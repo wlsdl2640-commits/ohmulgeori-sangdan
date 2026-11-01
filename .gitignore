@@ -1,0 +1,7 @@
+dist/
+www/
+android/
+node_modules/
+__pycache__/
+*.zip
+*.apk

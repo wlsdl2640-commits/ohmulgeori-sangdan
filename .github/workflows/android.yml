@@ -1,0 +1,71 @@
+name: 안드로이드 APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 웹 게임 빌드
+        run: |
+          pip install fonttools brotli pillow
+          python build.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: 안드로이드 프로젝트 만들기
+        run: |
+          npm ci --no-audit --no-fund
+          rm -rf www && mkdir www && cp -r dist/web/. www/
+          npx cap add android
+          cp -r android-res/. android/app/src/main/res/
+          sed -i 's/<activity/<activity android:screenOrientation="portrait"/' android/app/src/main/AndroidManifest.xml
+          sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"0.1.${{ github.run_number }}\"/" android/app/build.gradle
+          npx cap sync android
+
+      - name: APK 빌드
+        run: |
+          mkdir -p ~/.android
+          cp android-signing/debug.keystore ~/.android/debug.keystore
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../ohmulgeori-sangdan.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ohmulgeori-sangdan-apk
+          path: ohmulgeori-sangdan.apk
+
+      - name: 릴리스에 올리기
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: 오물거리 상단 0.1.${{ github.run_number }}
+          make_latest: true
+          files: ohmulgeori-sangdan.apk
+          body: |
+            안드로이드 폰에서 아래 ohmulgeori-sangdan.apk를 눌러 받은 뒤 설치하세요.
+            처음 설치할 때 '출처를 알 수 없는 앱' 설치를 허용해 달라는 창이 뜰 수 있어요.
+            빌드마다 같은 열쇠로 서명되므로, 새 빌드를 덮어 설치해도 저장 데이터가 유지돼요.

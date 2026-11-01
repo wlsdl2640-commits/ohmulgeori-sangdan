@@ -1,0 +1,16 @@
+{
+  "name": "ohmulgeori-sangdan",
+  "version": "0.1.0",
+  "private": true,
+  "description": "몬스터 부속품을 다루는 상단을 키우는 방치형 도트 경영 게임",
+  "scripts": {
+    "build": "python3 build.py"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3"
+  }
+}

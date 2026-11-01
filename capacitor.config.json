@@ -1,0 +1,16 @@
+{
+  "appId": "com.ohmulgeori.sangdan",
+  "appName": "오물거리 상단",
+  "webDir": "www",
+  "backgroundColor": "#0b0d12",
+  "android": {
+    "backgroundColor": "#0b0d12"
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "native",
+      "initialViewportFitValueHint": "cover",
+      "style": "DARK"
+    }
+  }
+}
