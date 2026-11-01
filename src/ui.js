@@ -27,10 +27,10 @@ function applyPx() { document.querySelectorAll('img[data-px]').forEach(im => { i
 
 const POR = {};
 function portrait(a) {
-  const key = [a.cls, a.look && a.look.hair, a.look && a.look.skin, a.hero ? 1 : 0].join('|');
+  const key = advKey(a);
   if (POR[key]) return POR[key];
-  const [c, x] = mkCanvas(20, 24);
-  x.translate(10, 22);
+  const [c, x] = mkCanvas(25, 30);
+  x.translate(12, 28);
   drawAdv(x, a, 0, {});
   return (POR[key] = c.toDataURL());
 }
@@ -40,24 +40,26 @@ const iconImg = (id, cls = 'ico') => `<img class="${cls}" src="${iconURL(id)}" a
 function updateHud() {
   $('h-gold').textContent = fmt(S.gold);
   $('h-fame').textContent = fmt(S.fame);
-  const p = dateParts(S.t);
-  $('h-date').textContent = `${p.m}월 ${p.d}일`;
+  const p = dateParts(S.t), ph = phaseOf(S.t), hd = $('h-date');
+  const html = `${p.m}월 ${p.d}일 <span class="ph ph-${PHASES[ph].id}">${PHASES[ph].name}</span>`;
+  if (hd.innerHTML !== html) hd.innerHTML = html;
   const dd = S.settleDay - today(), r = $('h-rent');
   r.textContent = `정산 D-${dd}`;
   r.classList.toggle('due', dd <= 3);
   const n = S.reqs.filter(q => reqHave(q) >= q.qty).length, b = $('req-badge');
   b.hidden = !n; b.textContent = n;
 }
-const WHY = { full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '동료를 잃고 복귀 중', boss: '보스를 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중' };
+const WHY = { full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '동료를 잃고 복귀 중', boss: '보스를 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중' };
 function expStatus(p) {
   const e = p.exp;
   if (!e) return p.members.length ? '상단에서 대기 중' : '파티원이 없어요';
   const F = FIELDS[e.field];
-  if (e.foes.length) return e.foes.some(f => f.boss) ? '보스와 싸우는 중!' : '전투 중';
-  if (e.mode === 'return') return WHY[e.why] || '복귀 중';
-  if (e.goDungeon) return '전투가 끝나면 던전에 들어가요';
-  if (e.c10 && e.area === 'field') return `${F.no}-10 반복 사냥 중 · 던전 입장 가능`;
-  return '전진 중';
+  if (e.foes.length) return e.foes.some(f => f.boss) ? '보스와 싸우는 중!' : e.camp ? '야영지 습격!' : '전투 중';
+  if (e.camp) return e.camp.t > 1.5 ? '모닥불 곁에서 자는 중' : '모닥불을 피우는 중';
+  if (e.wait === 'gate') return `${F.dungeon.name} 입구 · 들어갈지 정해 주세요`;
+  const tired = teamOf(p).some(a => (a.fat || 0) >= 60);
+  if (e.mode === 'return') return (WHY[e.why] || '복귀 중') + (tired ? ' · 지침' : '');
+  return (e.area === 'dungeon' ? '던전 탐험 중' : '전진 중') + (tired ? ' · 지침' : '');
 }
 function whereStr(e) {
   const F = FIELDS[e.field];
@@ -75,7 +77,7 @@ function updateOverlay() {
 }
 function renderChips() {
   const html = S.parties.map(p => {
-    const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.mode === 'return' ? 'back' : 'go';
+    const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.camp ? 'camp' : e.wait ? 'wait' : e.mode === 'return' ? 'back' : 'go';
     const st = !e ? '대기' : e.area === 'dungeon' ? `${FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
     return `<button type="button" class="pchip${S.view === p.id ? ' on' : ''}" data-view="${p.id}"><i class="dot ${cls}"></i>${esc(p.name)} · ${st}</button>`;
   }).join('');
@@ -104,6 +106,13 @@ function closeModal() { $('modal').hidden = true; $('m-body').onclick = null; UI
 function pumpModals() {
   if (UI.modal || !S || !S.modals.length || !$('title-scr').hidden) return;
   const m = S.modals.shift();
+  if (m.gate) {
+    // 던전 입구: 아직 기다리고 있을 때만 묻는다
+    const p = S.parties.find(x => x.id === m.gate);
+    if (!p || !p.exp || p.exp.wait !== 'gate') { setTimeout(pumpModals, 50); return; }
+    openModal(m.title, (m.body || []).map(t => `<p>${esc(t)}</p>`).join(''), [{ label: '지나가기', fn: () => { gateChoice(p, 'skip'); renderPanel(true); } }, { label: '들어가기', cls: 'gold', fn: () => { gateChoice(p, 'enter'); S.view = p.id; renderPanel(true); renderChips(); } }]);
+    return;
+  }
   openModal(m.title, (m.body || []).map(t => `<p>${esc(t)}</p>`).join(''));
 }
 function confirmBox(title, text, ok, fn, danger) {

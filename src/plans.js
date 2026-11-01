@@ -78,8 +78,8 @@ const PLANS = {
       R(ctx, -6, y - 2, 11, 5, m.body); R(ctx, -8, y, 3, 2, m.body); R(ctx, -10, y + 1, 3, 1, m.dark);
       R(ctx, 5, y - 4, 4, 4, m.body); R(ctx, 9, y - 2, 2, 2, m.beak || '#e8e2d0'); R(ctx, 7, y - 3, 1, 1, '#141414');
       R(ctx, -2, y + 3, 1, 3, m.dark); R(ctx, 2, y + 3, 1, 3, m.dark);
-      if (fr) { R(ctx, -5, y - 8, 9, 2, m.dark); R(ctx, -3, y - 10, 5, 2, m.dark); R(ctx, -4, y - 6, 7, 1, shade(m.dark, 0.2)); }
-      else { R(ctx, -5, y + 1, 9, 2, m.dark); R(ctx, -3, y + 3, 6, 2, m.dark); }
+      if (fr) { R(ctx, -2, y - 4, 6, 2, m.dark); R(ctx, -4, y - 6, 8, 2, m.dark); R(ctx, -6, y - 8, 9, 2, m.dark); R(ctx, -8, y - 10, 8, 2, m.dark); R(ctx, -9, y - 11, 4, 1, shade(m.dark, 0.25)); R(ctx, -5, y - 7, 6, 1, shade(m.dark, 0.18)); }
+      else { R(ctx, -3, y + 1, 8, 2, m.dark); R(ctx, -5, y + 3, 7, 2, m.dark); R(ctx, -6, y + 5, 4, 1, shade(m.dark, 0.2)); }
       return;
     }
     R(ctx, -2, y, 5, 3, m.body); R(ctx, -2, y - 1, 1, 1, m.body); R(ctx, 2, y - 1, 1, 1, m.body);

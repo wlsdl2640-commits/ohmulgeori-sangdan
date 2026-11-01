@@ -155,6 +155,20 @@ details.card summary::-webkit-details-marker { display: none; }
 @keyframes callup { 0% { opacity: 0; transform: translate(-50%, -70%); } 14% { opacity: 1; transform: translate(-50%, -100%); } 72% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -170%); } }
 
 .bar.mp { height: 4px; margin-top: 2px; }
+.bar.fat { height: 3px; margin-top: 2px; }
+.bar.fat i { background: #c8962a; }
+.bar.fat i.low { background: var(--warn); }
+.card > .bar.fat { margin-top: -7px; }
+.li.on { border-color: var(--gold-d); }
+.ph { margin-left: 4px; }
+.ph-dawn { color: #f0a8b8; }
+.ph-day { color: #f0d070; }
+.ph-dusk { color: #f08a3c; }
+.ph-night { color: #8ab0ff; }
+.pchip .dot.camp { background: #b88aff; }
+.pchip .dot.wait { background: var(--gold); }
+.warn { color: var(--warn); }
+details.card .list { margin-top: 8px; }
 .bar.mp i { background: #5aa0ff; }
 .card > .bar.mp { margin-top: -6px; }
 .q { display: inline-block; font-size: 11px; line-height: 1.4; padding: 0 4px; border: 1px solid currentColor; vertical-align: 1px; }

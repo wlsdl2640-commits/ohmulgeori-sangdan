@@ -1,29 +1,31 @@
 /* ───────── 새 게임과 저장 이전 ───────── */
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
-const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club' };
+const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
+  gladiator: 'sword', elementalist: 'staff', berserker: 'axe', dragoon: 'lance', paladin: 'sword', necromancer: 'staff' };
+const rollGate = () => ri(GATE_RANGE[0], GATE_RANGE[1]);
 
 function blankState(company) {
   return {
-    v: 2, seq: 1, t: 0, lastSeen: Date.now(),
+    v: 3, seq: 1, t: 0, lastSeen: Date.now(),
     company: (company || '').trim().slice(0, 12) || '등불 상단',
     gold: 1000, fame: 0,
     inv: { pot_s: 6, mp_s: 2 },
     advs: [], graves: [], parties: [], gear: [],
-    fields: Object.fromEntries(ALL_FIELDS.map(f => [f, { best: 0, cleared: false }])),
-    cands: [], reqs: [], heroQueue: [],
+    fields: Object.fromEntries(ALL_FIELDS.map(f => [f, { best: 0, cleared: false, gate: rollGate(), found: false }])),
+    cands: [], reqs: [], heroQueue: [], specQueue: [], bless: null,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
-    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0 },
+    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0 },
     settleDay: MONTH_DAYS,
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1 },
+    log: [], modals: [], flags: { v02: 1, v03: 1 },
     stats: { earned: 0, kills: 0, deaths: 0, trips: 0, sales: 0 },
     view: null
   };
 }
 function newParty(name, members) {
-  return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null };
+  return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null, wagon: null, dmode: 'ask', campNight: true };
 }
 function starterGear(a) { a.eq.weapon = makeGear(WEAPON_OF[a.cls], 0, 0); const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp; }
 function newGame(company) {
@@ -45,7 +47,7 @@ function migrate(v) {
   Object.assign(s, { seq: v.seq || 1, t: v.t || 0, lastSeen: v.lastSeen || Date.now(), gold: v.gold || 0, fame: v.fame || 0, inv: v.inv || {},
     graves: v.graves || [], log: v.log || [], settleDay: v.settleDay || MONTH_DAYS, heroQueue: v.heroQueue || [], view: v.view, shop: v.shop || { slots: [] } });
   Object.assign(s.stats, v.stats || {});
-  Object.assign(s.flags, v.flags || {}, { v02: 0 });
+  Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0 });
   Object.assign(s.bld, v.bld || {});
   for (const f of Object.keys(v.fields || {})) if (s.fields[f]) s.fields[f] = v.fields[f];
   // 모험가는 지금 레벨에 맞춰 능력치를 새로 만든다
@@ -66,6 +68,27 @@ function migrate(v) {
   s.modals = [{ title: 'v0.2 업데이트', body: STORY.v02 }];
   rollCands(); genReq(); genReq();
   return s;
+}
+// v0.2 → v0.3: 필드 50단계와 던전 입구, 피로, 마차, 신전, 특수직업
+function migrate3() {
+  S.v = 3;
+  S.bld.temple = S.bld.temple || 0;
+  S.bless = S.bless || null;
+  S.heroQueue = S.heroQueue || []; S.specQueue = S.specQueue || [];
+  ALL_FIELDS.forEach(f => { const fs = S.fields[f] || (S.fields[f] = { best: 0, cleared: false }); if (!fs.gate) fs.gate = rollGate(); if (fs.found == null) fs.found = !!fs.cleared; });
+  S.advs.forEach(a => { if (a.fat == null) a.fat = 0; });
+  S.graves.forEach(g => { if (!g.id) g.id = nid(); });
+  S.parties.forEach(p => {
+    if (p.wagon === undefined) p.wagon = null;
+    if (!p.dmode) p.dmode = 'ask';
+    if (p.campNight == null) p.campNight = true;
+    const e = p.exp;
+    if (e) { e.camp = e.camp || null; e.wait = e.wait || null; delete e.c10; delete e.goDungeon; if (e.area === 'dungeon' && !FIELDS[e.field].raid && S.fields[e.field].cleared) e.mode = 'return'; }
+  });
+  // 이미 공략한 던전마다 특수직업 모험가가 찾아온다
+  FIELD_IDS.forEach(f => { const fs = S.fields[f]; if (fs.cleared && SPECIALS[f] && !fs.spec) { fs.spec = 1; S.specQueue.push(f); } });
+  syncHeroes();
+  if (!S.flags.v03) { S.flags.v03 = 1; S.modals.push({ title: 'v0.3 업데이트', body: STORY.v03 }); }
 }
 
 /* ───────── 여관 손님 ───────── */
@@ -88,6 +111,14 @@ function makeCand() {
   return a;
 }
 function syncHeroes() {
+  for (const fid of S.specQueue || []) {
+    if (S.cands.some(c => c.specOf === fid)) continue;
+    const P = SPECIALS[fid];
+    const a = makeAdv({ cls: P.cls, lv: P.lv, name: P.name, bio: P.bio });
+    a.salary = Math.round(a.salary * 1.1 / 5) * 5; a.fee = a.salary; a.specOf = fid; a.cond = null;
+    starterGear(a);
+    S.cands.unshift(a);
+  }
   for (const fid of S.heroQueue) {
     if (S.cands.some(c => c.heroOf === fid)) continue;
     const H = HEROES[fid];
@@ -99,7 +130,7 @@ function syncHeroes() {
   }
 }
 function rollCands() {
-  S.cands = S.cands.filter(c => c.heroOf);
+  S.cands = S.cands.filter(c => c.heroOf || c.specOf);
   const n = 3 + (spn('guild') >= 3 ? 1 : 0);
   for (let i = 0; i < n; i++) S.cands.push(makeCand());
   if (!living().length) {
@@ -119,6 +150,7 @@ function hire(id) {
   S.gold -= c.fee;
   S.cands = S.cands.filter(x => x !== c);
   if (c.heroOf) S.heroQueue = S.heroQueue.filter(f => f !== c.heroOf);
+  if (c.specOf) S.specQueue = S.specQueue.filter(f => f !== c.specOf);
   const a = Object.assign({}, c);
   delete a.fee; delete a.cond; delete a.heroOf;
   a.status = 'idle';
@@ -231,10 +263,11 @@ function learnSkill(aid, sid) {
   if (a.skills.includes(sid)) return '이미 배운 스킬이에요.';
   if (!canLearn(a, sid)) return `${s.name}은(는) ${s.cls.includes('all') ? '' : s.cls.map(c => CLASSES[c].name).join('·') + ' '}Lv${s.lv} 이상만 배울 수 있어요.`;
   if (a.skills.length >= MAX_SKILLS) return `스킬은 ${MAX_SKILLS}개까지예요. 하나를 잊어야 배울 수 있어요.`;
-  if (!((S.inv['book_' + sid] || 0) > 0)) return '스킬북이 없어요.';
-  const fee = s.lv * 30;
+  if (!s.own && !((S.inv['book_' + sid] || 0) > 0)) return '스킬북이 없어요.';
+  const fee = s.own ? ownFee(s) : s.lv * 30;
   if (S.gold < fee) return '수업료가 모자라요.';
-  addTo(S.inv, 'book_' + sid, -1); S.gold -= fee;
+  if (!s.own) addTo(S.inv, 'book_' + sid, -1);
+  S.gold -= fee;
   a.skills.push(sid); clampVitals(a);
   log(`${a.name}이(가) 스킬 「${s.name}」을(를) 배웠다.`, 'good');
   changed();
@@ -256,6 +289,53 @@ function trainStat(aid, k) {
   if (trainedTotal(a) >= trainCap(a)) return `지금 레벨에서는 ${trainCap(a)}번까지 훈련할 수 있어요. 레벨을 올리세요.`;
   if (S.gold < trainCost(a)) return '훈련비가 모자라요.';
   S.gold -= trainCost(a); a.tr[k]++;
+  changed();
+  return '';
+}
+
+/* ───────── 신전 ───────── */
+function blessRoll() {
+  if (!S.bld.temple) return;
+  const last = S.bless && S.bless.id;
+  const id = pickOne(BLESS_IDS.filter(k => k !== last));
+  S.bless = { id, from: today() };
+  S.advs.forEach(clampVitals);
+  log(`신전에서 이번 달 「${BLESSINGS[id].name}」을(를) 내려 주었다. ${BLESSINGS[id].desc}`, 'good');
+}
+function revive(gid) {
+  const i = S.graves.findIndex(g => g.id === gid);
+  if (i < 0) return '이미 떠난 영혼이에요.';
+  if (!S.bld.temple) return '신전이 있어야 되살릴 수 있어요.';
+  if (living().length >= beds()) return '여관에 빈 방이 없어요.';
+  if (S.gold < REVIVE_COST) return '헌금이 모자라요.';
+  const g = S.graves[i];
+  let a;
+  if (g.adv) { a = JSON.parse(JSON.stringify(g.adv)); a.id = nid(); }
+  else { a = makeAdv({ cls: g.cls, lv: g.lv, name: g.name, hero: g.hero }); }   // 예전 무덤은 지금 레벨로 새로 빚는다
+  a.status = 'idle'; a.quit = false; a.unpaid = 0; a.fat = 0;
+  a.eq = a.eq || { weapon: null, armor: null, acc: null, bag: null };
+  const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
+  S.gold -= REVIVE_COST;
+  S.graves.splice(i, 1);
+  S.advs.push(a);
+  log(`신전에서 ${a.name}(${CLASSES[a.cls].name}, Lv${a.lv})이(가) 다시 눈을 떴다.`, 'good');
+  changed();
+  return '';
+}
+
+/* ───────── 마차 ───────── */
+const wagonOpen = w => !WAGONS[w].need || spn(WAGONS[w].need) >= WAGONS[w].tier;
+function buyWagon(pid, w) {
+  const p = S.parties.find(x => x.id === pid), W = WAGONS[w];
+  if (!p || !W) return '';
+  if (p.exp) return '원정 중에는 마차를 바꿀 수 없어요.';
+  if (!wagonOpen(w)) return '드워프 광산 조합 후원 2단계가 필요해요.';
+  if (p.wagon === w) return '이미 이 마차를 쓰고 있어요.';
+  const back = p.wagon ? Math.round(WAGONS[p.wagon].cost * 0.5) : 0;
+  if (S.gold + back < W.cost) return '돈이 모자라요.';
+  S.gold += back - W.cost;
+  log(`${p.name}에게 ${W.name}을(를) 마련했다.${back ? ` 쓰던 ${WAGONS[p.wagon].name}은(는) ${g$(back)}에 넘겼다.` : ''}`, 'good');
+  p.wagon = w;
   changed();
   return '';
 }
@@ -323,6 +403,7 @@ function upgrade(bid) {
   if (S.gold < cost) return '돈이 모자라요.';
   S.gold -= cost; S.bld[bid] = lv + 1;
   if (bid === 'bank' && lv === 0) bankRoll();
+  if (bid === 'temple' && lv === 0) { blessRoll(); queueModal({ title: '신전', body: STORY.temple.concat([`이번 달에는 「${BLESSINGS[S.bless.id].name}」: ${BLESSINGS[S.bless.id].desc}`]) }); }
   log(`${B.name}을(를) ${lv ? 'Lv' + (lv + 1) + '로 넓혔다' : '지었다'}.`, 'good');
   changed();
   return '';
@@ -491,6 +572,7 @@ function settle() {
   if (warned.length) lines.push(`${warned.join(', ')}에게 봉급을 주지 못했다. 다음 달에도 밀리면 떠난다.`);
   if (gone.length) lines.push(`두 달째 봉급을 못 받은 ${gone.join(', ')}은(는) 상단을 떠난다. 원정 중이면 돌아온 뒤에 떠난다.`);
   if (!S.flags.guildDown) lines.push(`다음 달 자릿세는 ${g$(rent())}이다.`);
+  if (S.bld.temple) { blessRoll(); lines.push(`신전: 이번 달에는 「${BLESSINGS[S.bless.id].name}」. ${BLESSINGS[S.bless.id].desc}`); }
   log(`${pm}월 정산을 마쳤다.`, unpaid.length ? 'bad' : '');
   queueModal({ title: `${pm}월 정산`, body: lines });
 }
@@ -508,7 +590,7 @@ function onNewDay(k) {
 }
 function autoDepart(p) {
   const team = p.members.map(advById).filter(Boolean);
-  if (!team.length || team.some(a => a.status !== 'idle' || a.hp < derive(a).maxHp * 0.85)) return;
+  if (!team.length || team.some(a => a.status !== 'idle' || a.hp < derive(a).maxHp * 0.85 || (a.fat || 0) > FATIGUE.depart)) return;
   startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains');
 }
 function stepHome(dt) {
@@ -518,6 +600,7 @@ function stepHome(dt) {
     const d = derive(a);
     if (a.hp < d.maxHp) a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.006 * m * dt);
     if (a.mp < d.maxMp) a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * dt);
+    if (a.fat) a.fat = Math.max(0, a.fat - FATIGUE.home * dt);
   }
 }
 function stepWorld(dt) {
@@ -559,14 +642,15 @@ function loadGame() {
     if (!raw) return false;
     const v = JSON.parse(raw);
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); saveGame(); return true; }
-    if (v.v !== 2) return false;
+    if (v.v === 1) { migrate(v); migrate3(); saveGame(); return true; }
+    if (v.v !== 2 && v.v !== 3) return false;
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.heroQueue = S.heroQueue || []; S.gear = S.gear || [];
     S.bank = S.bank || { offers: [], deps: [], loans: [] };
     S.research = S.research || { lv: {}, cur: null }; S.spons = S.spons || {};
     ALL_FIELDS.forEach(f => { S.fields[f] = S.fields[f] || { best: 0, cleared: false }; });
-    ['smithy', 'bank', 'tower'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    ['smithy', 'bank', 'tower', 'temple'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    if (S.v === 2) { migrate3(); saveGame(); } else migrate3();
     return true;
   } catch (_) { return false; }
 }
