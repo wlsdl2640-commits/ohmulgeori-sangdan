@@ -1,5 +1,5 @@
 /* ───────── 화면 공통 ───────── */
-const UI = { tab: 'co', dirty: true, html: '', chips: '', hold: false, modal: false };
+const UI = { tab: 'co', dirty: true, html: '', chips: '', hold: false, modal: false, advOpen: null, smithT: null };
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = n => Math.floor(n).toLocaleString('ko-KR');
@@ -10,6 +10,7 @@ const UI_PX = {
   coin:   ['..kkkk..', '.kyyyyk.', 'kyllyydk', 'kylyyydk', 'kylyyydk', 'kyyyyydk', '.kddddk.', '..kkkk..'],
   star:   ['...kk...', '...ff...', '..kffk..', 'kfffffk.', '.kfffk..', '.kfkfk..', 'kfk.kfk.', 'kk...kk.'],
   house:  ['....k....', '...kyk...', '..kyyyk..', '.kyyyyyk.', 'kkkkkkkkk', '.kwwwwwk.', '.kwkkwwk.', '.kwkkwwk.', '.kkkkkkk.'],
+  anvil:  ['.........', 'kkkkkkkk.', 'kwwwwwwwk', '.kwwwwwk.', '..kkwkk..', '...kwk...', '..kwwwk..', '.kwwwwwk.', '.kkkkkkk.'],
   person: ['...kkk...', '..kssk...', '..kssk...', '...kk....', '..kttk...', '.kttttk..', 'ktttttk..', '.kt.tk...', '.kk.kk...'],
   sword:  ['.......kk', '......klk', '.....klk.', '....klk..', '.k.klk...', '..kkk....', '..kdk....', '.kdkk....', 'kk.......'],
   box:    ['.kkkkkkk.', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', 'kbbkkbbbk', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', '.kkkkkkk.'],
@@ -42,17 +43,18 @@ function updateHud() {
   const p = dateParts(S.t);
   $('h-date').textContent = `${p.m}월 ${p.d}일`;
   const dd = S.settleDay - today(), r = $('h-rent');
-  r.textContent = `자릿세 D-${dd}`;
+  r.textContent = `정산 D-${dd}`;
   r.classList.toggle('due', dd <= 3);
-  const n = S.reqs.filter(q => (S.inv[q.item] || 0) >= q.qty).length, b = $('req-badge');
+  const n = S.reqs.filter(q => reqHave(q) >= q.qty).length, b = $('req-badge');
   b.hidden = !n; b.textContent = n;
 }
+const WHY = { full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '동료를 잃고 복귀 중', boss: '보스를 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중' };
 function expStatus(p) {
   const e = p.exp;
   if (!e) return p.members.length ? '상단에서 대기 중' : '파티원이 없어요';
   const F = FIELDS[e.field];
   if (e.foes.length) return e.foes.some(f => f.boss) ? '보스와 싸우는 중!' : '전투 중';
-  if (e.mode === 'return') return { full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '동료를 잃고 복귀 중', boss: '보스를 쓰러뜨리고 복귀 중' }[e.why] || '복귀 중';
+  if (e.mode === 'return') return WHY[e.why] || '복귀 중';
   if (e.goDungeon) return '전투가 끝나면 던전에 들어가요';
   if (e.c10 && e.area === 'field') return `${F.no}-10 반복 사냥 중 · 던전 입장 가능`;
   return '전진 중';
@@ -74,7 +76,7 @@ function updateOverlay() {
 function renderChips() {
   const html = S.parties.map(p => {
     const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.mode === 'return' ? 'back' : 'go';
-    const st = !e ? '대기' : e.area === 'dungeon' ? `던전 ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
+    const st = !e ? '대기' : e.area === 'dungeon' ? `${FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
     return `<button type="button" class="pchip${S.view === p.id ? ' on' : ''}" data-view="${p.id}"><i class="dot ${cls}"></i>${esc(p.name)} · ${st}</button>`;
   }).join('');
   if (html !== UI.chips) { $('pchips').innerHTML = html; UI.chips = html; }
@@ -83,6 +85,7 @@ function renderChips() {
 /* ───────── 창 ───────── */
 function openModal(title, html, btns) {
   UI.modal = true;
+  $('m-body').onclick = null; UI.advOpen = null;
   $('m-title').textContent = title;
   $('m-body').innerHTML = html;
   const box = $('m-btns');
@@ -94,9 +97,10 @@ function openModal(title, html, btns) {
     box.append(el);
   });
   $('modal').hidden = false;
-  setTimeout(() => { if (box.lastChild) box.lastChild.focus(); }, 40);
+  $('m-box').scrollTop = 0;
+  setTimeout(() => { if (box.lastChild) box.lastChild.focus({ preventScroll: true }); }, 40);
 }
-function closeModal() { $('modal').hidden = true; UI.modal = false; setTimeout(pumpModals, 150); }
+function closeModal() { $('modal').hidden = true; $('m-body').onclick = null; UI.modal = false; UI.advOpen = null; setTimeout(pumpModals, 150); }
 function pumpModals() {
   if (UI.modal || !S || !S.modals.length || !$('title-scr').hidden) return;
   const m = S.modals.shift();

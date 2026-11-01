@@ -8,6 +8,7 @@
 
   <section class="view" aria-label="원정 화면">
     <canvas id="cv" width="240" height="128"></canvas>
+    <div class="callouts" id="callouts" aria-hidden="true"></div>
     <div class="ov ov-l" id="ov-l"></div>
     <div class="ov ov-r" id="ov-r" hidden></div>
     <div class="ov ov-b" id="ov-b" hidden></div>
@@ -19,6 +20,7 @@
 
   <nav class="tabs" id="tabs" aria-label="메뉴">
     <button type="button" class="tab on" data-tab="co"><img data-px="house" alt="">상단</button>
+    <button type="button" class="tab" data-tab="fac"><img data-px="anvil" alt="">시설</button>
     <button type="button" class="tab" data-tab="adv"><img data-px="person" alt="">모험가</button>
     <button type="button" class="tab" data-tab="exp"><img data-px="sword" alt="">원정</button>
     <button type="button" class="tab" data-tab="inv"><img data-px="box" alt="">창고</button>
@@ -43,7 +45,7 @@
   </div>
 
   <div class="modal-wrap" id="modal" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <div class="modal" id="m-box" role="dialog" aria-modal="true" aria-labelledby="m-title">
       <h2 id="m-title"></h2>
       <div id="m-body"></div>
       <div class="m-btns" id="m-btns"></div>

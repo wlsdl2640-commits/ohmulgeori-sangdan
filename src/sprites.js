@@ -75,73 +75,6 @@ function drawMon(ctx, id, t, o = {}) {
   P(ctx, m, fr, t, o);
   ctx.restore();
 }
-const PLANS = {
-  quad(ctx, m, fr) {
-    const L = m.len, H = m.h, lg = m.low ? 1 : 2, b = m.body, d = m.dark;
-    const x0 = -Math.floor(L / 2), top = -H - lg;
-    R(ctx, x0, top, L, H, b); R(ctx, x0, top + H - 1, L, 1, d);
-    const hs = Math.max(3, Math.round(H * 0.85)), hx = x0 + L - 1;
-    R(ctx, hx, top - 1, hs, hs, b);
-    if (m.snout) R(ctx, hx + hs, top + 1, 2, 2, b);
-    R(ctx, hx + hs - 2, top, 1, 1, '#141414');
-    if (m.ear) R(ctx, hx, top - 2, 1, 1, d);
-    if (m.ears) { R(ctx, hx, top - 5, 1, 4, b); R(ctx, hx + 2, top - 4, 1, 3, b); }
-    if (m.horn) { R(ctx, hx + hs - 1, top - 2, 1, 1, m.horn); R(ctx, hx + hs, top - 3, 1, 1, m.horn); }
-    if (m.tail) R(ctx, x0 - 3, top + 1, 3, 1, d);
-    if (m.crown) { const c = '#f0c24a'; R(ctx, hx, top - 3, 4, 2, c); R(ctx, hx, top - 4, 1, 1, c); R(ctx, hx + 3, top - 4, 1, 1, c); R(ctx, hx + 1, top - 2, 1, 1, '#c0392b'); }
-    const legs = [x0 + 1, x0 + 3, x0 + L - 4, x0 + L - 2];
-    legs.forEach((lx, i) => R(ctx, lx, -lg, 1, lg - ((i + fr) % 2 ? 1 : 0), d));
-  },
-  blob(ctx, m, fr) {
-    const w = m.w + (fr ? 1 : 0), h = m.h - (fr ? 1 : 0), x0 = -Math.floor(w / 2);
-    R(ctx, x0 + 2, -h, w - 4, 1, m.body); R(ctx, x0 + 1, -h + 1, w - 2, 1, m.body); R(ctx, x0, -h + 2, w, h - 2, m.body);
-    R(ctx, x0, -1, w, 1, m.dark); R(ctx, x0 + 2, -h + 2, 2, 1, '#d8ffd0');
-    R(ctx, x0 + w - 3, -h + 3, 1, 2, '#123012'); R(ctx, x0 + w - 5, -h + 3, 1, 2, '#123012');
-  },
-  shroom(ctx, m, fr) {
-    R(ctx, -2, -7, 5, 6, m.stem); R(ctx, -2 + fr, -1, 2, 1, m.dark); R(ctx, 1 - fr, -1, 2, 1, m.dark);
-    R(ctx, -5, -11, 11, 4, m.body); R(ctx, -4, -12, 9, 1, m.body); R(ctx, -5, -8, 11, 1, m.dark);
-    R(ctx, -3, -11, 1, 1, '#f3e6ff'); R(ctx, 1, -10, 2, 1, '#f3e6ff'); R(ctx, 3, -12, 1, 1, '#f3e6ff');
-    R(ctx, 1, -5, 1, 1, '#141414'); R(ctx, -1, -5, 1, 1, '#141414');
-  },
-  bug(ctx, m, fr) {
-    for (let i = 0; i < 4; i++) { const lx = -4 + i * 2; R(ctx, lx, -3, 1, 2, m.dark); R(ctx, lx + ((i + fr) % 2 ? -1 : 1), -1, 1, 1, m.dark); }
-    R(ctx, -5, -7, 8, 4, m.body); R(ctx, -4, -8, 6, 1, m.body); R(ctx, 3, -6, 3, 3, m.dark);
-    R(ctx, 5, -6, 1, 1, m.eye); R(ctx, 4, -5, 1, 1, m.eye); R(ctx, -3, -7, 2, 1, shade(m.body, 0.2));
-  },
-  tree(ctx, m, fr) {
-    R(ctx, -2, -10, 5, 10, m.body); R(ctx, -4, -1, 2, 1, m.body); R(ctx, 3, -1, 2, 1, m.body);
-    R(ctx, 3, -9 + fr, 3, 1, m.body); R(ctx, 5, -10 + fr, 1, 1, m.body);
-    R(ctx, -5, -17, 11, 7, m.leaf); R(ctx, -4, -18, 9, 1, m.leaf); R(ctx, -6, -15, 1, 4, m.leaf); R(ctx, 6, -15, 1, 4, m.leaf);
-    R(ctx, -3, -16, 3, 1, shade(m.leaf, 0.25)); R(ctx, 1, -11, 4, 1, shade(m.leaf, -0.3));
-    R(ctx, 0, -8, 1, 1, '#f0e070'); R(ctx, 2, -8, 1, 1, '#f0e070'); R(ctx, 0, -5, 3, 1, shade(m.body, -0.4));
-  },
-  biped(ctx, m, fr) {
-    const s = m.skin, c = m.cloth;
-    if (fr) { R(ctx, -1, -3, 1, 3, c); R(ctx, 1, -4, 1, 3, c); } else { R(ctx, -2, -3, 1, 3, c); R(ctx, 1, -3, 1, 3, c); }
-    R(ctx, -2, -7, 5, 4, c); R(ctx, -2, -11, 5, 4, s);
-    R(ctx, -3, -11, 1, 1, s); R(ctx, 3, -12, 1, 2, s); R(ctx, 1, -10, 1, 1, '#f7e04a');
-    R(ctx, 3, -7, 1, 2, s);
-    if (m.gear === 'dagger') R(ctx, 4, -6, 2, 1, '#c9c3b8');
-    if (m.gear === 'staff') { R(ctx, 4, -13, 1, 12, '#7a5634'); R(ctx, 3, -15, 3, 2, '#e8e2d0'); R(ctx, 4, -14, 1, 1, '#141414'); }
-    if (m.gear === 'pick') { R(ctx, 4, -9, 1, 7, '#7a5634'); R(ctx, 2, -10, 5, 1, '#c9c3b8'); R(ctx, -2, -12, 5, 1, '#e8b84a'); }
-    if (m.feather) { R(ctx, -1, -13, 1, 2, '#e05a4a'); R(ctx, 0, -14, 1, 2, '#f0c24a'); }
-  },
-  flyer(ctx, m, fr, t) {
-    const y = -12 + Math.round(Math.sin(t * 5) * 2);
-    R(ctx, -2, y, 5, 3, m.body); R(ctx, -2, y - 1, 1, 1, m.body); R(ctx, 2, y - 1, 1, 1, m.body); R(ctx, 2, y + 1, 1, 1, '#ff4a4a');
-    if (fr) { R(ctx, -7, y - 2, 5, 2, m.dark); R(ctx, 3, y - 2, 5, 2, m.dark); }
-    else { R(ctx, -7, y + 2, 5, 2, m.dark); R(ctx, 3, y + 2, 5, 2, m.dark); }
-  },
-  golem(ctx, m, fr) {
-    R(ctx, -5, -5, 3, 5 - fr, m.dark); R(ctx, 2, -5, 3, 5 - (1 - fr), m.dark);
-    R(ctx, -6, -14, 12, 9, m.body); R(ctx, -3, -18, 6, 4, m.body);
-    R(ctx, 1, -16, 2, 1, m.core); R(ctx, -1, -11, 2, 2, m.core);
-    R(ctx, -8, -13, 2, 8, m.dark); R(ctx, 6, -13 + fr, 2, 8, m.dark);
-    R(ctx, -4, -12, 1, 3, m.dark); R(ctx, 3, -9, 2, 1, m.dark); R(ctx, -5, -14, 10, 1, shade(m.body, 0.18));
-  }
-};
-
 /* ───────── 아이콘 (10×10) ───────── */
 const ICON_PX = {
   tail:    ['..........', '.......kk.', '......k##k', '.....k#k..', '....k#k...', '...k#k....', '..k#k.....', '.k#k......', '.kk.......', '..........'],
@@ -156,15 +89,36 @@ const ICON_PX = {
   ore:     ['..........', '...kkk....', '..k##lkk..', '.k#l####k.', 'k###dd###k', 'k#d##l##dk', 'k###d###k.', '.kddddddk.', '..kkkkkk..', '..........'],
   potion:  ['...kkkk...', '...kbbk...', '....kk....', '...k..k...', '..k.l..k..', '.k######k.', '.k#l####k.', '.k######k.', '..kddddk..', '...kkkk...'],
   feather: ['........kk', '.......k#k', '......k#lk', '.....k##k.', '....k#lk..', '...k##k...', '..k#lk....', '..kdk.....', '.kk.......', 'k.........'],
-  heart:   ['..........', '.kk...kk..', 'k##k.k##k.', 'k#l#k###k.', 'k#l#####k.', '.k######k.', '..k####k..', '...k##k...', '....kk....', '..........']
+  heart:   ['..........', '.kk...kk..', 'k##k.k##k.', 'k#l#k###k.', 'k#l#####k.', '.k######k.', '..k####k..', '...k##k...', '....kk....', '..........'],
+  book:    ['.kkkkkkk..', 'k#######k.', 'k#lll###kk', 'k#######kp', 'k##ll###kp', 'k#######kp', 'k#######kp', 'k#######kp', 'kkkkkkkkkp', '.pppppppp.'],
+  sword:   ['........kk', '.......klk', '......kl#k', '.....kl#k.', '....kl#k..', '.k.kl#k...', '..kk#k....', '..kwk.....', '.kwkkk....', 'kk........'],
+  bow:     ['...kk.....', '..kwwk....', '..kwks....', '.kwk.s....', '.kwk.s....', '.kwk.s....', '.kwk.s....', '..kwks....', '..kwwk....', '...kk.....'],
+  staff:   ['......kkk.', '.....kl#k.', '.....k##k.', '......kkk.', '.....kwk..', '....kwk...', '...kwk....', '..kwk.....', '.kwk......', '.kk.......'],
+  mace:    ['.....kkk..', '....k#l#k.', '....k###k.', '.....kdk..', '....kwk...', '...kwk....', '..kwk.....', '.kwk......', 'kwk.......', 'kk........'],
+  dagger:  ['..........', '.......kk.', '......klk.', '.....kl#k.', '....kl#k..', '...k##k...', '..kkdk....', '.kwkk.....', 'kwk.......', 'kk........'],
+  club:    ['......kkk.', '.....k###k', '.....k#d#k', '....k###k.', '....kwkk..', '...kwk....', '..kwk.....', '.kwk......', 'kwk.......', 'kk........'],
+  armor:   ['.kk....kk.', 'k##k..k##k', 'k###kk###k', '.k#l####k.', '.k#l####k.', '.k######k.', '.k##dd##k.', '.k######k.', '..kkkkkk..', '..........'],
+  vest:    ['.kk....kk.', 'k##k..k##k', 'k##kkkk##k', '.k#d##d#k.', '.k######k.', '.k#d##d#k.', '.k######k.', '.kkkkkkkk.', '..........', '..........'],
+  robe:    ['...kkkk...', '..k####k..', '.k#l##l#k.', '.k######k.', '..k#dd#k..', '..k####k..', '.k######k.', 'k########k', 'kkkkkkkkkk', '..........'],
+  ring:    ['..........', '....kk....', '...klrk...', '....kk....', '..kk##kk..', '.k#k..k#k.', '.k#....#k.', '.k#k..k#k.', '..kk##kk..', '....kk....'],
+  amulet:  ['.k......k.', '..k....k..', '...k..k...', '....kk....', '...k##k...', '..k#l##k..', '..k####k..', '...k##k...', '....kk....', '..........'],
+  bag:     ['...kkkk...', '..k....k..', '.kkkkkkkk.', 'k########k', 'k#l######k', 'k##kkkk##k', 'k##k##k##k', 'k########k', '.kddddddk.', '..kkkkkk..']
 };
 function drawIcon(ctx, id, ox = 0, oy = 0) {
-  const it = ITEMS[id]; if (!it) return;
+  const it = typeof id === 'object' ? id : ITEMS[id]; if (!it) return;
   const pat = ICON_PX[it.icon] || ICON_PX.gem;
-  const map = { '#': it.c, l: shade(it.c, 0.45), d: shade(it.c, -0.4), k: '#1a1410', r: '#c0392b', b: '#c9a04a' };
+  const map = { '#': it.c, l: shade(it.c, 0.45), d: shade(it.c, -0.4), k: '#1a1410', r: '#c0392b', b: '#c9a04a', w: '#8a5a32', p: '#e8dcb8', s: '#e8e2d0' };
   pat.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const ch = row[x]; if (ch !== '.') R(ctx, ox + x, oy + y, 1, 1, map[ch]); } });
 }
 const ICON_URL = {};
+const TIER_COLORS = ['#b0a898', '#7ab05a', '#b8c0c8', '#7ab8ff', '#c8ecff', '#f0c24a'];
+function gearIconURL(g) {
+  const key = 'g:' + g.base + ':' + g.t;
+  if (ICON_URL[key]) return ICON_URL[key];
+  const [c, x] = mkCanvas(10, 10);
+  drawIcon(x, { icon: GTYPES[g.base].icon, c: TIER_COLORS[g.t] });
+  return (ICON_URL[key] = c.toDataURL());
+}
 function iconURL(id) {
   if (ICON_URL[id]) return ICON_URL[id];
   const [c, x] = mkCanvas(10, 10);
@@ -176,7 +130,7 @@ function iconURL(id) {
 const DIGITS = {
   '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001',
   '5': '111100111001111', '6': '111100111101111', '7': '111001010010010', '8': '111101111101111', '9': '111101111001111', '+': '000010111010000',
-  L: '100100100100111', V: '101101101101010', U: '101101101101111', P: '111101111100100', ' ': '000000000000000', '!': '010010010000010'
+  L: '100100100100111', M: '101111111101101', I: '111010010010111', S: '111100111001111', V: '101101101101010', U: '101101101101111', P: '111101111100100', ' ': '000000000000000', '!': '010010010000010'
 };
 function drawNum(ctx, x, y, s, col) {
   s = String(s);

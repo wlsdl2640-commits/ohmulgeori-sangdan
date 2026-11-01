@@ -25,6 +25,9 @@ jobs:
         run: |
           pip install fonttools brotli pillow
           python build.py
+          # build.py의 VERSION(예: 0.2.0)에서 앞 두 자리를 따 0.2.<빌드 번호>로 쓴다
+          VER=$(python -c "import re; print('.'.join(re.search(r\"VERSION = '([0-9.]+)'\", open('build.py', encoding='utf-8').read()).group(1).split('.')[:2]))")
+          echo "APP_VER=$VER.${{ github.run_number }}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:
@@ -41,7 +44,7 @@ jobs:
           npx cap add android
           cp -r android-res/. android/app/src/main/res/
           sed -i 's/<activity/<activity android:screenOrientation="portrait"/' android/app/src/main/AndroidManifest.xml
-          sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"0.1.${{ github.run_number }}\"/" android/app/build.gradle
+          sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"${{ env.APP_VER }}\"/" android/app/build.gradle
           npx cap sync android
 
       - name: APK 빌드
@@ -62,7 +65,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: 오물거리 상단 0.1.${{ github.run_number }}
+          name: 오물거리 상단 ${{ env.APP_VER }}
           make_latest: true
           files: ohmulgeori-sangdan.apk
           body: |

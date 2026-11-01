@@ -7,11 +7,12 @@ function fmtDur(sec) {
 }
 function awayReport(r) {
   if (r.sec < 60) return;
-  const lines = [`${fmtDur(r.sec)} 동안 상단이 돌아갔어요. (게임 속 ${r.days}일)`];
+  const lines = [`${fmtDur(r.sec)} 동안 원정대와 상점이 쉬지 않고 일했어요. 게임 속 날짜는 그대로예요.`];
   lines.push(`골드 ${r.gold >= 0 ? '+' : ''}${fmt(r.gold)}G · 처치 ${fmt(r.kills)}마리 · 상점 판매 ${fmt(r.sales)}개`);
+  if (r.gear) lines.push(`장비 ${r.gear}개가 새로 창고에 들어왔어요.`);
   if (r.fame) lines.push(`명성 ${r.fame > 0 ? '+' : ''}${r.fame}`);
   if (r.deaths) lines.push(`그사이 모험가 ${r.deaths}명이 쓰러졌어요. 모험가 탭의 묘지에서 확인할 수 있어요.`);
-  if (r.sec >= OFFLINE_CAP) lines.push('자리를 비운 시간은 최대 2시간까지만 계산돼요.');
+  if (r.sec >= offlineCap()) lines.push(`자리를 비운 시간은 최대 ${Math.round(offlineCap() / 3600)}시간까지만 계산돼요. 마탑의 「시간 결속」 연구로 늘릴 수 있어요.`);
   S.modals.unshift({ title: '자리를 비운 동안', body: lines });
 }
 function startGame() {
@@ -21,7 +22,7 @@ function startGame() {
   clearInterval(uiTimer);
   uiTimer = setInterval(() => {
     if (!S) return;
-    updateHud(); updateOverlay(); renderChips(); renderPanel(); pumpModals();
+    updateHud(); updateOverlay(); renderChips(); renderPanel(); refreshAdv(); pumpModals();
   }, 400);
   lastT = 0;
   requestAnimationFrame(loop);
@@ -32,9 +33,9 @@ function loop(now) {
   if (!lastT) lastT = now;
   let dt = (now - lastT) / 1000;
   lastT = now;
+  // 화면이 멈춰 있던 시간(앱을 내렸을 때 등)은 날짜를 넘기지 않고 따라잡는다
   if (dt > 3) {
-    const r = catchUp(Math.min(OFFLINE_CAP, dt));
-    awayReport(r);
+    awayReport(catchUp(dt));
     dt = 0; UI.dirty = true;
   }
   acc += Math.min(dt, 0.5);
@@ -53,7 +54,7 @@ function boot() {
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveGame(); });
   window.addEventListener('pagehide', saveGame);
   if (loadGame()) {
-    const away = Math.min(OFFLINE_CAP, Math.max(0, (Date.now() - (S.lastSeen || Date.now())) / 1000));
+    const away = Math.max(0, (Date.now() - (S.lastSeen || Date.now())) / 1000);
     if (away > 20) awayReport(catchUp(away));
     startGame();
   } else showTitle();
