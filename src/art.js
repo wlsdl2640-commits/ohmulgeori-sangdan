@@ -33,7 +33,7 @@ const WALKF = [
   { fl: 2, bl: -2, by: 0, arm: -1 }, { fl: 0, bl: 0, by: -1, arm: 0, lift: 1 },
   { fl: -2, bl: 2, by: 0, arm: 1 }, { fl: 0, bl: 0, by: -1, arm: 0, lift: 2 }
 ];
-const ROBED = ['mage', 'cleric', 'elementalist', 'necromancer'];
+const ROBED = ['mage', 'cleric', 'elementalist', 'necromancer', 'plaguedoc'];
 const CRYSTAL = { mage: null, elementalist: '#7ae0a0', necromancer: 'skull' };
 function advKey(a) {
   const w = a.eq && a.eq.weapon, ar = a.eq && a.eq.armor, l = a.look || {};
@@ -119,7 +119,7 @@ function paintArmor(P, arm, tY, robe) {
   else { P(-3, tY, 6, 1, c); P(-3, tY + 6, 6, 1, c); }
 }
 function paintHair(P, cls, style, hy, hr) {
-  const hood = ['archer', 'cleric', 'rogue', 'necromancer', 'paladin'].includes(cls);
+  const hood = ['archer', 'cleric', 'rogue', 'necromancer', 'paladin', 'plaguedoc'].includes(cls);
   if (hood) return;
   P(-3, hy - 1, 6, 2, hr); P(-3, hy + 1, 2, 3, hr); P(2, hy + 1, 1, 1, hr);
   if (style === 1) { P(-4, hy + 1, 2, 7, hr); P(-4, hy + 8, 1, 1, shade(hr, -0.3)); }
@@ -137,6 +137,7 @@ function paintHead(P, cls, hy, tu, tuD, tr, sk, hr) {
   if (cls === 'berserker') { const m = '#7a7a82', h = '#e8e2d0'; P(-4, hy - 1, 7, 3, m); P(-4, hy - 1, 7, 1, '#9a9aa4'); P(-5, hy - 3, 1, 3, h); P(-6, hy - 5, 1, 3, h); P(3, hy - 3, 1, 3, h); P(4, hy - 5, 1, 3, h); P(-1, hy + 5, 4, 2, hr); P(1, hy + 4, 2, 1, '#c0392b'); }
   if (cls === 'dragoon') { const m = '#2f5a6a'; P(-4, hy - 1, 7, 4, m); P(-4, hy - 1, 7, 1, '#4a8a9a'); P(-6, hy - 2, 3, 1, m); P(-7, hy - 3, 2, 1, '#7ad8c8'); P(2, hy + 2, 2, 2, m); P(3, hy + 4, 1, 1, m); P(-4, hy + 3, 1, 3, m); }
   if (cls === 'paladin') { const m = '#e8e4d8'; P(-4, hy - 1, 7, 8, m); P(-4, hy - 1, 7, 1, '#e8c060'); P(0, hy + 3, 3, 1, '#2a2620'); P(1, hy, 1, 6, '#e8c060'); P(-5, hy + 5, 1, 2, m); }
+  if (cls === 'plaguedoc') { const c = '#1e1c22'; P(-3, hy, 6, 5, '#2a2620'); P(0, hy + 2, 2, 1, '#8ad8ff'); P(3, hy + 3, 2, 1, '#c8b890'); P(4, hy + 4, 3, 1, '#c8b890'); P(6, hy + 5, 1, 1, '#a89870'); P(-4, hy - 4, 7, 4, c); P(-4, hy - 4, 7, 1, '#3a3640'); P(-6, hy - 1, 11, 1, c); P(-4, hy + 1, 1, 6, c); }
   if (cls === 'necromancer') { const c = '#1e1828'; P(-4, hy - 1, 7, 3, c); P(-4, hy + 2, 2, 6, c); P(-5, hy + 1, 1, 4, c); P(-2, hy + 2, 5, 2, '#3a3048'); P(1, hy + 3, 1, 1, '#c89aff'); P(-4, hy - 1, 7, 1, '#a87ad8'); }
 }
 // 무기: atk 0 = 모으기, 1 = 휘두르기 (-1 = 들고 있기)

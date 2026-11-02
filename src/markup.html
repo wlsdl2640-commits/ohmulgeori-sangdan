@@ -6,33 +6,46 @@
     <span class="hv rent" id="h-rent"></span>
   </header>
 
-  <section class="view" aria-label="원정 화면">
-    <canvas id="cv" width="240" height="128"></canvas>
-    <div class="callouts" id="callouts" aria-hidden="true"></div>
-    <div class="ov ov-l" id="ov-l"></div>
-    <div class="ov ov-r" id="ov-r" hidden></div>
-    <div class="ov ov-b" id="ov-b" hidden></div>
+  <section class="stage" id="stage" aria-label="상단 본부">
+    <canvas id="hq" aria-label="상단 본부 층 화면. 가구나 사람을 누르면 그 창이 열려요."></canvas>
+    <div class="floor-name" id="floor-name" aria-live="polite"></div>
+    <nav class="floors" id="floors" aria-label="층 이동"></nav>
+    <nav class="menu" id="menu" aria-label="메뉴">
+      <button type="button" class="mbtn" data-open="co"><img data-px="house" alt="">상단</button>
+      <button type="button" class="mbtn" data-open="fac"><img data-px="anvil" alt="">시설</button>
+      <button type="button" class="mbtn" data-open="adv"><img data-px="person" alt="">모험가</button>
+      <button type="button" class="mbtn" data-open="exp"><img data-px="sword" alt="">원정</button>
+      <button type="button" class="mbtn" data-open="inv"><img data-px="box" alt="">창고</button>
+      <button type="button" class="mbtn" data-open="req"><img data-px="scroll" alt="">의뢰<span class="badge" id="req-badge" hidden></span></button>
+    </nav>
+    <section class="pip" id="pip" aria-label="원정 화면. 누르면 크게 보거나 작게 봐요.">
+      <canvas id="cv" width="240" height="128"></canvas>
+      <div class="callouts" id="callouts" aria-hidden="true"></div>
+      <div class="ov ov-l" id="ov-l"></div>
+      <div class="ov ov-r" id="ov-r" hidden></div>
+      <div class="ov ov-b" id="ov-b" hidden></div>
+      <span class="pip-sz" aria-hidden="true"></span>
+    </section>
   </section>
 
   <div class="upd" id="upd" role="status" hidden></div>
 
-  <div class="chipbar">
+  <div class="chipbar" id="chipbar">
     <nav class="pchips" id="pchips" aria-label="파티 화면 고르기"></nav>
     <div class="speed" id="speed" role="group" aria-label="게임 속도">
       <button type="button" data-speed="1">1×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="3">3×</button><button type="button" data-speed="5">5×</button>
     </div>
   </div>
 
-  <main class="panel" id="panel"><div class="panel-in" id="panel-in"></div></main>
-
-  <nav class="tabs" id="tabs" aria-label="메뉴">
-    <button type="button" class="tab on" data-tab="co"><img data-px="house" alt="">상단</button>
-    <button type="button" class="tab" data-tab="fac"><img data-px="anvil" alt="">시설</button>
-    <button type="button" class="tab" data-tab="adv"><img data-px="person" alt="">모험가</button>
-    <button type="button" class="tab" data-tab="exp"><img data-px="sword" alt="">원정</button>
-    <button type="button" class="tab" data-tab="inv"><img data-px="box" alt="">창고</button>
-    <button type="button" class="tab" data-tab="req"><img data-px="scroll" alt="">의뢰<span class="badge" id="req-badge" hidden></span></button>
-  </nav>
+  <section class="win" id="win" hidden>
+    <header class="win-h">
+      <button type="button" class="win-btn" id="win-back" aria-label="뒤로"><span class="arr"></span>뒤로</button>
+      <h2 id="win-title"></h2>
+      <button type="button" class="win-btn" id="win-x" aria-label="닫기">닫기</button>
+    </header>
+    <nav class="win-path" id="win-path" aria-label="지금 위치"></nav>
+    <main class="panel" id="panel"><div class="panel-in" id="panel-in"></div></main>
+  </section>
 
   <div class="title-scr" id="title-scr" hidden>
     <canvas id="title-cv" width="240" height="128"></canvas>

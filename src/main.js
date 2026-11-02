@@ -17,12 +17,15 @@ function awayReport(r) {
 }
 function startGame() {
   running = true;
-  UI.html = ''; UI.chips = '';
-  renderPanel(true); renderChips(); updateHud(); updateOverlay();
+  UI.html = ''; UI.chips = ''; UI.floors = ''; UI.fname = '';
+  try { UI.pipBig = localStorage.getItem('ohmul:pip') === '1'; } catch (_) {}
+  $('pip').classList.toggle('big', UI.pipBig);
+  layoutStage(); hqGo('shop0', true);
+  renderPanel(true); renderChips(); updateHud(); updateOverlay(); renderFloors(); showWin(false);
   clearInterval(uiTimer);
   uiTimer = setInterval(() => {
     if (!S) return;
-    updateHud(); updateOverlay(); renderChips(); renderPanel(); refreshAdv(); pumpModals();
+    updateHud(); updateOverlay(); renderChips(); renderPanel(); renderFloors(); pumpModals();
   }, 400);
   renderSpeed();
   lastT = 0;
@@ -45,15 +48,21 @@ function loop(now) {
   let n = 0;
   while (acc >= 0.1 && n < 60) { step(0.1); acc -= 0.1; n++; }
   drawFrame(now, vt);
+  if (!winTop()) drawHQ(now, vt);   // 창이 본부를 덮고 있을 때는 그리지 않는다
   requestAnimationFrame(loop);
 }
 function boot() {
   applyPx();
   initView($('cv'));
+  initHQ($('hq'));
   bindUI();
+  try { history.replaceState({ w: 0 }, ''); } catch (_) {}
+  window.addEventListener('resize', () => { if (S) layoutStage(); });
   HOOKS.changed = () => { UI.dirty = true; };
   HOOKS.toast = toast;
   HOOKS.modal = () => setTimeout(pumpModals, 60);
+  HOOKS.sale = hqSale;
+  HOOKS.floor = renderFloors;
   setInterval(saveGame, 5000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveGame(); });
   window.addEventListener('pagehide', saveGame);

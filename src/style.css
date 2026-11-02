@@ -49,9 +49,55 @@ img.px, canvas { image-rendering: pixelated; }
 .hv.rent.due { color: var(--hp); }
 .pi { width: 16px; height: 16px; image-rendering: pixelated; }
 
-/* ── 전투 화면 ── */
-.view { flex: none; position: relative; background: #000; border-bottom: 2px solid #000; }
-.view canvas { display: block; width: 100%; aspect-ratio: 240 / 128; max-width: 100%; }
+/* ── 본부 화면 (층) ── */
+.stage { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #0e1118; }
+#hq { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; cursor: pointer; }
+.floor-name { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); z-index: 2; max-width: calc(100% - 24px); padding: 3px 10px; font-size: 12px; line-height: 1.45; text-align: center; color: var(--ink); background: rgba(8, 10, 14, .8); border: 1px solid rgba(240, 180, 60, .5); pointer-events: none; }
+.floor-name b { color: var(--gold); margin-right: 4px; }
+.floor-name small { display: block; font-size: 11px; color: var(--ink-2); }
+.floors { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; justify-content: safe center; gap: 3px; padding: 5px 6px 6px; overflow-x: auto; scrollbar-width: none; background: linear-gradient(rgba(8, 10, 14, 0), rgba(8, 10, 14, .55)); }
+.floors::-webkit-scrollbar { display: none; }
+.fl { flex: none; min-width: 36px; min-height: 32px; padding: 2px 4px; font-size: 11px; font-weight: 700; color: var(--ink-2); background: rgba(16, 19, 26, .88); border: 2px solid #000; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .35); font-variant-numeric: tabular-nums; }
+.fl.on { color: #1d1408; background: var(--gold); }
+.fl.ug { color: #c8b8a8; }
+.fl.ug.on { color: #1d1408; }
+.menu { position: absolute; right: 6px; top: 6px; z-index: 4; display: grid; grid-template-columns: repeat(2, auto); gap: 4px; }
+.stage.pipbig .menu { top: calc(var(--pip-b, 200px) + 6px); }
+.mbtn { position: relative; width: 54px; min-height: 46px; display: grid; justify-items: center; align-content: center; gap: 2px; padding: 5px 0 4px; font-size: 11px; color: var(--ink); background: rgba(19, 22, 30, .9); border: 2px solid #000; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .35), inset 0 2px 0 rgba(255, 255, 255, .06); }
+.mbtn img { width: 18px; height: 18px; image-rendering: pixelated; }
+.mbtn:active { transform: translateY(1px); }
+.mbtn.on { color: #1d1408; background: var(--gold); }
+.submenu { display: grid; gap: 6px; }
+.subbtn { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 50px; padding: 8px 12px; text-align: left; color: var(--ink); background: var(--panel); border: 2px solid var(--line); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .25); }
+.subbtn b { font-size: 14px; }
+.subbtn .sub { flex: 1; min-width: 0; text-align: right; }
+.subbtn::after { content: '›'; color: var(--gold); font-size: 18px; }
+.subbtn.hl { border-color: var(--gold-d); }
+.mbtn .badge { position: absolute; top: 2px; right: 3px; min-width: 16px; height: 16px; padding: 0 4px; font-size: 11px; line-height: 16px; background: var(--hp); color: #fff; }
+.pip { position: absolute; left: 6px; top: 6px; z-index: 3; width: 52%; aspect-ratio: 240 / 128; background: #000; border: 2px solid #000; box-shadow: 0 0 0 1px var(--gold-d), 0 6px 16px rgba(0, 0, 0, .5); cursor: pointer; }
+.pip canvas { display: block; width: 100%; height: 100%; }
+.pip.big { left: 0; top: 0; width: 100%; border-width: 0 0 2px; box-shadow: 0 6px 16px rgba(0, 0, 0, .45); }
+.pip:not(.big) .ov { font-size: 10px; padding: 2px 5px; }
+.pip:not(.big) .ov-l { top: 3px; left: 3px; max-width: calc(100% - 6px); overflow: hidden; text-overflow: ellipsis; }
+.pip:not(.big) .ov-r { display: none; }
+.pip:not(.big) .ov-b { bottom: 3px; left: 3px; max-width: calc(100% - 26px); overflow: hidden; text-overflow: ellipsis; }
+.pip-sz { position: absolute; right: 3px; bottom: 3px; width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, .7); border-top-color: transparent; border-left-color: transparent; pointer-events: none; }
+.pip.big .pip-sz { transform: rotate(180deg); right: 6px; bottom: 6px; }
+.pip .callouts .call { font-size: 9px; }
+.pip.big .callouts .call { font-size: 10px; }
+.stage.win-open .floors, .stage.win-open .floor-name { visibility: hidden; }
+
+/* ── 창 (메뉴 → 창 → 뒤로) ── */
+.win { position: absolute; left: 0; right: 0; top: var(--win-top, 160px); bottom: var(--win-bot, 52px); z-index: 20; display: flex; flex-direction: column; background: var(--app); border-top: 2px solid var(--gold-d); box-shadow: 0 -10px 24px rgba(0, 0, 0, .55); animation: winup .16s ease-out; }
+.win-h { flex: none; display: flex; align-items: center; gap: 8px; padding-block: 6px; padding-left: var(--gut-l); padding-right: var(--gut-r); background: #10131a; border-bottom: 2px solid #000; }
+.win-h h2 { flex: 1; min-width: 0; margin: 0; font-size: 15px; line-height: 1.3; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.win-btn { flex: none; display: inline-flex; align-items: center; gap: 5px; min-height: 36px; padding: 4px 10px; font-size: 12px; color: var(--ink); background: var(--panel-2); border: 2px solid #000; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .35); }
+.win-btn .arr { width: 0; height: 0; border: 5px solid transparent; border-right: 6px solid currentColor; border-left: 0; }
+.win-path { flex: none; display: flex; gap: 4px; flex-wrap: wrap; padding: 4px var(--gut-r) 4px var(--gut-l); font-size: 11px; color: var(--ink-3); background: #0e1118; border-bottom: 1px solid #000; }
+.win-path:empty { display: none; }
+.win-path span + span::before { content: '›'; margin-right: 4px; color: var(--ink-3); }
+.win .panel { flex: 1; }
+@keyframes winup { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
 .ov { position: absolute; font-size: 12px; line-height: 1.3; color: #fff; background: rgba(8, 10, 14, .62); padding: 3px 7px; border: 1px solid rgba(255, 255, 255, .08); white-space: nowrap; pointer-events: none; }
 .ov-l { top: 6px; left: var(--gut-l); }
 .ov-r { top: 6px; right: var(--gut-r); }
@@ -59,15 +105,15 @@ img.px, canvas { image-rendering: pixelated; }
 .ov .warn { color: var(--warn); }
 .ov .gold { color: var(--gold); }
 
-/* ── 파티 선택 ── */
-.chipbar { flex: none; display: flex; align-items: center; gap: 8px; padding-right: var(--gut-r); background: #10131a; border-bottom: 2px solid #000; }
+/* ── 파티 선택 (아래) ── */
+.chipbar { flex: none; display: flex; align-items: center; gap: 8px; padding-right: var(--gut-r); padding-bottom: env(safe-area-inset-bottom, 0px); background: #10131a; border-top: 2px solid #000; position: relative; z-index: 21; }
 .pchips { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; padding-block: 8px; padding-left: var(--gut-l); padding-right: 2px; scrollbar-width: none; }
 .speed { flex: none; display: flex; border: 2px solid #000; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .3); }
 .speed button { min-width: 31px; min-height: 32px; padding: 0 4px; font-size: 12px; font-weight: 700; background: var(--panel); color: var(--ink-3); border: 0; border-left: 1px solid #000; font-variant-numeric: tabular-nums; }
 .speed button:first-child { border-left: 0; }
 .speed button.on { background: var(--gold); color: #1d1408; }
 .hv .clk { font-variant-numeric: tabular-nums; color: var(--ink); }
-.upd { flex: none; display: flex; align-items: center; gap: 8px; padding-block: 6px; padding-left: var(--gut-l); padding-right: var(--gut-r); font-size: 12px; background: #2c2412; border-bottom: 2px solid #000; color: var(--ink); }
+.upd { flex: none; position: relative; z-index: 21; display: flex; align-items: center; gap: 8px; padding-block: 6px; padding-left: var(--gut-l); padding-right: var(--gut-r); font-size: 12px; background: #2c2412; border-bottom: 2px solid #000; color: var(--ink); }
 .upd a.btn { text-decoration: none; }
 textarea.code { width: 100%; min-height: 96px; padding: 8px; font: 11px/1.4 ui-monospace, monospace; background: #0e1118; color: var(--ink); border: 2px solid var(--line-2); resize: vertical; -webkit-user-select: text; user-select: text; word-break: break-all; }
 #t-import { justify-self: start; }
@@ -146,14 +192,6 @@ textarea.code { width: 100%; min-height: 96px; padding: 8px; font: 11px/1.4 ui-m
 .log span.d { color: var(--ink-3); margin-right: 6px; }
 details.card summary { cursor: pointer; font-size: 13px; color: var(--ink-2); list-style: none; }
 details.card summary::-webkit-details-marker { display: none; }
-
-/* ── 아래 탭 ── */
-.tabs { flex: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); background: #0e1118; border-top: 2px solid #000; padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
-.tab { display: grid; justify-items: center; gap: 2px; padding: 7px 0 8px; font-size: 12px; white-space: nowrap; color: var(--ink-3); background: none; border: 0; position: relative; }
-.tab img { width: 18px; height: 18px; image-rendering: pixelated; opacity: .55; }
-.tab.on { color: var(--gold); }
-.tab.on img { opacity: 1; }
-.tab .badge { position: absolute; top: 3px; left: calc(50% + 7px); min-width: 16px; height: 16px; padding: 0 4px; font-size: 11px; line-height: 16px; background: var(--hp); color: #fff; }
 
 /* ── v0.2: 스킬 이름, 장비, 능력치 ── */
 .callouts { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
@@ -236,4 +274,6 @@ details.card .list { margin-top: 8px; }
 
 @keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
-@media (max-width: 360px) { .hv.rent { display: none; } .tab { font-size: 11px; } .eqs { gap: 3px; } .speed button { min-width: 27px; padding: 0 2px; } .hud { gap: 9px; } }
+@media (max-width: 360px) { .hv.rent { display: none; } .eqs { gap: 3px; } .speed button { min-width: 27px; padding: 0 2px; } .hud { gap: 9px; } .mbtn { width: 50px; min-height: 44px; } .fl { min-width: 33px; } }
+/* 넓은 화면(PC 가로): 본부와 창을 나란히 */
+@media (min-width: 900px) and (min-height: 600px) { #app { max-width: 520px; } }

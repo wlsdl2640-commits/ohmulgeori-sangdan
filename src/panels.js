@@ -1,4 +1,4 @@
-/* ───────── 탭 화면 ───────── */
+/* ───────── 창 화면 ───────── */
 const PANELS = {};
 const qTag = g => `<span class="q q${g.q}">${QUALITY[g.q].name}</span>`;
 const gImg = (g, cls = 'ico') => `<img class="${cls}" src="${gearIconURL(g)}" alt="">`;
@@ -40,31 +40,30 @@ function rankCard() {
 }
 
 /* 상단 */
+// 상단: 하위 메뉴 → 창
+const subBtn = (id, label, sub, hl) => `<button type="button" class="subbtn${hl ? ' hl' : ''}" data-act="sub" data-id="${id}"><b>${label}</b><span class="sub">${sub}</span></button>`;
 PANELS.co = () => {
-  const p = dateParts(S.t), dd = S.settleDay - today(), cost = rent() + payroll(), sp = dateParts(S.settleDay * DAY_SEC);
-  const dueDeps = S.bank.deps.filter(d => d.due - today() <= 5);
-  const sponsors = Object.entries(SPONSORS).map(([k, P]) => {
-    const t = spn(k), open = sponsorOpen(k);
-    if (!open) return `<div class="card dim"><div class="h">${P.name}</div><div class="sub">${FIELDS[P.need].name}이(가) 열리면 후원할 수 있어요.</div></div>`;
-    const next = t < 3 ? `<div class="row"><span class="sub grow">다음: ${P.perks[t]} · 명성 +${P.fame[t]}</span><button type="button" class="btn sm gold" data-act="sponsor" data-id="${k}"${S.gold < P.cost[t] ? ' disabled' : ''}>후원 ${fmt(P.cost[t])}G</button></div>` : '<div class="sub ok-t">모든 후원을 마쳤어요.</div>';
-    return `<div class="card${t ? ' hl' : ''}"><div class="row"><div class="grow"><div class="h">${P.name} <small class="gold-t">${dots(t, 3)}</small></div><div class="sub">${P.desc}</div></div></div>
-      ${t ? `<div class="sub ok-t">받는 혜택: ${P.perks.slice(0, t).join(' · ')}</div>` : ''}${next}</div>`;
-  }).join('');
-  const R = GUILD_RAID, rd = S.flags.guildDown;
-  const raid = rd ? '<div class="card hl"><div class="h">암살자 길드 토벌 <small class="ok-t">완료</small></div><div class="sub">오물거리에 더는 자릿세가 없다. 손님도 늘었다.</div></div>'
-    : `<div class="card${raidReady() ? ' hl' : ''}"><div class="h">암살자 길드 토벌</div>
-      <div class="sub">매달 자릿세를 뜯어 가는 그들을 쓸어버리면 자릿세가 사라져요. 길드 은신처는 Lv28 이상 파티를 권해요.</div>
-      <div class="stats"><span class="${S.fame >= R.fame ? 'ok-t' : ''}">명성 ${S.fame}/${R.fame}</span><span class="${living().length >= R.advs ? 'ok-t' : ''}">모험가 ${living().length}/${R.advs}명</span><span class="${spn(R.sponsor) >= R.tier ? 'ok-t' : ''}">시민회 후원 ${spn(R.sponsor)}/${R.tier}단계</span></div>
-      ${raidReady() ? '<div class="sub gold-t">준비 완료! 원정 탭에서 7번가 뒷골목을 목적지로 고르세요.</div>' : ''}</div>`;
+  const p = dateParts(S.t), dd = S.settleDay - today(), cost = rent() + payroll(), q = rankReqs();
+  const done = q ? q.filter(x => x.ok).length : 0;
   return `
   <div class="card hl">
-    <div class="h">${esc(S.company)} <span class="tag gold-t">${RANKS[S.rank || 0].name}랭크</span></div>
-    <div class="sub">${WORLD.capital} ${WORLD.street} 입구 · 제국력 ${p.y}년 · v${VERSION}</div>
+    <div class="row"><span class="rk">${RANKS[S.rank || 0].name}</span><div class="grow"><div class="h">${esc(S.company)}</div><div class="sub">${RANKS[S.rank || 0].title} · ${WORLD.capital} ${WORLD.street} 입구 · 제국력 ${p.y}년</div></div></div>
     <div class="stats"><span>모험가 <b>${living().length}/${beds()}</b></span><span>파티 <b>${S.parties.length}/${partyMax()}</b></span><span>처치 <b>${fmt(S.stats.kills)}</b></span><span>부상 <b class="${patients().length ? 'red-t' : ''}">${patients().length}</b></span><span>던전 <b>${FIELD_IDS.filter(f => S.fields[f].cleared).length}/${FIELD_IDS.length}</b></span></div>
   </div>
-  <div class="sec"><b>상단 랭크</b><span>상인 조합 심사</span></div>
-  ${rankCard()}
-  <div class="sec"><b>월말 정산</b><span>D-${dd} · ${sp.m}월 ${sp.d}일</span></div>
+  <div class="submenu">
+    ${subBtn('co_rank', '상단 랭크', q ? `다음 ${RANKS[(S.rank || 0) + 1].name}랭크 조건 ${done}/${q.length}` : '가장 높은 랭크', rankReady())}
+    ${subBtn('co_money', '월말 정산', `D-${dd} · <span class="${S.gold >= cost ? '' : 'red-t'}">${fmt(cost)}G</span>`, dd <= 3)}
+    ${subBtn('co_spon', '후원', `${Object.values(S.spons).reduce((s2, v) => s2 + v, 0)}/${Object.keys(SPONSORS).length * 3}단계`)}
+    ${subBtn('co_goal', '목표', S.flags.guildDown ? '암살자 길드 토벌 완료' : raidReady() ? '<span class="gold-t">길드 토벌 준비 완료</span>' : '암살자 길드 · 마왕의 봉인', raidReady() && !S.flags.guildDown)}
+    ${subBtn('co_log', '소식', esc((S.log[0] && S.log[0].text) || '아직 없어요').slice(0, 22) + '…')}
+    ${subBtn('co_set', '설정', `저장 코드 · v${VERSION}`)}
+  </div>`;
+};
+PANELS.co_rank = () => rankCard();
+PANELS.co_money = () => {
+  const dd = S.settleDay - today(), cost = rent() + payroll(), sp = dateParts(S.settleDay * DAY_SEC);
+  const dueDeps = S.bank.deps.filter(d => d.due - today() <= 5);
+  return `<div class="sec" style="margin-top:0"><b>${sp.m}월 ${sp.d}일 정산</b><span>D-${dd}</span></div>
   <div class="card">
     <div class="row"><span class="grow">암살자 길드 자릿세</span><span class="num ${rent() ? 'red-t' : 'ok-t'}">${rent() ? fmt(rent()) + 'G' : '없음'}</span></div>
     <div class="row"><span class="grow">모험가 봉급 ${living().length}명</span><span class="num">${fmt(payroll())}G</span></div>
@@ -72,21 +71,30 @@ PANELS.co = () => {
     <div class="sub">${S.gold >= cost ? '지금 가진 돈으로 낼 수 있어요.' : '돈이 모자라요. 자릿세를 못 내면 창고가 털리고, 봉급이 두 달 밀리면 모험가가 떠나요.'} 날짜는 게임을 켜 둔 동안에만 흘러요.</div>
     ${dueDeps.length ? `<div class="sub red-t">곧 돌려줄 예금: ${dueDeps.map(d => `${esc(d.who)} ${dayLabel(d.due)} ${fmt(Math.round(d.amount * (1 + d.rate / 100)))}G`).join(', ')}</div>` : ''}
   </div>
-  ${S.bld.temple && S.bless ? `<div class="sec"><b>신전의 축복</b><span>다음 정산까지</span></div><div class="card hl"><div class="h">${BLESSINGS[S.bless.id].name}</div><div class="sub">${BLESSINGS[S.bless.id].desc}</div></div>` : ''}
-  <div class="sec"><b>후원</b><span>명성과 혜택</span></div>
-  ${sponsors}
-  <div class="sec"><b>목표</b></div>
-  ${raid}
-  <div class="card dim"><div class="h">마왕의 봉인 <small>${FIELD_IDS.filter(f => S.fields[f].cleared).length}/${FIELD_IDS.length}</small></div><div class="sub">필드마다 10 스테이지마다 필드 보스가 있고, 1-50의 주인을 쓰러뜨리면 던전 입구가 열린다. 던전은 한 번만 공략할 수 있고, 공략하면 큰 보상과 함께 상단 랭크업 조건 하나가 채워진다.</div></div>
-  <div class="sec"><b>소식</b></div>
-  <div class="card"><div class="log">${S.log.slice(0, 16).map(l => `<div class="${l.kind}"><span class="d">${l.d}</span>${esc(l.text)}</div>`).join('') || '<div>아직 소식이 없어요.</div>'}</div></div>
-  <div class="sec"><b>설정</b></div>
-  <div class="card"><div class="sub">진행 상황은 이 기기에 자동 저장돼요. 앱을 닫아도 최대 ${Math.round(offlineCap() / 3600)}시간까지 원정과 판매가 계속되고, 날짜와 시각은 그대로예요.</div>
+  ${S.bld.temple && S.bless ? `<div class="sec"><b>신전의 축복</b><span>다음 정산까지</span></div><div class="card hl"><div class="h">${BLESSINGS[S.bless.id].name}</div><div class="sub">${BLESSINGS[S.bless.id].desc}</div></div>` : ''}`;
+};
+PANELS.co_spon = () => Object.entries(SPONSORS).map(([k, P]) => {
+  const t = spn(k), open = sponsorOpen(k);
+  if (!open) return `<div class="card dim"><div class="h">${P.name}</div><div class="sub">${FIELDS[P.need].name}이(가) 열리면 후원할 수 있어요.</div></div>`;
+  const next = t < 3 ? `<div class="row"><span class="sub grow">다음: ${P.perks[t]} · 명성 +${P.fame[t]}</span><button type="button" class="btn sm gold" data-act="sponsor" data-id="${k}"${S.gold < P.cost[t] ? ' disabled' : ''}>후원 ${fmt(P.cost[t])}G</button></div>` : '<div class="sub ok-t">모든 후원을 마쳤어요.</div>';
+  return `<div class="card${t ? ' hl' : ''}"><div class="row"><div class="grow"><div class="h">${P.name} <small class="gold-t">${dots(t, 3)}</small></div><div class="sub">${P.desc}</div></div></div>
+    ${t ? `<div class="sub ok-t">받는 혜택: ${P.perks.slice(0, t).join(' · ')}</div>` : ''}${next}</div>`;
+}).join('');
+PANELS.co_goal = () => {
+  const R = GUILD_RAID, rd = S.flags.guildDown;
+  const raid = rd ? '<div class="card hl"><div class="h">암살자 길드 토벌 <small class="ok-t">완료</small></div><div class="sub">오물거리에 더는 자릿세가 없다. 손님도 늘었다.</div></div>'
+    : `<div class="card${raidReady() ? ' hl' : ''}"><div class="h">암살자 길드 토벌</div>
+      <div class="sub">매달 자릿세를 뜯어 가는 그들을 쓸어버리면 자릿세가 사라져요. 길드 은신처는 Lv28 이상 파티를 권해요.</div>
+      <div class="stats"><span class="${S.fame >= R.fame ? 'ok-t' : ''}">명성 ${S.fame}/${R.fame}</span><span class="${living().length >= R.advs ? 'ok-t' : ''}">모험가 ${living().length}/${R.advs}명</span><span class="${spn(R.sponsor) >= R.tier ? 'ok-t' : ''}">시민회 후원 ${spn(R.sponsor)}/${R.tier}단계</span></div>
+      ${raidReady() ? '<div class="sub gold-t">준비 완료! 원정 창에서 7번가 뒷골목을 목적지로 고르세요.</div>' : ''}</div>`;
+  return `${raid}<div class="card dim"><div class="h">마왕의 봉인 <small>${FIELD_IDS.filter(f => S.fields[f].cleared).length}/${FIELD_IDS.length}</small></div><div class="sub">필드마다 10 스테이지마다 필드 보스가 있고, 1-50의 주인을 쓰러뜨리면 던전 입구가 열린다. 던전은 한 번만 공략할 수 있고, 공략하면 큰 보상과 함께 상단 랭크업 조건 하나가 채워진다.</div></div>`;
+};
+PANELS.co_log = () => `<div class="card"><div class="log">${S.log.slice(0, 40).map(l => `<div class="${l.kind}"><span class="d">${l.d}</span>${esc(l.text)}</div>`).join('') || '<div>아직 소식이 없어요.</div>'}</div></div>`;
+PANELS.co_set = () => `<div class="card"><div class="sub">진행 상황은 이 기기에 자동 저장돼요. 앱을 닫아도 최대 ${Math.round(offlineCap() / 3600)}시간까지 원정과 판매가 계속되고, 날짜와 시각은 그대로예요.</div>
     <div class="sub">저장 코드를 복사해 두면 다른 기기나 새로 설치한 앱으로 진행 상황을 옮길 수 있어요.</div>
     <div class="btns"><button type="button" class="btn sm" data-act="export">저장 코드 복사</button><button type="button" class="btn sm" data-act="import">저장 코드로 불러오기</button>${isApp() ? '<button type="button" class="btn sm" data-act="update">업데이트 확인</button>' : ''}</div>
     <div class="btns"><button type="button" class="btn sm red" data-act="reset">처음부터 다시 하기</button></div>
     <div class="sub muted">버전 ${VERSION}${BUILD_NO ? ` · 빌드 ${BUILD_NO}` : ''}</div></div>`;
-};
 
 /* 시설 */
 function smithyBox() {
@@ -140,21 +148,26 @@ function towerBox() {
   }).join('');
   return `${cur ? `<div class="sub gold-t">연구 중: ${RESEARCH[cur.k].name} ${rlv(cur.k) + 1}단계 · ${dayLabel(cur.done)} 완료</div>` : '<div class="sub">한 번에 하나씩 연구할 수 있어요. 연구 기간은 게임 속 날짜로 셉니다.</div>'}<div class="list">${rows}</div>`;
 }
-PANELS.fac = () => BUILD_ORDER.map(id => {
+const BLD_INNER = { smithy: '대장간에서 장비 만들기', alchemy: '물약 만들기', temple: '치료와 치유사', bank: '예금과 대출', tower: '마법 연구' };
+function bldCard(id, full) {
   const B = BUILDINGS[id], lv = S.bld[id], max = lv >= B.max, c = B.cost[lv], need = BUILD_RANK[id] || 0;
   if (!lv && (S.rank || 0) < need) return `<div class="card dim"><div class="row"><div class="grow"><div class="h">${B.name} <small>잠김</small></div><div class="sub">${B.desc}</div></div><span class="sub muted">${RANKS[need].name}랭크에 열림</span></div></div>`;
   const btn = max ? '<span class="sub muted">최고 단계</span>' : `<button type="button" class="btn sm${lv ? '' : ' gold'}" data-act="build" data-id="${id}"${S.gold < c ? ' disabled' : ''}>${lv ? '확장' : '건설'} ${fmt(c)}G</button>`;
   let body = '';
-  if (lv && id === 'smithy') body = smithyBox();
-  if (lv && id === 'alchemy') body = `<div class="list">${RECIPES.map((r, i) => `<div class="li">${iconImg(r.out)}<div class="grow"><span>${ITEMS[r.out].name}</span><span class="sub">${S.bld.alchemy >= r.lv ? needStr(r.need) + ` · ${r.fee}G` : '공방 2단계 필요'}</span></div><button type="button" class="btn sm gold" data-act="craft" data-i="${i}"${canCraft(r) ? '' : ' disabled'}>만들기</button></div>`).join('')}</div>`;
-  if (lv && id === 'training') body = '<div class="sub">모험가 탭에서 모험가를 누르면 능력치를 훈련하고, 가진 스킬북으로 스킬을 배울 수 있어요.</div>';
-  if (lv && id === 'bank') body = bankBox();
-  if (lv && id === 'tower') body = towerBox();
-  if (id === 'temple') body = lv ? templeBox() : innCare();
-  if (id === 'shop' && lv) body = `<div class="sub">진열대 ${slotCount()}칸 · 손님 수 ×${traffic().toFixed(2)} · 진열은 창고 탭에서 해요.</div>`;
-  if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div>`;
-  return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? 'Lv' + lv : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}</div>`;
-}).join('');
+  if (full && lv && id === 'smithy') body = smithyBox();
+  if (full && lv && id === 'alchemy') body = `<div class="list">${RECIPES.map((r, i) => `<div class="li">${iconImg(r.out)}<div class="grow"><span>${ITEMS[r.out].name} <span class="muted">창고 ${S.inv[r.out] || 0}</span></span><span class="sub">${S.bld.alchemy >= r.lv ? needStr(r.need) + ` · ${r.fee}G` : '공방 2단계 필요'}</span></div><button type="button" class="btn sm gold" data-act="craft" data-i="${i}"${canCraft(r) ? '' : ' disabled'}>만들기</button></div>`).join('')}</div>`;
+  if (lv && id === 'training') body = '<div class="sub">모험가 창에서 능력치를 훈련하고, 스킬을 배우고, 전직할 수 있어요.</div>';
+  if (full && lv && id === 'bank') body = bankBox();
+  if (full && lv && id === 'tower') body = towerBox();
+  if (id === 'temple' && (full || !lv)) body = lv ? templeBox() : innCare();
+  if (id === 'shop' && lv) body = `<div class="sub">진열대 ${slotCount()}칸 · 손님 수 ×${traffic().toFixed(2)} · 진열은 창고 창에서 해요.</div>`;
+  if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 자기 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div>`;
+  const open = !full && lv && BLD_INNER[id] ? `<button type="button" class="btn sm gold" data-act="bopen" data-id="${id}">${BLD_INNER[id]} ›</button>` : '';
+  const sum = !full && lv && id === 'temple' && patients().length ? `<span class="sub red-t">환자 ${patients().length}명</span>` : '';
+  return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? 'Lv' + lv : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}${open || sum ? `<div class="row">${sum}<span class="grow"></span>${open}</div>` : ''}</div>`;
+}
+PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
+PANELS.b = w => bldCard(w.b, true);
 
 /* 모험가 */
 function eqIcons(a) { return SLOTS.map(([s, n]) => (a.eq[s] ? gImg(a.eq[s], 'ico q-b q' + a.eq[s].q) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
@@ -246,46 +259,24 @@ function advDetail(a) {
     <div class="sub muted">${esc(a.bio)}</div>
     ${idle ? '<div class="btns"><button type="button" class="btn sm red" data-mact="fire">내보내기</button></div>' : ''}`;
 }
-function openAdv(aid) {
-  const a = advById(aid);
-  if (!a) return;
-  UI.advHtml = advDetail(a);
-  openModal(a.name, UI.advHtml, [{ label: '닫기', cls: 'gold' }]);
-  UI.advOpen = aid;
-  liveIn($('m-body'));
-  $('m-body').onclick = e => {
-    const b = e.target.closest('[data-mact]');
-    if (!b || b.disabled) return;
-    const k = b.dataset.mact, x = advById(aid);
-    if (!x) return;
-    let m = '';
-    if (k === 'train') m = trainStat(aid, b.dataset.k);
-    if (k === 'eq') m = equip(aid, +b.dataset.g);
-    if (k === 'uneq') m = unequip(aid, b.dataset.s);
-    if (k === 'autoeq') m = autoEquip(aid);
-    if (k === 'learn') m = learnSkill(aid, b.dataset.s);
-    if (k === 'forget') { forgetSkill(aid, b.dataset.s); }
-    if (k === 'lic') m = licenseUp(aid);
-    if (k === 'promo') { const c = b.dataset.c; confirmBox('전직', `${x.name}을(를) ${CLASSES[c].name}(으)로 전직시킬까요? ${fmt(PROMO.fee)}G가 들고, 되돌릴 수 없어요.`, '전직', () => { say(promote(aid, c)); renderPanel(true); updateHud(); saveGame(); }, false); return; }
-    if (k === 'treat') m = treat(aid, b.dataset.k);
-    if (k === 'post') m = postHealer(aid, !x.post);
-    if (k === 'fire') { confirmBox('모험가 내보내기', `${x.name}을(를) 내보낼까요? 끼고 있던 장비는 창고로 돌아와요.`, '내보내기', () => { say(fire(aid)); renderPanel(true); saveGame(); }, true); return; }
-    say(m);
-    refreshAdv(true);
-    renderPanel(true); updateHud(); saveGame();
-  };
-}
-// 열려 있는 모험가 창을 최신 상태로 (펼친 목록은 그대로 둔다)
-function refreshAdv(force) {
-  if (!UI.advOpen || !UI.modal || (UI.mhold && !force)) return;
-  const a = advById(UI.advOpen);
-  if (!a) return;
-  const html = advDetail(a);
-  if (!force && html === UI.advHtml) return;
-  const body = $('m-body'), det = body.querySelector('details'), open = det && det.open;
-  body.innerHTML = html; UI.advHtml = html;
-  if (open) body.querySelector('details').open = true;
-  liveIn(body);
+function openAdv(aid) { if (advById(aid)) openWin('advd', { aid }); }
+PANELS.advd = w => { const a = advById(w.aid); return a ? advDetail(a) : '<div class="card"><div class="sub">상단을 떠난 모험가예요.</div></div>'; };
+function advAct(aid, b) {
+  const k = b.dataset.mact, x = advById(aid);
+  if (!x) return;
+  let m = '';
+  if (k === 'train') m = trainStat(aid, b.dataset.k);
+  if (k === 'eq') m = equip(aid, +b.dataset.g);
+  if (k === 'uneq') m = unequip(aid, b.dataset.s);
+  if (k === 'autoeq') m = autoEquip(aid);
+  if (k === 'learn') m = learnSkill(aid, b.dataset.s);
+  if (k === 'forget') forgetSkill(aid, b.dataset.s);
+  if (k === 'lic') m = licenseUp(aid);
+  if (k === 'promo') { const c = b.dataset.c; confirmBox('전직', `${x.name}을(를) ${CLASSES[c].name}(으)로 전직시킬까요? ${fmt(PROMO.fee)}G가 들고, 되돌릴 수 없어요.`, '전직', () => { say(promote(aid, c)); renderPanel(true); updateHud(); saveGame(); }, false); return; }
+  if (k === 'treat') m = treat(aid, b.dataset.k);
+  if (k === 'post') m = postHealer(aid, !x.post);
+  if (k === 'fire') { confirmBox('모험가 내보내기', `${x.name}을(를) 내보낼까요? 끼고 있던 장비는 창고로 돌아와요.`, '내보내기', () => { const r = fire(aid); say(r); if (!r) backWin(); renderPanel(true); saveGame(); }, true); return; }
+  say(m);
 }
 
 /* 원정 */
@@ -371,9 +362,9 @@ PANELS.inv = () => {
   <div class="sec"><b>부속품</b><span>${parts.length}종 · 기준가 ${fmt(total)}G어치</span></div>
   <div class="sub">버튼을 누르면 모험가 길드가 기준가의 ${Math.round(rate * 100)}%에 바로 사 가요.</div>
   <div class="list">${rows || '<div class="li"><span class="sub">창고가 비어 있어요. 원정을 보내 부속품을 모아 오세요.</span></div>'}</div>
-  <div class="sec"><b>장비 보관함</b><span>${S.gear.length}개 · 모험가 탭에서 끼워요</span></div>
+  <div class="sec"><b>장비 보관함</b><span>${S.gear.length}개 · 모험가 창에서 끼워요</span></div>
   <div class="list">${gear || '<div class="li"><span class="sub">보관 중인 장비가 없어요. 대장간에서 만들거나 원정에서 주워 와요.</span></div>'}</div>
-  ${books ? `<div class="sec"><b>스킬북</b><span>모험가 탭에서 배워요</span></div><div class="list">${books}</div>` : ''}
+  ${books ? `<div class="sec"><b>스킬북</b><span>모험가 창에서 배워요</span></div><div class="list">${books}</div>` : ''}
   <div class="sec"><b>물약</b><span>원정 보급품${spn('clinic') >= 1 ? ' · 진료소 할인' : ''}</span></div>
   ${POTIONS.map(k => `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k] || 0}</b></span><span class="sub muted">${ITEMS[k].heal ? `HP ${ITEMS[k].heal} 회복` : `MP ${ITEMS[k].mana} 회복`}</span></div><div class="btns"><button type="button" class="btn sm" data-act="buy" data-it="${k}" data-q="1"${S.gold < buyPrice(k) ? ' disabled' : ''}>${buyPrice(k)}G</button><button type="button" class="btn sm" data-act="buy" data-it="${k}" data-q="5"${S.gold < buyPrice(k) * 5 ? ' disabled' : ''}>5개 ${buyPrice(k) * 5}G</button></div></div>`).join('')}`;
 };
@@ -392,9 +383,17 @@ PANELS.req = () => `
 /* ───────── 그리기 ───────── */
 function renderPanel(force) {
   if (!S) return;
+  const top = winTop();
+  if (!top) return;
   if (UI.hold && !force) return;
-  const html = PANELS[UI.tab]();
-  if (force || html !== UI.html) { $('panel-in').innerHTML = html; UI.html = html; }
+  const html = (PANELS[top.id] || (() => ''))(top), key = top.id + ':' + (top.b || '') + ':' + (top.aid || '') + ':' + UI.stack.length;
+  if (force || html !== UI.html) {
+    // 같은 창을 다시 그릴 때는 펼쳐 둔 목록을 그대로 둔다
+    const box = $('panel-in'), open = key === UI.winKey ? [...box.querySelectorAll('details')].map(d => d.open) : [];
+    box.innerHTML = html; UI.html = html; UI.winKey = key;
+    box.querySelectorAll('details').forEach((d, i) => { if (open[i]) d.open = true; });
+    if (top.id === 'advd') $('win-title').textContent = winTitle(top);
+  }
   live();
 }
 function live() { liveIn($('panel-in')); if (UI.modal) liveIn($('m-body')); }
@@ -431,10 +430,12 @@ const ACT = {
   hire: d => say(hire(+d.id) || '고용했어요'),
   advopen: d => openAdv(+d.id),
   view: d => { S.view = +d.id; renderChips(); },
+  sub: d => openWin(d.id),
+  bopen: d => { openWin('b', { b: d.id }); if (BLD_FLOOR[d.id]) hqGo(BLD_FLOOR[d.id], true); },
   member: d => toggleMember(+d.id, +d.a),
   sup: d => setSup(+d.id, d.it, +d.d),
   dest: d => { const p = findP(d.id); if (p) p.dest = d.f; },
-  go: d => { const p = findP(d.id); if (!p) return; const m = startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) say(m); else { S.view = p.id; renderChips(); $('panel').scrollTop = 0; } },
+  go: d => { const p = findP(d.id); if (!p) return; const m = startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 출발!`); } },
   recall: d => { const p = findP(d.id); if (p) recall(p, 'order'); },
   gate: d => { const p = findP(d.id); if (p) { gateChoice(p, d.c); S.view = p.id; } },
   wagon: d => say(buyWagon(+d.id, d.w)),
@@ -460,7 +461,7 @@ const ACT = {
   export: () => openExport(),
   import: () => openImport(),
   update: () => checkUpdate(true),
-  reset: () => confirmBox('처음부터 다시', '저장된 진행 상황이 모두 지워져요. 되돌릴 수 없어요.', '모두 지우기', () => { resetGame(); showTitle(); }, true)
+  reset: () => confirmBox('처음부터 다시', '저장된 진행 상황이 모두 지워져요. 되돌릴 수 없어요.', '모두 지우기', () => { closeWins(); resetGame(); showTitle(); }, true)
 };
 function pickForSlot(i) {
   const used = S.shop.slots.filter(Boolean).map(s => s.item);
@@ -475,26 +476,38 @@ function pickForSlot(i) {
 
 function bindUI() {
   $('panel-in').addEventListener('click', e => {
-    const b = e.target.closest('[data-act]');
+    const b = e.target.closest('[data-act],[data-mact]');
     if (!b || b.disabled || !S) return;
-    ACT[b.dataset.act](b.dataset);
-    renderPanel(true); renderChips(); updateHud(); saveGame();
+    if (b.dataset.mact) { const top = winTop(); if (top && top.id === 'advd') advAct(top.aid, b); }
+    else ACT[b.dataset.act](b.dataset);
+    renderPanel(true); renderChips(); updateHud(); renderFloors(); saveGame();
   });
+  $('menu').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && S) menuOpen(b.dataset.open); });
+  $('win-back').addEventListener('click', backWin);
+  $('win-x').addEventListener('click', closeWins);
+  $('floors').addEventListener('click', e => { const b = e.target.closest('[data-floor]'); if (b) { hqGo(b.dataset.floor); renderFloors(); } });
+  $('pip').addEventListener('click', () => setPip(!UI.pipBig));
+  // 본부 화면: 누르면 그 자리의 것, 위아래로 밀면 층 이동
+  const hq = $('hq');
+  let p0 = null;
+  hq.addEventListener('pointerdown', e => { p0 = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+  hq.addEventListener('pointerup', e => {
+    if (!p0 || !S) return;
+    const dx = e.clientX - p0.x, dy = e.clientY - p0.y;
+    p0 = null;
+    if (Math.abs(dy) > 36 && Math.abs(dy) > Math.abs(dx) * 1.2) { hqStep(dy < 0 ? -1 : 1); renderFloors(); return; }
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) hqOpen(hqHit(e.clientX, e.clientY));
+  });
+  hq.addEventListener('pointercancel', () => { p0 = null; });
   const panel = $('panel');
   panel.addEventListener('pointerdown', () => { UI.hold = true; });
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => panel.addEventListener(t, () => setTimeout(() => { UI.hold = false; }, 180)));
-  $('pchips').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (!b) return; S.view = +b.dataset.view; renderChips(); if (UI.tab === 'exp') renderPanel(true); });
-  $('tabs').addEventListener('click', e => {
-    const b = e.target.closest('[data-tab]'); if (!b) return;
-    UI.tab = b.dataset.tab;
-    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b));
-    $('panel').scrollTop = 0; renderPanel(true);
-  });
+  $('pchips').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (!b) return; S.view = +b.dataset.view; renderChips(); const top = winTop(); if (top && top.id === 'exp') renderPanel(true); });
   const mb = $('m-box');
   mb.addEventListener('pointerdown', () => { UI.mhold = true; });
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => mb.addEventListener(t, () => setTimeout(() => { UI.mhold = false; }, 180)));
   $('modal').addEventListener('click', e => { if (e.target === $('modal') && $('m-btns').children.length === 1) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && UI.modal && $('m-btns').children.length === 1) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (UI.modal) { if ($('m-btns').children.length === 1) closeModal(); } else if (winTop()) backWin(); });
   $('speed').addEventListener('click', e => { const b = e.target.closest('[data-speed]'); if (b) setSpeed(+b.dataset.speed); });
   $('t-import').addEventListener('click', () => openImport(() => { $('title-scr').hidden = true; cancelAnimationFrame(titleRaf); startGame(); }));
   $('t-form').addEventListener('submit', e => {

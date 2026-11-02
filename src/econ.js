@@ -19,7 +19,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1 }, speed: 1,
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
   };
@@ -47,7 +47,7 @@ function migrate(v) {
   Object.assign(s, { seq: v.seq || 1, t: v.t || 0, lastSeen: v.lastSeen || Date.now(), gold: v.gold || 0, fame: v.fame || 0, inv: v.inv || {},
     graves: v.graves || [], log: v.log || [], settleDay: v.settleDay || MONTH_DAYS, view: v.view, shop: v.shop || { slots: [] } });
   Object.assign(s.stats, v.stats || {});
-  Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0, v04: 0, v05: 0 });
+  Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0, v04: 0, v05: 0, v06: 0 });
   Object.assign(s.bld, v.bld || {});
   for (const f of Object.keys(v.fields || {})) if (s.fields[f]) s.fields[f] = v.fields[f];
   // 모험가는 지금 레벨에 맞춰 능력치를 새로 만든다
@@ -476,6 +476,7 @@ function stepShop(dt) {
     if (isGearKey(s.item)) { const it = gearsOfKey(s.item)[0]; S.gear = S.gear.filter(x => x !== it); }
     else addTo(S.inv, s.item, -1);
     S.gold += g; S.stats.earned += g; S.stats.sales++; S.stats.soldG = (S.stats.soldG || 0) + g;
+    HOOKS.sale(i, g);
     if (S.sold.day !== today()) S.sold = { day: today(), n: 0, g: 0 };
     S.sold.n++; S.sold.g += g;
   }
@@ -846,7 +847,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); saveGame(); return true; }
     if (![2, 3, 4].includes(v.v)) return false;
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {};
@@ -857,7 +858,10 @@ function loadFrom(v) {
     const old = S.v;
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
+    notes6();
     return true;
   } catch (_) { return false; }
 }
+// v0.6: 본부 화면 안내 (한 번만)
+function notes6() { if (!S.flags.v06) { S.flags.v06 = 1; S.modals.push({ title: 'v0.6 업데이트', body: STORY.v06 }); } }
 function resetGame() { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} S = null; }

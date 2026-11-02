@@ -1,5 +1,5 @@
 /* ───────── 화면 공통 ───────── */
-const UI = { tab: 'co', dirty: true, html: '', chips: '', hold: false, modal: false, advOpen: null, smithT: null };
+const UI = { stack: [], dirty: true, html: '', winKey: '', chips: '', floors: '', fname: '', hold: false, modal: false, smithT: null, pipBig: false };
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = n => Math.floor(n).toLocaleString('ko-KR');
@@ -70,7 +70,7 @@ function updateOverlay() {
   const p = viewParty(), L = $('ov-l'), Rr = $('ov-r'), B = $('ov-b');
   if (!p) { L.textContent = '오물거리 · 상단 앞'; Rr.hidden = true; B.hidden = true; return; }
   const e = p.exp;
-  if (!e) { L.textContent = `${p.name} · 오물거리 상단 앞`; Rr.hidden = true; B.hidden = false; B.textContent = p.members.length ? '대기 중 · 원정 탭에서 출발' : '파티원이 없어요'; return; }
+  if (!e) { L.textContent = `${p.name} · 오물거리 상단 앞`; Rr.hidden = true; B.hidden = false; B.textContent = p.members.length ? '대기 중 · 원정 메뉴에서 출발' : '파티원이 없어요'; return; }
   L.textContent = `${p.name} · ${whereStr(e)}`;
   const u = usedOf(p), c = capOf(p);
   Rr.hidden = false; Rr.innerHTML = `짐 <span class="${u >= c ? 'warn' : 'gold'}">${u}/${c}</span>`;
@@ -84,6 +84,111 @@ function renderChips() {
   }).join('');
   if (html !== UI.chips) { $('pchips').innerHTML = html; UI.chips = html; }
 }
+
+/* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
+const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정' };
+const winTop = () => UI.stack[UI.stack.length - 1] || null;
+function winTitle(w) {
+  if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';
+  if (w.id === 'advd') { const a = S && advById(w.aid); return a ? `${a.name} · ${CLASSES[a.cls].name}` : '모험가'; }
+  return WIN_TITLE[w.id] || '';
+}
+function openWin(id, o) {
+  UI.stack.push(Object.assign({ id }, o || {}));
+  try { history.pushState({ w: UI.stack.length }, ''); } catch (_) {}
+  showWin(true);
+}
+// 뒤로: 브라우저·안드로이드 뒤로 가기와 같은 길로 간다
+function backWin() {
+  if (!UI.stack.length) return;
+  UI.stack.length--;
+  try { if (history.state && history.state.w) { UI.skipPop = 1; history.back(); } } catch (_) {}
+  showWin(true);
+}
+// 오른쪽 메뉴: 같은 메뉴를 다시 누르면 닫고, 다른 메뉴면 그 창으로 바꾼다
+function menuOpen(id) {
+  const d = UI.stack.length;
+  if (!d) { openWin(id); return; }
+  if (UI.stack[0].id === id) { closeWins(); return; }
+  UI.stack = [{ id }];
+  try { if (d > 1) { UI.skipPop = 1; history.go(-(d - 1)); } } catch (_) {}
+  showWin(true);
+}
+function closeWins() {
+  const n = UI.stack.length;
+  if (!n) return;
+  UI.stack.length = 0;
+  try { const k = Math.min(n, (history.state && history.state.w) || 0); if (k) { UI.skipPop = 1; history.go(-k); } } catch (_) {}
+  showWin(true);
+}
+window.addEventListener('popstate', e => {
+  if (UI.skipPop) { UI.skipPop = 0; return; }
+  const n = (e.state && e.state.w) || 0;
+  if (UI.modal && $('m-btns').children.length === 1) { closeModal(); if (UI.stack.length) try { history.pushState({ w: UI.stack.length }, ''); } catch (_) {} return; }
+  if (UI.stack.length > n) { UI.stack.length = n; showWin(true); }
+});
+function showWin(scroll) {
+  const top = winTop(), el = $('win');
+  $('stage').classList.toggle('win-open', !!top);
+  document.querySelectorAll('.mbtn').forEach(b => b.classList.toggle('on', !!top && UI.stack[0].id === b.dataset.open));
+  if (!top) { el.hidden = true; UI.html = ''; UI.winKey = ''; return; }
+  layoutWin();
+  el.hidden = false;
+  $('win-title').textContent = winTitle(top);
+  $('win-path').innerHTML = UI.stack.length > 1 ? UI.stack.map(w => `<span>${esc(winTitle(w))}</span>`).join('') : '';
+  if (scroll) $('panel').scrollTop = 0;
+  renderPanel(true);
+}
+// 창은 원정 화면 아래부터 파티 줄 위까지
+function layoutWin() {
+  const app = $('app').getBoundingClientRect(), pip = $('pip').getBoundingClientRect(), upd = $('upd');
+  const below = upd.hidden ? $('chipbar').getBoundingClientRect().top : upd.getBoundingClientRect().top;
+  $('app').style.setProperty('--win-top', Math.round(pip.bottom - app.top + 6) + 'px');
+  $('app').style.setProperty('--win-bot', Math.round(app.bottom - below) + 'px');
+}
+function setPip(big) {
+  UI.pipBig = !!big;
+  $('pip').classList.toggle('big', UI.pipBig);
+  try { localStorage.setItem('ohmul:pip', UI.pipBig ? '1' : '0'); } catch (_) {}
+  layoutStage();
+}
+// 원정 창 크기가 바뀌면 메뉴·본부·창 자리를 다시 잡는다
+function layoutStage() {
+  const st = $('stage'), pip = $('pip');
+  st.classList.toggle('pipbig', UI.pipBig);
+  st.style.setProperty('--pip-b', Math.round(pip.getBoundingClientRect().bottom - st.getBoundingClientRect().top) + 'px');
+  sizeView(); sizeHQ(); layoutWin();
+}
+
+/* ───────── 층 버튼과 층 이름 ───────── */
+function floorInfo(f) {
+  if (f.id === 'shop') { const sd = S.sold.day === today() ? S.sold : { n: 0, g: 0 }; return `진열대 ${slotCount()}칸 · 오늘 ${sd.n}개 ${fmt(sd.g)}G 판매`; }
+  if (f.id === 'inn') return `방 ${living().length}/${beds()} · 자는 모험가 ${living().filter(a => a.status === 'idle' && ((a.sleep || 0) > 2 || isNight())).length}명`;
+  if (f.id === 'temple') return `환자 ${patients().length}명 · 치유사 ${healers().length}/${healerSlots()}`;
+  if (f.id === 'training') return isNight() ? '밤에는 쉬어요' : `훈련하는 모험가 ${Math.min(6, living().filter(a => a.status === 'idle' && !a.inj && !a.post && (a.sleep || 0) <= 2).length)}명`;
+  if (f.id === 'alchemy') return `회복 물약 ${(S.inv.pot_s || 0) + (S.inv.pot_m || 0) + (S.inv.pot_l || 0)}개 · 마나 물약 ${(S.inv.mp_s || 0) + (S.inv.mp_m || 0)}개`;
+  if (f.id === 'tower') return S.research.cur ? `연구 중: ${RESEARCH[S.research.cur.k].name}` : '연구를 쉬고 있어요';
+  if (f.id === 'smithy') return `보관 중인 장비 ${S.gear.length}개`;
+  if (f.id === 'bank') return `거래 ${S.bank.deps.length + S.bank.loans.length}/${bankCap()}건`;
+  return '';
+}
+function renderFloors() {
+  if (!S) return;
+  const L = hqFloors().reverse(), cur = hqFloor(HQ.cur);   // 아래층부터 왼쪽에
+  const html = L.map(f => `<button type="button" class="fl${f.key === cur.key ? ' on' : ''}${f.under ? ' ug' : ''}" data-floor="${f.key}" aria-label="${f.label} ${esc(f.name)}"${f.key === cur.key ? ' aria-current="true"' : ''}>${f.id === 'tower' ? '탑' : f.label}</button>`).join('');
+  if (html !== UI.floors) { $('floors').innerHTML = html; UI.floors = html; }
+  const fn = `<b>${cur.label}</b>${esc(cur.name)}<small>${esc(floorInfo(cur))}</small>`;
+  if (fn !== UI.fname) { $('floor-name').innerHTML = fn; UI.fname = fn; }
+}
+// 본부 화면을 눌렀을 때: 가구·사람 → 창
+function hqOpen(h) {
+  if (!h) return;
+  if (h.adv) { openAdv(h.adv); return; }
+  const w = h.win;
+  if (!w) return;
+  if (w.startsWith('b:')) openWin('b', { b: w.slice(2) }); else openWin(w);
+}
+const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0' };
 
 /* ───────── 배속 ───────── */
 function renderSpeed() {
@@ -163,7 +268,7 @@ function showUpdate(name, url) {
 /* ───────── 창 ───────── */
 function openModal(title, html, btns) {
   UI.modal = true;
-  $('m-body').onclick = null; UI.advOpen = null;
+  $('m-body').onclick = null;
   $('m-title').textContent = title;
   $('m-body').innerHTML = html;
   const box = $('m-btns');
@@ -178,7 +283,7 @@ function openModal(title, html, btns) {
   $('m-box').scrollTop = 0;
   setTimeout(() => { if (box.lastChild) box.lastChild.focus({ preventScroll: true }); }, 40);
 }
-function closeModal() { $('modal').hidden = true; $('m-body').onclick = null; UI.modal = false; UI.advOpen = null; setTimeout(pumpModals, 150); }
+function closeModal() { $('modal').hidden = true; $('m-body').onclick = null; UI.modal = false; setTimeout(pumpModals, 150); }
 function pumpModals() {
   if (UI.modal || !S || !S.modals.length || !$('title-scr').hidden) return;
   const m = S.modals.shift();

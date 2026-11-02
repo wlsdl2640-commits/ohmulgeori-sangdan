@@ -1,6 +1,6 @@
 /* ───────── 게임 상태 ───────── */
 let S = null;
-const HOOKS = { changed() {}, toast() {}, modal() {} };   // 화면 쪽에서 덮어쓴다
+const HOOKS = { changed() {}, toast() {}, modal() {}, sale() {}, floor() {} };   // 화면 쪽에서 덮어쓴다
 const rnd = Math.random;
 const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
 const pickOne = a => a[Math.floor(rnd() * a.length)];
