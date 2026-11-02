@@ -41,7 +41,7 @@ function updateHud() {
   $('h-gold').textContent = fmt(S.gold);
   $('h-fame').textContent = fmt(S.fame);
   const p = dateParts(S.t), ph = phaseOf(S.t), hd = $('h-date');
-  const html = `${p.m}월 ${p.d}일 <span class="ph ph-${PHASES[ph].id}">${PHASES[ph].name}</span>`;
+  const html = `${p.m}월 ${p.d}일 <span class="clk">${clockStr(S.t)}</span> <span class="ph ph-${PHASES[ph].id}">${PHASES[ph].name}</span>`;
   if (hd.innerHTML !== html) hd.innerHTML = html;
   const dd = S.settleDay - today(), r = $('h-rent');
   r.textContent = `정산 D-${dd}`;
@@ -82,6 +82,81 @@ function renderChips() {
     return `<button type="button" class="pchip${S.view === p.id ? ' on' : ''}" data-view="${p.id}"><i class="dot ${cls}"></i>${esc(p.name)} · ${st}</button>`;
   }).join('');
   if (html !== UI.chips) { $('pchips').innerHTML = html; UI.chips = html; }
+}
+
+/* ───────── 배속 ───────── */
+function renderSpeed() {
+  const cur = (S && S.speed) || 1;
+  $('speed').querySelectorAll('[data-speed]').forEach(b => { const on = +b.dataset.speed === cur; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+}
+function setSpeed(n) {
+  if (!S || !SPEEDS.includes(n)) return;
+  S.speed = n;
+  renderSpeed(); saveGame();
+}
+
+/* ───────── 저장 코드 ───────── */
+function b64(u8) { let s = ''; for (let i = 0; i < u8.length; i += 8192) s += String.fromCharCode.apply(null, u8.subarray(i, i + 8192)); return btoa(s); }
+function unb64(b) { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+function saveCode() { saveGame(); return 'OHMUL1:' + b64(new TextEncoder().encode(JSON.stringify(S))); }
+function parseSave(txt) {
+  txt = (txt || '').trim();
+  const raw = txt.startsWith('OHMUL1:') ? new TextDecoder().decode(unb64(txt.slice(7).replace(/\s+/g, ''))) : txt;
+  const v = JSON.parse(raw);
+  if (!v || !Array.isArray(v.advs) || ![1, 2, 3].includes(v.v)) throw new Error('bad save');
+  return v;
+}
+async function copyText(el) {
+  try { await navigator.clipboard.writeText(el.value); return true; } catch (_) {}
+  try { el.focus(); el.select(); return document.execCommand('copy'); } catch (_) { return false; }
+}
+function openExport() {
+  openModal('저장 코드', `<p>아래 코드를 복사해 메모장이나 메신저 나에게 보내기 등에 보관하세요. 다른 기기나 새로 설치한 앱에서 「저장 코드로 불러오기」에 붙여 넣으면 지금 진행 상황이 그대로 옮겨져요.</p>
+    <textarea class="code" id="code-out" readonly rows="5">${saveCode()}</textarea>
+    <div class="btns"><button type="button" class="btn sm gold" id="code-copy">복사하기</button></div>`, [{ label: '닫기' }]);
+  $('code-copy').onclick = async () => { say((await copyText($('code-out'))) ? '저장 코드를 복사했어요' : '코드를 길게 눌러 직접 복사해 주세요'); };
+}
+// done: 불러온 뒤 할 일 (첫 화면에서 부를 때 게임을 시작한다)
+function openImport(done) {
+  openModal('저장 코드로 불러오기', `<p>복사해 둔 저장 코드를 붙여 넣으세요. 지금 이 기기의 진행 상황은 불러온 저장으로 바뀌어요.</p>
+    <textarea class="code" id="code-in" rows="5" placeholder="OHMUL1:..."></textarea>
+    <p class="sub red-t" id="code-err" hidden>저장 코드가 올바르지 않아요. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인해 주세요.</p>
+    <div class="btns"><button type="button" class="btn sm gold" id="code-load">불러오기</button></div>`, [{ label: '닫기' }]);
+  $('code-load').onclick = () => {
+    let v;
+    try { v = parseSave($('code-in').value); } catch (_) { $('code-err').hidden = false; return; }
+    const apply = () => {
+      v.lastSeen = Date.now();
+      if (!loadFrom(v)) { say('저장을 불러오지 못했어요'); return; }
+      saveGame();
+      UI.html = ''; UI.chips = ''; V.mode = '';
+      if (done) done(); else { renderPanel(true); renderChips(); updateHud(); renderSpeed(); }
+      say('저장을 불러왔어요');
+    };
+    if (S) confirmBox('저장 불러오기', '지금 진행 상황을 이 저장으로 바꿀까요? 되돌릴 수 없어요.', '불러오기', apply, true);
+    else { closeModal(); apply(); }
+  };
+}
+
+/* ───────── 앱 업데이트 알림 (설치한 앱에서만) ───────── */
+const isApp = () => { try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); } catch (_) { return false; } };
+async function checkUpdate(manual) {
+  if (!isApp() || !BUILD_NO) { if (manual) say('업데이트 확인은 설치한 앱에서만 할 수 있어요'); return; }
+  try {
+    const r = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' });
+    if (!r.ok) throw new Error(String(r.status));
+    const j = await r.json(), n = +String(j.tag_name || '').replace(/\D/g, '') || 0;
+    if (n > BUILD_NO) {
+      const a = (j.assets || []).find(x => /\.apk$/.test(x.name));
+      showUpdate(j.name || j.tag_name, a ? a.browser_download_url : j.html_url);
+    } else if (manual) say('지금이 최신 버전이에요');
+  } catch (_) { if (manual) say('업데이트를 확인하지 못했어요. 인터넷 연결을 확인해 주세요'); }
+}
+function showUpdate(name, url) {
+  const el = $('upd');
+  el.innerHTML = `<span class="grow">새 버전 <b>${esc(name)}</b>이(가) 나왔어요. 받아서 설치하면 덮어쓰기로 업데이트되고 저장은 그대로 남아요.</span><a class="btn sm gold" href="${esc(url)}">받기</a><button type="button" class="btn sm" id="upd-x">닫기</button>`;
+  el.hidden = false;
+  $('upd-x').onclick = () => { el.hidden = true; };
 }
 
 /* ───────── 창 ───────── */

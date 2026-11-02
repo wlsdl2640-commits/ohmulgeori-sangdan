@@ -18,15 +18,15 @@ const DAY_SKY = {
   desert:   ['#4f92d8', '#a4c6e2', '#f6e2ba'],
   town:     ['#5684c4', '#8cb0d8', '#d0e0ea']
 };
-/* 하루의 흐름 (dp: 0~0.25 새벽녘, 0.25~0.5 점심, 0.5~0.75 해질녘, 0.75~1 밤) */
+/* 하루의 흐름. dp 0 = 새벽 4시, dp 1 = 다음 날 새벽 4시 (1시간 = 1/24) */
 const TOD = [
-  { at: 0.0,  sky: ['#121a3e', '#33305e', '#9a6680'], dark: ['#1a1440', 0.42], star: 0.6 },
-  { at: 0.13, sky: ['#3a5a9a', '#c48aa2', '#f6c08a'], dark: ['#3a2050', 0.14], star: 0 },
-  { at: 0.27, sky: null, dark: ['#000000', 0], star: 0 },
-  { at: 0.5,  sky: null, dark: ['#40200c', 0.04], star: 0 },
-  { at: 0.62, sky: ['#38397a', '#d8704a', '#f8b060'], dark: ['#5a2010', 0.2], star: 0 },
-  { at: 0.75, sky: ['#141a40', '#38285a', '#74466a'], dark: ['#140c30', 0.42], star: 0.55 },
-  { at: 0.87, sky: ['#05081a', '#0c1430', '#1c2c4c'], dark: ['#04081a', 0.58], star: 1 },
+  { at: 0.0,  sky: ['#121a3e', '#33305e', '#9a6680'], dark: ['#1a1440', 0.42], star: 0.6 },   // 04:00 어스름
+  { at: 0.09, sky: ['#3a5a9a', '#c48aa2', '#f6c08a'], dark: ['#3a2050', 0.14], star: 0 },     // 06:10 해돋이
+  { at: 0.18, sky: null, dark: ['#000000', 0], star: 0 },                                      // 08:20 낮
+  { at: 0.46, sky: null, dark: ['#40200c', 0.04], star: 0 },                                   // 15:00
+  { at: 0.6,  sky: ['#38397a', '#d8704a', '#f8b060'], dark: ['#5a2010', 0.2], star: 0 },       // 18:20 노을
+  { at: 0.7,  sky: ['#141a40', '#38285a', '#74466a'], dark: ['#140c30', 0.42], star: 0.55 },   // 20:50 땅거미
+  { at: 0.82, sky: ['#05081a', '#0c1430', '#1c2c4c'], dark: ['#04081a', 0.58], star: 1 },      // 23:40 깊은 밤
   { at: 1.0,  sky: ['#121a3e', '#33305e', '#9a6680'], dark: ['#1a1440', 0.42], star: 0.6 }
 ];
 const smooth = k => k * k * (3 - 2 * k);
@@ -42,9 +42,9 @@ function todAt(dp, id) {
   const dark = [mix(A.dark[0], B.dark[0], k), A.dark[1] + (B.dark[1] - A.dark[1]) * k];
   const star = A.star + (B.star - A.star) * k;
   let sun = null, moon = null;
-  if (dp > 0.06 && dp < 0.7) { const u = (dp - 0.06) / 0.64; sun = { x: 12 + u * 216, y: 96 - Math.sin(Math.PI * u) * 76, u }; }
+  if (dp > 0.06 && dp < 0.66) { const u = (dp - 0.06) / 0.6; sun = { x: 12 + u * 216, y: 96 - Math.sin(Math.PI * u) * 76, u }; }
   const dm = dp < 0.15 ? dp + 1 : dp;
-  if (dm > 0.68 && dm < 1.12) { const u = (dm - 0.68) / 0.44; moon = { x: 12 + u * 216, y: 92 - Math.sin(Math.PI * u) * 70 }; }
+  if (dm > 0.64 && dm < 1.1) { const u = (dm - 0.64) / 0.46; moon = { x: 12 + u * 216, y: 92 - Math.sin(Math.PI * u) * 70 }; }
   return { sky, dark, star, sun, moon };
 }
 const clockDp = () => (S ? (((S.t % DAY_SEC) + DAY_SEC) % DAY_SEC) / DAY_SEC : 0.6);

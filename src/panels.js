@@ -50,7 +50,11 @@ PANELS.co = () => {
   <div class="sec"><b>소식</b></div>
   <div class="card"><div class="log">${S.log.slice(0, 16).map(l => `<div class="${l.kind}"><span class="d">${l.d}</span>${esc(l.text)}</div>`).join('') || '<div>아직 소식이 없어요.</div>'}</div></div>
   <div class="sec"><b>설정</b></div>
-  <div class="card"><div class="sub">진행 상황은 이 기기에 자동 저장돼요. 앱을 닫아도 최대 ${Math.round(offlineCap() / 3600)}시간까지 원정과 판매가 계속되고, 날짜는 그대로예요.</div><div class="btns"><button type="button" class="btn sm red" data-act="reset">처음부터 다시 하기</button></div></div>`;
+  <div class="card"><div class="sub">진행 상황은 이 기기에 자동 저장돼요. 앱을 닫아도 최대 ${Math.round(offlineCap() / 3600)}시간까지 원정과 판매가 계속되고, 날짜와 시각은 그대로예요.</div>
+    <div class="sub">저장 코드를 복사해 두면 다른 기기나 새로 설치한 앱으로 진행 상황을 옮길 수 있어요.</div>
+    <div class="btns"><button type="button" class="btn sm" data-act="export">저장 코드 복사</button><button type="button" class="btn sm" data-act="import">저장 코드로 불러오기</button>${isApp() ? '<button type="button" class="btn sm" data-act="update">업데이트 확인</button>' : ''}</div>
+    <div class="btns"><button type="button" class="btn sm red" data-act="reset">처음부터 다시 하기</button></div>
+    <div class="sub muted">버전 ${VERSION}${BUILD_NO ? ` · 빌드 ${BUILD_NO}` : ''}</div></div>`;
 };
 
 /* 시설 */
@@ -365,6 +369,9 @@ const ACT = {
   unslot: d => setSlot(+d.i, null),
   tier: d => { const s = S.shop.slots[+d.i]; if (s) { s.tier = +d.t; changed(); } },
   fulfill: d => say(fulfill(+d.id)),
+  export: () => openExport(),
+  import: () => openImport(),
+  update: () => checkUpdate(true),
   reset: () => confirmBox('처음부터 다시', '저장된 진행 상황이 모두 지워져요. 되돌릴 수 없어요.', '모두 지우기', () => { resetGame(); showTitle(); }, true)
 };
 function pickForSlot(i) {
@@ -400,6 +407,8 @@ function bindUI() {
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => mb.addEventListener(t, () => setTimeout(() => { UI.mhold = false; }, 180)));
   $('modal').addEventListener('click', e => { if (e.target === $('modal') && $('m-btns').children.length === 1) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && UI.modal && $('m-btns').children.length === 1) closeModal(); });
+  $('speed').addEventListener('click', e => { const b = e.target.closest('[data-speed]'); if (b) setSpeed(+b.dataset.speed); });
+  $('t-import').addEventListener('click', () => openImport(() => { $('title-scr').hidden = true; cancelAnimationFrame(titleRaf); startGame(); }));
   $('t-form').addEventListener('submit', e => {
     e.preventDefault();
     newGame($('t-name').value);

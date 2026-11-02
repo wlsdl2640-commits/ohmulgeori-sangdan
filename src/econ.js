@@ -19,7 +19,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1 },
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1 }, speed: 1,
     stats: { earned: 0, kills: 0, deaths: 0, trips: 0, sales: 0 },
     view: null
   };
@@ -47,7 +47,7 @@ function migrate(v) {
   Object.assign(s, { seq: v.seq || 1, t: v.t || 0, lastSeen: v.lastSeen || Date.now(), gold: v.gold || 0, fame: v.fame || 0, inv: v.inv || {},
     graves: v.graves || [], log: v.log || [], settleDay: v.settleDay || MONTH_DAYS, heroQueue: v.heroQueue || [], view: v.view, shop: v.shop || { slots: [] } });
   Object.assign(s.stats, v.stats || {});
-  Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0 });
+  Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0, v04: 0 });
   Object.assign(s.bld, v.bld || {});
   for (const f of Object.keys(v.fields || {})) if (s.fields[f]) s.fields[f] = v.fields[f];
   // 모험가는 지금 레벨에 맞춰 능력치를 새로 만든다
@@ -89,6 +89,8 @@ function migrate3() {
   FIELD_IDS.forEach(f => { const fs = S.fields[f]; if (fs.cleared && SPECIALS[f] && !fs.spec) { fs.spec = 1; S.specQueue.push(f); } });
   syncHeroes();
   if (!S.flags.v03) { S.flags.v03 = 1; S.modals.push({ title: 'v0.3 업데이트', body: STORY.v03 }); }
+  if (!S.flags.v04) { S.flags.v04 = 1; S.modals.push({ title: 'v0.4 업데이트', body: STORY.v04 }); }
+  if (!SPEEDS.includes(S.speed)) S.speed = 1;
 }
 
 /* ───────── 여관 손님 ───────── */
@@ -640,7 +642,12 @@ function loadGame() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return false;
-    const v = JSON.parse(raw);
+    return loadFrom(JSON.parse(raw));
+  } catch (_) { return false; }
+}
+// 저장 객체를 지금 판으로 (옛 저장은 차례로 옮긴다)
+function loadFrom(v) {
+  try {
     if (!v || !Array.isArray(v.advs)) return false;
     if (v.v === 1) { migrate(v); migrate3(); saveGame(); return true; }
     if (v.v !== 2 && v.v !== 3) return false;

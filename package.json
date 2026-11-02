@@ -1,6 +1,6 @@
 {
   "name": "ohmulgeori-sangdan",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "몬스터 부속품을 다루는 상단을 키우는 방치형 도트 경영 게임",
   "scripts": {

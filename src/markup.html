@@ -14,7 +14,14 @@
     <div class="ov ov-b" id="ov-b" hidden></div>
   </section>
 
-  <nav class="pchips" id="pchips" aria-label="파티 화면 고르기"></nav>
+  <div class="upd" id="upd" role="status" hidden></div>
+
+  <div class="chipbar">
+    <nav class="pchips" id="pchips" aria-label="파티 화면 고르기"></nav>
+    <div class="speed" id="speed" role="group" aria-label="게임 속도">
+      <button type="button" data-speed="1">1×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="3">3×</button><button type="button" data-speed="5">5×</button>
+    </div>
+  </div>
 
   <main class="panel" id="panel"><div class="panel-in" id="panel-in"></div></main>
 
@@ -40,6 +47,7 @@
         <input id="t-name" maxlength="12" autocomplete="off" placeholder="등불 상단">
         <button type="submit" class="btn gold block" id="t-go">상단 문 열기</button>
       </form>
+      <button type="button" class="btn sm" id="t-import">저장 코드로 이어하기</button>
       <p class="credit">글꼴: 갈무리 (SIL Open Font License 1.1)</p>
     </div>
   </div>

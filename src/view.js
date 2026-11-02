@@ -39,12 +39,14 @@ function callout(x, y, text, cls) {
   s.dataset.x = xp;
   s.style.left = xp + '%';
   s.style.top = Math.max(14, y / VH * 100 - near * 9) + '%';
+  const k = Math.min(2.5, (S && S.speed) || 1);   // 빠르게 흐를 때는 글씨도 빨리 사라진다
+  if (k > 1) s.style.animationDuration = (1.1 / k).toFixed(2) + 's';
   box.append(s);
-  setTimeout(() => s.remove(), 1150);
+  setTimeout(() => s.remove(), 1150 / k);
 }
 
-function drawFrame(now) {
-  const t = now / 1000, p = viewParty(), e = p && p.exp;
+function drawFrame(now, vt) {
+  const t = vt != null ? vt : now / 1000, p = viewParty(), e = p && p.exp;
   const key = (p ? p.id : 0) + ':' + (e ? 'x' : 'h');
   // 화면을 바꿨거나 오래 멈췄다 돌아오면 밀린 효과는 건너뛴다
   if (key !== V.mode || now - V.lastF > 1000) {

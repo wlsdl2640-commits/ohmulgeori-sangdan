@@ -21,6 +21,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - id: pages
+        name: GitHub Pages가 켜져 있는지 확인
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          on=$(gh api "repos/${{ github.repository }}" --jq '.has_pages')
+          echo "on=$on" >> "$GITHUB_OUTPUT"
+          if [ "$on" != "true" ]; then echo "::notice::GitHub Pages가 꺼져 있어 웹 배포를 건너뜁니다. Settings → Pages → Source를 GitHub Actions로 바꾸면 다음부터 배포됩니다."; fi
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -31,9 +40,12 @@ jobs:
           pip install fonttools brotli pillow
           python build.py
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - if: steps.pages.outputs.on == 'true'
+        uses: actions/configure-pages@v5
+      - if: steps.pages.outputs.on == 'true'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist/web
-      - id: deployment
+      - if: steps.pages.outputs.on == 'true'
+        id: deployment
         uses: actions/deploy-pages@v4

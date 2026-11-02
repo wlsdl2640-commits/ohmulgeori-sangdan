@@ -1,5 +1,5 @@
 """오물거리 상단 빌드: 소스를 한 파일로 묶고, 설치형 웹앱(PWA) 패키지를 만든다."""
-import base64, io, json, pathlib, shutil, zipfile
+import base64, io, json, os, pathlib, shutil, zipfile
 from fontTools import subset
 from fontTools.ttLib import TTFont
 from PIL import Image
@@ -8,11 +8,14 @@ ROOT = pathlib.Path(__file__).parent
 SRC, FONTS, DIST = ROOT / 'src', ROOT / 'fonts', ROOT / 'dist'
 JS = ['data.js', 'data-rpg.js', 'data-biz.js', 'sprites.js', 'plans.js', 'art.js', 'bg.js', 'core.js', 'econ.js', 'ui.js', 'view.js', 'panels.js', 'main.js']
 NAME = '오물거리 상단'
-VERSION = '0.3.0'
+VERSION = '0.4.0'
 
 css = (SRC / 'style.css').read_text(encoding='utf-8')
 markup = (SRC / 'markup.html').read_text(encoding='utf-8')
-js = '\n'.join((SRC / f).read_text(encoding='utf-8') for f in JS)
+# 빌드 번호(CI에서 넣는다)와 저장소: 설치한 앱이 새 버전을 알아보는 데 쓴다
+BUILD_NO = int(os.environ.get('BUILD_NO', '0') or 0)
+REPO = os.environ.get('GITHUB_REPOSITORY', 'wlsdl2640-commits/ohmulgeori-sangdan')
+js = f"const BUILD_NO = {BUILD_NO}, REPO = {json.dumps(REPO)};\n" + '\n'.join((SRC / f).read_text(encoding='utf-8') for f in JS)
 script = "(() => {\n'use strict';\n" + js + "\n})();"
 
 # ── 글꼴: 게임에 쓰인 글자 + 자주 쓰는 한글 2,350자만 남겨 크기를 줄인다 ──

@@ -1,5 +1,5 @@
 /* ───────── 시작과 반복 ───────── */
-let running = false, lastT = 0, acc = 0, uiTimer = 0;
+let running = false, lastT = 0, acc = 0, uiTimer = 0, vt = 0;
 
 function fmtDur(sec) {
   const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
@@ -24,6 +24,7 @@ function startGame() {
     if (!S) return;
     updateHud(); updateOverlay(); renderChips(); renderPanel(); refreshAdv(); pumpModals();
   }, 400);
+  renderSpeed();
   lastT = 0;
   requestAnimationFrame(loop);
   setTimeout(pumpModals, 300);
@@ -38,9 +39,12 @@ function loop(now) {
     awayReport(catchUp(dt));
     dt = 0; UI.dirty = true;
   }
-  acc += Math.min(dt, 0.5);
-  while (acc >= 0.1) { step(0.1); acc -= 0.1; }
-  drawFrame(now);
+  // 배속: 시뮬레이션과 그림이 함께 빨라진다 (자리를 비운 동안의 보상은 그대로 실제 시간 기준)
+  const sp = SPEEDS.includes(S.speed) ? S.speed : 1, gdt = Math.min(dt, 0.5) * sp;
+  acc += gdt; vt += gdt;
+  let n = 0;
+  while (acc >= 0.1 && n < 60) { step(0.1); acc -= 0.1; n++; }
+  drawFrame(now, vt);
   requestAnimationFrame(loop);
 }
 function boot() {
@@ -58,6 +62,7 @@ function boot() {
     if (away > 20) awayReport(catchUp(away));
     startGame();
   } else showTitle();
+  setTimeout(() => checkUpdate(false), 2500);
   // 직접 올린 웹사이트에서 열었을 때만 오프라인 캐시를 켠다
   try {
     if ('serviceWorker' in navigator && window.top === window && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
