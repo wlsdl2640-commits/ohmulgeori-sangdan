@@ -162,6 +162,7 @@ details.card summary::-webkit-details-marker { display: none; }
 .call.buff { color: #bfe8ff; border-color: rgba(122, 184, 255, .6); }
 .call.magic { color: #e2d0ff; border-color: rgba(180, 138, 255, .6); }
 .call.dot { color: #c8f0a0; border-color: rgba(122, 216, 60, .6); }
+.call.boss { color: #ffe08a; border-color: rgba(240, 90, 60, .8); background: rgba(40, 8, 8, .85); font-size: 11px; animation-duration: 2.2s; }
 @keyframes callup { 0% { opacity: 0; transform: translate(-50%, -70%); } 14% { opacity: 1; transform: translate(-50%, -100%); } 72% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -170%); } }
 
 .bar.mp { height: 4px; margin-top: 2px; }
@@ -180,6 +181,15 @@ details.card summary::-webkit-details-marker { display: none; }
 .warn { color: var(--warn); }
 details.card .list { margin-top: 8px; }
 .bar.mp i { background: #5aa0ff; }
+.bar.slp { height: 3px; margin-top: 2px; }
+.bar.slp i { background: #8a7ad8; }
+.bar.slp i.low { background: #c86af0; }
+.card > .bar.slp { margin-top: -7px; }
+.bar.inj { height: 5px; }
+.bar.inj i { background: #e07a8a; }
+.card > .bar.inj { margin-top: -5px; }
+.lic { display: inline-block; font-size: 11px; line-height: 1.4; padding: 0 4px; color: #120d0a; background: var(--c); border: 1px solid #000; vertical-align: 1px; }
+.rk { flex: none; display: grid; place-items: center; width: 40px; height: 40px; font-size: 24px; font-weight: 700; color: #1d1408; background: var(--gold); border: 2px solid #000; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .3); }
 .card > .bar.mp { margin-top: -6px; }
 .q { display: inline-block; font-size: 11px; line-height: 1.4; padding: 0 4px; border: 1px solid currentColor; vertical-align: 1px; }
 .q0 { color: #c9c3b8; }

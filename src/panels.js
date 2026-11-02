@@ -9,6 +9,35 @@ const clsList = cls => (cls.includes('all') ? '모든 직업' : cls.map(c => CLA
 const costStr = s => (s.passive ? '지속 효과' : s.cost.hp ? `HP ${Math.round(s.cost.hp * 100)}%` : `MP ${s.cost.mp}`);
 const needStr = need => Object.entries(need).map(([k, q]) => { const h = S.inv[k] || 0; return `<span class="${h >= q ? '' : 'red-t'}">${ITEMS[k].name} ${h}/${q}</span>`; }).join(' · ');
 const dots = (n, max) => '●'.repeat(n) + '○'.repeat(Math.max(0, max - n));
+const licTag = a => { const L = LICENSE[a.rank || 0]; return `<span class="lic" style="--c:${L.c}">${L.name}</span>`; };
+const injTag = a => (a.inj ? ` <span class="tag" style="color:${INJ[a.inj.sev].c}">${INJ[a.inj.sev].name}</span>` : '');
+const mini = a => `<img class="ico" src="${portrait(a)}" alt="" style="width:20px;height:24px">`;
+// 다친 모험가 한 줄: 치료 진행과 처치 버튼 (act: 패널은 data-act, 모험가 창은 data-mact)
+function careRow(a, plan, act = 'act') {
+  const I = INJ[a.inj.sev], rate = dayHeal(a, plan), days = Math.max(1, Math.ceil(injLeft(a) / rate)), done = treatedToday(a), tp = treatPreview(a);
+  const b = (k, label, ok, cls = '') => `<button type="button" class="btn sm ${cls}" data-${act}="treat" data-id="${a.id}" data-k="${k}"${ok ? '' : ' disabled'}>${label}</button>`;
+  const btns = [
+    b('herb', `약초 ${HERB_USE}개 +${HERB_PTS}`, !done && (S.inv.herb || 0) >= HERB_USE),
+    S.bld.temple ? b('med', tp.med ? `${ITEMS[tp.med.k].name} +${tp.med.v}` : '약재 없음', !done && tp.med) : '',
+    b('pot', tp.pot ? `${ITEMS[tp.pot.k].name} +${tp.pot.v}` : '물약 없음', !done && tp.pot),
+    canOp() ? b('op', a.inj.op ? '수술 받음' : `수술 ${fmt(opCost(a))}G`, !a.inj.op && S.gold >= opCost(a), 'gold') : ''
+  ].join('');
+  return `<div class="li col"><div class="row">${mini(a)}<div class="grow stack"><span>${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}</span> <span class="tag" style="color:${I.c}">${I.name}</span></span><span class="sub">치료 <b data-injn="${a.id}"></b>/${a.inj.need} · 하루 ${Math.round(rate)}씩 · 약 ${days}일${done ? ' · <span class="ok-t">오늘 처치함</span>' : ''}</span></div></div>
+    <div class="bar inj"><i data-inj="${a.id}"></i></div><div class="btns">${btns}</div></div>`;
+}
+
+/* 상단 랭크 */
+function rankCard() {
+  const r = S.rank || 0, Rk = RANKS[r], q = rankReqs();
+  const head = `<div class="row"><span class="rk">${Rk.name}</span><div class="grow"><div class="h">${Rk.name}랭크 · ${Rk.title}</div><div class="sub">랭크가 오르면 새 필드와 시설, 더 많은 파티·매대·방, 거래 혜택이 열려요.</div></div></div>`;
+  if (!q) return `<div class="card hl">${head}<div class="sub gold-t">가장 높은 랭크에 올랐어요.</div></div>`;
+  const N = RANKS[r + 1];
+  const rows = q.map(x => `<div class="row sub"><span class="grow${x.ok ? ' ok-t' : ''}">${x.ok ? '✔' : '·'} ${x.label}</span><span class="num${x.ok ? ' ok-t' : ''}">${x.flag ? (x.ok ? '완료' : '아직') : `${fmt(x.cur)}/${fmt(x.need)}${x.gold ? 'G' : ''}`}</span></div>`).join('');
+  return `<div class="card${rankReady() ? ' hl' : ''}">${head}
+    <div class="sec" style="margin-top:2px"><b>${N.name}랭크 「${N.title}」 심사 조건</b></div><div>${rows}</div>
+    <div class="sub gold-t">오르면: ${rankGifts(r + 1).join(' · ')}</div>
+    <button type="button" class="btn gold block" data-act="rankup"${rankReady() ? '' : ' disabled'}>${rankReady() ? '랭크업 심사 받기' : '조건을 모두 채우면 심사를 받을 수 있어요'}</button></div>`;
+}
 
 /* 상단 */
 PANELS.co = () => {
@@ -29,10 +58,12 @@ PANELS.co = () => {
       ${raidReady() ? '<div class="sub gold-t">준비 완료! 원정 탭에서 7번가 뒷골목을 목적지로 고르세요.</div>' : ''}</div>`;
   return `
   <div class="card hl">
-    <div class="h">${esc(S.company)}</div>
+    <div class="h">${esc(S.company)} <span class="tag gold-t">${RANKS[S.rank || 0].name}랭크</span></div>
     <div class="sub">${WORLD.capital} ${WORLD.street} 입구 · 제국력 ${p.y}년 · v${VERSION}</div>
-    <div class="stats"><span>모험가 <b>${living().length}/${beds()}</b></span><span>파티 <b>${S.parties.length}</b></span><span>처치 <b>${fmt(S.stats.kills)}</b></span><span>전사자 <b>${S.graves.length}</b></span></div>
+    <div class="stats"><span>모험가 <b>${living().length}/${beds()}</b></span><span>파티 <b>${S.parties.length}/${partyMax()}</b></span><span>처치 <b>${fmt(S.stats.kills)}</b></span><span>부상 <b class="${patients().length ? 'red-t' : ''}">${patients().length}</b></span><span>던전 <b>${FIELD_IDS.filter(f => S.fields[f].cleared).length}/${FIELD_IDS.length}</b></span></div>
   </div>
+  <div class="sec"><b>상단 랭크</b><span>상인 조합 심사</span></div>
+  ${rankCard()}
   <div class="sec"><b>월말 정산</b><span>D-${dd} · ${sp.m}월 ${sp.d}일</span></div>
   <div class="card">
     <div class="row"><span class="grow">암살자 길드 자릿세</span><span class="num ${rent() ? 'red-t' : 'ok-t'}">${rent() ? fmt(rent()) + 'G' : '없음'}</span></div>
@@ -46,7 +77,7 @@ PANELS.co = () => {
   ${sponsors}
   <div class="sec"><b>목표</b></div>
   ${raid}
-  <div class="card dim"><div class="h">마왕의 봉인 <small>${FIELD_IDS.filter(f => S.fields[f].cleared).length}/${FIELD_IDS.length}</small></div><div class="sub">던전은 필드 어딘가에 입구가 숨어 있고, 한 번만 공략할 수 있다. 주인을 쓰러뜨릴 때마다 이야기가 이어지고 용사와 특수직업 모험가가 여관을 찾아온다.</div></div>
+  <div class="card dim"><div class="h">마왕의 봉인 <small>${FIELD_IDS.filter(f => S.fields[f].cleared).length}/${FIELD_IDS.length}</small></div><div class="sub">필드마다 10 스테이지마다 필드 보스가 있고, 1-50의 주인을 쓰러뜨리면 던전 입구가 열린다. 던전은 한 번만 공략할 수 있고, 공략하면 큰 보상과 함께 상단 랭크업 조건 하나가 채워진다.</div></div>
   <div class="sec"><b>소식</b></div>
   <div class="card"><div class="log">${S.log.slice(0, 16).map(l => `<div class="${l.kind}"><span class="d">${l.d}</span>${esc(l.text)}</div>`).join('') || '<div>아직 소식이 없어요.</div>'}</div></div>
   <div class="sec"><b>설정</b></div>
@@ -81,12 +112,25 @@ function bankBox() {
     <div class="list">${offers || '<div class="li"><span class="sub">지금은 제안이 없어요.</span></div>'}</div>`;
 }
 function templeBox() {
-  const B = S.bless && BLESSINGS[S.bless.id], full = living().length >= beds();
-  const graves = S.graves.slice(0, 15).map(g => `<div class="li"><div class="grow"><span>${esc(g.name)} <span class="muted">${CLASSES[g.cls].name} Lv${g.lv}${g.hero ? ' · 용사' : ''}</span></span><span class="sub muted">${g.date} · ${esc(g.where)}</span></div><button type="button" class="btn sm gold" data-act="revive" data-id="${g.id}"${S.gold >= REVIVE_COST && !full ? '' : ' disabled'}>되살리기 ${REVIVE_COST}G</button></div>`).join('');
+  const B = S.bless && BLESSINGS[S.bless.id], hs = healers(), plan = healPlan(), pats = patients();
+  const free = S.advs.filter(a => HEALERS.includes(a.cls) && !a.post && a.status === 'idle' && !a.inj);
+  const hrows = hs.map(h => `<div class="li">${mini(h)}<div class="grow"><span>${esc(h.name)} <span class="muted">${CLASSES[h.cls].name} Lv${h.lv}</span></span><span class="sub">치료력 하루 +${Math.round(healPow(h))} · 환자 둘까지${h.cls === 'plaguedoc' ? ' · 수술 가능' : ''}</span></div><button type="button" class="btn sm" data-act="post" data-id="${h.id}" data-on="0">내리기</button></div>`).join('');
+  const add = hs.length < healerSlots() ? free.map(a => `<button type="button" class="pick" data-act="post" data-id="${a.id}" data-on="1"><i class="chk"></i>${mini(a)}<span class="grow">${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}${partyOf(a.id) ? ' · ' + esc(partyOf(a.id).name) + '에서 빠짐' : ''}</span></span><span class="sub num">+${Math.round(healPow(a))}/일</span></button>`).join('') : '';
   return `${B ? `<div class="sub gold-t">이번 달: ${B.name} · ${B.desc}</div>` : ''}
-    <div class="sec" style="margin-top:2px"><b>쓰러진 모험가</b><span>${S.graves.length}명</span></div>
-    <div class="list">${graves || '<div class="li"><span class="sub">아직 쓰러진 모험가가 없어요.</span></div>'}</div>
-    ${full && S.graves.length ? '<div class="sub red-t">여관에 빈 방이 있어야 되살릴 수 있어요.</div>' : '<div class="sub muted">되살아난 모험가는 레벨과 스킬을 그대로 지니지만, 장비는 원정에서 챙겨 온 것만 창고에 있어요.</div>'}`;
+    <div class="sec" style="margin-top:2px"><b>치유사</b><span>${hs.length}/${healerSlots()}명</span></div>
+    <div class="list">${hrows || '<div class="li"><span class="sub">성직자·성기사·역병의사를 두면 환자가 훨씬 빨리 나아요. 역병의사는 수술도 해요.</span></div>'}${add}</div>
+    <div class="sec"><b>환자</b><span>${pats.length}명 · 자연 치료 하루 ${Math.round(healRate())}</span></div>
+    <div class="list">${pats.map(a => careRow(a, plan)).join('') || '<div class="li"><span class="sub">다친 모험가가 없어요.</span></div>'}</div>
+    ${careFoot()}`;
+}
+const careFoot = () => `<div class="row sub"><span class="grow">약초 ${S.inv.herb || 0}개 · 처치는 환자마다 하루 한 번</span><button type="button" class="btn sm" data-act="buy" data-it="herb" data-q="6"${S.gold < buyPrice('herb') * 6 ? ' disabled' : ''}>약초 6개 ${buyPrice('herb') * 6}G</button><button type="button" class="btn sm${S.autoTreat ? ' on' : ''}" data-act="autotreat">자동 약초 ${S.autoTreat ? '켬' : '끔'}</button></div>`;
+// 신전이 없을 때: 여관 방에서 쉬며 약초·물약으로 응급 처치만
+function innCare() {
+  const pats = patients();
+  if (!pats.length) return '';
+  const plan = healPlan();
+  return `<div class="sub red-t">다친 모험가 ${pats.length}명이 여관 방에 누워 있어요. 신전을 지으면 하루 ${Math.round(healRate())} → ${(4 + 4) * (spn('clinic') >= 2 ? 1.5 : 1)}씩 낫고 약재·치유사·수술도 쓸 수 있어요.</div>
+    <div class="list">${pats.map(a => careRow(a, plan)).join('')}</div>${careFoot()}`;
 }
 function towerBox() {
   const cur = S.research.cur;
@@ -97,7 +141,8 @@ function towerBox() {
   return `${cur ? `<div class="sub gold-t">연구 중: ${RESEARCH[cur.k].name} ${rlv(cur.k) + 1}단계 · ${dayLabel(cur.done)} 완료</div>` : '<div class="sub">한 번에 하나씩 연구할 수 있어요. 연구 기간은 게임 속 날짜로 셉니다.</div>'}<div class="list">${rows}</div>`;
 }
 PANELS.fac = () => BUILD_ORDER.map(id => {
-  const B = BUILDINGS[id], lv = S.bld[id], max = lv >= B.max, c = B.cost[lv];
+  const B = BUILDINGS[id], lv = S.bld[id], max = lv >= B.max, c = B.cost[lv], need = BUILD_RANK[id] || 0;
+  if (!lv && (S.rank || 0) < need) return `<div class="card dim"><div class="row"><div class="grow"><div class="h">${B.name} <small>잠김</small></div><div class="sub">${B.desc}</div></div><span class="sub muted">${RANKS[need].name}랭크에 열림</span></div></div>`;
   const btn = max ? '<span class="sub muted">최고 단계</span>' : `<button type="button" class="btn sm${lv ? '' : ' gold'}" data-act="build" data-id="${id}"${S.gold < c ? ' disabled' : ''}>${lv ? '확장' : '건설'} ${fmt(c)}G</button>`;
   let body = '';
   if (lv && id === 'smithy') body = smithyBox();
@@ -105,20 +150,28 @@ PANELS.fac = () => BUILD_ORDER.map(id => {
   if (lv && id === 'training') body = '<div class="sub">모험가 탭에서 모험가를 누르면 능력치를 훈련하고, 가진 스킬북으로 스킬을 배울 수 있어요.</div>';
   if (lv && id === 'bank') body = bankBox();
   if (lv && id === 'tower') body = towerBox();
-  if (lv && id === 'temple') body = templeBox();
-  if (id === 'shop' && lv) body = `<div class="sub">손님 수 ×${traffic().toFixed(2)} · 진열은 창고 탭에서 해요.</div>`;
+  if (id === 'temple') body = lv ? templeBox() : innCare();
+  if (id === 'shop' && lv) body = `<div class="sub">진열대 ${slotCount()}칸 · 손님 수 ×${traffic().toFixed(2)} · 진열은 창고 탭에서 해요.</div>`;
+  if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div>`;
   return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? 'Lv' + lv : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}</div>`;
 }).join('');
 
 /* 모험가 */
 function eqIcons(a) { return SLOTS.map(([s, n]) => (a.eq[s] ? gImg(a.eq[s], 'ico q-b q' + a.eq[s].q) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
+function advState(a, p) {
+  if (a.status === 'away') return `<span class="warn">${esc(p ? p.name : '')} 원정 중</span>`;
+  if (a.inj) return `<span class="red-t">${INJ[a.inj.sev].name} · ${S.bld.temple ? '신전에서' : '여관 방에서'} 치료 중</span>`;
+  if (a.post) return '<span class="ok-t">신전에서 환자를 돌보는 중</span>';
+  if ((a.sleep || 0) >= SLEEP.block) return `<span class="warn">여관에서 자는 중${p ? ' · ' + esc(p.name) : ''}</span>`;
+  return p ? `대기 · ${esc(p.name)}` : '대기 · 파티 없음';
+}
 function advCard(a) {
   const p = partyOf(a.id), d = derive(a);
-  const st = a.status === 'away' ? `<span class="warn">${esc(p ? p.name : '')} 원정 중</span>` : p ? `대기 · ${esc(p.name)}` : '대기 · 파티 없음';
   return `<button type="button" class="card advc" data-act="advopen" data-id="${a.id}">
-    <div class="row"><img class="por" src="${portrait(a)}" alt=""><div class="grow"><div class="h">${esc(a.name)} <small>${CLASSES[a.cls].name} Lv${a.lv}</small>${a.hero ? ' <span class="tag gold-t">용사</span>' : ''}${CLASSES[a.cls].special ? ' <span class="tag fame-t">특수</span>' : ''}${a.quit ? ' <span class="tag red-t">퇴사 예정</span>' : ''}</div><div class="sub">${st}</div></div><div class="eqs">${eqIcons(a)}</div></div>
-    <div class="bar hp"><i data-hp="${a.id}"></i></div><div class="bar mp"><i data-mp="${a.id}"></i></div><div class="bar fat"><i data-fat="${a.id}"></i></div>
-    <div class="stats"><span>힘 <b>${d.T.str}</b></span><span>체력 <b>${d.T.vit}</b></span><span>민첩 <b>${d.T.agi}</b></span><span>지능 <b>${d.T.int}</b></span><span>피로 <b data-fatn="${a.id}">${Math.round(a.fat || 0)}</b></span><span class="muted">${a.skills.map(s => SKILLS[s].name).join(' · ')}</span></div>
+    <div class="row"><img class="por" src="${portrait(a)}" alt=""><div class="grow"><div class="h">${esc(a.name)} <small>${CLASSES[a.cls].name} Lv${a.lv}</small> ${licTag(a)}${a.hero ? ' <span class="tag gold-t">용사</span>' : ''}${CLASSES[a.cls].special ? ' <span class="tag fame-t">특수</span>' : ''}${injTag(a)}${a.quit ? ' <span class="tag red-t">퇴사 예정</span>' : ''}</div><div class="sub">${advState(a, p)}</div></div><div class="eqs">${eqIcons(a)}</div></div>
+    <div class="bar hp"><i data-hp="${a.id}"></i></div><div class="bar mp"><i data-mp="${a.id}"></i></div><div class="bar fat"><i data-fat="${a.id}"></i></div><div class="bar slp"><i data-slp="${a.id}"></i></div>
+    ${a.inj ? `<div class="bar inj"><i data-inj="${a.id}"></i></div>` : ''}
+    <div class="stats"><span>힘 <b>${d.T.str}</b></span><span>체력 <b>${d.T.vit}</b></span><span>민첩 <b>${d.T.agi}</b></span><span>지능 <b>${d.T.int}</b></span><span>명성 <b>${Math.floor(a.pf || 0)}</b></span><span>피로 <b data-fatn="${a.id}">${Math.round(a.fat || 0)}</b></span><span>숙면 <b data-slpn="${a.id}">${Math.round(a.sleep || 0)}</b></span><span class="muted">${a.skills.map(s => SKILLS[s].name).join(' · ')}</span></div>
   </button>`;
 }
 function candCard(c) {
@@ -128,25 +181,31 @@ function candCard(c) {
   if (!why && living().length >= beds()) why = '여관 방이 없어요';
   if (!why && S.gold < c.fee) why = '계약금이 모자라요';
   const C = CLASSES[c.cls], d = derive(c);
-  return `<div class="card${c.hero || c.specOf ? ' hl' : ''}">
-    <div class="row"><img class="por" src="${portrait(c)}" alt=""><div class="grow"><div class="h">${esc(c.name)} <small>${C.name} Lv${c.lv}</small>${c.hero ? ' <span class="tag gold-t">용사</span>' : ''}${c.specOf ? ' <span class="tag fame-t">특수직업</span>' : ''}</div><div class="sub">${C.desc}</div></div><div class="eqs">${eqIcons(c)}</div></div>
+  return `<div class="card">
+    <div class="row"><img class="por" src="${portrait(c)}" alt=""><div class="grow"><div class="h">${esc(c.name)} <small>${C.name} Lv${c.lv}</small> ${licTag(c)}</div><div class="sub">${C.desc}</div></div><div class="eqs">${eqIcons(c)}</div></div>
     <div class="stats"><span>힘 <b>${d.T.str}</b></span><span>체력 <b>${d.T.vit}</b></span><span>민첩 <b>${d.T.agi}</b></span><span>지능 <b>${d.T.int}</b></span><span>HP <b>${d.maxHp}</b></span><span>MP <b>${d.maxMp}</b></span><span>봉급 <b>${fmt(c.salary)}G/월</b></span></div>
     <div class="sub muted">${esc(c.bio)}</div>${cond}
     <div class="row"><span class="sub grow">${why ? `<span class="red-t">${why}</span>` : '고용할 수 있어요'}</span><button type="button" class="btn sm gold" data-act="hire" data-id="${c.id}"${why ? ' disabled' : ''}>고용 · 계약금 ${fmt(c.fee)}G</button></div>
   </div>`;
 }
+function specList() {
+  return Object.entries(SPECIAL_FAME).map(([c, f]) => { const on = S.unlocked.includes(c), from = Object.keys(PROMOTE).filter(k => PROMOTE[k].includes(c)).map(k => CLASSES[k].name).join('·');
+    return `<div class="${on ? 'ok-t' : 'muted'}">${on ? '✔' : '·'} ${CLASSES[c].name} · 명성 ${f} · ${from}에서 전직</div>`; }).join('');
+}
 PANELS.adv = () => `
   <div class="sec"><b>소속 모험가</b><span>${living().length}/${beds()}명 · 눌러서 자세히</span></div>
   ${living().map(advCard).join('') || '<div class="card"><div class="sub">모험가가 없어요. 아래 여관 손님 중에서 고용하세요.</div></div>'}
+  <details class="card"><summary>라이선스와 전직 안내 · 특수직업 ${S.unlocked.length}/${Object.keys(SPECIAL_FAME).length} 해금</summary><div class="log">
+    <div>모험가는 원정에서 몬스터를 잡고, 필드 보스와 던전을 쓰러뜨리고, 무사히 돌아올 때마다 개인 명성을 쌓아요. 레벨과 개인 명성이 차면 모험가 길드 심사를 받아 ${LICENSE.map(L => L.name).join(' → ')}로 올라가요. 라이선스가 오를수록 능력이 강해지고 봉급도 올라요.</div>
+    <div>특수직업은 상단 명성으로 해금되고, 비슷한 계열 모험가가 Lv${PROMO.lv} 이상·${LICENSE[PROMO.rank].name} 라이선스가 되면 훈련소에서 ${fmt(PROMO.fee)}G에 전직할 수 있어요.</div>${specList()}</div></details>
   <div class="sec"><b>여관 손님</b><span>이틀마다 새 손님</span></div>
-  ${S.cands.map(candCard).join('')}
-  ${S.graves.length ? `<details class="card"><summary>묘지 · ${S.graves.length}명${S.bld.temple ? ' · 시설 탭의 신전에서 되살릴 수 있어요' : ''}</summary><div class="log">${S.graves.slice(0, 30).map(g => `<div><span class="d">${g.date}</span>${esc(g.name)} (${CLASSES[g.cls].name} Lv${g.lv}) · ${esc(g.where)}</div>`).join('')}</div></details>` : ''}`;
+  ${S.cands.map(candCard).join('')}`;
 
 /* 모험가 상세 창 */
 function advDetail(a) {
   const d = derive(a), G = gearSum(a), idle = a.status === 'idle', canTr = S.bld.training && idle && trainedTotal(a) < trainCap(a);
   const stats = STATS.map(([k, n]) => `<div class="li flat"><span class="grow">${n} <b class="num">${d.T[k]}</b> <span class="sub muted">· 기본 ${a.st[k]}${a.tr[k] ? ` · 훈련 +${a.tr[k]}` : ''}${G[k] ? ` · 장비 ${G[k] > 0 ? '+' : ''}${G[k]}` : ''}</span></span>${S.bld.training ? `<button type="button" class="btn sm" data-mact="train" data-k="${k}"${canTr && S.gold >= trainCost(a) ? '' : ' disabled'}>+1 · ${fmt(trainCost(a))}G</button>` : ''}</div>`).join('');
-  const derived = [['HP', `${Math.ceil(a.hp)}/${d.maxHp}`], ['MP', `${Math.ceil(a.mp)}/${d.maxMp}`], ['피로', `${Math.round(a.fat || 0)}/100`], ['공격', d.atk.toFixed(1)], ['마법', d.matk.toFixed(1)], ['방어', d.def.toFixed(1)], ['회피', Math.round(d.eva * 1000) / 10 + '%'], ['치명', Math.round(d.crit * 1000) / 10 + '%'], ['공격속도', d.spd.toFixed(2) + '/초'], ['이동속도', d.move.toFixed(1)], ['짐', d.carry]]
+  const derived = [['HP', `${Math.ceil(a.hp)}/${d.maxHp}`], ['MP', `${Math.ceil(a.mp)}/${d.maxMp}`], ['피로', `${Math.round(a.fat || 0)}/100`], ['숙면 피로', `${Math.round(a.sleep || 0)}/100`], ['공격', d.atk.toFixed(1)], ['마법', d.matk.toFixed(1)], ['방어', d.def.toFixed(1)], ['회피', Math.round(d.eva * 1000) / 10 + '%'], ['치명', Math.round(d.crit * 1000) / 10 + '%'], ['공격속도', d.spd.toFixed(2) + '/초'], ['이동속도', d.move.toFixed(1)], ['짐', d.carry]]
     .map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('');
   const slots = SLOTS.map(([s, n]) => {
     const g = a.eq[s];
@@ -161,9 +220,19 @@ function advDetail(a) {
   const ownRows = owns.map(id => { const s = SKILLS[id], ok = a.lv >= s.lv; return `<div class="li"><div class="grow"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv}</span></span><span class="sub">${s.desc}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${ok && S.bld.training && idle && a.skills.length < MAX_SKILLS && S.gold >= ownFee(s) ? '' : ' disabled'}>${ok ? `배우기 ${ownFee(s)}G` : `Lv${s.lv}부터`}</button></div>`; }).join('');
   const table = SKILL_IDS.filter(id => SKILLS[id].cls.includes(a.cls) || SKILLS[id].cls.includes('all')).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv)
     .map(id => { const s = SKILLS[id], has = a.skills.includes(id); return `<div class="${has ? 'ok-t' : a.lv >= s.lv ? '' : 'muted'}">Lv${s.lv} ${s.name} · ${costStr(s)} · ${has ? '배움' : id === CLASSES[a.cls].innate ? '기본' : s.own ? '고유 · 책 없이 배움' : '스킬북 필요'}${s.cls.includes('all') ? ' · 공용' : ''}</div>`; }).join('');
+  const L = LICENSE[a.rank || 0], Ln = licNext(a);
+  const lic = Ln ? `<div class="li"><div class="grow"><span>다음: ${LICENSE[a.rank + 1].name} <span class="muted">· 능력 ×${LICENSE[a.rank + 1].mul}</span></span><span class="sub"><span class="${a.lv >= Ln.lv ? 'ok-t' : ''}">Lv ${a.lv}/${Ln.lv}</span> · <span class="${(a.pf || 0) >= Ln.pf ? 'ok-t' : ''}">개인 명성 ${Math.floor(a.pf || 0)}/${Ln.pf}</span> · 심사비 ${fmt(Ln.fee)}G</span></div><button type="button" class="btn sm gold" data-mact="lic"${idle && a.lv >= Ln.lv && (a.pf || 0) >= Ln.pf && S.gold >= Ln.fee ? '' : ' disabled'}>심사</button></div>` : '<div class="li"><span class="sub gold-t">가장 높은 라이선스예요.</span></div>';
+  const promo = (PROMOTE[a.cls] || []).map(c => { const why = promoWhy(a, c); return `<div class="li"><div class="grow"><span>${CLASSES[c].name} <span class="muted">· 기본 스킬 ${SKILLS[CLASSES[c].innate].name}</span></span><span class="sub">${CLASSES[c].desc}</span>${why ? `<span class="sub red-t">${why}</span>` : ''}</div><button type="button" class="btn sm gold" data-mact="promo" data-c="${c}"${why ? ' disabled' : ''}>전직 ${fmt(PROMO.fee)}G</button></div>`; }).join('');
+  const post = HEALERS.includes(a.cls) && S.bld.temple ? `<div class="li"><div class="grow"><span>신전 치유사</span><span class="sub">${a.post ? '신전에서 환자를 돌보고 있어요. 원정에는 나가지 않아요.' : `신전에 두면 환자를 하루 +${Math.round(healPow(a))}씩 치료해요.${a.cls === 'plaguedoc' ? ' 역병의사는 수술도 해요.' : ''}`}</span></div><button type="button" class="btn sm${a.post ? '' : ' gold'}" data-mact="post"${idle && !a.inj && (a.post || healers().length < healerSlots()) ? '' : ' disabled'}>${a.post ? '내리기' : `배치 ${healers().length}/${healerSlots()}`}</button></div>` : '';
   return `
-    <div class="row"><img class="por" src="${portrait(a)}" alt=""><div class="grow"><div class="h">${CLASSES[a.cls].name} Lv${a.lv}${a.hero ? ' <span class="tag gold-t">용사</span>' : ''}</div><div class="sub">경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0}</div><div class="bar xp"><i style="width:${pct(a.exp, expNeed(a.lv))}%"></i></div></div></div>
+    <div class="row"><img class="por" src="${portrait(a)}" alt=""><div class="grow"><div class="h">${CLASSES[a.cls].name} Lv${a.lv} ${licTag(a)}${a.hero ? ' <span class="tag gold-t">용사</span>' : ''}${injTag(a)}</div><div class="sub">경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0} · 개인 명성 ${Math.floor(a.pf || 0)}</div><div class="bar xp"><i style="width:${pct(a.exp, expNeed(a.lv))}%"></i></div></div></div>
     ${idle ? '' : '<div class="sub red-t">원정 중에는 보기만 할 수 있어요.</div>'}
+    ${a.inj ? `<div class="sec"><b>부상</b><span>${S.bld.temple ? '신전' : '여관 방'}에서 치료 중</span></div><div class="list">${careRow(a, healPlan(), 'mact')}</div>` : ''}
+    ${(a.sleep || 0) >= SLEEP.block ? `<div class="sub warn">숙면 피로 ${Math.round(a.sleep)} · ${SLEEP.block} 아래로 내려갈 때까지 여관에서 자야 원정에 나갈 수 있어요.</div>` : ''}
+    <div class="sec"><b>모험가 라이선스</b><span>지금 ${L.name}${L.mul > 1 ? ` · 능력 ×${L.mul}` : ''}</span></div>
+    <div class="list">${lic}</div>
+    ${promo ? `<div class="sec"><b>전직</b><span>훈련소에서</span></div><div class="list">${promo}</div>` : ''}
+    ${post ? `<div class="list">${post}</div>` : ''}
     <div class="sec"><b>능력치</b><span>${S.bld.training ? `훈련 ${trainedTotal(a)}/${trainCap(a)}번` : '훈련소를 지으면 훈련할 수 있어요'}</span></div>
     <div class="list">${stats}</div>
     <div class="stats boxed">${derived}</div>
@@ -183,6 +252,7 @@ function openAdv(aid) {
   UI.advHtml = advDetail(a);
   openModal(a.name, UI.advHtml, [{ label: '닫기', cls: 'gold' }]);
   UI.advOpen = aid;
+  liveIn($('m-body'));
   $('m-body').onclick = e => {
     const b = e.target.closest('[data-mact]');
     if (!b || b.disabled) return;
@@ -195,6 +265,10 @@ function openAdv(aid) {
     if (k === 'autoeq') m = autoEquip(aid);
     if (k === 'learn') m = learnSkill(aid, b.dataset.s);
     if (k === 'forget') { forgetSkill(aid, b.dataset.s); }
+    if (k === 'lic') m = licenseUp(aid);
+    if (k === 'promo') { const c = b.dataset.c; confirmBox('전직', `${x.name}을(를) ${CLASSES[c].name}(으)로 전직시킬까요? ${fmt(PROMO.fee)}G가 들고, 되돌릴 수 없어요.`, '전직', () => { say(promote(aid, c)); renderPanel(true); updateHud(); saveGame(); }, false); return; }
+    if (k === 'treat') m = treat(aid, b.dataset.k);
+    if (k === 'post') m = postHealer(aid, !x.post);
     if (k === 'fire') { confirmBox('모험가 내보내기', `${x.name}을(를) 내보낼까요? 끼고 있던 장비는 창고로 돌아와요.`, '내보내기', () => { say(fire(aid)); renderPanel(true); saveGame(); }, true); return; }
     say(m);
     refreshAdv(true);
@@ -211,6 +285,7 @@ function refreshAdv(force) {
   const body = $('m-body'), det = body.querySelector('details'), open = det && det.open;
   body.innerHTML = html; UI.advHtml = html;
   if (open) body.querySelector('details').open = true;
+  liveIn(body);
 }
 
 /* 원정 */
@@ -220,19 +295,20 @@ function partyCard(p) {
   const DM = { ask: '멈추고 묻기', enter: '바로 들어가기', skip: '지나가기' };
   const toggles = `<button type="button" class="btn sm${p.auto ? ' on' : ''}" data-act="auto" data-id="${p.id}">짐 차면 복귀 ${p.auto ? '켬' : '끔'}</button><button type="button" class="btn sm${p.safe ? ' on' : ''}" data-act="safe" data-id="${p.id}">위험하면 복귀 ${p.safe ? '켬' : '끔'}</button><button type="button" class="btn sm${p.campNight !== false ? ' on' : ''}" data-act="camp" data-id="${p.id}">밤에는 야영 ${p.campNight !== false ? '켬' : '끔'}</button><button type="button" class="btn sm${p.repeat ? ' on' : ''}" data-act="repeat" data-id="${p.id}">돌아오면 다시 출발 ${p.repeat ? '켬' : '끔'}</button><button type="button" class="btn sm on" data-act="dmode" data-id="${p.id}">던전 앞에서: ${DM[p.dmode || 'ask']}</button>`;
   if (e) {
-    const team = teamOf(p);
+    const team = teamOf(p), F = FIELDS[e.field];
     const gate = e.wait === 'gate';
     return `<div class="card${on || gate ? ' hl' : ''}">${head}
       <div class="sub" data-pwhere="${p.id}"></div>
       <div class="bar big load"><i data-prog="${p.id}"></i></div>
-      ${gate ? `<div class="card special"><div class="h">${FIELDS[e.field].dungeon.name} 입구</div><div class="sub">던전은 한 번만 공략할 수 있어요. 몬스터 Lv${FIELDS[e.field].lv + 9}~${FIELDS[e.field].lv + 13}, 주인 Lv${FIELDS[e.field].lv + 14}. 파티 평균 Lv${Math.round(avgLvOf(p))}.</div><div class="btns"><button type="button" class="btn sm gold" data-act="gate" data-id="${p.id}" data-c="enter">들어가기</button><button type="button" class="btn sm" data-act="gate" data-id="${p.id}" data-c="skip">지나가기</button></div></div>` : ''}
-      ${team.map(a => `<div class="row"><span class="sub" style="width:7.5em">${esc(a.name)} <span class="muted">Lv${a.lv}</span></span><div class="grow"><div class="bar hp"><i data-hp="${a.id}"></i></div><div class="bar mp"><i data-mp="${a.id}"></i></div><div class="bar fat"><i data-fat="${a.id}"></i></div></div></div>`).join('')}
+      ${gate ? `<div class="card special"><div class="h">${F.dungeon.name} 입구</div><div class="sub">던전은 한 번만 공략할 수 있어요. 몬스터 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)}, 주인 Lv${dungeonBossLv(F)}. 파티 평균 Lv${Math.round(avgLvOf(p))}.</div><div class="btns"><button type="button" class="btn sm gold" data-act="gate" data-id="${p.id}" data-c="enter">들어가기</button><button type="button" class="btn sm" data-act="gate" data-id="${p.id}" data-c="skip">지나가기</button></div></div>` : ''}
+      ${team.map(a => `<div class="row"><span class="sub" style="width:7.5em">${esc(a.name)} <span class="muted">Lv${a.lv}</span></span><div class="grow">${a.down ? `<span class="sub red-t">쓰러짐 · 들것에 실려 가는 중${a.inj ? ' (' + INJ[a.inj.sev].name + ')' : ''}</span>` : `<div class="bar hp"><i data-hp="${a.id}"></i></div><div class="bar mp"><i data-mp="${a.id}"></i></div><div class="bar fat"><i data-fat="${a.id}"></i></div><div class="bar slp"><i data-slp="${a.id}"></i></div>`}</div></div>`).join('')}
       <div class="row sub"><span class="grow">짐 <b data-load="${p.id}"></b> · 처치 <b data-kills="${p.id}"></b>${p.wagon ? ` · ${WAGONS[p.wagon].name}` : ''}</span><span data-sup="${p.id}"></span></div>
       <div class="btns">${e.mode === 'advance' ? `<button type="button" class="btn sm" data-act="recall" data-id="${p.id}">복귀</button>` : ''}${toggles}</div></div>`;
   }
-  const pool = S.advs.filter(a => a.status === 'idle');
-  const dest = p.dest && isUnlocked(p.dest) ? p.dest : 'plains';
-  const team = teamOf(p);
+  const pool = S.advs.filter(a => a.status === 'idle' && (!a.post || p.members.includes(a.id)));
+  const dest = p.dest && isUnlocked(p.dest) ? p.dest : 'plains', DF = FIELDS[dest];
+  const team = teamOf(p), block = team.map(cantGo).filter(Boolean);
+  const cps = checkpoints(dest), st = cps.includes(p.start) ? p.start : 1;
   const cap = capOf(p), supW = wOf(p.sup);
   const fast = team.length ? team.slice().sort((x, y) => derive(y).move - derive(x).move)[0] : null;
   const tired = team.filter(a => (a.fat || 0) > FATIGUE.depart);
@@ -241,30 +317,33 @@ function partyCard(p) {
   const avg = Math.round(avgLvOf(p));
   const fields = ALL_FIELDS.filter(f => f !== 'alley' || isUnlocked('alley')).map(fid => {
     const F = FIELDS[fid], ok = isUnlocked(fid), fs = S.fields[fid];
-    const sub = F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : ok ? `Lv${F.lv + 3}+ · 최고 ${F.no}-${fs.best || 0}${fs.cleared ? ' · 던전★' : fs.found ? ` · 입구 ${F.no}-${fs.gate}` : ' · 입구 ???'}` : '이전 던전 공략 필요';
+    const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length;
+    const sub = F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : ok ? `Lv${F.lv}~${F.lv + 12} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}` : `상단 ${RANKS[F.no - 1].name}랭크에 열림`;
     return `<button type="button" class="fbtn${dest === fid ? ' on' : ''}${F.raid ? ' raid' : ''}" data-act="dest" data-id="${p.id}" data-f="${fid}"${ok ? '' : ' disabled'}><span>${F.name}</span><small>${sub}</small></button>`;
   }).join('');
   const last = p.last ? `<div class="sub muted">지난 원정: ${FIELDS[p.last.field].name}, 처치 ${p.last.kills}마리, 부속품 ${Object.values(p.last.got).reduce((s, q) => s + q, 0)}개${p.last.gear ? `, 장비 ${p.last.gear}개` : ''}</div>` : '';
   return `<div class="card${on ? ' hl' : ''}">${head}
     <div class="sec" style="margin-top:2px"><b>파티원</b><span>눌러서 넣고 빼기</span></div>
-    <div class="list">${pool.map(a => { const o = partyOf(a.id), inP = p.members.includes(a.id), d = derive(a); return `<button type="button" class="pick${inP ? ' on' : ''}" data-act="member" data-id="${p.id}" data-a="${a.id}"><i class="chk"></i><img class="ico" src="${portrait(a)}" alt="" style="width:20px;height:24px"><span class="grow">${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}${o && o !== p ? ' · ' + esc(o.name) : ''}</span></span><span class="sub num">HP ${pct(a.hp, d.maxHp)}%</span></button>`; }).join('') || '<div class="sub">대기 중인 모험가가 없어요.</div>'}</div>
+    <div class="list">${pool.map(a => { const o = partyOf(a.id), inP = p.members.includes(a.id), d = derive(a), why = a.inj ? INJ[a.inj.sev].name : (a.sleep || 0) >= SLEEP.block ? '자는 중' : ''; return `<button type="button" class="pick${inP ? ' on' : ''}" data-act="member" data-id="${p.id}" data-a="${a.id}"><i class="chk"></i>${mini(a)}<span class="grow">${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}${o && o !== p ? ' · ' + esc(o.name) : ''}</span>${why ? ` <span class="red-t">${why}</span>` : ''}</span><span class="sub num">HP ${pct(a.hp, d.maxHp)}%</span></button>`; }).join('') || '<div class="sub">대기 중인 모험가가 없어요.</div>'}</div>
     <div class="sec"><b>보급품</b><span>가져간 물약만 쓸 수 있어요</span></div>
     ${POTIONS.filter(k => (S.inv[k] || 0) > 0 || (p.sup[k] || 0) > 0 || k === 'pot_s').map(k => `<div class="row">${iconImg(k)}<span class="grow sub">${ITEMS[k].name} <span class="muted">창고 ${S.inv[k] || 0}</span></span><span class="step"><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="-1">−</button><span>${p.sup[k] || 0}</span><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="1">+</button></span></div>`).join('')}
     <div class="sec"><b>목적지</b><span>파티 평균 Lv${avg}</span></div>
     <div class="fields">${fields}</div>
+    ${DF.raid ? '' : `<div class="sec"><b>출발 거점</b><span>필드 보스를 쓰러뜨린 구간 다음부터</span></div><div class="btns">${[1, 11, 21, 31, 41].map(x => `<button type="button" class="btn sm${x === st ? ' on' : ''}" data-act="start" data-id="${p.id}" data-s="${x}"${cps.includes(x) ? '' : ' disabled'}>${DF.no}-${x} <span class="muted">Lv${fieldLv(DF, x)}</span></button>`).join('')}</div>`}
     <div class="sub">짐 한도 ${cap} · 물약이 ${supW} 차지${fast ? ` · 이동속도 ${(moveOf(p)).toFixed(1)} (가장 민첩한 ${esc(fast.name)} 기준${p.wagon ? ', 마차 포함' : ''})` : ''}</div>
     <details class="card"><summary>마차 · ${p.wagon ? `${WAGONS[p.wagon].name} (짐 +${WAGONS[p.wagon].cap})` : '없음'} · 바꾸면 쓰던 마차는 반값에 넘겨요</summary><div class="list">${wagonList}</div></details>
     ${hurt ? '<div class="sub red-t">다친 모험가가 있어요. 상단에 두면 체력이 서서히 차요.</div>' : ''}
     ${tired.length ? `<div class="sub warn">${tired.map(a => esc(a.name)).join(', ')}이(가) 지쳐 있어요. 상단에서 쉬면 피로가 풀려요.</div>` : ''}
+    ${block.length ? `<div class="sub red-t">${block.map(esc).join('<br>')}</div>` : ''}
     ${last}
     <div class="btns">${toggles}</div>
-    <div class="btns"><button type="button" class="btn gold grow" data-act="go" data-id="${p.id}"${team.length ? '' : ' disabled'}>${FIELDS[dest].name}(으)로 출발</button><button type="button" class="btn" data-act="delparty" data-id="${p.id}">파티 삭제</button></div>
+    <div class="btns"><button type="button" class="btn gold grow" data-act="go" data-id="${p.id}"${team.length && !block.length ? '' : ' disabled'}>${DF.name}${DF.raid ? '' : ` ${DF.no}-${st}`}(으)로 출발</button><button type="button" class="btn" data-act="delparty" data-id="${p.id}">파티 삭제</button></div>
   </div>`;
 }
 PANELS.exp = () => `
-  <div class="sec"><b>원정대</b><span>${S.parties.length}/${MAX_PARTIES}개</span></div>
+  <div class="sec"><b>원정대</b><span>${S.parties.length}/${partyMax()}개</span></div>
   ${S.parties.map(partyCard).join('')}
-  ${S.parties.length < MAX_PARTIES ? '<button type="button" class="btn block" data-act="newparty">+ 새 파티 만들기</button>' : ''}`;
+  ${S.parties.length < partyMax() ? '<button type="button" class="btn block" data-act="newparty">+ 새 파티 만들기</button>' : `<div class="sub muted">상단 랭크가 오르면 파티를 더 만들 수 있어요.</div>`}`;
 
 /* 창고 */
 PANELS.inv = () => {
@@ -318,8 +397,9 @@ function renderPanel(force) {
   if (force || html !== UI.html) { $('panel-in').innerHTML = html; UI.html = html; }
   live();
 }
-function live() {
-  const box = $('panel-in');
+function live() { liveIn($('panel-in')); if (UI.modal) liveIn($('m-body')); }
+function liveIn(box) {
+  if (!box) return;
   const D = {};
   const dOf = a => D[a.id] || (D[a.id] = derive(a));
   box.querySelectorAll('[data-hp]').forEach(el => { const a = advById(+el.dataset.hp); if (!a) return; const mx = dOf(a).maxHp; el.style.width = pct(a.hp, mx) + '%'; el.classList.toggle('low', a.hp < mx * 0.35); });
@@ -329,6 +409,10 @@ function live() {
   box.querySelectorAll('[data-prog]').forEach(el => { const p = S.parties.find(x => x.id === +el.dataset.prog); if (p && p.exp) { const e = p.exp, k = e.stage - 1 + e.pos / STAGE_LEN; el.style.width = (e.area === 'dungeon' ? pct(k, DUNGEON_FLOORS) : pct(k, FIELD_STAGES)) + '%'; } });
   box.querySelectorAll('[data-fat]').forEach(el => { const a = advById(+el.dataset.fat); if (a) { el.style.width = Math.round(a.fat || 0) + '%'; el.classList.toggle('low', (a.fat || 0) >= 85); } });
   box.querySelectorAll('[data-fatn]').forEach(el => { const a = advById(+el.dataset.fatn); if (a) el.textContent = Math.round(a.fat || 0); });
+  box.querySelectorAll('[data-slp]').forEach(el => { const a = advById(+el.dataset.slp); if (a) { el.style.width = Math.round(a.sleep || 0) + '%'; el.classList.toggle('low', (a.sleep || 0) >= SLEEP.block); } });
+  box.querySelectorAll('[data-slpn]').forEach(el => { const a = advById(+el.dataset.slpn); if (a) el.textContent = Math.round(a.sleep || 0); });
+  box.querySelectorAll('[data-inj]').forEach(el => { const a = advById(+el.dataset.inj); if (a && a.inj) el.style.width = pct(a.inj.done, a.inj.need) + '%'; });
+  box.querySelectorAll('[data-injn]').forEach(el => { const a = advById(+el.dataset.injn); if (a && a.inj) el.textContent = Math.floor(a.inj.done); });
   box.querySelectorAll('[data-load]').forEach(el => { const p = S.parties.find(x => x.id === +el.dataset.load); if (p) el.textContent = `${usedOf(p)}/${capOf(p)}`; });
   box.querySelectorAll('[data-kills]').forEach(el => { const p = S.parties.find(x => x.id === +el.dataset.kills); if (p && p.exp) el.textContent = p.exp.kills; });
   box.querySelectorAll('[data-sup]').forEach(el => { const p = S.parties.find(x => x.id === +el.dataset.sup); if (p && p.exp) el.textContent = `물약 ${wOf(p.exp.sup)}개 남음${p.exp.gbag.length ? ` · 장비 ${p.exp.gbag.length}` : ''}`; });
@@ -356,7 +440,11 @@ const ACT = {
   wagon: d => say(buyWagon(+d.id, d.w)),
   camp: d => { const p = findP(d.id); if (p) p.campNight = p.campNight === false; },
   dmode: d => { const p = findP(d.id); if (p) p.dmode = { ask: 'enter', enter: 'skip', skip: 'ask' }[p.dmode || 'ask']; },
-  revive: d => say(revive(+d.id) || '신전에서 다시 눈을 떴어요'),
+  rankup: () => say(rankUp()),
+  treat: d => say(treat(+d.id, d.k)),
+  post: d => say(postHealer(+d.id, d.on === '1')),
+  autotreat: () => { S.autoTreat = !S.autoTreat; },
+  start: d => { const p = findP(d.id); if (p) p.start = +d.s; },
   auto: d => { const p = findP(d.id); if (p) p.auto = !p.auto; },
   safe: d => { const p = findP(d.id); if (p) p.safe = !p.safe; },
   repeat: d => { const p = findP(d.id); if (p) p.repeat = !p.repeat; },

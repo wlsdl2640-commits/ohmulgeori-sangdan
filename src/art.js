@@ -210,25 +210,27 @@ function drawAdv(ctx, a, t, o = {}) {
 }
 
 /* ───────── 몬스터 ───────── */
-function monH(id) {
-  const m = MONS[id], s = Math.max(1, Math.round(m.scale || 1));
+// sc: 필드 보스처럼 몸집을 따로 키울 때
+const monSc = (m, sc) => sc || Math.max(1, Math.round(m.scale || 1));
+function monH(id, sc) {
+  const m = MONS[id], s = monSc(m, sc);
   const h = m.plan === 'quad' ? (m.h || 4) + 5 : m.plan === 'blob' ? (m.nose ? 13 : m.h || 8) : m.plan === 'bug' ? (m.tail ? 15 : 8)
     : m.plan === 'flyer' ? (m.big ? 24 : 17) : m.plan === 'golem' ? (m.small ? 16 : 18) : m.plan === 'worm' ? 23 : m.plan === 'ghost' ? (m.crown ? 21 : 17)
     : { shroom: 12, tree: 18, biped: 14 }[m.plan] || 12;
   return h * s;
 }
-function monW(id) {
-  const m = MONS[id], s = Math.max(1, Math.round(m.scale || 1));
+function monW(id, sc) {
+  const m = MONS[id], s = monSc(m, sc);
   const w = m.plan === 'quad' ? (m.len || 8) + 3 : m.plan === 'flyer' ? (m.big ? 20 : 15) : m.plan === 'worm' ? 14 : m.plan === 'tree' ? 13 : m.plan === 'golem' && !m.small ? 16 : m.plan === 'bug' && m.tail ? 15 : 11;
   return w * s;
 }
 const LOOPS = { flyer: 10, worm: 17, ghost: 20 };   // 계속 움직이는 몸은 여러 장으로 나눠 굽는다
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], sc = Math.max(1, Math.round(m.scale || 1));
+  const m = MONS[id], sc = monSc(m, o.sc);
   const tt = t + (o.ph || 0);
   const fr = Math.floor(tt * 6) % 2, loop = LOOPS[m.plan], q = loop ? Math.floor(tt * 8) % loop : 0;
-  const w = (Math.ceil(monW(id) / sc) + 26) * sc, h = (Math.ceil(monH(id) / sc) + 14) * sc;
-  const key = 'M|' + id + '|' + fr + '|' + q + '|' + (FLASH || '');
+  const w = (Math.ceil(monW(id, sc) / sc) + 26) * sc, h = (Math.ceil(monH(id, sc) / sc) + 14) * sc;
+  const key = 'M|' + id + '|' + fr + '|' + q + '|' + sc + '|' + (FLASH || '');
   const s = bake(key, w, h, Math.round(w / 2), h - 3, x => { if (sc > 1) x.scale(sc, sc); PLANS[m.plan](x, m, fr, q / 8, o); });
   blit(ctx, s);
 }
@@ -327,6 +329,19 @@ function drawZ(ctx, x, y, t, ph) {
   }
 }
 
+/* ───────── 들것: 쓰러진 동료를 싣고 간다 ───────── */
+function drawStretcher(ctx, a, t, moving) {
+  const by = moving ? Math.round(Math.sin(t * 9) * 0.6) : 0;
+  ctx.save(); ctx.translate(0, by);
+  R(ctx, -12, -4, 25, 1, '#6b4a2e'); R(ctx, -13, -4, 1, 1, '#8a6a44'); R(ctx, 13, -4, 1, 1, '#8a6a44');
+  R(ctx, -9, -5, 19, 2, '#d8cdb0'); R(ctx, -9, -3, 19, 1, '#a89a7a');
+  R(ctx, -8, -1, 1, 3, '#5e3c22'); R(ctx, 8, -1, 1, 3, '#5e3c22');
+  ctx.translate(0, -3);
+  drawAdv(ctx, a, t, { sleep: 1 });
+  ctx.restore();
+  R(ctx, -1, -15 + by, 3, 1, '#e0503f'); R(ctx, 0, -16 + by, 1, 3, '#e0503f');
+}
+
 /* ───────── 던전 입구 (필드 위에 서 있다) ───────── */
 function paintGate(x, kind, cleared) {
   const P = (px, py, w, h, c) => R(x, px, py, w, h, c), dark = '#120e14';
@@ -355,11 +370,14 @@ function paintGate(x, kind, cleared) {
     P(-6, -14, 12, 14, dark); P(-8, -16, 16, 2, '#d8c098'); P(-8, -14, 2, 14, '#d8c098'); P(6, -14, 2, 14, '#d8c098');
     P(-3, -19, 6, 2, '#f0c24a'); P(-1, -21, 2, 2, '#f0c24a');
   }
-  if (cleared) {                    // 공략한 던전은 판자로 막혔다
+  if (cleared === 2) {              // 1-50의 주인이 지키는 동안은 봉인되어 있다
+    for (let i = 0; i < 14; i++) { P(-8 + i, -18 + i, 2, 1, '#8a8e98'); P(5 - i, -18 + i, 2, 1, '#8a8e98'); }
+    P(-3, -12, 6, 6, '#6a2a8a'); P(-2, -11, 4, 4, '#b86af0'); P(-1, -10, 2, 2, '#f0d8ff');
+  } else if (cleared) {             // 공략한 던전은 판자로 막혔다
     P(-9, -18, 18, 2, '#9a7a4f'); P(-9, -10, 18, 2, '#9a7a4f'); P(-8, -18, 2, 18, '#7a5634'); P(6, -18, 2, 18, '#7a5634');
     for (let i = 0; i < 12; i++) { P(-7 + i, -17 + i, 2, 1, '#8a6a44'); P(5 - i, -17 + i, 2, 1, '#8a6a44'); }
   }
 }
 function drawGate(ctx, kind, cleared) {
-  blit(ctx, bake('G|' + kind + (cleared ? 1 : 0), 54, 44, 27, 41, x => paintGate(x, kind, cleared)));
+  blit(ctx, bake('G|' + kind + (+cleared || 0), 54, 44, 27, 41, x => paintGate(x, kind, cleared)));
 }

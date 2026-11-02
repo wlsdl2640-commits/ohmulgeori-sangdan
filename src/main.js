@@ -11,7 +11,7 @@ function awayReport(r) {
   lines.push(`골드 ${r.gold >= 0 ? '+' : ''}${fmt(r.gold)}G · 처치 ${fmt(r.kills)}마리 · 상점 판매 ${fmt(r.sales)}개`);
   if (r.gear) lines.push(`장비 ${r.gear}개가 새로 창고에 들어왔어요.`);
   if (r.fame) lines.push(`명성 ${r.fame > 0 ? '+' : ''}${r.fame}`);
-  if (r.deaths) lines.push(`그사이 모험가 ${r.deaths}명이 쓰러졌어요. 모험가 탭의 묘지에서 확인할 수 있어요.`);
+  if (r.downs) lines.push(`그사이 모험가가 ${r.downs}번 쓰러져 들것에 실려 왔어요. 신전에서 치료 상황을 확인하세요.`);
   if (r.sec >= offlineCap()) lines.push(`자리를 비운 시간은 최대 ${Math.round(offlineCap() / 3600)}시간까지만 계산돼요. 마탑의 「시간 결속」 연구로 늘릴 수 있어요.`);
   S.modals.unshift({ title: '자리를 비운 동안', body: lines });
 }

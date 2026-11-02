@@ -49,16 +49,17 @@ function updateHud() {
   const n = S.reqs.filter(q => reqHave(q) >= q.qty).length, b = $('req-badge');
   b.hidden = !n; b.textContent = n;
 }
-const WHY = { full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '동료를 잃고 복귀 중', boss: '보스를 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중' };
+const WHY = { full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '쓰러진 동료를 들것에 싣고 복귀 중', boss: '던전의 주인을 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중', sleep: '잠이 모자라 복귀 중' };
 function expStatus(p) {
   const e = p.exp;
   if (!e) return p.members.length ? '상단에서 대기 중' : '파티원이 없어요';
   const F = FIELDS[e.field];
-  if (e.foes.length) return e.foes.some(f => f.boss) ? '보스와 싸우는 중!' : e.camp ? '야영지 습격!' : '전투 중';
+  if (e.foes.length) { const fb = e.foes.find(f => f.fb); return fb ? `필드 보스 ${fb.name}와(과) 싸우는 중!` : e.foes.some(f => f.boss) ? '던전의 주인과 싸우는 중!' : e.camp ? '야영지 습격!' : '전투 중'; }
   if (e.camp) return e.camp.t > 1.5 ? '모닥불 곁에서 자는 중' : '모닥불을 피우는 중';
   if (e.wait === 'gate') return `${F.dungeon.name} 입구 · 들어갈지 정해 주세요`;
-  const tired = teamOf(p).some(a => (a.fat || 0) >= 60);
-  if (e.mode === 'return') return (WHY[e.why] || '복귀 중') + (tired ? ' · 지침' : '');
+  const tired = teamOf(p).some(a => (a.fat || 0) >= 60), carry = teamOf(p).filter(a => a.down).length;
+  if (e.mode === 'return') return (WHY[e.why] || '복귀 중') + (carry && e.why !== 'loss' ? ` · 들것 ${carry}` : '') + (tired ? ' · 지침' : '');
+  if (carry) return `들것 ${carry}개를 메고 ${e.area === 'dungeon' ? '던전 탐험' : '전진'} 중`;
   return (e.area === 'dungeon' ? '던전 탐험 중' : '전진 중') + (tired ? ' · 지침' : '');
 }
 function whereStr(e) {
@@ -103,7 +104,7 @@ function parseSave(txt) {
   txt = (txt || '').trim();
   const raw = txt.startsWith('OHMUL1:') ? new TextDecoder().decode(unb64(txt.slice(7).replace(/\s+/g, ''))) : txt;
   const v = JSON.parse(raw);
-  if (!v || !Array.isArray(v.advs) || ![1, 2, 3].includes(v.v)) throw new Error('bad save');
+  if (!v || !Array.isArray(v.advs) || ![1, 2, 3, 4].includes(v.v)) throw new Error('bad save');
   return v;
 }
 async function copyText(el) {

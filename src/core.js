@@ -40,7 +40,7 @@ function makeAdv(o = {}) {
   const a = {
     id: nid(), name: o.name || (pickOne(NAME_A) + pickOne(NAME_B)), cls, lv, exp: 0, hero: !!o.hero,
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls]),
-    status: 'idle', kills: 0, trips: 0, quit: false, fat: 0,
+    status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
     eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate],
     salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
@@ -65,12 +65,12 @@ function derive(a) {
   for (const [k] of STATS) T[k] = Math.max(0, a.st[k] + a.tr[k] + (G[k] || 0));
   let atk = a.cls === 'archer' ? T.str * 0.5 + T.agi * 0.75 : a.cls === 'rogue' ? T.str * 0.8 + T.agi * 0.45 : T.str * 1.1;
   atk += L * 0.4 + (G.atk || 0);
-  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind');
+  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul;
   return {
-    T, atk: atk * war,
-    matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1) * war,
-    def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08) * (earth ? 1.1 : 1),
-    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1)),
+    T, atk: atk * war * lic,
+    matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1) * war * lic,
+    def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08) * (earth ? 1.1 : 1) * lic,
+    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic),
     maxMp: Math.round(8 + T.int * 4 + L + (G.mp || 0)),
     eva: Math.min(0.45, T.agi * 0.004 + (G.eva || 0) + (wind ? 0.05 : 0)),
     crit: Math.min(0.6, C.crit + T.agi * 0.0015 + (G.crit || 0)),
@@ -97,8 +97,9 @@ function addExp(a, n) {
 const advById = id => S.advs.find(a => a.id === id);
 const living = () => S.advs.filter(a => a.status !== 'dead');
 const partyOf = aid => S.parties.find(p => p.members.includes(aid));
-const beds = () => 2 + S.bld.inn * 2;
+const beds = () => 2 + S.bld.inn * 2 + rankBeds(S.rank || 0);
 const teamOf = p => p.members.map(advById).filter(a => a && a.status !== 'dead');
+const standing = p => teamOf(p).filter(a => !a.down);
 const avgLvOf = p => { const t = teamOf(p); return t.length ? t.reduce((s, a) => s + a.lv, 0) / t.length : 0; };
 
 /* ───────── 짐 ───────── */
@@ -106,10 +107,11 @@ const wOf = bag => Object.entries(bag).reduce((s, [k, q]) => s + (ITEMS[k] ? ITE
 const vOf = bag => Object.entries(bag).reduce((s, [k, q]) => s + (ITEMS[k] ? ITEMS[k].v * q : 0), 0);
 const gW = list => (list || []).reduce((s, g) => s + GTYPES[g.base].w, 0);
 const wagonOf = p => (p.wagon && WAGONS[p.wagon]) || null;
-function capOf(p) { const w = wagonOf(p); return Math.round((teamOf(p).reduce((s, a) => s + derive(a).carry, 0) + (w ? w.cap : 0)) * (1 + rlv('carry') * 0.1)); }
+// 쓰러진 동료는 짐을 못 들고, 들것이 자리를 차지한다
+function capOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + (w ? w.cap : 0)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
 function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) : wOf(p.sup); }
 // 파티 이동속도 = 가장 빠른(민첩한) 모험가의 속도 × 피로 × 마차
-function moveOf(p) { const w = wagonOf(p); return Math.max(4, ...teamOf(p).map(a => derive(a).move * fatMul(a.fat || 0))) * (w ? w.spd : 1); }
+function moveOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down); if (!st.length) return 4; return Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * (w ? w.spd : 1) * (st.length < all.length ? 0.8 : 1); }
 const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v)); });
 function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete bag[k]; }
 
@@ -133,6 +135,7 @@ const mHp = (m, L) => m.mh * (25 + 18 * L + 1.15 * L * L);
 const mAtk = (m, L) => m.ma * (2.5 + 1.5 * L + 0.035 * L * L);
 const mDef = (m, L) => (m.md || 0) * (1 + 0.6 * L);
 const red = def => 60 / (60 + Math.max(0, def) * 1.5);
+const DIFF = { hp: 1.22, atk: 1.16 };   // v0.5: 더 어렵게
 
 function areaDef(e) { const F = FIELDS[e.field]; return e.area === 'dungeon' ? F.dungeon : F; }
 function makeEncs(e) {
@@ -142,8 +145,20 @@ function makeEncs(e) {
   return [25 + ri(-4, 4), 55 + ri(-4, 4), 85 + ri(-4, 4)];
 }
 function foeFrom(id, lv) {
-  const m = MONS[id], hp = Math.round(mHp(m, lv));
-  return { uid: nid(), id, lv, hp, maxHp: hp, atk: mAtk(m, lv), def: mDef(m, lv), spd: m.spd, eva: m.eva || 0, cd: 0.6 + rnd() * 0.8, boss: !!m.boss, dot: null, dotT: 0, slow: 0 };
+  const m = MONS[id], hp = Math.round(mHp(m, lv) * DIFF.hp);
+  return { uid: nid(), id, lv, hp, maxHp: hp, atk: mAtk(m, lv) * DIFF.atk, def: mDef(m, lv), spd: m.spd, eva: m.eva || 0, cd: 0.6 + rnd() * 0.8, boss: !!m.boss, dot: null, dotT: 0, slow: 0 };
+}
+// 필드 보스: 10 스테이지마다. k = 1~5 (1-50은 그 필드의 주인)
+function fieldBoss(F, stage, lv) {
+  const k = Math.round(stage / BOSS_EVERY), pool = F.mons.filter(id => minStage(MONS[id]) <= stage);
+  const id = pool[(k * 7 + F.no * 3) % pool.length];
+  const f = foeFrom(id, lv + 1);
+  f.hp = f.maxHp = Math.round(f.maxHp * (3 + 0.9 * k));
+  f.atk *= 1.25 + 0.06 * k; f.def *= 1.25;
+  f.boss = true; f.fb = k; f.aoe = k >= 3;
+  f.sc = Math.min(3, Math.max(1, Math.round(MONS[id].scale || 1)) + (k >= 5 ? 2 : 1));
+  f.name = k >= 5 ? `${F.name}의 주인 ${MONS[id].name}` : `우두머리 ${MONS[id].name}`;
+  return f;
 }
 // 어두워질수록 몬스터가 더 몰려온다 (던전 안은 상관없음)
 function nightMore(e) {
@@ -153,11 +168,14 @@ function nightMore(e) {
 }
 function rollFoes(e, idx, extra = 0) {
   const F = FIELDS[e.field], A = areaDef(e);
-  const boss = e.area === 'dungeon' && e.stage === DUNGEON_FLOORS && e.mode === 'advance' && idx === e.encs.length - 1;
-  const lv = e.area === 'dungeon' ? F.lv + 8 + e.stage : fieldLv(F, e.stage);
+  const last = e.mode === 'advance' && idx === e.encs.length - 1;
+  const dboss = e.area === 'dungeon' && e.stage === DUNGEON_FLOORS && last;
+  const fboss = e.area === 'field' && e.stage % BOSS_EVERY === 0 && last;
+  const lv = e.area === 'dungeon' ? (F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);
   const pool = A.mons.filter(id => e.area === 'dungeon' || minStage(MONS[id]) <= e.stage);
   const out = [];
-  if (boss) { out.push(foeFrom(A.boss, F.lv + 14)); out.push(foeFrom(pickOne(pool), lv)); }
+  if (dboss) { out.push(foeFrom(A.boss, F.raid ? F.lv + 14 : dungeonBossLv(F))); out.push(foeFrom(pickOne(pool), lv)); }
+  else if (fboss) { out.push(fieldBoss(F, e.stage, lv)); for (let i = 0; i < (e.stage >= 30 ? 2 : 1); i++) out.push(foeFrom(pickOne(pool), lv)); }
   else {
     let n = e.mode === 'return' ? 1 : 1 + ri(0, Math.min(2, Math.floor(e.stage / 5))) + (e.area === 'dungeon' ? 1 : 0);
     n = Math.min(5, n + nightMore(e) + extra);
@@ -169,26 +187,43 @@ function spawn(p, e) {
   e.foes = e.next || rollFoes(e, e.ei - 1);
   e.next = null;
   e.cd = {}; e.buffs = []; e.taunt = null;
-  ev(e, 'spawn', { boss: e.foes.some(f => f.boss) });
+  const fb = e.foes.find(f => f.fb);
+  ev(e, 'spawn', { boss: e.foes.some(f => f.boss), name: fb ? fb.name : '' });
 }
 function ev(e, type, data) { e.ev.push(Object.assign({ n: ++e.evN, type }, data)); if (e.ev.length > 50) e.ev.shift(); }
 
-function newExp(fid, sup) {
+// 거점: 필드 보스를 쓰러뜨린 구간 다음부터 출발할 수 있다 (1-11, 1-21 …)
+function checkpoints(fid) {
+  const F = FIELDS[fid], fs = S.fields[fid];
+  if (!F || F.raid || !fs) return [1];
+  return [1].concat([1, 2, 3, 4].filter(k => fs.boss && fs.boss[k]).map(k => k * BOSS_EVERY + 1));
+}
+function newExp(fid, sup, start = 1) {
   const F = FIELDS[fid];
-  const e = { field: fid, area: F.raid ? 'dungeon' : 'field', mode: 'advance', stage: 1, pos: 0, ei: 0, encs: [], foes: [], next: null,
+  const e = { field: fid, area: F.raid ? 'dungeon' : 'field', mode: 'advance', stage: start, home: start, pos: 0, ei: 0, encs: [], foes: [], next: null,
     bag: {}, gbag: [], sup, cd: {}, scd: {}, buffs: [], taunt: null, potCd: 0, mpCd: 0,
     kills: 0, full: false, ev: [], evN: 0, why: '', camp: null, wait: null };
   e.encs = makeEncs(e);
   return e;
 }
+// 원정에 못 나가는 이유 (없으면 '')
+function cantGo(a) {
+  if (!a || a.status !== 'idle') return '원정 중이에요';
+  if (a.inj) return `${a.name}이(가) 다쳐서 치료가 필요해요`;
+  if (a.post) return `${a.name}은(는) 신전에서 일하고 있어요`;
+  if ((a.sleep || 0) >= SLEEP.block) return `${a.name}이(가) 너무 피곤해요. 여관에서 더 자야 해요`;
+  return '';
+}
 function startExp(p, fid) {
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
   if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요.';
   if (!isUnlocked(fid)) return '아직 갈 수 없는 곳이에요.';
+  const why = team.map(cantGo).find(Boolean);
+  if (why) return why + '.';
   const sup = {};
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
-  p.exp = newExp(fid, sup);
-  team.forEach(a => { a.status = 'away'; a.mp = derive(a).maxMp; });
+  p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
+  team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.stats.trips++;
   log(`${p.name}이(가) ${FIELDS[fid].name}(으)로 출발했다.`);
   changed();
@@ -202,12 +237,13 @@ function recall(p, why = '') {
   ev(e, 'turn', {});
   if (why === 'full') log(`${p.name}의 짐이 가득 차서 상단으로 돌아온다.`);
   if (why === 'danger') { log(`${p.name}은(는) 물약이 떨어지고 부상자가 생겨 발길을 돌렸다.`); HOOKS.toast(`${p.name}: 위험해서 복귀합니다`); }
-  if (why === 'loss') log(`${p.name}은(는) 동료를 잃고 발길을 돌렸다.`);
+  if (why === 'loss') log(`${p.name}은(는) 쓰러진 동료를 들것에 싣고 발길을 돌렸다.`);
   if (why === 'ahead') log(`${p.name}은(는) 앞쪽 몬스터가 너무 강해 보여 발길을 돌렸다.`);
+  if (why === 'sleep') log(`${p.name}은(는) 며칠째 제대로 못 자 상단으로 돌아간다.`);
   if (why === 'end') log(`${p.name}이(가) ${FIELDS[e.field].name}의 끝에 닿아 발길을 돌렸다.`, 'good');
   changed();
 }
-// 던전 입구 앞에서: 들어간다 / 지나간다
+// 던전 입구 앞에서: 들어간다 / 지나간다(돌아간다)
 function enterDungeon(p) {
   const e = p.exp;
   if (!e || e.wait !== 'gate' || e.area !== 'field' || S.fields[e.field].cleared) return;
@@ -216,13 +252,12 @@ function enterDungeon(p) {
   ev(e, 'enter', {});
   changed();
 }
-
 function gateChoice(p, choice) {
   const e = p.exp;
   if (!e || e.wait !== 'gate') return;
   if (choice === 'enter') { enterDungeon(p); return; }
   e.wait = null;
-  log(`${p.name}은(는) ${FIELDS[e.field].dungeon.name}에 들어가지 않고 앞으로 나아갔다.`);
+  log(`${p.name}은(는) ${FIELDS[e.field].dungeon.name}에 들어가지 않고 돌아섰다.`);
   if (e.stage >= FIELD_STAGES) { recall(p, 'end'); return; }
   e.stage++; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
   changed();
@@ -250,10 +285,15 @@ function stepCamp(p, e, team, dm, dt) {
 
 function stepExp(p, dt) {
   const e = p.exp;
-  const team = teamOf(p);
+  const all = teamOf(p);
+  if (!all.length) { p.exp = null; changed(); return; }
+  const team = all.filter(a => !a.down);
   if (!team.length) { wipe(p); return; }
   e.potCd = Math.max(0, e.potCd - dt);
   e.mpCd = Math.max(0, e.mpCd - dt);
+  // 숙면 피로: 원정 내내 쌓이고 여관에서만 풀린다
+  const sl = (SLEEP.field + (e.foes.length ? SLEEP.fight : 0)) * dt;
+  all.forEach(a => { a.sleep = Math.min(100, (a.sleep || 0) + sl); });
   const dm = {};
   team.forEach(a => { const d = derive(a), m = fatMul(a.fat || 0); if (m < 1) { d.atk *= m; d.matk *= m; d.def *= m; } dm[a.id] = d; });
   usePotions(p, e, team, dm);
@@ -263,6 +303,7 @@ function stepExp(p, dt) {
   team.forEach(a => { const d = dm[a.id]; a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.008 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
   if (e.wait === 'gate') return;   // 던전 입구 앞에서 결정을 기다린다
   if (p.safe && e.mode === 'advance' && !hpPotions(e) && team.some(a => a.hp < dm[a.id].maxHp * 0.7)) recall(p, 'danger');
+  if (p.safe && e.mode === 'advance' && e.area === 'field' && all.some(a => (a.sleep || 0) >= SLEEP.max)) recall(p, 'sleep');
   const fats = team.map(a => a.fat || 0), maxF = Math.max(...fats), avgF = fats.reduce((s, v) => s + v, 0) / fats.length;
   if (maxF >= FATIGUE.camp || (isNight() && p.campNight !== false && avgF >= FATIGUE.nightCamp)) { startCamp(p, e); return; }
   tire(team, FATIGUE.walk * fr * dt);
@@ -284,22 +325,25 @@ function stageClear(p, e) {
   const fs = S.fields[e.field], F = FIELDS[e.field];
   if (e.area === 'field') {
     if (e.stage > fs.best) { fs.best = e.stage; if (e.stage % 5 === 0) { S.fame += 1; log(`${p.name}이(가) ${F.no}-${e.stage}까지 처음으로 진출했다. 명성 +1`, 'good'); } }
-    // 던전 입구 (한 번 공략하면 더는 못 들어간다)
-    if (e.stage === fs.gate && !fs.cleared) {
+    if (e.stage >= FIELD_STAGES) {
       e.pos = STAGE_LEN;
-      if (!fs.found) { fs.found = true; log(`${p.name}이(가) ${F.no}-${e.stage}에서 ${F.dungeon.name} 입구를 찾았다!`, 'good'); }
-      const mode = p.dmode || 'ask';
-      if (mode !== 'skip') {
-        e.wait = 'gate';
-        if (mode === 'enter') { enterDungeon(p); return; }
-        HOOKS.toast(`${p.name}: ${F.dungeon.name} 입구에 도착`);
-        queueModal({ title: `${F.dungeon.name} 입구`, gate: p.id, body: [`${p.name}이(가) ${F.name} ${F.no}-${e.stage}에서 ${F.dungeon.name} 입구 앞에 섰다.`, `던전은 한 번만 공략할 수 있다. 안에는 Lv${F.lv + 9}~${F.lv + 13} 몬스터와 주인 ${MONS[F.dungeon.boss].name}(Lv${F.lv + 14})이 기다린다. 파티 평균 Lv${Math.round(avgLvOf(p))}.`] });
-        changed();
-        return;
+      // 1-50의 주인을 쓰러뜨려 던전 입구가 열렸다 (한 번 공략한 던전은 봉인된다)
+      if (!fs.cleared) {
+        if (!fs.found) { fs.found = true; log(`${p.name}이(가) ${F.no}-${FIELD_STAGES}에서 ${F.dungeon.name} 입구를 열었다!`, 'good'); }
+        const mode = p.dmode || 'ask';
+        if (mode !== 'skip') {
+          e.wait = 'gate';
+          if (mode === 'enter') { enterDungeon(p); return; }
+          HOOKS.toast(`${p.name}: ${F.dungeon.name} 입구에 도착`);
+          queueModal({ title: `${F.dungeon.name} 입구`, gate: p.id, body: [`${p.name}이(가) ${F.name}의 주인을 쓰러뜨리고 ${F.dungeon.name} 입구 앞에 섰다.`, `던전은 한 번만 공략할 수 있다. 안에는 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)} 몬스터와 주인 ${MONS[F.dungeon.boss].name}(Lv${dungeonBossLv(F)})이 기다린다. 파티 평균 Lv${Math.round(avgLvOf(p))}.`] });
+          changed();
+          return;
+        }
       }
+      recall(p, 'end');
+      return;
     }
-    if (e.stage >= FIELD_STAGES) { e.pos = STAGE_LEN; recall(p, 'end'); return; }
-    if (p.safe && fieldLv(F, e.stage + 1) > avgLvOf(p) + 3) { e.stage++; e.pos = 0; e.ei = 0; e.encs = []; e.next = null; recall(p, 'ahead'); return; }
+    if (p.safe && fieldLv(F, e.stage + 1) + ((e.stage + 1) % BOSS_EVERY === 0 ? 2 : 0) > avgLvOf(p) + 3) { e.stage++; e.pos = 0; e.ei = 0; e.encs = []; e.next = null; recall(p, 'ahead'); return; }
     e.stage++;
   } else if (e.stage < DUNGEON_FLOORS) e.stage++;
   e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
@@ -309,9 +353,9 @@ function stageBack(p, e) {
   if (e.area === 'dungeon') {
     if (e.stage > 1) e.stage--;
     else if (FIELDS[e.field].raid) { arrive(p); return; }
-    else { e.area = 'field'; e.stage = S.fields[e.field].gate || 10; }
-  } else if (e.stage > 1) e.stage--;
-  else { arrive(p); return; }
+    else { e.area = 'field'; e.stage = FIELD_STAGES; }
+  } else if (e.stage > (e.home || 1)) e.stage--;
+  else { arrive(p); return; }   // 출발한 거점에 닿으면 마차를 타고 상단으로
   e.pos = STAGE_LEN; e.ei = 0; e.encs = makeEncs(e); e.next = null;
   changed();
 }
@@ -320,6 +364,7 @@ function stageBack(p, e) {
 const buffMul = (e, aid, stat) => e.buffs.reduce((m, b) => (b.stat === stat && (b.to === aid || b.to === 'party') && b.mult ? m * b.mult : m), 1);
 const buffAdd = (e, aid, stat) => e.buffs.reduce((m, b) => (b.stat === stat && (b.to === aid || b.to === 'party') && b.add ? m + b.add : m), 0);
 const lowestFoe = foes => foes.reduce((x, f) => (f.hp < x.hp ? f : x), foes[0]);
+const up = x => x.hp > 0 && !x.down;
 function hitFoe(e, f, atk, crit, magic) {
   const v = Math.max(1, Math.round(atk * (0.85 + rnd() * 0.3) * red(magic ? f.def * 0.5 : f.def) * (crit ? 1.75 : 1)));
   f.hp -= v;
@@ -337,14 +382,15 @@ function pickSkill(a, d, team, dm, foes, e) {
     if (s.kind === 'heal' && s.tgt === 'self') {
       if (a.hp < d.maxHp * 0.5) pr = 10;
     } else if (s.kind === 'heal') {
-      const hurt = team.filter(x => x.hp > 0 && x.hp < dm[x.id].maxHp * (s.tgt === 'party' ? 0.7 : 0.6));
+      const hurt = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * (s.tgt === 'party' ? 0.7 : 0.6));
       if (s.tgt === 'party' ? hurt.length >= 2 : hurt.length >= 1) pr = s.tgt === 'party' ? 11 : 10;
     } else if (s.kind === 'buff') {
       if (!e.buffs.some(b => b.sid === id)) pr = foes.some(f => f.boss) || foes.length >= 2 ? 7 : 4;
     } else if (s.kind === 'taunt') {
-      if (team.length > 1 && !(e.taunt && e.taunt.t > 0)) pr = 7;
+      if (team.filter(up).length > 1 && !(e.taunt && e.taunt.t > 0)) pr = 7;
     } else if (s.kind === 'dot') {
-      if (foes[0] && !foes[0].dot && foes[0].hp > foes[0].maxHp * 0.4) pr = 5;
+      const tg = s.tgt === 'all' ? foes : [foes[0]];
+      if (tg.some(f => !f.dot && f.hp > f.maxHp * 0.4)) pr = s.tgt === 'all' && foes.length >= 2 ? 7 : 5;
     } else pr = s.tgt === 'all' ? (foes.length >= 2 ? 8 : 2) : (foes.some(f => f.boss) ? 6 : 5);
     if (pr > bp) { bp = pr; best = id; }
   }
@@ -370,14 +416,13 @@ function cast(e, a, d, id, team, dm, foes) {
       if (s.drain) { const h = Math.round(v * s.drain); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); }
     }
   } else if (s.kind === 'dot') {
-    const f = foes[0];
-    f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult, t: s.dur, magic: !!s.magic }; f.dotT = 0;
-    ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 });
+    const tg = s.tgt === 'all' ? foes : [foes[0]];
+    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult, t: s.dur, magic: !!s.magic }; f.dotT = 0; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
   } else if (s.kind === 'heal' && s.tgt === 'self') {
     const h = Math.round(d.maxHp * s.pct); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h });
   } else if (s.kind === 'heal') {
     const pow = d.matk * s.mult;
-    const alive = team.filter(x => x.hp > 0);
+    const alive = team.filter(up);
     const tg = s.tgt === 'party' ? alive : [alive.sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0]];
     tg.forEach(x => { const h = Math.round(pow * (0.9 + rnd() * 0.2)); x.hp = Math.min(dm[x.id].maxHp, x.hp + h); ev(e, 'heal', { s: a.id, d: x.id, v: h }); });
   } else if (s.kind === 'buff') {
@@ -403,18 +448,29 @@ function basicAct(e, a, d, team, dm, foes) {
   const v = hitFoe(e, f, d.atk * buffMul(e, a.id, 'atk'), crit, false);
   ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: act === 'arrow' ? 'arrow' : 'melee' });
 }
+const TANKS = ['warrior', 'paladin', 'gladiator'];
 function battle(p, e, team, dm, dt) {
   const foes = e.foes;
+  if (e.flee) {
+    e.flee -= dt;
+    if (e.flee <= 0) {
+      e.flee = 0; e.foes = []; e.next = null; e.cd = {}; e.buffs = []; e.taunt = null;
+      ev(e, 'flee', {});
+      log(`${p.name}은(는) 쓰러진 동료를 들쳐 메고 싸움에서 빠져나왔다.`, 'bad');
+      return;
+    }
+  }
   e.buffs.forEach(b => { b.t -= dt; });
   e.buffs = e.buffs.filter(b => b.t > 0);
   if (e.taunt) { e.taunt.t -= dt; if (e.taunt.t <= 0) e.taunt = null; }
   for (const a of team) {
+    if (!up(a)) continue;
     const d = dm[a.id];
     a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.02 * d.mpRegen * dt);
     const sc = e.scd[a.id] || (e.scd[a.id] = {});
     for (const k in sc) sc[k] = Math.max(0, sc[k] - dt);
     e.cd[a.id] = (e.cd[a.id] ?? (0.3 + rnd() * 0.6)) - dt;
-    if (e.cd[a.id] > 0 || a.hp <= 0) continue;
+    if (e.cd[a.id] > 0) continue;
     e.cd[a.id] = 1 / d.spd * (0.9 + rnd() * 0.2);
     const alive = foes.filter(f => f.hp > 0);
     if (!alive.length) break;
@@ -433,20 +489,19 @@ function battle(p, e, team, dm, dt) {
     f.cd -= dt;
     if (f.cd > 0) continue;
     f.cd = 1 / f.spd * (0.9 + rnd() * 0.25) * (f.slow > 0 ? 1.6 : 1);
-    const live = team.filter(x => x.hp > 0);
+    const live = team.filter(up);
     if (!live.length) break;
-    const m = MONS[f.id];
-    if (m.aoe && rnd() < 0.3) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm)); continue; }
+    if ((MONS[f.id].aoe || f.aoe) && rnd() < 0.3) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm)); continue; }
     let tgt = null;
     if (e.taunt) tgt = live.find(x => x.id === e.taunt.aid) || null;
-    if (!tgt) { const tank = live.find(x => x.cls === 'warrior'); tgt = tank && rnd() < 0.7 ? tank : live[0]; }
+    if (!tgt) { const tank = live.find(x => TANKS.includes(x.cls)); tgt = tank && rnd() < 0.7 ? tank : live[0]; }
     hitAdv(p, e, f, tgt, 1, dm);
   }
   for (let i = foes.length - 1; i >= 0; i--) if (foes[i].hp <= 0) { const f = foes[i]; foes.splice(i, 1); kill(p, e, f); }
   if (!foes.length) { e.cd = {}; e.buffs = []; e.taunt = null; ev(e, 'clear', {}); }
 }
 function hitAdv(p, e, f, x, mult, dm) {
-  if (x.hp <= 0 || x.status === 'dead') return;
+  if (!up(x)) return;
   const d = dm[x.id], m = MONS[f.id];
   if (rnd() < Math.min(0.6, d.eva + buffAdd(e, x.id, 'eva'))) { ev(e, 'miss', { s: f.uid, d: x.id }); return; }
   const def = d.def * buffMul(e, x.id, 'def') * (m.magic ? 0.5 : 1);
@@ -454,24 +509,37 @@ function hitAdv(p, e, f, x, mult, dm) {
   const v = Math.max(1, Math.round(f.atk * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1)));
   x.hp -= v;
   ev(e, 'hurt', { s: f.uid, d: x.id, v, c: crit, k: m.magic ? 'magic' : '' });
-  if (x.hp <= 0) die(p, e, x);
+  if (x.hp <= 0) down(p, e, x, f);
 }
 function kill(p, e, f) {
   const m = MONS[f.id], F = FIELDS[e.field];
   e.kills++; S.stats.kills++;
-  const team = teamOf(p);
-  team.forEach(a => { a.kills = (a.kills || 0) + 1; });
+  const team = teamOf(p).filter(a => !a.down);
+  team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04); });
   const harvest = blessed('harvest') ? 1.15 : 1;
-  const xp = Math.round(f.lv * 3 * (f.boss ? 15 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0)) * harvest);
+  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0)) * harvest);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
-  ev(e, 'kill', { d: f.uid, id: f.id });
-  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0)) * harvest;
-  for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul)) loot(p, e, it, q || 1);
+  ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0 });
+  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0)) * harvest, fbm = f.fb ? 3 : 1;
+  for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
+  if (e.area === 'field' && rnd() < 0.12 * harvest) loot(p, e, 'herb', 1);
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
-  if (f.boss || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(f.boss ? 0.25 : 0)));
-  if (rnd() < (f.boss ? 0.6 : (inD ? 0.015 : 0.004) * ap)) { const b = randomBook(Math.max(1, f.lv - 14), f.lv + 2); if (b) loot(p, e, b, 1); }
-  if (f.boss) dungeonClear(p, e);
+  if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(f.boss ? 0.25 : 0)));
+  if (rnd() < (f.fb ? 0.3 : f.boss ? 0.6 : (inD ? 0.015 : 0.004) * ap)) { const b = randomBook(Math.max(1, f.lv - 14), f.lv + 2); if (b) loot(p, e, b, 1); }
+  if (f.fb) fieldBossDown(p, e, f);
+  else if (f.boss) dungeonClear(p, e);
+}
+function fieldBossDown(p, e, f) {
+  const fs = S.fields[e.field], F = FIELDS[e.field], k = f.fb;
+  fs.boss = fs.boss || {};
+  const first = !fs.boss[k];
+  fs.boss[k] = (fs.boss[k] || 0) + 1;
+  const fame = first ? 4 + k * 3 : 1;
+  S.fame += fame;
+  teamOf(p).filter(a => !a.down).forEach(a => { a.pf = (a.pf || 0) + (first ? 6 : 3); });
+  log(`${p.name}이(가) ${F.no}-${e.stage}의 필드 보스 ${f.name}을(를) 쓰러뜨렸다! 명성 +${fame}`, 'good');
+  if (first) HOOKS.toast(`필드 보스 격파 · ${f.name}`);
 }
 function loot(p, e, it, q) {
   const room = capOf(p) - usedOf(p);
@@ -491,7 +559,7 @@ const hpPotions = e => ['pot_l', 'pot_m', 'pot_s'].reduce((s, k) => s + (e.sup[k
 function potionHeal(k) { return ITEMS[k].heal * (1 + rlv('potion') * 0.25 + (spn('clinic') >= 3 ? 0.2 : 0)); }
 function usePotions(p, e, team, dm) {
   if (e.potCd <= 0) {
-    const low = team.filter(a => a.hp > 0 && a.hp < dm[a.id].maxHp * 0.4).sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];
+    const low = team.filter(a => up(a) && a.hp < dm[a.id].maxHp * 0.4).sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];
     if (low) {
       const miss = dm[low.id].maxHp - low.hp;
       const order = ['pot_s', 'pot_m', 'pot_l'].filter(k => (e.sup[k] || 0) > 0);
@@ -506,7 +574,7 @@ function usePotions(p, e, team, dm) {
     }
   }
   if (e.mpCd <= 0) {
-    const dry = team.find(a => a.hp > 0 && (a.cls === 'mage' || a.cls === 'cleric') && a.mp < dm[a.id].maxMp * 0.2);
+    const dry = team.find(a => up(a) && ['mage', 'cleric', 'elementalist', 'necromancer', 'plaguedoc', 'paladin'].includes(a.cls) && a.mp < dm[a.id].maxMp * 0.2);
     const use = dry && ['mp_s', 'mp_m'].find(k => (e.sup[k] || 0) > 0);
     if (use) {
       addTo(e.sup, use, -1);
@@ -516,38 +584,52 @@ function usePotions(p, e, team, dm) {
     }
   }
 }
-function die(p, e, a) {
-  a.hp = 0; a.status = 'dead';
-  p.members = p.members.filter(id => id !== a.id);
-  const F = FIELDS[e.field];
-  const snap = JSON.parse(JSON.stringify(a));
-  snap.eq = { weapon: null, armor: null, acc: null, bag: null }; snap.status = 'idle';
-  S.graves.unshift({ id: nid(), name: a.name, cls: a.cls, lv: a.lv, hero: a.hero, date: dateStr(S.t), where: `${F.name} ${e.area === 'dungeon' ? '던전 ' + e.stage + '층' : F.no + '-' + e.stage}`, adv: snap });
-  if (S.graves.length > 60) S.graves.length = 60;
-  S.stats.deaths++;
-  ev(e, 'die', { d: a.id, cls: a.cls });
-  log(`${a.name}(${CLASSES[a.cls].name}, Lv${a.lv})이(가) ${F.name}에서 쓰러졌다.`, 'bad');
-  HOOKS.toast(`${a.name}이(가) 전사했다`);
-  S.advs = S.advs.filter(x => x.id !== a.id);
-  // 남은 동료가 들 수 있는 만큼 장비를 챙긴다
-  const gear = SLOTS.map(([s]) => a.eq[s]).filter(Boolean).sort((x, y) => gearValue(y) - gearValue(x));
-  const kept = [], left = [];
-  if (p.members.length) for (const g of gear) { if (capOf(p) - usedOf(p) >= GTYPES[g.base].w) { e.gbag.push(g); kept.push(gearName(g)); } else left.push(gearName(g)); }
-  if (kept.length) log(`${p.name}은(는) ${a.name}의 장비 ${kept.join(', ')}을(를) 챙겼다.${left.length ? ` ${left.join(', ')}은(는) 무거워서 두고 왔다.` : ''}`);
-  else if (gear.length && p.members.length) log(`${p.name}은(는) 짐이 가득 차 ${a.name}의 장비를 챙기지 못했다.`, 'bad');
+/* ───────── 쓰러짐: 죽지 않고 들것에 실려 돌아온다 ───────── */
+function hurtRoll(f) {
+  const r = rnd();
+  let sev = r < 0.45 ? 1 : r < 0.86 ? 2 : 3;
+  if (f && f.boss && sev < 3 && rnd() < 0.5) sev++;
+  return sev;
+}
+function injure(a, sev) {
+  if (a.inj && a.inj.sev >= sev) return;
+  a.inj = { sev, need: INJ[sev].need, done: a.inj ? a.inj.done : 0, at: today() };
+}
+function dropOver(p, e) {
   let over = usedOf(p) - capOf(p);
-  if (over > 0 && p.members.length) {
-    const keys = Object.keys(e.bag).sort((x, y) => ITEMS[x].v / ITEMS[x].w - ITEMS[y].v / ITEMS[y].w);
-    for (const k of keys) { while (over > 0 && e.bag[k] > 0) { addTo(e.bag, k, -1); over -= ITEMS[k].w; } if (over <= 0) break; }
-    log(`${p.name}은(는) 짐이 넘쳐 일부 부속품을 버렸다.`);
-  }
-  if (p.safe && p.members.length && e.mode === 'advance') recall(p, 'loss');
+  if (over <= 0) return;
+  const keys = Object.keys(e.bag).sort((x, y) => ITEMS[x].v / ITEMS[x].w - ITEMS[y].v / ITEMS[y].w);
+  for (const k of keys) { while (over > 0 && e.bag[k] > 0) { addTo(e.bag, k, -1); over -= ITEMS[k].w; } if (over <= 0) break; }
+  e.gbag.sort((x, y) => gearValue(x) - gearValue(y));
+  while (over > 0 && e.gbag.length) { const g = e.gbag.shift(); over -= GTYPES[g.base].w; }
+  log(`${p.name}은(는) 들것을 싣느라 짐 일부를 버렸다.`);
+}
+function down(p, e, a, f) {
+  a.hp = 0; a.down = true;
+  const sev = hurtRoll(f);
+  injure(a, sev);
+  S.stats.downs = (S.stats.downs || 0) + 1;
+  ev(e, 'down', { d: a.id });
+  log(`${a.name}이(가) ${FIELDS[e.field].name}에서 쓰러졌다 (${INJ[sev].name}). 동료들이 들것에 싣는다.`, 'bad');
+  HOOKS.toast(`${a.name} 쓰러짐 · ${INJ[sev].name}`);
+  dropOver(p, e);
+  if (p.safe && e.mode === 'advance') recall(p, 'loss');
+  if (p.safe && e.foes.length && !e.flee) e.flee = 2.5;   // 조심스러운 파티는 들것을 메고 싸움에서 빠져나온다
   changed();
 }
+// 모두 쓰러지면: 길드 구조대가 데려오지만 짐은 잃는다
 function wipe(p) {
-  const F = FIELDS[p.exp.field];
-  log(`${p.name}이(가) ${F.name}에서 전멸했다. 가져오던 짐과 장비도 모두 잃었다.`, 'bad');
-  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 원정대가 전멸했다. 가져오던 부속품과 장비도 모두 잃었다.`, '모험가는 한 번 쓰러지면 돌아오지 않는다. 물약을 넉넉히 챙기고, 무리하지 말자.'] });
+  const e = p.exp, F = FIELDS[e.field];
+  teamOf(p).forEach(a => {
+    injure(a, Math.max(2, a.inj ? a.inj.sev : 2));
+    if (rnd() < 0.25 && a.inj.sev < 3) injure(a, a.inj.sev + 1);
+    a.down = false; a.status = 'idle'; a.hp = 1; a.trips++;
+  });
+  S.stats.wipes = (S.stats.wipes || 0) + 1;
+  log(`${p.name}이(가) ${F.name}에서 전멸했다. 길드 구조대가 모두를 데려왔지만 가져오던 짐과 장비는 잃었다.`, 'bad');
+  S.flags.firstInj = 1;
+  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 원정대가 모두 쓰러졌다. 지나가던 길드 구조대 덕분에 목숨은 건졌지만 모두 크게 다쳤고, 가져오던 부속품과 장비, 물약은 잃었다.`, '다친 모험가는 신전에서 치료해야 다시 원정에 나갈 수 있다. 무리하지 말자.'] });
+  p.last = { got: {}, gear: 0, kills: e.kills, field: e.field, wiped: 1 };
   p.exp = null;
   changed();
 }
@@ -558,12 +640,15 @@ function arrive(p) {
   for (const [k, q] of Object.entries(e.sup)) addTo(S.inv, k, q);
   e.gbag.forEach(g => S.gear.push(g));
   const team = p.members.map(advById).filter(Boolean);
-  team.forEach(a => { a.status = 'idle'; a.trips++; });
+  const hurt = team.filter(a => a.down || a.inj);
+  team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; });
   team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 상단을 떠났다.'));
   const n = Object.values(got).reduce((s, q) => s + q, 0);
   log(`${p.name}이(가) 돌아왔다. 부속품 ${n}개(약 ${val}G어치)${e.gbag.length ? `, 장비 ${e.gbag.length}개` : ''}, 처치 ${e.kills}마리.`, 'good');
-  HOOKS.toast(`${p.name} 귀환 · 부속품 ${n}개${e.gbag.length ? ` · 장비 ${e.gbag.length}개` : ''}`);
-  p.last = { got, gear: e.gbag.length, kills: e.kills, field: e.field };
+  if (hurt.length) log(`부상자 ${hurt.map(a => a.name).join(', ')}이(가) ${S.bld.temple ? '신전 치료실로 옮겨졌다' : '여관 방에 눕혀졌다. 신전이 있으면 훨씬 빨리 낫는다'}.`, 'bad');
+  if (hurt.length && !S.flags.firstInj) { S.flags.firstInj = 1; queueModal({ title: '첫 부상자', body: STORY.firstInj }); }
+  HOOKS.toast(`${p.name} 귀환 · 부속품 ${n}개${e.gbag.length ? ` · 장비 ${e.gbag.length}개` : ''}${hurt.length ? ` · 부상 ${hurt.length}명` : ''}`);
+  p.last = { got, gear: e.gbag.length, kills: e.kills, field: e.field, hurt: hurt.length };
   p.exp = null;
   if (!S.flags.firstReturn) { S.flags.firstReturn = 1; queueModal({ title: '첫 원정', body: STORY.firstReturn }); }
   changed();
@@ -579,23 +664,23 @@ function dungeonClear(p, e) {
   const fs = S.fields[e.field], F = FIELDS[e.field];
   const first = !fs.cleared;
   fs.cleared = true;
+  const team = teamOf(p).filter(a => !a.down);
   if (F.raid) {
     S.flags.guildDown = 1;
     S.fame += 50; S.gold += 5000; S.stats.earned += 5000;
+    team.forEach(a => { a.pf = (a.pf || 0) + 25; });
     log(`${p.name}이(가) 암살자 길드장을 쓰러뜨렸다! 길드 금고에서 5,000G, 명성 +50`, 'good');
     queueModal({ title: '암살자 길드 토벌', body: STORY.guild });
   } else if (first) {
-    const gold = DUNGEON_GOLD[F.tier] || 1000, fame = 40 + F.tier * 12;
-    S.gold += gold; S.fame += fame; S.stats.earned += gold;
-    // 보물 상자: 장비 두 점(하나는 고급 이상)과 스킬북
-    e.gbag.push(makeGear(pickOne(GTYPE_IDS), F.tier, Math.max(1, rollQuality(0.4))), makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(0.4)));
-    const b = randomBook(F.lv, F.lv + 16); if (b) addTo(e.bag, b, 1);
+    const gold = DUNGEON_GOLD[F.tier] || 3000, fame = 60 + F.tier * 25;
+    S.gold += gold; S.fame += fame; S.stats.earned += gold; S.stats.dungeons = (S.stats.dungeons || 0) + 1;
+    team.forEach(a => { a.pf = (a.pf || 0) + 20; });
+    // 보물 상자: 장비 세 점(하나는 희귀)과 스킬북 두 권
+    e.gbag.push(makeGear(pickOne(GTYPE_IDS), F.tier, 2), makeGear(pickOne(GTYPE_IDS), F.tier, Math.max(1, rollQuality(0.4))), makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(0.4)));
+    const b1 = randomBook(F.lv, F.lv + 16), b2 = randomBook(F.lv, F.lv + 20);
+    if (b1) addTo(e.bag, b1, 1); if (b2) addTo(e.bag, b2, 1);
     log(`${p.name}이(가) ${F.dungeon.name}의 주인 ${MONS[F.dungeon.boss].name}을(를) 쓰러뜨렸다! 보물 ${g$(gold)}, 명성 +${fame}`, 'good');
-    const SP = SPECIALS[e.field];
-    if (HEROES[e.field]) S.heroQueue.push(e.field);
-    if (SP && !fs.spec) { fs.spec = 1; S.specQueue.push(e.field); }
-    syncHeroes();
-    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 장비 두 점${b ? ', 스킬북' : ''}을 찾았다. 명성 +${fame}`], SP ? [`소문을 들은 ${CLASSES[SP.cls].name} ${SP.name}이(가) 여관을 찾아왔다.`] : []) });
+    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 장비 세 점, 스킬북을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`]) });
   } else {
     S.fame += 3;
     log(`${p.name}이(가) ${MONS[F.dungeon.boss].name}을(를) 또 쓰러뜨렸다. 명성 +3`, 'good');
@@ -604,9 +689,9 @@ function dungeonClear(p, e) {
   changed();
 }
 const raidReady = () => S.fame >= GUILD_RAID.fame && living().length >= GUILD_RAID.advs && spn(GUILD_RAID.sponsor) >= GUILD_RAID.tier;
+// 필드는 상단 랭크가 오르면 하나씩 열린다 (랭크 F = 평원, E = 원시림 …)
 function isUnlocked(fid) {
-  if (fid === 'plains') return true;
   if (fid === 'alley') return !S.flags.guildDown && raidReady();
-  const prev = FIELD_IDS.find(k => FIELDS[k].next === fid);
-  return !!(prev && S.fields[prev] && S.fields[prev].cleared);
+  const F = FIELDS[fid];
+  return !!F && !F.raid && (S.rank || 0) >= F.no - 1;
 }

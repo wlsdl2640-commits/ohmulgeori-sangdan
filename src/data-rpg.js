@@ -18,6 +18,7 @@ Object.assign(CLASSES, {
   berserker:    { name: '광전사',     special: 1, base: { str: 11, vit: 9, agi: 4, int: 0 }, grow: { str: 2.4, vit: 1.9, agi: 0.8, int: 0.1 }, spd: 0.9,  crit: 0.08, carry: 14, salary: 230, act: 'melee', innate: 'bloodstrike', tunic: '#6a4a32', trim: '#c0392b', desc: 'HP를 깎아 가며 무시무시한 힘을 낸다.' },
   dragoon:      { name: '용기병',     special: 1, base: { str: 8, vit: 7, agi: 8, int: 2 },  grow: { str: 1.8, vit: 1.5, agi: 1.6, int: 0.3 }, spd: 1.0,  crit: 0.08, carry: 12, salary: 250, act: 'melee', innate: 'jump',        tunic: '#2f5a6a', trim: '#7ad8c8', desc: '하늘로 뛰어올라 창으로 내리꽂는다.' },
   paladin:      { name: '성기사',     special: 1, base: { str: 7, vit: 10, agi: 3, int: 6 }, grow: { str: 1.5, vit: 2.2, agi: 0.5, int: 1.3 }, spd: 0.85, crit: 0.04, carry: 12, salary: 260, act: 'melee', innate: 'holystrike',  tunic: '#e8e4d8', trim: '#e8c060', desc: '동료를 지키고 치유하는 신의 기사.' },
+  plaguedoc:    { name: '역병의사',   special: 1, base: { str: 3, vit: 6, agi: 5, int: 9 },  grow: { str: 0.4, vit: 1.3, agi: 1.0, int: 2.2 }, spd: 0.85, crit: 0.06, carry: 9,  salary: 240, act: 'heal',  innate: 'miasma',      tunic: '#2a2a2e', trim: '#c8b890', desc: '독 안개로 적을 약하게 하고 동료를 치료한다. 신전에서 수술을 할 수 있다.' },
   necromancer:  { name: '네크로맨서', special: 1, base: { str: 2, vit: 5, agi: 4, int: 11 }, grow: { str: 0.3, vit: 1.1, agi: 0.8, int: 2.7 }, spd: 0.78, crit: 0.05, carry: 8,  salary: 270, act: 'magic', innate: 'drain',       tunic: '#2a2234', trim: '#a87ad8', desc: '죽음의 마법으로 적의 생명을 빼앗는다.' }
 });
 const CLASS_IDS = Object.keys(CLASSES).filter(k => !CLASSES[k].special);   // 여관에 무작위로 오는 직업
@@ -77,6 +78,10 @@ const SKILLS = {
   guard:       { name: '수호의 맹세', cls: ['paladin'], lv: 6, own: 1, cost: { mp: 10 }, cd: 12, kind: 'taunt', dur: 7, desc: '7초 동안 모든 적이 자신만 노리게 한다.' },
   layhands:    { name: '치유의 손길', cls: ['paladin'], lv: 11, own: 1, cost: { mp: 12 }, cd: 7, kind: 'heal', mult: 1.8, tgt: 'low', desc: '가장 다친 동료를 크게 치료한다.' },
   judgment:    { name: '천상의 심판', cls: ['paladin'], lv: 20, own: 1, cost: { mp: 22 }, cd: 12, kind: 'mdmg', mult: 1.7, boss: 1.4, tgt: 'all', fx: 'holy', desc: '하늘의 빛이 모든 적을 내리친다.' },
+  miasma:      { name: '독 플라스크', cls: ['plaguedoc'], lv: 1, cost: { mp: 7 }, cd: 5, kind: 'dot', magic: 1, mult: 0.9, dur: 6, tgt: 'all', fx: 'dark', desc: '깨지면 독 안개가 퍼져 모든 적에게 6초 동안 독 피해를 준다.' },
+  remedy:      { name: '응급 수술', cls: ['plaguedoc'], lv: 6, own: 1, cost: { mp: 10 }, cd: 6, kind: 'heal', mult: 1.7, tgt: 'low', desc: '가장 다친 동료를 크게 치료한다.' },
+  quarantine:  { name: '격리', cls: ['plaguedoc'], lv: 12, own: 1, cost: { mp: 12 }, cd: 14, kind: 'buff', stat: 'def', mult: 1.3, dur: 8, tgt: 'party', desc: '8초 동안 파티의 방어력을 올린다.' },
+  panacea:     { name: '만병통치약', cls: ['plaguedoc'], lv: 20, own: 1, cost: { mp: 22 }, cd: 12, kind: 'heal', mult: 1.2, tgt: 'party', desc: '파티 전원을 치료한다.' },
   drain:       { name: '생명 흡수', cls: ['necromancer'], lv: 1, cost: { mp: 8 }, cd: 3.5, kind: 'mdmg', mult: 1.7, drain: 0.35, tgt: 'front', fx: 'dark', desc: '적의 생명을 빼앗아 자신의 HP를 채운다.' },
   curse:       { name: '저주', cls: ['necromancer'], lv: 6, own: 1, cost: { mp: 10 }, cd: 8, kind: 'dot', magic: 1, mult: 0.7, dur: 6, tgt: 'front', fx: 'dark', desc: '6초 동안 저주 피해를 준다.' },
   bonewall:    { name: '뼈의 방벽', cls: ['necromancer'], lv: 12, own: 1, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'def', mult: 1.3, dur: 8, tgt: 'party', desc: '해골 방패가 8초 동안 파티를 지킨다.' },
@@ -108,14 +113,14 @@ const GTYPES = {
   sword:   { name: '장검',     slot: 'weapon', cls: ['warrior', 'gladiator', 'paladin'],                     st: { atk: 4.2, vit: 0.5 },           w: 3, icon: 'sword',  mat: [3, 1, 0] },
   bow:     { name: '활',       slot: 'weapon', cls: ['archer'],                      st: { atk: 3.6, agi: 0.8 },           w: 2, icon: 'bow',    mat: [2, 2, 0] },
   staff:   { name: '지팡이',   slot: 'weapon', cls: ['mage', 'elementalist', 'necromancer'],                        st: { matk: 4.2, int: 0.8, mp: 4 },   w: 2, icon: 'staff',  mat: [1, 0, 3] },
-  mace:    { name: '철퇴',     slot: 'weapon', cls: ['cleric', 'paladin'],                      st: { atk: 2.4, matk: 2.6, int: 0.5 }, w: 3, icon: 'mace',  mat: [3, 0, 1] },
+  mace:    { name: '철퇴',     slot: 'weapon', cls: ['cleric', 'paladin', 'plaguedoc'],                      st: { atk: 2.4, matk: 2.6, int: 0.5 }, w: 3, icon: 'mace',  mat: [3, 0, 1] },
   dagger:  { name: '단검',     slot: 'weapon', cls: ['rogue', 'gladiator'],                       st: { atk: 3.2, agi: 0.6, crit: 0.006 }, w: 1, icon: 'dagger', mat: [2, 1, 0] },
   club:    { name: '몽둥이',   slot: 'weapon', cls: ['porter', 'warrior', 'berserker'],           st: { atk: 3.4, str: 0.8 },           w: 3, icon: 'club',   mat: [3, 0, 0] },
   axe:     { name: '도끼',     slot: 'weapon', cls: ['berserker', 'warrior', 'porter'],     st: { atk: 4.6, str: 0.8, agi: -0.3 }, w: 4, icon: 'axe',    mat: [3, 1, 0] },
   lance:   { name: '창',       slot: 'weapon', cls: ['dragoon'],                     st: { atk: 4.3, agi: 0.7 },           w: 3, icon: 'lance',  mat: [3, 1, 0] },
   plate:   { name: '판금 갑옷', slot: 'armor', cls: ['warrior', 'gladiator', 'berserker', 'dragoon', 'paladin'],                     st: { def: 4.2, hp: 10, agi: -0.3 },  w: 6, icon: 'armor',  mat: [2, 3, 0] },
   leather: { name: '가죽 갑옷', slot: 'armor', cls: ['archer', 'rogue', 'porter', 'gladiator', 'berserker', 'dragoon'],   st: { def: 2.6, hp: 5, agi: 0.6 },    w: 3, icon: 'vest',   mat: [0, 4, 0] },
-  robe:    { name: '로브',     slot: 'armor', cls: ['mage', 'cleric', 'elementalist', 'necromancer'],               st: { def: 1.6, mp: 6, int: 0.8 },    w: 2, icon: 'robe',   mat: [0, 1, 3] },
+  robe:    { name: '로브',     slot: 'armor', cls: ['mage', 'cleric', 'elementalist', 'necromancer', 'plaguedoc'],               st: { def: 1.6, mp: 6, int: 0.8 },    w: 2, icon: 'robe',   mat: [0, 1, 3] },
   ring:    { name: '반지',     slot: 'acc',   cls: ['all'],                          st: { str: 0.7, agi: 0.7, crit: 0.005 }, w: 1, icon: 'ring', mat: [1, 0, 2] },
   amulet:  { name: '부적',     slot: 'acc',   cls: ['all'],                          st: { int: 0.7, vit: 0.7, eva: 0.005 }, w: 1, icon: 'amulet', mat: [0, 0, 3] },
   bag:     { name: '가방',     slot: 'bag',   cls: ['all'],                          st: { carry: 4 },                     w: 1, icon: 'bag',    mat: [0, 5, 0] }
