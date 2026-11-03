@@ -1213,6 +1213,8 @@ const PXL = {
   dragoon:     { head: 'dragon', body: 'scale', ex: ['pauldron', 'cape'], c1: '#2f6a7a', c2: '#e8c060', metal: '#5a9aaa', cape: '#2a3a5a', gem: '#7ad8c8', pants: '#2a3a4a' },
   sniper:      { head: 'goggles', body: 'leather', ex: ['quiver', 'scarf'], c1: '#5a6a52', c2: '#c9a04a', c3: '#8a7a5a', gem: '#8ad8ff', wv: 'long', pants: '#4a4a3e' },
   hawkeye:     { head: 'feather', body: 'coat', ex: ['quiver', 'cape'], c1: '#f0ece0', c2: '#e8c060', hc: '#2f6a4a', feather: '#f0c24a', cape: '#c9a04a', wv: 'long', pants: '#5a4a36' },
+  mhunter:     { head: 'horn', body: 'leather', ex: ['quiver', 'fur', 'scarf'], c1: '#5a4a2a', c2: '#c8b080', c3: '#8a3a2a', hc: '#c8b890', metal: '#8a8a92', wv: 'long', pants: '#4a3a2a', boots: '#3a2a1a' },
+  dslayer:     { head: 'dragon', body: 'plate', ex: ['pauldron', 'cape', 'quiver', 'spike'], c1: '#3a2a2a', c2: '#e05a3a', c3: '#e05a3a', metal: '#5a4a56', cape: '#6a1a1a', gem: '#ff8a3a', eyes: '#ff8a3a', wv: 'long', pants: '#2a1a1a' },
   bard:        { head: 'beret', body: 'coat', c1: '#c8322a', c2: '#f2c444', hc: '#4a3a8a', feather: '#4ab0e0', pants: '#4a3a6a', hair: 'long' },
   maestro:     { head: 'beret', body: 'coat', ex: ['cape'], c1: '#6a3a9a', c2: '#f2c444', hc: '#2a1a3a', feather: '#fff4b0', cape: '#2a1a3a', pants: '#2a2236', hair: 'long' },
   assassin:    { head: 'cowl', body: 'leather', ex: ['scarf'], c1: '#2a2a36', c2: '#4a4458', c3: '#a82a2a', hc: '#22222c', pants: '#22222c', boots: '#1c1a22', twin: 1, eyes: '#c83a3a' },

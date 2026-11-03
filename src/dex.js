@@ -54,6 +54,7 @@ function monWhere(id) {
     if (F.mons.includes(id)) out.push({ fid, where: `${F.name} ${F.no}-${minStage(MONS[id])}~`, lv: fieldLv(F, minStage(MONS[id])) });
     if (F.dungeon && F.dungeon.mons.includes(id)) out.push({ fid, where: F.dungeon.name, lv: dungeonLv(F, 1) });
     if (F.dungeon && F.dungeon.boss === id) out.push({ fid, where: `${F.dungeon.name}의 주인`, lv: F.raid ? F.lv + 14 : dungeonBossLv(F), boss: 1 });
+    if (F.bosses) F.bosses.forEach((b, i) => { if (b === id && MONS[id].fb) out.push({ fid, where: `${F.name} ${F.no}-${(i + 1) * 10} ${i === 4 ? '주인' : '우두머리'}`, lv: fieldLv(F, (i + 1) * 10) + 1, fb: i + 1 }); });
   }
   for (const rid of RAID_IDS) if (RAIDS[rid].mon === id) out.push({ fid: 'raid_' + rid, where: `레이드 (${FIELDS[RAIDS[rid].bg].name} 근처)`, lv: RAIDS[rid].lv + 4, raid: rid });
   return out;
@@ -61,7 +62,7 @@ function monWhere(id) {
 function dexMonList() {
   const seen = new Set(), order = [];
   const push = id => { if (MONS[id] && !seen.has(id)) { seen.add(id); order.push(id); } };
-  for (const fid of ALL_FIELDS) { const F = FIELDS[fid]; F.mons.forEach(push); if (F.dungeon) { F.dungeon.mons.forEach(push); push(F.dungeon.boss); } }
+  for (const fid of ALL_FIELDS) { const F = FIELDS[fid]; F.mons.forEach(push); if (F.bosses) F.bosses.forEach(push); if (F.dungeon) { F.dungeon.mons.forEach(push); push(F.dungeon.boss); } }
   RAID_IDS.forEach(r => push(RAIDS[r].mon));
   return order;
 }
@@ -69,8 +70,8 @@ function monCard(id) {
   const m = MONS[id], D = dexState(), k = D.kills[id] || 0, seen = !!D.seen[id] || k > 0, where = monWhere(id), lv = where.length ? where[0].lv : 10;
   const lvl = DEX_K.filter(x => k >= x).length;   // 0~4
   if (!seen) return `<div class="li dexm dim"><img class="dexi" src="${monIconURL(id, 1)}" alt=""><div class="grow stack"><span>???</span><span class="sub">${where.length ? esc(where[0].where) : '어딘가'} · 만나면 열려요</span></div></div>`;
-  const f = foeFrom(id, lv), xp = Math.round(lv * 3 * (m.boss ? 15 : 1));
-  const tags = [m.boss && !m.giant ? '<span class="tag gold-t">주인</span>' : '', m.giant ? '<span class="tag red-t">레이드</span>' : '', m.magic ? '<span class="tag">마법</span>' : '', m.aoe ? '<span class="tag">광역</span>' : ''].join('');
+  const fbk = where.length && where[0].fb ? where[0].fb : 0, f = fbk ? fieldBoss(FIELDS[where[0].fid], fbk * 10, lv - 1) : foeFrom(id, lv), xp = Math.round(lv * 3 * (fbk ? 8 : m.boss ? 15 : 1));
+  const tags = [m.boss && !m.giant ? '<span class="tag gold-t">주인</span>' : '', fbk ? `<span class="tag gold-t">${fbk >= 5 ? '필드의 주인' : '우두머리'}</span>` : '', m.giant ? '<span class="tag red-t">레이드</span>' : '', m.magic ? '<span class="tag">마법</span>' : '', m.aoe ? '<span class="tag">광역</span>' : ''].join('');
   const stats = lvl >= 1 ? `<div class="stats"><span>Lv${lv} 기준</span><span>HP <b>${fmt(f.maxHp)}</b></span><span>공격 <b>${f.atk.toFixed(0)}</b></span><span>방어 <b>${f.def.toFixed(0)}</b></span><span>속도 <b>${m.spd}</b></span>${m.eva ? `<span>회피 <b>${Math.round(m.eva * 100)}%</b></span>` : ''}<span>경험치 <b>${fmt(xp)}</b>${m.boss ? '' : '/마리'}</span></div><div class="sub muted">체력 ×${m.mh} · 공격 ×${m.ma} · 방어 ×${m.md || 0} · 레벨이 오르면 함께 오른다</div>` : `<div class="sub muted">한 마리 잡으면 능력치와 경험치가 열려요.</div>`;
   let drops = '';
   if (lvl >= 2) {
@@ -86,11 +87,12 @@ function monCard(id) {
 /* ───────── 직업 ───────── */
 function clsCard(c) {
   const C = CLASSES[c], t = jobTier(c), n = S.advs.filter(a => a.cls === c).length, Q = JOB_REQ[t];
-  const req = t === 1 ? '여관에서 고용' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${c === 'gladiator' ? `, 투기장 랭킹 ${fmt(GLADIATOR_SCORE)}점` : ''}`;
+  const req = t === 1 ? '여관에서 고용' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${jobReqText(c) ? ` · ${jobReqText(c)}` : ''}`;
   return `<details class="card"><summary><span class="row"><img class="por" src="${clsIconURL(c)}" alt=""><span class="grow stack"><span>${C.name}${tierTag(c)}${n ? ` <span class="tag ok-t">${n}명</span>` : ''}</span><span class="sub">${C.desc}</span></span></span></summary>
     <div class="stats"><span>힘 <b>${C.base.str}</b> +${C.grow.str}/Lv</span><span>체력 <b>${C.base.vit}</b> +${C.grow.vit}/Lv</span><span>민첩 <b>${C.base.agi}</b> +${C.grow.agi}/Lv</span><span>지능 <b>${C.base.int}</b> +${C.grow.int}/Lv</span></div>
     <div class="stats"><span>공격 속도 <b>${C.spd}</b></span><span>치명 <b>${Math.round(C.crit * 100)}%</b></span><span>짐 <b>${C.carry}</b></span>${C.salary ? `<span>봉급 <b>${C.salary}G</b></span>` : ''}</div>
     ${trText(c) ? `<div class="sub gold-t">${trText(c)}</div>` : ''}
+    ${JOB_TRAITS[c] ? `<div class="sub gold-t">직업 특성 「${JOB_TRAITS[c].name}」 ${JOB_TRAITS[c].desc}</div>` : ''}
     <div class="sub">기본 스킬 「${SKILLS[C.innate] ? SKILLS[C.innate].name : '-'}」 · ${req}</div>
     ${nextJobs(c).length ? `<div class="sub muted">다음 전직: ${nextJobs(c).map(x => CLASSES[x].name).join(' · ')}</div>` : ''}
     ${t === 3 ? `<div class="sub muted">각성하면 「${SKILLS['awk_' + jobBase(c)].name}」</div>` : ''}</details>`;
@@ -140,14 +142,16 @@ function matRow(it) {
   return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.v}G · 무게 ${I.w}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${itemFrom(it).join(', ') || (I.boss === 1 ? '우두머리(필드 보스)' : I.boss === 2 ? '필드의 주인' : I.boss === 3 ? '던전 주인·주인을 다시 잡을 때' : I.raid ? '레이드 등수 보상' : '')}</span>${mats.length || wants.length ? `<span class="sub muted">${mats.length ? `장비 재료(${mats.join('·')})` : ''}${mats.length && wants.length ? ' · ' : ''}${wants.length ? `사는 왕국: ${wants.join(', ')}` : ''}</span>` : ''}</div></div>`;
 }
 function dexMats() {
-  const ids = Object.keys(ITEMS).filter(it => { const I = ITEMS[it]; return !I.book && !I.potion && !I.heal && !I.mana && !I.sup && !it.startsWith('rune_') && !I.runeKind; });
+  const ids = Object.keys(ITEMS).filter(it => { const I = ITEMS[it]; return !I.book && !I.potion && !I.heal && !I.mana && !I.sup && !I.herb && !it.startsWith('rune_') && !I.runeKind; });
   const g1 = ids.filter(it => !ITEMS[it].boss && !ITEMS[it].raid), g2 = ids.filter(it => ITEMS[it].boss), g3 = ids.filter(it => ITEMS[it].raid);
   const known = ids.filter(it => dexState().items[it] || (S.inv[it] || 0) > 0).length;
-  return `<div class="sub muted">${known}/${ids.length} 얻어 봄</div><details class="card" open><summary>몬스터 부속품 <span class="muted">${g1.length}</span></summary><div class="list">${g1.map(matRow).join('')}</div></details><details class="card"><summary>보스 부속품 <span class="muted">${g2.length}</span></summary><div class="list">${g2.map(matRow).join('')}</div></details><details class="card"><summary>레이드 보상 <span class="muted">${g3.length}</span></summary><div class="list">${g3.map(matRow).join('')}</div></details>`;
+  const herbs = HERB_IDS.map(it => { const I = ITEMS[it], known = !!dexState().items[it] || (S.inv[it] || 0) > 0, uses = RECIPES.filter(r => r.need[it]).map(r => ITEMS[r.out].name);
+    return `<div class="li${known ? '' : ' dim'}">${iconImg(it)}<div class="grow stack"><span>${known ? I.name : '???'} <span class="muted">· ${I.v}G</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${known ? I.desc || '' : '주우면 열려요'}</span><span class="sub muted">자라는 곳: ${herbFields(it).join(', ') || '상점'}${known && uses.length ? ` · 조제: ${uses.join(', ')}` : ''}</span></div></div>`; }).join('');
+  return `<div class="sub muted">${known}/${ids.length} 얻어 봄</div><details class="card" open><summary>몬스터 부속품 <span class="muted">${g1.length}</span></summary><div class="list">${g1.map(matRow).join('')}</div></details><details class="card"><summary>보스 부속품 <span class="muted">${g2.length}</span></summary><div class="list">${g2.map(matRow).join('')}</div></details><details class="card"><summary>레이드 보상 <span class="muted">${g3.length}</span></summary><div class="list">${g3.map(matRow).join('')}</div></details><details class="card"><summary>약초 <span class="muted">${HERB_IDS.length} · 필드에서 싸운 뒤 줍는다</span></summary><div class="list">${herbs}</div></details>`;
 }
 function dexPots() {
-  const ids = Object.keys(ITEMS).filter(it => ITEMS[it].potion || ITEMS[it].sup || ITEMS[it].heal || ITEMS[it].mana);
-  const rows = ids.map(it => { const I = ITEMS[it]; return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.buy ? `사는 값 ${I.buy}G` : `${I.v}G`}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${I.heal ? `HP ${Math.round(potionHeal(it))} 회복 (기본 ${I.heal})` : I.mana ? `MP ${I.mana} 회복` : I.desc || ''} · 원정 보급품으로 가져가면 싸울 때 저절로 써요</span></div></div>`; }).join('');
+  const ids = SUPPLY_IDS;
+  const rows = ids.map(it => { const I = ITEMS[it], r = RECIPES.find(x => x.out === it); return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.buy ? `사는 값 ${I.buy}G` : `${I.v}G`}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${I.heal ? `HP ${Math.round(potionHeal(it))} 회복 (기본 ${I.heal})` : I.mana ? `MP ${I.mana} 회복` : `${cureName(I.cure)} 치료 · ${I.desc || ''}`} · 보급품으로 가져가면 저절로 써요</span>${r ? `<span class="sub muted">조제: ${Object.entries(r.need).map(([m, n]) => `${ITEMS[m].name} ${n}`).join(' · ')} · ${r.fee}G${r.lv > 1 ? ' · 공방 2단계' : ''}</span>` : ''}</div></div>`; }).join('');
   const runes = RUNE_IDS.map(k => `<div class="li">${iconImg(runeId(k, 0))}<div class="grow stack"><span>${RUNES[k].name}의 룬 <span class="muted">· 하급·중급·상급</span></span><span class="sub">${RUNES[k].desc || '장비 룬 칸에 새긴다'}</span></div></div>`).join('');
   return `<div class="list">${rows}</div><div class="sec"><b>룬</b><span>대장간에서 장비에 새겨요</span></div><div class="list">${runes}</div>`;
 }

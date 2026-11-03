@@ -32,6 +32,13 @@ const ICON_PX = {
   feather: ['........kk', '.......k#k', '......k#lk', '.....k##k.', '....k#lk..', '...k##k...', '..k#lk....', '..kdk.....', '.kk.......', 'k.........'],
   heart:   ['..........', '.kk...kk..', 'k##k.k##k.', 'k#l#k###k.', 'k#l#####k.', '.k######k.', '..k####k..', '...k##k...', '....kk....', '..........'],
   book:    ['.kkkkkkk..', 'k#######k.', 'k#lll###kk', 'k#######kp', 'k##ll###kp', 'k#######kp', 'k#######kp', 'k#######kp', 'kkkkkkkkkp', '.pppppppp.'],
+  wing:    ['..........', 'kk........', 'k#kk......', 'k##l#kk...', 'k#####l#k.', '.k####l##k', '..kd###dk.', '...kd#dk..', '....kdk...', '.....k....'],
+  eye:     ['..........', '...kkkk...', '..k####k..', '.k#kkkk#k.', 'k#k#ll#k#k', 'k#k#ll#k#k', '.k#kkkk#k.', '..k####k..', '...kkkk...', '..........'],
+  drop:    ['..........', '.....k....', '....k#k...', '....k#k...', '...k#l#k..', '...k###k..', '..k#l###k.', '..k#####k.', '...kdddk..', '....kkk...'],
+  bone:    ['..........', 'kk......kk', 'k#k....k#k', '.k#kkkk#k.', '..k####k..', '.k#kkkk#k.', 'k#k....k#k', 'kk......kk', '..........', '..........'],
+  branch:  ['........kk', '.......k#k', '......k#k.', '....kkk#k.', '...k#l#k..', '..k##k#k..', '.k#lk.k#k.', 'k#k....kk.', 'kk........', '..........'],
+  root:    ['...kkkk...', '..k#ll#k..', '..k####k..', '...k##k...', '..k#l##k..', '..k####k..', '.k#kkk#k..', '.kk..k#k..', '.....kk...', '..........'],
+  flower:  ['..........', '..kk..kk..', '.k#lk#l#k.', '.k######k.', '..k#rr#k..', '.k##rr##k.', '.k#l####k.', '..kk.kkk..', '....k.....', '...kk.....'],
   sword:   ['........kk', '.......klk', '......kl#k', '.....kl#k.', '....kl#k..', '.k.kl#k...', '..kk#k....', '..kwk.....', '.kwkkk....', 'kk........'],
   bow:     ['...kk.....', '..kwwk....', '..kwks....', '.kwk.s....', '.kwk.s....', '.kwk.s....', '.kwk.s....', '..kwks....', '..kwwk....', '...kk.....'],
   staff:   ['......kkk.', '.....kl#k.', '.....k##k.', '......kkk.', '.....kwk..', '....kwk...', '...kwk....', '..kwk.....', '.kwk......', '.kk.......'],
@@ -60,7 +67,7 @@ function drawIcon(ctx, id, ox = 0, oy = 0) {
   pat.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const ch = row[x]; if (ch !== '.') R(ctx, ox + x, oy + y, 1, 1, map[ch]); } });
 }
 const ICON_URL = {};
-const TIER_COLORS = ['#b0a898', '#7ab05a', '#b8c0c8', '#7ab8ff', '#c8ecff', '#f0c24a'];
+const TIER_COLORS = ['#b0a898', '#7ab05a', '#b8c0c8', '#7ab8ff', '#c8ecff', '#f0c24a', '#7ab86a', '#e07a4a', '#c060e0'];
 const QCOL = ['#b0a898', '#7bd36a', '#6ab0ff', '#c07af0', '#f0b43c', '#ff6a5a', '#fff4b0'];
 function gearIconURL(g) {
   const key = 'g:' + g.base + ':' + g.t;

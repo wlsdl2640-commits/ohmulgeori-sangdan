@@ -188,7 +188,7 @@ function foeFrom(id, lv) {
 // 필드 보스: 10 스테이지마다. k = 1~5 (1-50은 그 필드의 주인)
 function fieldBoss(F, stage, lv) {
   const k = Math.round(stage / BOSS_EVERY), pool = F.mons.filter(id => minStage(MONS[id]) <= stage);
-  const id = pool[(k * 7 + F.no * 3) % pool.length];
+  const id = F.bosses && F.bosses[k - 1] && MONS[F.bosses[k - 1]] ? F.bosses[k - 1] : pool[(k * 7 + F.no * 3) % pool.length];
   const f = foeFrom(id, lv + 1);
   f.hp = f.maxHp = Math.round(f.maxHp * (3 + 0.9 * k));
   f.atk *= 1.25 + 0.06 * k; f.def *= 1.25;
@@ -686,15 +686,15 @@ function kill(p, e, f) {
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); });
   const harvest = blessed('harvest') ? 1.15 : 1;
-  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0)) * harvest);
+  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp')) * harvest);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
   ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0, adv: f.adv || null });
   if (f.pvp) return;   // 투기장: 전리품 없음
   kqKill(f.id);
-  const luck = Math.max(0, ...team.map(a => TQ(a, 'luck')));
-  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck) * harvest, fbm = f.fb ? 3 : 1;
+  const luck = Math.max(0, ...team.map(a => TQ(a, 'luck'))), hunt = Math.max(0, ...team.map(a => TQ(a, 'drop')));   // 보물 사냥꾼의 운, 괴물사냥꾼의 손질
+  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt) * harvest, fbm = f.fb ? 3 : 1;
   for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
-  if (e.area === 'field' && rnd() < 0.12 * harvest) loot(p, e, 'herb', 1);
+  if (e.area === 'field' && rnd() < 0.12 * harvest) loot(p, e, pickOne(F.herbs || ['herb']), 1);   // 약초 줍기
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
   if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(f.boss ? 0.25 : 0)));
@@ -706,7 +706,7 @@ function kill(p, e, f) {
 }
 // 보스 전용 부속품: 우두머리(1-10~1-40)는 증표, 필드의 주인(1-50)은 핵, 던전을 공략한 뒤에는 가끔 혼까지
 function bossParts(p, e, f, inD) {
-  if (!FIELD_IDS.includes(e.field)) return;
+  if (!TIER_FIELDS.includes(e.field)) return;
   const t = FIELDS[e.field].tier, fs = S.fields[e.field];
   if (f.fb) {
     if (f.fb < 5) loot(p, e, 'crest_' + t, 1 + (rnd() < 0.35 ? 1 : 0));
@@ -741,11 +741,12 @@ function lootGear(p, e, g) {
 }
 const isCaster = a => ['mage', 'cleric'].includes(jobBase(a.cls)) || a.cls === 'paladin' || CLASSES[a.cls].act === 'magic';
 const hpPotions = e => ['pot_l', 'pot_m', 'pot_s'].reduce((s, k) => s + (e.sup[k] || 0), 0);
-function potionHeal(k) { return ITEMS[k].heal * (1 + rlv('potion') * 0.25 + (spn('clinic') >= 3 ? 0.2 : 0)); }
+function potionHeal(k) { return ITEMS[k].heal * (1 + rlv('potion') * 0.25 + (spn('clinic') >= 3 ? 0.2 : 0) + relic('potion')); }
 function usePotions(p, e, team, dm) {
-  if ((e.sup.bandage || 0) > 0 && e.sta) {
-    const bl = team.find(a => up(a) && e.sta[a.id] && e.sta[a.id].bleed);
-    if (bl) { addTo(e.sup, 'bandage', -1); cureSta(e, bl, ['bleed']); ev(e, 'pot', { d: bl.id, v: 0, k: 'bandage' }); }
+  if (e.sta) for (const k of CURE_IDS) {   // 상태이상 치료 소모품: 걸린 사람이 있으면 하나 쓴다 (만병통치약은 맨 나중에)
+    if ((e.sup[k] || 0) <= 0) continue;
+    const C = ITEMS[k].cure, a = team.find(x => up(x) && e.sta[x.id] && C.some(s => e.sta[x.id][s]));
+    if (a) { addTo(e.sup, k, -1); cureSta(e, a, C); ev(e, 'pot', { d: a.id, v: 0, k }); }
   }
   if (e.potCd <= 0) {
     const low = team.filter(a => up(a) && a.hp < dm[a.id].maxHp * 0.4).sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];
@@ -891,6 +892,7 @@ function isUnlocked(fid) {
   if (fid === 'sewer') return (S.rank || 0) >= UNDER_RANK;
   const F = FIELDS[fid];
   if (F && F.giant) { const r = raidRec(F.giant); return !!(r && !r.done); }
+  if (F && F.after) return !!(S.fields[F.after] && S.fields[F.after].cleared);   // 마계: 앞 땅의 던전을 공략하면
   return !!F && !F.raid && (S.rank || 0) >= F.no - 1;
 }
 

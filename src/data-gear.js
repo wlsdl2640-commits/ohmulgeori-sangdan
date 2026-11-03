@@ -21,8 +21,8 @@ const isBossPart = k => !!(ITEMS[k] && ITEMS[k].boss);
 const BOSS_RECIPE = {
   3: { mat: 1.5, crest: 2, core: 0, soul: 0, fee: 2,  smith: 1 },   // 영웅
   4: { mat: 2,   crest: 4, core: 1, soul: 0, fee: 3,  smith: 3 },   // 전설
-  5: { mat: 2,   crest: 6, core: 3, soul: 1, fee: 5,  smith: 4 },   // 신화
-  6: { mat: 3,   crest: 8, core: 6, soul: 2, fee: 10, smith: 4 }    // 신성
+  5: { mat: 2,   crest: 6, core: 3, soul: 1, fee: 5,  smith: 5 },   // 신화
+  6: { mat: 3,   crest: 8, core: 6, soul: 2, fee: 10, smith: 7 }    // 신성
 };
 function bossNeed(base, t, q) {
   const B = BOSS_RECIPE[q], need = {};

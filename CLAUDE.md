@@ -26,7 +26,15 @@
 - `src/dex.js`: `S.dex = { kills, seen, items, gear }`. `foeFrom`이 `dexSeen`, `kill`이 `dexKill`(투기장 제외), `hitFoe`가 30마리 완전 기록 때 피해 +3%. 창은 `PANELS.dex`에 탭(`UI.dexTab`, ACT `dextab`), 상단 창의 `subBtn('dex')`로 연다. 탭을 바꾸면 `winTop().tab`을 바꿔 `renderPanel`의 키가 달라지게 해서 펼친 목록(details) 상태가 탭 사이에 섞이지 않는다.
 - 몬스터 공개 단계는 `DEX_K = [1, 5, 15, 30]`. 옛 저장은 `dexMigrate()`(migrateS 끝)에서 가 본 필드 몬스터를 만난 것으로 옮긴다.
 
+## 마계·약초·창고·시설 (빌드 17)
+- `src/data-demon.js`: DEMON_IDS(swamp·barren·castle), 몬스터 27종, 부속품, `F.bosses`(10 스테이지마다 정해진 우두머리, core.js `fieldBoss`), `F.after`(앞 땅의 던전 공략 = 잠금 사슬, `isUnlocked`), GTIERS 6·7·8, TIER_FIELDS(장비 단계·보스 부속품·유물을 가진 필드; FIELD_IDS 대신 쓴다), `CLASSES[c].req`(lv·fame·item·arena, econ.js promoWhy). 그림은 `src/pxmon2.js`(반 해상도 격자 → 두 배, 2×2 블록을 짝수 칸에 맞추려고 빈 줄을 하나 앞에 둔다), 풍경은 `src/demon.js`(BG_MAKERS) + scene.js buildUnder의 hut·lab·torture.
+- `src/data-herb.js`: 약초(herb: 1, `F.herbs`로 필드에서 줍는다), 치료 소모품(sup: 1, `cure: [상태이상]`, core.js usePotions가 CURE_IDS를 돈다), RECIPES를 약초 바탕으로 다시 씀, 창고 분류 `INV_CATS`/`itemCat`. 약초 아이템 id는 그대로 `herb`, 이름만 히포크리초.
+- 창고(`PANELS.inv`): 탭(`UI.invTab`) + 칸 격자(`.igrid .cell`, `UI.invSel`) + 설명 카드(`invDetail`). 원정 출발은 다시 원정대 창(partyCard의 `.fbtn`, 「필드」·「마계」 탭 `UI.destTab`); 지도의 필드 노드는 `mapexp`로 원정대 창을 연다.
+- 전직 트리: 마검사 from warrior, 음유시인 from porter, 괴물사냥꾼(mhunter)·드래곤 슬레이어(dslayer) from archer. 옛 저장은 migrateS 끝에서 안 맞는 장비를 창고로 뺀다.
+- 마법사의 돌: `ITEMS.wizstone`(use: 'trait'), econ.js `useStone`, 모험가 창 특성 칩의 `data-mact="stone"`. 직업 특성은 data-trait.js `JOB_TRAITS` → `TRAITS['j_'+cls]`(job 표시), 전직(promote)과 옛 저장 이전에서 붙인다. `ROLL_TRAIT_IDS`는 무작위 특성 풀(직업 특성 제외).
+- 시설: BUILDINGS max 15·12·8·6·5·8·5·8. `shopStands(lv)`, `craftFee`, 훈련비·연구비·연구 기간 할인은 econ.js.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
-- 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`.
+- 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).
 - 커밋 끝에 `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>` 과 `Claude-Session:` 줄.

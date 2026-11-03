@@ -636,7 +636,7 @@ function heroPanel(a) {
         <div class="hero-side"><div class="hero-por"><img src="${heroBust(a)}" alt=""></div><div class="hero-sk">${hexes.join('')}</div></div>
       </div>
       <div class="hero-party">${thumbs}</div>
-      <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}</div>
+      <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait${TRAITS[id].job ? ' job' : ''}" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}</div>
     </div>
 `;
 }

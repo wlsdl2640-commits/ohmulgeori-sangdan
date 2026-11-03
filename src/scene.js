@@ -204,7 +204,10 @@ function buildUnder(kind) {
     tomb:   { wall: '#a8844e', line: '#7a5a32', floor: '#c8a468', fl: '#a8844e' },
     alley:  { wall: '#2a2628', line: '#1a1618', floor: '#3a3438', fl: '#2a2628', torch: '#e04a3a' },
     sewer:  { wall: '#2e3a34', line: '#1e2822', floor: '#3a4a44', fl: '#2e3a34', torch: '#f0b050' },
-    arena:  { wall: '#4a4038', line: '#36302a', floor: '#c8a86a', fl: '#b09258', torch: '#f0a03a' }
+    arena:  { wall: '#4a4038', line: '#36302a', floor: '#c8a86a', fl: '#b09258', torch: '#f0a03a' },
+    hut:    { wall: '#4a3a2a', line: '#2e2418', floor: '#3a3a28', fl: '#2e2e20', torch: '#8af0a0' },
+    lab:    { wall: '#3a3a44', line: '#26262e', floor: '#4a4a52', fl: '#3a3a42', torch: '#6ae8a0' },
+    torture:{ wall: '#2a2228', line: '#1a1418', floor: '#302830', fl: '#241c24', torch: '#e05a3a' }
   }[kind];
   const [mid, m] = mkCanvas(480, 128);
   R(m, 0, 0, 480, 104, pal.wall);
@@ -234,6 +237,28 @@ function buildUnder(kind) {
     for (let x = 60; x < 480; x += 144) { R(m, x, 62, 10, 16, '#a82a2a'); R(m, x + 2, 64, 6, 10, '#f0c24a'); R(m, x, 78, 10, 1, '#6a1818'); R(m, x + 4, 79, 2, 3, '#a82a2a'); }
     for (let x = 0; x < 480; x += 7) R(m, x, 100, 4, 1, '#5a5048');
   }
+  if (kind === 'hut') {
+    // 마녀의 오두막: 통나무 벽, 매달린 약초와 뼈, 가마솥, 선반의 병
+    for (let y = 2; y < 104; y += 9) { R(m, 0, y, 480, 2, '#3a2a1c'); R(m, 0, y + 2, 480, 1, '#5a4630'); }
+    for (let x = 20; x < 480; x += 44) { const h = 8 + Math.floor(r() * 8); R(m, x, 20, 1, h, '#8a7a5a'); R(m, x - 2, 20 + h, 5, 5, r() < 0.5 ? '#5a8a4a' : '#8a6a3a'); R(m, x - 1, 26 + h, 3, 2, '#3a5a2a'); if (r() < 0.3) { R(m, x + 10, 22, 2, 6, '#e8e0d0'); R(m, x + 9, 28, 4, 3, '#e8e0d0'); } }
+    for (let x = 60; x < 480; x += 150) { R(m, x, 70, 30, 3, '#5a4630'); for (let i = 0; i < 5; i++) R(m, x + 2 + i * 6, 64, 3, 6, ['#b46ad8', '#5ad6e8', '#f0b43c', '#7ad83a', '#e04a5a'][i]); }
+    for (let x = 110; x < 480; x += 220) { R(m, x, 84, 20, 14, '#2a2a2e'); R(m, x - 2, 82, 24, 3, '#3a3a3e'); R(m, x + 2, 80, 16, 2, '#7ad83a'); R(m, x + 6, 76, 2, 3, '#8af0a0'); R(m, x + 12, 74, 2, 3, '#8af0a0'); R(m, x + 4, 98, 2, 4, '#5a4630'); R(m, x + 14, 98, 2, 4, '#5a4630'); }
+  }
+  if (kind === 'lab') {
+    // 키메라 연구소: 유리 배양통(초록 액체와 실험체), 책상, 쇠사슬, 파이프
+    R(m, 0, 14, 480, 4, '#5a5a62'); R(m, 0, 14, 480, 1, '#7a7a82'); for (let x = 30; x < 480; x += 70) { R(m, x, 18, 3, 8, '#5a5a62'); R(m, x + 1, 26, 1, 4, '#6ae8a0'); }
+    for (let x = 40; x < 480; x += 120) { R(m, x, 48, 24, 52, '#2a3a34'); R(m, x + 2, 50, 20, 48, '#2a6a4a'); R(m, x + 2, 50, 3, 48, '#4a9a6a'); R(m, x - 2, 44, 28, 5, '#5a5a62'); R(m, x - 2, 98, 28, 4, '#5a5a62'); R(m, x + 8, 62, 8, 10, '#1a2a22'); R(m, x + 6, 72, 12, 16, '#1a2a22'); R(m, x + 10, 66, 2, 2, '#e8e8a0'); for (let i = 0; i < 4; i++) R(m, x + 4 + i * 5, 54 + (i * 7) % 20, 1, 1, '#9af0c0'); }
+    for (let x = 100; x < 480; x += 240) { R(m, x, 86, 36, 3, '#5a4630'); R(m, x + 2, 89, 2, 11, '#5a4630'); R(m, x + 32, 89, 2, 11, '#5a4630'); R(m, x + 6, 80, 6, 6, '#8a4a4a'); R(m, x + 16, 82, 10, 4, '#e8e0d0'); R(m, x + 28, 78, 3, 8, '#5ad6e8'); }
+    for (let x = 10; x < 480; x += 90) { for (let i = 0; i < 6; i++) R(m, x + (i % 2), 30 + i * 3, 2, 2, '#6a6a72'); }
+  }
+  if (kind === 'torture') {
+    // 지하 고문실: 쇠사슬과 족쇄, 우리, 철의 처녀, 해골
+    for (let x = 16; x < 480; x += 48) { for (let i = 0; i < 9; i++) R(m, x + (i % 2), 10 + i * 4, 2, 3, '#6a6a72'); R(m, x - 2, 46, 6, 3, '#5a5a62'); }
+    for (let x = 60; x < 480; x += 160) { R(m, x, 40, 26, 60, '#1a1418'); for (let i = 0; i < 5; i++) R(m, x + 2 + i * 5, 40, 2, 60, '#4a4a52'); R(m, x - 1, 38, 28, 3, '#4a4a52'); R(m, x - 1, 98, 28, 2, '#4a4a52'); R(m, x + 8, 76, 8, 8, '#e8e0d0'); R(m, x + 10, 79, 1, 2, '#1a1418'); R(m, x + 13, 79, 1, 2, '#1a1418'); }
+    for (let x = 140; x < 480; x += 240) { R(m, x, 50, 16, 50, '#3a3a44'); R(m, x + 2, 52, 12, 46, '#2a2a34'); R(m, x + 6, 56, 4, 6, '#1a1418'); for (let i = 0; i < 4; i++) R(m, x + 4 + (i % 2) * 6, 66 + i * 7, 2, 2, '#8a8a92'); }
+    for (let x = 30; x < 480; x += 97) { R(m, x, 94, 6, 6, '#e8e0d0'); R(m, x + 1, 96, 1, 2, '#1a1418'); R(m, x + 4, 96, 1, 2, '#1a1418'); R(m, x + 8, 98, 8, 2, '#e8e0d0'); }
+    for (let x = 0; x < 480; x += 23) R(m, x, 100 - (x % 5), 2, 1, '#6a1a1a');
+  }
   // 횃불 받침 (불꽃은 따로 그린다)
   for (let x = 40; x < 480; x += 120) { R(m, x, 52, 2, 9, '#5e4630'); R(m, x - 1, 51, 4, 2, '#3a2a1e'); }
   const [gr, g] = mkCanvas(480, 28);
@@ -247,7 +272,7 @@ function buildUnder(kind) {
   const [fore, fo] = mkCanvas(480, 128);
   for (let x = 90; x < 480; x += 200) { R(fo, x, 0, 12, 128, shade(pal.wall, -0.45)); R(fo, x, 0, 2, 128, shade(pal.wall, -0.3)); R(fo, x - 2, 0, 16, 6, shade(pal.wall, -0.5)); }
   const torch = pal.torch || '#f0a03a';
-  return { under: true, wall: pal.wall, torch, mid, gr, foreTall: fore, ambient: 'dust', dark: kind === 'arena' ? 0.14 : undefined,
+  return { under: true, wall: pal.wall, torch, mid, gr, foreTall: fore, ambient: 'dust', dark: kind === 'arena' ? 0.14 : kind === 'torture' ? 0.42 : undefined,
     emit(g, off, t) { for (let x = 40; x < 480; x += 120) { const xx = ((x - off) % 480 + 480) % 480; for (const tx of [xx, xx - 480]) { if (tx < -8 || tx > VW + 8) continue; const fl = Math.floor(t * 9 + x) % 3; R(g, tx - 1, 47 - fl, 4, 4 + fl, torch); R(g, tx, 46 - fl, 2, 3, '#f7e04a'); R(g, tx, 48, 2, 2, '#fff2c0'); } } },
     lights(off) { const out = []; for (let x = 40; x < 480; x += 120) { const xx = ((x - off) % 480 + 480) % 480; for (const tx of [xx, xx - 480]) if (tx > -40 && tx < VW + 40) out.push({ x: tx + 1, y: 48, r: 34, c: torch, glow: 1 }); } return out; } };
 }
@@ -304,7 +329,7 @@ function getBg(id) {
   const make = { plains: buildPlains, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
     cellar: () => buildUnder('cellar'), cave: () => buildUnder('cave'), mine: () => buildUnder('mine'),
     valley: buildValley, snow: buildSnow, desert: buildDesert, front: buildFront,
-    nest: () => buildUnder('nest'), icetemple: () => buildUnder('icetemple'), tomb: () => buildUnder('tomb'), alley: buildAlley, sewer: () => buildUnder('sewer'), arena: () => buildUnder('arena') }[id] || buildPlains;
+    nest: () => buildUnder('nest'), icetemple: () => buildUnder('icetemple'), tomb: () => buildUnder('tomb'), alley: buildAlley, sewer: () => buildUnder('sewer'), arena: () => buildUnder('arena') }[id] || (typeof BG_MAKERS !== 'undefined' && BG_MAKERS[id]) || buildPlains;
   return (BG[id] = make());
 }
 function tile(ctx, img, off, y) {

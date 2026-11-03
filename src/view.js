@@ -591,7 +591,7 @@ function logEvent(x, e, p) {
   if (x.type === 'miss') return add(`${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
   if (x.type === 'aoe') return add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn');
   if (x.type === 'heal') return add(x.s === x.d ? `${ally(jo(A(x.d), '이', '가'))} HP를 ${num(x.v, 'g')} 회복했습니다.` : `${ally(jo(A(x.s), '이', '가'))} ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 치유했습니다.`);
-  if (x.type === 'pot' && x.k === 'bandage') return add(`${ally(jo(A(x.d), '이', '가'))} 붕대를 감아 출혈을 멎게 했습니다.`);
+  if (x.type === 'pot' && x.k) return add(`${ally(jo(A(x.d), '이', '가'))} ${ITEMS[x.k].name}(으)로 ${cureName(ITEMS[x.k].cure)}을(를) 풀었습니다.`);
   if (x.type === 'pot') return add(`${ally(jo(A(x.d), '이', '가'))} 회복 물약으로 HP ${num(x.v, 'g')} 회복.`);
   if (x.type === 'mana') return add(`${ally(jo(A(x.d), '이', '가'))} 마나 물약으로 MP ${num(x.v, 'b')} 회복.`);
   if (x.type === 'skill') { const s = SKILLS[x.id]; if (s) add(`${ally(jo(A(x.s), '이', '가'))} 「${esc(s.name)}」${s.kind === 'heal' ? '을(를) 외웠습니다.' : '!'}`, 'sk'); return; }

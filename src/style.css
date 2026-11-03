@@ -401,7 +401,7 @@ html, body { overflow-x: hidden; }
 .trait small { color: var(--ink-3); font-size: 10px; }
 
 /* ───────── 지도 ───────── */
-.map-wrap { position: relative; width: 100%; aspect-ratio: 240 / 200; background: #3a2a14; border: 3px solid #5a3a1e; box-shadow: inset 0 0 0 2px #1a1208; }
+.map-wrap { position: relative; width: 100%; aspect-ratio: 240 / 240; background: #3a2a14; border: 3px solid #5a3a1e; box-shadow: inset 0 0 0 2px #1a1208; }
 .map-img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
 .mnode { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 1px; padding: 0; background: none; border: 0; color: #fff; font-size: 9px; line-height: 1; text-shadow: 1px 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000, 1px 0 0 #000, 0 1px 0 #000; }
 .mnode .mn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; font-style: normal; font-size: 10px; font-weight: 700; color: #1d1408; background: #f0c24a; border: 2px solid #1a1208; border-radius: 50%; box-shadow: 0 1px 0 #1a1208; }
@@ -441,3 +441,26 @@ html, body { overflow-x: hidden; }
 .dexm .stats { margin-top: 6px; }
 .dexm .row.sub { padding: 2px 0; }
 details.card > .list { margin-top: 8px; }
+
+/* ───────── 창고: 분류 탭과 칸 격자 ───────── */
+.tabs.inv .tab { padding: 6px 1px; font-size: 11px; letter-spacing: -.02em; }
+.tabs.inv .tab small { display: block; margin-top: 1px; font-size: 9px; color: var(--ink-3); }
+.tabs.inv .tab.on small { color: var(--gold); }
+.igrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; margin: 6px 0 8px; padding: 6px; background: #121620; border: 2px solid var(--line); box-shadow: inset 0 2px 0 rgba(0, 0, 0, .35); }
+.cell { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 1; padding: 0; background: #1a2030; border: 2px solid #2c3446; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .3); }
+.cell .ico.lg { width: 30px; height: 30px; }
+.cell .qty { position: absolute; right: 2px; bottom: 0; font-size: 10px; font-weight: 700; color: #fff; text-shadow: 1px 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000, 1px 0 0 #000; }
+.cell.on { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-d), 0 0 0 1px var(--gold-d); }
+.cell.zero { opacity: .5; }
+.cell.empty { background: #141a26; border-color: #222a3a; box-shadow: none; }
+.igrid.herb .cell { background: #1a2a1c; border-color: #2e4a30; }
+.igrid.sup .cell { background: #2a1c1e; border-color: #4a2e32; }
+.igrid.book .cell { background: #1a2232; border-color: #2e3c5a; }
+.igrid.rune .cell { background: #241a30; border-color: #3e2e52; }
+.igrid.gear .cell { background: #2a2218; border-color: #4a3c28; }
+.idet .row { align-items: flex-start; }
+.idet .ico.lg { margin-top: 2px; }
+
+.trait.job { border-color: var(--gold-d); background: #2a2418; }
+.trait.job b { color: var(--gold); }
+.trait .btn.xs { margin-top: 3px; padding: 2px 6px; font-size: 10px; min-height: 0; }

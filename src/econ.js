@@ -2,7 +2,7 @@
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
   gladiator: 'sword', champion: 'sword', knight: 'sword', paladin: 'sword', berserker: 'axe', bloodlord: 'axe',
-  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute',
+  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute', mhunter: 'bow', dslayer: 'bow',
   assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'dagger', masterthief: 'dagger',
   elementalist: 'staff', elementlord: 'staff', necromancer: 'staff', lich: 'staff', spellblade: 'sword', arcblade: 'sword',
   priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
@@ -149,7 +149,7 @@ function migrate5() {
   if (S.v >= 5) return;
   S.v = 5;
   if (!SPEEDS.includes(S.speed)) S.speed = S.speed > 1 ? 5 : 1;
-  S.relics = FIELD_IDS.filter(f => S.fields[f] && S.fields[f].cleared);
+  S.relics = TIER_FIELDS.filter(f => S.fields[f] && S.fields[f].cleared);
   S.king = { favor: {}, visit: null, next: today() + 2 };
   S.raid = null;
   S.advs.concat(S.cands || []).forEach(a => {
@@ -176,7 +176,7 @@ function migrate5() {
 /* ───────── 여관 손님 ───────── */
 function giftPool() {
   const out = [];
-  FIELD_IDS.filter(isUnlocked).forEach(fid => FIELDS[fid].mons.forEach(mid => MONS[mid].drops.forEach(([it]) => { if (!out.includes(it)) out.push(it); })));
+  TIER_FIELDS.filter(isUnlocked).forEach(fid => FIELDS[fid].mons.forEach(mid => MONS[mid].drops.forEach(([it]) => { if (!out.includes(it)) out.push(it); })));
   return out;
 }
 function makeCand() {
@@ -405,7 +405,7 @@ function forgetSkill(aid, sid) {
 }
 const trainedTotal = a => Object.values(a.tr).reduce((s, v) => s + v, 0);
 const trainCap = a => a.lv * 2;
-const trainCost = a => Math.round((60 + 30 * trainedTotal(a)) * (1 + a.lv / 20) / 5) * 5;
+const trainCost = a => Math.round((60 + 30 * trainedTotal(a)) * (1 + a.lv / 20) * (1 - Math.max(0, (S.bld.training || 1) - 1) * 0.12) / 5) * 5;
 function trainStat(aid, k) {
   const a = advById(aid);
   if (!S.bld.training) return '훈련소가 필요해요.';
@@ -430,7 +430,7 @@ function blessRoll() {
 // 다친 모험가: 신전(없으면 여관 방)에서 시간이 지나면 낫고, 처치·치유사·수술로 앞당긴다
 const patients = () => S.advs.filter(a => a.inj);
 const healers = () => S.advs.filter(a => a.post === 'temple');
-const healerSlots = () => S.bld.temple || 0;
+const healerSlots = () => Math.min(4, S.bld.temple || 0);
 const healRate = () => (S.bld.temple ? 4 + 4 * S.bld.temple : 3) * (spn('clinic') >= 2 ? 1.5 : 1) * (1 + relic('rest'));   // 하루 자연 치료
 const healPow = h => (2 + h.lv * 0.4 + derive(h).T.int * 0.15) * careMul(h.cls);
 const injLeft = a => (a.inj ? Math.max(0, a.inj.need - a.inj.done) : 0);
@@ -493,7 +493,7 @@ function treat(aid, kind) {
   }
   if (treatedToday(a)) return '오늘은 이미 처치를 받았어요. 내일 다시 할 수 있어요.';
   let k = null, pts = 0;
-  if (kind === 'herb') { if ((S.inv.herb || 0) < HERB_USE) return `약초가 ${HERB_USE}개 필요해요.`; k = 'herb'; pts = HERB_PTS; addTo(S.inv, 'herb', -HERB_USE); }
+  if (kind === 'herb') { if ((S.inv.herb || 0) < HERB_USE) return `히포크리초가 ${HERB_USE}개 필요해요.`; k = 'herb'; pts = HERB_PTS; addTo(S.inv, 'herb', -HERB_USE); }
   else if (kind === 'med') { if (!S.bld.temple) return '약재 처방은 신전에서만 할 수 있어요.'; k = medPick(rem); if (!k) return '쓸 수 있는 약재가 없어요.'; pts = ITEMS[k].med * MED_MUL; addTo(S.inv, k, -1); }
   else if (kind === 'pot') { k = potPick(rem); if (!k) return '회복 물약이 없어요.'; pts = POT_TREAT[k]; addTo(S.inv, k, -1); }
   else return '';
@@ -512,7 +512,7 @@ function stepCare(dt) {
   if (!pats.length) return;
   const plan = healPlan(), k = dt / DAY_SEC;
   for (const a of pats) {
-    if (S.autoTreat && !treatedToday(a) && (S.inv.herb || 0) >= HERB_USE) { a.inj.day = today(); addTo(S.inv, 'herb', -HERB_USE); healInj(a, HERB_PTS, '약초'); if (!a.inj) continue; }
+    if (S.autoTreat && !treatedToday(a) && (S.inv.herb || 0) >= HERB_USE) { a.inj.day = today(); addTo(S.inv, 'herb', -HERB_USE); healInj(a, HERB_PTS, '히포크리초'); if (!a.inj) continue; }
     healInj(a, dayHeal(a, plan) * k, '');
   }
   if (!S.bld.temple) return;
@@ -549,11 +549,11 @@ function sellGuild(it, q) {
   HOOKS.toast(`${ITEMS[it].name} ${q}개를 ${g$(g)}에 팔았다`);
   changed();
 }
-const slotCount = () => S.bld.shop + 2 + rankStands(S.rank || 0);
+const slotCount = () => shopStands(S.bld.shop) + rankStands(S.rank || 0);
 const isGearKey = k => typeof k === 'string' && k.startsWith('g:');
 function gearsOfKey(k) { const [, b, t] = k.split(':'); return S.gear.filter(g => g.base === b && g.t === +t).sort((x, y) => x.q - y.q); }
 const stockOf = k => (isGearKey(k) ? gearsOfKey(k).length : S.inv[k] || 0);
-function slotPrice(s) { return (isGearKey(s.item) ? (gearsOfKey(s.item)[0] ? gearValue(gearsOfKey(s.item)[0]) : 0) * TIERS[s.tier].m : ITEMS[s.item].v * TIERS[s.tier].m) * (1 + relic('price')); }
+function slotPrice(s) { return (isGearKey(s.item) ? (gearsOfKey(s.item)[0] ? gearValue(gearsOfKey(s.item)[0]) : 0) * TIERS[s.tier].m : ITEMS[s.item].v * TIERS[s.tier].m) * (1 + relic('price') + Math.max(0, S.bld.shop - 5) * 0.02); }
 function setSlot(i, it, tier) {
   while (S.shop.slots.length < slotCount()) S.shop.slots.push(null);
   S.shop.slots[i] = it ? { item: it, tier: tier || 0, tm: 0 } : null;
@@ -586,13 +586,15 @@ function buy(it, q) {
   changed();
   return '';
 }
-const canCraft = r => S.bld.alchemy >= r.lv && Object.entries(r.need).every(([k, q]) => (S.inv[k] || 0) >= q) && S.gold >= r.fee;
+const craftFee = r => Math.round(r.fee * (1 - Math.max(0, S.bld.alchemy - 2) * 0.1));
+const canCraft = r => S.bld.alchemy >= r.lv && Object.entries(r.need).every(([k, q]) => (S.inv[k] || 0) >= q) && S.gold >= craftFee(r);
 function craft(i) {
   const r = RECIPES[i];
   if (S.bld.alchemy < r.lv) return r.lv > 1 ? '연금술 공방을 넓혀야 해요.' : '연금술 공방이 필요해요.';
   if (!canCraft(r)) return '재료나 돈이 모자라요.';
   Object.entries(r.need).forEach(([k, q]) => addTo(S.inv, k, -q));
-  S.gold -= r.fee; addTo(S.inv, r.out, 1);
+  S.gold -= craftFee(r); addTo(S.inv, r.out, 1);
+  if (rnd() < Math.max(0, S.bld.alchemy - 2) * 0.15) { addTo(S.inv, r.out, 1); HOOKS.toast(`${ITEMS[r.out].name}이(가) 하나 더 나왔다!`); }   // 넓은 공방의 덤
   changed();
   return '';
 }
@@ -611,7 +613,7 @@ function upgrade(bid) {
 }
 
 /* ───────── 의뢰 ───────── */
-function maxGearTier() { let m = 0; GTIERS.forEach((T, i) => { if (S.bld.smithy >= T.smith && isUnlocked(FIELD_IDS[i])) m = i; }); return m; }
+function maxGearTier() { let m = 0; GTIERS.forEach((T, i) => { if (S.bld.smithy >= T.smith && isUnlocked(TIER_FIELDS[i])) m = i; }); return m; }
 function genReq() {
   if (S.reqs.length >= 4) return;
   const special = (Object.values(S.spons).some(v => v >= 2) && rnd() < 0.25) || (spn('citizens') >= 3 && rnd() < 0.15);
@@ -770,12 +772,29 @@ function checkUnlocks() {
 function promoWhy(a, cls) {
   const t = jobTier(cls), Q = JOB_REQ[t];
   if (!jobOpen(t)) return `상단 명성 ${JOB_FAME[t]}에 열려요`;
-  if (cls === 'gladiator' && arenaScore() < GLADIATOR_SCORE) return `투기장 랭킹 점수 ${fmt(GLADIATOR_SCORE)} 필요 (지금 ${fmt(arenaScore())})`;
+  const R = CLASSES[cls].req || {};
+  if (R.arena && arenaScore() < GLADIATOR_SCORE) return `투기장 랭킹 점수 ${fmt(GLADIATOR_SCORE)} 필요 (지금 ${fmt(arenaScore())})`;
   if (!S.bld.training) return '훈련소가 필요해요';
-  if (a.lv < Q.lv) return `Lv${Q.lv}부터`;
+  if (a.lv < Math.max(Q.lv, R.lv || 0)) return `Lv${Math.max(Q.lv, R.lv || 0)}부터`;
+  if (R.fame && S.fame < R.fame) return `상단 명성 ${fmt(R.fame)} 필요 (지금 ${fmt(S.fame)})`;
+  if (R.item && (S.inv[R.item[0]] || 0) < R.item[1]) return `${ITEMS[R.item[0]].name} ${R.item[1]}개 필요 (창고 ${S.inv[R.item[0]] || 0})`;
   if ((a.rank || 0) < Q.rank) return `${LICENSE[Q.rank].name} 라이선스 필요`;
   if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
   if (S.gold < Q.fee) return '돈이 모자라요';
+  return '';
+}
+function useStone(aid, tid) {
+  const a = advById(aid);
+  if (!a) return '';
+  if ((S.inv.wizstone || 0) < 1) return '마법사의 돌이 없어요.';
+  if (!(a.traits || []).includes(tid)) return '그 특성이 없어요.';
+  if (isJobTrait(tid)) return '직업 특성은 바꿀 수 없어요.';
+  const r = rerollTrait(a, tid);
+  if (!r) return '바꿀 수 없어요.';
+  addTo(S.inv, 'wizstone', -1);
+  log(`마법사의 돌: ${a.name}의 「${TRAITS[r[0]].name}」이(가) 「${TRAITS[r[1]].name}」(으)로 바뀌었다.`, 'good');
+  queueModal({ title: '마법사의 돌', adv: a.id, body: [`돌이 빛나며 ${a.name}의 특성이 바뀌었다.`, `「${TRAITS[r[0]].name}」 → 「${TRAITS[r[1]].name}」 (${TRAITS[r[1]].desc})`] });
+  changed();
   return '';
 }
 function promote(aid, cls) {
@@ -785,8 +804,10 @@ function promote(aid, cls) {
   if (why) return why + '.';
   const C0 = CLASSES[a.cls], C1 = CLASSES[cls], wasT = a.eq.weapon ? a.eq.weapon.t : 0, Q = JOB_REQ[jobTier(cls)];
   S.gold -= Q.fee;
+  if (C1.req && C1.req.item) addTo(S.inv, C1.req.item[0], -C1.req.item[1]);   // 전직 재료(피눈물 등)
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
   a.cls = cls;
+  const jt = jobTraitOf(cls); if (jt) { a.traits = (a.traits || []).filter(t => !(TRAITS[t] && TRAITS[t].job && jobTier(TRAITS[t].job) === jobTier(cls))); a.traits.push(jt); }   // 직업 특성
   a.skills = [C1.innate, ...a.skills.filter(id => id !== C1.innate)].slice(0, skillSlots(a));
   if (a.post && !isHealer(cls)) a.post = null;
   SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } });
@@ -794,7 +815,7 @@ function promote(aid, cls) {
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
   clampVitals(a);
   log(`${a.name}이(가) ${C0.name}에서 ${C1.name}(으)로 전직했다!`, 'good');
-  queueModal({ title: `${jobTier(cls)}차 전직 · ${C1.name}`, adv: a.id, body: [`${a.name}이(가) 훈련소에서 ${C1.name}(으)로 다시 태어났다.`, C1.desc, `기본 스킬 「${SKILLS[C1.innate].name}」을(를) 익혔고, 배워 둔 스킬은 그대로 남았다. 새 직업에 맞지 않는 장비는 창고로 옮겼다.`] });
+  queueModal({ title: `${jobTier(cls)}차 전직 · ${C1.name}`, adv: a.id, body: [`${a.name}이(가) 훈련소에서 ${C1.name}(으)로 다시 태어났다.`, C1.desc, `기본 스킬 「${SKILLS[C1.innate].name}」을(를) 익혔고, 배워 둔 스킬은 그대로 남았다. 새 직업에 맞지 않는 장비는 창고로 옮겼다.`].concat(jt ? [`직업 특성 「${TRAITS[jt].name}」(${TRAITS[jt].desc})이 생겼다. 직업 특성은 마법사의 돌로 바꿀 수 없다.`] : []) });
   changed();
   return '';
 }
@@ -901,7 +922,7 @@ function raidDay() {
 }
 
 /* ───────── 마탑 ───────── */
-const researchCost = k => (rlv(k) >= RESEARCH[k].max ? null : RESEARCH[k].cost[rlv(k)]);
+const researchCost = k => { if (rlv(k) >= RESEARCH[k].max) return null; const c = RESEARCH[k].cost[rlv(k)]; return [Math.round(c[0] * (1 - Math.max(0, (S.bld.tower || 1) - 1) * 0.1)), c[1]]; };
 function canResearch(k) {
   const c = researchCost(k);
   return !!(S.bld.tower && !S.research.cur && c && S.gold >= c[0] && Object.entries(c[1]).every(([i, q]) => (S.inv[i] || 0) >= q));
@@ -914,7 +935,7 @@ function startResearch(k) {
   if (!canResearch(k)) return '돈이나 재료가 모자라요.';
   S.gold -= c[0];
   Object.entries(c[1]).forEach(([i, q]) => addTo(S.inv, i, -q));
-  S.research.cur = { k, done: today() + RESEARCH[k].days[rlv(k)] };
+  S.research.cur = { k, done: today() + Math.max(1, RESEARCH[k].days[rlv(k)] - Math.max(0, S.bld.tower - 1)) };
   log(`마탑에서 「${RESEARCH[k].name}」 연구를 시작했다. ${dayLabel(S.research.cur.done)}에 끝난다.`);
   changed();
   return '';
@@ -1076,7 +1097,7 @@ function loadFrom(v) {
   } catch (_) { return false; }
 }
 // 의상·숙련도 칸 (없으면 만든다)
-function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); }
+function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); }
 // 새 전투 화면 안내 (한 번만)
 function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ title: '전투 화면이 새로워졌어요', body: STORY.bview }); } }
 // v0.6: 본부 화면 안내 (한 번만)

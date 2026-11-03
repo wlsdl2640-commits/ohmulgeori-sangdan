@@ -1,6 +1,6 @@
 /* ───────── 지도: 필드·던전·레이드를 골라 원정을 보내고, 왕국·단체와 이야기한다 ─────────
    지도 그림은 240×200 논리 픽셀(두 배로 굽는다). 노드는 그 위에 HTML 단추로 얹는다. */
-const MAP_W = 240, MAP_H = 200;
+const MAP_W = 240, MAP_H = 240;   // 아래 40칸은 마계
 const MAP_NODES = {
   plains:   { x: 84, y: 116, dun: [18, 10] },
   forest:   { x: 44, y: 76,  dun: [20, 12] },
@@ -9,7 +9,10 @@ const MAP_NODES = {
   snow:     { x: 204, y: 40, dun: [-20, 12] },
   desert:   { x: 206, y: 150, dun: [-6, 18] },
   alley:    { x: 92, y: 164 },
-  sewer:    { x: 150, y: 176, dun: [20, 0] }
+  sewer:    { x: 150, y: 176, dun: [20, 0] },
+  swamp:    { x: 44, y: 222, dun: [22, -8] },
+  barren:   { x: 122, y: 224, dun: [24, -8] },
+  castle:   { x: 200, y: 222, dun: [-24, -8] }
 };
 const MAP_KINGS = { inglisia: { x: 22, y: 134 }, frama: { x: 58, y: 186 }, elves: { x: 24, y: 48 }, dwarves: { x: 128, y: 26 }, sarak: { x: 226, y: 178 } };
 const MAP_ORGS = {
@@ -47,12 +50,21 @@ function mapArt() {
   ell(g, 206, 150, 38, 30, '#d8c070'); ell(g, 210, 146, 26, 18, '#e8d488');
   for (let i = 0; i < 9; i++) { const y = 128 + i * 5; R(g, 176 + (i % 2) * 10, y, 18 + (i % 3) * 6, 1, '#c0a858'); R(g, 206 + (i % 3) * 5, y + 2, 12, 1, '#f0e0a0'); }
   R(g, 222, 140, 2, 6, '#5a8a4a'); R(g, 220, 138, 6, 2, '#5a8a4a'); R(g, 226, 136, 2, 4, '#5a8a4a');
+  // 마계: 남쪽 검은 땅 (늪 · 재의 땅 · 검은 성)
+  R(g, 0, 204, MAP_W, 36, '#2a2230');
+  for (let x = 0; x < MAP_W; x += 3) { const h = 2 + ((x * 7) % 5); R(g, x, 204 - h, 3, h + 1, '#3a2a3a'); R(g, x, 203 - h, 2, 1, '#5a3a4a'); }
+  for (let i = 0; i < 120; i++) R(g, Math.floor(r() * MAP_W), 206 + Math.floor(r() * 32), 1 + Math.floor(r() * 2), 1, r() < 0.5 ? '#342a3c' : '#221c28');
+  ell(g, 44, 222, 34, 12, '#1e3a2a'); ell(g, 40, 220, 22, 7, '#2a4a34'); for (let i = 0; i < 16; i++) { const x = 14 + Math.floor(r() * 60), y = 213 + Math.floor(r() * 18); R(g, x, y, 3, 1, '#4a6a4a'); R(g, x + 1, y - 2, 1, 2, '#3a5a3a'); }
+  ell(g, 122, 224, 36, 12, '#5a3a32'); ell(g, 118, 222, 22, 6, '#6a4a3a'); for (let i = 0; i < 9; i++) { const x = 90 + i * 8, y = 216 + (i % 3) * 5; R(g, x, y, 5, 1, '#3a2420'); R(g, x + 2, y + 1, 1, 2, '#3a2420'); } R(g, 104, 212, 2, 3, '#f08a30'); R(g, 136, 230, 2, 2, '#f08a30');
+  ell(g, 200, 224, 32, 12, '#2e2a3a'); for (const [tx, th, tw] of [[186, 14, 5], [194, 20, 7], [204, 16, 5], [212, 12, 5]]) { R(g, tx, 230 - th, tw, th, '#1a1622'); R(g, tx + 1, 229 - th, tw - 2, 1, '#2e2a3a'); R(g, tx + Math.floor(tw / 2), 226 - th, 1, 3, '#6a1a2a'); } R(g, 186, 230, 32, 2, '#1a1622');
+  R(g, 0, 232, 1, 8, '#3a2a3a');
   // 뒷골목·지하수로 (도시 근처 어두운 땅)
   ell(g, 92, 166, 12, 8, '#5a5a5a'); ell(g, 150, 178, 14, 9, '#4a5048'); ell(g, 150, 178, 8, 4, '#2e4a4a');
   // 길
   const road = (x0, y0, x1, y1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i += 3) { const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); R(g, x, y, 2, 1, '#8a6a3a'); } };
   road(120, 150, 84, 118); road(84, 118, 44, 78); road(84, 118, 122, 60); road(122, 60, 176, 94); road(176, 94, 204, 42); road(120, 150, 206, 150); road(120, 150, 92, 164); road(120, 150, 150, 176);
   road(84, 118, 22, 134); road(44, 78, 24, 50); road(122, 60, 128, 28); road(206, 150, 226, 178); road(120, 150, 58, 186);
+  road(92, 166, 44, 220); road(44, 222, 122, 224); road(122, 224, 200, 222);
   // 도시 하르겐: 성벽과 집들
   R(g, 106, 142, 28, 14, '#8a7a62'); R(g, 106, 142, 28, 1, '#a89a82'); R(g, 106, 155, 28, 1, '#5a4a3a');
   for (const [hx, hy, w] of [[108, 146, 6], [116, 144, 7], [125, 147, 6], [110, 150, 5], [119, 151, 6], [127, 152, 5]]) { R(g, hx, hy, w, 4, '#c8b088'); R(g, hx - 1, hy - 2, w + 2, 2, '#a83a2a'); R(g, hx + 1, hy + 1, 1, 1, '#4a3a2a'); }
@@ -150,24 +162,18 @@ function mapNodes() {
 }
 function mapDetail() {
   const sel = UI.mapSel;
-  if (!sel) return '<div class="card"><div class="sub">지도에서 필드·던전·레이드를 누르면 원정을 보낼 수 있어요. 왕국과 단체를 누르면 이야기할 수 있어요.</div></div>';
+  if (!sel) return '<div class="card"><div class="sub">필드·던전·레이드를 누르면 어떤 곳인지 볼 수 있어요. 원정은 원정대 창에서 보내요. 왕국과 단체를 누르면 이야기할 수 있어요.</div></div>';
   if (sel.k === 'king' || sel.k === 'org') return talkCard(sel.id);
   // 원정 목적지
   let fid = sel.id, F, title, sub, dungeon = sel.k === 'dungeon';
   if (sel.k === 'raid') { fid = 'raid_' + sel.id; F = FIELDS[fid]; const R = RAIDS[sel.id], r = raidRec(sel.id); title = `레이드 · ${R.name}`; sub = `Lv${R.lv} · 남은 HP ${pct(r.hp, r.max)}% · ${R.desc}`; }
   else { F = FIELDS[fid]; const fs = S.fields[fid]; const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length; title = dungeon ? F.dungeon.name : F.name; sub = dungeon ? `${fs.cleared ? '공략 완료 · 다시 들어가면 주인이 기다린다' : '한 번만 공략할 수 있다'} · 몬스터 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)}, 주인 Lv${dungeonBossLv(F)}` : F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : `Lv${F.lv}~${F.lv + 12} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`} · ${F.desc}`; }
   const ok = isUnlocked(fid);
-  const parties = S.parties.filter(p => !p.exp), sp = parties.find(p => p.id === UI.mapP) || parties[0];
-  const picker = parties.length ? `<div class="btns">${parties.map(p => `<button type="button" class="btn sm${sp && sp.id === p.id ? ' on' : ''}" data-act="mapparty" data-id="${p.id}">${esc(p.name)} · ${p.members.length}명 · Lv${Math.round(avgLvOf(p))}</button>`).join('')}</div>` : '<div class="sub red-t">대기 중인 파티가 없어요. 원정대 창에서 파티를 꾸리거나 돌아오길 기다려요.</div>';
-  let why = !ok ? (F.unlock || (F.giant ? '이번 달에는 열리지 않은 레이드' : `상단 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열려요`)) : '';
-  if (!why && sp) { const team = teamOf(sp); if (!team.length) why = '파티에 모험가가 없어요'; else why = team.map(cantGo).find(Boolean) || ''; if (!why && F.giant && avgLvOf(sp) < RAIDS[F.giant].lv - RAID_GAP) why = `파티 평균 Lv${RAIDS[F.giant].lv - RAID_GAP} 이상이어야 해요`; }
-  const cps = !dungeon && !F.raid && !F.giant ? checkpoints(fid) : [1];
-  const start = sp ? (cps.includes(sp.start) ? sp.start : 1) : 1;
-  const cpBtns = cps.length > 1 && sp ? `<div class="sec"><b>출발 거점</b><span>필드 보스를 쓰러뜨린 구간 다음부터</span></div><div class="btns">${cps.map(c => `<button type="button" class="btn sm${start === c ? ' on' : ''}" data-act="start" data-id="${sp.id}" data-s="${c}">${F.no}-${c}</button>`).join('')}</div>` : '';
-  return `<div class="card hl"><div class="h">${esc(title)}</div><div class="sub">${sub}</div></div>
-    <div class="sec"><b>보낼 파티</b><span>원정대 창에서 꾸려요</span></div>${picker}${cpBtns}
+  const why = !ok ? (F.unlock || (F.giant ? '이번 달에는 열리지 않은 레이드' : `상단 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열려요`)) : '';
+  const mons = !F.giant && F.mons.length ? `<div class="sub muted">몬스터: ${(dungeon ? F.dungeon.mons : F.mons).map(id => MONS[id].name).join(', ')}${dungeon ? ` · 주인 ${MONS[F.dungeon.boss].name}` : F.bosses ? ` · 우두머리 ${F.bosses.map(id => MONS[id].name).filter((v, i, a) => a.indexOf(v) === i).join(', ')}` : ''}</div>` : '';
+  return `<div class="card hl"><div class="h">${esc(title)}</div><div class="sub">${sub}</div>${mons}</div>
     ${why ? `<div class="sub red-t">${esc(why)}</div>` : ''}
-    <button type="button" class="btn gold block" data-act="mapgo" data-f="${fid}" data-d="${dungeon ? 1 : 0}" data-p="${sp ? sp.id : 0}"${!why && sp ? '' : ' disabled'}>${sp ? `${esc(sp.name)} ${dungeon ? '던전으로' : F.giant ? '레이드' : '출발'}` : '출발'}</button>`;
+    <button type="button" class="btn gold block" data-act="mapexp" data-f="${fid}" data-d="${dungeon ? 1 : 0}"${ok ? '' : ' disabled'}>원정대 창에서 보내기</button>`;
 }
 function talkCard(id) {
   const K = KINGDOMS[id], O = MAP_ORGS[id], name = K ? K.name : O.name, open = K ? kingOpen(id) : true;
@@ -216,6 +222,7 @@ Object.assign(ACT, {
   mapsel: d => { UI.mapSel = { k: d.k, id: d.id }; renderPanel(true); },
   mapparty: d => { UI.mapP = +d.id; renderPanel(true); },
   mapgo: d => { const m = mapGo(+d.p, d.f, d.d === '1'); if (m) say(m); else { say(`${findP(+d.p).name} 출발!`); showWin(false); } },
+  mapexp: d => { const p = S.parties.find(x => !x.exp); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : 'base'; menuOpen('exp'); },
   talk: d => openWin('talk', { who: d.id, mode: '' }),
   talkmode: d => { const top = winTop(); if (top && top.id === 'talk') { top.mode = d.m; renderPanel(true); } },
   talknote: () => say('지금은 그 왕국 상단이 와 있지 않아요. 찾아오면 지도나 상단 창의 교역에서 거래해요.'),

@@ -105,7 +105,6 @@ const TRAIT_SKILLS = {
 Object.assign(SKILLS, TRAIT_SKILLS);
 Object.keys(TRAIT_SKILLS).forEach(id => { const s = SKILLS[id]; SKILL_IDS.push(id); BOOK_IDS.push(id); ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + s.lv * 35, w: 1, icon: 'book', c: BOOK_COLORS[s.cls[0]] || '#4a8ac8', book: id }; });
 ITEMS.bandage = { name: '붕대', v: 18, w: 1, icon: 'hide', c: '#f0ece0', sup: 1, desc: '출혈을 멎게 한다. 보급품으로 가져가면 저절로 쓴다.' };
-POTIONS.push('bandage');
 
 // 각성(용사): 3차 직업의 끝에 선 모험가를 용사로. 각성기를 받고 능력이 15% 오른다
 const AWAKEN = { lv: 60, rank: 3, fee: 30000, souls: 2 };
@@ -121,3 +120,55 @@ Object.assign(SKILLS, AWK_SKILLS);
 Object.keys(AWK_SKILLS).forEach(id => SKILL_IDS.push(id));
 const awkSkillOf = a => 'awk_' + jobBase(a.cls);
 STAT_NAMES.block = '방어'; STAT_NAMES.counter = '반격'; STAT_NAMES.double = '연타'; STAT_NAMES.heal = '회복량'; STAT_NAMES.rheal = '받는 회복';
+
+/* ───────── 직업 특성 (2차·3차 전직 때 붙는다, 마법사의 돌로 바꿀 수 없다) · 마법사의 돌 ───────── */
+const JOB_TRAITS = {
+  // 2차
+  gladiator:   { name: '검투사의 투지',   desc: '치명타 +6% · 공격력 +6%',        crit: 0.06, atkPct: 0.06 },
+  knight:      { name: '기사의 맹세',     desc: '방어력 +12% · 방어 확률 +6%',    defPct: 0.12, block: 0.06 },
+  berserker:   { name: '광전사의 피',     desc: '공격력 +12% · 받는 피해 +4%',    atkPct: 0.12, guard: -0.04 },
+  spellblade:  { name: '마검의 각인',     desc: '공격력 +6% · 마법 공격력 +6%',   atkPct: 0.06, matkPct: 0.06 },
+  ranger:      { name: '숲의 동반자',     desc: '회피 +6% · 이동 속도 +8%',       eva: 0.06, movePct: 0.08 },
+  sniper:      { name: '매의 눈',         desc: '치명타 +10%',                    crit: 0.10 },
+  mhunter:     { name: '사냥꾼의 본능',   desc: '보스 피해 +8% · 전리품 +6%',     bossDmg: 0.08, luck: 0.06 },
+  bard:        { name: '음유시인의 선율', desc: '회복량 +8% · 초당 MP +1',        healPow: 0.08, mpFlat: 1 },
+  assassin:    { name: '그림자 걸음',     desc: '회피 +6% · 치명타 +6%',          eva: 0.06, crit: 0.06 },
+  duelist:     { name: '쌍검의 춤',       desc: '연타 확률 +10%',                 double: 0.10 },
+  treasure:    { name: '보물의 감',       desc: '전리품·금화 +10%',               luck: 0.10 },
+  elementalist:{ name: '정령의 가호',     desc: '마법 공격력 +10%',               matkPct: 0.10 },
+  necromancer: { name: '죽음의 인장',     desc: '마법 공격력 +6% · 초당 HP 0.5% 재생', matkPct: 0.06, hpRegen: 0.005 },
+  priest:      { name: '성자의 손',       desc: '회복량 +12%',                    healPow: 0.12 },
+  plaguedoc:   { name: '역병의 지식',     desc: '마법 공격력 +6% · 중독·출혈 피해 -50%', matkPct: 0.06, resPoison: 0.5 },
+  exorcist:    { name: '퇴마의 서약',     desc: '보스 피해 +12%',                 bossDmg: 0.12 },
+  // 3차
+  champion:    { name: '챔피언의 관록',   desc: '치명타 +10% · 공격력 +10%',      crit: 0.10, atkPct: 0.10 },
+  paladin:     { name: '성기사의 가호',   desc: '방어력 +15% · 받는 회복량 +10%', defPct: 0.15, rheal: 0.10 },
+  bloodlord:   { name: '군주의 갈증',     desc: '공격력 +15% · HP 50% 아래에서 +10%', atkPct: 0.15, frenzy: 0.10 },
+  arcblade:    { name: '별의 검흔',       desc: '공격력 +10% · 마법 공격력 +10%', atkPct: 0.10, matkPct: 0.10 },
+  dragoon:     { name: '용기병의 창',     desc: '공격력 +10% · 회피 +8%',         atkPct: 0.10, eva: 0.08 },
+  hawkeye:     { name: '신궁의 집중',     desc: '치명타 +15%',                    crit: 0.15 },
+  dslayer:     { name: '용살자의 심장',   desc: '보스 피해 +15% · 전리품 +10%',   bossDmg: 0.15, luck: 0.10 },
+  maestro:     { name: '거장의 악장',     desc: '회복량 +12% · 초당 MP +2',       healPow: 0.12, mpFlat: 2 },
+  shadowlord:  { name: '어둠의 군주',     desc: '회피 +10% · 치명타 +10%',        eva: 0.10, crit: 0.10 },
+  bladedancer: { name: '검무의 경지',     desc: '연타 확률 +15%',                 double: 0.15 },
+  masterthief: { name: '대도의 손끝',     desc: '전리품·금화 +15%',               luck: 0.15 },
+  elementlord: { name: '정령왕의 권능',   desc: '마법 공격력 +15%',               matkPct: 0.15 },
+  lich:        { name: '불사의 인장',     desc: '마법 공격력 +10% · 초당 HP 1% 재생', matkPct: 0.10, hpRegen: 0.01 },
+  archbishop:  { name: '대주교의 축성',   desc: '회복량 +15% · 받는 회복량 +10%', healPow: 0.15, rheal: 0.10 },
+  physician:   { name: '명의의 처방',     desc: '마법 공격력 +8% · 회복량 +8%',   matkPct: 0.08, healPow: 0.08 },
+  inquisitor:  { name: '심판의 권능',     desc: '보스 피해 +18%',                 bossDmg: 0.18 }
+};
+Object.entries(JOB_TRAITS).forEach(([cls, t]) => { TRAITS['j_' + cls] = Object.assign({ job: cls }, t); });
+const jobTraitOf = cls => (JOB_TRAITS[cls] ? 'j_' + cls : null);
+const isJobTrait = id => !!(TRAITS[id] && TRAITS[id].job);
+const ROLL_TRAIT_IDS = TRAIT_IDS.slice();   // 무작위로 붙는 특성(직업 특성 제외)
+ITEMS.wizstone = { name: '마법사의 돌', v: 4000, w: 1, icon: 'gem', c: '#c060e0', use: 'trait', desc: '모험가의 타고난 특성 하나를 골라 다른 특성으로 바꾼다. 직업 특성은 바꿀 수 없다. 모험가 창에서 쓴다.' };
+// 특성 하나를 무작위 다른 특성으로. 바뀐 [옛, 새] 또는 null
+function rerollTrait(a, id) {
+  if (!a || !(a.traits || []).includes(id) || isJobTrait(id)) return null;
+  const pool = ROLL_TRAIT_IDS.filter(t => !a.traits.includes(t));
+  if (!pool.length) return null;
+  const nt = pickOne(pool);
+  a.traits[a.traits.indexOf(id)] = nt;
+  return [id, nt];
+}

@@ -58,7 +58,7 @@ function underTick() {
 }
 
 /* ───────── 투기장 ───────── */
-const arenaTier = () => Math.max(2, ...FIELD_IDS.filter(isUnlocked).map(f => FIELDS[f].tier));
+const arenaTier = () => Math.max(2, ...TIER_FIELDS.filter(isUnlocked).map(f => FIELDS[f].tier));
 function arenaLvBase() { const lv = S.parties.length ? Math.max(...S.parties.map(p => avgLvOf(p))) : 1; return Math.max(6, Math.round(lv)); }
 // 상대 모험가 한 명: 급에 맞는 직업과 장비
 function fakeAdv(lv, tier) {
@@ -168,7 +168,7 @@ function arenaShop() {
   const t = arenaTier();
   const gear = ARENA_GEAR.map(b => ({ kind: 'gear', base: b, t, q: 3, price: GTYPES[b].slot === 'acc' ? 150 : 100 + t * 30 }));
   const books = ARENA_BOOKS.map(id => ({ kind: 'book', id, price: 50 + SKILLS[id].lv * 2 }));
-  return gear.concat(books);
+  return gear.concat(books, [{ kind: 'item', id: 'wizstone', price: 200 }]);
 }
 function arenaBuy(kind, id) {
   const U = S.under.arena, o = arenaShop().find(x => x.kind === kind && (x.base === id || x.id === id));
@@ -176,8 +176,9 @@ function arenaBuy(kind, id) {
   if (U.coins < o.price) return `투기장 코인이 모자라요 (${o.price} 필요).`;
   U.coins -= o.price;
   if (kind === 'gear') { const g = makeGear(o.base, o.t, o.q); S.gear.push(g); log(`투기장 상단에서 ${gearName(g)}을(를) 샀다. (코인 ${o.price})`); return `${gearName(g)}을(를) 창고에 넣었어요.`; }
-  addTo(S.inv, 'book_' + o.id, 1); log(`투기장 상단에서 ${ITEMS['book_' + o.id].name}을(를) 샀다. (코인 ${o.price})`);
-  return `${ITEMS['book_' + o.id].name}을(를) 창고에 넣었어요.`;
+  const it = kind === 'item' ? o.id : 'book_' + o.id;
+  addTo(S.inv, it, 1); log(`투기장 상단에서 ${ITEMS[it].name}을(를) 샀다. (코인 ${o.price})`);
+  return `${ITEMS[it].name}을(를) 창고에 넣었어요.`;
 }
 
 /* ───────── 암시장: 날마다 바뀌는 장비·스킬북·룬 ───────── */
@@ -188,6 +189,7 @@ function bmRefresh(k) {
   const kb = KINGDOM_IDS.flatMap(x => KINGDOMS[x].books || []);
   for (let i = 0; i < 2; i++) { const id = rnd() < 0.2 ? pickOne(kb) : pickOne(BOOK_IDS); B.stock.push({ kind: 'item', it: 'book_' + id, price: Math.round(ITEMS['book_' + id].v * 2.5 / 10) * 10 }); }
   const r = runeId(pickOne(RUNE_IDS), rnd() < 0.3 ? 1 : 0); if (ITEMS[r]) B.stock.push({ kind: 'item', it: r, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
+  if (rnd() < 0.25) B.stock.push({ kind: 'item', it: 'wizstone', price: Math.round(ITEMS.wizstone.v * 1.5 / 10) * 10 });
 }
 function bmBuy(i) {
   const B = S.under.bm, o = B.stock[i];
@@ -301,7 +303,9 @@ PANELS.ar = () => {
 };
 PANELS.arshop = () => {
   const A = S.under.arena, list = arenaShop();
-  const rows = list.map(o => o.kind === 'gear'
+  const rows = list.map(o => o.kind === 'item'
+    ? `<div class="li">${iconImg(o.id)}<div class="grow stack"><span>${ITEMS[o.id].name}${(S.inv[o.id] || 0) ? ` <span class="tag ok-t">${S.inv[o.id]}</span>` : ''}</span><span class="sub">${ITEMS[o.id].desc}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="item" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
+    : o.kind === 'gear'
     ? `<div class="li">${gImg({ base: o.base, t: o.t, q: o.q, runes: [] }, 'ico q-b q' + o.q)}<div class="grow stack"><span>${GTIERS[o.t].name} ${GTYPES[o.base].name} <span class="tag" style="color:${QUALITY[o.q].c}">${QUALITY[o.q].name}</span></span><span class="sub">${statLine(gearStats({ base: o.base, t: o.t, q: o.q, runes: [] }))} · ${GTYPES[o.base].cls.includes('all') ? '누구나' : GTYPES[o.base].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="gear" data-id="${o.base}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
     : `<div class="li">${iconImg('book_' + o.id)}<div class="grow stack"><span>${ITEMS['book_' + o.id].name} <span class="muted">· Lv${SKILLS[o.id].lv} · ${SKILLS[o.id].cls.map(c => CLASSES[c] ? CLASSES[c].name : '누구나').join('·')}</span></span><span class="sub">${SKILLS[o.id].desc}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="book" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`).join('');
   return `<div class="card hl"><div class="h">투기장 상단</div><div class="sub">투기장 코인으로만 거래해요. 가진 코인 ${coinTag(A.coins)}. 여기 장비는 어디서도 떨어지지 않고, 스킬북도 여기서만 팔아요.</div></div><div class="list">${rows}</div>`;
