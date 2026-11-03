@@ -66,6 +66,7 @@ PANELS.co = () => {
     ${subBtn('co_money', '월말 정산', `D-${dd} · <span class="${S.gold >= cost ? '' : 'red-t'}">${fmt(cost)}G</span>`, dd <= 3)}
     ${subBtn('co_spon', '후원', `${Object.values(S.spons).reduce((s2, v) => s2 + v, 0)}/${Object.keys(SPONSORS).length * 3}단계`)}
     ${subBtn('co_king', '왕국 교역', S.king && S.king.visit ? `<span class="gold-t">${KINGDOMS[S.king.visit.k].name} 방문 중 · D-${S.king.visit.until - today()}</span>` : '이웃 왕국 상단이 물건을 사러 와요', !!(S.king && S.king.visit))}
+    ${subBtn('dex', '도감', dexSub())}
     ${subBtn('co_relic', '유물', `${(S.relics || []).length}/${FIELD_IDS.length}개 · 던전 공략 보상`)}
     ${subBtn('co_goal', '목표', S.flags.guildDown ? '암살자 길드 토벌 완료' : raidReady() ? '<span class="gold-t">길드 토벌 준비 완료</span>' : '암살자 길드 · 마왕의 봉인', raidReady() && !S.flags.guildDown)}
     ${subBtn('co_log', '소식', esc((S.log[0] && S.log[0].text) || '아직 없어요').slice(0, 22) + '…')}
@@ -484,7 +485,7 @@ function renderPanel(force) {
   const top = winTop();
   if (!top) return;
   if (UI.hold && !force) return;
-  const html = (PANELS[top.id] || (() => ''))(top), key = top.id + ':' + (top.b || '') + ':' + (top.aid || '') + ':' + UI.stack.length;
+  const html = (PANELS[top.id] || (() => ''))(top), key = top.id + ':' + (top.b || '') + ':' + (top.aid || '') + ':' + (top.tab || '') + ':' + UI.stack.length;
   if (force || html !== UI.html) {
     // 같은 창을 다시 그릴 때는 펼쳐 둔 목록을 그대로 둔다
     const box = $('panel-in'), open = key === UI.winKey ? [...box.querySelectorAll('details')].map(d => d.open) : [];

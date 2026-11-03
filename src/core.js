@@ -182,6 +182,7 @@ function makeEncs(e) {
 }
 function foeFrom(id, lv) {
   const m = MONS[id], hp = Math.round(mHp(m, lv) * DIFF.hp);
+  if (S && S.advs) dexSeen(id);   // 도감: 만난 몬스터
   return { uid: nid(), id, lv, hp, maxHp: hp, atk: mAtk(m, lv) * DIFF.atk, def: mDef(m, lv), spd: m.spd, eva: m.eva || 0, cd: 0.6 + rnd() * 0.8, boss: !!m.boss, dot: null, dotT: 0, slow: 0 };
 }
 // 필드 보스: 10 스테이지마다. k = 1~5 (1-50은 그 필드의 주인)
@@ -473,6 +474,7 @@ function hitFoe(e, f, atk, crit, magic, a) {
   if (T.first && f.hp >= f.maxHp) m *= T.first;
   if (T.bossDmg && f.boss) m *= T.bossDmg;
   if (a && f.boss) m *= 1 + traitSum(a, 'bossDmg');
+  if (a && !f.pvp && dexKills(f.id) >= DEX_K[3]) m *= 1.03;   // 도감 완전 기록
   if (f.sta && f.sta.weak) def *= 0.8;
   const v = Math.max(1, Math.round(atk * (0.85 + rnd() * 0.3) * red(def) * m));
   f.hp -= v;
@@ -679,6 +681,7 @@ function hitAdv(p, e, f, x, mult, dm) {
 function kill(p, e, f) {
   const m = MONS[f.id], F = FIELDS[e.field];
   e.kills++; S.stats.kills++;
+  if (!f.pvp) dexKill(f.id);   // 도감: 잡은 수
   if (f.giant) { ev(e, 'kill', { d: f.uid, id: f.id, sc: 0 }); e.giantDown = 1; return; }   // 레이드 몬스터는 stepRaid가 마무리한다
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); });
