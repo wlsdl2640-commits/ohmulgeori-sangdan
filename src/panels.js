@@ -1,7 +1,7 @@
 /* ───────── 창 화면 ───────── */
 const PANELS = {};
 const qTag = g => `<span class="q q${g.q}">${QUALITY[g.q].name}</span>`;
-const gImg = (g, cls = 'ico') => `<img class="${cls}" src="${gearIconURL(g)}" alt="">`;
+const gImg = (g, cls = 'ico') => `<img class="${cls}${g.plus >= 10 ? ' p10' : g.plus >= 7 ? ' p7' : g.plus >= 4 ? ' p4' : ''}" src="${gearIconURL(g)}" alt="">`;
 function statLine(st) {
   return Object.entries(st).map(([k, v]) => `${STAT_NAMES[k]} ${PCT_STATS.includes(k) ? '+' + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
 }
@@ -67,6 +67,7 @@ PANELS.co = () => {
     ${subBtn('co_spon', '후원', `${Object.values(S.spons).reduce((s2, v) => s2 + v, 0)}/${Object.keys(SPONSORS).length * 3}단계`)}
     ${subBtn('co_king', '왕국 교역', S.king && S.king.visit ? `<span class="gold-t">${KINGDOMS[S.king.visit.k].name} 방문 중 · D-${S.king.visit.until - today()}</span>` : '이웃 왕국 상단이 물건을 사러 와요', !!(S.king && S.king.visit))}
     ${subBtn('dex', '도감', dexSub())}
+    ${subBtn('hall', '명예의 전당', `동상 ${(S.hall || []).length}/${HALL_MAX} · Lv${MAX_LV} 모험가 은퇴${S.advs.some(a => a.lv >= MAX_LV) ? ' · <span class="gold-t">은퇴할 수 있는 모험가가 있어요</span>' : ''}`, S.advs.some(a => a.lv >= MAX_LV))}
     ${subBtn('co_relic', '유물', `${(S.relics || []).length}/${TIER_FIELDS.length}개 · 던전 공략 보상`)}
     ${subBtn('co_goal', '목표', S.flags.guildDown ? '암살자 길드 토벌 완료' : raidReady() ? '<span class="gold-t">길드 토벌 준비 완료</span>' : '암살자 길드 · 마왕의 봉인', raidReady() && !S.flags.guildDown)}
     ${subBtn('co_log', '소식', esc((S.log[0] && S.log[0].text) || '아직 없어요').slice(0, 22) + '…')}
@@ -78,9 +79,9 @@ PANELS.co_king = () => {
   const v = S.king && S.king.visit;
   const visit = v ? (() => {
     const D = KINGDOMS[v.k];
-    const rows = v.order.map(o => { const have = S.inv[o.it] || 0, left = o.n - o.got, one = Math.round(ITEMS[o.it].v * v.m); return `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <b class="num">${o.got}/${o.n}</b></span><span class="sub">하나에 ${fmt(one)}G (기준가 ${ITEMS[o.it].v}G) · 창고 ${have}</span></div><button type="button" class="btn sm gold" data-act="kingsell" data-it="${o.it}"${left > 0 && have > 0 ? '' : ' disabled'}>${left <= 0 ? '다 채움' : have ? `${Math.min(left, have)}개 팔기` : '창고에 없음'}</button></div>`; }).join('');
+    const rows = v.order.map(o => { const have = S.inv[o.it] || 0, left = o.n - o.got, one = Math.round(ITEMS[o.it].v * v.m * festSellMul(v.k)); return `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <b class="num">${o.got}/${o.n}</b></span><span class="sub">하나에 ${fmt(one)}G (기준가 ${ITEMS[o.it].v}G) · 창고 ${have}</span></div><button type="button" class="btn sm gold" data-act="kingsell" data-it="${o.it}"${left > 0 && have > 0 ? '' : ' disabled'}>${left <= 0 ? '다 채움' : have ? `${Math.min(left, have)}개 팔기` : '창고에 없음'}</button></div>`; }).join('');
     return `<div class="card hl" style="--kc:${D.c}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} 상단</div><div class="sub">${D.desc}</div></div></div>
-      <div class="sub gold-t">${dayLabel(v.until)}까지 머물러요 (D-${v.until - today()}) · 기준가의 ${Math.round(v.m * 100)}% · 지금까지 ${fmt(v.earned)}G${v.full ? ' · <span class="ok-t">주문 완료</span>' : ''}</div>
+      <div class="sub gold-t">${festOf(v.k) ? '🎉 축제 중: 사 가는 값 두 배, 파는 물건 30% 할인 · ' : ''}${dayLabel(v.until)}까지 머물러요 (D-${v.until - today()}) · 기준가의 ${Math.round(v.m * 100 * festSellMul(v.k))}% · 지금까지 ${fmt(v.earned)}G${v.full ? ' · <span class="ok-t">주문 완료</span>' : ''}</div>
       <div class="list">${rows}</div>
       ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>여기서만 파는 스킬북도 있어요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].book ? SKILLS[ITEMS[o.it].book].desc : `창고 ${S.inv[o.it] || 0}`}</span></div><button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button></div>`).join('')}</div>` : ''}</div>`;
   })() : `<div class="card"><div class="sub">지금은 찾아온 왕국 상단이 없어요. ${S.king ? `${dayLabel(S.king.next)}쯤 다음 상단이 올 거예요.` : ''}</div></div>`;
@@ -105,6 +106,7 @@ PANELS.co_money = () => {
     <div class="sub">${S.gold >= cost ? '지금 가진 돈으로 낼 수 있어요.' : '돈이 모자라요. 자릿세를 못 내면 창고가 털리고, 봉급이 두 달 밀리면 모험가가 떠나요.'} 날짜는 게임을 켜 둔 동안에만 흘러요.</div>
     ${dueDeps.length ? `<div class="sub red-t">곧 돌려줄 예금: ${dueDeps.map(d => `${esc(d.who)} ${dayLabel(d.due)} ${fmt(Math.round(d.amount * (1 + d.rate / 100)))}G`).join(', ')}</div>` : ''}
   </div>
+  ${ledgerBox()}
   ${S.bld.temple && S.bless ? `<div class="sec"><b>신전의 축복</b><span>다음 정산까지</span></div><div class="card hl"><div class="h">${BLESSINGS[S.bless.id].name}</div><div class="sub">${BLESSINGS[S.bless.id].desc}</div></div>` : ''}`;
 };
 PANELS.co_spon = () => Object.entries(SPONSORS).map(([k, P]) => {
@@ -127,6 +129,9 @@ PANELS.co_log = () => `<div class="card"><div class="log">${S.log.slice(0, 40).m
 PANELS.co_set = () => `<div class="card"><div class="sub">진행 상황은 이 기기에 자동 저장돼요. 앱을 닫아도 최대 ${Math.round(offlineCap() / 3600)}시간까지 원정과 판매가 계속되고, 날짜와 시각은 그대로예요.</div>
     <div class="sub">저장 코드를 복사해 두면 다른 기기나 새로 설치한 앱으로 진행 상황을 옮길 수 있어요.</div>
     <div class="btns"><button type="button" class="btn sm" data-act="export">저장 코드 복사</button><button type="button" class="btn sm" data-act="import">저장 코드로 불러오기</button>${isApp() ? '<button type="button" class="btn sm" data-act="update">업데이트 확인</button>' : ''}</div>
+    <div class="sec"><b>소리</b><span>효과음과 배경음</span></div>
+    <div class="btns"><button type="button" class="btn sm${AU.sfx ? ' on' : ''}" data-act="ausfx">효과음 ${AU.sfx ? '켬' : '끔'}</button><button type="button" class="btn sm${AU.bgm ? ' on' : ''}" data-act="aubgm">배경음 ${AU.bgm ? '켬' : '끔'}</button><span class="step"><button type="button" class="btn sm" data-act="auvol" data-d="-0.1">−</button><span>음량 ${Math.round(AU.vol * 100)}%</span><button type="button" class="btn sm" data-act="auvol" data-d="0.1">+</button></span></div>
+    <div class="sub muted">배경음은 상단 앞·필드·던전·보스·투기장·마계마다 달라요. 소리는 화면을 한 번 누른 뒤부터 나요.</div>
     <div class="btns"><button type="button" class="btn sm red" data-act="reset">처음부터 다시 하기</button></div>
     <div class="sub muted">버전 ${VERSION}${BUILD_NO ? ` · 빌드 ${BUILD_NO}` : ''}</div></div>`;
 
@@ -144,7 +149,24 @@ function smithyBox() {
   }).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. 룬 칸 ${q}개.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">일반 제작은 만들 때마다 일반·고급·희귀 품질이 정해져요. 대장간을 넓힐수록 좋은 품질이 잘 나와요.</div>';
-  return `<div class="btns">${chips}</div><div class="btns">${qchips}</div>${note}<div class="list">${rows}</div>`;
+  const tabs = `<div class="tabs"><button type="button" class="tab${UI.smithTab !== 'enh' ? ' on' : ''}" data-act="smithTab" data-t="make">제작</button><button type="button" class="tab${UI.smithTab === 'enh' ? ' on' : ''}" data-act="smithTab" data-t="enh">강화</button></div>`;
+  if (UI.smithTab === 'enh') return tabs + enhanceBox();
+  return `${tabs}<div class="btns">${chips}</div><div class="btns">${qchips}</div>${note}<div class="list">${rows}</div>`;
+}
+// 강화: 창고와 끼고 있는 장비 중 하나를 골라 +1씩
+function enhanceBox() {
+  const all = gearsAll().sort((x, y) => gearScore(y.g) - gearScore(x.g));
+  if (!all.length) return '<div class="card"><div class="sub muted">강화할 장비가 없어요.</div></div>';
+  const sel = all.find(x => x.g.id === UI.enhG) || all[0]; UI.enhG = sel.g.id;
+  const g = sel.g, why = plusWhy(g), next = Object.assign({}, g, { plus: Math.min(PLUS_MAX, (g.plus || 0) + 1) }), now = gearStats(g), nx = gearStats(next);
+  const diff = Object.keys(nx).map(k => { const a = now[k] || 0, b = nx[k] || 0; if (a === b) return ''; return `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) ? (a * 100).toFixed(1) + '%→' + (b * 100).toFixed(1) + '%' : a + '→' + b}`; }).filter(Boolean).join(' · ');
+  const cells = all.map(x => `<button type="button" class="cell${x.g.id === g.id ? ' on' : ''}" data-act="enhsel" data-id="${x.g.id}">${gImg(x.g, 'ico lg q-b q' + x.g.q)}${x.g.plus ? `<b class="qty">+${x.g.plus}</b>` : ''}${x.owner ? '<i class="own"></i>' : ''}</button>`).join('');
+  const fill = (6 - (all.length % 6)) % 6; const pad = Array.from({ length: fill }, () => '<span class="cell empty"></span>').join('');
+  const need = plusNeed(g);
+  return `<div class="sub muted">+1씩 올라가요. 능력치 +6%/단계, +4·+7·+10에서 테두리가 빛나요. 실패해도 단계는 내려가지 않지만 재료와 돈은 잃어요.</div>
+    <div class="igrid gear">${cells}${pad}</div>
+    <div class="card hl idet"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}${sel.owner ? ` <span class="tag">${esc(sel.owner.name)} 착용</span>` : ''}</span><span class="sub">${statLine(now)}</span>${(g.plus || 0) < PLUS_MAX ? `<span class="sub ok-t">+${(g.plus || 0) + 1}: ${diff || '변화 없음'}</span><span class="sub muted">재료 ${needStr(need)} · ${fmt(plusFee(g))}G · 성공 ${Math.round(plusRate(g) * 100)}%</span>` : '<span class="sub gold-t">최고 강화 +10</span>'}${why && (g.plus || 0) < PLUS_MAX ? `<span class="sub red-t">${why}</span>` : ''}</div></div>
+    <div class="btns"><button type="button" class="btn gold grow" data-act="enhance" data-id="${g.id}"${why ? ' disabled' : ''}>${(g.plus || 0) >= PLUS_MAX ? '완료' : `+${(g.plus || 0) + 1} 강화 · ${fmt(plusFee(g))}G`}</button></div></div>`;
 }
 function bankBox() {
   const deals = S.bank.deps.map(d => `<div class="li"><div class="grow"><span>예금 · ${esc(d.who)}</span><span class="sub">${fmt(d.amount)}G 맡음 · <span class="${d.due - today() <= 3 ? 'red-t' : ''}">${dayLabel(d.due)}(D-${d.due - today()})</span>에 ${fmt(Math.round(d.amount * (1 + d.rate / 100)))}G 돌려줌</span></div></div>`)
@@ -192,7 +214,7 @@ function towerBox() {
     <div class="sec"><b>룬 공방</b><span>룬은 장비 창에서 끼워요</span></div>
     <div class="list">${carve || '<div class="li"><span class="sub">필드 보스가 떨어뜨리는 「우두머리의 증표」로 룬을 새길 수 있어요.</span></div>'}${fuse}</div>`;
 }
-const BLD_INNER = { smithy: '대장간에서 장비 만들기', alchemy: '물약 만들기', temple: '치료와 치유사', bank: '예금과 대출', tower: '마법 연구' };
+const BLD_INNER = { smithy: '대장간에서 장비 만들기', alchemy: '물약 만들기', temple: '치료와 치유사', bank: '예금과 대출', tower: '마법 연구', pen: '알 품기와 펫 돌보기' };
 function bldCard(id, full) {
   const B = BUILDINGS[id], lv = S.bld[id], max = lv >= B.max, c = B.cost[lv], need = BUILD_RANK[id] || 0;
   if (!lv && (S.rank || 0) < need) return `<div class="card dim"><div class="row"><div class="grow"><div class="h">${B.name} <small>잠김</small></div><div class="sub">${B.desc}</div></div><span class="sub muted">${RANKS[need].name}랭크에 열림</span></div></div>`;
@@ -202,6 +224,8 @@ function bldCard(id, full) {
   if (full && lv && id === 'alchemy') body = `<div class="list">${RECIPES.map((r, i) => `<div class="li">${iconImg(r.out)}<div class="grow"><span>${ITEMS[r.out].name} <span class="muted">창고 ${S.inv[r.out] || 0}</span></span><span class="sub">${S.bld.alchemy >= r.lv ? needStr(r.need) + ` · ${craftFee(r)}G` : '공방 2단계 필요'}</span></div><button type="button" class="btn sm gold" data-act="craft" data-i="${i}"${canCraft(r) ? '' : ' disabled'}>만들기</button></div>`).join('')}</div>`;
   if (lv && id === 'training') body = '<div class="sub">모험가 창에서 능력치를 훈련하고, 스킬을 배우고, 전직할 수 있어요.</div>';
   if (full && lv && id === 'bank') body = bankBox();
+  if (full && lv && id === 'pen') body = penBox();
+  if (!full && lv && id === 'pen') body = `<div class="sub">펫 ${S.pets.length}/${penCap()}마리 · 품는 알 ${(S.pen && S.pen.inc.length) || 0}개 · 상단에 남은 펫 ${petsAtHome().length}마리</div>`;
   if (full && lv && id === 'tower') body = towerBox();
   if (id === 'temple' && (full || !lv)) body = lv ? templeBox() : innCare();
   if (id === 'shop' && lv) body = `<div class="sub">진열대 ${slotCount()}칸 · 손님 수 ×${traffic().toFixed(2)} · 진열은 창고 창에서 해요.</div>`;
@@ -256,7 +280,7 @@ PANELS.adv = () => `
   ${living().map(advCard).join('') || '<div class="card"><div class="sub">모험가가 없어요. 아래 여관 손님 중에서 고용하세요.</div></div>'}
   <details class="card"><summary>라이선스와 전직 안내</summary><div class="log">
     <div>모험가는 원정에서 몬스터를 잡고, 필드 보스와 던전을 쓰러뜨리고, 무사히 돌아올 때마다 개인 명성을 쌓아요. 레벨과 개인 명성이 차면 모험가 길드 심사를 받아 ${LICENSE.map(L => L.name).join(' → ')}로 올라가요. 라이선스가 오를수록 능력이 강해지고 봉급도 올라요.</div>
-    <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 검투사는 Lv30과 투기장 랭킹 점수, 기사는 Lv30과 상단 명성 1000, 광전사는 마계 백작의 성에서 나오는 피눈물이 더 필요해요.</div>${jobTreeList()}
+    <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·레인저·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>${jobTreeList()}
     <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이에요.</div></div></details>
   <div class="sec"><b>여관 손님</b><span>이틀마다 새 손님</span></div>
   ${S.cands.map(candCard).join('')}`;
@@ -353,13 +377,14 @@ function partyCard(p) {
   const e = p.exp, on = S.view === p.id;
   const head = `<div class="row"><div class="grow"><div class="h">${esc(p.name)} <small>${p.members.length}명</small></div><div class="sub" data-pst="${p.id}"></div></div>${on ? '<span class="tag gold-t">화면에 표시 중</span>' : `<button type="button" class="btn sm" data-act="view" data-id="${p.id}">화면 보기</button>`}</div>`;
   const DM = { ask: '멈추고 묻기', enter: '바로 들어가기', skip: '지나가기' };
-  const toggles = `<button type="button" class="btn sm${p.auto ? ' on' : ''}" data-act="auto" data-id="${p.id}">짐 차면 복귀 ${p.auto ? '켬' : '끔'}</button><button type="button" class="btn sm${p.safe ? ' on' : ''}" data-act="safe" data-id="${p.id}">위험하면 복귀 ${p.safe ? '켬' : '끔'}</button><button type="button" class="btn sm${p.campNight !== false ? ' on' : ''}" data-act="camp" data-id="${p.id}">밤에는 야영 ${p.campNight !== false ? '켬' : '끔'}</button><button type="button" class="btn sm${p.repeat ? ' on' : ''}" data-act="repeat" data-id="${p.id}">돌아오면 다시 출발 ${p.repeat ? '켬' : '끔'}</button><button type="button" class="btn sm on" data-act="dmode" data-id="${p.id}">던전 앞에서: ${DM[p.dmode || 'ask']}</button>`;
+  const toggles = `<button type="button" class="btn sm${p.auto ? ' on' : ''}" data-act="auto" data-id="${p.id}">짐 차면 복귀 ${p.auto ? '켬' : '끔'}</button><button type="button" class="btn sm${p.safe ? ' on' : ''}" data-act="safe" data-id="${p.id}">위험하면 복귀 ${p.safe ? '켬' : '끔'}</button><button type="button" class="btn sm${p.campNight !== false ? ' on' : ''}" data-act="camp" data-id="${p.id}">밤에는 야영 ${p.campNight !== false ? '켬' : '끔'}</button><button type="button" class="btn sm${p.repeat ? ' on' : ''}" data-act="repeat" data-id="${p.id}">돌아오면 다시 출발 ${p.repeat ? '켬' : '끔'}</button><button type="button" class="btn sm${p.autoBuy ? ' on' : ''}" data-act="autobuy" data-id="${p.id}">보급품 모자라면 사기 ${p.autoBuy ? '켬' : '끔'}</button><button type="button" class="btn sm on" data-act="dmode" data-id="${p.id}">던전 앞에서: ${DM[p.dmode || 'ask']}</button>`;
   if (e) {
     const team = teamOf(p), F = FIELDS[e.field];
     const gate = e.wait === 'gate';
     return `<div class="card${on || gate ? ' hl' : ''}">${head}
       <div class="sub" data-pwhere="${p.id}"></div>
       <div class="bar big load"><i data-prog="${p.id}"></i></div>
+      ${petOfParty(p) ? `<div class="row sub"><img class="peti" src="${monIconURL(petOfParty(p).stage ? PETS[petOfParty(p).kind].mon : 'pet_' + petOfParty(p).kind)}" alt=""><span class="grow">펫 ${esc(petOfParty(p).name)} <span class="muted">· ${petOfParty(p).stage ? PETS[petOfParty(p).kind].evo : PETS[petOfParty(p).kind].name} Lv${petOfParty(p).lv} · ${PET_ACT_NAME[PETS[petOfParty(p).kind].act]}</span></span></div>` : ''}
       ${gate ? `<div class="card special"><div class="h">${F.dungeon.name} 입구</div><div class="sub">던전은 한 번만 공략할 수 있어요. 몬스터 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)}, 주인 Lv${dungeonBossLv(F)}. 파티 평균 Lv${Math.round(avgLvOf(p))}.</div><div class="btns"><button type="button" class="btn sm gold" data-act="gate" data-id="${p.id}" data-c="enter">들어가기</button><button type="button" class="btn sm" data-act="gate" data-id="${p.id}" data-c="skip">지나가기</button></div></div>` : ''}
       ${team.map(a => `<div class="row"><span class="sub" style="width:7.5em">${esc(a.name)} <span class="muted">Lv${a.lv}</span></span><div class="grow">${a.down ? `<span class="sub red-t">쓰러짐 · 들것에 실려 가는 중${a.inj ? ' (' + INJ[a.inj.sev].name + ')' : ''}</span>` : `<div class="bar hp"><i data-hp="${a.id}"></i></div><div class="bar mp"><i data-mp="${a.id}"></i></div><div class="bar fat"><i data-fat="${a.id}"></i></div><div class="bar slp"><i data-slp="${a.id}"></i></div>`}</div></div>`).join('')}
       <div class="row sub"><span class="grow">짐 <b data-load="${p.id}"></b> · 처치 <b data-kills="${p.id}"></b>${p.wagon ? ` · ${WAGONS[p.wagon].name}` : ''}</span><span data-sup="${p.id}"></span></div>
@@ -389,6 +414,7 @@ function partyCard(p) {
   return `<div class="card${on ? ' hl' : ''}">${head}
     <div class="sec" style="margin-top:2px"><b>파티원</b><span>${team.length ? `${team.length}명 · 빼면 위 대기 목록으로` : '위 대기 목록에서 넣어요'}</span></div>
     <div class="list">${team.map(a => memberRow(a, `<button type="button" class="btn sm" data-act="member" data-id="${p.id}" data-a="${a.id}">빼기</button>`)).join('') || '<div class="sub muted">아직 아무도 없어요. 위 대기 목록에서 모험가를 넣어 주세요.</div>'}</div>
+    ${S.bld.pen || S.pets.length ? petRow(p) : ''}
     <div class="sec"><b>보급품</b><span>물약과 치료 소모품 · 가져간 것만 써요</span></div>
     ${SUPPLY_IDS.filter(k => (S.inv[k] || 0) > 0 || (p.sup[k] || 0) > 0 || k === 'pot_s').map(k => `<div class="row">${iconImg(k)}<span class="grow sub">${ITEMS[k].name} <span class="muted">창고 ${S.inv[k] || 0}</span></span><span class="step"><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="-1">−</button><span>${p.sup[k] || 0}</span><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="1">+</button></span></div>`).join('')}
     <div class="sec"><b>목적지</b><span>파티 평균 Lv${avg}</span></div>
@@ -459,7 +485,7 @@ PANELS.inv = () => {
     const g = gear.find(x => 'g' + x.id === sel) || gear[0];
     if (g) { if (sel !== 'g' + g.id) cells[0] = cell('g' + g.id, gImg(g, 'ico lg q-b q' + g.q), null, true);
       detail = `<div class="card hl idet"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}</span><span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w} · 모험가 창에서 끼워요</span></div></div>
-        <div class="btns">${runeSlots(g) ? `<button type="button" class="btn sm" data-act="runewin" data-g="${g.id}">룬 새기기</button>` : ''}<button type="button" class="btn sm" data-act="sellgear" data-id="${g.id}">팔기 ${fmt(Math.round(gearValue(g) * GEAR_SELL))}G</button></div></div>`; }
+        <div class="btns">${S.bld.smithy ? `<button type="button" class="btn sm gold" data-act="enhopen" data-id="${g.id}">강화${g.plus ? ' +' + g.plus : ''}</button>` : ''}${runeSlots(g) ? `<button type="button" class="btn sm" data-act="runewin" data-g="${g.id}">룬 새기기</button>` : ''}<button type="button" class="btn sm" data-act="sellgear" data-id="${g.id}">팔기 ${fmt(Math.round(gearValue(g) * GEAR_SELL))}G</button></div></div>`; }
     else detail = '<div class="card"><div class="sub">보관 중인 장비가 없어요. 대장간에서 만들거나 원정에서 주워 와요.</div></div>';
   } else {
     const list = tab === 'sup' ? SUPPLY_IDS.concat(keys('sup').filter(k => !SUPPLY_IDS.includes(k))) : keys(tab).sort((a, b) => (tab === 'book' ? SKILLS[ITEMS[a].book].lv - SKILLS[ITEMS[b].book].lv : ITEMS[b].v - ITEMS[a].v));
@@ -501,6 +527,9 @@ function invDetail(k, rate) {
   } else if (cat === 'herb') {
     const where = herbFields(k);
     extra = [where.length ? `자라는 곳: ${where.join(', ')}` : '', RECIPES.filter(r => r.need[k]).map(r => ITEMS[r.out].name).length ? `조제: ${RECIPES.filter(r => r.need[k]).map(r => ITEMS[r.out].name).join(', ')}` : '', k === 'herb' ? `부상 처치 ${HERB_USE}개 +${HERB_PTS}` : ''].filter(Boolean).join(' · ');
+  } else if (cat === 'sup' && I.egg) {
+    desc = I.desc; extra = `${FIELDS[PETS[I.egg].field] ? FIELDS[PETS[I.egg].field].name : ''}의 우두머리·던전 주인이 남겨요 · 상단에 두면 ${petHomeText(I.egg)}`;
+    btns += `<button type="button" class="btn sm gold" data-act="bopen" data-id="pen">사육장에서 품기</button>`;
   } else if (cat === 'sup' && I.use) {
     desc = I.desc; extra = '암시장·투기장 상단·마계 던전 주인에게서 얻어요 · 모험가 창의 특성에서 써요';
   } else if (cat === 'sup') {
@@ -514,6 +543,7 @@ function invDetail(k, rate) {
     desc = `${s.desc} · ${clsList(s.cls)} · Lv${s.lv}+ · ${costStr(s)}`; extra = '모험가 창 → 스킬에서 배워요';
   } else if (cat === 'rune') extra = `장비 탭 → 룬 새기기 · ${I.desc || ''}`;
   if (q > 0) btns += `<button type="button" class="btn sm" data-act="sell" data-it="${k}" data-q="1">길드에 팔기 ${one}G</button>${q > 1 ? `<button type="button" class="btn sm" data-act="sell" data-it="${k}" data-q="${q}">모두 ${fmt(one * q)}G</button>` : ''}`;
+  if (cat === 'mat' || cat === 'herb') { const AS = S.autoSell || {}, on = AS[k] != null; btns += `<button type="button" class="btn sm${on ? ' on' : ''}" data-act="autosell" data-it="${k}">자동 판매 ${on ? '켬' : '끔'}</button>${on ? `<span class="step"><button type="button" class="btn sm" data-act="autokeep" data-it="${k}" data-d="-10">−</button><span>${AS[k]}개 남김</span><button type="button" class="btn sm" data-act="autokeep" data-it="${k}" data-d="10">+</button></span>` : ''}`; }
   return `<div class="card hl idet"><div class="row">${iconImg(k, 'ico lg')}<div class="grow stack"><span>${I.name} <b class="num">×${q}</b> <span class="muted">· 무게 ${I.w} · 기준가 ${I.v}G</span></span>${desc ? `<span class="sub">${desc}</span>` : ''}${extra ? `<span class="sub muted">${extra}</span>` : ''}</div></div>${btns ? `<div class="btns">${btns}</div>` : ''}</div>`;
 }
 
@@ -585,6 +615,10 @@ const ACT = {
   build: d => say(upgrade(d.id)),
   sponsor: d => say(sponsor(d.id)),
   smithT: d => { UI.smithT = +d.i; },
+  smithTab: d => { UI.smithTab = d.t; const top = winTop(); if (top) top.tab = d.t; renderPanel(true); },
+  enhsel: d => { UI.enhG = +d.id; renderPanel(true); },
+  enhance: d => { say(enhance(+d.id)); renderPanel(true); },
+  enhopen: d => { UI.smithTab = 'enh'; UI.enhG = +d.id; openWin('b', { b: 'smithy', tab: 'enh' }); },
   smith: d => { const r = smith(d.b, +d.t, +d.q || 0); if (typeof r === 'string') say(r); else say(`${QUALITY[r.q].name} ${gearName(r)} 완성`); },
   smithQ: d => { UI.smithQ = +d.q; },
   kingsell: d => say(kingSell(d.it)),
@@ -625,6 +659,17 @@ const ACT = {
   delparty: d => { const p = findP(d.id); if (p) confirmBox('파티 삭제', `${p.name}을(를) 지울까요? 모험가는 상단에 남아요.`, '삭제', () => { deleteParty(p.id); renderPanel(true); renderChips(); }, true); },
   sell: d => sellGuild(d.it, +d.q),
   invtab: d => { UI.invTab = d.id; UI.invSel = null; const top = winTop(); if (top) top.tab = d.id; renderPanel(true); },
+  ausfx: () => { auSet('sfx', !AU.sfx); renderPanel(true); },
+  aubgm: () => { auSet('bgm', !AU.bgm); renderPanel(true); },
+  auvol: d => { auSet('vol', Math.max(0, Math.min(1, Math.round((AU.vol + (+d.d)) * 10) / 10))); sfx('coin'); renderPanel(true); },
+  autosell: d => { S.autoSell = S.autoSell || {}; if (S.autoSell[d.it] != null) delete S.autoSell[d.it]; else S.autoSell[d.it] = 0; changed(); renderPanel(true); },
+  autokeep: d => { S.autoSell = S.autoSell || {}; S.autoSell[d.it] = Math.max(0, (S.autoSell[d.it] || 0) + (+d.d)); changed(); renderPanel(true); },
+  autobuy: d => { const p = findP(d.id); if (p) { p.autoBuy = !p.autoBuy; renderPanel(true); } },
+  hatch: d => say(hatch(d.k)),
+  feed: d => say(feed(+d.id, d.it)),
+  release: d => { const pt = petById(+d.id); if (pt) confirmBox('놓아주기', `${pt.name}을(를) 들판에 놓아줄까요? 되돌릴 수 없어요.`, '놓아주기', () => { say(releasePet(+d.id)); renderPanel(true); }, true); },
+  setpet: d => { const m = setPartyPet(+d.id, +d.pet); if (m) say(m); renderPanel(true); },
+  unpet: d => { setPartyPet(+d.id, 0); renderPanel(true); },
   invsel: d => { UI.invSel = d.id; renderPanel(true); },
   sellgear: d => sellGear(+d.id),
   buy: d => say(buy(d.it, +d.q)),
@@ -648,12 +693,13 @@ function pickForSlot(i) {
   $('m-body').onclick = e => { const b = e.target.closest('[data-slotpick]'); if (!b) return; setSlot(i, b.dataset.slotpick, 1); $('m-body').onclick = null; closeModal(); renderPanel(true); };
 }
 
+const ACT_SFX = { sell: 'coin', sellgear: 'coin', buy: 'buy', bmbuy: 'buy', arbuy: 'buy', kingbuy: 'buy', merbuy: 'buy', kingsell: 'coin', craft: 'pot', smith: 'forge', enhance: 'forge', build: 'forge', hatch: 'buff', feed: 'pot', go: 'open', wavego: 'warn', retire: 'win', train: 'buff', learn: 'buff', promo: 'win', awaken: 'win', stone: 'buff', fulfill: 'coin', dest: 'ui', desttab: 'ui', invtab: 'ui', dextab: 'ui' };
 function bindUI() {
   $('panel-in').addEventListener('click', e => {
     const b = e.target.closest('[data-act],[data-mact]');
     if (!b || b.disabled || !S) return;
-    if (b.dataset.mact) { const top = winTop(); if (top && top.id === 'advd') advAct(top.aid, b); }
-    else ACT[b.dataset.act](b.dataset);
+    if (b.dataset.mact) { const top = winTop(); if (top && top.id === 'advd') advAct(top.aid, b); sfx(ACT_SFX[b.dataset.mact] || 'ui'); }
+    else { ACT[b.dataset.act](b.dataset); sfx(ACT_SFX[b.dataset.act] || 'ui'); }
     renderPanel(true); renderChips(); updateHud(); renderFloors(); saveGame();
   });
   $('menu').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && S) menuOpen(b.dataset.open); });
@@ -703,4 +749,62 @@ function bindUI() {
     saveGame();
     startGame();
   });
+}
+
+/* ───────── 펫: 사육장 창과 파티 칸 ───────── */
+const petIcon = pet => `<img class="peti" src="${monIconURL(pet.stage ? PETS[pet.kind].mon : 'pet_' + pet.kind)}" alt="">`;
+function petCard(pet, inParty) {
+  const K = PETS[pet.kind], party = S.parties.find(x => x.pet === pet.id), need = petNeed(pet.lv), fedToday = pet.fed === today();
+  const feeds = K.likes.map(it => `<button type="button" class="btn sm" data-act="feed" data-id="${pet.id}" data-it="${it}"${fedToday || !(S.inv[it] || 0) ? ' disabled' : ''}>${ITEMS[it].name} <span class="muted">${S.inv[it] || 0}</span></button>`).join('');
+  return `<div class="card petc"><div class="row">${petIcon(pet)}<div class="grow stack"><span>${esc(pet.name)} <span class="muted">· ${pet.stage ? K.evo : K.name} Lv${pet.lv}${pet.lv >= PET_MAX_LV ? ' (최고)' : ''}</span>${pet.trait ? ` <span class="tag gold-t" title="${PET_TRAITS[pet.trait].desc}">${PET_TRAITS[pet.trait].name}</span>` : ''}</span><span class="sub">${PET_ACT_NAME[K.act]} · ${K.desc}${pet.stage ? '' : ` · Lv${PET_EVO_LV}에 ${K.evo}(으)로 진화`}</span><span class="sub muted">${party ? `${esc(party.name)}과 함께${party.exp ? ' 원정 중' : ''}` : `상단에서 ${petHomeText(pet.kind)}`} · 처치 ${fmt(pet.kills || 0)}</span></div></div>
+    <div class="row sub"><span style="width:4em">경험치</span><div class="bar grow"><i style="width:${pet.lv >= PET_MAX_LV ? 100 : Math.round(pet.exp / need * 100)}%"></i></div><span class="num">${pet.lv >= PET_MAX_LV ? '—' : `${fmt(pet.exp)}/${fmt(need)}`}</span></div>
+    <div class="row sub"><span style="width:4em">호감도</span><div class="bar grow aff"><i style="width:${Math.round((pet.aff || 0) / PET_AFF_MAX * 100)}%"></i></div><span class="num">${pet.aff || 0}/${PET_AFF_MAX}${pet.trait ? '' : ' · 가득 차면 특성'}</span></div>
+    <div class="row wrap"><span class="sub muted">먹이${fedToday ? ' (오늘은 먹었어요)' : ' · 하루 한 번'}:</span>${feeds}${party && party.exp ? '' : `<button type="button" class="btn sm" data-act="release" data-id="${pet.id}">놓아주기</button>`}</div></div>`;
+}
+function penBox() {
+  const P = petState(), eggs = Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].egg && S.inv[k] > 0);
+  const inc = P.inc.map(x => `<div class="li">${iconImg('egg_' + x.kind)}<div class="grow stack"><span>${ITEMS['egg_' + x.kind].name}</span><span class="sub">${x.done - today() <= 0 ? '곧 태어나요' : `D-${x.done - today()} · 새벽에 태어나요`}</span></div></div>`).join('');
+  const eggRows = eggs.map(k => { const why = hatchWhy(ITEMS[k].egg); return `<div class="li">${iconImg(k)}<div class="grow stack"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${PETS[ITEMS[k].egg].desc}</span>${why ? `<span class="sub red-t">${why}</span>` : ''}</div><button type="button" class="btn sm gold" data-act="hatch" data-k="${ITEMS[k].egg}"${why ? ' disabled' : ''}>품기</button></div>`; }).join('');
+  const home = petsAtHome();
+  return `<div class="sub">펫 ${S.pets.length}/${penCap()}마리 · 한 번에 ${S.bld.pen}개 품기 · ${PET_HATCH_DAYS}일이면 태어나요. 알은 필드 우두머리와 던전 주인이 가끔 남겨요.</div>
+    <div class="sec"><b>품는 알</b><span>${P.inc.length}/${S.bld.pen}</span></div><div class="list">${inc || '<div class="sub muted">품고 있는 알이 없어요.</div>'}</div>
+    <div class="sec"><b>창고의 알</b><span>${eggs.length}종</span></div><div class="list">${eggRows || '<div class="sub muted">알이 없어요. 필드 보스를 잡아 보세요.</div>'}</div>
+    <div class="sec"><b>펫</b><span>상단에 남은 ${home.length}마리는 ${home.length ? home.map(x => petHomeText(x.kind)).filter((v, i, a) => a.indexOf(v) === i).join(', ') : '효과 없음'}</span></div>
+    ${S.pets.map(pt => petCard(pt)).join('') || '<div class="card"><div class="sub muted">아직 펫이 없어요.</div></div>'}`;
+}
+function petRow(p) {
+  const pet = petOfParty(p), free = S.pets.filter(x => !S.parties.some(q => q.pet === x.id));
+  return `<div class="sec"><b>펫</b><span>파티마다 한 마리 · 상단에 남으면 집에서 돕는다</span></div>
+    ${pet ? `<div class="li">${petIcon(pet)}<div class="grow stack"><span>${esc(pet.name)} <span class="muted">· ${pet.stage ? PETS[pet.kind].evo : PETS[pet.kind].name} Lv${pet.lv}</span></span><span class="sub">${PET_ACT_NAME[PETS[pet.kind].act]} · ${PETS[pet.kind].desc}</span></div><button type="button" class="btn sm" data-act="unpet" data-id="${p.id}">빼기</button></div>` : '<div class="sub muted">함께 가는 펫이 없어요.</div>'}
+    ${free.length ? `<div class="btns">${free.map(x => `<button type="button" class="btn sm" data-act="setpet" data-id="${p.id}" data-pet="${x.id}">${petIcon(x)} ${esc(x.name)} Lv${x.lv}</button>`).join('')}</div>` : ''}`;
+}
+
+/* ───────── 수입 그래프: 최근 14일 수입·지출 ───────── */
+function ledgerRows() {
+  const L = (S.ledger || []).slice(), k = today();
+  L.push({ day: k + 1, gold: S.gold, earned: S.stats.earned || 0, now: 1 });
+  const out = [];
+  for (let i = 1; i < L.length; i++) { const a = L[i - 1], b = L[i]; const inc = Math.max(0, b.earned - a.earned), net = b.gold - a.gold; out.push({ day: a.day, inc, out: Math.max(0, inc - net), net, now: !!b.now }); }
+  return out.slice(-14);
+}
+function ledgerChartURL(rows) {
+  const W = 352, H = 110, [cv, g] = mkCanvas(W, H);
+  R(g, 0, 0, W, H, '#121620');
+  const mx = Math.max(1, ...rows.map(r => Math.max(r.inc, r.out))), base = 92, n = rows.length, bw = Math.floor((W - 24) / Math.max(n, 7)), left = 18;
+  for (let i = 1; i <= 3; i++) { const y = base - Math.round(i / 3 * 70); R(g, left, y, W - left - 4, 1, '#1e2634'); }
+  rows.forEach((r, i) => {
+    const x = left + i * bw, hi = Math.round(r.inc / mx * 70), ho = Math.round(r.out / mx * 70);
+    R(g, x + 2, base - hi, Math.max(2, Math.floor(bw / 2) - 2), hi, r.now ? '#9ad8a0' : '#7bd36a');
+    R(g, x + 2 + Math.floor(bw / 2), base - ho, Math.max(2, Math.floor(bw / 2) - 3), ho, r.now ? '#f08a8a' : '#e0503f');
+    const p = dateParts(r.day * DAY_SEC); g.fillStyle = '#747d8e'; g.font = '9px sans-serif'; g.fillText(`${p.d}`, x + 3, H - 6);
+  });
+  R(g, left, base, W - left - 4, 1, '#46526a');
+  g.fillStyle = '#747d8e'; g.font = '9px sans-serif'; g.fillText(fmt(mx), 2, 24); g.fillText('0', 6, base + 3);
+  return cv.toDataURL();
+}
+function ledgerBox() {
+  const rows = ledgerRows();
+  if (!rows.length) return '';
+  const inc = rows.reduce((s, r) => s + r.inc, 0), out = rows.reduce((s, r) => s + r.out, 0), net = rows.reduce((s, r) => s + r.net, 0);
+  return `<div class="sec"><b>수입과 지출</b><span>최근 ${rows.length}일</span></div><div class="card"><img class="chart" src="${ledgerChartURL(rows)}" alt="수입 그래프"><div class="row sub"><span class="grow"><span class="ok-t">■</span> 수입 ${fmt(inc)}G · <span class="red-t">■</span> 지출 ${fmt(out)}G</span><span class="num ${net >= 0 ? 'ok-t' : 'red-t'}">순 ${net >= 0 ? '+' : ''}${fmt(net)}G</span></div><div class="sub muted">하루 평균 ${fmt(Math.round(inc / rows.length))}G 벌고 ${fmt(Math.round(out / rows.length))}G 써요${(S.stats.autoG || 0) ? ` · 자동 판매로 지금까지 ${fmt(S.stats.autoG)}G` : ''}. 마지막 막대는 오늘(진행 중).</div></div>`;
 }

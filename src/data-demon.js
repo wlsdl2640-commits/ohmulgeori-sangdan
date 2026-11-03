@@ -144,11 +144,22 @@ STORY.swamp = ['늪지의 마녀가 가마솥 안으로 사라졌다. 늪의 안
 STORY.barren = ['키메라가 연구소와 함께 무너졌다. 재가 날리는 땅 끝에 검은 성이 보인다.', '연구소에서 꺼낸 키메라의 심장은 아직 뛰고 있었다. 모험가들의 몸이 조금 더 튼튼해졌다.'];
 STORY.castle = ['리치 킹이 성물함과 함께 부서졌다. 백작의 성에 아침 햇살이 들었다.', '성물함의 조각은 모험가들에게 죽은 자의 기억을 속삭인다. 싸울 때마다 더 많이 배운다.', '마계 세 땅이 모두 조용해졌다. 제국 사람들은 이제 7번가 입구의 상단을 「마계를 연 상단」이라 부른다.'];
 
-/* ───────── 전직 조건 강화 ───────── */
-// req: lv(최소 레벨, JOB_REQ보다 높게), fame(상단 명성), item([부속품, 개수] — 전직할 때 씀), arena(투기장 랭킹 점수)
-CLASSES.gladiator.req = { lv: 30, arena: 1 };
+/* ───────── 전직 조건: 계열마다 맨 앞 2차 직업은 레벨만, 나머지는 저마다 추가 조건 ─────────
+   req: lv(최소 레벨) · fame(상단 명성) · item([부속품, 개수], 전직 때 씀) · itemAny([머리글자, 개수], 어느 단계든) · kills(그 모험가의 처치 수)
+        dexFull(도감 완전 기록 몬스터 수) · bld(시설) · arenaWins(투기장 승리) · relics(유물 수) · cleared(공략한 던전 수) */
+CLASSES.gladiator.req = { lv: 30 };
 CLASSES.knight.req = { lv: 30, fame: 1000 };
 CLASSES.berserker.req = { item: ['blood_tear', 1] };
+CLASSES.spellblade.req = { bld: 'tower' };
+CLASSES.sniper.req = { kills: 500 };
+CLASSES.mhunter.req = { dexFull: 3 };
+CLASSES.necromancer.req = { itemAny: ['soul_', 1] };
+CLASSES.sorcerer.req = { lv: 30, bld: 'tower' };
+CLASSES.duelist.req = { arenaWins: 10 };
+CLASSES.treasure.req = { relics: 1 };
+CLASSES.plaguedoc.req = { bld: 'temple' };
+CLASSES.exorcist.req = { cleared: 1 };
+const REQ_NAME = { itemAny: { soul_: '던전 주인의 혼(어느 단계든)' } };
 function jobReqText(c) {
   const R = CLASSES[c] && CLASSES[c].req; if (!R) return '';
   const out = [];
@@ -156,5 +167,27 @@ function jobReqText(c) {
   if (R.fame) out.push(`상단 명성 ${fmt(R.fame)}`);
   if (R.arena) out.push(`투기장 랭킹 ${fmt(GLADIATOR_SCORE)}점`);
   if (R.item) out.push(`${ITEMS[R.item[0]].name} ${R.item[1]}개`);
+  if (R.itemAny) out.push(`${REQ_NAME.itemAny[R.itemAny[0]] || R.itemAny[0]} ${R.itemAny[1]}개`);
+  if (R.kills) out.push(`본인 처치 ${fmt(R.kills)}마리`);
+  if (R.dexFull) out.push(`도감 완전 기록 ${R.dexFull}종`);
+  if (R.bld) out.push(`${BUILDINGS[R.bld].name} 건설`);
+  if (R.arenaWins) out.push(`투기장 ${R.arenaWins}승`);
+  if (R.relics) out.push(`유물 ${R.relics}개`);
+  if (R.cleared) out.push(`던전 공략 ${R.cleared}곳`);
   return out.join(' · ');
+}
+// 모자란 조건 하나를 말로 (없으면 '')
+function jobReqWhy(a, c) {
+  const R = CLASSES[c] && CLASSES[c].req; if (!R) return '';
+  if (R.arena && arenaScore() < GLADIATOR_SCORE) return `투기장 랭킹 점수 ${fmt(GLADIATOR_SCORE)} 필요 (지금 ${fmt(arenaScore())})`;
+  if (R.fame && S.fame < R.fame) return `상단 명성 ${fmt(R.fame)} 필요 (지금 ${fmt(S.fame)})`;
+  if (R.item && (S.inv[R.item[0]] || 0) < R.item[1]) return `${ITEMS[R.item[0]].name} ${R.item[1]}개 필요 (창고 ${S.inv[R.item[0]] || 0})`;
+  if (R.itemAny) { const n = Object.keys(S.inv).filter(k => k.startsWith(R.itemAny[0])).reduce((t, k) => t + (S.inv[k] || 0), 0); if (n < R.itemAny[1]) return `${REQ_NAME.itemAny[R.itemAny[0]] || R.itemAny[0]} ${R.itemAny[1]}개 필요 (창고 ${n})`; }
+  if (R.kills && (a.kills || 0) < R.kills) return `본인 처치 ${fmt(R.kills)}마리 필요 (지금 ${fmt(a.kills || 0)})`;
+  if (R.dexFull) { const n = S.dex ? Object.values(S.dex.kills || {}).filter(v => v >= 30).length : 0; if (n < R.dexFull) return `도감 완전 기록 ${R.dexFull}종 필요 (지금 ${n}종)`; }
+  if (R.bld && !S.bld[R.bld]) return `${BUILDINGS[R.bld].name}이(가) 있어야 해요`;
+  if (R.arenaWins && ((S.under && S.under.arena && S.under.arena.wins) || 0) < R.arenaWins) return `투기장 ${R.arenaWins}승 필요 (지금 ${(S.under && S.under.arena && S.under.arena.wins) || 0}승)`;
+  if (R.relics && (S.relics || []).length < R.relics) return `유물 ${R.relics}개 필요 (지금 ${(S.relics || []).length}개)`;
+  if (R.cleared) { const n = TIER_FIELDS.filter(f => S.fields[f] && S.fields[f].cleared).length; if (n < R.cleared) return `던전 공략 ${R.cleared}곳 필요 (지금 ${n}곳)`; }
+  return '';
 }

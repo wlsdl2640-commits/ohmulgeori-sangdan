@@ -60,8 +60,11 @@ function boot() {
   HOOKS.changed = () => { UI.dirty = true; };
   HOOKS.toast = toast;
   HOOKS.modal = () => setTimeout(pumpModals, 60);
-  HOOKS.sale = hqSale;
+  HOOKS.sale = (i, g) => { hqSale(i, g); sfx('coin'); };
+  ['pointerdown', 'touchstart', 'keydown'].forEach(evn => document.addEventListener(evn, auUnlock, { passive: true }));
   HOOKS.floor = renderFloors;
+  window.__AU = AU;
+  window.__au = () => ({ ok: AU.ok, theme: AU.theme, state: AU.ctx ? AU.ctx.state : 'none', sfx: AU.sfx, bgm: AU.bgm, step: AU.seq ? AU.seq.step : -1 });   // 시험용
   setInterval(saveGame, 5000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveGame(); });
   window.addEventListener('pagehide', saveGame);

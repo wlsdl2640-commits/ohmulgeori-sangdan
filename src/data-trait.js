@@ -39,7 +39,7 @@ function rollTraits() {
   while (out.length < n) { const t = pickOne(TRAIT_IDS); if (!out.includes(t)) out.push(t); }
   return out;
 }
-const traitSum = (a, k) => (a.traits || []).reduce((s, id) => s + ((TRAITS[id] && TRAITS[id][k]) || 0), 0);
+const traitSum = (a, k) => (a.traits || []).reduce((s, id) => s + ((TRAITS[id] && TRAITS[id][k]) || 0), 0) + (typeof hallBonus === 'function' && S && S.hall ? hallBonus(k) : 0);   // 명예의 전당 동상 보너스도 더한다
 // 직업 특성 + 타고난 특성
 const TQ = (a, k) => ((TR(a)[k] || 0) + traitSum(a, k));
 
@@ -137,6 +137,7 @@ const JOB_TRAITS = {
   treasure:    { name: '보물의 감',       desc: '전리품·금화 +10%',               luck: 0.10 },
   elementalist:{ name: '정령의 가호',     desc: '마법 공격력 +10%',               matkPct: 0.10 },
   necromancer: { name: '죽음의 인장',     desc: '마법 공격력 +6% · 초당 HP 0.5% 재생', matkPct: 0.06, hpRegen: 0.005 },
+  sorcerer:    { name: '마도사의 인장',   desc: '마법 공격력 +8% · 치명타 +4%',   matkPct: 0.08, crit: 0.04 },
   priest:      { name: '성자의 손',       desc: '회복량 +12%',                    healPow: 0.12 },
   plaguedoc:   { name: '역병의 지식',     desc: '마법 공격력 +6% · 중독·출혈 피해 -50%', matkPct: 0.06, resPoison: 0.5 },
   exorcist:    { name: '퇴마의 서약',     desc: '보스 피해 +12%',                 bossDmg: 0.12 },
@@ -154,6 +155,7 @@ const JOB_TRAITS = {
   masterthief: { name: '대도의 손끝',     desc: '전리품·금화 +15%',               luck: 0.15 },
   elementlord: { name: '정령왕의 권능',   desc: '마법 공격력 +15%',               matkPct: 0.15 },
   lich:        { name: '불사의 인장',     desc: '마법 공격력 +10% · 초당 HP 1% 재생', matkPct: 0.10, hpRegen: 0.01 },
+  archmage:    { name: '대마도사의 권능', desc: '마법 공격력 +12% · 치명타 +6%',  matkPct: 0.12, crit: 0.06 },
   archbishop:  { name: '대주교의 축성',   desc: '회복량 +15% · 받는 회복량 +10%', healPow: 0.15, rheal: 0.10 },
   physician:   { name: '명의의 처방',     desc: '마법 공격력 +8% · 회복량 +8%',   matkPct: 0.08, healPow: 0.08 },
   inquisitor:  { name: '심판의 권능',     desc: '보스 피해 +18%',                 bossDmg: 0.18 }

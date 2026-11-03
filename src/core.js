@@ -143,7 +143,7 @@ const wagonOf = p => (p.wagon && WAGONS[p.wagon]) || null;
 function capOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + (w ? w.cap : 0)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
 function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) : wOf(p.sup); }
 // 파티 이동속도 = 가장 빠른(민첩한) 모험가의 속도 × 피로 × 마차
-function moveOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4; return ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * (w ? w.spd : 1) * (st.length < all.length ? 0.8 : 1); }
+function moveOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4; return ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * (w ? w.spd : 1) * (st.length < all.length ? 0.8 : 1) * (1 + petHome('move')); }
 const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v * (v > 0 ? 1 - traitSum(a, 'fatigue') : 1))); });
 function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete bag[k]; }
 
@@ -260,6 +260,7 @@ function startExp(p, fid) {
   const GR = FIELDS[fid].giant && RAIDS[FIELDS[fid].giant];
   if (GR && avgLvOf(p) < GR.lv - RAID_GAP) return `${GR.name} 레이드는 파티 평균 Lv${GR.lv - RAID_GAP} 이상이어야 도전할 수 있어요.`;
   const sup = {};
+  if (p.autoBuy) for (const [k, q] of Object.entries(p.sup)) { const short = q - (S.inv[k] || 0); if (short > 0 && ITEMS[k] && ITEMS[k].buy) { const cost = buyPrice(k) * short; if (S.gold >= cost) { S.gold -= cost; S.stats.spent = (S.stats.spent || 0) + cost; addTo(S.inv, k, short); log(`${p.name} 출발 전에 ${ITEMS[k].name} ${short}개를 ${g$(cost)}에 사 두었다.`); } } }
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
   p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
   team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
@@ -347,6 +348,7 @@ function stepExp(p, dt) {
   const fr = blessed('moon') ? 0.75 : 1;
   if (e.area === 'raid') { stepRaid(p, e, team, dm, dt, fr); return; }
   if (e.area === 'arena') { stepArena(p, e, team, dm, dt, fr); return; }
+  if (e.area === 'wave') { stepWave(p, e, team, dm, dt, fr); return; }
   if (e.foes.length) { tire(team, FATIGUE.fight * fr * dt); battle(p, e, team, dm, dt); return; }
   if (e.camp) { stepCamp(p, e, team, dm, dt); return; }
   team.forEach(a => { const d = dm[a.id]; a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.008 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
@@ -534,7 +536,7 @@ function cast(e, a, d, id, team, dm, foes) {
     const tg = s.tgt === 'all' ? foes.slice() : [s.tgt === 'low' ? lowestFoe(foes) : foes[0]];
     for (const f of tg) for (let h = 0; h < (s.hits || 1); h++) {
       if (f.hp <= 0) break;
-      let atk = (magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M;
+      let atk = (magic ? d.matk * buffMul(e, a.id, 'matk') : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M;
       if (s.boss && f.boss) atk *= s.boss;
       const crit = s.crit === 1 || rnd() < d.crit + (s.crit || 0);
       const v = hitFoe(e, f, atk, crit, magic, a);
@@ -547,7 +549,7 @@ function cast(e, a, d, id, team, dm, foes) {
     stealGold(s, tg.length * (s.hits || 1));
   } else if (s.kind === 'dot') {
     const tg = s.tgt === 'all' ? foes : [foes[0]];
-    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M * (TR(a).dot || 1), t: s.dur, magic: !!s.magic }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
+    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk * buffMul(e, a.id, 'matk') : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M * (TR(a).dot || 1), t: s.dur, magic: !!s.magic }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
   } else if (s.kind === 'heal' && s.tgt === 'self') {
     const h = Math.round(d.maxHp * s.pct * M * d.healPow * (1 + d.rheal + buffAdd(e, a.id, 'rheal'))); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); cureSta(e, a, ['bleed']);
   } else if (s.kind === 'heal') {
@@ -632,6 +634,7 @@ function battle(p, e, team, dm, dt) {
     const sk = pickSkill(a, d, team, dm, alive, e);
     if (sk) cast(e, a, d, sk, team, dm, alive); else basicAct(e, a, d, team, dm, alive);
   }
+  petTick(p, e, team, dm, dt);
   for (const f of foes) {
     if (f.hp <= 0) continue;
     if (f.dot) {
@@ -664,7 +667,7 @@ function hitAdv(p, e, f, x, mult, dm) {
   if (rnd() < Math.min(0.6, d.eva + buffAdd(e, x.id, 'eva'))) { ev(e, 'miss', { s: f.uid, d: x.id }); return; }
   const def = d.def * buffMul(e, x.id, 'def') * (m.magic ? 0.5 : 1);
   const crit = rnd() < (f.boss ? 0.08 : 0.04);
-  const guard = Math.min(0.5, TQ(x, 'guard') + relic('guard'));
+  const pet0 = petOfParty(p), guard = Math.min(0.5, TQ(x, 'guard') + relic('guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
   const blk = rnd() < Math.min(0.6, (d.block || 0) + buffAdd(e, x.id, 'block'));
   const v = Math.max(1, Math.round(f.atk * (f.sta && f.sta.weak ? 0.8 : 1) * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard) * (blk ? 0.25 : 1)));
   x.hp -= v;
@@ -686,23 +689,25 @@ function kill(p, e, f) {
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); });
   const harvest = blessed('harvest') ? 1.15 : 1;
-  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp')) * harvest);
+  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp')) * harvest);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
   ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0, adv: f.adv || null });
+  petKill(p, e, f, xp);
   if (f.pvp) return;   // 투기장: 전리품 없음
   kqKill(f.id);
   const luck = Math.max(0, ...team.map(a => TQ(a, 'luck'))), hunt = Math.max(0, ...team.map(a => TQ(a, 'drop')));   // 보물 사냥꾼의 운, 괴물사냥꾼의 손질
-  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt) * harvest, fbm = f.fb ? 3 : 1;
+  const pet = petOfParty(p), petLuck = (pet ? (PETS[pet.kind].luck || 0) + (pet.trait === 'lucky' ? 0.08 : 0) : 0) + petHome('luck');
+  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt + petLuck) * harvest, fbm = f.fb ? 3 : 1;
   for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
-  if (e.area === 'field' && rnd() < 0.12 * harvest) loot(p, e, pickOne(F.herbs || ['herb']), 1);   // 약초 줍기
+  if (e.area === 'field' && rnd() < 0.12 * harvest * (1 + petHome('herb'))) loot(p, e, pickOne(F.herbs || ['herb']), 1);   // 약초 줍기
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
   if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(f.boss ? 0.25 : 0)));
   if (rnd() < (f.fb ? 0.3 : f.boss ? 0.6 : (inD ? 0.015 : 0.004) * ap)) { const b = randomBook(Math.max(1, f.lv - 14), f.lv + 2); if (b) loot(p, e, b, 1); }
   bossParts(p, e, f, inD);
   if (luck && rnd() < luck) { const g = Math.round(f.lv * (2 + rnd() * 3)); S.gold += g; S.stats.earned += g; }
-  if (f.fb) fieldBossDown(p, e, f);
-  else if (f.boss) dungeonClear(p, e);
+  if (f.fb) { if (S.fields[e.field]) fieldBossDown(p, e, f); }   // 방어전(wave)의 우두머리는 필드 기록이 없다
+  else if (f.boss && e.area === 'dungeon') dungeonClear(p, e);
 }
 // 보스 전용 부속품: 우두머리(1-10~1-40)는 증표, 필드의 주인(1-50)은 핵, 던전을 공략한 뒤에는 가끔 혼까지
 function bossParts(p, e, f, inD) {
@@ -796,7 +801,7 @@ function dropOver(p, e) {
 }
 function down(p, e, a, f) {
   a.hp = 0; a.down = true;
-  if (e.area === 'arena') { ev(e, 'down', { d: a.id }); log(`${a.name}이(가) 모래판에 쓰러졌다.`, 'bad'); changed(); return; }   // 투기장에서는 다치지 않는다
+  if (e.area === 'arena' || e.area === 'wave') { ev(e, 'down', { d: a.id }); log(`${a.name}이(가) ${e.area === 'wave' ? '성문 앞에' : '모래판에'} 쓰러졌다.`, 'bad'); changed(); return; }   // 투기장·방어전에서는 다치지 않는다
   const sev = hurtRoll(f);
   injure(a, sev);
   S.stats.downs = (S.stats.downs || 0) + 1;
@@ -812,6 +817,7 @@ function down(p, e, a, f) {
 function wipe(p) {
   const e = p.exp, F = FIELDS[e.field];
   if (e.area === 'arena') { arenaWipe(p); return; }
+  if (e.area === 'wave') { waveWipe(p); return; }
   teamOf(p).forEach(a => {
     injure(a, Math.max(2, a.inj ? a.inj.sev : 2));
     if (rnd() < 0.25 && a.inj.sev < 3) injure(a, a.inj.sev + 1);
@@ -831,12 +837,14 @@ function arrive(p) {
   for (const [k, q] of Object.entries(e.bag)) addTo(S.inv, k, q);
   for (const [k, q] of Object.entries(e.sup)) addTo(S.inv, k, q);
   e.gbag.forEach(g => S.gear.push(g));
+  autoSellRun(p.name);
   const team = p.members.map(advById).filter(Boolean);
   const hurt = team.filter(a => a.down || a.inj);
   team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; });
   team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 상단을 떠났다.'));
   const n = Object.values(got).reduce((s, q) => s + q, 0);
   if (e.area === 'arena') log(`${p.name}이(가) 투기장에서 돌아왔다.`);
+  else if (e.area === 'wave') log(`${p.name}이(가) 성문에서 돌아왔다.`);
   else log(`${p.name}이(가) 돌아왔다. 부속품 ${n}개(약 ${val}G어치)${e.gbag.length ? `, 장비 ${e.gbag.length}개` : ''}, 처치 ${e.kills}마리.`, 'good');
   if (hurt.length) log(`부상자 ${hurt.map(a => a.name).join(', ')}이(가) ${S.bld.temple ? '신전 치료실로 옮겨졌다' : '여관 방에 눕혀졌다. 신전이 있으면 훨씬 빨리 낫는다'}.`, 'bad');
   if (hurt.length && !S.flags.firstInj) { S.flags.firstInj = 1; queueModal({ title: '첫 부상자', body: STORY.firstInj }); }

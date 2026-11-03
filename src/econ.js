@@ -2,7 +2,7 @@
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
   gladiator: 'sword', champion: 'sword', knight: 'sword', paladin: 'sword', berserker: 'axe', bloodlord: 'axe',
-  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute', mhunter: 'bow', dslayer: 'bow',
+  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute', mhunter: 'bow', dslayer: 'bow', sorcerer: 'staff', archmage: 'staff',
   assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'dagger', masterthief: 'dagger',
   elementalist: 'staff', elementlord: 'staff', necromancer: 'staff', lich: 'staff', spellblade: 'sword', arcblade: 'sword',
   priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
@@ -14,7 +14,7 @@ function blankState(company) {
     company: (company || '').trim().slice(0, 12) || '등불 상단',
     gold: 1000, fame: 0, rank: 0, unlocked: [],
     inv: { pot_s: 6, mp_s: 2, herb: 6 },
-    advs: [], parties: [], gear: [],
+    advs: [], parties: [], gear: [], pets: [], pen: { inc: [] },
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
@@ -30,7 +30,7 @@ function blankState(company) {
   };
 }
 function newParty(name, members) {
-  return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null, wagon: null, dmode: 'ask', campNight: true, start: 1 };
+  return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null, wagon: null, dmode: 'ask', campNight: true, start: 1, pet: null };
 }
 function starterGear(a) { a.eq.weapon = makeGear(WEAPON_OF[a.cls], 0, 0); const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp; }
 function newGame(company) {
@@ -284,7 +284,48 @@ function unequip(aid, slot) {
   clampVitals(a); changed();
   return '';
 }
-const gearScore = g => (g ? g.t * 10 + g.q * 3.5 : -1);
+const gearScore = g => (g ? g.t * 10 + g.q * 3.5 + (g.plus || 0) * 0.8 : -1);
+/* ───────── 장비 강화 (+1 ~ +10) ───────── */
+const PLUS_MAX = 10;
+const PLUS_RATE = [1, 1, 1, 0.85, 0.8, 0.75, 0.65, 0.6, 0.5, 0.45];   // 지금 +n에서 +n+1 성공 확률
+function plusNeed(g) {   // 다음 단계 재료: +1~+3 증표 2, +4~+6 핵 1, +7~+9 혼 1, +10 혼 2
+  const n = (g.plus || 0) + 1, t = g.t, need = {};
+  if (n <= 3) need['crest_' + t] = 2; else if (n <= 6) need['core_' + t] = 1; else if (n <= 9) need['soul_' + t] = 1; else need['soul_' + t] = 2;
+  return need;
+}
+const plusFee = g => Math.round(recipeFee(g.t) * (1 + (g.plus || 0)) * 1.2 * (1 - relic('smith')) / 10) * 10;
+const plusRate = g => Math.min(1, PLUS_RATE[g.plus || 0] + (spn('dwarves') >= 2 ? 0.05 : 0));
+function gearsAll() {   // 창고 + 끼고 있는 장비 (owner 표시)
+  const out = S.gear.map(g => ({ g, owner: null }));
+  S.advs.forEach(a => SLOTS.forEach(([sl]) => { if (a.eq[sl]) out.push({ g: a.eq[sl], owner: a }); }));
+  return out;
+}
+const gearAnyById = id => { const r = gearsAll().find(x => x.g.id === id); return r || null; };
+function plusWhy(g) {
+  if (!g) return '장비를 고르세요';
+  if (!S.bld.smithy) return '대장간이 필요해요';
+  if ((g.plus || 0) >= PLUS_MAX) return '최고 강화예요';
+  const need = plusNeed(g), lack = Object.entries(need).find(([k, n]) => (S.inv[k] || 0) < n);
+  if (lack) return `${ITEMS[lack[0]].name} ${lack[1]}개 필요 (창고 ${S.inv[lack[0]] || 0})`;
+  if (S.gold < plusFee(g)) return '돈이 모자라요';
+  return '';
+}
+function enhance(id) {
+  const r = gearAnyById(id); if (!r) return '그 장비가 없어요.';
+  const g = r.g, why = plusWhy(g); if (why) return why + '.';
+  const need = plusNeed(g), fee = plusFee(g), rate = plusRate(g);
+  Object.entries(need).forEach(([k, n]) => addTo(S.inv, k, -n)); S.gold -= fee; S.stats.spent = (S.stats.spent || 0) + fee;
+  if (rnd() < rate) {
+    g.plus = (g.plus || 0) + 1;
+    log(`${gearName(g)} 강화 성공! (${Math.round(rate * 100)}%)`, 'good');
+    if (r.owner) clampVitals(r.owner);
+    changed();
+    return `성공! ${gearName(g)}`;
+  }
+  log(`${gearName(g)} +${(g.plus || 0) + 1} 강화 실패… 재료와 돈을 잃었다 (${Math.round(rate * 100)}%).`, 'bad');
+  changed();
+  return `실패… ${gearName(g)}은(는) 그대로예요.`;
+}
 function autoEquip(aid) {
   const a = advById(aid);
   if (!a || a.status !== 'idle') return '대기 중인 모험가만 장비를 바꿀 수 있어요.';
@@ -541,6 +582,12 @@ function buyWagon(pid, w) {
 
 /* ───────── 판매·구매·제작 ───────── */
 const guildRate = () => GUILD_RATE + (spn('guild') >= 1 ? 0.1 : 0) + 0.02 * (S.rank || 0);
+// 자동 판매: 표시해 둔 부속품은 원정대가 돌아올 때 남길 수만 남기고 길드에 판다
+function autoSellRun(who) {
+  const A = S.autoSell || {}; let total = 0, n = 0;
+  for (const k in A) { if (!ITEMS[k] || A[k] == null) continue; const q = (S.inv[k] || 0) - A[k]; if (q > 0) { const g = Math.round(ITEMS[k].v * guildRate() * q); addTo(S.inv, k, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g; total += g; n += q; } }
+  if (n) { log(`자동 판매: 부속품 ${n}개를 모험가 길드에 ${g$(total)}에 팔았다.`); S.stats.autoG = (S.stats.autoG || 0) + total; }
+}
 function sellGuild(it, q) {
   q = Math.min(q, S.inv[it] || 0);
   if (q <= 0) return;
@@ -559,7 +606,7 @@ function setSlot(i, it, tier) {
   S.shop.slots[i] = it ? { item: it, tier: tier || 0, tm: 0 } : null;
   changed();
 }
-const traffic = () => (1 + S.fame / 150) * (1 + 0.1 * (S.bld.shop - 1)) * (1 + (spn('citizens') >= 1 ? 0.15 : 0) + (spn('citizens') >= 3 ? 0.15 : 0)) * (S.flags.guildDown ? 1.2 : 1) * (1 + 0.08 * (S.rank || 0));
+const traffic = () => (1 + S.fame / 150) * (1 + 0.1 * (S.bld.shop - 1)) * (1 + (spn('citizens') >= 1 ? 0.15 : 0) + (spn('citizens') >= 3 ? 0.15 : 0)) * (S.flags.guildDown ? 1.2 : 1) * (1 + 0.08 * (S.rank || 0)) * (1 + petHome('traffic')) * (cityDamaged() ? 0.7 : 1);
 function stepShop(dt) {
   const n = slotCount(), tr = traffic();
   for (let i = 0; i < n; i++) {
@@ -594,7 +641,7 @@ function craft(i) {
   if (!canCraft(r)) return '재료나 돈이 모자라요.';
   Object.entries(r.need).forEach(([k, q]) => addTo(S.inv, k, -q));
   S.gold -= craftFee(r); addTo(S.inv, r.out, 1);
-  if (rnd() < Math.max(0, S.bld.alchemy - 2) * 0.15) { addTo(S.inv, r.out, 1); HOOKS.toast(`${ITEMS[r.out].name}이(가) 하나 더 나왔다!`); }   // 넓은 공방의 덤
+  if (rnd() < Math.max(0, S.bld.alchemy - 2) * 0.15 + petHome('craft')) { addTo(S.inv, r.out, 1); HOOKS.toast(`${ITEMS[r.out].name}이(가) 하나 더 나왔다!`); }   // 넓은 공방의 덤
   changed();
   return '';
 }
@@ -762,11 +809,9 @@ function checkUnlocks() { S.flags.job2 = 1; S.flags.job3 = 1; }
 function promoWhy(a, cls) {
   const t = jobTier(cls), Q = JOB_REQ[t];
   const R = CLASSES[cls].req || {};
-  if (R.arena && arenaScore() < GLADIATOR_SCORE) return `투기장 랭킹 점수 ${fmt(GLADIATOR_SCORE)} 필요 (지금 ${fmt(arenaScore())})`;
   if (!S.bld.training) return '훈련소가 필요해요';
   if (a.lv < Math.max(Q.lv, R.lv || 0)) return `Lv${Math.max(Q.lv, R.lv || 0)}부터`;
-  if (R.fame && S.fame < R.fame) return `상단 명성 ${fmt(R.fame)} 필요 (지금 ${fmt(S.fame)})`;
-  if (R.item && (S.inv[R.item[0]] || 0) < R.item[1]) return `${ITEMS[R.item[0]].name} ${R.item[1]}개 필요 (창고 ${S.inv[R.item[0]] || 0})`;
+  const rw = jobReqWhy(a, cls); if (rw) return rw;
   if ((a.rank || 0) < Q.rank) return `${LICENSE[Q.rank].name} 라이선스 필요`;
   if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
   if (S.gold < Q.fee) return '돈이 모자라요';
@@ -812,16 +857,17 @@ function promote(aid, cls) {
 /* ───────── 이웃 왕국의 상단 ───────── */
 const kingOpen = k => { const n = KINGDOMS[k].need; return !n || isUnlocked(n) || ((S.fields[n] && S.fields[n].best) || 0) > 0; };
 const favorOf = k => (S.king && S.king.favor[k]) || 0;
-function kingArrive() {
+const kingArriveFor = (id, days) => kingArrive(id, days);
+function kingArrive(forId, days) {
   const open = KINGDOM_IDS.filter(kingOpen);
   if (!open.length) return;
-  const id = pickOne(open), D = KINGDOMS[id], fv = favorTier(favorOf(id));
+  const id = forId || pickOne(open), D = KINGDOMS[id], fv = favorTier(favorOf(id));
   const known = new Set(giftPool());
   let wants = D.wants.filter(it => ITEMS[it] && (known.has(it) || (S.inv[it] || 0) > 0));
   if (wants.length < 2) wants = D.wants.filter(it => ITEMS[it] && !ITEMS[it].raid).slice(0, 3);
   const pick = wants.sort(() => rnd() - 0.5).slice(0, 3);
   const order = pick.map(it => ({ it, n: Math.max(1, Math.round(Math.min(40, Math.max(2, 700 / ITEMS[it].v)) * (1 + fv * 0.2))), got: 0 }));
-  S.king.visit = { k: id, until: today() + 3, order, m: FAVOR[fv].m, earned: 0, goods: kingGoods(D) };
+  S.king.visit = { k: id, until: today() + (days || 3), order, m: FAVOR[fv].m, earned: 0, goods: kingGoods(D).map(o => Object.assign(o, { price: Math.round(o.price * festBuyMul(id)) })) };
   log(`${D.name}의 상단이 오물거리를 찾아왔다. 사흘 동안 물건을 사 간다.`, 'good');
   HOOKS.toast(`${D.name} 상단 방문 · 상단 창의 교역에서 팔 수 있어요`);
   queueModal({ title: `${D.name} 상단 방문`, body: [D.desc, `이번에 사 가려는 것: ${order.map(o => `${ITEMS[o.it].name} ${o.n}개`).join(', ')}. 기준가의 ${Math.round(FAVOR[fv].m * 100)}%를 쳐준다.`, '사흘 안에 상단 창의 「왕국 교역」에서 팔 수 있다. 주문을 다 채우면 왕국과 더 가까워진다.'] });
@@ -832,7 +878,7 @@ function kingSell(it) {
   if (!o) return '';
   const q = Math.min(o.n - o.got, S.inv[it] || 0);
   if (q <= 0) return o.got >= o.n ? '이미 다 채웠어요.' : `${ITEMS[it].name}이(가) 창고에 없어요.`;
-  const g = Math.round(ITEMS[it].v * v.m) * q;
+  const g = Math.round(ITEMS[it].v * v.m * festSellMul(v.k)) * q;
   addTo(S.inv, it, -q); o.got += q; v.earned += g;
   S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
   S.king.favor[v.k] = favorOf(v.k) + g / 500;
@@ -954,7 +1000,8 @@ function sponsor(k) {
 
 /* ───────── 월말 정산 ───────── */
 const rent = () => (S.flags.guildDown ? 0 : 300 + 50 * Math.floor(S.fame / 25));
-const payroll = () => living().reduce((s, a) => s + a.salary, 0);
+const salaryOf = a => Math.round(a.salary * (1 - mentorCut(a.cls)) / 5) * 5;   // 스승(명예의 전당) 할인
+const payroll = () => living().reduce((s, a) => s + salaryOf(a), 0);
 function settle() {
   const pm = dateParts(S.t - DAY_SEC).m, lines = [], r = rent();
   if (S.flags.guildDown) lines.push('암살자 길드가 무너져 이제 자릿세는 없다.');
@@ -990,6 +1037,7 @@ function settle() {
 /* ───────── 시간 흐름 ───────── */
 function onNewDay(k) {
   checkUnlocks();
+  S.ledger = (S.ledger || []).filter(x => x.day > k - 16); S.ledger.push({ day: k, gold: S.gold, earned: S.stats.earned || 0 });   // 수입 그래프용 하루 기록
   if (k % 2 === 0) rollCands();
   S.reqs = S.reqs.filter(r => { if (r.due < k) { log(`${r.client}의 의뢰가 기한을 넘겨 취소됐다.`); return false; } return true; });
   if (k % 2 === 1 || S.reqs.length < 2) genReq();
@@ -998,6 +1046,8 @@ function onNewDay(k) {
   raidDay();
   kingDay(k);
   underTick();
+  penDay(k);
+  eventsDay(k);
   if (k >= S.settleDay) { settle(); seasonEnd(); S.settleDay += MONTH_DAYS; }
   if (!S.flags.guildDown && !S.flags.raidTold && raidReady()) { S.flags.raidTold = 1; queueModal({ title: '시민회의 부탁', body: STORY.guildReady }); }
   changed();
@@ -1008,7 +1058,7 @@ function autoDepart(p) {
   startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains');
 }
 function stepHome(dt) {
-  const m = (spn('clinic') >= 2 ? 2 : 1) * (1 + relic('rest')), rest = SLEEP.rest(S.bld.inn) * (isNight() ? 1.6 : 0.8) * (1 + relic('rest')) * dt;
+  const m = (spn('clinic') >= 2 ? 2 : 1) * (1 + relic('rest') + petHome('rest')), rest = SLEEP.rest(S.bld.inn) * (isNight() ? 1.6 : 0.8) * (1 + relic('rest') + petHome('rest')) * dt;
   for (const a of S.advs) {
     if (a.status !== 'idle') continue;
     const d = derive(a);
@@ -1068,7 +1118,7 @@ function loadFrom(v) {
     if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); saveGame(); return true; }
     if (![2, 3, 4, 5].includes(v.v)) return false;
     S = v;
-    S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {};
+    S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
     S.bank = S.bank || { offers: [], deps: [], loans: [] };
     S.research = S.research || { lv: {}, cur: null }; S.spons = S.spons || {};
     ALL_FIELDS.forEach(f => { S.fields[f] = S.fields[f] || newField(); });

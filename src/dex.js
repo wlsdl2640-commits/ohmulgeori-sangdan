@@ -1,7 +1,7 @@
 /* ───────── 도감: 몬스터 · 직업 · 스킬 · 부속품 · 장비 · 소모품 ─────────
    몬스터는 잡을수록 정보가 열린다(1·5·15·30마리). 부속품·장비는 한 번 얻으면 열린다. */
 Object.assign(WIN_TITLE, { dex: '도감' });
-const DEX_TABS = [['mon', '몬스터'], ['cls', '직업'], ['skill', '스킬'], ['mat', '부속품'], ['gear', '장비'], ['pot', '소모품']];
+const DEX_TABS = [['mon', '몬스터'], ['pet', '펫'], ['cls', '직업'], ['skill', '스킬'], ['mat', '부속품'], ['gear', '장비'], ['pot', '소모품']];
 const DEX_K = [1, 5, 15, 30];   // 잡은 수에 따라 열리는 단계
 function dexState() { if (!S.dex) S.dex = { kills: {}, seen: {}, items: {}, gear: {} }; return S.dex; }
 const dexKills = id => (S && S.dex && S.dex.kills[id]) || 0;
@@ -171,6 +171,13 @@ function dexSub() {
   const D = dexState(), ids = dexMonList(), seen = ids.filter(id => D.seen[id] || D.kills[id]).length, full = ids.filter(id => (D.kills[id] || 0) >= DEX_K[3]).length;
   return `몬스터 ${seen}/${ids.length} 만남 · 완전 기록 ${full} · 직업·스킬·부속품·장비`;
 }
+/* ───────── 펫 ───────── */
+function dexPets() {
+  const D = dexState(), known = D.pets || {};
+  const rows = PET_IDS.map(k => { const P = PETS[k], seen = !!known[k] || (S.pets || []).some(x => x.kind === k), own = (S.pets || []).filter(x => x.kind === k).length, egg = S.inv['egg_' + k] || 0;
+    return `<div class="li${seen ? '' : ' dim'}"><img class="dexi" src="${monIconURL('pet_' + k, !seen)}" alt=""><div class="grow stack"><span>${seen ? P.name : '???'}${own ? ` <span class="tag ok-t">${own}마리</span>` : ''}${egg ? ` <span class="tag">알 ${egg}</span>` : ''}</span><span class="sub">${seen ? `${PET_ACT_NAME[P.act]} · ${P.desc}` : '알을 부화시키면 열려요'}</span><span class="sub muted">알: ${FIELDS[P.field] ? FIELDS[P.field].name : '?'}의 우두머리·던전 주인${seen ? ` · 진화 ${P.evo} · 상단에 두면 ${petHomeText(k)} · 먹이 ${P.likes.map(it => ITEMS[it].name).join('·')}` : ''}</span></div></div>`; }).join('');
+  return `<div class="sub muted">${PET_IDS.filter(k => known[k] || (S.pets || []).some(x => x.kind === k)).length}/${PET_IDS.length} 길러 봄 · 파티마다 한 마리 · Lv${PET_EVO_LV} 진화 · 호감도가 차면 특성</div><div class="list">${rows}</div>`;
+}
 /* ───────── 창 ───────── */
 PANELS.dex = () => {
   dexScan();
@@ -179,6 +186,7 @@ PANELS.dex = () => {
   let body = '';
   if (tab === 'mon') { const ids = dexMonList(), seen = ids.filter(id => D.seen[id] || D.kills[id]).length, full = ids.filter(id => (D.kills[id] || 0) >= 30).length; body = `<div class="sub muted">만남 ${seen}/${ids.length} · 완전 기록 ${full}/${ids.length} · 잡을수록 능력치·경험치·전리품·확률이 열려요</div>${ids.map(monCard).join('')}`; }
   else if (tab === 'cls') { const tiers = [1, 2, 3]; body = tiers.map(t => `<div class="sec"><b>${t}차 직업</b><span>${Object.keys(CLASSES).filter(c => jobTier(c) === t).length}개</span></div>` + Object.keys(CLASSES).filter(c => jobTier(c) === t).map(clsCard).join('')).join(''); }
+  else if (tab === 'pet') body = dexPets();
   else if (tab === 'skill') body = dexSkills();
   else if (tab === 'mat') body = dexMats();
   else if (tab === 'gear') body = dexGear();

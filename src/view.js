@@ -215,6 +215,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const pos = {}, n = team.length, draws = [], dir = e.mode === 'return' ? -1 : 1, mx = x => (dir > 0 ? x : AW - x);
   V.dir = dir;
   team.forEach((a, i) => { const [x, y] = SLOT_P[Math.min(5, i)]; pos['a' + a.id] = [mx(x), y]; });
+  const pet = petOfParty(p);
+  if (pet) pos['aP' + pet.id] = [mx(34), 197];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   Object.assign(V.last, pos);
   events(e, pos, t, team, p);
@@ -280,6 +282,18 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     });
   });
 
+  // 펫: 파티 뒤에서 따라다니며 cd마다 앞으로 튀어나온다
+  if (pet) {
+    const [px, py] = pos['aP' + pet.id], pz = zAt(py) * (pet.stage ? 0.72 : 1.1), pat = V.atk['aP' + pet.id], plunge = pat && t - pat < 0.3;
+    const hop = walking ? Math.abs(Math.sin(t * 7)) * 2 : plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 4 : Math.abs(Math.sin(t * 2.5)) * 0.6;
+    const pdx = (plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 14 : 0) * dir;
+    draws.push({ y: py - 1, f: g => {
+      shadowAt(g, px + pdx, py, 5 * pz);
+      g.save(); g.translate(px + pdx, py - hop); g.scale(-dir, 1);
+      drawMon(g, pet.stage ? PETS[pet.kind].mon : 'pet_' + pet.kind, t, { ph: 0.7, z: pz });
+      g.restore();
+    } });
+  }
   // 파티
   team.forEach((a, i) => {
     const [x0, y0] = pos['a' + a.id], z = zAt(y0);
@@ -392,6 +406,20 @@ function events(e, pos, t, team, p) {
   const atop = id => { const q = at('a' + id); return q ? [q[0], q[1] - 21 * zAt(q[1]) - 6] : null; };
   for (const x of e.ev) {
     if (x.n <= V.lastN) continue;
+    if (x.type === 'hit') { if (!x.dot && x.v) sfx(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k]); }
+    else if (x.type === 'hurt' && !x.dot) sfx('hurt');
+    else if (x.type === 'heal' || x.type === 'pot' || x.type === 'fheal') sfx(x.type === 'pot' ? 'pot' : 'heal');
+    else if (x.type === 'buff') sfx('buff');
+    else if (x.type === 'kill') sfx('kill');
+    else if (x.type === 'lvl' || x.type === 'petlvl') sfx('lvl');
+    else if (x.type === 'down') sfx('down');
+    else if (x.type === 'loot' || x.type === 'gear') sfx('loot');
+    else if (x.type === 'miss' || x.type === 'fmiss') sfx('miss');
+    else if (x.type === 'mastery') sfx('mast');
+    else if (x.type === 'spawn' && x.boss) sfx('boss');
+    else if (x.type === 'arena') sfx(x.win ? 'win' : 'lose');
+    else if (x.type === 'wave') sfx('buff');
+    else if (x.type === 'sta' && x.side !== 'f') sfx('warn');
     V.lastN = x.n;
     logEvent(x, e, p);
     if (x.type === 'hit') {
@@ -462,7 +490,8 @@ function events(e, pos, t, team, p) {
       if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
       if (s && (s.kind === 'mdmg' || s.kind === 'heal')) V.atk['a' + x.s] = t;
     } else if (x.type === 'buff') {
-      const s = SKILLS[x.id], col = s && s.kind === 'taunt' ? '#ff5a4a' : BUFF_C[s && s.stat] || '#e8e2d0';
+      const s = SKILLS[x.id], col = x.pet ? BUFF_C[x.pet === 'song' ? 'atk' : 'def'] : s && s.kind === 'taunt' ? '#ff5a4a' : BUFF_C[s && s.stat] || '#e8e2d0';
+      if (x.pet) { const pq = at('a' + x.s); if (pq) callout(pq[0], pq[1] - 18, PET_ACT_NAME[x.pet] + '!', 'buff'); }
       const list = x.party ? team.map(a => a.id) : [x.s];
       list.forEach(id => { const aq = at('a' + id); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.7, c: col }); });
     } else if (x.type === 'kill') {
@@ -478,6 +507,9 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'lvl') {
       const aq = at('a' + x.d);
       if (aq) { V.fx.push({ k: 'levelup', x: aq[0], y: aq[1], t0: t, d: 1.4 }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 14, s: 'LEVEL UP', c: '#ffd84a', t0: t + 0.1, d: 1.3, big: 1 }); }
+    } else if (x.type === 'petlvl') {
+      const aq = at('aP' + x.pet);
+      if (aq) V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 16, s: 'LEVEL UP', c: '#ffd84a', t0: t + 0.1, d: 1.1 });
     } else if (x.type === 'fheal') {
       const fq = at('f' + x.d);
       if (fq) { V.fx.push({ k: 'heal', x: fq[0], y: fq[1], t0: t, d: 0.7, c: '#8af08a' }); V.fx.push({ k: 'num', x: fq[0], y: fq[1] - 24, s: '+' + x.v, c: '#8af08a', t0: t, d: 0.8 }); }
@@ -573,13 +605,14 @@ function fx(g, t) {
 function jo(w, a, b) { const c = String(w).charCodeAt(String(w).length - 1); return w + (c >= 0xac00 && c <= 0xd7a3 && (c - 0xac00) % 28 ? a : b); }
 const LOG_MAX = 80;
 function logEvent(x, e, p) {
-  const A = id => { const a = advById(id); return a ? a.name : '동료'; };
+  const A = id => { if (typeof id === 'string' && id[0] === 'P') { const pt = petById(+id.slice(1)); return pt ? pt.name : '펫'; } const a = advById(id); return a ? a.name : '동료'; };
   const Fn = uid => V.fname[uid] || '몬스터';
   const ally = s => `<b class="lg-a">${esc(s)}</b>`, foe = s => `<b class="lg-f">${esc(s)}</b>`, num = (v, c) => `<b class="lg-${c || 'n'}">${fmt(v)}</b>`;
   const add = (h, c) => { V.log.push({ n: ++V.logN, h, c: c || '' }); if (V.log.length > LOG_MAX) V.log.shift(); };
   if (x.type === 'hit') {
     if (x.dot && !x.v) return;
     if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') return add(`${foe(jo(Fn(x.d), '이', '가'))} ${x.k === 'curse' ? '저주' : x.k === 'burn' ? '화상' : x.k === 'bleed' ? '출혈' : '독'}(으)로 ${num(x.v)} 피해를 입었습니다.`, 'dim');
+    if (x.pet) return add(`펫 ${ally(A(x.s))}의 ${PET_ACT_NAME[PETS[(petById(+String(x.s).slice(1)) || { kind: 'wolf' }).kind].act] || '공격'}! ${foe(Fn(x.d))}에게 ${num(x.v)} 피해.`);
     if (x.k === 'pet') return add(`${ally(A(x.s))}의 동료 짐승이 ${foe(Fn(x.d))}에게 ${num(x.v)} 피해!`);
     return add(`${x.ctr ? '<i class="lg-c">반격!</i> ' : ''}${x.c ? '<i class="lg-c">치명타!</i> ' : ''}${ally(jo(A(x.s), '이', '가'))} ${foe(Fn(x.d))}에게 ${num(x.v, x.c ? 'c' : '')} 피해를 줬습니다.`);
   }
@@ -590,16 +623,19 @@ function logEvent(x, e, p) {
   if (x.type === 'cure') return add(`${ally(A(x.d))}의 상태이상이 풀렸습니다.`, 'dim');
   if (x.type === 'miss') return add(`${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
   if (x.type === 'aoe') return add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn');
+  if (x.type === 'heal' && typeof x.s === 'string') { const pt = petById(+x.s.slice(1)); return add(`펫 ${ally(pt ? pt.name : '펫')}의 ${pt ? PET_ACT_NAME[PETS[pt.kind].act] : '회복'}! ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 회복.`); }
   if (x.type === 'heal') return add(x.s === x.d ? `${ally(jo(A(x.d), '이', '가'))} HP를 ${num(x.v, 'g')} 회복했습니다.` : `${ally(jo(A(x.s), '이', '가'))} ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 치유했습니다.`);
   if (x.type === 'pot' && x.k) return add(`${ally(jo(A(x.d), '이', '가'))} ${ITEMS[x.k].name}(으)로 ${cureName(ITEMS[x.k].cure)}을(를) 풀었습니다.`);
   if (x.type === 'pot') return add(`${ally(jo(A(x.d), '이', '가'))} 회복 물약으로 HP ${num(x.v, 'g')} 회복.`);
   if (x.type === 'mana') return add(`${ally(jo(A(x.d), '이', '가'))} 마나 물약으로 MP ${num(x.v, 'b')} 회복.`);
   if (x.type === 'skill') { const s = SKILLS[x.id]; if (s) add(`${ally(jo(A(x.s), '이', '가'))} 「${esc(s.name)}」${s.kind === 'heal' ? '을(를) 외웠습니다.' : '!'}`, 'sk'); return; }
   if (x.type === 'kill') return add(`${foe(jo(Fn(x.d), '을', '를'))} 처치했습니다!`, 'kill');
+  if (x.type === 'wave') return add(`${x.cur}번째 무리를 막았습니다! (${x.cur}/${x.n})`, 'kill');
   if (x.type === 'loot') { const it = ITEMS[x.id]; if (it) add(`전리품 <b class="lg-l">${esc(it.name)}</b> 획득`, 'loot'); return; }
   if (x.type === 'gear') return add(`장비 <b class="lg-l">${esc(GTYPES[x.base].name)}</b> 획득!`, 'loot');
   if (x.type === 'down') return add(`${ally(jo(A(x.d), '이', '가'))} 쓰러졌습니다. 들것에 싣습니다.`, 'bad');
   if (x.type === 'lvl') { const a = advById(x.d); if (a) add(`${ally(A(x.d))} 레벨 업! LV ${a.lv}`, 'lvl'); return; }
+  if (x.type === 'petlvl') { const pt = petById(x.pet); if (pt) add(`펫 ${ally(pt.name)} 레벨 업! LV ${pt.lv}`, 'lvl'); return; }
   if (x.type === 'fheal') return add(`${foe(jo(Fn(x.s), '이', '가'))} ${foe(Fn(x.d))}의 HP를 ${num(x.v, 'g')} 회복시켰습니다.`, 'dim');
   if (x.type === 'arena') return add(x.win ? '<i class="lg-c">승리!</i> 투기장의 관중이 환호합니다.' : '패배했습니다. 들것에 실려 모래판을 나갑니다.', x.win ? 'lvl' : 'bad');
   if (x.type === 'mastery') { const s = SKILLS[x.id]; if (s) add(`${ally(A(x.s))}의 「${esc(s.name)}」 숙련도가 ${x.lv}단계가 되었습니다. (위력 +${x.lv * 3}%)`, 'lvl'); return; }

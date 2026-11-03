@@ -1227,6 +1227,8 @@ const PXL = {
   elementlord: { head: 'crown', body: 'robe', ex: ['cape', 'stole'], c1: '#e8e4f0', c2: '#5ac8f0', c3: '#5ac8f0', cape: '#3a6a9a', gem: '#f0a040', hair: 'long' },
   necromancer: { head: 'hoodup', body: 'robe', c1: '#262032', c2: '#7a4ab8', hc: '#1e1828', skin: '#d8d0d8', gem: '#b88aff', wv: 'skull', eyes: '#9a6ad8' },
   lich:        { head: 'bonecrown', face: 'bones', body: 'robe', ex: ['cape', 'stole'], c1: '#2a1a3a', c2: '#a87ad8', c3: '#a87ad8', hc: '#e8e4dc', skin: '#e8e4dc', cape: '#1a1024', gem: '#c89aff', eyes: '#c89aff', wv: 'skull' },
+  sorcerer:    { head: 'wizard', body: 'robe', ex: ['stole', 'stars'], c1: '#4a2a8a', c2: '#f0c24a', c3: '#f0c24a', hc: '#2a1a4a', gem: '#ff8ad8', glow: '#c89aff' },
+  archmage:    { head: 'wizard', body: 'robe', ex: ['cape', 'stole', 'stars'], c1: '#1a1040', c2: '#ffd870', c3: '#ffd870', hc: '#120a30', cape: '#2a1050', gem: '#ffe0ff', glow: '#ffe0ff', hair: 'long' },
   spellblade:  { head: 'circlet', body: 'leather', ex: ['pauldron'], c1: '#3a4a7a', c2: '#8ab8ff', metal: '#a2b0cc', gem: '#8ab8ff', glow: '#8ab8ff' },
   arcblade:    { head: 'circlet', body: 'plate', ex: ['pauldron', 'cape', 'stars'], c1: '#1e2a4a', c2: '#c8d8ff', metal: '#5a6a9a', cape: '#141a3a', gem: '#fff4b0', glow: '#c8d8ff', hair: 'long' },
   priest:      { head: 'mitre', body: 'robe', ex: ['stole'], c1: '#f2eee2', c2: '#f2c444', c3: '#f2c444', gem: '#fff2a0' },

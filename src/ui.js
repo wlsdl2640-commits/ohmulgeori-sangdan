@@ -69,6 +69,8 @@ function expStatus(p) {
 function whereStr(e) {
   const F = FIELDS[e.field];
   if (e.area === 'raid') return `레이드 · ${F.name}`;
+  if (e.area === 'wave') return `하르겐 성문 · ${e.wave.cur + 1}/${e.wave.n}번째 무리`;
+  if (e.area === 'arena') return '지하 투기장';
   return e.area === 'dungeon' ? `${F.dungeon.name} ${e.stage}층` : `${F.name} ${F.no}-${e.stage}`;
 }
 function updateOverlay() {
@@ -99,6 +101,7 @@ function winTitle(w) {
   return WIN_TITLE[w.id] || '';
 }
 function openWin(id, o) {
+  sfx('open');
   UI.stack.push(Object.assign({ id }, o || {}));
   try { history.pushState({ w: UI.stack.length }, ''); } catch (_) {}
   showWin(true);
@@ -122,6 +125,7 @@ function menuOpen(id) {
 function closeWins() {
   const n = UI.stack.length;
   if (!n) return;
+  sfx('close');
   UI.stack.length = 0;
   try { const k = Math.min(n, (history.state && history.state.w) || 0); if (k) { UI.skipPop = 1; history.go(-k); } } catch (_) {}
   showWin(true);
@@ -160,6 +164,7 @@ function floorInfo(f) {
   if (f.id === 'shop') { const sd = S.sold.day === today() ? S.sold : { n: 0, g: 0 }; return `진열대 ${slotCount()}칸 · 오늘 ${sd.n}개 ${fmt(sd.g)}G 판매`; }
   if (f.id === 'inn') return `방 ${living().length}/${beds()} · 자는 모험가 ${living().filter(a => a.status === 'idle' && ((a.sleep || 0) > 2 || isNight())).length}명`;
   if (f.id === 'temple') return `환자 ${patients().length}명 · 치유사 ${healers().length}/${healerSlots()}`;
+  if (f.id === 'pen') return `펫 ${S.pets.length}/${penCap()} · 품는 알 ${(S.pen && S.pen.inc.length) || 0}`;
   if (f.id === 'training') return isNight() ? '밤에는 쉬어요' : `훈련하는 모험가 ${Math.min(6, living().filter(a => a.status === 'idle' && !a.inj && !a.post && (a.sleep || 0) <= 2).length)}명`;
   if (f.id === 'alchemy') return `회복 물약 ${(S.inv.pot_s || 0) + (S.inv.pot_m || 0) + (S.inv.pot_l || 0)}개 · 마나 물약 ${(S.inv.mp_s || 0) + (S.inv.mp_m || 0)}개`;
   if (f.id === 'tower') return S.research.cur ? `연구 중: ${RESEARCH[S.research.cur.k].name}` : '연구를 쉬고 있어요';
@@ -183,7 +188,7 @@ function hqOpen(h) {
   if (!w) return;
   if (w.startsWith('b:')) openWin('b', { b: w.slice(2) }); else openWin(w);
 }
-const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0' };
+const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0' };
 
 /* ───────── 배속 ───────── */
 function renderSpeed() {
@@ -264,6 +269,7 @@ function showUpdate(name, url) {
 
 /* ───────── 창 ───────── */
 function openModal(title, html, btns) {
+  sfx('open');
   UI.modal = true;
   $('m-body').onclick = null;
   $('m-title').textContent = title;

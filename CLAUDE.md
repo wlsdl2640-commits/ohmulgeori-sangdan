@@ -34,6 +34,15 @@
 - 마법사의 돌: `ITEMS.wizstone`(use: 'trait'), econ.js `useStone`, 모험가 창 특성 칩의 `data-mact="stone"`. 직업 특성은 data-trait.js `JOB_TRAITS` → `TRAITS['j_'+cls]`(job 표시), 전직(promote)과 옛 저장 이전에서 붙인다. `ROLL_TRAIT_IDS`는 무작위 특성 풀(직업 특성 제외).
 - 시설: BUILDINGS max 15·12·8·6·5·8·5·8. `shopStands(lv)`, `craftFee`, 훈련비·연구비·연구 기간 할인은 econ.js.
 
+## 펫·강화·전당·이벤트·소리 (빌드 19)
+- 펫: `src/data-pet.js`(PETS 12종, 알 ITEMS egg_*, BUILDINGS.pen), `src/pxpet.js`(새끼 도트, PXM['pet_'+k]와 MONS['pet_'+k]), `src/pet.js`(부화 hatch/penDay, 먹이 feed, 경험치 petExp, 전투 petTick, 처치 petKill·알 드랍, 파티 setPartyPet). 상태 `S.pets`, `S.pen.inc`, `p.pet`. 전투 사건의 펫 출처는 `s: 'P'+id`(view.js A()가 이름을 푼다). 상단에 남은 펫 효과는 `petHome(k)`.
+- 장비 강화: `g.plus`, data-rpg.js `plusMul`(+6%/단계)·gearName·gearValue, econ.js `enhance/plusNeed/plusFee/plusRate/gearsAll`, 대장간 창 탭 `UI.smithTab`('enh'), 창고 장비 설명의 `enhopen`. 아이콘 클래스 p4/p7/p10.
+- 명예의 전당: `src/hall.js`(HALL_LINE, hallBonus가 traitSum에 더해진다, retire, PANELS.hall). 스승 봉급 할인 `salaryOf`.
+- 지도 이벤트: `src/events.js`(S.events, eventsDay, 웨이브 startWave/stepWave/waveEnd — e.area 'wave', FIELDS.wave 가짜 필드(bg front), 축제 festSellMul/festBuyMul, 떠돌이 상인 merchantBuy, eventNodes/eventCard를 map.js가 부른다). `cityDamaged()`는 traffic을 깎는다.
+- 자동화: `p.autoBuy`(startExp), `S.autoSell[k] = 남길 수`(arrive → autoSellRun), `S.ledger`(onNewDay 기록, panels.js ledgerBox 그래프).
+- 소리: `src/audio.js`(AU, sfx(name), BGM 패턴 32걸음·auTick 스케줄러, bgmThemeNow가 보는 파티로 테마를 고른다). 첫 입력에서 auUnlock. 설정은 localStorage 'paros-audio'. view.js events()와 panels.js bindUI(ACT_SFX)에서 부른다. 시험용 `window.__au()`/`window.__AU`.
+- 전직 조건: data-demon.js `CLASSES[c].req`와 `jobReqWhy/jobReqText`(lv·fame·item·itemAny·kills·dexFull·bld·arenaWins·relics·cleared). 계열 맨 앞 2차는 레벨만. 마도사(sorcerer)→대마도사(archmage) 추가, 마법 버프 stat 'matk' 지원.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

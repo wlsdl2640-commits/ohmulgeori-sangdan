@@ -48,6 +48,8 @@ Object.assign(CLASSES, {
   lich:        SP({ name: '리치',       tier: 3, from: 'necromancer', base: { str: 2, vit: 6, agi: 4, int: 14 }, grow: { str: 0.3, vit: 1.3, agi: 0.8, int: 3.1 }, spd: 0.8,  crit: 0.06, carry: 8, salary: 300, act: 'magic', innate: 'soulrend',    tunic: '#1a1424', trim: '#7af0c8', tr: { mdrain: 0.15 }, desc: '죽음을 넘어선 마법사. 빼앗은 생명으로 영원히 산다.' }),
   spellblade:  SP({ name: '마검사',     tier: 2, from: 'warrior',    base: { str: 8, vit: 7, agi: 4, int: 6 },   grow: { str: 1.6, vit: 1.5, agi: 0.7, int: 1.4 }, spd: 0.95, crit: 0.08, salary: 230, act: 'melee', innate: 'flameblade',  tunic: '#5a2a2a', trim: '#f08a3c', tr: { hybrid: 0.5 }, desc: '검에 마법을 실어 벤다. 기본 공격에 마법 피해가 더해진다.' }),
   arcblade:    SP({ name: '마검성',     tier: 3, from: 'spellblade', base: { str: 9, vit: 8, agi: 7, int: 10 },  grow: { str: 1.9, vit: 1.5, agi: 1.3, int: 2.0 }, spd: 1.0,  crit: 0.1,  salary: 300, act: 'melee', innate: 'starblade',   tunic: '#3a1a4a', trim: '#c89aff', tr: { hybrid: 0.8 }, desc: '검과 마법의 정점에 선 자.' }),
+  sorcerer:    SP({ name: '마도사',     tier: 2, from: 'mage',       base: { str: 1, vit: 4, agi: 5, int: 12 },  grow: { str: 0.2, vit: 0.9, agi: 0.9, int: 2.8 }, spd: 0.8,  crit: 0.12, carry: 8, salary: 240, act: 'magic', innate: 'arcanebolt',  tunic: '#4a2a8a', trim: '#f0c24a', tr: { critMul: 2.3, pen: 0.3 }, desc: '마력을 한 점에 모아 꿰뚫는다. 마법이 치명타로 터지고 방어를 뚫는다.' }),
+  archmage:    SP({ name: '대마도사',   tier: 3, from: 'sorcerer',   base: { str: 2, vit: 5, agi: 6, int: 15 },  grow: { str: 0.2, vit: 1.1, agi: 1.0, int: 3.2 }, spd: 0.82, crit: 0.16, carry: 8, salary: 310, act: 'magic', innate: 'arcanestorm', tunic: '#1a1040', trim: '#ffd870', tr: { critMul: 2.8, pen: 0.5 }, desc: '마법의 끝에 선 자. 폭풍 같은 마력으로 전장을 쓸어 버린다.' }),
   // ── 성직자 ──
   priest:      SP({ name: '사제',       tier: 2, from: 'cleric',     base: { str: 3, vit: 6, agi: 4, int: 10 },  grow: { str: 0.5, vit: 1.4, agi: 0.7, int: 2.4 }, spd: 0.8,  crit: 0.03, carry: 8, salary: 220, act: 'heal', innate: 'prayer',       tunic: '#f0ece0', trim: '#5a8ad8', tr: { healPow: 1.25 }, desc: '치유의 기도에 전념한다. 치유량이 크게 오른다.' }),
   archbishop:  SP({ name: '대주교',     tier: 3, from: 'priest',     base: { str: 4, vit: 7, agi: 5, int: 13 },  grow: { str: 0.6, vit: 1.6, agi: 0.8, int: 2.9 }, spd: 0.82, crit: 0.04, carry: 8, salary: 290, act: 'heal', innate: 'miracle',      tunic: '#fff8e8', trim: '#d9b44a', tr: { healPow: 1.5 }, desc: '기적을 부르는 대성당의 주인.' }),
@@ -264,6 +266,15 @@ const SKILLS = {
   wyrmbane:    { name: '용살자의 눈', cls: ['dslayer'], lv: 60, own: 1, passive: { atkPct: 0.15, crit: 0.08 }, desc: '공격력 15%, 치명 8%가 오른다.' },
   slayrain:    { name: '용살의 비', cls: ['dslayer'], lv: 75, own: 1, cost: { mp: 36 }, cd: 12, kind: 'dmg', mult: 1.8, hits: 2, tgt: 'all', fx: 'arrow', desc: '모든 적에게 두 발씩 쏟아붓는다.' },
   dragonheart: { name: '용의 심장 꿰기', cls: ['dslayer'], lv: 95, own: 1, cost: { mp: 60 }, cd: 20, kind: 'dmg', mult: 7.0, crit: 0.3, tgt: 'low', fx: 'arrow', desc: '가장 약한 적의 심장을 꿰는 필살의 한 발.' },
+  arcanebolt:  { name: '마력탄', cls: ['sorcerer'], lv: 1, cost: { mp: 10 }, cd: 4, kind: 'mdmg', mult: 2.4, crit: 0.15, tgt: 'front', fx: 'spell', desc: '응축한 마력을 쏜다. 치명타가 잘 터진다.' },
+  manaward:    { name: '마력 방벽', cls: ['sorcerer'], lv: 22, own: 1, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'def', mult: 1.6, dur: 8, tgt: 'self', desc: '8초 동안 마력 방벽으로 방어력이 크게 오른다.' },
+  meteor:      { name: '유성 낙하', cls: ['sorcerer'], lv: 28, own: 1, cost: { mp: 22 }, cd: 12, kind: 'mdmg', mult: 1.5, tgt: 'all', fx: 'fire', sta: { k: 'burn', p: 0.3, d: 8, m: 0.3 }, desc: '하늘에서 유성을 떨어뜨려 모든 적을 태운다.' },
+  arcanefocus: { name: '마력 집중', cls: ['sorcerer'], lv: 36, own: 1, passive: { matkPct: 0.1, crit: 0.05 }, desc: '마법 공격력 10%, 치명 5%가 오른다.' },
+  disintegrate:{ name: '분해', cls: ['sorcerer'], lv: 48, own: 1, cost: { mp: 30 }, cd: 12, kind: 'mdmg', mult: 4.2, tgt: 'low', fx: 'spell', desc: '가장 약한 적을 마력으로 분해한다.' },
+  arcanestorm: { name: '마력 폭풍', cls: ['archmage'], lv: 1, cost: { mp: 20 }, cd: 5, kind: 'mdmg', mult: 2.4, tgt: 'all', fx: 'bolt', desc: '마력의 폭풍이 모든 적을 휩쓴다.' },
+  amplify:     { name: '마력 증폭', cls: ['archmage'], lv: 60, own: 1, cost: { mp: 28 }, cd: 18, kind: 'buff', stat: 'matk', mult: 1.4, dur: 8, tgt: 'party', desc: '8초 동안 파티의 마법 공격력을 올린다.' },
+  gravity:     { name: '중력 붕괴', cls: ['archmage'], lv: 75, own: 1, cost: { mp: 40 }, cd: 12, kind: 'mdmg', mult: 1.2, hits: 3, tgt: 'all', fx: 'dark', sta: { k: 'stun', p: 0.25, d: 2, m: 0 }, desc: '중력을 뒤틀어 모든 적을 세 번 짓누른다. 기절시킬 수 있다.' },
+  ultima:      { name: '궁극 마법', cls: ['archmage'], lv: 95, own: 1, cost: { mp: 80 }, cd: 24, kind: 'mdmg', mult: 6.5, tgt: 'all', fx: 'holy', crit: 0.3, desc: '모든 것을 지우는 마법.' },
   flameblade:  { name: '화염검', cls: ['spellblade'], lv: 1, cost: { mp: 8 }, cd: 4, kind: 'mdmg', mult: 2.0, tgt: 'front', fx: 'fire', desc: '불꽃을 두른 검으로 벤다.' },
   frostblade:  { name: '냉기검', cls: ['spellblade'], lv: 22, own: 1, cost: { mp: 12 }, cd: 7, kind: 'mdmg', mult: 1.8, slow: 4, tgt: 'front', fx: 'ice', desc: '베인 적이 얼어붙어 느려진다.' },
   thunderblade:{ name: '뇌전검', cls: ['spellblade'], lv: 28, own: 1, cost: { mp: 18 }, cd: 9, kind: 'mdmg', mult: 1.2, tgt: 'all', fx: 'bolt', desc: '검끝의 번개가 모든 적에게 튄다.' },
@@ -361,8 +372,10 @@ const runeSlots = g => (g ? g.q || 0 : 0);
 const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐' };
 const PCT_STATS = ['crit', 'eva'];
 
+const PLUS_MUL = 0.06;   // 강화 한 단계마다 기본 능력치 +6%
+const plusMul = g => 1 + PLUS_MUL * (g.plus || 0);
 function gearStats(g) {
-  const T = GTYPES[g.base], t = GTIERS[g.t], q = QUALITY[g.q || 0].m, out = {};
+  const T = GTYPES[g.base], t = GTIERS[g.t], q = QUALITY[g.q || 0].m * plusMul(g), out = {};
   for (const [k, v] of Object.entries(T.st)) {
     if (k === 'carry') out.carry = Math.round((6 + v * t.p) * q);
     else if (PCT_STATS.includes(k)) out[k] = Math.min(0.12, Math.round(v * t.p * q * 1000) / 1000);
@@ -373,9 +386,9 @@ function gearStats(g) {
   for (const id of g.runes || []) { const R = ITEMS[id] && ITEMS[id].rune; if (!R) continue; const [k, l] = R, st = RUNES[k].st; out[st] = Math.round(((out[st] || 0) + RUNES[k].v[l]) * 1000) / 1000; }
   return out;
 }
-const gearName = g => `${GTIERS[g.t].name} ${GTYPES[g.base].name}`;
+const gearName = g => `${GTIERS[g.t].name} ${GTYPES[g.base].name}${g.plus ? ' +' + g.plus : ''}`;
 const gearKey = g => `${g.base}:${g.t}`;
-const gearValue = g => Math.round(45 * GTIERS[g.t].p * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5 + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
+const gearValue = g => Math.round((45 * GTIERS[g.t].p * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) * (1 + 0.12 * (g.plus || 0)) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
 const recipeFee = t => Math.round(15 * GTIERS[t].p * GTIERS[t].p);
 function recipeNeed(base, t) {
   const need = {}, mats = GTIERS[t].mats;

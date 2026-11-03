@@ -158,12 +158,14 @@ function mapNodes() {
   if (S.raid) for (const r of S.raid.list) { if (r.done) continue; const R = RAIDS[r.id], N = MAP_NODES[MAP_RAID[r.id] || 'plains']; out.push(mapNodeHtml('raid', r.id, N.x - 16, N.y - 14, `rd${sel.k === 'raid' && sel.id === r.id ? ' on' : ''}`, `<i class="mn" style="background:${R.c}">☠</i>`, R.name)); }
   for (const k of KINGDOM_IDS) { const P = MAP_KINGS[k], open = kingOpen(k); out.push(mapNodeHtml('king', k, P.x, P.y + 10, `kg${open ? '' : ' lock'}${sel.k === 'king' && sel.id === k ? ' on' : ''}`, `<img src="${emblemURL(k)}" alt="">`, KINGDOMS[k].name.replace(/ .*/, ''))); }
   for (const o in MAP_ORGS) { const P = MAP_ORGS[o]; if (o === 'guild' && !underOpen()) continue; out.push(mapNodeHtml('org', o, P.x, P.y, `og${sel.k === 'org' && sel.id === o ? ' on' : ''}`, `<img src="${emblemURL(o)}" alt="">`, o === 'city' ? '하르겐' : '암살자 길드')); }
+  out.push(eventNodes(sel));
   return out.join('');
 }
 function mapDetail() {
   const sel = UI.mapSel;
-  if (!sel) return '<div class="card"><div class="sub">필드·던전·레이드를 누르면 어떤 곳인지 볼 수 있어요. 원정은 원정대 창에서 보내요. 왕국과 단체를 누르면 이야기할 수 있어요.</div></div>';
+  if (!sel) { const evs = evState().filter(x => !x.done); return `<div class="card"><div class="sub">필드·던전·레이드를 누르면 어떤 곳인지 볼 수 있어요. 원정은 원정대 창에서 보내요. 왕국과 단체를 누르면 이야기할 수 있어요.</div>${evs.length ? `<div class="sub gold-t">지금 지도 위: ${evs.map(x => x.type === 'wave' ? `⚔ 몬스터 웨이브 (D-${Math.max(0, x.arrive - today())})` : x.type === 'fest' ? `★ ${KINGDOMS[x.k].name} 축제` : '$ 떠돌이 상인').join(' · ')}</div>` : ''}</div>`; }
   if (sel.k === 'king' || sel.k === 'org') return talkCard(sel.id);
+  if (sel.k === 'event') return eventCard(+sel.id);
   // 원정 목적지
   let fid = sel.id, F, title, sub, dungeon = sel.k === 'dungeon';
   if (sel.k === 'raid') { fid = 'raid_' + sel.id; F = FIELDS[fid]; const R = RAIDS[sel.id], r = raidRec(sel.id); title = `레이드 · ${R.name}`; sub = `Lv${R.lv} · 남은 HP ${pct(r.hp, r.max)}% · ${R.desc}`; }

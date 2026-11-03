@@ -464,3 +464,25 @@ details.card > .list { margin-top: 8px; }
 .trait.job { border-color: var(--gold-d); background: #2a2418; }
 .trait.job b { color: var(--gold); }
 .trait .btn.xs { margin-top: 3px; padding: 2px 6px; font-size: 10px; min-height: 0; }
+
+/* ───────── 펫 ───────── */
+.peti { flex: none; width: 28px; height: 22px; image-rendering: pixelated; }
+.btn .peti { width: 20px; height: 16px; vertical-align: middle; margin-right: 2px; }
+.bar.aff i { background: #e07aa0; }
+.petc .row.sub .bar { height: 6px; }
+.hallc .por { width: 46px; height: 56px; }
+
+/* ───────── 장비 강화 ───────── */
+.ico.p4 { box-shadow: 0 0 0 1px #6ab0ff, 0 0 4px #6ab0ff; }
+.ico.p7 { box-shadow: 0 0 0 1px #c07af0, 0 0 5px #c07af0; }
+.ico.p10 { box-shadow: 0 0 0 1px #f0b43c, 0 0 6px #f0b43c; animation: p10glow 1.6s ease-in-out infinite; }
+@keyframes p10glow { 50% { box-shadow: 0 0 0 1px #fff4b0, 0 0 9px #f0b43c; } }
+.cell .own { position: absolute; left: 2px; top: 2px; width: 6px; height: 6px; background: var(--ok); border: 1px solid #000; border-radius: 50%; }
+
+.chart { display: block; width: 100%; image-rendering: pixelated; border: 2px solid var(--line); margin-bottom: 6px; }
+
+/* ───────── 지도 이벤트 ───────── */
+.mnode.evn .mn { border-radius: 3px; font-size: 11px; }
+.mnode.wave .mn { background: #c03030; color: #fff; animation: mpulse 0.9s ease-in-out infinite; }
+.mnode.mer .mn { background: #f0c24a; color: #1d1408; }
+.mnode.fest .mn { background: #e07aa0; color: #fff; }

@@ -11,6 +11,7 @@ const FLOOR_INFO = {
   training: { name: '훈련소', win: 'adv' },
   temple:   { name: '신전', win: 'b:temple' },
   inn:      { name: '여관', win: 'adv' },
+  pen:      { name: '사육장', win: 'b:pen' },
   tower:    { name: '마탑', win: 'b:tower' },
   smithy:   { name: '대장간', win: 'b:smithy', under: 1 },
   bank:     { name: '은행 금고', win: 'b:bank', under: 1 }
@@ -18,6 +19,7 @@ const FLOOR_INFO = {
 const ROOM_C = {
   shop:     { wall: '#d6ba90', wall2: '#bc9e74', base: '#6a4a2a', fl: ['#9e774a', '#916c42'], plank: 1 },
   inn:      { wall: '#dccaa6', wall2: '#c4ae88', base: '#5e4228', fl: ['#8a5e3a', '#7e5434'], plank: 1 },
+  pen:      { wall: '#c8b890', wall2: '#ae9e76', base: '#6a5a3a', fl: ['#9a8a4a', '#8e7e42'] },
   temple:   { wall: '#e6e2d6', wall2: '#cdc8b8', base: '#8a8478', fl: ['#cac4b6', '#b8b2a4'] },
   training: { wall: '#c8a67c', wall2: '#ae8c64', base: '#5e4630', fl: ['#6e8e5c', '#628252'] },
   alchemy:  { wall: '#9cb696', wall2: '#86a080', base: '#465640', fl: ['#7c8272', '#707666'] },
@@ -35,6 +37,7 @@ function hqFloors() {
   if (b.temple) up.push({ id: 'temple' });
   const nInn = Math.max(1, Math.ceil(beds() / SEATS));
   for (let i = 0; i < nInn; i++) up.push({ id: 'inn', i });
+  if (b.pen) up.push({ id: 'pen' });
   if (b.tower) up.push({ id: 'tower' });
   const down = [];
   if (b.smithy) down.push({ id: 'smithy' });
@@ -129,6 +132,7 @@ const F = {
 const LAYOUT = {
   shop: [['counter', 5, 1, 3, 1, 16, 'co'], ['crate', 8, 1, 1, 1, 10], ['crate', 8, 2, 1, 1, 10], ['barrel', 8, 8, 1, 1, 12], ['plant', 0, 8, 1, 1, 18], ['lamp', 8, 6, 1, 1, 28], ['shelf', 1, 0, 2, 1, 28, 'inv'], ['stairs', 3.4, 0, 1.2, 1.5, 16]],
   inn: [],
+  pen: [['crate', 0, 0, 1, 1, 10], ['barrel', 8, 0, 1, 1, 12, 'b:pen'], ['crate', 8, 1, 1, 1, 10], ['plant', 0, 8, 1, 1, 18], ['plant', 8, 8, 1, 1, 18], ['mat', 2, 2, 5, 2, 1], ['mat', 2, 5, 5, 2, 1]],
   alchemy: [['cauldron', 3, 3, 2, 2, 12, 'b:alchemy'], ['shelf', 1, 0, 2, 1, 28, 'b:alchemy'], ['shelf', 5, 0, 2, 1, 28, 'b:alchemy'], ['table', 6, 4, 2, 1, 16, 'b:alchemy'], ['barrel', 8, 2, 1, 1, 12], ['crate', 1, 7, 1, 1, 10], ['stool', 7, 6, 1, 1, 6]],
   training: [['mat', 1, 3, 3, 2, 1], ['mat', 5, 3, 3, 2, 1], ['dummy', 2, 1, 1, 1, 24, 'adv'], ['dummy', 4, 1, 1, 1, 24, 'adv'], ['dummy', 6, 1, 1, 1, 24, 'adv'], ['rack', 0, 5, 2, 1, 20], ['barrel', 8, 7, 1, 1, 12], ['crate', 8, 1, 1, 1, 10]],
   temple: [['altar', 3, 0, 3, 1, 22, 'b:temple'], ['plant', 1, 0, 1, 1, 18], ['plant', 7, 0, 1, 1, 18], ['lamp', 0, 3, 1, 1, 28], ['lamp', 8, 3, 1, 1, 28]],
@@ -342,6 +346,7 @@ function sceneOf(f, t) {
   if (f.id === 'shop') shopScene(it, t);
   if (f.id === 'inn') innScene(it, f, t);
   if (f.id === 'temple') templeScene(it, t);
+  if (f.id === 'pen') penScene(it, t);
   if (f.id === 'training') trainScene(it, t);
   if (f.id === 'alchemy') staffAt(it, STAFF.alchem, 2.6, 4.6, 'stir', t, 'f', 1);
   if (f.id === 'tower') { staffAt(it, STAFF.sage, 2.2, 6.4, 'read', t, 'b', 1); }
@@ -427,6 +432,18 @@ function innScene(it, f, t) {
   }
 }
 /* 신전: 환자와 치유사 */
+/* 사육장: 상단에 남은 펫들이 돌아다니고, 품는 알이 놓여 있다 */
+const PEN_SPOT = [[2.5, 3], [5, 2.6], [3.5, 5.5], [6, 5], [1.5, 6.5], [7, 3.8], [4.5, 4], [2, 4.5]];
+function penScene(it, t) {
+  const home = petsAtHome().slice(0, PEN_SPOT.length);
+  home.forEach((pet, i) => {
+    const [bx, by] = PEN_SPOT[i], tx = bx + Math.sin(t * 0.6 + i * 2) * 0.6, ty = by + Math.cos(t * 0.45 + i) * 0.4, [x, y] = scr(tx, ty);
+    const hop = Math.abs(Math.sin(t * 4 + i)) * 1.5;
+    it(tx + ty, x, y, g => { g.save(); g.translate(Math.round(x), Math.round(y - hop)); g.scale(0.55, 0.55); drawMon(g, pet.stage ? PETS[pet.kind].mon : 'pet_' + pet.kind, t, { ph: i }); g.restore(); }, { x: x - 8, y: y - 14, w: 16, h: 16, win: 'b:pen' });
+  });
+  const inc = (S.pen && S.pen.inc) || [];
+  inc.forEach((x, i) => { const [sx, sy] = scr(1 + i * 1.2, 1.2), E = ITEMS['egg_' + x.kind]; it(1 + i * 1.2 + 1.2, sx, sy, g => { R(g, Math.round(sx) - 4, Math.round(sy) - 6, 9, 4, '#c8a860'); R(g, Math.round(sx) - 3, Math.round(sy) - 9, 7, 7, E.c); R(g, Math.round(sx) - 2, Math.round(sy) - 10, 5, 2, E.c); R(g, Math.round(sx) - 2, Math.round(sy) - 8, 2, 2, shade(E.c, 0.35)); }, { x: sx - 6, y: sy - 12, w: 12, h: 12, win: 'b:pen' }); });
+}
 function templeScene(it, t) {
   staffAt(it, STAFF.priest, 4.5, 1.6, 'pray', t, 'b', 0, 0.8);
   const pats = patients().filter(a => a.status === 'idle'), hs = healers();
