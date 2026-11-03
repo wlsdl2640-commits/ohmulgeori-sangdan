@@ -6,7 +6,7 @@ from PIL import Image
 
 ROOT = pathlib.Path(__file__).parent
 SRC, FONTS, DIST = ROOT / 'src', ROOT / 'fonts', ROOT / 'dist'
-JS = ['data.js', 'data-rpg.js', 'data-biz.js', 'data-gear.js', 'data-world.js', 'sprites.js', 'plans.js', 'doll.js', 'chars.js', 'beasts.js', 'art.js', 'bg.js', 'arena.js', 'people.js', 'core.js', 'econ.js', 'iso.js', 'ui.js', 'view.js', 'panels.js', 'main.js']
+JS = ['data.js', 'data-rpg.js', 'data-biz.js', 'data-gear.js', 'data-world.js', 'sprites.js', 'pxa.js', 'pxs.js', 'pxmon.js', 'art.js', 'bg.js', 'arena.js', 'pxhq.js', 'people.js', 'core.js', 'econ.js', 'iso.js', 'ui.js', 'view.js', 'panels.js', 'main.js']
 NAME = '오물거리 상단'
 VERSION = '0.7.0'
 

@@ -8,7 +8,7 @@ const ap = (X, Y, z) => [AR.VX + X * 120 / z, AR.HZ + (ACAM - Y) * 120 / z];
 
 class Pix {
   constructor(w, h) { this.w = w; this.h = h; this.img = new ImageData(w, h); this.d = new Uint32Array(this.img.data.buffer); }
-  static c(hex) { const [r, g, b] = hexRgb(hex); return ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; }
+  static c(hex) { const [r, g, b] = pxRgb(hex); return ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; }
   set(x, y, c) { x = Math.round(x); y = Math.round(y); if (x >= 0 && y >= 0 && x < this.w && y < this.h) this.d[y * this.w + x] = c; }
   rect(x, y, w, h, c) { const x0 = Math.max(0, Math.round(x)), y0 = Math.max(0, Math.round(y)), x1 = Math.min(this.w, Math.round(x + w)), y1 = Math.min(this.h, Math.round(y + h)); for (let j = y0; j < y1; j++) this.d.fill(c, j * this.w + x0, j * this.w + Math.max(x0, x1)); }
   // 다각형 채우기. dk = 0~1 이면 바둑판 무늬로 그만큼만 (반투명 대신)

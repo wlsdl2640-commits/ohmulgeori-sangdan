@@ -27,47 +27,45 @@ function bake(key, w, h, ax, ay, paint, plain) {
 }
 const blit = (ctx, s) => ctx.drawImage(s.cv, -s.ax, -s.ay);
 
-/* ───────── 모험가 (고해상도 그림은 chars.js) ───────── */
-const ROBED = Object.keys(LOOKS).filter(c => LOOKS[c].body === 'robe');
+/* ───────── 모험가 (손 도트: pxa.js 앞모습 · pxs.js 옆모습) ───────── */
+const ROBED = Object.keys(PXL).filter(c => PXL[c].body === 'robe');
 function advKey(a) {
-  const w = a.eq && a.eq.weapon, ar = a.eq && a.eq.armor, l = a.look || {};
-  return [a.cls, l.hair, l.skin, a.hero ? 1 : 0, (a.id || 0) % 3, w ? w.base + w.t : '-', ar ? ar.base + ar.t : '-'].join('|');
+  const w = a.eq && a.eq.weapon, l = a.look || {};
+  return [a.cls, l.hair, l.skin, (a.id || 0) % 3, w ? w.base : '-'].join('|');
 }
 function advPoseOf(t, o) {
   if (o.sleep) return ['sleep', 0];
+  if (o.down) return ['down', 0];
   if (o.sit) return ['sit', 0];
   if (o.atk) return ['atk', o.atkF != null ? o.atkF : 1];
   if (o.walk) return ['walk', Math.floor(t * 8 + (o.ph || 0) * 2) % 4];
   return ['idle', Math.floor(t * 1.6 + (o.ph || 0)) % 2];
 }
-// ctx는 두 배 해상도 화면(논리 좌표)
-function drawAdv(ctx, a, t, o = {}) { const [pose, fr] = advPoseOf(t, o); blitHi(ctx, advSprite(a, pose, fr, o.z || 1)); }
-// 1:1 캔버스(초상화)에 그대로
-function drawAdvHi(ctx, a, t, o = {}) { const [pose, fr] = advPoseOf(t, o), s = advSprite(a, pose, fr); ctx.drawImage(s.cv, -s.ax, -s.ay); }
+// 논리 좌표 화면에 그린다. o.side 옆모습 · o.z 배율
+function drawAdv(ctx, a, t, o = {}) {
+  const [pose, fr] = advPoseOf(t, o), s = o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr), z = o.z || 1;
+  if (z === 1) { pxBlit(ctx, s); return; }
+  ctx.save(); ctx.scale(z, z); pxBlit(ctx, s); ctx.restore();
+}
+function drawAdvHi(ctx, a, t, o = {}) { drawAdv(ctx, a, t, o); }
 
-/* ───────── 몬스터 (고해상도 그림은 beasts.js) ───────── */
-// sc: 필드 보스처럼 몸집을 따로 키울 때
+/* ───────── 몬스터 (손 도트: pxmon.js) ───────── */
 const monSc = (m, sc) => sc || Math.max(1, Math.round(m.scale || 1));
+const MON_DIM = {};
 function monBase(id) {
-  const m = MONS[id];
-  if (HUMAN_FOES[id]) return [12, 22];
-  if (m.W) return [m.W, m.H];
-  const h = m.plan === 'quad' ? (m.h || 4) + 5 : m.plan === 'blob' ? (m.nose ? 15 : m.h || 8) : m.plan === 'bug' ? (m.tail ? 15 : 8)
-    : m.plan === 'flyer' ? (m.big ? 24 : 17) : m.plan === 'golem' ? (m.small ? 16 : 19) : m.plan === 'worm' ? 23 : m.plan === 'ghost' ? (m.crown ? 23 : 19)
-    : { shroom: 13, tree: 19, biped: 15 }[m.plan] || 12;
-  const w = m.plan === 'quad' ? (m.len || 8) + 4 : m.plan === 'flyer' ? (m.big ? 22 : 15) : m.plan === 'worm' ? 14 : m.plan === 'tree' ? 13 : m.plan === 'golem' && !m.small ? 16 : m.plan === 'bug' && m.tail ? 16 : 11;
-  return [w, h];
+  if (MON_DIM[id]) return MON_DIM[id];
+  const M = PXM[id];
+  if (!M) return (MON_DIM[id] = [12, 12]);
+  const rows = pxRows(M.g), b = M.big || 1;
+  return (MON_DIM[id] = [Math.max(...rows.map(r => r.length)) * b, rows.length * b]);
 }
 const monH = (id, sc) => monBase(id)[1] * monSc(MONS[id], sc);
 const monW = (id, sc) => monBase(id)[0] * monSc(MONS[id], sc);
-const LOOPS = { flyer: 4, worm: 4, ghost: 4, giantgriffon: 4, dragon: 4, whale: 4 };   // 계속 움직이는 몸
-// o.z: 무대 배율 (몸집 sc와 곱한다)
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], sc = monSc(m, o.sc) * (o.z || 1), tt = t + (o.ph || 0);
-  const fr = Math.floor(tt * (m.giant ? 3 : 6)) % 2, loop = LOOPS[m.plan], q = loop ? Math.floor(tt * (m.giant ? 5 : 8)) % loop : 0;
-  const [bw, bh] = monBase(id), W = Math.ceil((bw + 34) * sc * HI), H = Math.ceil((bh + 18) * sc * HI);
-  const key = 'MH|' + id + '|' + fr + '|' + q + '|' + sc + '|' + (FLASH || '');
-  blitHi(ctx, bakeHi(key, W, H, Math.round(W / 2), Math.round(H - 4 * sc), D => paintMonHi(D, id, m, fr, q, sc)));
+  const m = MONS[id], M = PXM[id] || PXM.rat, sc = monSc(m, o.sc) * (o.z || 1) * (M.big || 1), tt = t + (o.ph || 0);
+  const fr = Math.floor(tt * (m.giant ? 3 : 5)) % 2, s = pxMonSprite(PXM[id] ? id : 'rat', fr);
+  if (sc === 1) { pxBlit(ctx, s); return; }
+  ctx.save(); ctx.scale(sc, sc); pxBlit(ctx, s); ctx.restore();
 }
 
 /* ───────── 모닥불과 잠든 숨 (본부 화면에서도 쓴다) ───────── */
