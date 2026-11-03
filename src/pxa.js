@@ -49,21 +49,66 @@ function pxRamp(hex) {
 }
 
 /* 굽기: 격자 → 캔버스 (테두리 1칸). ax, ay = 발밑 기준점(격자 좌표) */
-function pxBake(key, g, pal, ax, ay) {
-  const k = key + '|' + (FLASH || '');
+/* B4 손질 스위치: rim 가장자리 빛, line 부위 사이 선, tex 질감. null이면 끈다 */
+let PX_FX = { rim: 0.28, line: 0.26, tex: 1 };
+// 글자 → 재질 묶음 (1 = 얼굴·눈처럼 선을 긋지 않는 것)
+const PX_MAT = { S: 2, s: 2, t: 2, k: 1, w: 1, p: 1, m: 1, H: 3, h: 3, L: 3, C: 4, c: 4, Q: 4, d: 4, M: 5, N: 5, n: 5, x: 5, G: 6, g: 6, o: 6, J: 7, j: 7, I: 7, A: 8, a: 8, F: 8, f: 8, W: 9, V: 9, U: 11, u: 11, B: 12, b: 12, R: 13, r: 13, X: 14, Z: 15, z: 15, K: 16, O: 17, v: 17, P: 18, q: 18 };
+// 선을 긋는 큰 부위: 살·머리카락·천·쇠·모자·가죽·바지·장화·망토
+const PX_LINE = { 2: 1, 3: 1, 4: 1, 5: 1, 7: 1, 8: 1, 9: 1, 11: 1, 12: 1, 18: 1 };
+/* 뭉툭 도트: 격자를 반으로 줄여 굽고 2배로 키운다 (픽셀이 굵어진다). 0이면 끈다 */
+let PX_CHUNK = 2;
+// 2×2 칸을 하나로. 눈·입·쇠·나무(무기)·금은 작아도 살린다
+const PX_PRI = { k: 3.2, w: 3.0, p: 1.6, m: 1.6, x: 1.6, M: 1.35, N: 1.3, O: 1.4, v: 1.3, K: 1.25, G: 1.3, g: 1.2, X: 1.5, Z: 1.2, R: 1.15 };
+function pxChunk(g) {
+  const H = g.length, W = g[0].length, out = [];
+  for (let y = 0; y < H; y += 2) {
+    const row = [];
+    for (let x = 0; x < W; x += 2) {
+      const a = g[y][x], b = x + 1 < W ? g[y][x + 1] : '.', c = y + 1 < H ? g[y + 1][x] : '.', e = y + 1 < H && x + 1 < W ? g[y + 1][x + 1] : '.';
+      let empty = 0; const cnt = {};
+      for (const q of [a, b, c, e]) { if (q === '.') empty++; else cnt[q] = (cnt[q] || 0) + 1; }
+      if (empty > 2) { row.push('.'); continue; }
+      let best = '.', bs = 0;
+      for (const q in cnt) { const v = cnt[q] * (PX_PRI[q] || 1); if (v > bs) { bs = v; best = q; } }
+      row.push(best);
+    }
+    out.push(row);
+  }
+  return out;
+}
+function pxBake(key, g0, pal, ax, ay, pre) {
+  const ch = PX_CHUNK && !(g0.pre || pre) ? PX_CHUNK : 0, k = key + '|' + (FLASH || '') + (PX_FX ? '|fx' : '') + (PX_CHUNK ? '|c' : '');
   let s = PXC.get(k);
   if (s) return s;
+  // 뭉툭: 격자를 반으로 (이미 반 해상도로 그린 것(pre)은 그대로)
+  const g = ch ? pxChunk(g0) : g0, sc = PX_CHUNK ? 2 : 1;
+  if (ch) { ax /= 2; ay /= 2; }
   const H = g.length, W = g[0].length;
   let x0 = W, y0 = H, x1 = -1, y1 = -1;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (g[y][x] !== '.') { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
   if (x1 < 0) { x0 = y0 = 0; x1 = y1 = 0; }
   const w = x1 - x0 + 3, h = y1 - y0 + 3, img = new ImageData(w, h), d = img.data, fl = FLASH ? pxRgb(FLASH) : null, ol = pxRgb(PXO);
   const set = (x, y, c) => { const i = (y * w + x) * 4; d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; d[i + 3] = 255; };
-  const RGB = {};
+  const RGB = {}, FX = (g0.pre || pre) ? null : PX_FX;   // 반 해상도로 미리 손질한 그림은 그대로
   for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
     const c = g[y][x]; if (c === '.') continue;
     const hx = pal[c]; if (!hx) continue;
-    set(x - x0 + 1, y - y0 + 1, fl || RGB[c] || (RGB[c] = pxRgb(hx)));
+    let col = fl || RGB[c] || (RGB[c] = pxRgb(hx));
+    if (FX && !fl) {
+      // B4 손질: 왼쪽 위 가장자리 빛 · 부위 사이 어두운 선 · 쇠·가죽 질감
+      const m = PX_MAT[c] || 0, up = y > 0 ? g[y - 1][x] : '.', lf = x > 0 ? g[y][x - 1] : '.';
+      let f = 1;
+      if (m > 1) {
+        // 위·왼쪽에 다른 부위가 겹치면 그 밑은 그늘(맞닿은 그림자), 바깥이면 가장자리 빛
+        const mu = PX_MAT[up] || 0, ml = PX_MAT[lf] || 0, big = PX_LINE[m];
+        if (big && ((up !== '.' && mu > 1 && mu !== m && PX_LINE[mu]) || (lf !== '.' && ml > 1 && ml !== m && PX_LINE[ml]))) f *= 1 - FX.line;
+        else if (up === '.' || lf === '.') f *= 1 + FX.rim;
+        if (FX.tex && m === 5 && (x + y) % 2) f *= 0.92;
+        if (FX.tex && m === 9 && x % 3 === 1 && y % 3 === 1) f *= 0.86;
+      }
+      if (f !== 1) col = [Math.min(255, Math.round(col[0] * f)), Math.min(255, Math.round(col[1] * f)), Math.min(255, Math.round(col[2] * f))];
+    }
+    set(x - x0 + 1, y - y0 + 1, col);
   }
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     if (d[(y * w + x) * 4 + 3]) continue;
@@ -71,9 +116,10 @@ function pxBake(key, g, pal, ax, ay) {
     if (on(x - 1, y) || on(x + 1, y) || on(x, y - 1) || on(x, y + 1)) { const i = (y * w + x) * 4; const c = fl || ol; d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; d[i + 3] = 254; }
   }
   for (let i = 3; i < d.length; i += 4) if (d[i] === 254) d[i] = 255;
-  const [cv, x] = mkCanvas(w, h);
+  let [cv, x] = mkCanvas(w, h);
   x.putImageData(img, 0, 0);
-  s = { cv, ax: ax - x0 + 1, ay: ay - y0 + 1, w, h };
+  if (sc > 1) { const [big, bx] = mkCanvas(w * sc, h * sc); bx.imageSmoothingEnabled = false; bx.drawImage(cv, 0, 0, w * sc, h * sc); cv = big; }
+  s = { cv, ax: Math.round((ax - x0 + 1) * sc), ay: Math.round((ay - y0 + 1) * sc), w: w * sc, h: h * sc };
   PXC.set(k, s);
   if (PXC.size > 1400) PXC.delete(PXC.keys().next().value);
   return s;
@@ -314,8 +360,8 @@ G..............g
 .NMxMMMMMMMMMNn.
 .NMMMMMMMMMMMNn.
 .NMMMMMMGMMMMNn.
-.NMMMMMMGMMMMNn.
-.NKKKKKKGKKKKKn.
+.NKKwwKKGKKwwNn.
+.NKKwwKKGKKwwNn.
 .NMMMMMMGMMMMNn.
 .NMMMNNNGNNNMNn.
 .nNNNNNNNNNNNnn.
@@ -876,18 +922,19 @@ G...Gg
 ..v..
 `,
   lute: `
-VV..........
-.VV.........
-..vV........
-...vV.......
-....vV......
-.....vOOO...
-....OOOOOOv.
-...OOOOOOOOv
-...OOOK@OOOv
-...OOOOOOOOv
-....OOOOOOv.
-.....vvvvv..
+vv............
+.vvv..........
+..vvv.........
+...vvv........
+....vvv.......
+.....vvvvvv...
+.....vZZZZZZv.
+....vZZZZZZZZv
+....vZZKKZZZZv
+....vZZK@KZZZv
+....vZZZKZZZZv
+.....vZZZZZZv.
+......vvvvvv..
 `
 };
 // 활: 왼손(몸 블록 0칸, 5줄)에 세워 든다. draw = 시위를 당긴 모습
@@ -1249,7 +1296,7 @@ function pxAdvGrid(a, pose, fr, Lx) {
   // 방패 · 활 · 두 번째 칼
   if (L.shield && !sit) { const Sd = PX_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), BX + Sd.x, BY + 5 + Sd.y); }
   if (bow) { const B = PX_BOW[wk]; pxPut(g, pxRows(atk === 0 ? B.draw : B.g), BX + B.x, BY + B.y + sitDrop); }
-  else if (wk === 'lute') { const W = pxRows(PX_WPN.lute), [ax, ay] = pxFind(W, '@'); pxPut(g, W, BX + 9 - ax, BY + 4 - ay + (atk === 1 ? 1 : 0) + sitDrop, 'O'); if (atk === 0) pxPut(g, ['SS', 'Ss'], BX + 10, BY + 3 + sitDrop); }
+  else if (wk === 'lute') { const W = pxRows(PX_WPN.lute), [ax, ay] = pxFind(W, '@'); pxPut(g, W, BX + 9 - ax, BY + 4 - ay + (atk === 1 ? 1 : 0) + sitDrop, 'K'); if (atk === 0) pxPut(g, ['SS', 'Ss'], BX + 10, BY + 3 + sitDrop); }
   else if (!sit) {
     const up = pxRows(PX_WPN[wk] || PX_WPN.sword), rows = arm === 'out' ? pxRot(up) : up, [ax, ay] = pxFind(rows, '@'), [hx, hy] = PX_HAND[arm];
     pxPut(g, rows, BX + hx - ax, BY + hy - ay, 'v');

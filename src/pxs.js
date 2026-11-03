@@ -233,8 +233,8 @@ G.............g
 .NMxMMMMMMMMNn.
 .NMMMMMMMMMMNn.
 .NMMMMMMMMMGNn.
-.NMMMMMMMMMGNn.
-.NMMMMMMKKKKKn.
+.NMMMMMMKKwwKn.
+.NMMMMMMKKwwKn.
 .NMMMMMMMMMGNn.
 .NMMMMMMNNNGNn.
 .nNNNNNNNNNNnn.
@@ -873,7 +873,7 @@ function pxsAdvGrid(a, pose, fr, Lx) {
   // 팔과 무기
   if (arm !== 'rest') { const A = PXS_ARM[arm]; pxPut(g, pxTone(pxRows(A.g), armTone), SX + A.x, SY + A.y + sd); }
   if (bow) { const B = PXS_BOW[wk]; pxPut(g, pxRows(atk === 0 ? B.draw : B.g), SX + B.x, SY + B.y + sd); }
-  else if (lute) { const W = pxRows(PX_WPN.lute), [ax, ay] = pxFind(W, '@'); pxPut(g, W, SX + 8 - ax, SY + 4 - ay + (atk === 1 ? 1 : 0) + sd, 'O'); }
+  else if (lute) { const W = pxRows(PX_WPN.lute), [ax, ay] = pxFind(W, '@'); pxPut(g, W, SX + 8 - ax, SY + 4 - ay + (atk === 1 ? 1 : 0) + sd, 'K'); }
   else if (!sit) {
     const pole = ['staff', 'skull', 'crozier', 'lance'].includes(wk), up = pxRows(PX_WPN[wk] || PX_WPN.sword);
     const rows = arm === 'out' || (arm === 'rest' && !pole) ? pxRot(up) : up, [ax, ay] = pxFind(rows, '@'), [hx, hy] = arm === 'rest' && !pole ? [11, 4] : PXS_HAND[arm];
