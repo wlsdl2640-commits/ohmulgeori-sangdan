@@ -1333,17 +1333,11 @@ HhSSSSSpSSh.
   return g;
 }
 const PXK_POSE = { idle: 2, walk: 4, atk: 2, sit: 1, sleep: 1 };
-/* 입은 의상까지 더한 도안. 의상은 직업 도안의 색(과 머리 장식)만 바꾼다 */
-const LOOKC = {};
-function advLook(a) {
-  const cls = PXL[a.cls] ? a.cls : 'warrior', L = PXL[cls], C = a.skin && typeof COSTUMES !== 'undefined' ? COSTUMES[a.skin] : null;
-  if (!C) return L;
-  const k = cls + '|' + a.skin;
-  return LOOKC[k] || (LOOKC[k] = Object.assign({}, L, C.pal, C.head ? { head: C.head, face: null } : {}));
-}
+/* 직업 도안 (전직하면 바뀐다) */
+function advLook(a) { return PXL[a.cls] || PXL[jobBase(a.cls)] || PXL.warrior; }
 function pxAdvSprite(a, pose, fr, Lx) {
   const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || advLook(a);
-  const key = 'PA|' + (Lx ? JSON.stringify(Lx).length + (Lx.c1 || '') : a.skin || '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
+  const key = 'PA|' + (Lx ? JSON.stringify(Lx).length + (Lx.c1 || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
   const hit = PXC.get(key + '|' + (FLASH || ''));
   if (hit) return hit;
   const g = pose === 'sleep' ? pxSleepGrid(a, L) : pxAdvGrid(a, pose, fr, L);

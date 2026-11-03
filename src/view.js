@@ -185,6 +185,12 @@ function townScene(w, t, p, lights, post, dark) {
   });
 }
 
+// 상태이상 표시: 막대 위에 색점 (중독 초록 · 화상 주황 · 출혈 빨강 · 냉기 하늘 · 감전 노랑 · 마비 보라 · 기절 흰색 · 쇠약 회색)
+function staDots(g, st, x, y) {
+  if (!st) return;
+  let i = 0;
+  for (const k of STATUS_IDS) if (st[k]) { R(g, x + i * 3, y, 2, 2, STATUS[k].c); i++; }
+}
 /* ───────── 원정 (옆모습): 파티는 왼쪽, 적은 오른쪽. 앞줄이 크고 뒷줄이 작다 ───────── */
 const ORBIT = { elementalist: ['#7ae0a0', '#f0a040'], necromancer: ['#b88aff', '#6a4aa8'] };
 const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168]];
@@ -268,6 +274,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       const bw = Math.max(14, Math.min(30, eW(f) * 0.6 * z / ZE));
       bar(g, x, y + 3, bw, f.hp / f.maxHp, f.boss ? '#f0b43c' : '#e0503f');
       if (f.dot) R(g, x - bw / 2 - 3, y + 3, 1.5, 1.5, f.dot.magic ? '#b88aff' : '#7ad83c');
+      staDots(g, f.sta, x - bw / 2, y);
       if (f.slow > 0) R(g, x + bw / 2 + 1.5, y + 3, 1.5, 1.5, '#8ad8ff');
       if (f.fb) { const yy = y - eH(f) * z / ZE - 6; R(g, x - 3, yy, 7, 2, '#f0b43c'); R(g, x - 3, yy - 2, 1, 2, '#f0b43c'); R(g, x, yy - 2, 1, 2, '#f0b43c'); R(g, x + 3, yy - 2, 1, 2, '#f0b43c'); }
     });
@@ -299,6 +306,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       bar(g, x0, y0 + 3, 22, a.hp / d.maxHp, '#e0503f');
       bar(g, x0, y0 + 5.5, 22, a.mp / Math.max(1, d.maxMp), '#4a8ae8', 1);
       if ((a.fat || 0) >= 60) R(g, x0 + 12.5, y0 + 3, 1.5, 1.5, a.fat >= 85 ? '#e0503f' : '#f0b43c');
+      staDots(g, e.sta && e.sta[a.id], x0 - 11, y0);
       if (e.taunt && e.taunt.aid === a.id) drawNum(g, x0, y - 21 * z - 6, '!', '#ff5a4a');
     });
   });
@@ -389,7 +397,7 @@ function events(e, pos, t, team, p) {
     if (x.type === 'hit') {
       const fm = fmid(x.d), ft = ftop(x.d);
       if (!fm) continue;
-      if (x.k === 'poison' || x.k === 'curse') { V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: x.k === 'curse' ? '#c89aff' : '#9ae86a', t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: fm[0], y: fm[1], t0: t, d: 0.5, c: x.k === 'curse' ? '#c89aff' : '#9ae86a' }); continue; }
+      if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') { const cc = x.k === 'curse' ? '#c89aff' : x.k === 'burn' ? '#ff8a2a' : x.k === 'bleed' ? '#ff4a4a' : '#9ae86a'; V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: cc, t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: fm[0], y: fm[1], t0: t, d: 0.5, c: cc }); continue; }
       const am = amid(x.s);
       if (!am) continue;
       V.atk['a' + x.s] = t;
@@ -414,10 +422,20 @@ function events(e, pos, t, team, p) {
       const ft = ftop(x.d);
       V.atk['a' + x.s] = t;
       if (ft) V.fx.push({ k: 'num', x: ft[0] + 2, y: ft[1] - 4, s: 'MISS', c: '#a9b0bd', t0: t, d: 0.6 });
+    } else if (x.type === 'hurt' && x.dot) {
+      const aq = at('a' + x.d);
+      if (aq) { V.fx.push({ k: 'num', x: aq[0] + jx(), y: aq[1] - 21 * zAt(aq[1]) - 6, s: String(x.v), c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a', t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: aq[0], y: aq[1] - 10, t0: t, d: 0.5, c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a' }); }
+    } else if (x.type === 'sta') {
+      const q = at((x.side === 'f' ? 'f' : 'a') + x.d), St = STATUS[x.k];
+      if (q && St) { callout(q[0], q[1] - 21 * zAt(q[1]) - 10, St.name + '!', 'dot'); V.fx.push({ k: 'buff', x: q[0], y: q[1], t0: t, d: 0.6, c: St.c }); }
+    } else if (x.type === 'cure') {
+      const aq = at('a' + x.d);
+      if (aq) V.fx.push({ k: 'heal', x: aq[0], y: aq[1], t0: t, d: 0.6, c: '#c8f0ff' });
     } else if (x.type === 'hurt') {
       const am = amid(x.d), aq = at('a' + x.d);
       if (!am) continue;
       V.lunge['f' + x.s] = t + 0.14;
+      if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - 21 * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: t, d: 0.6 }); }
       V.flash['a' + x.d] = t + 0.1;
       const fm = fmid(x.s);
       if (fm && x.k === 'magic') V.fx.push({ k: 'orb', x0: fm[0], y0: fm[1], x1: am[0], y1: am[1], t0: t - 0.12, d: 0.14, c: '#d86aff', c2: '#ffffff', size: 2 });
@@ -561,15 +579,19 @@ function logEvent(x, e, p) {
   const add = (h, c) => { V.log.push({ n: ++V.logN, h, c: c || '' }); if (V.log.length > LOG_MAX) V.log.shift(); };
   if (x.type === 'hit') {
     if (x.dot && !x.v) return;
-    if (x.k === 'poison' || x.k === 'curse') return add(`${foe(jo(Fn(x.d), '이', '가'))} ${x.k === 'curse' ? '저주' : '독'}로 ${num(x.v)} 피해를 입었습니다.`, 'dim');
+    if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') return add(`${foe(jo(Fn(x.d), '이', '가'))} ${x.k === 'curse' ? '저주' : x.k === 'burn' ? '화상' : x.k === 'bleed' ? '출혈' : '독'}(으)로 ${num(x.v)} 피해를 입었습니다.`, 'dim');
     if (x.k === 'pet') return add(`${ally(A(x.s))}의 동료 짐승이 ${foe(Fn(x.d))}에게 ${num(x.v)} 피해!`);
-    return add(`${x.c ? '<i class="lg-c">치명타!</i> ' : ''}${ally(jo(A(x.s), '이', '가'))} ${foe(Fn(x.d))}에게 ${num(x.v, x.c ? 'c' : '')} 피해를 줬습니다.`);
+    return add(`${x.ctr ? '<i class="lg-c">반격!</i> ' : ''}${x.c ? '<i class="lg-c">치명타!</i> ' : ''}${ally(jo(A(x.s), '이', '가'))} ${foe(Fn(x.d))}에게 ${num(x.v, x.c ? 'c' : '')} 피해를 줬습니다.`);
   }
   if (x.type === 'fmiss') return add(`${ally(A(x.s))}의 공격이 ${foe(Fn(x.d))}에게 빗나갔습니다.`, 'dim');
-  if (x.type === 'hurt') return add(`${foe(Fn(x.s))}의 공격! ${ally(jo(A(x.d), '이', '가'))} ${num(x.v, 'r')} 피해를 입었습니다.`);
+  if (x.type === 'hurt' && x.dot) return add(`${ally(jo(A(x.d), '이', '가'))} ${STATUS[x.k] ? STATUS[x.k].name : '독'}(으)로 ${num(x.v, 'r')} 피해를 입었습니다.`, 'dim');
+  if (x.type === 'hurt') return add(`${foe(Fn(x.s))}의 공격! ${ally(jo(A(x.d), '이', '가'))} ${num(x.v, 'r')} 피해를 입었습니다.${x.blk ? ' <i class="lg-c">막았다!</i>' : ''}`);
+  if (x.type === 'sta') { const St = STATUS[x.k]; if (St) add(x.side === 'f' ? `${foe(jo(Fn(x.d), '이', '가'))} ${St.name} 상태가 됐습니다.` : `${ally(jo(A(x.d), '이', '가'))} ${St.name} 상태가 됐습니다!`, x.side === 'f' ? 'sk' : 'warn'); return; }
+  if (x.type === 'cure') return add(`${ally(A(x.d))}의 상태이상이 풀렸습니다.`, 'dim');
   if (x.type === 'miss') return add(`${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
   if (x.type === 'aoe') return add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn');
   if (x.type === 'heal') return add(x.s === x.d ? `${ally(jo(A(x.d), '이', '가'))} HP를 ${num(x.v, 'g')} 회복했습니다.` : `${ally(jo(A(x.s), '이', '가'))} ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 치유했습니다.`);
+  if (x.type === 'pot' && x.k === 'bandage') return add(`${ally(jo(A(x.d), '이', '가'))} 붕대를 감아 출혈을 멎게 했습니다.`);
   if (x.type === 'pot') return add(`${ally(jo(A(x.d), '이', '가'))} 회복 물약으로 HP ${num(x.v, 'g')} 회복.`);
   if (x.type === 'mana') return add(`${ally(jo(A(x.d), '이', '가'))} 마나 물약으로 MP ${num(x.v, 'b')} 회복.`);
   if (x.type === 'skill') { const s = SKILLS[x.id]; if (s) add(`${ally(jo(A(x.s), '이', '가'))} 「${esc(s.name)}」${s.kind === 'heal' ? '을(를) 외웠습니다.' : '!'}`, 'sk'); return; }

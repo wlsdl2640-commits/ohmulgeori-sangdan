@@ -18,6 +18,32 @@ function migrateU() {
   U.arena = U.arena || { score: 0, coins: 0, wins: 0, losses: 0, day: -1, fights: 0, opps: [], best: 0 };
   U.bm = U.bm || { day: -1, stock: [] };
   U.au = U.au || { day: -1, g: null };
+  if (!U.arena.season) seasonReset();
+}
+/* 시즌 랭킹판: 한 달 동안 다른 상단들과 점수를 겨루고 월말에 등수 보상 */
+const SEASON_REWARD = [[300, 20, '투기장의 왕'], [200, 12, '모래판의 검'], [120, 8, '관중의 총아'], [60, 4, ''], [60, 4, ''], [30, 2, ''], [30, 2, ''], [30, 2, '']];
+function seasonReset() {
+  const A = S.under.arena, names = ARENA_NAMES.slice().sort(() => rnd() - 0.5).slice(0, 7);
+  A.season = { score: 0, wins: 0, rivals: names.map((n, i) => ({ name: n, score: ri(80, 400) * (i < 3 ? 2 : 1) })), title: A.season ? A.season.title : '' };
+}
+function seasonDay() {
+  const Sn = S.under.arena.season; if (!Sn) return;
+  Sn.rivals.forEach((r, i) => { r.score += ri(30, 120) + (i < 2 ? ri(40, 160) : 0); });
+}
+function seasonStand() {
+  const Sn = S.under.arena.season, rows = Sn.rivals.map(r => ({ name: r.name, score: r.score, me: 0 })).concat([{ name: S.company, score: Sn.score, me: 1 }]);
+  rows.sort((x, y) => y.score - x.score);
+  return rows;
+}
+function seasonEnd() {
+  const A = S.under && S.under.arena, Sn = A && A.season; if (!Sn) return;
+  const rows = seasonStand(), rank = rows.findIndex(r => r.me) + 1, R = SEASON_REWARD[Math.min(rank, SEASON_REWARD.length) - 1];
+  if (Sn.wins > 0) {
+    A.coins += R[0]; S.fame += R[1]; if (R[2]) Sn.title = R[2];
+    log(`투기장 시즌이 끝났다. ${rank}위 · 코인 +${R[0]}, 명성 +${R[1]}${R[2] ? ` · 칭호 「${R[2]}」` : ''}`, 'good');
+    queueModal({ title: '투기장 시즌 결산', body: [`이번 달 시즌 ${rank}위 (시즌 점수 ${fmt(Sn.score)}, ${Sn.wins}승).`, `보상: 투기장 코인 ${R[0]}, 명성 +${R[1]}${R[2] ? `, 칭호 「${R[2]}」` : ''}.`].concat(rows.slice(0, 3).map((r, i) => `${i + 1}위 ${r.name} ${fmt(r.score)}`)) });
+  }
+  const title = Sn.title; seasonReset(); S.under.arena.season.title = title;
 }
 // 열렸는지 살피고, 날이 바뀌었으면 새로 뽑는다 (매 틱 싸게)
 function underTick() {
@@ -25,7 +51,7 @@ function underTick() {
   if (!underOpen()) return;
   const k = today();
   if (!S.flags.under) { S.flags.under = 1; log('7번가 지하수로 입구가 열렸다. 시설 창에서 내려갈 수 있다.', 'good'); queueModal({ title: '지하수로', body: STORY.under }); }
-  if (S.under.arena.day !== k) arenaRefresh(k);
+  if (S.under.arena.day !== k) { arenaRefresh(k); seasonDay(); }
   if (S.under.bm.day !== k) bmRefresh(k);
   if (S.under.au.day !== k) { auClose(); auRefresh(k); }
   auStep();
@@ -116,11 +142,13 @@ function arenaEnd(p, e, win) {
   if (win) {
     const gain = ARENA_SCORE_WIN[tier] + Math.max(-30, Math.min(30, Math.round(((e.oppLv || avg) - avg) * 3)));
     U.coins += ARENA_COIN.win; U.score += gain; U.wins++; U.best = Math.max(U.best || 0, U.score); S.fame += 1;
+    if (U.season) { U.season.score += gain; U.season.wins++; }
     log(`${p.name}이(가) 투기장에서 ${e.oppName}을(를) 이겼다! 랭킹 점수 +${gain}, 투기장 코인 +${ARENA_COIN.win}, 명성 +1`, 'good');
     HOOKS.toast(`투기장 승리 · 점수 +${gain} · 코인 +${ARENA_COIN.win}`);
     if (U.score >= GLADIATOR_SCORE && !S.flags.gladOK) { S.flags.gladOK = 1; queueModal({ title: '투기장의 이름', body: [`${S.company}의 이름이 투기장 명판 맨 위에 올랐다. 랭킹 점수 ${fmt(GLADIATOR_SCORE)}.`, '이제 전사를 검투사로 전직시킬 수 있다 (훈련소, Lv20·라이선스 조건은 그대로).'] }); }
   } else {
     U.coins += ARENA_COIN.lose; U.score = Math.max(0, U.score - ARENA_SCORE_LOSE); U.losses++;
+    if (U.season) U.season.score = Math.max(0, U.season.score - ARENA_SCORE_LOSE);
     log(`${p.name}이(가) 투기장에서 ${e.oppName}에게 졌다. 랭킹 점수 -${ARENA_SCORE_LOSE}, 투기장 코인 +${ARENA_COIN.lose}`, 'bad');
     HOOKS.toast(`투기장 패배 · 코인 +${ARENA_COIN.lose}`);
   }
@@ -267,7 +295,9 @@ PANELS.ar = () => {
   const opps = A.opps.map((o, i) => { const fee = arenaFee(o), ok = sel && A.fights < ARENA_PER_DAY && S.gold >= fee;
     return `<div class="card"><div class="row"><span class="tag ${['', 'gold-t', 'red-t'][o.tier]}">${ARENA_TIERS[o.tier]}</span><div class="grow"><div class="h">${esc(o.name)}</div><div class="sub">${o.members.length}명 · Lv${o.lv} · 이기면 점수 +${ARENA_SCORE_WIN[o.tier]}</div></div><button type="button" class="btn sm gold" data-act="arfight" data-p="${sel ? sel.id : 0}" data-i="${i}"${ok ? '' : ' disabled'}>도전 ${fmt(fee)}G</button></div>
       <div class="row wrap">${o.members.map(m => `<span class="mem"><img src="${portrait(m)}" alt=""><span>${esc(m.name)}<br><small>${CLASSES[m.cls].name} ${m.lv}</small></span></span>`).join('')}</div></div>`; }).join('');
-  return head + pick + `<div class="sec"><b>오늘의 상대</b><span>새벽 4시에 바뀌어요</span></div>` + opps;
+  const Sn = A.season, rows = Sn ? seasonStand() : [], dd = S.settleDay - today();
+  const season = Sn ? `<div class="sec"><b>시즌 랭킹판</b><span>월말 정산 D-${dd} · 등수 보상</span></div><div class="card">${Sn.title ? `<div class="sub gold-t">칭호 「${esc(Sn.title)}」</div>` : ''}${rows.map((r, i) => `<div class="row sub${r.me ? ' gold-t' : ''}"><span class="rkn">${i + 1}</span><span class="grow">${esc(r.name)}</span><b class="num">${fmt(r.score)}</b></div>`).join('')}<div class="sub muted">1위 코인 300·명성 20·칭호, 2위 200·12, 3위 120·8, 4~5위 60, 그 아래 30 (한 판이라도 이겨야 받아요)</div></div>` : '';
+  return head + pick + `<div class="sec"><b>오늘의 상대</b><span>새벽 4시에 바뀌어요</span></div>` + opps + season;
 };
 PANELS.arshop = () => {
   const A = S.under.arena, list = arenaShop();

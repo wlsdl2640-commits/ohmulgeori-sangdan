@@ -42,13 +42,38 @@ function makeAdv(o = {}) {
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
-    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, skin: null,
+    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, traits: o.traits || rollTraits(),
     salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
   };
   growStats(a, lv - 1);
   const d = derive(a);
   a.hp = d.maxHp; a.mp = d.maxMp;
   return a;
+}
+/* ───────── 각성: 3차 직업을 용사로 ───────── */
+function awakenWhy(a) {
+  if (a.hero) return '이미 용사예요';
+  if (jobTier(a.cls) < 3) return '3차 직업이어야 해요';
+  if (a.lv < AWAKEN.lv) return `Lv${AWAKEN.lv}부터`;
+  if ((a.rank || 0) < AWAKEN.rank) return `${LICENSE[AWAKEN.rank].name} 라이선스 필요`;
+  if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
+  const souls = Object.keys(S.inv).filter(k => k.startsWith('soul_')).reduce((n, k) => n + S.inv[k], 0);
+  if (souls < AWAKEN.souls) return `주인의 혼 ${AWAKEN.souls}개 필요 (지금 ${souls})`;
+  if (S.gold < AWAKEN.fee) return `${fmt(AWAKEN.fee)}G 필요`;
+  return '';
+}
+function awaken(aid) {
+  const a = advById(aid); if (!a) return '';
+  const why = awakenWhy(a); if (why) return why + '.';
+  let need = AWAKEN.souls;
+  for (const k of Object.keys(S.inv).filter(k => k.startsWith('soul_')).sort()) { const t = Math.min(need, S.inv[k]); addTo(S.inv, k, -t); need -= t; if (!need) break; }
+  S.gold -= AWAKEN.fee; a.hero = true; S.fame += 30;
+  const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk);
+  const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
+  log(`${a.name}이(가) 각성해 용사가 되었다! 각성기 「${SKILLS[sk].name}」. 상단 명성 +30`, 'good');
+  queueModal({ title: '각성', body: [`${a.name}의 안에서 잠들어 있던 힘이 깨어났다. 모험가 길드 명예의 벽에 「용사」로 이름이 새겨진다.`, `각성기 「${SKILLS[sk].name}」: ${SKILLS[sk].desc}`, '능력이 15% 오르고, 레벨이 오를 때마다 더 크게 자란다.'] });
+  changed();
+  return '';
 }
 function gearSum(a) {
   const s = {};
@@ -65,25 +90,30 @@ function derive(a) {
   for (const [k] of STATS) T[k] = Math.max(0, a.st[k] + a.tr[k] + (G[k] || 0));
   let atk = jb === 'archer' ? T.str * 0.5 + T.agi * 0.75 : jb === 'rogue' ? T.str * 0.8 + T.agi * 0.45 : T.str * 1.1;
   atk += L * 0.4 + (G.atk || 0);
-  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul;
+  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul * (a.hero ? 1.15 : 1);
+  const X = k => traitSum(a, k);   // 타고난 특성
   return {
-    T, atk: atk * war * lic * (1 + (P.atkPct || 0)),
-    matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0)) * war * lic,
-    def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08) * (earth ? 1.1 : 1) * lic,
-    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0))),
-    maxMp: Math.round(8 + T.int * 4 + L + (G.mp || 0)),
-    eva: Math.min(0.5, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0)),
-    crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0)),
-    spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0)),
-    carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0)) * (1 + (P.carryPct || 0))),
-    move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move')) * (wind ? 1.15 : 1),
+    T, atk: atk * war * lic * (1 + (P.atkPct || 0) + X('atkPct')),
+    matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0) + X('matkPct')) * war * lic,
+    def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08 + X('defPct')) * (earth ? 1.1 : 1) * lic,
+    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct'))),
+    maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct'))),
+    eva: Math.min(0.6, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva')),
+    crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0) + X('crit')),
+    block: Math.min(0.6, (G.block || 0) + (P.block || 0) + X('block')),
+    counter: Math.min(0.7, (G.counter || 0) + (P.counter || 0) + X('counter')),
+    double: Math.min(0.6, (G.double || 0) + (P.double || 0) + X('double')),
+    healPow: 1 + X('healPow'), rheal: X('rheal'), hpRegen: X('hpRegen'), mpFlat: X('mpFlat'),
+    spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct')),
+    carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
+    move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct')) * (wind ? 1.15 : 1),
     mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3
   };
 }
 function clampVitals(a) { const d = derive(a); a.hp = Math.min(a.hp, d.maxHp); a.mp = Math.min(a.mp == null ? d.maxMp : a.mp, d.maxMp); }
 function addExp(a, n) {
   if (a.lv >= MAX_LV) { a.exp = 0; return false; }
-  a.exp += n;
+  a.exp += Math.round(n * (1 + traitSum(a, 'expPct')));
   let up = false;
   while (a.lv < MAX_LV && a.exp >= expNeed(a.lv)) {
     const before = derive(a);
@@ -113,8 +143,8 @@ const wagonOf = p => (p.wagon && WAGONS[p.wagon]) || null;
 function capOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + (w ? w.cap : 0)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
 function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) : wOf(p.sup); }
 // 파티 이동속도 = 가장 빠른(민첩한) 모험가의 속도 × 피로 × 마차
-function moveOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down); if (!st.length) return 4; return Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * (w ? w.spd : 1) * (st.length < all.length ? 0.8 : 1); }
-const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v)); });
+function moveOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4; return ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * (w ? w.spd : 1) * (st.length < all.length ? 0.8 : 1); }
+const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v * (v > 0 ? 1 - traitSum(a, 'fatigue') : 1))); });
 function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete bag[k]; }
 
 /* ───────── 장비 만들기 ───────── */
@@ -301,14 +331,17 @@ function stepExp(p, dt) {
   e.mpCd = Math.max(0, e.mpCd - dt);
   // 숙면 피로: 원정 내내 쌓이고 여관에서만 풀린다
   const sl = (SLEEP.field + (e.foes.length ? SLEEP.fight : 0)) * dt;
-  all.forEach(a => { a.sleep = Math.min(100, (a.sleep || 0) + sl); });
+  all.forEach(a => { a.sleep = Math.min(100, (a.sleep || 0) + sl * (1 - traitSum(a, 'sleepy'))); });
   const dm = {};
-  team.forEach(a => { const d = derive(a), m = fatMul(a.fat || 0); if (m < 1) { d.atk *= m; d.matk *= m; d.def *= m; } dm[a.id] = d; });
+  e.sta = e.sta || {};
+  team.forEach(a => { const d = derive(a), m = fatMul(a.fat || 0); if (m < 1) { d.atk *= m; d.matk *= m; d.def *= m; } const st = e.sta[a.id]; if (st && st.weak) { d.atk *= 0.8; d.matk *= 0.8; d.def *= 0.8; } if (d.hpRegen) a.hp = Math.min(d.maxHp, a.hp + d.maxHp * d.hpRegen * dt); dm[a.id] = d; });
+  tickSta(p, e, team, dm, dt);
+  if (!p.exp) return;
   // 음유시인·마에스트로의 노래: 파티 전체 공격력과 마법 피해
   const aura = Math.max(0, ...team.map(a => TR(a).aura || 0));
   if (aura) team.forEach(a => { dm[a.id].atk *= 1 + aura; dm[a.id].matk *= 1 + aura; });
   // 광전사: 체력이 줄수록 공격력이 오른다
-  team.forEach(a => { const r = TR(a).rage; if (r) dm[a.id].atk *= 1 + r * Math.max(0, 1 - a.hp / dm[a.id].maxHp); });
+  team.forEach(a => { const r = TR(a).rage; if (r) dm[a.id].atk *= 1 + r * Math.max(0, 1 - a.hp / dm[a.id].maxHp); const fz = traitSum(a, 'frenzy'); if (fz && a.hp < dm[a.id].maxHp * 0.5) dm[a.id].atk *= 1 + fz; });
   usePotions(p, e, team, dm);
   const fr = blessed('moon') ? 0.75 : 1;
   if (e.area === 'raid') { stepRaid(p, e, team, dm, dt, fr); return; }
@@ -375,6 +408,58 @@ function stageBack(p, e) {
   changed();
 }
 
+/* ───────── 상태이상 ───────── */
+// 모험가에게 건다 (특성 저항 반영)
+function inflictAdv(e, a, o, atk) {
+  e.sta = e.sta || {};
+  const st = e.sta[a.id] || (e.sta[a.id] = {}), k = o.k;
+  if (k === 'bleed' || k === 'poison' || k === 'burn') {
+    const res = k === 'burn' ? traitSum(a, 'resBurn') : traitSum(a, 'resPoison');
+    const dps = Math.max(1, Math.round((atk || 10) * (o.m || 0.25) * (1 - res)));
+    if (st[k] && st[k].dps >= dps) { st[k].t = Math.max(st[k].t, o.d || 8); return; }
+    st[k] = { t: o.d || 8, dps, acc: 0 };
+  } else if (k === 'weak') { st.weak = Math.max(st.weak || 0, o.d || 8); }
+  else { const d = (o.d || 3) * (1 - traitSum(a, 'resCc')); if (d <= 0.2) return; st[k] = Math.max(st[k] || 0, d); }
+  ev(e, 'sta', { d: a.id, k, side: 'a' });
+}
+function inflictFoe(e, f, o, atk) {
+  const st = f.sta || (f.sta = {}), k = o.k;
+  if (k === 'bleed' || k === 'poison' || k === 'burn') { const dps = Math.max(1, Math.round((atk || 10) * (o.m || 0.25))); if (st[k] && st[k].dps >= dps) { st[k].t = Math.max(st[k].t, o.d || 8); return; } st[k] = { t: o.d || 8, dps, acc: 0 }; }
+  else st[k] = Math.max(st[k] || 0, (o.d || 3) * (f.boss ? 0.5 : 1));
+  ev(e, 'sta', { d: f.uid, k, side: 'f' });
+}
+function cureSta(e, a, ks) {
+  const st = e.sta && e.sta[a.id]; if (!st) return;
+  let any = false;
+  for (const k of ks) if (st[k]) { delete st[k]; any = true; }
+  if (any) ev(e, 'cure', { d: a.id });
+}
+// 모험가 상태이상 틱: 독·화상·출혈 피해, 시간 줄이기
+function tickSta(p, e, team, dm, dt) {
+  for (const a of team) {
+    const st = e.sta[a.id]; if (!st) continue;
+    for (const k of ['poison', 'burn', 'bleed']) {
+      const o = st[k]; if (!o) continue;
+      o.t -= dt; o.acc += dt;
+      if (o.acc >= 1) { o.acc -= 1; const v = Math.max(1, Math.round(o.dps * (0.9 + rnd() * 0.2))); a.hp -= v; ev(e, 'hurt', { s: 0, d: a.id, v, k, dot: 1 }); if (a.hp <= 0) { down(p, e, a, { boss: false }); if (!p.exp) return; break; } }
+      if (o.t <= 0) delete st[k];
+    }
+    for (const k of ['chill', 'shock', 'para', 'stun', 'weak']) if (st[k]) { st[k] -= dt; if (st[k] <= 0) delete st[k]; }
+    if (!Object.keys(st).length) delete e.sta[a.id];
+  }
+}
+function tickFoeSta(e, f, dt) {
+  const st = f.sta; if (!st) return;
+  for (const k of ['poison', 'burn', 'bleed']) {
+    const o = st[k]; if (!o) continue;
+    o.t -= dt; o.acc += dt;
+    if (o.acc >= 1) { o.acc -= 1; const v = Math.max(1, Math.round(o.dps * (0.9 + rnd() * 0.2) * red(f.def * 0.2))); f.hp -= v; ev(e, 'hit', { s: 0, d: f.uid, v, k, dot: 1 }); }
+    if (o.t <= 0) delete st[k];
+  }
+  for (const k of ['chill', 'shock', 'para', 'stun', 'weak']) if (st[k]) { st[k] -= dt; if (st[k] <= 0) delete st[k]; }
+  if (!Object.keys(st).length) f.sta = null;
+}
+
 /* ───────── 전투 ───────── */
 const buffMul = (e, aid, stat) => e.buffs.reduce((m, b) => (b.stat === stat && (b.to === aid || b.to === 'party') && b.mult ? m * b.mult : m), 1);
 const buffAdd = (e, aid, stat) => e.buffs.reduce((m, b) => (b.stat === stat && (b.to === aid || b.to === 'party') && b.add ? m + b.add : m), 0);
@@ -387,6 +472,8 @@ function hitFoe(e, f, atk, crit, magic, a) {
   if (T.pen) def *= 1 - T.pen;
   if (T.first && f.hp >= f.maxHp) m *= T.first;
   if (T.bossDmg && f.boss) m *= T.bossDmg;
+  if (a && f.boss) m *= 1 + traitSum(a, 'bossDmg');
+  if (f.sta && f.sta.weak) def *= 0.8;
   const v = Math.max(1, Math.round(atk * (0.85 + rnd() * 0.3) * red(def) * m));
   f.hp -= v;
   return v;
@@ -401,6 +488,8 @@ function leech(e, a, d, v, magic) {
 }
 function stealGold(s, hits) { if (!s.steal) return; const g = Math.round(s.steal * hits); S.gold += g; S.stats.earned += g; }
 function pickSkill(a, d, team, dm, foes, e) {
+  const st = e.sta && e.sta[a.id];
+  if (st && (st.shock || st.stun)) return null;
   const sc = e.scd[a.id] || (e.scd[a.id] = {});
   let best = null, bp = 0;
   for (const id of a.skills) {
@@ -416,6 +505,8 @@ function pickSkill(a, d, team, dm, foes, e) {
       if (s.tgt === 'party' ? hurt.length >= 2 : hurt.length >= 1) pr = s.tgt === 'party' ? 11 : 10;
     } else if (s.kind === 'buff') {
       if (!e.buffs.some(b => b.sid === id)) pr = foes.some(f => f.boss) || foes.length >= 2 ? 7 : 4;
+    } else if (s.kind === 'cure') {
+      if (team.some(x => up(x) && e.sta && e.sta[x.id] && s.cures.some(k => e.sta[x.id][k]))) pr = 9;
     } else if (s.kind === 'taunt') {
       if (team.filter(up).length > 1 && !(e.taunt && e.taunt.t > 0)) pr = 7;
     } else if (s.kind === 'dot') {
@@ -446,6 +537,7 @@ function cast(e, a, d, id, team, dm, foes) {
       const crit = s.crit === 1 || rnd() < d.crit + (s.crit || 0);
       const v = hitFoe(e, f, atk, crit, magic, a);
       ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: s.fx || (magic ? 'magic' : CLASSES[a.cls].act === 'arrow' ? 'arrow' : 'melee') });
+      if (s.sta && f.hp > 0 && rnd() < s.sta.p) inflictFoe(e, f, s.sta, atk);
       if (s.slow) f.slow = s.slow;
       if (s.drain) { const h = Math.round(v * s.drain); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); }
       else leech(e, a, d, v, magic);
@@ -455,12 +547,15 @@ function cast(e, a, d, id, team, dm, foes) {
     const tg = s.tgt === 'all' ? foes : [foes[0]];
     tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M * (TR(a).dot || 1), t: s.dur, magic: !!s.magic }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
   } else if (s.kind === 'heal' && s.tgt === 'self') {
-    const h = Math.round(d.maxHp * s.pct * M); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h });
+    const h = Math.round(d.maxHp * s.pct * M * d.healPow * (1 + d.rheal + buffAdd(e, a.id, 'rheal'))); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); cureSta(e, a, ['bleed']);
   } else if (s.kind === 'heal') {
-    const pow = d.matk * s.mult * M * (TR(a).healPow || 1);
+    const pow = d.matk * s.mult * M * (TR(a).healPow || 1) * d.healPow * buffMul(e, a.id, 'heal');
     const alive = team.filter(up);
     const tg = s.tgt === 'party' ? alive : [alive.sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0]];
-    tg.forEach(x => { const h = Math.round(pow * (0.9 + rnd() * 0.2)); x.hp = Math.min(dm[x.id].maxHp, x.hp + h); ev(e, 'heal', { s: a.id, d: x.id, v: h }); });
+    tg.forEach(x => { const h = Math.round(pow * (0.9 + rnd() * 0.2) * (1 + dm[x.id].rheal + buffAdd(e, x.id, 'rheal'))); x.hp = Math.min(dm[x.id].maxHp, x.hp + h); ev(e, 'heal', { s: a.id, d: x.id, v: h }); cureSta(e, x, s.cures || ['bleed']); });
+  } else if (s.kind === 'cure') {
+    team.filter(up).forEach(x => cureSta(e, x, s.cures));
+    ev(e, 'buff', { s: a.id, id, party: true });
   } else if (s.kind === 'buff') {
     const to = s.tgt === 'party' ? 'party' : a.id;
     e.buffs = e.buffs.filter(b => b.sid !== id);
@@ -472,7 +567,8 @@ function cast(e, a, d, id, team, dm, foes) {
   }
 }
 function basicAct(e, a, d, team, dm, foes) {
-  const act = CLASSES[a.cls].act, T = TR(a);
+  const act = CLASSES[a.cls].act, T = TR(a), st = e.sta && e.sta[a.id];
+  if (st && (st.para || st.stun)) return;
   if (act === 'magic') {
     const f = foes[0], v = hitFoe(e, f, d.matk * 0.9, rnd() < d.crit, true, a);
     ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'magic' });
@@ -483,7 +579,7 @@ function basicAct(e, a, d, team, dm, foes) {
   }
   const f = act === 'arrow' ? lowestFoe(foes) : foes[0];
   const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
-  const swings = 1 + (T.double && rnd() < T.double ? 1 : 0);
+  const swings = 1 + (rnd() < (T.double || 0) + (d.double || 0) ? 1 : 0);
   for (let i = 0; i < swings; i++) {
     if (f.hp <= 0) break;
     if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); continue; }
@@ -497,7 +593,7 @@ function basicAct(e, a, d, team, dm, foes) {
   if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet), false, false, null); ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'pet' }); }
 }
 // 적이 노릴 상대: 앞줄과 방패를 든 직업이 더 자주 맞는다
-function tankW(a) { const t = TR(a).tank; return t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0; }
+function tankW(a) { const t = TR(a).tank; return Math.max(0, (t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0) + traitSum(a, 'tank')); }
 function pickTarget(live) {
   const w = live.map((x, i) => 1 + (i === 0 ? 1 : 0) + tankW(x) * 2), sum = w.reduce((s2, v) => s2 + v, 0);
   let r = rnd() * sum;
@@ -522,11 +618,13 @@ function battle(p, e, team, dm, dt) {
     if (!up(a)) continue;
     const d = dm[a.id];
     a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.02 * d.mpRegen * dt);
-    const sc = e.scd[a.id] || (e.scd[a.id] = {});
-    for (const k in sc) sc[k] = Math.max(0, sc[k] - dt);
-    e.cd[a.id] = (e.cd[a.id] ?? (0.3 + rnd() * 0.6)) - dt;
+    const sc = e.scd[a.id] || (e.scd[a.id] = {}), chill = e.sta && e.sta[a.id] && e.sta[a.id].chill ? 0.67 : 1;
+    for (const k in sc) sc[k] = Math.max(0, sc[k] - dt * chill);
+    a.mp = Math.min(d.maxMp, a.mp + (d.mpFlat || 0) * dt);
+    e.cd[a.id] = (e.cd[a.id] ?? (0.3 + rnd() * 0.6)) - dt * chill;
     if (e.cd[a.id] > 0) continue;
     e.cd[a.id] = 1 / d.spd * (0.9 + rnd() * 0.2);
+    if (e.sta && e.sta[a.id] && e.sta[a.id].stun) continue;
     const alive = foes.filter(f => f.hp > 0);
     if (!alive.length) break;
     const sk = pickSkill(a, d, team, dm, alive, e);
@@ -540,14 +638,16 @@ function battle(p, e, team, dm, dt) {
       if (f.dot.t <= 0) f.dot = null;
     }
     if (f.slow > 0) f.slow -= dt;
+    tickFoeSta(e, f, dt);
     if (f.hp <= 0) continue;
-    f.cd -= dt;
+    f.cd -= dt * (f.sta && f.sta.chill ? 0.67 : 1);
     if (f.cd > 0) continue;
     f.cd = 1 / f.spd * (0.9 + rnd() * 0.25) * (f.slow > 0 ? 1.6 : 1);
+    if (f.sta && (f.sta.stun || f.sta.para)) continue;
     const live = team.filter(up);
     if (!live.length) break;
-    if (f.heal && rnd() < 0.3) { const ally = foes.filter(x => x.hp > 0).sort((x, y) => x.hp / x.maxHp - y.hp / y.maxHp)[0]; if (ally && ally.hp < ally.maxHp * 0.75) { const h = Math.round(f.heal * (0.9 + rnd() * 0.2)); ally.hp = Math.min(ally.maxHp, ally.hp + h); ev(e, 'fheal', { s: f.uid, d: ally.uid, v: h }); continue; } }
-    if ((MONS[f.id].aoe || f.aoe) && rnd() < 0.3) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm)); continue; }
+    if (f.heal && !(f.sta && f.sta.shock) && rnd() < 0.3) { const ally = foes.filter(x => x.hp > 0).sort((x, y) => x.hp / x.maxHp - y.hp / y.maxHp)[0]; if (ally && ally.hp < ally.maxHp * 0.75) { const h = Math.round(f.heal * (0.9 + rnd() * 0.2)); ally.hp = Math.min(ally.maxHp, ally.hp + h); ev(e, 'fheal', { s: f.uid, d: ally.uid, v: h }); continue; } }
+    if ((MONS[f.id].aoe || f.aoe) && !(f.sta && f.sta.shock) && rnd() < 0.3) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm)); continue; }
     let tgt = null;
     if (e.taunt) tgt = live.find(x => x.id === e.taunt.aid) || null;
     if (!tgt) tgt = pickTarget(live);
@@ -562,24 +662,33 @@ function hitAdv(p, e, f, x, mult, dm) {
   if (rnd() < Math.min(0.6, d.eva + buffAdd(e, x.id, 'eva'))) { ev(e, 'miss', { s: f.uid, d: x.id }); return; }
   const def = d.def * buffMul(e, x.id, 'def') * (m.magic ? 0.5 : 1);
   const crit = rnd() < (f.boss ? 0.08 : 0.04);
-  const guard = Math.min(0.5, (TR(x).guard || 0) + relic('guard'));
-  const v = Math.max(1, Math.round(f.atk * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard)));
+  const guard = Math.min(0.5, TQ(x, 'guard') + relic('guard'));
+  const blk = rnd() < Math.min(0.6, (d.block || 0) + buffAdd(e, x.id, 'block'));
+  const v = Math.max(1, Math.round(f.atk * (f.sta && f.sta.weak ? 0.8 : 1) * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard) * (blk ? 0.25 : 1)));
   x.hp -= v;
-  ev(e, 'hurt', { s: f.uid, d: x.id, v, c: crit, k: m.magic ? 'magic' : '' });
-  if (x.hp <= 0) down(p, e, x, f);
+  ev(e, 'hurt', { s: f.uid, d: x.id, v, c: crit, k: m.magic ? 'magic' : '', blk: blk ? 1 : 0 });
+  if (x.hp <= 0) { down(p, e, x, f); return; }
+  const ms = m.sta || f.inflict;
+  if (ms && rnd() < ms.p) inflictAdv(e, x, ms, f.atk);
+  const st = e.sta && e.sta[x.id];
+  if (!(st && (st.para || st.stun)) && rnd() < Math.min(0.7, (d.counter || 0) + buffAdd(e, x.id, 'counter'))) {
+    const cv = hitFoe(e, f, d.atk * buffMul(e, x.id, 'atk') * 0.8, rnd() < d.crit, false, x);
+    ev(e, 'hit', { s: x.id, d: f.uid, v: cv, c: false, k: 'melee', ctr: 1 });
+  }
 }
 function kill(p, e, f) {
   const m = MONS[f.id], F = FIELDS[e.field];
   e.kills++; S.stats.kills++;
   if (f.giant) { ev(e, 'kill', { d: f.uid, id: f.id, sc: 0 }); e.giantDown = 1; return; }   // 레이드 몬스터는 stepRaid가 마무리한다
   const team = teamOf(p).filter(a => !a.down);
-  team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04); });
+  team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); });
   const harvest = blessed('harvest') ? 1.15 : 1;
   const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0)) * harvest);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
   ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0, adv: f.adv || null });
   if (f.pvp) return;   // 투기장: 전리품 없음
-  const luck = Math.max(0, ...team.map(a => TR(a).luck || 0));
+  kqKill(f.id);
+  const luck = Math.max(0, ...team.map(a => TQ(a, 'luck')));
   const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck) * harvest, fbm = f.fb ? 3 : 1;
   for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
   if (e.area === 'field' && rnd() < 0.12 * harvest) loot(p, e, 'herb', 1);
@@ -631,6 +740,10 @@ const isCaster = a => ['mage', 'cleric'].includes(jobBase(a.cls)) || a.cls === '
 const hpPotions = e => ['pot_l', 'pot_m', 'pot_s'].reduce((s, k) => s + (e.sup[k] || 0), 0);
 function potionHeal(k) { return ITEMS[k].heal * (1 + rlv('potion') * 0.25 + (spn('clinic') >= 3 ? 0.2 : 0)); }
 function usePotions(p, e, team, dm) {
+  if ((e.sup.bandage || 0) > 0 && e.sta) {
+    const bl = team.find(a => up(a) && e.sta[a.id] && e.sta[a.id].bleed);
+    if (bl) { addTo(e.sup, 'bandage', -1); cureSta(e, bl, ['bleed']); ev(e, 'pot', { d: bl.id, v: 0, k: 'bandage' }); }
+  }
   if (e.potCd <= 0) {
     const low = team.filter(a => up(a) && a.hp < dm[a.id].maxHp * 0.4).sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];
     if (low) {

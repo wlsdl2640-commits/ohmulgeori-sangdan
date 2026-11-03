@@ -902,7 +902,7 @@ function pxsDownGrid(a, L) {
 }
 function pxsAdvSprite(a, pose, fr, Lx) {
   const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || advLook(a);
-  const key = 'PS|' + (Lx ? (Lx.c1 || '') + (Lx.head || '') : a.skin || '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
+  const key = 'PS|' + (Lx ? (Lx.c1 || '') + (Lx.head || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
   const hit = PXC.get(key + '|' + (FLASH || ''));
   if (hit) return hit;
   const g = pose === 'sleep' ? pxSleepGrid(a, L) : pose === 'down' ? pxsDownGrid(a, L) : pxsAdvGrid(a, pose, fr, L);

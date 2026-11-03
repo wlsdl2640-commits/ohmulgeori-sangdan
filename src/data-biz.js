@@ -108,7 +108,7 @@ function rankGifts(r) {   // 랭크 r에 오르면 받는 것 (설명용)
 /* ───────── 모험가 라이선스 (개인 랭크) ───────── */
 const LICENSE = [
   { name: '동장', c: '#c08a5a', mul: 1 }, { name: '은장', c: '#c8ccd4', mul: 1.05 }, { name: '금장', c: '#f0c24a', mul: 1.11 },
-  { name: '백은', c: '#e8f4ff', mul: 1.18 }, { name: '용사', c: '#ff8a4a', mul: 1.28 }
+  { name: '백은', c: '#e8f4ff', mul: 1.18 }, { name: '백금', c: '#d8f0ff', mul: 1.28 }
 ];
 // LICENSE_UP[r]: r → r+1 조건 (레벨, 개인 명성, 길드 심사비)
 const LICENSE_UP = [{ lv: 12, pf: 40, fee: 300 }, { lv: 24, pf: 150, fee: 1200 }, { lv: 36, pf: 400, fee: 4000 }, { lv: 48, pf: 900, fee: 12000 }];

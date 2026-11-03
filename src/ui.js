@@ -15,7 +15,8 @@ const UI_PX = {
   sword:  ['.......kk', '......klk', '.....klk.', '....klk..', '.k.klk...', '..kkk....', '..kdk....', '.kdkk....', 'kk.......'],
   box:    ['.kkkkkkk.', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', 'kbbkkbbbk', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', '.kkkkkkk.'],
   scroll: ['.kkkkkk..', 'kppppppk.', 'kpkkkkpk.', 'kppppppk.', '.kpkkkpk.', '.kppppppk', '.kpkkkkpk', '.kppppppk', '..kkkkkk.'],
-  mag:    ['.kkkk....', 'klwwlk...', 'kwllllk..', 'kwllllk..', 'klllllk..', '.kllllkk.', '..kkkkdkk', '......kdk', '.......kk']
+  mag:    ['.kkkk....', 'klwwlk...', 'kwllllk..', 'kwllllk..', 'klllllk..', '.kllllkk.', '..kkkkdkk', '......kdk', '.......kk'],
+  map:    ['kkkkkkkkk', 'kpppfpppk', 'kppffpppk', 'kpffppppk', 'kpfpppypk', 'kppppyypk', 'kpppyyppk', 'kppppyppk', 'kkkkkkkkk']
 };
 const UI_PAL = { k: '#0b0d12', y: '#f0b43c', l: '#fff2c0', d: '#9a6a1c', f: '#5fd4c0', w: '#c9c3b8', s: '#f1c9a5', t: '#4a7ac8', b: '#9a6a3c', p: '#e8dcb8' };
 function pxURL(name) {
@@ -90,7 +91,7 @@ function renderChips() {
 }
 
 /* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
-const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '룬', battle: '전투' };
+const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '룬', battle: '전투' };
 const winTop = () => UI.stack[UI.stack.length - 1] || null;
 function winTitle(w) {
   if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';

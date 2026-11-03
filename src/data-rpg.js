@@ -70,7 +70,7 @@ const ALL_CLASS_IDS = Object.keys(CLASSES);
 const MAX_SKILLS = 4;   // 기본 스킬 칸. LV30·50·70·90·100마다 한 칸씩 늘어난다
 const MAX_LV = 100;
 const SKILL_SLOT_LV = [30, 50, 70, 90, 100];
-const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length;
+const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length + (a.hero ? 1 : 0);   // 용사는 각성기 칸이 따로
 
 /* ───────── 스킬 ───────── */
 // cls: 배울 수 있는 직업 (all = 모두), lv: 배울 수 있는 레벨, cost: { mp } 또는 { hp: 최대 HP 비율 }

@@ -562,7 +562,7 @@ function hexURL(glyph, kind, max) {
 
 /* ───────── 무대 그리기 ───────── */
 const HERO = { raf: 0, W: 132, H: 148, Z: 3, swing: 0 };
-function heroAdv(a) { return UI.heroSel == null ? a : Object.assign({}, a, { skin: UI.heroSel || null }); }
+function heroAdv(a) { return a; }
 function heroDraw(cv, a, now) {
   const dpr = window.devicePixelRatio || 1, { W, H, Z } = HERO;
   if (cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
@@ -601,6 +601,17 @@ function heroPortrait(a, z, W, H) {
   return (HPOR[key] = c.toDataURL());
 }
 
+// 큰 초상: 앞모습 머리·어깨를 4배로 (어두운 틀 안)
+const HBUST = {};
+function heroBust(a) {
+  const key = advKey(a);
+  if (HBUST[key]) return HBUST[key];
+  const [c, x] = mkCanvas(84, 84);
+  x.fillStyle = '#1a1612'; x.fillRect(0, 0, 84, 84);
+  x.translate(42, 110); x.scale(2.5, 2.5);
+  pxBlit(x, pxAdvSprite(a, 'idle', 0));
+  return (HBUST[key] = c.toDataURL());
+}
 /* ───────── 화면 ───────── */
 const ARR_L = '<span class="tri l"></span>', ARR_R = '<span class="tri r"></span>';
 function heroPanel(a) {
@@ -613,15 +624,6 @@ function heroPanel(a) {
   }
   const p = partyOf(a.id), mates = p ? p.members.map(advById).filter(Boolean) : S.advs.slice(0, 10);
   const thumbs = mates.map(m => `<button type="button" class="hthumb${m.id === a.id ? ' on' : ''}" data-mact="hgo" data-aid="${m.id}"><img src="${heroPortrait(m, 2, 50, 60)}" alt=""><span>${esc(m.name)}</span></button>`).join('');
-  const sel = UI.heroSel == null ? (a.skin || '') : UI.heroSel, skins = S.skins || {};
-  const cards = [''].concat(COSTUME_IDS).map(id => {
-    const C = id ? COSTUMES[id] : null, own = !id || !!skins[id], worn = (a.skin || '') === id;
-    return `<button type="button" class="skin${sel === id ? ' sel' : ''}${worn ? ' worn' : own ? ' own' : ''}" data-mact="hsel" data-skin="${id}"><img src="${heroPortrait(Object.assign({}, a, { skin: id || null }), 3, 92, 108)}" alt=""><span class="stag ${own ? 'free' : 'price'}">${own ? (id ? '보유' : 'Free') : fmt(C.price) + 'G'}</span><span class="sname">${C ? esc(C.name) : '평소 옷'}</span></button>`;
-  }).join('');
-  const C = sel ? COSTUMES[sel] : null, own = !sel || !!skins[sel], worn = (a.skin || '') === sel, idle = a.status === 'idle';
-  const act = worn ? '<button type="button" class="btn sm" disabled>입고 있어요</button>'
-    : own ? `<button type="button" class="btn sm gold" data-mact="hwear" data-skin="${sel}"${idle ? '' : ' disabled'}>장착</button>`
-    : `<button type="button" class="btn sm gold" data-mact="hbuy" data-skin="${sel}"${S.gold >= C.price ? '' : ' disabled'}>${fmt(C.price)}G에 사기</button>`;
   return `
     <div class="hero">
       <div class="hero-top">
@@ -631,13 +633,12 @@ function heroPanel(a) {
           <div class="hero-lv">Lv.${a.lv}${a.hero ? ' <small>용사</small>' : ''}</div>
           <div class="hero-xp"><div class="hbar"><i style="width:${(xp * 100).toFixed(1)}%"></i></div><button type="button" class="hero-mag${UI.heroDet === false ? '' : ' on'}" data-mact="hdet" aria-label="자세히"><img src="${pxURL('mag')}" alt=""></button></div>
         </div>
-        <div class="hero-sk">${hexes.join('')}</div>
+        <div class="hero-side"><div class="hero-por"><img src="${heroBust(a)}" alt=""></div><div class="hero-sk">${hexes.join('')}</div></div>
       </div>
       <div class="hero-party">${thumbs}</div>
+      <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}</div>
     </div>
-    <div class="sec"><b>의상</b><span>${Object.keys(skins).length}/${COSTUME_IDS.length} 보유 · 한 번 사면 모두 입을 수 있어요</span></div>
-    <div class="skins">${cards}</div>
-    <div class="row hero-act"><div class="grow stack"><span>${C ? `${esc(C.name)}${own ? ' · 보유 중' : ` · ${fmt(C.price)}G`}` : '평소 옷'}</span><span class="sub muted">${C ? esc(C.desc) : '직업 그대로의 옷차림이에요.'}${idle ? '' : ' <span class="red-t">원정 중에는 갈아입을 수 없어요.</span>'}</span></div>${act}</div>`;
+`;
 }
 // 모험가 창의 버튼 중 영웅 화면 것 (처리했으면 true)
 function heroAct(aid, b) {
@@ -645,13 +646,10 @@ function heroAct(aid, b) {
   if (!top || top.id !== 'advd') return false;
   if (k === 'hprev' || k === 'hnext') {
     const L = S.advs, i = L.findIndex(x => x.id === aid), n = L.length;
-    if (n > 1) { top.aid = L[(i + (k === 'hnext' ? 1 : n - 1)) % n].id; UI.heroSel = null; renderPanel(true); $('panel') && ($('panel').scrollTop = 0); }
+    if (n > 1) { top.aid = L[(i + (k === 'hnext' ? 1 : n - 1)) % n].id; renderPanel(true); $('panel') && ($('panel').scrollTop = 0); }
     return true;
   }
-  if (k === 'hgo') { if (+b.dataset.aid !== aid) { top.aid = +b.dataset.aid; UI.heroSel = null; renderPanel(true); } return true; }
-  if (k === 'hsel') { UI.heroSel = b.dataset.skin; renderPanel(true); return true; }
-  if (k === 'hwear') { say(wearSkin(aid, b.dataset.skin)); UI.heroSel = null; renderPanel(true); return true; }
-  if (k === 'hbuy') { say(buySkin(b.dataset.skin)); renderPanel(true); return true; }
+  if (k === 'hgo') { if (+b.dataset.aid !== aid) { top.aid = +b.dataset.aid; renderPanel(true); } return true; }
   if (k === 'hdet') { UI.heroDet = UI.heroDet === false; renderPanel(true); return true; }
   return false;
 }
