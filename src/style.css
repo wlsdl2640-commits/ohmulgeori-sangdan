@@ -486,3 +486,6 @@ details.card > .list { margin-top: 8px; }
 .mnode.wave .mn { background: #c03030; color: #fff; animation: mpulse 0.9s ease-in-out infinite; }
 .mnode.mer .mn { background: #f0c24a; color: #1d1408; }
 .mnode.fest .mn { background: #e07aa0; color: #fff; }
+
+.tabs.adv { margin: 8px 0; }
+.tabs.adv .tab { font-size: 12px; padding: 7px 1px; }

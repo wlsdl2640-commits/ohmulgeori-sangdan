@@ -41,6 +41,7 @@
 - 지도 이벤트: `src/events.js`(S.events, eventsDay, 웨이브 startWave/stepWave/waveEnd — e.area 'wave', FIELDS.wave 가짜 필드(bg front), 축제 festSellMul/festBuyMul, 떠돌이 상인 merchantBuy, eventNodes/eventCard를 map.js가 부른다). `cityDamaged()`는 traffic을 깎는다.
 - 자동화: `p.autoBuy`(startExp), `S.autoSell[k] = 남길 수`(arrive → autoSellRun), `S.ledger`(onNewDay 기록, panels.js ledgerBox 그래프).
 - 소리: `src/audio.js`(AU, sfx(name), BGM 패턴 32걸음·auTick 스케줄러, bgmThemeNow가 보는 파티로 테마를 고른다). 첫 입력에서 auUnlock. 설정은 localStorage 'paros-audio'. view.js events()와 panels.js bindUI(ACT_SFX)에서 부른다. 시험용 `window.__au()`/`window.__AU`.
+- 모험가 창(advDetail)은 탭 `UI.advTab`(sum·stat·job·skill·gear·etc, `data-mact="atab"`). 시험은 먼저 탭을 눌러야 단추가 보인다.
 - 전직 조건: data-demon.js `CLASSES[c].req`와 `jobReqWhy/jobReqText`(lv·fame·item·itemAny·kills·dexFull·bld·arenaWins·relics·cleared). 계열 맨 앞 2차는 레벨만. 마도사(sorcerer)→대마도사(archmage) 추가, 마법 버프 stat 'matk' 지원.
 
 ## 빌드·배포
