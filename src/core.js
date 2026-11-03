@@ -39,7 +39,7 @@ function makeAdv(o = {}) {
   const cls = o.cls || pickOne(CLASS_IDS), C = CLASSES[cls], lv = o.lv || 1;
   const a = {
     id: nid(), name: o.name || (pickOne(NAME_A) + pickOne(NAME_B)), cls, lv, exp: 0, hero: !!o.hero,
-    look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls]),
+    look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
     eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate],
@@ -61,30 +61,31 @@ function passives(a) {
   return p;
 }
 function derive(a) {
-  const C = CLASSES[a.cls], G = gearSum(a), P = passives(a), L = a.lv, T = {};
+  const C = CLASSES[a.cls], jb = jobBase(a.cls), G = gearSum(a), P = passives(a), L = a.lv, T = {};
   for (const [k] of STATS) T[k] = Math.max(0, a.st[k] + a.tr[k] + (G[k] || 0));
-  let atk = a.cls === 'archer' ? T.str * 0.5 + T.agi * 0.75 : a.cls === 'rogue' ? T.str * 0.8 + T.agi * 0.45 : T.str * 1.1;
+  let atk = jb === 'archer' ? T.str * 0.5 + T.agi * 0.75 : jb === 'rogue' ? T.str * 0.8 + T.agi * 0.45 : T.str * 1.1;
   atk += L * 0.4 + (G.atk || 0);
   const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul;
   return {
-    T, atk: atk * war * lic,
-    matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1) * war * lic,
+    T, atk: atk * war * lic * (1 + (P.atkPct || 0)),
+    matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0)) * war * lic,
     def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08) * (earth ? 1.1 : 1) * lic,
-    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic),
+    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0))),
     maxMp: Math.round(8 + T.int * 4 + L + (G.mp || 0)),
-    eva: Math.min(0.45, T.agi * 0.004 + (G.eva || 0) + (wind ? 0.05 : 0)),
-    crit: Math.min(0.6, C.crit + T.agi * 0.0015 + (G.crit || 0)),
-    spd: C.spd * (1 + T.agi * 0.004),
+    eva: Math.min(0.5, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0)),
+    crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0)),
+    spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0)),
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0)) * (1 + (P.carryPct || 0))),
-    move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0)) * (wind ? 1.15 : 1),
+    move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move')) * (wind ? 1.15 : 1),
     mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3
   };
 }
 function clampVitals(a) { const d = derive(a); a.hp = Math.min(a.hp, d.maxHp); a.mp = Math.min(a.mp == null ? d.maxMp : a.mp, d.maxMp); }
 function addExp(a, n) {
+  if (a.lv >= MAX_LV) { a.exp = 0; return false; }
   a.exp += n;
   let up = false;
-  while (a.exp >= expNeed(a.lv)) {
+  while (a.lv < MAX_LV && a.exp >= expNeed(a.lv)) {
     const before = derive(a);
     a.exp -= expNeed(a.lv); a.lv++; up = true;
     growStats(a, 1);
@@ -92,6 +93,7 @@ function addExp(a, n) {
     a.hp = Math.min(after.maxHp, a.hp + (after.maxHp - before.maxHp));
     a.mp = Math.min(after.maxMp, a.mp + (after.maxMp - before.maxMp));
   }
+  if (a.lv >= MAX_LV) a.exp = 0;
   return up;
 }
 const advById = id => S.advs.find(a => a.id === id);
@@ -116,13 +118,17 @@ const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, 
 function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete bag[k]; }
 
 /* ───────── 장비 만들기 ───────── */
+// 품질: 일반·고급·희귀는 무작위, 보스에게서는 가끔 영웅. 전설 이상은 보스 부속품으로 만들거나 던전·레이드 보상
 function rollQuality(boost = 0) {
-  const r = rnd(), rare = 0.05 + boost * 0.5 + (spn('dwarves') >= 3 ? 0.06 : 0), fine = 0.25 + boost + (spn('dwarves') >= 2 ? 0.08 : 0);
-  return r < rare ? 2 : r < rare + fine ? 1 : 0;
+  const r = rnd(), dw = spn('dwarves'), hero = boost >= 0.2 ? 0.01 + boost * 0.08 : 0;
+  const rare = 0.05 + boost * 0.5 + (dw >= 3 ? 0.06 : 0), fine = 0.25 + boost + (dw >= 2 ? 0.08 : 0);
+  return r < hero ? 3 : r < hero + rare ? 2 : r < hero + rare + fine ? 1 : 0;
 }
+// 희귀 이상은 보너스 능력치가 붙는다 (등급이 높을수록 여러 개, 더 크게)
+const BONUS_Q = [null, null, [1, 0.6], [1, 1.0], [2, 1.0], [2, 1.4], [3, 1.6]];
 function makeGear(base, t, q) {
-  const g = { id: nid(), base, t, q: q || 0, bonus: null };
-  if (g.q === 2) { const k = pickOne(['str', 'vit', 'agi', 'int']); g.bonus = { [k]: Math.max(1, Math.round(0.6 * GTIERS[t].p)) }; }
+  const g = { id: nid(), base, t, q: q || 0, bonus: null, runes: [] }, B = BONUS_Q[g.q];
+  if (B) { g.bonus = {}; const ks = STAT_KEYS.slice().sort(() => rnd() - 0.5).slice(0, B[0]); ks.forEach(k => { g.bonus[k] = Math.max(1, Math.round(B[1] * GTIERS[t].p)); }); }
   return g;
 }
 function randomBook(lo, hi) {
@@ -200,10 +206,10 @@ function checkpoints(fid) {
 }
 function newExp(fid, sup, start = 1) {
   const F = FIELDS[fid];
-  const e = { field: fid, area: F.raid ? 'dungeon' : 'field', mode: 'advance', stage: start, home: start, pos: 0, ei: 0, encs: [], foes: [], next: null,
+  const e = { field: fid, area: F.giant ? 'raid' : F.raid ? 'dungeon' : 'field', raid: F.giant || null, rt: 0, dealt: 0, mode: 'advance', stage: start, home: start, pos: 0, ei: 0, encs: [], foes: [], next: null,
     bag: {}, gbag: [], sup, cd: {}, scd: {}, buffs: [], taunt: null, potCd: 0, mpCd: 0,
     kills: 0, full: false, ev: [], evN: 0, why: '', camp: null, wait: null };
-  e.encs = makeEncs(e);
+  e.encs = F.giant ? [] : makeEncs(e);
   return e;
 }
 // 원정에 못 나가는 이유 (없으면 '')
@@ -217,9 +223,11 @@ function cantGo(a) {
 function startExp(p, fid) {
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
   if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요.';
-  if (!isUnlocked(fid)) return '아직 갈 수 없는 곳이에요.';
+  if (!isUnlocked(fid)) return FIELDS[fid] && FIELDS[fid].giant ? '이번 달에는 열리지 않은 레이드예요.' : '아직 갈 수 없는 곳이에요.';
   const why = team.map(cantGo).find(Boolean);
   if (why) return why + '.';
+  const GR = FIELDS[fid].giant && RAIDS[FIELDS[fid].giant];
+  if (GR && avgLvOf(p) < GR.lv - RAID_GAP) return `${GR.name} 레이드는 파티 평균 Lv${GR.lv - RAID_GAP} 이상이어야 도전할 수 있어요.`;
   const sup = {};
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
   p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
@@ -296,8 +304,14 @@ function stepExp(p, dt) {
   all.forEach(a => { a.sleep = Math.min(100, (a.sleep || 0) + sl); });
   const dm = {};
   team.forEach(a => { const d = derive(a), m = fatMul(a.fat || 0); if (m < 1) { d.atk *= m; d.matk *= m; d.def *= m; } dm[a.id] = d; });
+  // 음유시인·마에스트로의 노래: 파티 전체 공격력과 마법 피해
+  const aura = Math.max(0, ...team.map(a => TR(a).aura || 0));
+  if (aura) team.forEach(a => { dm[a.id].atk *= 1 + aura; dm[a.id].matk *= 1 + aura; });
+  // 광전사: 체력이 줄수록 공격력이 오른다
+  team.forEach(a => { const r = TR(a).rage; if (r) dm[a.id].atk *= 1 + r * Math.max(0, 1 - a.hp / dm[a.id].maxHp); });
   usePotions(p, e, team, dm);
   const fr = blessed('moon') ? 0.75 : 1;
+  if (e.area === 'raid') { stepRaid(p, e, team, dm, dt, fr); return; }
   if (e.foes.length) { tire(team, FATIGUE.fight * fr * dt); battle(p, e, team, dm, dt); return; }
   if (e.camp) { stepCamp(p, e, team, dm, dt); return; }
   team.forEach(a => { const d = dm[a.id]; a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.008 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
@@ -365,11 +379,26 @@ const buffMul = (e, aid, stat) => e.buffs.reduce((m, b) => (b.stat === stat && (
 const buffAdd = (e, aid, stat) => e.buffs.reduce((m, b) => (b.stat === stat && (b.to === aid || b.to === 'party') && b.add ? m + b.add : m), 0);
 const lowestFoe = foes => foes.reduce((x, f) => (f.hp < x.hp ? f : x), foes[0]);
 const up = x => x.hp > 0 && !x.down;
-function hitFoe(e, f, atk, crit, magic) {
-  const v = Math.max(1, Math.round(atk * (0.85 + rnd() * 0.3) * red(magic ? f.def * 0.5 : f.def) * (crit ? 1.75 : 1)));
+// 직업 특성: 방어 관통·치명 배율·첫 공격·보스 피해
+function hitFoe(e, f, atk, crit, magic, a) {
+  const T = a ? TR(a) : {};
+  let def = magic ? f.def * 0.5 : f.def, m = crit ? T.critMul || 1.75 : 1;
+  if (T.pen) def *= 1 - T.pen;
+  if (T.first && f.hp >= f.maxHp) m *= T.first;
+  if (T.bossDmg && f.boss) m *= T.bossDmg;
+  const v = Math.max(1, Math.round(atk * (0.85 + rnd() * 0.3) * red(def) * m));
   f.hp -= v;
   return v;
 }
+// 흡혈 (물리·마법)
+function leech(e, a, d, v, magic) {
+  const T = TR(a), k = magic ? T.mdrain : T.lifesteal;
+  if (!k || a.hp >= d.maxHp) return;
+  const h = Math.max(1, Math.round(v * k));
+  a.hp = Math.min(d.maxHp, a.hp + h);
+  ev(e, 'heal', { s: a.id, d: a.id, v: h });
+}
+function stealGold(s, hits) { if (!s.steal) return; const g = Math.round(s.steal * hits); S.gold += g; S.stats.earned += g; }
 function pickSkill(a, d, team, dm, foes, e) {
   const sc = e.scd[a.id] || (e.scd[a.id] = {});
   let best = null, bp = 0;
@@ -410,18 +439,20 @@ function cast(e, a, d, id, team, dm, foes) {
       let atk = (magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult;
       if (s.boss && f.boss) atk *= s.boss;
       const crit = s.crit === 1 || rnd() < d.crit + (s.crit || 0);
-      const v = hitFoe(e, f, atk, crit, magic);
+      const v = hitFoe(e, f, atk, crit, magic, a);
       ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: s.fx || (magic ? 'magic' : CLASSES[a.cls].act === 'arrow' ? 'arrow' : 'melee') });
       if (s.slow) f.slow = s.slow;
       if (s.drain) { const h = Math.round(v * s.drain); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); }
+      else leech(e, a, d, v, magic);
     }
+    stealGold(s, tg.length * (s.hits || 1));
   } else if (s.kind === 'dot') {
     const tg = s.tgt === 'all' ? foes : [foes[0]];
-    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult, t: s.dur, magic: !!s.magic }; f.dotT = 0; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
+    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult * (TR(a).dot || 1), t: s.dur, magic: !!s.magic }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
   } else if (s.kind === 'heal' && s.tgt === 'self') {
     const h = Math.round(d.maxHp * s.pct); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h });
   } else if (s.kind === 'heal') {
-    const pow = d.matk * s.mult;
+    const pow = d.matk * s.mult * (TR(a).healPow || 1);
     const alive = team.filter(up);
     const tg = s.tgt === 'party' ? alive : [alive.sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0]];
     tg.forEach(x => { const h = Math.round(pow * (0.9 + rnd() * 0.2)); x.hp = Math.min(dm[x.id].maxHp, x.hp + h); ev(e, 'heal', { s: a.id, d: x.id, v: h }); });
@@ -436,19 +467,38 @@ function cast(e, a, d, id, team, dm, foes) {
   }
 }
 function basicAct(e, a, d, team, dm, foes) {
-  const act = CLASSES[a.cls].act;
+  const act = CLASSES[a.cls].act, T = TR(a);
   if (act === 'magic') {
-    const f = foes[0], v = hitFoe(e, f, d.matk * 0.9, rnd() < d.crit, true);
+    const f = foes[0], v = hitFoe(e, f, d.matk * 0.9, rnd() < d.crit, true, a);
     ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'magic' });
+    leech(e, a, d, v, true);
+    // 정령술사: 다른 적에게도 번진다
+    if (T.aoe) foes.slice(1).forEach(o => { if (o.hp > 0) { const w = hitFoe(e, o, d.matk * 0.9 * T.aoe, false, true, a); ev(e, 'hit', { s: a.id, d: o.uid, v: w, c: false, k: 'fire' }); } });
     return;
   }
   const f = act === 'arrow' ? lowestFoe(foes) : foes[0];
-  if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); return; }
-  const crit = rnd() < d.crit;
-  const v = hitFoe(e, f, d.atk * buffMul(e, a.id, 'atk'), crit, false);
-  ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: act === 'arrow' ? 'arrow' : 'melee' });
+  const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
+  const swings = 1 + (T.double && rnd() < T.double ? 1 : 0);
+  for (let i = 0; i < swings; i++) {
+    if (f.hp <= 0) break;
+    if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); continue; }
+    const crit = rnd() < d.crit;
+    const atk = d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * T.hybrid : 0);
+    const v = hitFoe(e, f, atk, crit, false, a);
+    ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k });
+    leech(e, a, d, v, false);
+  }
+  // 레인저·용기병: 동물 동료가 함께 문다
+  if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet), false, false, null); ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'pet' }); }
 }
-const TANKS = ['warrior', 'paladin', 'gladiator'];
+// 적이 노릴 상대: 앞줄과 방패를 든 직업이 더 자주 맞는다
+function tankW(a) { const t = TR(a).tank; return t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0; }
+function pickTarget(live) {
+  const w = live.map((x, i) => 1 + (i === 0 ? 1 : 0) + tankW(x) * 2), sum = w.reduce((s2, v) => s2 + v, 0);
+  let r = rnd() * sum;
+  for (let i = 0; i < live.length; i++) { r -= w[i]; if (r <= 0) return live[i]; }
+  return live[0];
+}
 function battle(p, e, team, dm, dt) {
   const foes = e.foes;
   if (e.flee) {
@@ -494,7 +544,7 @@ function battle(p, e, team, dm, dt) {
     if ((MONS[f.id].aoe || f.aoe) && rnd() < 0.3) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm)); continue; }
     let tgt = null;
     if (e.taunt) tgt = live.find(x => x.id === e.taunt.aid) || null;
-    if (!tgt) { const tank = live.find(x => TANKS.includes(x.cls)); tgt = tank && rnd() < 0.7 ? tank : live[0]; }
+    if (!tgt) tgt = pickTarget(live);
     hitAdv(p, e, f, tgt, 1, dm);
   }
   for (let i = foes.length - 1; i >= 0; i--) if (foes[i].hp <= 0) { const f = foes[i]; foes.splice(i, 1); kill(p, e, f); }
@@ -506,7 +556,8 @@ function hitAdv(p, e, f, x, mult, dm) {
   if (rnd() < Math.min(0.6, d.eva + buffAdd(e, x.id, 'eva'))) { ev(e, 'miss', { s: f.uid, d: x.id }); return; }
   const def = d.def * buffMul(e, x.id, 'def') * (m.magic ? 0.5 : 1);
   const crit = rnd() < (f.boss ? 0.08 : 0.04);
-  const v = Math.max(1, Math.round(f.atk * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1)));
+  const guard = Math.min(0.5, (TR(x).guard || 0) + relic('guard'));
+  const v = Math.max(1, Math.round(f.atk * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard)));
   x.hp -= v;
   ev(e, 'hurt', { s: f.uid, d: x.id, v, c: crit, k: m.magic ? 'magic' : '' });
   if (x.hp <= 0) down(p, e, x, f);
@@ -514,21 +565,35 @@ function hitAdv(p, e, f, x, mult, dm) {
 function kill(p, e, f) {
   const m = MONS[f.id], F = FIELDS[e.field];
   e.kills++; S.stats.kills++;
+  if (f.giant) { ev(e, 'kill', { d: f.uid, id: f.id, sc: 0 }); e.giantDown = 1; return; }   // 레이드 몬스터는 stepRaid가 마무리한다
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04); });
   const harvest = blessed('harvest') ? 1.15 : 1;
   const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0)) * harvest);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
   ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0 });
-  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0)) * harvest, fbm = f.fb ? 3 : 1;
+  const luck = Math.max(0, ...team.map(a => TR(a).luck || 0));
+  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck) * harvest, fbm = f.fb ? 3 : 1;
   for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
   if (e.area === 'field' && rnd() < 0.12 * harvest) loot(p, e, 'herb', 1);
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
   if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(f.boss ? 0.25 : 0)));
   if (rnd() < (f.fb ? 0.3 : f.boss ? 0.6 : (inD ? 0.015 : 0.004) * ap)) { const b = randomBook(Math.max(1, f.lv - 14), f.lv + 2); if (b) loot(p, e, b, 1); }
+  bossParts(p, e, f, inD);
+  if (luck && rnd() < luck) { const g = Math.round(f.lv * (2 + rnd() * 3)); S.gold += g; S.stats.earned += g; }
   if (f.fb) fieldBossDown(p, e, f);
   else if (f.boss) dungeonClear(p, e);
+}
+// 보스 전용 부속품: 우두머리(1-10~1-40)는 증표, 필드의 주인(1-50)은 핵, 던전을 공략한 뒤에는 가끔 혼까지
+function bossParts(p, e, f, inD) {
+  if (!FIELD_IDS.includes(e.field)) return;
+  const t = FIELDS[e.field].tier, fs = S.fields[e.field];
+  if (f.fb) {
+    if (f.fb < 5) loot(p, e, 'crest_' + t, 1 + (rnd() < 0.35 ? 1 : 0));
+    else { loot(p, e, 'core_' + t, 1); loot(p, e, 'crest_' + t, 2); if (fs.cleared && rnd() < 0.12 + relic('drop')) loot(p, e, 'soul_' + t, 1); }
+    if (rnd() < (f.fb >= 5 ? 0.5 : 0.25)) loot(p, e, runeId(pickOne(RUNE_IDS), f.fb >= 5 && rnd() < 0.3 ? 1 : 0), 1);
+  } else if (inD && rnd() < (f.boss ? 1 : 0.02)) loot(p, e, runeId(pickOne(RUNE_IDS), f.boss ? 1 : 0), 1);
 }
 function fieldBossDown(p, e, f) {
   const fs = S.fields[e.field], F = FIELDS[e.field], k = f.fb;
@@ -555,6 +620,7 @@ function lootGear(p, e, g) {
     if (g.q >= 1) log(`${p.name}이(가) ${QUALITY[g.q].name} 장비 「${gearName(g)}」을(를) 주웠다.`, 'good');
   } else e.full = true;
 }
+const isCaster = a => ['mage', 'cleric'].includes(jobBase(a.cls)) || a.cls === 'paladin' || CLASSES[a.cls].act === 'magic';
 const hpPotions = e => ['pot_l', 'pot_m', 'pot_s'].reduce((s, k) => s + (e.sup[k] || 0), 0);
 function potionHeal(k) { return ITEMS[k].heal * (1 + rlv('potion') * 0.25 + (spn('clinic') >= 3 ? 0.2 : 0)); }
 function usePotions(p, e, team, dm) {
@@ -574,7 +640,7 @@ function usePotions(p, e, team, dm) {
     }
   }
   if (e.mpCd <= 0) {
-    const dry = team.find(a => up(a) && ['mage', 'cleric', 'elementalist', 'necromancer', 'plaguedoc', 'paladin'].includes(a.cls) && a.mp < dm[a.id].maxMp * 0.2);
+    const dry = team.find(a => up(a) && isCaster(a) && a.mp < dm[a.id].maxMp * 0.2);
     const use = dry && ['mp_s', 'mp_m'].find(k => (e.sup[k] || 0) > 0);
     if (use) {
       addTo(e.sup, use, -1);
@@ -675,12 +741,16 @@ function dungeonClear(p, e) {
     const gold = DUNGEON_GOLD[F.tier] || 3000, fame = 60 + F.tier * 25;
     S.gold += gold; S.fame += fame; S.stats.earned += gold; S.stats.dungeons = (S.stats.dungeons || 0) + 1;
     team.forEach(a => { a.pf = (a.pf || 0) + 20; });
-    // 보물 상자: 장비 세 점(하나는 희귀)과 스킬북 두 권
-    e.gbag.push(makeGear(pickOne(GTYPE_IDS), F.tier, 2), makeGear(pickOne(GTYPE_IDS), F.tier, Math.max(1, rollQuality(0.4))), makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(0.4)));
+    // 보물 상자: 전설·영웅 장비와 장비 한 점, 스킬북 두 권, 주인의 혼 둘, 중급 룬 둘. 그리고 유물
+    e.gbag.push(makeGear(pickOne(GTYPE_IDS), F.tier, 4), makeGear(pickOne(GTYPE_IDS), F.tier, 3), makeGear(pickOne(GTYPE_IDS), F.tier, Math.max(1, rollQuality(0.4))));
     const b1 = randomBook(F.lv, F.lv + 16), b2 = randomBook(F.lv, F.lv + 20);
     if (b1) addTo(e.bag, b1, 1); if (b2) addTo(e.bag, b2, 1);
-    log(`${p.name}이(가) ${F.dungeon.name}의 주인 ${MONS[F.dungeon.boss].name}을(를) 쓰러뜨렸다! 보물 ${g$(gold)}, 명성 +${fame}`, 'good');
-    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 장비 세 점, 스킬북을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`]) });
+    addTo(e.bag, 'soul_' + F.tier, 2);
+    addTo(e.bag, runeId(pickOne(RUNE_IDS), 1), 1); addTo(e.bag, runeId(pickOne(RUNE_IDS), 1), 1);
+    const RL = RELICS[e.field], newRelic = RL && !(S.relics || []).includes(e.field);
+    if (newRelic) (S.relics = S.relics || []).push(e.field);
+    log(`${p.name}이(가) ${F.dungeon.name}의 주인 ${MONS[F.dungeon.boss].name}을(를) 쓰러뜨렸다! 보물 ${g$(gold)}, 명성 +${fame}${newRelic ? `, 유물 「${RL.name}」` : ''}`, 'good');
+    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 전설·영웅 장비, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 상단 창의 유물에서 볼 수 있다.`] : []) });
   } else {
     S.fame += 3;
     log(`${p.name}이(가) ${MONS[F.dungeon.boss].name}을(를) 또 쓰러뜨렸다. 명성 +3`, 'good');
@@ -693,5 +763,58 @@ const raidReady = () => S.fame >= GUILD_RAID.fame && living().length >= GUILD_RA
 function isUnlocked(fid) {
   if (fid === 'alley') return !S.flags.guildDown && raidReady();
   const F = FIELDS[fid];
+  if (F && F.giant) { const r = raidRec(F.giant); return !!(r && !r.done); }
   return !!F && !F.raid && (S.rank || 0) >= F.no - 1;
+}
+
+/* ───────── 초대형 레이드: 다른 상단·왕국 원정대와 같은 몬스터를 두고 겨룬다 ───────── */
+const RAID_FIGHT = 90;      // 한 번 도전하면 이만큼(게임 속 초) 싸우고 물러난다
+const RAID_GAP = 10;        // 레이드 레벨보다 이만큼 낮은 파티까지 도전할 수 있다
+const raidRec = id => (S && S.raid ? S.raid.list.find(r => r.id === id) : null);
+const raidHp = L => Math.round(600 * (25 + 18 * L + 1.15 * L * L) * DIFF.hp / 1000) * 1000;
+function giantFoe(id) {
+  const R = RAIDS[id], rec = raidRec(id), f = foeFrom(R.mon, R.lv + 4);
+  Object.assign(f, { maxHp: rec.max, hp: rec.hp, giant: id, boss: true, aoe: true, name: R.name, atk: f.atk * 0.55, spd: Math.min(f.spd, 0.8) });   // 파티 전체를 자주 치니 한 방은 약하게
+  return f;
+}
+function raidLeave(p, e, why) {
+  e.mode = 'return'; e.why = why; e.foes = []; e.next = null; e.wait = null; e.flee = 0; e.left = 1;
+  const team = teamOf(p).filter(a => !a.down), xp = Math.round(e.dealt / 20);
+  if (e.dealt > 0 && !e.paid) {
+    e.paid = 1;
+    team.forEach(a => { a.pf = (a.pf || 0) + 3; if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
+    log(`${p.name}이(가) ${RAIDS[e.raid].name}에게 ${Math.round(e.dealt).toLocaleString('ko-KR')} 피해를 주고 물러났다.`, 'good');
+  }
+  changed();
+}
+function stepRaid(p, e, team, dm, dt, fr) {
+  const rec = raidRec(e.raid);
+  if (e.foes.length) {
+    const f = e.foes[0];
+    if (!rec || rec.done) { raidLeave(p, e, 'over'); return; }
+    if (e.mode === 'return' && !e.flee) { raidLeave(p, e, e.why || 'order'); return; }   // 복귀 명령
+    f.hp = rec.hp;                      // 다른 파티와 경쟁자가 깎은 만큼 반영
+    const before = f.hp;
+    tire(team, FATIGUE.fight * fr * dt);
+    battle(p, e, team, dm, dt);
+    if (!p.exp) return;                 // 전멸
+    const dealt = Math.max(0, before - Math.max(0, f.hp));
+    if (dealt) { rec.hp = Math.max(0, rec.hp - dealt); rec.me += dealt; e.dealt += dealt; }
+    if (rec.hp <= 0) { raidEnd(rec, 'kill'); raidLeave(p, e, 'raid'); return; }
+    e.rt += dt;
+    if (e.foes.length && e.rt >= RAID_FIGHT) raidLeave(p, e, 'time');
+    return;
+  }
+  if (e.fought && !e.left) { raidLeave(p, e, e.why || 'retreat'); return; }   // 들것을 메고 빠져나왔다
+  team.forEach(a => { const d = dm[a.id]; a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.008 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
+  tire(team, FATIGUE.walk * fr * dt);
+  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1);
+  if (e.mode === 'advance') {
+    if (!rec || rec.done) { raidLeave(p, e, 'over'); return; }
+    e.pos = Math.min(STAGE_LEN * 0.6, e.pos + v * dt);
+    if (e.pos >= STAGE_LEN * 0.6) { e.foes = [giantFoe(e.raid)]; e.fought = 1; e.cd = {}; e.buffs = []; e.taunt = null; ev(e, 'spawn', { boss: true, name: RAIDS[e.raid].name }); }
+  } else {
+    e.pos -= v * dt;
+    if (e.pos <= 0) arrive(p);
+  }
 }

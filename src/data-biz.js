@@ -114,15 +114,16 @@ const LICENSE = [
 const LICENSE_UP = [{ lv: 12, pf: 40, fee: 300 }, { lv: 24, pf: 150, fee: 1200 }, { lv: 36, pf: 400, fee: 4000 }, { lv: 48, pf: 900, fee: 12000 }];
 
 /* ───────── 전직 ───────── */
-// 상단 명성으로 특수직업이 해금되고, 비슷한 계열 모험가를 훈련소에서 전직시킨다
-const SPECIAL_FAME = { gladiator: 60, elementalist: 100, berserker: 150, plaguedoc: 200, dragoon: 260, paladin: 330, necromancer: 420 };
-const PROMOTE = { warrior: ['gladiator', 'berserker', 'paladin'], porter: ['berserker'], archer: ['dragoon'], rogue: ['dragoon'], mage: ['elementalist', 'necromancer'], cleric: ['paladin', 'plaguedoc'] };
-const PROMO = { lv: 15, rank: 1, fee: 1500 };
+// 상단 명성이 오르면 훈련소에 스승이 찾아와 2차(명성 40)·3차(명성 300) 전직이 열린다
+const JOB_FAME = { 2: 40, 3: 300 };
 
 /* ───────── 부상과 치료 ───────── */
 // 쓰러진 모험가는 부상을 입고 돌아온다. need = 다 나을 때까지 필요한 치료 점수
 const INJ = [null, { name: '경상', need: 30, c: '#f0b43c' }, { name: '중상', need: 70, c: '#f08a3c' }, { name: '위중', need: 140, c: '#e0503f' }];
-const HEALERS = ['cleric', 'paladin', 'plaguedoc'];
+// 신전에서 환자를 돌볼 수 있는 직업: 성직자 계열과 성기사. 수술은 역병의사·명의만
+const isHealer = c => jobBase(c) === 'cleric' || c === 'paladin';
+const SURGEONS = ['plaguedoc', 'physician'];
+const careMul = c => (c === 'plaguedoc' ? 1.5 : c === 'physician' ? 1.8 : (CLASSES[c].tr && CLASSES[c].tr.healPow) || 1);
 const STRETCHER = 15;      // 들것 하나가 차지하는 짐
 const POT_TREAT = { pot_s: 20, pot_m: 50, pot_l: 110 };
 const HERB_USE = 3, HERB_PTS = 30;        // 약초 세 개로 한 번 처치

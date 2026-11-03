@@ -25,13 +25,13 @@ function pxURL(name) {
 }
 function applyPx() { document.querySelectorAll('img[data-px]').forEach(im => { im.src = pxURL(im.dataset.px); }); }
 
-const POR = {};
+const POR = {}, POR_W = 46, POR_H = 54;
 function portrait(a) {
   const key = advKey(a);
   if (POR[key]) return POR[key];
-  const [c, x] = mkCanvas(25, 30);
-  x.translate(12, 28);
-  drawAdv(x, a, 0, {});
+  const [c, x] = mkCanvas(POR_W, POR_H);
+  x.translate(POR_W / 2, POR_H - 3);
+  drawAdvHi(x, a, 0, {});
   return (POR[key] = c.toDataURL());
 }
 const iconImg = (id, cls = 'ico') => `<img class="${cls}" src="${iconURL(id)}" alt="">`;
@@ -49,11 +49,13 @@ function updateHud() {
   const n = S.reqs.filter(q => reqHave(q) >= q.qty).length, b = $('req-badge');
   b.hidden = !n; b.textContent = n;
 }
-const WHY = { full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '쓰러진 동료를 들것에 싣고 복귀 중', boss: '던전의 주인을 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중', sleep: '잠이 모자라 복귀 중' };
+const WHY = { over: '레이드가 끝나 복귀 중', raid: '레이드 몬스터를 쓰러뜨리고 복귀 중', time: '레이드에서 물러나 복귀 중', retreat: '레이드에서 빠져나와 복귀 중', full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '쓰러진 동료를 들것에 싣고 복귀 중', boss: '던전의 주인을 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중', sleep: '잠이 모자라 복귀 중' };
 function expStatus(p) {
   const e = p.exp;
   if (!e) return p.members.length ? '상단에서 대기 중' : '파티원이 없어요';
   const F = FIELDS[e.field];
+  if (e.area === 'raid' && e.foes.length) return `${RAIDS[e.raid].name}와(과) 싸우는 중! · ${Math.max(0, Math.ceil(RAID_FIGHT - e.rt))}초 · 피해 ${fmt(e.dealt)}`;
+  if (e.area === 'raid' && e.mode === 'advance') return `${RAIDS[e.raid].name}에게 다가가는 중`;
   if (e.foes.length) { const fb = e.foes.find(f => f.fb); return fb ? `필드 보스 ${fb.name}와(과) 싸우는 중!` : e.foes.some(f => f.boss) ? '던전의 주인과 싸우는 중!' : e.camp ? '야영지 습격!' : '전투 중'; }
   if (e.camp) return e.camp.t > 1.5 ? '모닥불 곁에서 자는 중' : '모닥불을 피우는 중';
   if (e.wait === 'gate') return `${F.dungeon.name} 입구 · 들어갈지 정해 주세요`;
@@ -64,6 +66,7 @@ function expStatus(p) {
 }
 function whereStr(e) {
   const F = FIELDS[e.field];
+  if (e.area === 'raid') return `레이드 · ${F.name}`;
   return e.area === 'dungeon' ? `${F.dungeon.name} ${e.stage}층` : `${F.name} ${F.no}-${e.stage}`;
 }
 function updateOverlay() {
@@ -79,14 +82,14 @@ function updateOverlay() {
 function renderChips() {
   const html = S.parties.map(p => {
     const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.camp ? 'camp' : e.wait ? 'wait' : e.mode === 'return' ? 'back' : 'go';
-    const st = !e ? '대기' : e.area === 'dungeon' ? `${FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
+    const st = !e ? '대기' : e.area === 'raid' ? '레이드' : e.area === 'dungeon' ? `${FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
     return `<button type="button" class="pchip${S.view === p.id ? ' on' : ''}" data-view="${p.id}"><i class="dot ${cls}"></i>${esc(p.name)} · ${st}</button>`;
   }).join('');
   if (html !== UI.chips) { $('pchips').innerHTML = html; UI.chips = html; }
 }
 
 /* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
-const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정' };
+const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '룬' };
 const winTop = () => UI.stack[UI.stack.length - 1] || null;
 function winTitle(w) {
   if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';
@@ -192,8 +195,10 @@ const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'tr
 
 /* ───────── 배속 ───────── */
 function renderSpeed() {
-  const cur = (S && S.speed) || 1;
-  $('speed').querySelectorAll('[data-speed]').forEach(b => { const on = +b.dataset.speed === cur; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  const cur = (S && S.speed) || 1, b = $('speed');
+  b.textContent = cur + '×';
+  b.classList.toggle('fast', cur > 1);
+  b.setAttribute('aria-label', `게임 속도 ${cur}배. 누르면 바꿔요`);
 }
 function setSpeed(n) {
   if (!S || !SPEEDS.includes(n)) return;
@@ -315,7 +320,8 @@ function showTitle() {
   $('t-sub').textContent = `${WORLD.continent} 대륙 · ${WORLD.empire} · 제도 ${WORLD.capital}`;
   $('t-intro').innerHTML = STORY.intro.map(t => `<p>${esc(t)}</p>`).join('');
   const cv = $('title-cv'), ctx = cv.getContext('2d');
-  const [off, g] = mkCanvas(VW, VH);
+  const [off, g] = mkCanvas(VW * HI, VH * HI);
+  g.setTransform(HI, 0, 0, HI, 0, 0);
   const cast = [
     { cls: 'warrior', look: { hair: '#5a3a22', skin: '#e0ac7e' } },
     { cls: 'archer', look: { hair: '#c9a04a', skin: '#f1c9a5' } },
@@ -325,12 +331,12 @@ function showTitle() {
   const draw = now => {
     if ($('title-scr').hidden) return;
     const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    const w = Math.max(VW, Math.round(r.width * dpr)), h = Math.max(VH, Math.round(r.height * dpr));
+    const w = Math.max(VW * HI, Math.round(r.width * dpr)), h = Math.max(VH * HI, Math.round(r.height * dpr));
     if (cv.width !== w) { cv.width = w; cv.height = h; }
     drawBg(g, 'town', 0, now / 1000);
     cast.forEach((a, i) => { g.save(); g.translate(56 + i * 34 + (i >= 2 ? 26 : 0), GY); g.scale(i < 2 ? 1 : -1, 1); drawAdv(g, a, now / 1000, {}); g.restore(); });
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(off, 0, 0, VW, VH, 0, 0, cv.width, cv.height);
+    ctx.drawImage(off, 0, 0, VW * HI, VH * HI, 0, 0, cv.width, cv.height);
     titleRaf = requestAnimationFrame(draw);
   };
   cancelAnimationFrame(titleRaf);

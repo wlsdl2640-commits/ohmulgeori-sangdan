@@ -20,13 +20,15 @@ const STAFF = {
   innkeep: { key: 'Sinn', hair: '#7a2f22', skin: '#e0ac7e', body: '#8a5a9a', legs: '#4a3a2a', apron: '#e8dcb8', style: 1 },
   coach:   { key: 'Scoach', hair: '#5a3a22', skin: '#c68a5e', body: '#a8432f', legs: '#3a3040', style: 2, beard: 1 }
 };
-const ADV_HAT = { warrior: ['helm', '#9aa4b0'], archer: ['hood'], mage: ['wizard'], cleric: ['hood'], rogue: ['hood', '#2a2a34'], porter: [null], gladiator: ['bronze', '#c08a3a'],
-  elementalist: ['circlet', '#7ae0a0'], berserker: ['horns', '#7a7a82'], dragoon: ['dragon', '#2f5a6a'], paladin: ['greathelm', '#e8e4d8'], necromancer: ['hood', '#1e1828'], plaguedoc: ['plague', '#1e1c22'] };
+// 본부의 작은 모험가: 직업 차림(LOOKS)에서 색과 모자를 고른다
+const HAT_OF = { helm: 'helm', great: 'greathelm', winged: 'greathelm', glad: 'bronze', horn: 'horns', dragon: 'dragon', hood: 'hood', hoodup: 'hood', cowl: 'hood', coif: 'hood', coif2: 'hood',
+  wizard: 'wizard', mitre: 'wizard', mitre2: 'wizard', crown: 'circlet', bonecrown: 'circlet', circlet: 'circlet', laurel: 'circlet', beak: 'plague', band: 'band', goggles: 'goggle', beret: 'cap', feather: 'cap', tophat: 'cap', widebrim: 'cap' };
 function advPerson(a) {
-  const C = CLASSES[a.cls] || CLASSES.warrior, l = a.look || {}, [hat, hc] = ADV_HAT[a.cls] || [null];
+  const L = LOOKS[a.cls] || LOOKS[jobBase(a.cls)] || LOOKS.warrior, l = a.look || {}, hat = HAT_OF[L.head] || null;
+  const hc = ['helm', 'horn', 'great', 'winged'].includes(L.head) ? (L.metal || '#9aa4b0') : L.head === 'coif' || L.head === 'mitre' || L.head === 'mitre2' ? '#f4f0e6' : L.head === 'glad' ? '#c08a3a' : ['crown', 'circlet', 'laurel'].includes(L.head) ? (L.gem || '#f0c24a') : L.head === 'hoodup' && L.cape ? L.cape : L.c3 && L.head === 'band' ? L.c3 : L.c1;
   return { key: 'A' + a.cls + (l.hair || '') + (l.skin || '') + ((a.id || 0) % 3) + (a.hero ? 'h' : ''),
-    hair: l.hair || HAIRS[0], skin: a.cls === 'necromancer' ? '#d8d0d8' : (l.skin || SKINS[0]), body: C.tunic, legs: shade(C.tunic, -0.45), trim: C.trim,
-    style: (a.id || 0) % 3, robe: ROBED.includes(a.cls) ? 1 : 0, hat, hatc: hc || C.tunic, pack: a.cls === 'porter', cape: a.hero ? '#b8322a' : a.cls === 'paladin' ? '#3a5aa8' : null };
+    hair: l.hair || HAIRS[0], skin: L.skin || l.skin || SKINS[0], body: L.body === 'plate' || L.body === 'chain' || L.body === 'scale' ? (L.metal || '#9aa4b0') : L.body === 'bare' ? (l.skin || SKINS[0]) : L.c1, legs: shade(L.c1, -0.45), trim: L.c2,
+    style: (a.id || 0) % 3, robe: L.body === 'robe' ? 1 : 0, hat, hatc: hc, pack: (L.ex || []).includes('pack'), cape: L.cape || (a.hero ? '#b8322a' : null), glasses: L.head === 'monocle' ? 1 : 0 };
 }
 
 function paintPerson(x, p, dir, pose, fr) {

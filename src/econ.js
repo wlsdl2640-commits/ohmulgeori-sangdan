@@ -1,12 +1,16 @@
 /* ───────── 새 게임과 저장 이전 ───────── */
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
-  gladiator: 'sword', elementalist: 'staff', berserker: 'axe', dragoon: 'lance', paladin: 'sword', necromancer: 'staff', plaguedoc: 'mace' };
+  gladiator: 'sword', champion: 'sword', knight: 'sword', paladin: 'sword', berserker: 'axe', bloodlord: 'axe',
+  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute',
+  assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'dagger', masterthief: 'dagger',
+  elementalist: 'staff', elementlord: 'staff', necromancer: 'staff', lich: 'staff', spellblade: 'sword', arcblade: 'sword',
+  priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
 const newField = () => ({ best: 0, cleared: false, found: false, boss: {} });
 
 function blankState(company) {
   return {
-    v: 4, seq: 1, t: 0, lastSeen: Date.now(),
+    v: 5, seq: 1, t: 0, lastSeen: Date.now(),
     company: (company || '').trim().slice(0, 12) || '등불 상단',
     gold: 1000, fame: 0, rank: 0, unlocked: [],
     inv: { pot_s: 6, mp_s: 2, herb: 6 },
@@ -19,7 +23,8 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1 }, speed: 1,
+    relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
   };
@@ -38,6 +43,7 @@ function newGame(company) {
   S.parties.push(newParty('1팀', [w.id, ar.id, cl.id]));
   S.view = S.parties[0].id;
   rollCands(); genReq(); genReq();
+  raidMonth(true);
   log(`${S.company}이(가) ${WORLD.street} 입구에 문을 열었다.`);
   queueModal({ title: '검은 두건의 손님', body: STORY.assassin });
 }
@@ -47,7 +53,7 @@ function migrate(v) {
   Object.assign(s, { seq: v.seq || 1, t: v.t || 0, lastSeen: v.lastSeen || Date.now(), gold: v.gold || 0, fame: v.fame || 0, inv: v.inv || {},
     graves: v.graves || [], log: v.log || [], settleDay: v.settleDay || MONTH_DAYS, view: v.view, shop: v.shop || { slots: [] } });
   Object.assign(s.stats, v.stats || {});
-  Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0, v04: 0, v05: 0, v06: 0 });
+  Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0, v04: 0, v05: 0, v06: 0, v07: 0 });
   Object.assign(s.bld, v.bld || {});
   for (const f of Object.keys(v.fields || {})) if (s.fields[f]) s.fields[f] = v.fields[f];
   // 모험가는 지금 레벨에 맞춰 능력치를 새로 만든다
@@ -122,7 +128,7 @@ function migrate4() {
   }
   delete S.graves; delete S.heroQueue; delete S.specQueue;
   S.cands = (S.cands || []).filter(c => !c.heroOf && !c.specOf);
-  S.unlocked = Object.keys(SPECIAL_FAME).filter(c => S.fame >= SPECIAL_FAME[c] || S.advs.some(a => a.cls === c));
+  S.unlocked = [];
   S.parties.forEach(p => {
     p.start = 1;
     const e = p.exp;
@@ -135,6 +141,35 @@ function migrate4() {
     if (back.length) body.push(`묘지에 이름을 올렸던 ${back.join(', ')}은(는) 사실 오물거리 진료소에 누워 있었다. 크게 다친 채로 상단에 돌아왔으니 신전에서 치료해 주자.`);
     body.push(`지금까지 공략한 던전에 맞춰 상단은 ${RANKS[S.rank].name}랭크 「${RANKS[S.rank].title}」(으)로 시작한다.`);
     S.modals.push({ title: 'v0.5 업데이트', body });
+  }
+}
+
+// v0.6 → v0.7: 2차·3차 전직, Lv100, 보스 장비·룬·유물, 왕국 교역, 레이드, 배속 1·5·10·20
+function migrate5() {
+  if (S.v >= 5) return;
+  S.v = 5;
+  if (!SPEEDS.includes(S.speed)) S.speed = S.speed > 1 ? 5 : 1;
+  S.relics = FIELD_IDS.filter(f => S.fields[f] && S.fields[f].cleared);
+  S.king = { favor: {}, visit: null, next: today() + 2 };
+  S.raid = null;
+  S.advs.concat(S.cands || []).forEach(a => {
+    if (!CLASSES[a.cls]) a.cls = 'warrior';
+    a.skills = (a.skills || []).filter(id => SKILLS[id] && canLearn(a, id));
+    const inn = CLASSES[a.cls].innate;
+    if (!a.skills.includes(inn)) a.skills.unshift(inn);
+    a.skills = a.skills.slice(0, skillSlots(a));
+    if (a.post && !isHealer(a.cls)) a.post = null;
+    SLOTS.forEach(([sl]) => { const g = a.eq && a.eq[sl]; if (g) g.runes = g.runes || []; });
+  });
+  S.gear.forEach(g => { g.runes = g.runes || []; });
+  S.flags.job2 = S.fame >= JOB_FAME[2] ? 1 : 0; S.flags.job3 = S.fame >= JOB_FAME[3] ? 1 : 0;
+  S.unlocked = [];
+  raidMonth(true);
+  if (!S.flags.v07) {
+    S.flags.v07 = 1;
+    const body = STORY.v07.slice();
+    if (S.relics.length) body.push(`지금까지 공략한 던전에서 유물 ${S.relics.length}개(${S.relics.map(f => RELICS[f].name).join(', ')})를 찾아 상단에 모셔 두었다.`);
+    S.modals.push({ title: 'v0.7 업데이트', body });
   }
 }
 
@@ -268,18 +303,80 @@ function sellGear(gid) {
   HOOKS.toast(`${gearName(g)}을(를) ${g$(price)}에 팔았다`);
   changed();
 }
-const smithFee = t => Math.round(recipeFee(t) * (spn('dwarves') >= 1 ? 0.7 : 1));
-const canSmith = (base, t) => S.bld.smithy >= GTIERS[t].smith && Object.entries(recipeNeed(base, t)).every(([k, q]) => (S.inv[k] || 0) >= q) && S.gold >= smithFee(t);
-function smith(base, t) {
-  if (S.bld.smithy < GTIERS[t].smith) return '대장간을 더 넓혀야 해요.';
-  if (!canSmith(base, t)) return '재료나 돈이 모자라요.';
-  Object.entries(recipeNeed(base, t)).forEach(([k, q]) => addTo(S.inv, k, -q));
-  S.gold -= smithFee(t);
-  const g = makeGear(base, t, rollQuality(0.03 * S.bld.smithy));
+// 대장간: 일반 제작은 품질이 무작위, 영웅 이상은 보스 부속품을 넣어 그 등급을 반드시 만든다
+const smithFee = (t, q = 0) => Math.round(recipeFee(t) * (spn('dwarves') >= 1 ? 0.7 : 1) * (1 - relic('smith')) * (q >= 3 ? BOSS_RECIPE[q].fee : 1));
+const smithNeed = (base, t, q = 0) => (q >= 3 ? bossNeed(base, t, q) : recipeNeed(base, t));
+const smithLv = (t, q = 0) => Math.max(GTIERS[t].smith, q >= 3 ? BOSS_RECIPE[q].smith : 0);
+const canSmith = (base, t, q = 0) => S.bld.smithy >= smithLv(t, q) && Object.entries(smithNeed(base, t, q)).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= smithFee(t, q);
+function smith(base, t, q = 0) {
+  if (S.bld.smithy < smithLv(t, q)) return `대장간 Lv${smithLv(t, q)}이 있어야 해요.`;
+  if (!canSmith(base, t, q)) return '재료나 돈이 모자라요.';
+  Object.entries(smithNeed(base, t, q)).forEach(([k, n]) => addTo(S.inv, k, -n));
+  S.gold -= smithFee(t, q);
+  const g = makeGear(base, t, q >= 3 ? q : rollQuality(0.03 * S.bld.smithy + (relic('smith') ? 0.05 : 0)));
   S.gear.push(g);
   log(`대장간에서 ${QUALITY[g.q].name} 「${gearName(g)}」을(를) 만들었다.`, g.q ? 'good' : '');
   changed();
   return g;
+}
+
+/* ───────── 룬: 장비 등급마다 한 칸씩 열린 룬 칸에 끼운다 ───────── */
+function findGear(gid) {
+  const g = S.gear.find(x => x.id === gid);
+  if (g) return { g, a: null };
+  for (const a of S.advs) for (const [sl] of SLOTS) if (a.eq[sl] && a.eq[sl].id === gid) return { g: a.eq[sl], a };
+  return null;
+}
+const RUNE_OUT = [100, 400, 1500];   // 룬을 빼는 값 (빼낸 룬은 창고로)
+function runeIn(gid, rid) {
+  const f = findGear(gid);
+  if (!f) return '장비를 찾을 수 없어요.';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  const g = f.g; g.runes = g.runes || [];
+  if (!runeSlots(g)) return '일반 장비에는 룬 칸이 없어요. 고급부터 등급마다 한 칸씩 열려요.';
+  if (g.runes.length >= runeSlots(g)) return '룬 칸이 꽉 찼어요.';
+  if (!ITEMS[rid] || !ITEMS[rid].rune || !(S.inv[rid] > 0)) return '그 룬이 없어요.';
+  addTo(S.inv, rid, -1); g.runes.push(rid);
+  if (f.a) clampVitals(f.a);
+  log(`${gearName(g)}에 ${ITEMS[rid].name}을(를) 끼웠다.`);
+  changed();
+  return '';
+}
+function runeOut(gid, i) {
+  const f = findGear(gid);
+  if (!f || !f.g.runes || !f.g.runes[i]) return '';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  const rid = f.g.runes[i], fee = RUNE_OUT[ITEMS[rid].rune[1]];
+  if (S.gold < fee) return `룬을 빼려면 ${g$(fee)}이 들어요.`;
+  S.gold -= fee; f.g.runes.splice(i, 1); addTo(S.inv, rid, 1);
+  if (f.a) clampVitals(f.a);
+  changed();
+  return '';
+}
+// 마탑: 같은 룬 셋을 합쳐 한 단계 위로, 우두머리의 증표 둘로 하급 룬 새기기
+function runeFuse(rid) {
+  const R = ITEMS[rid] && ITEMS[rid].rune;
+  if (!S.bld.tower) return '마탑이 필요해요.';
+  if (!R || R[1] >= 2) return '더 합칠 수 없는 룬이에요.';
+  if ((S.inv[rid] || 0) < RUNE_FUSE.n) return `같은 룬이 ${RUNE_FUSE.n}개 있어야 해요.`;
+  const fee = RUNE_FUSE.fee[R[1]];
+  if (S.gold < fee) return '돈이 모자라요.';
+  S.gold -= fee; addTo(S.inv, rid, -RUNE_FUSE.n);
+  const out = runeId(R[0], R[1] + 1); addTo(S.inv, out, 1);
+  log(`마탑에서 룬을 합쳐 ${ITEMS[out].name}을(를) 만들었다.`, 'good');
+  changed();
+  return '';
+}
+function runeCarve(t) {
+  if (!S.bld.tower) return '마탑이 필요해요.';
+  const k = 'crest_' + t;
+  if ((S.inv[k] || 0) < RUNE_CARVE.crest) return `${ITEMS[k].name} ${RUNE_CARVE.crest}개가 필요해요.`;
+  if (S.gold < RUNE_CARVE.fee) return '돈이 모자라요.';
+  S.gold -= RUNE_CARVE.fee; addTo(S.inv, k, -RUNE_CARVE.crest);
+  const out = runeId(pickOne(RUNE_IDS), 0); addTo(S.inv, out, 1);
+  log(`마탑에서 ${ITEMS[k].name}에 ${ITEMS[out].name}을(를) 새겼다.`, 'good');
+  changed();
+  return out;
 }
 
 /* ───────── 스킬과 훈련 ───────── */
@@ -288,8 +385,8 @@ function learnSkill(aid, sid) {
   if (!S.bld.training) return '훈련소가 있어야 스킬을 배울 수 있어요.';
   if (!a || a.status !== 'idle') return '대기 중인 모험가만 배울 수 있어요.';
   if (a.skills.includes(sid)) return '이미 배운 스킬이에요.';
-  if (!canLearn(a, sid)) return `${s.name}은(는) ${s.cls.includes('all') ? '' : s.cls.map(c => CLASSES[c].name).join('·') + ' '}Lv${s.lv} 이상만 배울 수 있어요.`;
-  if (a.skills.length >= MAX_SKILLS) return `스킬은 ${MAX_SKILLS}개까지예요. 하나를 잊어야 배울 수 있어요.`;
+  if (!canLearn(a, sid)) return `${s.name}은(는) ${s.cls.includes('all') ? '' : s.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·') + ' '}Lv${s.lv} 이상만 배울 수 있어요.`;
+  if (a.skills.length >= skillSlots(a)) { const nx = SKILL_SLOT_LV.find(l => a.lv < l); return `스킬 칸 ${skillSlots(a)}개가 꽉 찼어요. 하나를 잊거나${nx ? ` Lv${nx}에 칸이 늘어나면` : ''} 배울 수 있어요.`; }
   if (!s.own && !((S.inv['book_' + sid] || 0) > 0)) return '스킬북이 없어요.';
   const fee = s.own ? ownFee(s) : s.lv * 30;
   if (S.gold < fee) return '수업료가 모자라요.';
@@ -334,11 +431,11 @@ function blessRoll() {
 const patients = () => S.advs.filter(a => a.inj);
 const healers = () => S.advs.filter(a => a.post === 'temple');
 const healerSlots = () => S.bld.temple || 0;
-const healRate = () => (S.bld.temple ? 4 + 4 * S.bld.temple : 3) * (spn('clinic') >= 2 ? 1.5 : 1);   // 하루 자연 치료
-const healPow = h => (2 + h.lv * 0.4 + derive(h).T.int * 0.15) * (h.cls === 'plaguedoc' ? 1.5 : 1);
+const healRate = () => (S.bld.temple ? 4 + 4 * S.bld.temple : 3) * (spn('clinic') >= 2 ? 1.5 : 1) * (1 + relic('rest'));   // 하루 자연 치료
+const healPow = h => (2 + h.lv * 0.4 + derive(h).T.int * 0.15) * careMul(h.cls);
 const injLeft = a => (a.inj ? Math.max(0, a.inj.need - a.inj.done) : 0);
 const treatedToday = a => !!(a.inj && a.inj.day === today());
-const canOp = () => !!S.bld.temple && healers().some(h => h.cls === 'plaguedoc');
+const canOp = () => !!S.bld.temple && healers().some(h => SURGEONS.includes(h.cls));
 const opCost = a => Math.round(injLeft(a) * SURGERY.gold);
 function healPlan() {   // 치유사가 누구를 돌보는지 (한 명이 환자 둘까지, 심한 환자부터)
   const pats = patients().sort((x, y) => injLeft(y) - injLeft(x)), plan = new Map();
@@ -353,7 +450,7 @@ function postHealer(aid, on) {
   if (!a) return '';
   if (!on) { if (a.post) { a.post = null; log(`${a.name}이(가) 신전 일을 마쳤다.`); changed(); } return ''; }
   if (!S.bld.temple) return '신전이 있어야 해요.';
-  if (!HEALERS.includes(a.cls)) return '성직자·성기사·역병의사만 신전에서 환자를 돌볼 수 있어요.';
+  if (!isHealer(a.cls)) return '성직자 계열과 성기사만 신전에서 환자를 돌볼 수 있어요.';
   if (a.status !== 'idle') return '원정 중이에요.';
   if (a.inj) return '다친 모험가는 일할 수 없어요.';
   if (healers().length >= healerSlots()) return `치유사 자리는 ${healerSlots()}명까지예요. 신전을 넓혀 주세요.`;
@@ -384,7 +481,7 @@ function treat(aid, kind) {
   if (!a || !a.inj) return '';
   const rem = injLeft(a);
   if (kind === 'op') {
-    if (!canOp()) return '신전에 역병의사가 있어야 수술할 수 있어요.';
+    if (!canOp()) return '신전에 역병의사나 명의가 있어야 수술할 수 있어요.';
     if (a.inj.op) return '이미 수술을 받았어요.';
     const c = opCost(a);
     if (S.gold < c) return '수술비가 모자라요.';
@@ -456,7 +553,7 @@ const slotCount = () => S.bld.shop + 2 + rankStands(S.rank || 0);
 const isGearKey = k => typeof k === 'string' && k.startsWith('g:');
 function gearsOfKey(k) { const [, b, t] = k.split(':'); return S.gear.filter(g => g.base === b && g.t === +t).sort((x, y) => x.q - y.q); }
 const stockOf = k => (isGearKey(k) ? gearsOfKey(k).length : S.inv[k] || 0);
-function slotPrice(s) { return isGearKey(s.item) ? (gearsOfKey(s.item)[0] ? gearValue(gearsOfKey(s.item)[0]) : 0) * TIERS[s.tier].m : ITEMS[s.item].v * TIERS[s.tier].m; }
+function slotPrice(s) { return (isGearKey(s.item) ? (gearsOfKey(s.item)[0] ? gearValue(gearsOfKey(s.item)[0]) : 0) * TIERS[s.tier].m : ITEMS[s.item].v * TIERS[s.tier].m) * (1 + relic('price')); }
 function setSlot(i, it, tier) {
   while (S.shop.slots.length < slotCount()) S.shop.slots.push(null);
   S.shop.slots[i] = it ? { item: it, tier: tier || 0, tm: 0 } : null;
@@ -658,43 +755,148 @@ function licenseUp(aid) {
 }
 
 /* ───────── 전직 ───────── */
+const jobOpen = t => !!(S.flags['job' + t] || S.fame >= JOB_FAME[t]);
 function checkUnlocks() {
-  for (const [cls, f] of Object.entries(SPECIAL_FAME)) {
-    if (S.fame < f || S.unlocked.includes(cls)) continue;
-    S.unlocked.push(cls);
-    const from = Object.keys(PROMOTE).filter(k => PROMOTE[k].includes(cls)).map(k => CLASSES[k].name).join('·');
-    log(`명성이 ${f}에 닿아 특수직업 ${CLASSES[cls].name}이(가) 해금됐다.`, 'good');
-    queueModal({ title: `특수직업 해금 · ${CLASSES[cls].name}`, body: [`상단의 이름이 널리 알려지자 ${CLASSES[cls].name}의 비법을 아는 스승이 훈련소를 찾아왔다.`, CLASSES[cls].desc, `${from} 모험가가 Lv${PROMO.lv} 이상이고 ${LICENSE[PROMO.rank].name} 라이선스가 있으면 ${g$(PROMO.fee)}에 전직할 수 있다. 모험가 창에서 전직을 고르자.`] });
+  for (const t of [2, 3]) {
+    if (S.flags['job' + t] || S.fame < JOB_FAME[t]) continue;
+    S.flags['job' + t] = 1;
+    const Q = JOB_REQ[t];
+    log(`명성이 ${JOB_FAME[t]}에 닿아 ${t}차 전직이 열렸다.`, 'good');
+    queueModal({ title: `${t}차 전직 해금`, body: t === 2
+      ? ['상단의 이름이 알려지자 이름난 스승들이 훈련소를 찾아왔다.', `전사·궁수·도적·마법사·성직자는 Lv${Q.lv} 이상, ${LICENSE[Q.rank].name} 라이선스가 되면 ${g$(Q.fee)}에 세 갈래 2차 직업 중 하나를 고를 수 있다. 직업마다 특성이 다르다.`, '전사라면 회피와 치명타의 검투사, 방어의 기사, 피를 마시는 광전사 중 하나다. 모험가 창에서 고르자.']
+      : ['제국 곳곳의 대가들이 상단의 소문을 듣고 찾아왔다.', `2차 직업 모험가가 Lv${Q.lv} 이상, ${LICENSE[Q.rank].name} 라이선스가 되면 ${g$(Q.fee)}에 3차 직업으로 오를 수 있다.`] });
   }
 }
 function promoWhy(a, cls) {
-  if (!S.unlocked.includes(cls)) return `상단 명성 ${SPECIAL_FAME[cls]}에 해금돼요`;
+  const t = jobTier(cls), Q = JOB_REQ[t];
+  if (!jobOpen(t)) return `상단 명성 ${JOB_FAME[t]}에 열려요`;
   if (!S.bld.training) return '훈련소가 필요해요';
-  if (a.lv < PROMO.lv) return `Lv${PROMO.lv}부터`;
-  if ((a.rank || 0) < PROMO.rank) return `${LICENSE[PROMO.rank].name} 라이선스 필요`;
+  if (a.lv < Q.lv) return `Lv${Q.lv}부터`;
+  if ((a.rank || 0) < Q.rank) return `${LICENSE[Q.rank].name} 라이선스 필요`;
   if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
-  if (S.gold < PROMO.fee) return '돈이 모자라요';
+  if (S.gold < Q.fee) return '돈이 모자라요';
   return '';
 }
 function promote(aid, cls) {
   const a = advById(aid);
-  if (!a || !(PROMOTE[a.cls] || []).includes(cls)) return '';
+  if (!a || !nextJobs(a.cls).includes(cls)) return '';
   const why = promoWhy(a, cls);
   if (why) return why + '.';
-  const C0 = CLASSES[a.cls], C1 = CLASSES[cls], wasT = a.eq.weapon ? a.eq.weapon.t : 0;
-  S.gold -= PROMO.fee;
+  const C0 = CLASSES[a.cls], C1 = CLASSES[cls], wasT = a.eq.weapon ? a.eq.weapon.t : 0, Q = JOB_REQ[jobTier(cls)];
+  S.gold -= Q.fee;
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
-  a.skills = [C1.innate, ...a.skills.filter(id => id !== C0.innate && id !== C1.innate)].slice(0, MAX_SKILLS);
   a.cls = cls;
-  if (a.post && !HEALERS.includes(cls)) a.post = null;
-  SLOTS.forEach(([s]) => { const g = a.eq[s]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[s] = null; } });
+  a.skills = [C1.innate, ...a.skills.filter(id => id !== C1.innate)].slice(0, skillSlots(a));
+  if (a.post && !isHealer(cls)) a.post = null;
+  SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } });
   if (!a.eq.weapon) a.eq.weapon = makeGear(WEAPON_OF[cls], wasT, 0);   // 길드가 새 직업에 맞는 무기를 준다
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
   clampVitals(a);
   log(`${a.name}이(가) ${C0.name}에서 ${C1.name}(으)로 전직했다!`, 'good');
-  queueModal({ title: `전직 · ${C1.name}`, body: [`${a.name}이(가) 훈련소에서 ${C1.name}(으)로 다시 태어났다.`, C1.desc, `기본 스킬 「${SKILLS[C1.innate].name}」을(를) 익혔고, 배워 둔 스킬은 그대로 남았다. 새 직업에 맞지 않는 장비는 창고로 옮겼고, 길드가 ${GTYPES[WEAPON_OF[cls]].name} 하나를 내주었다.`] });
+  queueModal({ title: `${jobTier(cls)}차 전직 · ${C1.name}`, adv: a.id, body: [`${a.name}이(가) 훈련소에서 ${C1.name}(으)로 다시 태어났다.`, C1.desc, `기본 스킬 「${SKILLS[C1.innate].name}」을(를) 익혔고, 배워 둔 스킬은 그대로 남았다. 새 직업에 맞지 않는 장비는 창고로 옮겼다.`] });
   changed();
   return '';
+}
+
+/* ───────── 이웃 왕국의 상단 ───────── */
+const kingOpen = k => { const n = KINGDOMS[k].need; return !n || isUnlocked(n) || ((S.fields[n] && S.fields[n].best) || 0) > 0; };
+const favorOf = k => (S.king && S.king.favor[k]) || 0;
+function kingArrive() {
+  const open = KINGDOM_IDS.filter(kingOpen);
+  if (!open.length) return;
+  const id = pickOne(open), D = KINGDOMS[id], fv = favorTier(favorOf(id));
+  const known = new Set(giftPool());
+  let wants = D.wants.filter(it => ITEMS[it] && (known.has(it) || (S.inv[it] || 0) > 0));
+  if (wants.length < 2) wants = D.wants.filter(it => ITEMS[it] && !ITEMS[it].raid).slice(0, 3);
+  const pick = wants.sort(() => rnd() - 0.5).slice(0, 3);
+  const order = pick.map(it => ({ it, n: Math.max(1, Math.round(Math.min(40, Math.max(2, 700 / ITEMS[it].v)) * (1 + fv * 0.2))), got: 0 }));
+  S.king.visit = { k: id, until: today() + 3, order, m: FAVOR[fv].m, earned: 0 };
+  log(`${D.name}의 상단이 오물거리를 찾아왔다. 사흘 동안 물건을 사 간다.`, 'good');
+  HOOKS.toast(`${D.name} 상단 방문 · 상단 창의 교역에서 팔 수 있어요`);
+  queueModal({ title: `${D.name} 상단 방문`, body: [D.desc, `이번에 사 가려는 것: ${order.map(o => `${ITEMS[o.it].name} ${o.n}개`).join(', ')}. 기준가의 ${Math.round(FAVOR[fv].m * 100)}%를 쳐준다.`, '사흘 안에 상단 창의 「왕국 교역」에서 팔 수 있다. 주문을 다 채우면 왕국과 더 가까워진다.'] });
+  changed();
+}
+function kingSell(it) {
+  const v = S.king && S.king.visit, o = v && v.order.find(x => x.it === it);
+  if (!o) return '';
+  const q = Math.min(o.n - o.got, S.inv[it] || 0);
+  if (q <= 0) return o.got >= o.n ? '이미 다 채웠어요.' : `${ITEMS[it].name}이(가) 창고에 없어요.`;
+  const g = Math.round(ITEMS[it].v * v.m) * q;
+  addTo(S.inv, it, -q); o.got += q; v.earned += g;
+  S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
+  S.king.favor[v.k] = favorOf(v.k) + g / 500;
+  HOOKS.toast(`${KINGDOMS[v.k].name}에 ${ITEMS[it].name} ${q}개 · ${g$(g)}`);
+  if (v.order.every(x => x.got >= x.n) && !v.full) {
+    v.full = 1; S.king.favor[v.k] += 8; S.fame += 3;
+    log(`${KINGDOMS[v.k].name}의 주문을 모두 채웠다. 왕국과 가까워졌다. 명성 +3`, 'good');
+  }
+  changed();
+  return '';
+}
+function kingLeave() {
+  const v = S.king.visit;
+  if (!v) return;
+  const D = KINGDOMS[v.k];
+  log(v.earned ? `${D.name} 상단이 ${g$(v.earned)}어치를 사서 돌아갔다.` : `${D.name} 상단이 빈손으로 돌아갔다.`, v.earned ? 'good' : '');
+  if (!v.earned) S.king.favor[v.k] = Math.max(0, favorOf(v.k) - 3);
+  S.king.visit = null;
+  S.king.next = today() + ri(4, 7);
+}
+function kingDay(k) {
+  if (!S.king) S.king = { favor: {}, visit: null, next: k + 2 };
+  if (S.king.visit && k > S.king.visit.until) kingLeave();
+  if (!S.king.visit && k >= S.king.next) kingArrive();
+}
+
+/* ───────── 초대형 레이드: 매달 둘이 열린다 ───────── */
+function newRaid(id) {
+  const R = RAIDS[id], max = raidHp(R.lv);
+  const rv = RIVALS.slice().sort(() => rnd() - 0.5).slice(0, 5).map(r => ({ n: r.name, c: r.c, pw: 0.5 + rnd() * 0.9, d: 0 }));
+  return { id, max, hp: max, me: 0, rivals: rv, done: 0, rank: 0 };
+}
+function raidMonth(fresh) {
+  if (S.raid) for (const rec of S.raid.list) if (!rec.done) raidEnd(rec, 'escape');
+  const a = pickOne(['kingslime', 'kaishar', 'griffon']), b = pickOne(RAID_IDS.filter(x => x !== a));
+  S.raid = { list: [newRaid(a), newRaid(b)], from: today() };
+  const names = S.raid.list.map(r => `${RAIDS[r.id].name}(Lv${RAIDS[r.id].lv})`).join('와(과) ');
+  log(`이번 달 레이드: ${names}`, 'good');
+  if (!fresh) queueModal({ title: '이번 달 레이드', body: [`${names} 레이드가 열렸다.`, '다른 상단과 왕국 원정대가 함께 몬스터를 두드린다. 쓰러뜨리면 피해를 많이 준 순서대로 보상을 받고, 달이 바뀔 때까지 못 쓰러뜨리면 몬스터가 떠나 보상이 절반이 된다.', '원정 창에서 파티의 목적지를 레이드로 고르자.'] });
+}
+const raidStand = rec => rec.rivals.map(r => ({ n: r.n, d: r.d, c: r.c })).concat([{ n: S.company, d: rec.me, me: 1 }]).sort((x, y) => y.d - x.d);
+const raidTier = L => GTIERS.reduce((m, T, i) => (T.lv <= L ? i : m), 0);
+function raidReward(rec, i, half) {
+  const R = RAIDS[rec.id], W = RAID_REWARD[Math.min(i, RAID_REWARD.length - 1)], k = half ? 0.5 : 1, got = [];
+  const gold = Math.round(raidGold(R.lv) * W.gold * k / 10) * 10, fame = Math.round(W.fame * k);
+  S.gold += gold; S.stats.earned += gold; S.fame += fame;
+  got.push(g$(gold), `명성 +${fame}`);
+  const np = Math.max(1, Math.round(W.part * k)); addTo(S.inv, 'rp_' + rec.id, np); got.push(`${ITEMS['rp_' + rec.id].name} ${np}개`);
+  if (W.heart && !half) { addTo(S.inv, 'rh_' + rec.id, W.heart); got.push(ITEMS['rh_' + rec.id].name); }
+  if (W.gear) { const q = Math.max(2, W.gear - (half ? 1 : 0)), g = makeGear(pickOne(GTYPE_IDS), raidTier(R.lv), q); S.gear.push(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }
+  const rl = W.rune - (half ? 1 : 0);
+  if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); addTo(S.inv, id, 1); got.push(ITEMS[id].name); }
+  return `우리 상단 ${i + 1}위! 보상: ${got.join(', ')}`;
+}
+function raidEnd(rec, how) {
+  if (rec.done) return;
+  rec.done = how === 'kill' ? 1 : 2; rec.hp = Math.max(0, rec.hp);
+  const R = RAIDS[rec.id], st = raidStand(rec), my = st.findIndex(x => x.me);
+  rec.rank = rec.me > 0 ? my + 1 : 0;
+  rec.final = st.map(x => ({ n: x.n, d: Math.round(x.d), me: x.me ? 1 : 0 }));
+  const body = [how === 'kill' ? `${R.name}이(가) 쓰러졌다!` : `달이 바뀌자 ${R.name}이(가) 모습을 감췄다. 보상은 절반이다.`,
+    '순위 · ' + st.slice(0, 6).map((x, i) => `${i + 1}. ${x.n} ${Math.round(x.d).toLocaleString('ko-KR')}`).join(' · ')];
+  body.push(rec.me > 0 ? raidReward(rec, my, how !== 'kill') : '우리 상단은 이번 레이드에 나서지 않았다.');
+  log(`${R.name} 레이드가 끝났다.${rec.rank ? ` 우리 상단 ${rec.rank}위.` : ''}`, rec.rank ? 'good' : '');
+  queueModal({ title: `레이드 종료 · ${R.name}`, body });
+  changed();
+}
+// 경쟁자들은 날마다 몬스터를 두드린다
+function raidDay() {
+  if (!S.raid) return;
+  for (const rec of S.raid.list) {
+    if (rec.done) continue;
+    for (const r of rec.rivals) { const v = Math.round(rec.max * r.pw / 110 * (0.6 + rnd() * 0.8)); r.d += v; rec.hp -= v; }
+    if (rec.hp <= 0) { rec.hp = 0; raidEnd(rec, 'kill'); }
+  }
 }
 
 /* ───────── 마탑 ───────── */
@@ -771,6 +973,7 @@ function settle() {
   if (S.bld.temple) { blessRoll(); lines.push(`신전: 이번 달에는 「${BLESSINGS[S.bless.id].name}」. ${BLESSINGS[S.bless.id].desc}`); }
   log(`${pm}월 정산을 마쳤다.`, unpaid.length ? 'bad' : '');
   queueModal({ title: `${pm}월 정산`, body: lines });
+  raidMonth(false);
 }
 
 /* ───────── 시간 흐름 ───────── */
@@ -781,6 +984,8 @@ function onNewDay(k) {
   if (k % 2 === 1 || S.reqs.length < 2) genReq();
   if (S.bld.bank) bankDay(k);
   researchDay(k);
+  raidDay();
+  kingDay(k);
   if (k >= S.settleDay) { settle(); S.settleDay += MONTH_DAYS; }
   if (!S.flags.guildDown && !S.flags.raidTold && raidReady()) { S.flags.raidTold = 1; queueModal({ title: '시민회의 부탁', body: STORY.guildReady }); }
   changed();
@@ -791,7 +996,7 @@ function autoDepart(p) {
   startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains');
 }
 function stepHome(dt) {
-  const m = spn('clinic') >= 2 ? 2 : 1, rest = SLEEP.rest(S.bld.inn) * (isNight() ? 1.6 : 0.8) * dt;
+  const m = (spn('clinic') >= 2 ? 2 : 1) * (1 + relic('rest')), rest = SLEEP.rest(S.bld.inn) * (isNight() ? 1.6 : 0.8) * (1 + relic('rest')) * dt;
   for (const a of S.advs) {
     if (a.status !== 'idle') continue;
     const d = derive(a);
@@ -847,8 +1052,8 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); saveGame(); return true; }
-    if (![2, 3, 4].includes(v.v)) return false;
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); saveGame(); return true; }
+    if (![2, 3, 4, 5].includes(v.v)) return false;
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {};
     S.bank = S.bank || { offers: [], deps: [], loans: [] };
@@ -859,6 +1064,9 @@ function loadFrom(v) {
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
+    if (old < 5) { migrate5(); saveGame(); }
+    S.relics = S.relics || []; S.king = S.king || { favor: {}, visit: null, next: today() + 2 };
+    if (!S.raid) raidMonth(true);
     return true;
   } catch (_) { return false; }
 }

@@ -45,16 +45,22 @@ const ICON_PX = {
   axe:     ['....kkkk..', '...k###lk.', '...k####k.', '....kkwk..', '.....kwk..', '....kwk...', '...kwk....', '..kwk.....', '.kwk......', '.kk.......'],
   lance:   ['........kk', '.......klk', '......k#k.', '.....kwk..', '....kwk...', '...kwk....', '..kwk.....', '.kwk......', 'kwk.......', 'kk........'],
   leaf:    ['......kk..', '....kk##k.', '...k#l##k.', '..k#l###k.', '.k#l###k..', '.k#l##k...', '.k###k....', '..kkd.....', '...kd.....', '....k.....'],
-  bag:     ['...kkkk...', '..k....k..', '.kkkkkkkk.', 'k########k', 'k#l######k', 'k##kkkk##k', 'k##k##k##k', 'k########k', '.kddddddk.', '..kkkkkk..']
+  bag:     ['...kkkk...', '..k....k..', '.kkkkkkkk.', 'k########k', 'k#l######k', 'k##kkkk##k', 'k##k##k##k', 'k########k', '.kddddddk.', '..kkkkkk..'],
+  lute:    ['........kk', '.......kwk', '......kwk.', '..kkkkwk..', '.k#l##kk..', 'k#l#kk#k..', 'k##kdk#k..', 'k###kk#k..', '.kd###k...', '..kkkk....'],
+  rune:    ['..kkkkkk..', '.kgGGGGgk.', '.kG#GG#Gk.', '.kGG##GGk.', '.kG#ll#Gk.', '.kGG##GGk.', '.kG#GG#Gk.', '.kGGGGGGk.', '.kggggggk.', '..kkkkkk..'],
+  crest:   ['.kkkkkkkk.', '.kbbbbbbk.', '.kb#l##bk.', '.kb#ll#bk.', '.kb####bk.', '..kb##bk..', '..kb#dbk..', '...kbbk...', '....kk....', '..........'],
+  core:    ['...kkkk...', '..kbbbbk..', '.kb#ll#bk.', 'kb#lll##bk', 'kb######bk', 'kb##dd##bk', '.kb####bk.', '..kbbbbk..', '...kkkk...', '..........'],
+  soul:    ['....k.....', '...k#k....', '...k#lk...', '..k#ll#k..', '..k#ll#k..', '.k##l###k.', '.k#l##l#k.', '.k##ll##k.', '..kdddk...', '...kkk....']
 };
 function drawIcon(ctx, id, ox = 0, oy = 0) {
   const it = typeof id === 'object' ? id : ITEMS[id]; if (!it) return;
   const pat = ICON_PX[it.icon] || ICON_PX.gem;
-  const map = { '#': it.c, l: shade(it.c, 0.45), d: shade(it.c, -0.4), k: '#1a1410', r: '#c0392b', b: '#c9a04a', w: '#8a5a32', p: '#e8dcb8', s: '#e8e2d0' };
+  const map = { '#': it.c, l: shade(it.c, 0.45), d: shade(it.c, -0.4), k: '#1a1410', r: '#c0392b', b: '#c9a04a', w: '#8a5a32', p: '#e8dcb8', s: '#e8e2d0', g: '#4a4652', G: '#6e6a78' };
   pat.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const ch = row[x]; if (ch !== '.') R(ctx, ox + x, oy + y, 1, 1, map[ch]); } });
 }
 const ICON_URL = {};
 const TIER_COLORS = ['#b0a898', '#7ab05a', '#b8c0c8', '#7ab8ff', '#c8ecff', '#f0c24a'];
+const QCOL = ['#b0a898', '#7bd36a', '#6ab0ff', '#c07af0', '#f0b43c', '#ff6a5a', '#fff4b0'];
 function gearIconURL(g) {
   const key = 'g:' + g.base + ':' + g.t;
   if (ICON_URL[key]) return ICON_URL[key];
@@ -73,7 +79,7 @@ function iconURL(id) {
 const DIGITS = {
   '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001',
   '5': '111100111001111', '6': '111100111101111', '7': '111001010010010', '8': '111101111101111', '9': '111101111001111', '+': '000010111010000',
-  L: '100100100100111', M: '101111111101101', I: '111010010010111', S: '111100111001111', V: '101101101101010', U: '101101101101111', P: '111101111100100', ' ': '000000000000000', '!': '010010010000010', D: '110101101101110', O: '111101101101111', W: '101101101111101', N: '110101101101101'
+  L: '100100100100111', M: '101111111101101', I: '111010010010111', S: '111100111001111', V: '101101101101010', U: '101101101101111', P: '111101111100100', ' ': '000000000000000', '!': '010010010000010', D: '110101101101110', O: '111101101101111', W: '101101101111101', N: '110101101101101', '%': '101001010100101'
 };
 function drawNum(ctx, x, y, s, col) {
   s = String(s);

@@ -6,16 +6,17 @@ const V = { cvs: null, ctx: null, off: null, g: null, wc: null, w: null, lc: nul
 function initView(canvas) {
   V.cvs = canvas;
   V.ctx = canvas.getContext('2d');
-  [V.off, V.g] = mkCanvas(VW, VH);
-  [V.wc, V.w] = mkCanvas(VW, VH);
-  [V.lc, V.l] = mkCanvas(VW, VH);
+  [V.off, V.g] = mkCanvas(VW * HI, VH * HI);
+  [V.wc, V.w] = mkCanvas(VW * HI, VH * HI);
+  [V.lc, V.l] = mkCanvas(VW * HI, VH * HI);
+  [V.g, V.w, V.l].forEach(x => x.setTransform(HI, 0, 0, HI, 0, 0));   // 논리 좌표로 그리면 두 배로 찍힌다
   sizeView();
   window.addEventListener('resize', sizeView);
 }
 function sizeView() {
   const r = V.cvs.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-  V.cvs.width = Math.max(VW, Math.round(r.width * dpr));
-  V.cvs.height = Math.max(VH, Math.round(r.height * dpr));
+  V.cvs.width = Math.max(VW * HI, Math.round(r.width * dpr));
+  V.cvs.height = Math.max(VH * HI, Math.round(r.height * dpr));
   V.ctx.imageSmoothingEnabled = false;
 }
 const viewParty = () => (S && (S.parties.find(p => p.id === S.view) || S.parties[0])) || null;
@@ -38,7 +39,7 @@ function callout(x, y, text, cls) {
   s.textContent = text;
   s.dataset.x = xp;
   s.style.left = xp + '%';
-  s.style.top = cls === 'boss' ? '13%' : Math.max(24, y / VH * 100 - near * 9) + '%';
+  s.style.top = cls === 'boss' ? (V.giant ? '34%' : '13%') : Math.max(V.giant ? 36 : 24, y / VH * 100 - near * 9) + '%';   // 레이드 체력 막대를 가리지 않게
   const k = Math.min(2.5, (S && S.speed) || 1), dur = cls === 'boss' ? 2.3 : 1.1;   // 빠르게 흐를 때는 글씨도 빨리 사라진다
   if (k > 1 || cls === 'boss') s.style.animationDuration = (dur / k).toFixed(2) + 's';
   box.append(s);
@@ -67,7 +68,7 @@ function drawFrame(now, vt) {
   drawFore(w, id, V.scroll);
   for (const l of bgLights(id, V.scroll, dark)) lights.push(l);
   if (dark > 0.01) applyDark(w, dark, dcol, lights);
-  g.drawImage(V.wc, 0, 0);
+  g.drawImage(V.wc, 0, 0, VW, VH);
   if (dark > 0.05) glows(g, lights, dark);
   bgEmit(g, id, V.scroll, t, dark);
   for (const f of post) f(g);
@@ -77,7 +78,7 @@ function drawFrame(now, vt) {
   c.imageSmoothingEnabled = false;
   const sx = V.shake > 0 ? Math.round((Math.random() - 0.5) * V.shake) * (V.cvs.width / VW) : 0;
   if (sx) { c.fillStyle = '#000'; c.fillRect(0, 0, V.cvs.width, V.cvs.height); }
-  c.drawImage(V.off, 0, 0, VW, VH, sx, 0, V.cvs.width, V.cvs.height);
+  c.drawImage(V.off, 0, 0, VW * HI, VH * HI, sx, 0, V.cvs.width, V.cvs.height);
   V.shake = Math.max(0, V.shake - 0.4);
 }
 
@@ -94,7 +95,7 @@ function applyDark(w, a, col, lights) {
     L.fillStyle = gr; L.fillRect(l.x - l.r, l.y - l.r, l.r * 2, l.r * 2);
   }
   L.globalCompositeOperation = 'source-over';
-  w.save(); w.globalCompositeOperation = 'source-atop'; w.drawImage(V.lc, 0, 0); w.restore();
+  w.save(); w.globalCompositeOperation = 'source-atop'; w.drawImage(V.lc, 0, 0, VW, VH); w.restore();
 }
 function glows(g, lights, dark) {
   g.save(); g.globalCompositeOperation = 'lighter';
@@ -141,6 +142,7 @@ function fieldScene(w, t, p, e, lights, post, dark) {
   const n = team.length, sp = n > 1 ? Math.min(15, 84 / (n - 1)) : 0;
   const front = dir > 0 ? 104 : 136;
   const foes = fighting ? e.foes : camping ? [] : (e.next || []);
+  V.giant = foes.some(f => f.giant);
   const gap = !fighting && !camping && e.encs[e.ei] != null ? Math.abs(e.encs[e.ei] - e.pos) * PXU : 0;
   const pos = {};
   const cx = Math.round(front - dir * (n - 1) * sp / 2);
@@ -188,11 +190,13 @@ function fieldScene(w, t, p, e, lights, post, dark) {
     shadow(w, x, Math.min(48, monW(f.id, f.sc) * 0.8));
     const lg = (V.lunge['f' + f.uid] || 0) > t ? -dir * 4 : 0;
     w.save(); w.translate(x + lg, GY); w.scale(-dir, 1);
-    FLASH = (V.flash['f' + f.uid] || 0) > t ? '#ffffff' : null;
+    FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
     drawMon(w, f.id, t, { ph: i * 0.37, sc: f.sc });
     FLASH = null; w.restore();
     if (f.fb) post.push(g => { const y = GY - monH(f.id, f.sc) - 9; R(g, x - 3, y, 7, 2, '#f0b43c'); R(g, x - 3, y - 2, 1, 2, '#f0b43c'); R(g, x, y - 2, 1, 2, '#f0b43c'); R(g, x + 3, y - 2, 1, 2, '#f0b43c'); });
-    if (fighting) {
+    if (f.giant) {   // 레이드: 화면 위에 큰 체력 막대
+      post.push(g => { const R0 = RAIDS[f.giant], fr0 = Math.max(0, f.hp / f.maxHp); R(g, 39, 20, 162, 6, '#0a0810'); R(g, 40, 21, 160, 4, '#3a1414'); R(g, 40, 21, Math.round(160 * fr0), 4, '#e0503f'); R(g, 40, 21, Math.round(160 * fr0), 1, '#ff9a7a'); drawNum(g, 120, 28, Math.ceil(fr0 * 100) + '%', '#ffffff'); });
+    } else if (fighting) {
       const y = GY - monH(f.id, f.sc) - 5;
       post.push(g => { hpBar(g, x, y, f.hp / f.maxHp, f.boss ? '#f0b43c' : '#e0503f'); if (f.dot) R(g, x - 9, y, 2, 2, f.dot.magic ? '#b88aff' : '#7ad83c'); if (f.slow > 0) R(g, x + 7, y, 2, 2, '#8ad8ff'); });
     }

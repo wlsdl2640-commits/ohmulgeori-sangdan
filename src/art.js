@@ -27,213 +27,46 @@ function bake(key, w, h, ax, ay, paint, plain) {
 }
 const blit = (ctx, s) => ctx.drawImage(s.cv, -s.ax, -s.ay);
 
-/* ───────── 모험가 ───────── */
-// 걷기 4장: fl·bl = 앞·뒷발 위치, by = 몸이 들썩이는 높이, arm = 팔 흔들기
-const WALKF = [
-  { fl: 2, bl: -2, by: 0, arm: -1 }, { fl: 0, bl: 0, by: -1, arm: 0, lift: 1 },
-  { fl: -2, bl: 2, by: 0, arm: 1 }, { fl: 0, bl: 0, by: -1, arm: 0, lift: 2 }
-];
-const ROBED = ['mage', 'cleric', 'elementalist', 'necromancer', 'plaguedoc'];
-const CRYSTAL = { mage: null, elementalist: '#7ae0a0', necromancer: 'skull' };
+/* ───────── 모험가 (고해상도 그림은 chars.js) ───────── */
+const ROBED = Object.keys(LOOKS).filter(c => LOOKS[c].body === 'robe');
 function advKey(a) {
   const w = a.eq && a.eq.weapon, ar = a.eq && a.eq.armor, l = a.look || {};
   return [a.cls, l.hair, l.skin, a.hero ? 1 : 0, (a.id || 0) % 3, w ? w.base + w.t : '-', ar ? ar.base + ar.t : '-'].join('|');
 }
-function paintAdv(x, a, pose, fr) {
-  const C = CLASSES[a.cls] || CLASSES.warrior, cls = a.cls;
-  const look = a.look || { hair: HAIRS[0], skin: SKINS[0] };
-  const P = (px, py, w, h, c) => R(x, px, py, w, h, c);
-  const sk = cls === 'necromancer' ? '#d8d0d8' : look.skin, skD = shade(sk, -0.22), hr = look.hair;
-  const tu = C.tunic, tuD = shade(tu, -0.3), tuL = shade(tu, 0.2), tr = C.trim;
-  const wpn = a.eq && a.eq.weapon, arm = a.eq && a.eq.armor;
-  const metal = wpn ? TIER_COLORS[wpn.t] : '#9aa0a8', metalL = shade(metal, 0.4);
-  const style = cls === 'elementalist' ? 1 : (a.id || 0) % 3;
-  const robe = ROBED.includes(cls);
-  if (pose === 'sleep') return paintSleep(P, a, sk, hr, tu, tr);
-  const sit = pose === 'sit';
-  const W = pose === 'walk' ? WALKF[fr % 4] : { fl: 1, bl: -1, by: 0, arm: 0 };
-  const by = sit ? 5 : W.by;
-  const pants = robe ? tuD : cls === 'berserker' ? '#4a3424' : shade(tu, -0.45), boot = '#3a2a1e';
-  const atk = pose === 'atk' ? fr % 2 : -1;          // 0 = 힘을 모으는 자세, 1 = 내지르는 자세
-  const B = y => y + by;                               // 몸통 기준 높이
-
-  // ── 등 뒤: 망토·화살통·짐·방패 ──
-  if (a.hero || cls === 'paladin') { const cc = cls === 'paladin' ? '#3a5aa8' : '#b8322a'; const sw = sit ? 0 : W.arm; P(-5, B(-13), 2, sit ? 9 : 10, cc); P(-6 + Math.min(0, sw), B(-6), 2, sit ? 3 : 4, shade(cc, -0.2)); }
-  if (cls === 'archer') { P(-5, B(-16), 2, 8, '#7a5634'); P(-5, B(-18), 1, 2, '#e8e2d0'); P(-4, B(-19), 1, 3, '#e8e2d0'); P(-6, B(-17), 1, 1, '#c0392b'); }
-  if (cls === 'porter') { P(-10, B(-18), 7, 12, '#7a5634'); P(-10, B(-18), 7, 1, '#9a7a4f'); P(-10, B(-20), 7, 2, '#a8432f'); P(-11, B(-13), 2, 4, '#5a6a7a'); P(-9, B(-11), 5, 1, '#5e4630'); }
-  if (cls === 'warrior') { P(-7, B(-14), 4, 7, '#8a2a20'); P(-7, B(-14), 4, 1, '#c9c3b8'); P(-6, B(-11), 2, 2, '#c9a04a'); }
-  if (cls === 'gladiator') { P(-8, B(-14), 5, 6, '#b8803a'); P(-7, B(-15), 3, 8, '#b8803a'); P(-6, B(-12), 1, 2, '#e8c070'); }
-  if (cls === 'paladin') { P(-8, B(-15), 5, 8, '#e8e4d8'); P(-7, B(-7), 3, 2, '#e8e4d8'); P(-6, B(-14), 1, 7, '#e8c060'); P(-7, B(-12), 3, 1, '#e8c060'); }
-
-  // ── 뒷팔 ──
-  const sw = sit ? 0 : W.arm;
-  P(-4 + Math.max(0, -sw), B(-12), 1, 4, tuD); P(-4 + Math.max(0, -sw), B(-8), 1, 1, skD);
-
-  // ── 다리 또는 로브 ──
-  if (sit) {
-    if (robe) { P(-4, -4, 10, 4, tu); P(-4, -1, 10, 1, tuD); P(5, -2, 2, 2, boot); }
-    else { P(-2, -3, 7, 2, pants); P(4, -4, 2, 3, pants); P(5, -2, 3, 2, boot); }
-  } else if (robe) {
-    const hem = tr;
-    P(-3, B(-7), 6, 2, tu); P(-4, B(-5), 8, 3, tu); P(-4, -2, 8, 1, tu); P(-4, -1, 8, 1, armTrim(arm, hem));
-    P(W.fl > 0 ? 2 : 0, 0, 2, 1, boot); if (W.bl < 0) P(-3, 0, 2, 1, shade(boot, -0.2));
-  } else {
-    const leg = (hx, off, c, bc, lifted) => {
-      const hip = B(-7), foot = lifted ? -2 : -1, mid = Math.round((hip + foot) / 2);
-      P(hx + Math.round(off / 2), hip, 2, mid - hip + 1, c);
-      P(hx + off, mid, 2, foot - mid, c);
-      P(hx + off, foot - 1, 3, 2, bc);
-    };
-    leg(-2, W.bl, shade(pants, -0.2), shade(boot, -0.25), W.lift === 2);
-    leg(0, W.fl, pants, boot, W.lift === 1);
-  }
-
-  // ── 몸통 ──
-  const tY = B(-13);
-  if (cls === 'berserker' && !arm) { P(-3, tY, 6, 6, sk); P(-3, tY, 6, 2, '#7a5a3a'); P(-4, tY - 1, 3, 3, '#8a6a4a'); P(-1, tY + 3, 2, 1, '#c0392b'); }
-  else if (cls === 'gladiator' && !arm) { P(-3, tY, 6, 6, sk); P(-3, tY + 1, 6, 1, '#7a5232'); P(1, tY, 1, 6, '#7a5232'); P(-3, tY + 4, 6, 2, '#a8432f'); }
-  else { P(-3, tY, 6, 7, tu); P(-3, tY, 6, 1, tr); P(2, tY + 1, 1, 5, tuL); }
-  if (arm) paintArmor(P, arm, tY, robe);
-  if (cls === 'dragoon') { P(-3, tY + 1, 6, 1, '#4a8a9a'); P(-3, tY + 3, 6, 1, '#4a8a9a'); P(-4, tY - 1, 3, 2, '#2f5a6a'); }
-  if (!robe || sit) { P(-3, B(-7), 6, 1, '#4a3020'); P(0, B(-7), 1, 1, '#e0c050'); }
-  if (cls === 'cleric') { P(0, tY + 1, 1, 4, tr); P(-1, tY + 2, 3, 1, tr); }
-  if (cls === 'necromancer') { P(-1, tY + 2, 3, 1, '#e8e4dc'); P(0, tY + 1, 1, 3, '#e8e4dc'); }
-
-  // ── 머리 ──
-  const hy = B(-20);
-  P(-3, hy, 6, 7, sk); P(-3, hy + 6, 1, 1, skD);
-  P(1, hy + 3, 1, 1, '#1a1410'); P(2, hy + 5, 1, 1, skD); P(-2, hy + 6, 4, 1, skD);
-  paintHair(P, cls, style, hy, hr);
-  paintHead(P, cls, hy, tu, tuD, tr, sk, hr);
-
-  // ── 앞팔과 무기 ──
-  if (sit) { P(2, B(-12), 1, 3, tu); P(3, B(-9), 2, 1, sk); return; }
-  paintWeapon(P, a, cls, wpn, metal, metalL, atk, pose, B, W, tu);
+function advPoseOf(t, o) {
+  if (o.sleep) return ['sleep', 0];
+  if (o.sit) return ['sit', 0];
+  if (o.atk) return ['atk', o.atkF != null ? o.atkF : 1];
+  if (o.walk) return ['walk', Math.floor(t * 8 + (o.ph || 0) * 2) % 4];
+  return ['idle', Math.floor(t * 1.6 + (o.ph || 0)) % 2];
 }
-function armTrim(arm, base) { return arm ? TIER_COLORS[arm.t] : base; }
-function paintArmor(P, arm, tY, robe) {
-  const c = TIER_COLORS[arm.t], cL = shade(c, 0.35), cD = shade(c, -0.35);
-  if (arm.base === 'plate') { P(-3, tY, 6, 6, c); P(-3, tY, 6, 1, cL); P(-1, tY + 2, 3, 1, cD); P(-4, tY - 1, 3, 2, cL); P(1, tY - 1, 3, 2, cL); P(-3, tY + 5, 6, 1, cD); }
-  else if (arm.base === 'leather') { P(-3, tY + 1, 6, 5, '#7a5232'); P(-3, tY + 1, 6, 1, c); P(0, tY + 2, 1, 3, '#5a3a22'); P(-2, tY + 3, 1, 1, '#a8743e'); }
-  else if (arm.base === 'robe' && !robe) { P(-3, tY, 6, 6, '#5a4a6a'); P(-3, tY, 6, 1, c); }
-  else { P(-3, tY, 6, 1, c); P(-3, tY + 6, 6, 1, c); }
-}
-function paintHair(P, cls, style, hy, hr) {
-  const hood = ['archer', 'cleric', 'rogue', 'necromancer', 'paladin', 'plaguedoc'].includes(cls);
-  if (hood) return;
-  P(-3, hy - 1, 6, 2, hr); P(-3, hy + 1, 2, 3, hr); P(2, hy + 1, 1, 1, hr);
-  if (style === 1) { P(-4, hy + 1, 2, 7, hr); P(-4, hy + 8, 1, 1, shade(hr, -0.3)); }
-  if (style === 2) { P(-3, hy - 2, 1, 1, hr); P(-1, hy - 3, 1, 2, hr); P(1, hy - 2, 1, 1, hr); }
-}
-function paintHead(P, cls, hy, tu, tuD, tr, sk, hr) {
-  if (cls === 'warrior') { const m = '#9aa4b0'; P(-4, hy - 1, 7, 3, m); P(-4, hy - 1, 7, 1, '#c8d0d8'); P(-4, hy + 2, 1, 4, m); P(2, hy + 2, 1, 2, m); P(-1, hy - 3, 2, 2, '#c0392b'); P(-3, hy - 2, 2, 1, '#c0392b'); }
-  if (cls === 'archer') { P(-4, hy - 1, 7, 3, tu); P(-4, hy + 2, 2, 6, tu); P(-5, hy, 1, 3, tu); P(-1, hy - 1, 3, 1, shade(tu, 0.2)); P(2, hy - 2, 1, 2, '#e05a4a'); }
-  if (cls === 'mage') { P(-5, hy, 9, 1, tuD); P(-3, hy - 1, 6, 1, tr); P(-2, hy - 2, 5, 1, tu); P(-2, hy - 3, 4, 1, tu); P(-3, hy - 4, 3, 1, tu); P(-4, hy - 5, 2, 1, tu); P(-5, hy - 6, 2, 1, tu); P(-6, hy - 6, 1, 1, tr); }
-  if (cls === 'cleric') { P(-4, hy - 1, 7, 3, tu); P(-4, hy + 2, 2, 6, tu); P(-1, hy - 3, 3, 2, tu); P(0, hy - 3, 1, 2, tr); P(-4, hy + 1, 7, 1, tr); }
-  if (cls === 'rogue') { const c = '#2a2a34'; P(-4, hy - 1, 7, 3, c); P(-4, hy + 2, 2, 6, c); P(-5, hy + 1, 1, 3, c); P(0, hy + 4, 3, 2, '#3a3a46'); }
-  if (cls === 'porter') P(-3, hy + 1, 6, 1, '#c9a04a');
-  if (cls === 'gladiator') { const b = '#c08a3a'; P(-4, hy - 1, 7, 3, b); P(-4, hy - 1, 7, 1, '#e8b860'); P(2, hy + 2, 1, 3, b); P(-4, hy + 2, 1, 3, b); P(-4, hy - 3, 7, 2, '#b8322a'); P(-5, hy - 2, 1, 2, '#b8322a'); }
-  if (cls === 'elementalist') { P(-3, hy + 1, 6, 1, '#4ab07a'); P(-1, hy, 2, 1, '#9ae0b0'); P(2, hy + 1, 1, 1, '#9ae0b0'); }
-  if (cls === 'berserker') { const m = '#7a7a82', h = '#e8e2d0'; P(-4, hy - 1, 7, 3, m); P(-4, hy - 1, 7, 1, '#9a9aa4'); P(-5, hy - 3, 1, 3, h); P(-6, hy - 5, 1, 3, h); P(3, hy - 3, 1, 3, h); P(4, hy - 5, 1, 3, h); P(-1, hy + 5, 4, 2, hr); P(1, hy + 4, 2, 1, '#c0392b'); }
-  if (cls === 'dragoon') { const m = '#2f5a6a'; P(-4, hy - 1, 7, 4, m); P(-4, hy - 1, 7, 1, '#4a8a9a'); P(-6, hy - 2, 3, 1, m); P(-7, hy - 3, 2, 1, '#7ad8c8'); P(2, hy + 2, 2, 2, m); P(3, hy + 4, 1, 1, m); P(-4, hy + 3, 1, 3, m); }
-  if (cls === 'paladin') { const m = '#e8e4d8'; P(-4, hy - 1, 7, 8, m); P(-4, hy - 1, 7, 1, '#e8c060'); P(0, hy + 3, 3, 1, '#2a2620'); P(1, hy, 1, 6, '#e8c060'); P(-5, hy + 5, 1, 2, m); }
-  if (cls === 'plaguedoc') { const c = '#1e1c22'; P(-3, hy, 6, 5, '#2a2620'); P(0, hy + 2, 2, 1, '#8ad8ff'); P(3, hy + 3, 2, 1, '#c8b890'); P(4, hy + 4, 3, 1, '#c8b890'); P(6, hy + 5, 1, 1, '#a89870'); P(-4, hy - 4, 7, 4, c); P(-4, hy - 4, 7, 1, '#3a3640'); P(-6, hy - 1, 11, 1, c); P(-4, hy + 1, 1, 6, c); }
-  if (cls === 'necromancer') { const c = '#1e1828'; P(-4, hy - 1, 7, 3, c); P(-4, hy + 2, 2, 6, c); P(-5, hy + 1, 1, 4, c); P(-2, hy + 2, 5, 2, '#3a3048'); P(1, hy + 3, 1, 1, '#c89aff'); P(-4, hy - 1, 7, 1, '#a87ad8'); }
-}
-// 무기: atk 0 = 모으기, 1 = 휘두르기 (-1 = 들고 있기)
-function paintWeapon(P, a, cls, wpn, metal, metalL, atk, pose, B, W, tu) {
-  const base = wpn ? wpn.base : WEAPON_OF[cls], wood = '#6b4a2e', woodL = '#8a6a44', hand = (a.look && a.look.skin) || '#f1c9a5';
-  const arm = (hx, hy) => { P(2, B(-12), 1, Math.max(1, hy - B(-12)), tu); P(hx, hy, 1, 1, hand); };
-  const sway = atk < 0 ? (W.arm || 0) : 0;
-  if (base === 'sword' || base === 'axe' || base === 'club' || base === 'mace') {
-    if (atk === 0) { arm(1, B(-16)); P(0, B(-24), 2, 8, base === 'club' ? wood : metal); P(-1, B(-16), 4, 1, '#c9a04a'); if (base === 'axe') { P(-3, B(-24), 3, 4, metal); P(-3, B(-24), 1, 4, metalL); } if (base === 'mace') { P(-1, B(-25), 4, 3, metal); } return; }
-    if (atk === 1) { arm(5, B(-11)); P(6, B(-12), 9, 2, base === 'club' ? wood : metal); P(6, B(-12), 9, 1, base === 'club' ? woodL : metalL); P(5, B(-13), 1, 4, '#c9a04a'); if (base === 'axe') { P(12, B(-15), 4, 6, metal); P(15, B(-15), 1, 6, metalL); } if (base === 'mace') { P(13, B(-14), 3, 5, metal); } return; }
-    arm(3, B(-9 + sway));
-    if (base === 'sword') { P(3, B(-11 + sway), 1, 2, wood); P(2, B(-12 + sway), 3, 1, '#c9a04a'); P(3, B(-19 + sway), 2, 7, metal); P(4, B(-19 + sway), 1, 6, metalL); P(3, B(-20 + sway), 1, 1, metalL); }
-    if (base === 'axe') { P(4, B(-18 + sway), 1, 10, wood); P(5, B(-19 + sway), 3, 5, metal); P(7, B(-20 + sway), 1, 7, metalL); }
-    if (base === 'club') { P(4, B(-17 + sway), 2, 9, wood); P(3, B(-18 + sway), 3, 3, woodL); }
-    if (base === 'mace') { P(4, B(-15 + sway), 1, 7, wood); P(3, B(-18 + sway), 3, 3, metal); P(4, B(-19 + sway), 1, 1, metalL); P(2, B(-17 + sway), 1, 1, metalL); P(6, B(-17 + sway), 1, 1, metalL); }
-    return;
-  }
-  if (base === 'dagger') {
-    if (atk === 1) { arm(6, B(-10)); P(7, B(-11), 5, 1, metal); P(7, B(-11), 3, 1, metalL); return; }
-    arm(4, B(-9 + sway)); P(5, B(-10 + sway), 3, 1, metal); P(-5, B(-9), 2, 1, metal);
-    return;
-  }
-  if (base === 'lance') {
-    if (atk >= 0) { arm(atk ? 6 : 3, B(-11)); const x0 = atk ? 0 : -4; P(x0, B(-12), 18, 1, wood); P(x0 + 18, B(-13), 3, 3, metal); P(x0 + 20, B(-12), 2, 1, metalL); P(x0 + 4, B(-13), 2, 1, '#7ad8c8'); return; }
-    arm(4, B(-10 + sway)); P(4, B(-25 + sway), 1, 24, wood); P(3, B(-28 + sway), 3, 3, metal); P(4, B(-29 + sway), 1, 1, metalL); P(5, B(-22 + sway), 2, 2, '#7ad8c8');
-    return;
-  }
-  if (base === 'bow') {
-    const bx = 5;
-    arm(4, B(-12));
-    P(bx, B(-18), 1, 2, wood); P(bx + 1, B(-16), 1, 8, wood); P(bx, B(-8), 1, 2, wood); P(bx + 1, B(-16), 1, 1, woodL);
-    if (atk === 0) { P(bx - 4, B(-17), 1, 4, '#e8e2d0'); P(bx - 3, B(-13), 1, 4, '#e8e2d0'); P(bx - 4, B(-12), 10, 1, '#d8d0c0'); P(bx + 5, B(-13), 2, 3, metal); P(bx - 5, B(-13), 1, 3, '#c0392b'); }
-    else P(bx, B(-16), 1, 8, '#e8e2d0');
-    return;
-  }
-  if (base === 'staff') {
-    const cr = CRYSTAL[cls] === undefined ? metal : CRYSTAL[cls] || metal;
-    if (atk >= 0) {
-      // 지팡이를 앞으로 들어 올린 자세
-      arm(5, B(-14));
-      for (let i = 0; i < 14; i++) P(4 + Math.floor(i / 4), B(-2 - i), 1, 1, wood);
-      if (cr === 'skull') { P(7, B(-20), 4, 3, '#e8e4dc'); P(8, B(-19), 1, 1, '#1a1410'); P(10, B(-19), 1, 1, '#1a1410'); }
-      else { P(7, B(-20), 3, 3, cr); P(8, B(-21), 1, 1, '#ffffff'); }
-      return;
-    }
-    arm(4, B(-10 + sway));
-    P(4, B(-21), 1, 21, wood); P(4, B(-21), 1, 3, woodL);
-    if (cr === 'skull') { P(3, B(-25), 4, 4, '#e8e4dc'); P(4, B(-24), 1, 1, '#1a1410'); P(6, B(-24), 1, 1, '#1a1410'); P(4, B(-22), 2, 1, '#9a9488'); }
-    else { P(3, B(-24), 3, 3, cr); P(4, B(-25), 1, 1, '#ffffff'); P(4, B(-23), 1, 1, shade(cr, 0.5)); }
-    return;
-  }
-  arm(3, B(-9 + sway));
-}
-function paintSleep(P, a, sk, hr, tu, tr) {
-  // 침낭 속에서 잔다 (머리가 오른쪽)
-  const roll = shade(tu, -0.15);
-  P(-9, -4, 15, 4, roll); P(-9, -4, 15, 1, shade(roll, 0.25)); P(-9, -1, 15, 1, shade(roll, -0.3)); P(-2, -4, 1, 4, tr);
-  P(-10, -3, 1, 2, shade(roll, -0.2));
-  P(6, -6, 5, 5, sk); P(6, -7, 5, 2, hr); P(10, -6, 1, 3, hr); P(8, -4, 2, 1, '#3a2a20');
-  P(5, -3, 2, 3, '#e8dcb8');
-}
-function drawAdv(ctx, a, t, o = {}) {
-  let pose = 'idle', fr = 0;
-  if (o.sleep) pose = 'sleep';
-  else if (o.sit) pose = 'sit';
-  else if (o.atk) { pose = 'atk'; fr = o.atkF != null ? o.atkF : 1; }
-  else if (o.walk) { pose = 'walk'; fr = Math.floor(t * 8 + (o.ph || 0) * 2) % 4; }
-  const key = 'A|' + advKey(a) + '|' + pose + fr + '|' + (FLASH || '');
-  const s = bake(key, 40, 36, 18, 31, x => paintAdv(x, a, pose, fr));
-  blit(ctx, s);
-}
+// ctx는 두 배 해상도 화면(논리 좌표)
+function drawAdv(ctx, a, t, o = {}) { const [pose, fr] = advPoseOf(t, o); blitHi(ctx, advSprite(a, pose, fr)); }
+// 1:1 캔버스(초상화)에 그대로
+function drawAdvHi(ctx, a, t, o = {}) { const [pose, fr] = advPoseOf(t, o), s = advSprite(a, pose, fr); ctx.drawImage(s.cv, -s.ax, -s.ay); }
 
-/* ───────── 몬스터 ───────── */
+/* ───────── 몬스터 (고해상도 그림은 beasts.js) ───────── */
 // sc: 필드 보스처럼 몸집을 따로 키울 때
 const monSc = (m, sc) => sc || Math.max(1, Math.round(m.scale || 1));
-function monH(id, sc) {
-  const m = MONS[id], s = monSc(m, sc);
-  const h = m.plan === 'quad' ? (m.h || 4) + 5 : m.plan === 'blob' ? (m.nose ? 13 : m.h || 8) : m.plan === 'bug' ? (m.tail ? 15 : 8)
-    : m.plan === 'flyer' ? (m.big ? 24 : 17) : m.plan === 'golem' ? (m.small ? 16 : 18) : m.plan === 'worm' ? 23 : m.plan === 'ghost' ? (m.crown ? 21 : 17)
-    : { shroom: 12, tree: 18, biped: 14 }[m.plan] || 12;
-  return h * s;
+function monBase(id) {
+  const m = MONS[id];
+  if (HUMAN_FOES[id]) return [12, 22];
+  if (m.W) return [m.W, m.H];
+  const h = m.plan === 'quad' ? (m.h || 4) + 5 : m.plan === 'blob' ? (m.nose ? 15 : m.h || 8) : m.plan === 'bug' ? (m.tail ? 15 : 8)
+    : m.plan === 'flyer' ? (m.big ? 24 : 17) : m.plan === 'golem' ? (m.small ? 16 : 19) : m.plan === 'worm' ? 23 : m.plan === 'ghost' ? (m.crown ? 23 : 19)
+    : { shroom: 13, tree: 19, biped: 15 }[m.plan] || 12;
+  const w = m.plan === 'quad' ? (m.len || 8) + 4 : m.plan === 'flyer' ? (m.big ? 22 : 15) : m.plan === 'worm' ? 14 : m.plan === 'tree' ? 13 : m.plan === 'golem' && !m.small ? 16 : m.plan === 'bug' && m.tail ? 16 : 11;
+  return [w, h];
 }
-function monW(id, sc) {
-  const m = MONS[id], s = monSc(m, sc);
-  const w = m.plan === 'quad' ? (m.len || 8) + 3 : m.plan === 'flyer' ? (m.big ? 20 : 15) : m.plan === 'worm' ? 14 : m.plan === 'tree' ? 13 : m.plan === 'golem' && !m.small ? 16 : m.plan === 'bug' && m.tail ? 15 : 11;
-  return w * s;
-}
-const LOOPS = { flyer: 10, worm: 17, ghost: 20 };   // 계속 움직이는 몸은 여러 장으로 나눠 굽는다
+const monH = (id, sc) => monBase(id)[1] * monSc(MONS[id], sc);
+const monW = (id, sc) => monBase(id)[0] * monSc(MONS[id], sc);
+const LOOPS = { flyer: 4, worm: 4, ghost: 4, giantgriffon: 4, dragon: 4, whale: 4 };   // 계속 움직이는 몸
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], sc = monSc(m, o.sc);
-  const tt = t + (o.ph || 0);
-  const fr = Math.floor(tt * 6) % 2, loop = LOOPS[m.plan], q = loop ? Math.floor(tt * 8) % loop : 0;
-  const w = (Math.ceil(monW(id, sc) / sc) + 26) * sc, h = (Math.ceil(monH(id, sc) / sc) + 14) * sc;
-  const key = 'M|' + id + '|' + fr + '|' + q + '|' + sc + '|' + (FLASH || '');
-  const s = bake(key, w, h, Math.round(w / 2), h - 3, x => { if (sc > 1) x.scale(sc, sc); PLANS[m.plan](x, m, fr, q / 8, o); });
-  blit(ctx, s);
+  const m = MONS[id], sc = monSc(m, o.sc), tt = t + (o.ph || 0);
+  const fr = Math.floor(tt * (m.giant ? 3 : 6)) % 2, loop = LOOPS[m.plan], q = loop ? Math.floor(tt * (m.giant ? 5 : 8)) % loop : 0;
+  const [bw, bh] = monBase(id), W = Math.ceil((bw + 34) * sc * HI), H = Math.ceil((bh + 18) * sc * HI);
+  const key = 'MH|' + id + '|' + fr + '|' + q + '|' + sc + '|' + (FLASH || '');
+  blitHi(ctx, bakeHi(key, W, H, Math.round(W / 2), H - 4 * sc, D => paintMonHi(D, id, m, fr, q, sc)));
 }
 
 /* ───────── 마차 ───────── */
