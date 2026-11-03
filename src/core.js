@@ -312,6 +312,7 @@ function stepExp(p, dt) {
   usePotions(p, e, team, dm);
   const fr = blessed('moon') ? 0.75 : 1;
   if (e.area === 'raid') { stepRaid(p, e, team, dm, dt, fr); return; }
+  if (e.area === 'arena') { stepArena(p, e, team, dm, dt, fr); return; }
   if (e.foes.length) { tire(team, FATIGUE.fight * fr * dt); battle(p, e, team, dm, dt); return; }
   if (e.camp) { stepCamp(p, e, team, dm, dt); return; }
   team.forEach(a => { const d = dm[a.id]; a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.008 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
@@ -545,6 +546,7 @@ function battle(p, e, team, dm, dt) {
     f.cd = 1 / f.spd * (0.9 + rnd() * 0.25) * (f.slow > 0 ? 1.6 : 1);
     const live = team.filter(up);
     if (!live.length) break;
+    if (f.heal && rnd() < 0.3) { const ally = foes.filter(x => x.hp > 0).sort((x, y) => x.hp / x.maxHp - y.hp / y.maxHp)[0]; if (ally && ally.hp < ally.maxHp * 0.75) { const h = Math.round(f.heal * (0.9 + rnd() * 0.2)); ally.hp = Math.min(ally.maxHp, ally.hp + h); ev(e, 'fheal', { s: f.uid, d: ally.uid, v: h }); continue; } }
     if ((MONS[f.id].aoe || f.aoe) && rnd() < 0.3) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm)); continue; }
     let tgt = null;
     if (e.taunt) tgt = live.find(x => x.id === e.taunt.aid) || null;
@@ -573,9 +575,10 @@ function kill(p, e, f) {
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04); });
   const harvest = blessed('harvest') ? 1.15 : 1;
-  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0)) * harvest);
+  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0)) * harvest);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
-  ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0 });
+  ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0, adv: f.adv || null });
+  if (f.pvp) return;   // 투기장: 전리품 없음
   const luck = Math.max(0, ...team.map(a => TR(a).luck || 0));
   const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck) * harvest, fbm = f.fb ? 3 : 1;
   for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
@@ -676,6 +679,7 @@ function dropOver(p, e) {
 }
 function down(p, e, a, f) {
   a.hp = 0; a.down = true;
+  if (e.area === 'arena') { ev(e, 'down', { d: a.id }); log(`${a.name}이(가) 모래판에 쓰러졌다.`, 'bad'); changed(); return; }   // 투기장에서는 다치지 않는다
   const sev = hurtRoll(f);
   injure(a, sev);
   S.stats.downs = (S.stats.downs || 0) + 1;
@@ -690,6 +694,7 @@ function down(p, e, a, f) {
 // 모두 쓰러지면: 길드 구조대가 데려오지만 짐은 잃는다
 function wipe(p) {
   const e = p.exp, F = FIELDS[e.field];
+  if (e.area === 'arena') { arenaWipe(p); return; }
   teamOf(p).forEach(a => {
     injure(a, Math.max(2, a.inj ? a.inj.sev : 2));
     if (rnd() < 0.25 && a.inj.sev < 3) injure(a, a.inj.sev + 1);
@@ -714,7 +719,8 @@ function arrive(p) {
   team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; });
   team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 상단을 떠났다.'));
   const n = Object.values(got).reduce((s, q) => s + q, 0);
-  log(`${p.name}이(가) 돌아왔다. 부속품 ${n}개(약 ${val}G어치)${e.gbag.length ? `, 장비 ${e.gbag.length}개` : ''}, 처치 ${e.kills}마리.`, 'good');
+  if (e.area === 'arena') log(`${p.name}이(가) 투기장에서 돌아왔다.`);
+  else log(`${p.name}이(가) 돌아왔다. 부속품 ${n}개(약 ${val}G어치)${e.gbag.length ? `, 장비 ${e.gbag.length}개` : ''}, 처치 ${e.kills}마리.`, 'good');
   if (hurt.length) log(`부상자 ${hurt.map(a => a.name).join(', ')}이(가) ${S.bld.temple ? '신전 치료실로 옮겨졌다' : '여관 방에 눕혀졌다. 신전이 있으면 훨씬 빨리 낫는다'}.`, 'bad');
   if (hurt.length && !S.flags.firstInj) { S.flags.firstInj = 1; queueModal({ title: '첫 부상자', body: STORY.firstInj }); }
   HOOKS.toast(`${p.name} 귀환 · 부속품 ${n}개${e.gbag.length ? ` · 장비 ${e.gbag.length}개` : ''}${hurt.length ? ` · 부상 ${hurt.length}명` : ''}`);
@@ -766,6 +772,7 @@ const raidReady = () => S.fame >= GUILD_RAID.fame && living().length >= GUILD_RA
 // 필드는 상단 랭크가 오르면 하나씩 열린다 (랭크 F = 평원, E = 원시림 …)
 function isUnlocked(fid) {
   if (fid === 'alley') return !S.flags.guildDown && raidReady();
+  if (fid === 'sewer') return (S.rank || 0) >= UNDER_RANK;
   const F = FIELDS[fid];
   if (F && F.giant) { const r = raidRec(F.giant); return !!(r && !r.done); }
   return !!F && !F.raid && (S.rank || 0) >= F.no - 1;

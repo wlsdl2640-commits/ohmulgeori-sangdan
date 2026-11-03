@@ -99,7 +99,7 @@ function drawFrame(now, vt) {
   if (id === 'forest' && !bg.tall) { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
   if (bg.under && !bg.tall) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
   const lights = [], post = [];
-  const dark = bg.under ? 0.34 : T.dark[1], dcol = bg.under ? '#05040a' : T.dark[0];
+  const dark = bg.under ? (bg.dark != null ? bg.dark : 0.34) : T.dark[1], dcol = bg.under ? '#05040a' : T.dark[0];
   if (e) fieldScene(w, t, p, e, lights, post, dark, bg); else townScene(w, t, p, lights, post, dark);
   w.save(); w.translate(0, oy); drawFore(w, id, V.scroll); w.restore();
   for (const l of bgLights(id, V.scroll, dark)) lights.push({ x: l.x, y: l.y + oy, r: l.r, c: l.c, glow: l.glow, flick: l.flick });
@@ -242,8 +242,10 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   for (const gh of V.ghosts) {
     const k = t - gh.t0, fall = Math.min(1, k / 0.32), ang = fall * fall * Math.PI / 2, fade = k < 0.45 ? 1 : Math.max(0, 1 - (k - 0.45) / 0.45);
     draws.push({ y: gh.y, f: g => {
-      g.save(); g.globalAlpha = fade; g.translate(gh.x, gh.y); g.rotate(gh.face < 0 ? ang : -ang); g.scale(gh.face, 1);
-      FLASH = k < 0.1 ? '#ffffff' : null; drawMon(g, gh.id, 0, { sc: gh.sc, z: gh.z }); FLASH = null; g.restore();
+      g.save(); g.globalAlpha = fade; g.translate(gh.x, gh.y);
+      if (gh.adv) { g.scale(gh.face, 1); FLASH = k < 0.1 ? '#ffffff' : null; drawAdv(g, gh.adv, 0, { side: 1, down: 1, z: gh.z }); }
+      else { g.rotate(gh.face < 0 ? ang : -ang); g.scale(gh.face, 1); FLASH = k < 0.1 ? '#ffffff' : null; drawMon(g, gh.id, 0, { sc: gh.sc, z: gh.z }); }
+      FLASH = null; g.restore();
       if (k > 0.3) for (let i = 0; i < 6; i++) { const a = i * 1.05 + gh.x, u = (k - 0.3) / 0.6; R(g, Math.round((gh.x + Math.cos(a) * (6 + u * 18)) * 2) / 2, Math.round((gh.y - 6 - Math.sin(a) * 0.5 * (6 + u * 14) - u * 10) * 2) / 2, 2 - u, 2 - u, 'rgba(220,210,200,' + (0.7 * (1 - u)).toFixed(2) + ')'); }
     } });
   }
@@ -256,7 +258,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       shadowAt(g, 0, 0, Math.min(46, eW(f) * 0.45 * z / ZE));
       g.scale(-dir, 1);
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
-      drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z });
+      if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 모험가 옆모습
+      else drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z });
       FLASH = null; g.restore();
     } });
     if (!fighting) return;
@@ -446,7 +449,7 @@ function events(e, pos, t, team, p) {
       list.forEach(id => { const aq = at('a' + id); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.7, c: col }); });
     } else if (x.type === 'kill') {
       const q = at('f' + x.d);
-      if (q) V.ghosts.push({ id: x.id, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });
+      if (q) V.ghosts.push({ id: x.id, adv: x.adv || null, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });
     } else if (x.type === 'loot' || x.type === 'gear') {
       const gh = V.ghosts[V.ghosts.length - 1], q = gh ? [gh.x, gh.y] : [160, 180];
       V.fx.push({ k: 'icon', id: x.type === 'gear' ? { icon: GTYPES[x.base].icon, c: TIER_COLORS[x.t] } : x.id, x: q[0] + (x.type === 'gear' ? 6 : 0), y: q[1] - 10, t0: t + 0.3, d: x.type === 'gear' ? 1.4 : 0.9 });
@@ -457,6 +460,13 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'lvl') {
       const aq = at('a' + x.d);
       if (aq) { V.fx.push({ k: 'levelup', x: aq[0], y: aq[1], t0: t, d: 1.4 }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 14, s: 'LEVEL UP', c: '#ffd84a', t0: t + 0.1, d: 1.3, big: 1 }); }
+    } else if (x.type === 'fheal') {
+      const fq = at('f' + x.d);
+      if (fq) { V.fx.push({ k: 'heal', x: fq[0], y: fq[1], t0: t, d: 0.7, c: '#8af08a' }); V.fx.push({ k: 'num', x: fq[0], y: fq[1] - 24, s: '+' + x.v, c: '#8af08a', t0: t, d: 0.8 }); }
+    } else if (x.type === 'arena') {
+      V.fx.push({ k: 'num', x: AW / 2, y: 96, s: x.win ? 'VICTORY' : 'DEFEAT', c: x.win ? '#ffd84a' : '#ff6a5a', t0: t + 0.2, d: 2.2, big: 1 });
+      callout(AW / 2, 120, x.win ? '승리! 관중이 환호한다' : '패배… 들것에 실려 나간다', 'boss');
+      if (x.win) V.shake = 3;
     } else if (x.type === 'mastery') {
       const aq = at('a' + x.s), s = SKILLS[x.id];
       if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 14, `${s.name} 숙련 ${x.lv}`, 'mast'); V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t + 0.2, d: 0.8, c: '#8af0c0' }); }
@@ -568,6 +578,8 @@ function logEvent(x, e, p) {
   if (x.type === 'gear') return add(`장비 <b class="lg-l">${esc(GTYPES[x.base].name)}</b> 획득!`, 'loot');
   if (x.type === 'down') return add(`${ally(jo(A(x.d), '이', '가'))} 쓰러졌습니다. 들것에 싣습니다.`, 'bad');
   if (x.type === 'lvl') { const a = advById(x.d); if (a) add(`${ally(A(x.d))} 레벨 업! LV ${a.lv}`, 'lvl'); return; }
+  if (x.type === 'fheal') return add(`${foe(jo(Fn(x.s), '이', '가'))} ${foe(Fn(x.d))}의 HP를 ${num(x.v, 'g')} 회복시켰습니다.`, 'dim');
+  if (x.type === 'arena') return add(x.win ? '<i class="lg-c">승리!</i> 투기장의 관중이 환호합니다.' : '패배했습니다. 들것에 실려 모래판을 나갑니다.', x.win ? 'lvl' : 'bad');
   if (x.type === 'mastery') { const s = SKILLS[x.id]; if (s) add(`${ally(A(x.s))}의 「${esc(s.name)}」 숙련도가 ${x.lv}단계가 되었습니다. (위력 +${x.lv * 3}%)`, 'lvl'); return; }
   if (x.type === 'spawn') { const fs = e.foes.map(f => f.name || MONS[f.id].name); if (fs.length) add(`${x.boss ? '<i class="lg-c">보스!</i> ' : x.amb ? '<i class="lg-c">기습!</i> ' : ''}${fs.map(foe).join(', ')} 출현`, x.boss ? 'warn' : ''); return; }
   if (x.type === 'clear') return add('전투에서 이겼습니다.', 'dim');

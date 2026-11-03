@@ -202,7 +202,9 @@ function buildUnder(kind) {
     nest:   { wall: '#4a4038', line: '#3a322c', floor: '#5a4a3a', fl: '#4a3a2c' },
     icetemple: { wall: '#6a98b8', line: '#4a7898', floor: '#a8c8dc', fl: '#8ab0c8', torch: '#8ad8ff' },
     tomb:   { wall: '#a8844e', line: '#7a5a32', floor: '#c8a468', fl: '#a8844e' },
-    alley:  { wall: '#2a2628', line: '#1a1618', floor: '#3a3438', fl: '#2a2628', torch: '#e04a3a' }
+    alley:  { wall: '#2a2628', line: '#1a1618', floor: '#3a3438', fl: '#2a2628', torch: '#e04a3a' },
+    sewer:  { wall: '#2e3a34', line: '#1e2822', floor: '#3a4a44', fl: '#2e3a34', torch: '#f0b050' },
+    arena:  { wall: '#4a4038', line: '#36302a', floor: '#c8a86a', fl: '#b09258', torch: '#f0a03a' }
   }[kind];
   const [mid, m] = mkCanvas(480, 128);
   R(m, 0, 0, 480, 104, pal.wall);
@@ -217,6 +219,21 @@ function buildUnder(kind) {
   if (kind === 'icetemple') { for (let x = 0; x < 480; x += 7) { const h = 3 + Math.floor(r() * 10); R(m, x, 0, 2, h, '#e8f6ff'); R(m, x, h, 1, 2, '#e8f6ff'); } for (let x = 40; x < 480; x += 100) { R(m, x, 30, 10, 74, '#c8e4f4'); R(m, x + 2, 30, 2, 74, '#ffffff'); R(m, x - 2, 26, 14, 4, '#e8f6ff'); } }
   if (kind === 'tomb') { for (let x = 16; x < 480; x += 60) { R(m, x, 40, 3, 3, '#5a3a1a'); R(m, x + 6, 38, 2, 6, '#5a3a1a'); R(m, x + 11, 40, 4, 2, '#5a3a1a'); R(m, x + 2, 50, 10, 1, '#5a3a1a'); } for (let x = 70; x < 480; x += 150) { R(m, x, 84, 30, 16, '#8a6a3a'); R(m, x + 2, 82, 26, 2, '#c8a468'); R(m, x + 12, 86, 6, 10, '#f0c24a'); } }
   if (kind === 'alley') { for (let x = 10; x < 480; x += 55) { R(m, x, 86, 14, 14, '#5e4630'); R(m, x + 1, 87, 12, 1, '#7a5a3a'); R(m, x + 6, 86, 1, 14, '#4a3420'); } for (let x = 30; x < 480; x += 90) { R(m, x, 30, 18, 14, '#16141a'); R(m, x + 2, 32, 6, 4, '#3a2a2a'); } }
+  if (kind === 'sewer') {
+    // 벽을 따라 지나는 관, 쇠창살 배수구, 물때
+    R(m, 0, 18, 480, 5, '#4a4a52'); R(m, 0, 18, 480, 1, '#6a6a72'); R(m, 0, 22, 480, 1, '#2a2a30'); for (let x = 20; x < 480; x += 60) { R(m, x, 16, 4, 9, '#3a3a42'); R(m, x + 1, 16, 1, 9, '#5a5a62'); }
+    for (let x = 36; x < 480; x += 96) { R(m, x, 70, 18, 12, '#141a16'); for (let i = 0; i < 4; i++) R(m, x + 2 + i * 4, 70, 2, 12, '#3a4a44'); R(m, x - 1, 69, 20, 1, '#4a5a54'); }
+    for (let i = 0; i < 40; i++) { const x = Math.floor(r() * 480), y = 24 + Math.floor(r() * 70); R(m, x, y, 1 + Math.floor(r() * 2), 3 + Math.floor(r() * 10), '#243028'); }
+    for (let x = 10; x < 480; x += 37) if (r() < 0.6) { R(m, x, 98 - Math.floor(r() * 3), 3, 2, '#5a7a3a'); R(m, x + 1, 96, 1, 1, '#8aa84a'); }
+  }
+  if (kind === 'arena') {
+    // 관중석: 난간 위로 어두운 사람들, 깃발, 아치
+    R(m, 0, 0, 480, 56, '#2a2420'); for (let y = 8; y < 56; y += 12) { R(m, 0, y, 480, 2, '#3a322c'); for (let x = (y / 12) % 2 ? 6 : 0; x < 480; x += 12) { const h = 5 + Math.floor(r() * 3); R(m, x + 2, y - h, 5, h, '#1a1614'); R(m, x + 3, y - h - 2, 3, 2, '#1a1614'); if (r() < 0.2) R(m, x + 4, y - h - 1, 1, 1, ['#f0c060', '#e04040', '#60c0f0'][Math.floor(r() * 3)]); } }
+    R(m, 0, 56, 480, 4, '#5a4a3a'); R(m, 0, 56, 480, 1, '#7a6a5a');
+    for (let x = 24; x < 480; x += 72) { R(m, x, 60, 2, 44, '#2a2420'); R(m, x - 8, 60, 18, 3, '#2a2420'); for (let i = 0; i < 5; i++) R(m, x - 6 + i * 3, 63, 1, 10 + (i % 2) * 2, '#2a2420'); }
+    for (let x = 60; x < 480; x += 144) { R(m, x, 62, 10, 16, '#a82a2a'); R(m, x + 2, 64, 6, 10, '#f0c24a'); R(m, x, 78, 10, 1, '#6a1818'); R(m, x + 4, 79, 2, 3, '#a82a2a'); }
+    for (let x = 0; x < 480; x += 7) R(m, x, 100, 4, 1, '#5a5048');
+  }
   // 횃불 받침 (불꽃은 따로 그린다)
   for (let x = 40; x < 480; x += 120) { R(m, x, 52, 2, 9, '#5e4630'); R(m, x - 1, 51, 4, 2, '#3a2a1e'); }
   const [gr, g] = mkCanvas(480, 28);
@@ -225,10 +242,12 @@ function buildUnder(kind) {
   for (let y = 7; y < 28; y += 7) R(g, 0, y, 480, 1, pal.fl);
   R(g, 0, 0, 480, 1, shade(pal.floor, 0.2));
   if (kind === 'mine') { R(g, 0, 10, 480, 1, '#8a8a90'); R(g, 0, 16, 480, 1, '#8a8a90'); for (let x = 2; x < 480; x += 8) R(g, x, 9, 3, 9, '#5e4630'); }
+  if (kind === 'sewer') { R(g, 0, 14, 480, 14, '#1e3a3a'); R(g, 0, 14, 480, 1, '#2a4a4a'); for (let x = 0; x < 480; x += 23) { R(g, x + 3, 18 + (x / 23) % 3, 9, 1, '#2e5a5a'); R(g, x + 14, 23 - (x / 23) % 2, 6, 1, '#2e5a5a'); } R(g, 0, 13, 480, 1, '#4a5a54'); }
+  if (kind === 'arena') { for (let i = 0; i < 90; i++) R(g, Math.floor(r() * 480), Math.floor(r() * 28), 2, 1, i % 2 ? '#d8b878' : '#a88a52'); R(g, 0, 0, 480, 1, '#8a7a4a'); }
   const [fore, fo] = mkCanvas(480, 128);
   for (let x = 90; x < 480; x += 200) { R(fo, x, 0, 12, 128, shade(pal.wall, -0.45)); R(fo, x, 0, 2, 128, shade(pal.wall, -0.3)); R(fo, x - 2, 0, 16, 6, shade(pal.wall, -0.5)); }
   const torch = pal.torch || '#f0a03a';
-  return { under: true, wall: pal.wall, torch, mid, gr, foreTall: fore, ambient: 'dust',
+  return { under: true, wall: pal.wall, torch, mid, gr, foreTall: fore, ambient: 'dust', dark: kind === 'arena' ? 0.14 : undefined,
     emit(g, off, t) { for (let x = 40; x < 480; x += 120) { const xx = ((x - off) % 480 + 480) % 480; for (const tx of [xx, xx - 480]) { if (tx < -8 || tx > VW + 8) continue; const fl = Math.floor(t * 9 + x) % 3; R(g, tx - 1, 47 - fl, 4, 4 + fl, torch); R(g, tx, 46 - fl, 2, 3, '#f7e04a'); R(g, tx, 48, 2, 2, '#fff2c0'); } } },
     lights(off) { const out = []; for (let x = 40; x < 480; x += 120) { const xx = ((x - off) % 480 + 480) % 480; for (const tx of [xx, xx - 480]) if (tx > -40 && tx < VW + 40) out.push({ x: tx + 1, y: 48, r: 34, c: torch, glow: 1 }); } return out; } };
 }
@@ -285,7 +304,7 @@ function getBg(id) {
   const make = { plains: buildPlains, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
     cellar: () => buildUnder('cellar'), cave: () => buildUnder('cave'), mine: () => buildUnder('mine'),
     valley: buildValley, snow: buildSnow, desert: buildDesert, front: buildFront,
-    nest: () => buildUnder('nest'), icetemple: () => buildUnder('icetemple'), tomb: () => buildUnder('tomb'), alley: buildAlley }[id] || buildPlains;
+    nest: () => buildUnder('nest'), icetemple: () => buildUnder('icetemple'), tomb: () => buildUnder('tomb'), alley: buildAlley, sewer: () => buildUnder('sewer'), arena: () => buildUnder('arena') }[id] || buildPlains;
   return (BG[id] = make());
 }
 function tile(ctx, img, off, y) {

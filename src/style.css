@@ -379,3 +379,11 @@ html, body { overflow-x: hidden; }
 .part { display: grid; gap: 12px; min-width: 0; }
 .li.mrow { padding: 5px 8px; gap: 8px; }
 .mrow .btns { flex: none; justify-content: flex-end; }
+/* ───────── 지하수로 ───────── */
+.card.under { text-align: left; border-color: #4a3a5a; background: linear-gradient(#1a1a26, #141420); }
+.card.under:not(.dim) .h { color: #c8a8ff; }
+.ubadge { flex: none; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #c8a8ff; background: #241e30; border: 2px solid #4a3a5a; }
+.coin { color: #f0c24a; }
+.mem { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px 2px 2px; margin: 2px 4px 2px 0; font-size: 11px; line-height: 1.2; background: var(--panel-2); border: 1px solid var(--line); }
+.mem img { width: 23px; height: 28px; image-rendering: pixelated; background: #0e1118; border: 1px solid #000; }
+.mem small { color: var(--ink-3); }

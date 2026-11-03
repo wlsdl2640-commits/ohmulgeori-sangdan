@@ -770,6 +770,7 @@ function checkUnlocks() {
 function promoWhy(a, cls) {
   const t = jobTier(cls), Q = JOB_REQ[t];
   if (!jobOpen(t)) return `상단 명성 ${JOB_FAME[t]}에 열려요`;
+  if (cls === 'gladiator' && arenaScore() < GLADIATOR_SCORE) return `투기장 랭킹 점수 ${fmt(GLADIATOR_SCORE)} 필요 (지금 ${fmt(arenaScore())})`;
   if (!S.bld.training) return '훈련소가 필요해요';
   if (a.lv < Q.lv) return `Lv${Q.lv}부터`;
   if ((a.rank || 0) < Q.rank) return `${LICENSE[Q.rank].name} 라이선스 필요`;
@@ -810,7 +811,7 @@ function kingArrive() {
   if (wants.length < 2) wants = D.wants.filter(it => ITEMS[it] && !ITEMS[it].raid).slice(0, 3);
   const pick = wants.sort(() => rnd() - 0.5).slice(0, 3);
   const order = pick.map(it => ({ it, n: Math.max(1, Math.round(Math.min(40, Math.max(2, 700 / ITEMS[it].v)) * (1 + fv * 0.2))), got: 0 }));
-  S.king.visit = { k: id, until: today() + 3, order, m: FAVOR[fv].m, earned: 0 };
+  S.king.visit = { k: id, until: today() + 3, order, m: FAVOR[fv].m, earned: 0, goods: kingGoods(D) };
   log(`${D.name}의 상단이 오물거리를 찾아왔다. 사흘 동안 물건을 사 간다.`, 'good');
   HOOKS.toast(`${D.name} 상단 방문 · 상단 창의 교역에서 팔 수 있어요`);
   queueModal({ title: `${D.name} 상단 방문`, body: [D.desc, `이번에 사 가려는 것: ${order.map(o => `${ITEMS[o.it].name} ${o.n}개`).join(', ')}. 기준가의 ${Math.round(FAVOR[fv].m * 100)}%를 쳐준다.`, '사흘 안에 상단 창의 「왕국 교역」에서 팔 수 있다. 주문을 다 채우면 왕국과 더 가까워진다.'] });
@@ -986,6 +987,7 @@ function onNewDay(k) {
   researchDay(k);
   raidDay();
   kingDay(k);
+  underTick();
   if (k >= S.settleDay) { settle(); S.settleDay += MONTH_DAYS; }
   if (!S.flags.guildDown && !S.flags.raidTold && raidReady()) { S.flags.raidTold = 1; queueModal({ title: '시민회의 부탁', body: STORY.guildReady }); }
   changed();
@@ -1018,6 +1020,7 @@ function step(dt) {
   S.t += dt;
   stepWorld(dt);
   checkUnlocks();
+  underTick();
   const d1 = today();
   for (let k = d0 + 1; k <= d1; k++) onNewDay(k);
 }
@@ -1073,7 +1076,7 @@ function loadFrom(v) {
   } catch (_) { return false; }
 }
 // 의상·숙련도 칸 (없으면 만든다)
-function migrateS() { S.skins = S.skins || {}; S.advs.forEach(a => { a.sm = a.sm || {}; if (a.skin && !COSTUMES[a.skin]) a.skin = null; }); }
+function migrateS() { S.skins = S.skins || {}; S.advs.forEach(a => { a.sm = a.sm || {}; if (a.skin && !COSTUMES[a.skin]) a.skin = null; }); migrateU(); }
 // 새 전투 화면 안내 (한 번만)
 function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ title: '전투 화면이 새로워졌어요', body: STORY.bview }); } }
 // v0.6: 본부 화면 안내 (한 번만)

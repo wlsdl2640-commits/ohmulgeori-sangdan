@@ -80,7 +80,8 @@ PANELS.co_king = () => {
     const rows = v.order.map(o => { const have = S.inv[o.it] || 0, left = o.n - o.got, one = Math.round(ITEMS[o.it].v * v.m); return `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <b class="num">${o.got}/${o.n}</b></span><span class="sub">하나에 ${fmt(one)}G (기준가 ${ITEMS[o.it].v}G) · 창고 ${have}</span></div><button type="button" class="btn sm gold" data-act="kingsell" data-it="${o.it}"${left > 0 && have > 0 ? '' : ' disabled'}>${left <= 0 ? '다 채움' : have ? `${Math.min(left, have)}개 팔기` : '창고에 없음'}</button></div>`; }).join('');
     return `<div class="card hl" style="--kc:${D.c}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} 상단</div><div class="sub">${D.desc}</div></div></div>
       <div class="sub gold-t">${dayLabel(v.until)}까지 머물러요 (D-${v.until - today()}) · 기준가의 ${Math.round(v.m * 100)}% · 지금까지 ${fmt(v.earned)}G${v.full ? ' · <span class="ok-t">주문 완료</span>' : ''}</div>
-      <div class="list">${rows}</div></div>`;
+      <div class="list">${rows}</div>
+      ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>여기서만 파는 스킬북도 있어요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].book ? SKILLS[ITEMS[o.it].book].desc : `창고 ${S.inv[o.it] || 0}`}</span></div><button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button></div>`).join('')}</div>` : ''}</div>`;
   })() : `<div class="card"><div class="sub">지금은 찾아온 왕국 상단이 없어요. ${S.king ? `${dayLabel(S.king.next)}쯤 다음 상단이 올 거예요.` : ''}</div></div>`;
   const list = KINGDOM_IDS.map(k => { const D = KINGDOMS[k], open = kingOpen(k), f = favorOf(k), t = favorTier(f), nx = FAVOR[t + 1];
     return `<div class="card${open ? '' : ' dim'}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} <small>${FAVOR[t].name}</small></div><div class="sub">${open ? `호감 ${Math.floor(f)}${nx ? `/${nx.at}` : ''} · 값 ${Math.round(FAVOR[t].m * 100)}%` : `${FIELDS[D.need].name}에 가 보면 교역을 시작해요`}</div></div></div>
@@ -369,7 +370,7 @@ function partyCard(p) {
   const fields = ALL_FIELDS.filter(f => f !== 'alley' || isUnlocked('alley')).map(fid => {
     const F = FIELDS[fid], ok = isUnlocked(fid), fs = S.fields[fid];
     const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length;
-    const sub = F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : ok ? `Lv${F.lv}~${F.lv + 12} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}` : `상단 ${RANKS[F.no - 1].name}랭크에 열림`;
+    const sub = F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : ok ? `Lv${F.lv}~${F.lv + 12} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}` : (F.unlock || `상단 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열림`);
     return `<button type="button" class="fbtn${dest === fid ? ' on' : ''}${F.raid ? ' raid' : ''}" data-act="dest" data-id="${p.id}" data-f="${fid}"${ok ? '' : ' disabled'}><span>${F.name}</span><small>${sub}</small></button>`;
   }).join('');
   const last = p.last ? `<div class="sub muted">지난 원정: ${FIELDS[p.last.field].name}, 처치 ${p.last.kills}마리, 부속품 ${Object.values(p.last.got).reduce((s, q) => s + q, 0)}개${p.last.gear ? `, 장비 ${p.last.gear}개` : ''}</div>` : '';
