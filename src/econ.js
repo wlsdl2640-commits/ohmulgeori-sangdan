@@ -14,7 +14,7 @@ function blankState(company) {
     company: (company || '').trim().slice(0, 12) || '등불 상단',
     gold: 1000, fame: 0, rank: 0, unlocked: [],
     inv: { pot_s: 6, mp_s: 2, herb: 6 },
-    advs: [], parties: [], gear: [],
+    advs: [], parties: [], gear: [], skins: {},
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
@@ -1052,7 +1052,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); notesB(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); saveGame(); return true; }
     if (![2, 3, 4, 5].includes(v.v)) return false;
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {};
@@ -1067,12 +1067,36 @@ function loadFrom(v) {
     if (old < 5) { migrate5(); saveGame(); }
     S.relics = S.relics || []; S.king = S.king || { favor: {}, visit: null, next: today() + 2 };
     if (!S.raid) raidMonth(true);
+    migrateS();
     notesB();
     return true;
   } catch (_) { return false; }
 }
+// 의상·숙련도 칸 (없으면 만든다)
+function migrateS() { S.skins = S.skins || {}; S.advs.forEach(a => { a.sm = a.sm || {}; if (a.skin && !COSTUMES[a.skin]) a.skin = null; }); }
 // 새 전투 화면 안내 (한 번만)
 function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ title: '전투 화면이 새로워졌어요', body: STORY.bview }); } }
 // v0.6: 본부 화면 안내 (한 번만)
 function notes6() { if (!S.flags.v06) { S.flags.v06 = 1; S.modals.push({ title: 'v0.6 업데이트', body: STORY.v06 }); } }
 function resetGame() { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} S = null; }
+
+/* ───────── 의상 ───────── */
+// 한 번 사면 상단의 모든 모험가가 입을 수 있다
+function buySkin(id) {
+  const C = COSTUMES[id];
+  if (!C) return '';
+  S.skins = S.skins || {};
+  if (S.skins[id]) return '이미 가진 의상이에요.';
+  if (S.gold < C.price) return `${fmt(C.price)}G가 필요해요.`;
+  S.gold -= C.price; S.skins[id] = 1;
+  log(`「${C.name}」 의상을 샀다. (-${fmt(C.price)}G)`, 'good');
+  return `「${C.name}」 의상을 샀어요. 이제 누구든 입을 수 있어요.`;
+}
+function wearSkin(aid, id) {
+  const a = advById(aid);
+  if (!a) return '';
+  if (id && !COSTUMES[id]) return '';
+  if (id && !(S.skins || {})[id]) return '아직 사지 않은 의상이에요.';
+  a.skin = id || null;
+  return id ? `${a.name}이(가) 「${COSTUMES[id].name}」 의상을 입었어요.` : `${a.name}이(가) 평소 옷으로 갈아입었어요.`;
+}

@@ -51,7 +51,7 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 function boot() {
-  applyPx();
+  applyPx(); applyFrames();
   initView($('cv'));
   initHQ($('hq'));
   bindUI();

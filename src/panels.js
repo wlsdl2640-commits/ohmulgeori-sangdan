@@ -282,7 +282,7 @@ function advDetail(a) {
   const promo = nextJobs(a.cls).map(c => { const why = promoWhy(a, c), Q = JOB_REQ[jobTier(c)]; return `<div class="li job"><img class="por" src="${portrait(Object.assign({}, a, { cls: c }))}" alt=""><div class="grow"><span>${CLASSES[c].name} <span class="muted">· ${jobTier(c)}차 · 기본 스킬 ${SKILLS[CLASSES[c].innate].name}</span></span><span class="sub">${CLASSES[c].desc}</span><span class="sub gold-t">${trText(c)}</span>${why ? `<span class="sub red-t">${why}</span>` : ''}</div><button type="button" class="btn sm gold" data-mact="promo" data-c="${c}"${why ? ' disabled' : ''}>전직 ${fmt(Q.fee)}G</button></div>`; }).join('');
   const post = isHealer(a.cls) && S.bld.temple ? `<div class="li"><div class="grow"><span>신전 치유사</span><span class="sub">${a.post ? '신전에서 환자를 돌보고 있어요. 원정에는 나가지 않아요.' : `신전에 두면 환자를 하루 +${Math.round(healPow(a))}씩 치료해요.${SURGEONS.includes(a.cls) ? ' 수술도 해요.' : ''}`}</span></div><button type="button" class="btn sm${a.post ? '' : ' gold'}" data-mact="post"${idle && !a.inj && (a.post || healers().length < healerSlots()) ? '' : ' disabled'}>${a.post ? '내리기' : `배치 ${healers().length}/${healerSlots()}`}</button></div>` : '';
   return `
-    <div class="row"><img class="por big" src="${portrait(a)}" alt=""><div class="grow"><div class="h">${CLASSES[a.cls].name} Lv${a.lv}${tierTag(a.cls)} ${licTag(a)}${a.hero ? ' <span class="tag gold-t">용사</span>' : ''}${injTag(a)}</div>${trText(a.cls) ? `<div class="sub gold-t">${trText(a.cls)}</div>` : ''}<div class="sub">경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0} · 개인 명성 ${Math.floor(a.pf || 0)}</div><div class="bar xp"><i style="width:${pct(a.exp, expNeed(a.lv))}%"></i></div></div></div>
+    <div class="card"><div class="h">${esc(a.name)} <span class="muted">· ${CLASSES[a.cls].name} Lv${a.lv}</span>${tierTag(a.cls)} ${licTag(a)}${a.hero ? ' <span class="tag gold-t">용사</span>' : ''}${injTag(a)}</div>${trText(a.cls) ? `<div class="sub gold-t">${trText(a.cls)}</div>` : ''}<div class="sub">경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0} · 개인 명성 ${Math.floor(a.pf || 0)}</div></div>
     ${idle ? '' : '<div class="sub red-t">원정 중에는 보기만 할 수 있어요.</div>'}
     ${a.inj ? `<div class="sec"><b>부상</b><span>${S.bld.temple ? '신전' : '여관 방'}에서 치료 중</span></div><div class="list">${careRow(a, healPlan(), 'mact')}</div>` : ''}
     ${(a.sleep || 0) >= SLEEP.block ? `<div class="sub warn">숙면 피로 ${Math.round(a.sleep)} · ${SLEEP.block} 아래로 내려갈 때까지 여관에서 자야 원정에 나갈 수 있어요.</div>` : ''}
@@ -304,10 +304,11 @@ function advDetail(a) {
     ${idle ? '<div class="btns"><button type="button" class="btn sm red" data-mact="fire">내보내기</button></div>' : ''}`;
 }
 function openAdv(aid) { if (advById(aid)) openWin('advd', { aid }); }
-PANELS.advd = w => { const a = advById(w.aid); return a ? advDetail(a) : '<div class="card"><div class="sub">상단을 떠난 모험가예요.</div></div>'; };
+PANELS.advd = w => { const a = advById(w.aid); if (!a) return '<div class="card"><div class="sub">상단을 떠난 모험가예요.</div></div>'; heroStart(); return `<section data-part="hero" class="part">${heroPanel(a)}</section><section data-part="det" class="part">${UI.heroDet === false ? '<div class="sub muted center">돋보기를 누르면 능력치·장비·스킬을 자세히 볼 수 있어요.</div>' : advDetail(a)}</section>`; };
 function advAct(aid, b) {
   const k = b.dataset.mact, x = advById(aid);
   if (!x) return;
+  if (heroAct(aid, b)) return;
   let m = '';
   if (k === 'train') m = trainStat(aid, b.dataset.k);
   if (k === 'eq') m = equip(aid, +b.dataset.g);
@@ -468,11 +469,25 @@ function renderPanel(force) {
   if (force || html !== UI.html) {
     // 같은 창을 다시 그릴 때는 펼쳐 둔 목록을 그대로 둔다
     const box = $('panel-in'), open = key === UI.winKey ? [...box.querySelectorAll('details')].map(d => d.open) : [];
-    box.innerHTML = html; UI.html = html; UI.winKey = key;
+    if (!(key === UI.winKey && !force && patchParts(box, html))) { box.innerHTML = html; UI.parts = Object.fromEntries([...box.children].filter(e => e.dataset.part).map(e => [e.dataset.part, e.outerHTML])); }
+    UI.html = html; UI.winKey = key;
     box.querySelectorAll('details').forEach((d, i) => { if (open[i]) d.open = true; });
     if (top.id === 'advd') $('win-title').textContent = winTitle(top);
   }
   live();
+}
+// 조각(data-part)으로 나뉜 창은 바뀐 조각만 갈아 끼운다 (애니메이션 캔버스·가로 스크롤을 지킨다). 못 하면 false
+function patchParts(box, html) {
+  const olds = [...box.children].filter(e => e.dataset.part);
+  if (!olds.length || olds.length !== box.children.length) return false;
+  const tpl = document.createElement('template'); tpl.innerHTML = html;
+  const news = [...tpl.content.children].filter(e => e.dataset.part);
+  if (news.length !== tpl.content.children.length || news.length !== olds.length || news.some((e, i) => e.dataset.part !== olds[i].dataset.part)) return false;
+  // 살아 있는 조각은 그 사이 바뀌었을 수 있으니(캔버스 크기 등) 지난번 글자와 견준다
+  const was = UI.parts || {}, now = {};
+  news.forEach((e, i) => { const h = e.outerHTML; now[e.dataset.part] = h; if (h !== was[e.dataset.part]) olds[i].replaceWith(e); });
+  UI.parts = now;
+  return true;
 }
 function live() { liveIn($('panel-in')); if (UI.modal) liveIn($('m-body')); }
 function liveIn(box) {

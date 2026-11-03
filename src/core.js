@@ -42,7 +42,7 @@ function makeAdv(o = {}) {
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
-    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate],
+    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, skin: null,
     salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
   };
   growStats(a, lv - 1);
@@ -431,12 +431,16 @@ function cast(e, a, d, id, team, dm, foes) {
   if (s.cost.hp) a.hp -= Math.round(d.maxHp * s.cost.hp);
   e.scd[a.id][id] = s.cd;
   ev(e, 'skill', { s: a.id, id });
+  // 숙련도: 쓸수록 위력이 조금씩 오른다 (단계가 오르면 알린다)
+  const sm = smLv(a, id), M = smMul(a, id);
+  a.sm = a.sm || {}; a.sm[id] = (a.sm[id] || 0) + 1;
+  if (smLv(a, id) > sm) ev(e, 'mastery', { s: a.id, id, lv: smLv(a, id) });
   if (s.kind === 'dmg' || s.kind === 'mdmg') {
     const magic = s.kind === 'mdmg';
     const tg = s.tgt === 'all' ? foes.slice() : [s.tgt === 'low' ? lowestFoe(foes) : foes[0]];
     for (const f of tg) for (let h = 0; h < (s.hits || 1); h++) {
       if (f.hp <= 0) break;
-      let atk = (magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult;
+      let atk = (magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M;
       if (s.boss && f.boss) atk *= s.boss;
       const crit = s.crit === 1 || rnd() < d.crit + (s.crit || 0);
       const v = hitFoe(e, f, atk, crit, magic, a);
@@ -448,11 +452,11 @@ function cast(e, a, d, id, team, dm, foes) {
     stealGold(s, tg.length * (s.hits || 1));
   } else if (s.kind === 'dot') {
     const tg = s.tgt === 'all' ? foes : [foes[0]];
-    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult * (TR(a).dot || 1), t: s.dur, magic: !!s.magic }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
+    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M * (TR(a).dot || 1), t: s.dur, magic: !!s.magic }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
   } else if (s.kind === 'heal' && s.tgt === 'self') {
-    const h = Math.round(d.maxHp * s.pct); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h });
+    const h = Math.round(d.maxHp * s.pct * M); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h });
   } else if (s.kind === 'heal') {
-    const pow = d.matk * s.mult * (TR(a).healPow || 1);
+    const pow = d.matk * s.mult * M * (TR(a).healPow || 1);
     const alive = team.filter(up);
     const tg = s.tgt === 'party' ? alive : [alive.sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0]];
     tg.forEach(x => { const h = Math.round(pow * (0.9 + rnd() * 0.2)); x.hp = Math.min(dm[x.id].maxHp, x.hp + h); ev(e, 'heal', { s: a.id, d: x.id, v: h }); });

@@ -459,6 +459,9 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'lvl') {
       const aq = at('a' + x.d);
       if (aq) { V.fx.push({ k: 'levelup', x: aq[0], y: aq[1], t0: t, d: 1.4 }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 14, s: 'LEVEL UP', c: '#ffd84a', t0: t + 0.1, d: 1.3, big: 1 }); }
+    } else if (x.type === 'mastery') {
+      const aq = at('a' + x.s), s = SKILLS[x.id];
+      if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 14, `${s.name} 숙련 ${x.lv}`, 'mast'); V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t + 0.2, d: 0.8, c: '#8af0c0' }); }
     } else if (x.type === 'spawn' && (x.boss || x.amb)) {
       V.shake = x.boss ? 6 : 4;
       if (x.name) callout(170, 120, x.name, 'boss');
@@ -567,6 +570,7 @@ function logEvent(x, e, p) {
   if (x.type === 'gear') return add(`장비 <b class="lg-l">${esc(GTYPES[x.base].name)}</b> 획득!`, 'loot');
   if (x.type === 'down') return add(`${ally(jo(A(x.d), '이', '가'))} 쓰러졌습니다. 들것에 싣습니다.`, 'bad');
   if (x.type === 'lvl') { const a = advById(x.d); if (a) add(`${ally(A(x.d))} 레벨 업! LV ${a.lv}`, 'lvl'); return; }
+  if (x.type === 'mastery') { const s = SKILLS[x.id]; if (s) add(`${ally(A(x.s))}의 「${esc(s.name)}」 숙련도가 ${x.lv}단계가 되었습니다. (위력 +${x.lv * 3}%)`, 'lvl'); return; }
   if (x.type === 'spawn') { const fs = e.foes.map(f => f.name || MONS[f.id].name); if (fs.length) add(`${x.boss ? '<i class="lg-c">보스!</i> ' : x.amb ? '<i class="lg-c">기습!</i> ' : ''}${fs.map(foe).join(', ')} 출현`, x.boss ? 'warn' : ''); return; }
   if (x.type === 'clear') return add('전투에서 이겼습니다.', 'dim');
   if (x.type === 'flee') return add('파티가 전투에서 물러났습니다.', 'bad');

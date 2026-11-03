@@ -31,7 +31,7 @@ const blit = (ctx, s) => ctx.drawImage(s.cv, -s.ax, -s.ay);
 const ROBED = Object.keys(PXL).filter(c => PXL[c].body === 'robe');
 function advKey(a) {
   const w = a.eq && a.eq.weapon, l = a.look || {};
-  return [a.cls, l.hair, l.skin, (a.id || 0) % 3, w ? w.base : '-'].join('|');
+  return [a.cls, l.hair, l.skin, (a.id || 0) % 3, w ? w.base : '-', a.skin || ''].join('|');
 }
 function advPoseOf(t, o) {
   if (o.sleep) return ['sleep', 0];

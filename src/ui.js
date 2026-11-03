@@ -14,7 +14,8 @@ const UI_PX = {
   person: ['...kkk...', '..kssk...', '..kssk...', '...kk....', '..kttk...', '.kttttk..', 'ktttttk..', '.kt.tk...', '.kk.kk...'],
   sword:  ['.......kk', '......klk', '.....klk.', '....klk..', '.k.klk...', '..kkk....', '..kdk....', '.kdkk....', 'kk.......'],
   box:    ['.kkkkkkk.', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', 'kbbkkbbbk', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', '.kkkkkkk.'],
-  scroll: ['.kkkkkk..', 'kppppppk.', 'kpkkkkpk.', 'kppppppk.', '.kpkkkpk.', '.kppppppk', '.kpkkkkpk', '.kppppppk', '..kkkkkk.']
+  scroll: ['.kkkkkk..', 'kppppppk.', 'kpkkkkpk.', 'kppppppk.', '.kpkkkpk.', '.kppppppk', '.kpkkkkpk', '.kppppppk', '..kkkkkk.'],
+  mag:    ['.kkkk....', 'klwwlk...', 'kwllllk..', 'kwllllk..', 'klllllk..', '.kllllkk.', '..kkkkdkk', '......kdk', '.......kk']
 };
 const UI_PAL = { k: '#0b0d12', y: '#f0b43c', l: '#fff2c0', d: '#9a6a1c', f: '#5fd4c0', w: '#c9c3b8', s: '#f1c9a5', t: '#4a7ac8', b: '#9a6a3c', p: '#e8dcb8' };
 function pxURL(name) {
@@ -25,12 +26,12 @@ function pxURL(name) {
 }
 function applyPx() { document.querySelectorAll('img[data-px]').forEach(im => { im.src = pxURL(im.dataset.px); }); }
 
-const POR = {}, POR_W = 46, POR_H = 54;
+const POR = {}, POR_W = 46, POR_H = 56;
 function portrait(a) {
   const key = advKey(a);
   if (POR[key]) return POR[key];
   const [c, x] = mkCanvas(POR_W, POR_H);
-  x.translate(POR_W / 2, POR_H - 3);
+  x.translate(POR_W / 2, POR_H - 2); x.scale(2, 2);
   drawAdvHi(x, a, 0, {});
   return (POR[key] = c.toDataURL());
 }

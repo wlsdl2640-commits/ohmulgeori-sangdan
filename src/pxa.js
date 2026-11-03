@@ -490,6 +490,22 @@ JJJJJJJJJJJJJJJJJJJJ
 ..zZKZKZZKZKZz..
 ....zZZZZZZz....
 ` },
+  pumpkin: { top: 2, g: `
+.......AA.......
+......jJAa......
+....jJJIJJJJJj..
+..jJJIJJJIJJJJj.
+.jJJIJJJJIJJJJjj
+.JJIJKKJJIJKKJjj
+.JJIJKKKJIJKKKjj
+.JJIJJJJJIJJJJjj
+.JJIKJJKJKJJKJjj
+.jJJKKKKKKKKKKjj
+.jJJJKJJKJKJJjj.
+..jJJJJIJJJJjj..
+...jjJJJJJJjj...
+.....jjjjjj.....
+` },
   paint: { top: 0, g: `
 ................
 ................
@@ -1246,8 +1262,8 @@ function pxAdvGrid(a, pose, fr, Lx) {
   return g;
 }
 // 자는 모습: 침낭 + 옆으로 누운 머리
-function pxSleepGrid(a) {
-  const cls = PXL[a.cls] ? a.cls : 'warrior', L = PXL[cls], g = pxGrid(PXW, PXH);
+function pxSleepGrid(a, Lx) {
+  const L = Lx || advLook(a), g = pxGrid(PXW, PXH);
   pxPut(g, pxRows(`
 .........................
 ..CCCCCCCCCCCCCCCcZZZZ...
@@ -1270,11 +1286,19 @@ HhSSSSSpSSh.
   return g;
 }
 const PXK_POSE = { idle: 2, walk: 4, atk: 2, sit: 1, sleep: 1 };
+/* 입은 의상까지 더한 도안. 의상은 직업 도안의 색(과 머리 장식)만 바꾼다 */
+const LOOKC = {};
+function advLook(a) {
+  const cls = PXL[a.cls] ? a.cls : 'warrior', L = PXL[cls], C = a.skin && typeof COSTUMES !== 'undefined' ? COSTUMES[a.skin] : null;
+  if (!C) return L;
+  const k = cls + '|' + a.skin;
+  return LOOKC[k] || (LOOKC[k] = Object.assign({}, L, C.pal, C.head ? { head: C.head, face: null } : {}));
+}
 function pxAdvSprite(a, pose, fr, Lx) {
-  const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || PXL[cls];
-  const key = 'PA|' + (Lx ? JSON.stringify(Lx).length + (Lx.c1 || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
+  const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || advLook(a);
+  const key = 'PA|' + (Lx ? JSON.stringify(Lx).length + (Lx.c1 || '') : a.skin || '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
   const hit = PXC.get(key + '|' + (FLASH || ''));
   if (hit) return hit;
-  const g = pose === 'sleep' ? pxSleepGrid(a) : pxAdvGrid(a, pose, fr, Lx);
+  const g = pose === 'sleep' ? pxSleepGrid(a, L) : pxAdvGrid(a, pose, fr, L);
   return pxBake(key, g, pxPal(L, look), BX + 8, BY + 13 + (pose === 'sleep' ? -2 : 0));
 }

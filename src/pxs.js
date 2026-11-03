@@ -407,6 +407,22 @@ JJJJJJJJJJJJJJJJJJJ
 ........zZKZKZz
 .........zZZZz.
 ` },
+  pumpkin: { top: 2, g: `
+........AA.....
+.......jAa.....
+.....jJJIJJj...
+...jJJIJJJIJJj.
+..jJJIJJJIJJJJj
+.jJJIJJJIJJKKJj
+.jJJIJJJIJJKKKj
+.jJJIJJJIJJJJJj
+.jJJIJJJIJKJJKj
+.jJJJIJJJKKKKKj
+..jJJIJJJJKJKj.
+..jjJJJJJJJJj..
+...jjJJJJJjj...
+.....jjjjjj....
+` },
   paint: { top: 0, g: `
 ...............
 ...............
@@ -885,10 +901,10 @@ function pxsDownGrid(a, L) {
   return g;
 }
 function pxsAdvSprite(a, pose, fr, Lx) {
-  const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || PXL[cls];
-  const key = 'PS|' + (Lx ? (Lx.c1 || '') + (Lx.head || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
+  const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || advLook(a);
+  const key = 'PS|' + (Lx ? (Lx.c1 || '') + (Lx.head || '') : a.skin || '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
   const hit = PXC.get(key + '|' + (FLASH || ''));
   if (hit) return hit;
-  const g = pose === 'sleep' ? pxSleepGrid(a) : pose === 'down' ? pxsDownGrid(a, L) : pxsAdvGrid(a, pose, fr, Lx);
+  const g = pose === 'sleep' ? pxSleepGrid(a, L) : pose === 'down' ? pxsDownGrid(a, L) : pxsAdvGrid(a, pose, fr, L);
   return pxBake(key, g, pxPal(L, look), SX + 6, SY + 13);
 }
