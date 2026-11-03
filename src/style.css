@@ -377,3 +377,5 @@ html, body { overflow-x: hidden; }
 .hero-act { padding: 2px 0; font-size: 12px; }
 .center { text-align: center; }
 .part { display: grid; gap: 12px; min-width: 0; }
+.li.mrow { padding: 5px 8px; gap: 8px; }
+.mrow .btns { flex: none; justify-content: flex-end; }

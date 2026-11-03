@@ -16,7 +16,8 @@ const DAY_SKY = {
   valley:   ['#3f8fdc', '#74b4e8', '#c8e4f2'],
   snow:     ['#6a8ccc', '#a2bce0', '#e6eef6'],
   desert:   ['#4f92d8', '#a4c6e2', '#f6e2ba'],
-  town:     ['#5684c4', '#8cb0d8', '#d0e0ea']
+  town:     ['#5684c4', '#8cb0d8', '#d0e0ea'],
+  front:    ['#5684c4', '#8cb0d8', '#d0e0ea']
 };
 /* 하루의 흐름. dp 0 = 새벽 4시, dp 1 = 다음 날 새벽 4시 (1시간 = 1/24) */
 const TOD = [

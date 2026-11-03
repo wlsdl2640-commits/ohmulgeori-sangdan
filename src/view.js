@@ -85,34 +85,31 @@ function drawFrame(now, vt) {
   V.lastF = now;
   const g = V.g, w = V.w, dp = clockDp();
   const F = e && FIELDS[e.field];
-  const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg === 'forest' && e.stage > 20 ? 'primeval' : F.bg) : 'town';
-  const bg = e ? getBg(id) : arenaBg(id), oy = e && bg.tall ? 0 : BG_OY;
-  // 옆으로 흐르는 풍경: 간 거리만큼
+  const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg === 'forest' && e.stage > 20 ? 'primeval' : F.bg) : 'front';
+  const bg = getBg(id), oy = bg.tall ? 0 : BG_OY;
+  // 옆으로 흐르는 풍경: 간 거리만큼 (상단 앞은 멈춰 있다)
   if (e) { const target = routePos(e) * 1.6; if (Math.abs(target - V.scroll) > 200) V.scroll = target; else V.scroll += (target - V.scroll) * 0.2; } else V.scroll = 0;
-  let T;
   w.clearRect(0, 0, AW, AH);
-  if (e) {
-    // 옛 240×128 풍경을 무대 아래쪽에 붙이고, 위는 하늘로 잇는다
-    T = todAt(dp, id);
-    if (bg.under) R(g, 0, 0, AW, AH, '#000');
-    else { R(g, 0, 0, AW, BG_OY + 1, T.sky[0]); if (T.star > 0.02) for (const st of STARS) { const tw = 0.55 + 0.45 * Math.sin(t * (1.5 + st.b * 2) + st.p), a = T.star * tw * (0.5 + st.b * 0.5); if (a > 0.05) R(g, st.x, Math.round(st.y * BG_OY / 70), 1, 1, `rgba(255,250,235,${a.toFixed(2)})`); } }
-    g.save(); g.translate(0, BG_OY); drawSky(g, id, V.scroll, t, dp); g.restore();
-    w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
-    if (id === 'forest' && !bg.tall) { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
-    if (bg.under && !bg.tall) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
-  } else { T = bg.under ? todAt(dp, 'plains') : arenaSky(g, id, t, dp); if (bg.under) R(g, 0, 0, AW, AH, '#000'); w.drawImage(bg.cv, 0, 0, AW, AH); }
+  // 옛 240×128 풍경을 무대 아래쪽에 붙이고, 위는 하늘로 잇는다 (키 큰 풍경은 무대 전체)
+  const T = todAt(dp, id);
+  if (bg.under) R(g, 0, 0, AW, AH, '#000');
+  else { R(g, 0, 0, AW, BG_OY + 1, T.sky[0]); if (T.star > 0.02) for (const st of STARS) { const tw = 0.55 + 0.45 * Math.sin(t * (1.5 + st.b * 2) + st.p), a = T.star * tw * (0.5 + st.b * 0.5); if (a > 0.05) R(g, st.x, Math.round(st.y * BG_OY / 70), 1, 1, `rgba(255,250,235,${a.toFixed(2)})`); } }
+  g.save(); g.translate(0, BG_OY); drawSky(g, id, V.scroll, t, dp); g.restore();
+  w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
+  if (id === 'forest' && !bg.tall) { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
+  if (bg.under && !bg.tall) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
   const lights = [], post = [];
   const dark = bg.under ? 0.34 : T.dark[1], dcol = bg.under ? '#05040a' : T.dark[0];
   if (e) fieldScene(w, t, p, e, lights, post, dark, bg); else townScene(w, t, p, lights, post, dark);
-  if (e) { w.save(); w.translate(0, oy); drawFore(w, id, V.scroll); w.restore(); for (const l of bgLights(id, V.scroll, dark)) lights.push({ x: l.x, y: l.y + oy, r: l.r, c: l.c, glow: l.glow, flick: l.flick }); }
-  else stageLights(id, bg, lights, dark);
+  w.save(); w.translate(0, oy); drawFore(w, id, V.scroll); w.restore();
+  for (const l of bgLights(id, V.scroll, dark)) lights.push({ x: l.x, y: l.y + oy, r: l.r, c: l.c, glow: l.glow, flick: l.flick });
   if (dark > 0.01) applyDark(w, dark, dcol, lights);
   g.drawImage(V.wc, 0, 0, AW, AH);
   if (dark > 0.05) glows(g, lights, dark);
-  if (e) { g.save(); g.translate(0, oy); bgEmit(g, id, V.scroll, t, dark); g.restore(); }
+  g.save(); g.translate(0, oy); bgEmit(g, id, V.scroll, t, dark); g.restore();
   for (const f of post) f(g);
-  if (e) { fx(g, t); g.save(); g.translate(0, bg.tall ? 0 : BG_OY); drawAmbient(g, id, V.scroll, t, T); g.restore(); }
-  else ambient(g, id, t, T);
+  if (e) fx(g, t);
+  g.save(); g.translate(0, bg.tall ? 0 : BG_OY); drawAmbient(g, id, V.scroll, t, T); g.restore();
   present();
 }
 // 작은 창에는 가운데 띠, 열려 있으면 전투 창에는 무대 전체
@@ -155,36 +152,37 @@ function glows(g, lights, dark) {
   }
   g.restore();
 }
-// 무대에 붙은 불빛: 던전 횃불, 거리 등불
-function stageLights(id, bg, lights, dark) {
-  if (bg.under) {
-    for (const z of [1.5, 3]) for (const s of [-1, 1]) { const [x, y] = ap(s * 1.4, 1.2, z); lights.push({ x: x / HI, y: y / HI - 2, r: 46 / z, c: DUN[id] ? DUN[id].light : '#f0b050', glow: 1, flick: 1 }); }
-  } else if (bg.town && dark > 0.12) {
-    for (const z of [1.32, 1.9]) for (const s of [-1, 1]) { const [x, y] = ap(s * 1.15, 1.3, z); lights.push({ x: x / HI, y: y / HI, r: 52 / z, c: '#f0c060', glow: 1 }); }
-  }
-}
 
-/* ───────── 상단 앞 (원정 중이 아닐 때) ───────── */
+/* ───────── 상단 앞 (원정 중이 아닐 때): 입구 앞에 선 파티, 거리를 오가는 사람들 ───────── */
 const TOWNSFOLK = [
-  { cls: 'porter', look: { hair: '#5a3a22', skin: '#e0ac7e' }, id: 1, X: -0.86, sp: 0.07, z0: 0 },
-  { cls: 'cleric', look: { hair: '#c9a04a', skin: '#f1c9a5' }, id: 2, X: 0.9, sp: 0.05, z0: 0.45 }
+  { cls: 'porter', look: { hair: '#5a3a22', skin: '#e0ac7e' }, id: 1, sp: 14, off: 0, dir: 1 },
+  { cls: 'cleric', look: { hair: '#c9a04a', skin: '#f1c9a5' }, id: 2, sp: 11, off: 150, dir: -1 },
+  { cls: 'archer', look: { hair: '#2b1d16', skin: '#c68a5e' }, id: 3, sp: 16, off: 260, dir: 1 }
 ];
+// 입구 앞 자리: 넷까지 한 줄, 그보다 많으면 두 줄
+function frontSlots(n) {
+  if (n <= 4) { const sp = n > 3 ? 40 : 46; return Array.from({ length: n }, (_, i) => [Math.round(120 + (i - (n - 1) / 2) * sp), 190]); }
+  const back = Math.ceil(n / 2), front = n - back, out = [];
+  for (let i = 0; i < back; i++) out.push([Math.round(120 + (i - (back - 1) / 2) * 44), 181]);
+  for (let i = 0; i < front; i++) out.push([Math.round(120 + (i - (front - 1) / 2) * 44 + (front === back ? 22 : 0)), 191]);
+  return out;
+}
 function townScene(w, t, p, lights, post, dark) {
-  // 거리 저 안쪽에서 걸어 나오는 사람들 (멀면 작게)
+  // 거리를 지나가는 사람들 (파티 뒤, 밤에는 한 명만)
   TOWNSFOLK.forEach((v, i) => {
     if (i && dark > 0.3) return;
-    const k = (v.z0 + t * v.sp) % 1, z = 8 - k * 5.4, [x, y] = ap(v.X, 0, z), s = Math.min(1, 2.6 / z);
-    w.save(); w.translate(x / HI, y / HI); shadowAt(w, 0, 0, 8 * s); drawAdv(w, v, t, { walk: 1, ph: i, z: zq(ZP * s) }); w.restore();
+    const span = AW + 70, k = ((t * v.sp + v.off) % span + span) % span, x = v.dir > 0 ? k - 35 : AW + 35 - k;
+    w.save(); w.translate(Math.round(x), 181); shadowAt(w, 0, 0, 7); if (v.dir < 0) w.scale(-1, 1); drawAdv(w, v, t, { walk: 1, ph: i, side: 1, z: zq(1.1) }); w.restore();
   });
   let list = p ? teamOf(p) : [];
   if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6);
   list = list.slice(0, 6);
+  const slots = frontSlots(list.length);
   list.forEach((a, i) => {
-    const x = partyX(i, list.length);
-    shadowAt(w, x, ROW_P, 9);
-    w.save(); w.translate(x, ROW_P); drawAdv(w, a, t, { ph: i * 0.5, z: ZP }); w.restore();
+    const [x, y] = slots[i], z = zq(y > 185 ? ZS : ZS * 0.92);
+    shadowAt(w, x, y, 9 * z / ZS);
+    w.save(); w.translate(x, y); drawAdv(w, a, t, { ph: i * 0.5, z }); w.restore();
   });
-  if (dark > 0.3 && list.length) lights.push({ x: AW / 2, y: ROW_P - PH / 2, r: 70, c: '#f0c060' });
 }
 
 /* ───────── 원정 (옆모습): 파티는 왼쪽, 적은 오른쪽. 앞줄이 크고 뒷줄이 작다 ───────── */
@@ -581,17 +579,6 @@ function logEvent(x, e, p) {
 }
 
 /* 날씨와 생물 (빛을 입힌 뒤에 그린다) */
-function ambient(g, id, t, T) {
-  const dark = T.dark[1], wrap = (v, m) => ((v % m) + m) % m, P = (x, y, w, h, c) => R(g, Math.round(x * 2) / 2, Math.round(y * 2) / 2, w, h, c);
-  if ((id === 'plains' || id === 'forest') && dark > 0.2) for (let i = 0; i < 12; i++) { const x = wrap(i * 41 + Math.sin(t * 0.7 + i) * 14 - V.scroll * 0.7, AW), y = 100 + (i * 17) % 90 + Math.sin(t * 1.3 + i * 2) * 5; if (Math.sin(t * 2.5 + i * 1.7) > 0.1) P(x, y, 1, 1, `rgba(220,255,120,${Math.min(1, dark * 1.8).toFixed(2)})`); }
-  if (id === 'forest') for (let i = 0; i < 10; i++) P(wrap(i * 53 + t * 6 + Math.sin(t + i) * 10, AW), wrap(i * 29 + t * (10 + i % 4 * 3), AH), 1.5, 1, ['#c86a2a', '#d89a3a', '#6aa84f'][i % 3]);
-  if (id === 'snow') for (let i = 0; i < 46; i++) { const s = i % 7 ? 1 : 1.5; P(wrap(i * 53 + t * (8 + (i % 5) * 3) + Math.sin(t + i) * 4, AW), wrap(i * 37 + t * (14 + (i % 4) * 4), AH), s, s, '#ffffff'); }
-  if (id === 'mountain') for (let i = 0; i < 9; i++) P(wrap(i * 71 - t * 110, AW + 40) - 20, 12 + (i * 23) % 150, 8 + (i % 3) * 4, 0.5, 'rgba(255,255,255,0.45)');
-  if (id === 'desert' && dark < 0.4) for (let i = 0; i < 9; i++) P(wrap(i * 61 - t * 40, AW + 30) - 15, 120 + (i * 19) % 70, 5 + i % 4, 0.5, 'rgba(240,210,150,0.6)');
-  if (id === 'valley') for (let i = 0; i < 4; i++) { const x = wrap(i * 80 + t * 22 + Math.sin(t * 3 + i) * 8, AW + 40) - 20, y = 18 + i * 10 + Math.sin(t * 4 + i) * 4, f = Math.floor(t * 8 + i) % 2; P(x - 2, y + f * 0.5, 2, 0.5, '#3a2a34'); P(x, y, 0.5, 1, '#3a2a34'); P(x + 0.5, y + f * 0.5, 2, 0.5, '#3a2a34'); }
-  if (DUN[id]) for (let i = 0; i < 14; i++) P(wrap(i * 37 + Math.sin(t * 0.4 + i) * 8, AW), 40 + wrap(i * 23 - t * 3, 150), 0.5, 0.5, 'rgba(255,230,180,0.4)');
-  if (id === 'town') for (let i = 0; i < 3; i++) { const k = wrap(t * 0.25 + i * 0.33, 1); P(70 + i * 50 + Math.sin(t + i) * 2, 40 - k * 30, 1.5, 1.5, `rgba(200,200,210,${(0.5 * (1 - k)).toFixed(2)})`); }
-}
 
 /* ───────── 전투 창: 무대 전체 + 전투 기록 ───────── */
 function openBattle() { const top = winTop(); if (top && top.id === 'battle') return; openWin('battle'); }
@@ -635,7 +622,12 @@ function renderBattle() {
 
 /* 첫 화면: 거리 무대에 네 사람 */
 function drawStill(g, id, cast, t) {
-  arenaSky(g, id, t, clockDp());
-  g.drawImage(arenaBg(id).cv, 0, 0, AW, AH);
-  cast.forEach((a, i) => { const x = partyX(i, cast.length); shadowAt(g, x, ROW_P, 9); g.save(); g.translate(x, ROW_P); drawAdv(g, a, t, { ph: i * 0.5, z: ZP }); g.restore(); });
+  const dp = clockDp(), T = todAt(dp, 'front');
+  R(g, 0, 0, AW, BG_OY + 1, T.sky[0]);
+  g.save(); g.translate(0, BG_OY); drawSky(g, 'front', 0, t, dp); g.restore();
+  drawLand(g, 'front', 0, t, T);
+  const slots = frontSlots(cast.length);
+  cast.forEach((a, i) => { const [x, y] = slots[i]; shadowAt(g, x, y, 9); g.save(); g.translate(x, y); drawAdv(g, a, t, { ph: i * 0.5, z: zq(ZS) }); g.restore(); });
+  drawFore(g, 'front', 0);
+  bgEmit(g, 'front', 0, t, T.dark[1]);
 }

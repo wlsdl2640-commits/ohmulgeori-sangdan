@@ -326,6 +326,19 @@ function advAct(aid, b) {
 }
 
 /* 원정 */
+// 모험가 한 줄 (초상·이름·직업·HP)
+function memberRow(a, btns) {
+  const d = derive(a), why = cantGo(a) ? (a.inj ? INJ[a.inj.sev].name : a.post ? '신전 근무' : (a.sleep || 0) >= SLEEP.block ? '자는 중' : '') : '';
+  return `<div class="li mrow"><img class="por" src="${portrait(a)}" alt=""><div class="grow stack"><span>${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}</span>${why ? ` <span class="red-t">${why}</span>` : ''}</span><span class="sub">HP ${pct(a.hp, d.maxHp)}% · MP ${pct(a.mp, d.maxMp)}%${(a.fat || 0) > 0 ? ` · 피로 ${Math.round(a.fat)}` : ''}</span></div><div class="btns">${btns}</div></div>`;
+}
+// 어느 파티에도 없는 모험가: 파티에 넣는 단추가 파티마다 하나씩
+function freeList() {
+  const free = S.advs.filter(a => a.status === 'idle' && !partyOf(a.id) && !a.post);
+  const open = S.parties.filter(p => !p.exp);
+  const rows = free.map(a => memberRow(a, open.map(p => `<button type="button" class="btn sm" data-act="member" data-id="${p.id}" data-a="${a.id}">${esc(p.name)}에</button>`).join('') || '<span class="sub muted">넣을 파티 없음</span>')).join('');
+  return `<div class="sec"><b>대기 중인 모험가</b><span>${free.length}명 · 파티에 넣어 원정을 보내요</span></div>
+    <div class="list">${rows || '<div class="sub muted">모두 파티에 들어가 있어요.</div>'}</div>`;
+}
 function partyCard(p) {
   const e = p.exp, on = S.view === p.id;
   const head = `<div class="row"><div class="grow"><div class="h">${esc(p.name)} <small>${p.members.length}명</small></div><div class="sub" data-pst="${p.id}"></div></div>${on ? '<span class="tag gold-t">화면에 표시 중</span>' : `<button type="button" class="btn sm" data-act="view" data-id="${p.id}">화면 보기</button>`}</div>`;
@@ -342,7 +355,6 @@ function partyCard(p) {
       <div class="row sub"><span class="grow">짐 <b data-load="${p.id}"></b> · 처치 <b data-kills="${p.id}"></b>${p.wagon ? ` · ${WAGONS[p.wagon].name}` : ''}</span><span data-sup="${p.id}"></span></div>
       <div class="btns">${e.mode === 'advance' ? `<button type="button" class="btn sm" data-act="recall" data-id="${p.id}">복귀</button>` : ''}${toggles}</div></div>`;
   }
-  const pool = S.advs.filter(a => a.status === 'idle' && (!a.post || p.members.includes(a.id)));
   const dest = p.dest && isUnlocked(p.dest) ? p.dest : 'plains', DF = FIELDS[dest];
   const team = teamOf(p), block = team.map(cantGo).filter(Boolean);
   const cps = checkpoints(dest), st = cps.includes(p.start) ? p.start : 1;
@@ -362,8 +374,8 @@ function partyCard(p) {
   }).join('');
   const last = p.last ? `<div class="sub muted">지난 원정: ${FIELDS[p.last.field].name}, 처치 ${p.last.kills}마리, 부속품 ${Object.values(p.last.got).reduce((s, q) => s + q, 0)}개${p.last.gear ? `, 장비 ${p.last.gear}개` : ''}</div>` : '';
   return `<div class="card${on ? ' hl' : ''}">${head}
-    <div class="sec" style="margin-top:2px"><b>파티원</b><span>눌러서 넣고 빼기</span></div>
-    <div class="list">${pool.map(a => { const o = partyOf(a.id), inP = p.members.includes(a.id), d = derive(a), why = a.inj ? INJ[a.inj.sev].name : (a.sleep || 0) >= SLEEP.block ? '자는 중' : ''; return `<button type="button" class="pick${inP ? ' on' : ''}" data-act="member" data-id="${p.id}" data-a="${a.id}"><i class="chk"></i>${mini(a)}<span class="grow">${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}${o && o !== p ? ' · ' + esc(o.name) : ''}</span>${why ? ` <span class="red-t">${why}</span>` : ''}</span><span class="sub num">HP ${pct(a.hp, d.maxHp)}%</span></button>`; }).join('') || '<div class="sub">대기 중인 모험가가 없어요.</div>'}</div>
+    <div class="sec" style="margin-top:2px"><b>파티원</b><span>${team.length ? `${team.length}명 · 빼면 위 대기 목록으로` : '위 대기 목록에서 넣어요'}</span></div>
+    <div class="list">${team.map(a => memberRow(a, `<button type="button" class="btn sm" data-act="member" data-id="${p.id}" data-a="${a.id}">빼기</button>`)).join('') || '<div class="sub muted">아직 아무도 없어요. 위 대기 목록에서 모험가를 넣어 주세요.</div>'}</div>
     <div class="sec"><b>보급품</b><span>가져간 물약만 쓸 수 있어요</span></div>
     ${POTIONS.filter(k => (S.inv[k] || 0) > 0 || (p.sup[k] || 0) > 0 || k === 'pot_s').map(k => `<div class="row">${iconImg(k)}<span class="grow sub">${ITEMS[k].name} <span class="muted">창고 ${S.inv[k] || 0}</span></span><span class="step"><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="-1">−</button><span>${p.sup[k] || 0}</span><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="1">+</button></span></div>`).join('')}
     <div class="sec"><b>목적지</b><span>파티 평균 Lv${avg}</span></div>
@@ -410,6 +422,7 @@ PANELS.rune = w => {
     <div class="sec"><b>창고의 룬</b><span>마탑에서 새기고 합쳐요</span></div><div class="list">${add || '<div class="li"><span class="sub">룬이 없어요. 필드 보스와 던전, 레이드에서 얻거나 마탑에서 새겨요.</span></div>'}</div>`;
 };
 PANELS.exp = () => `
+  ${freeList()}
   ${S.raid ? `<div class="sec"><b>이번 달 레이드</b><span>D-${S.settleDay - today()}</span></div>${S.raid.list.map(r => raidCard(r, false)).join('')}` : ''}
   <div class="sec"><b>원정대</b><span>${S.parties.length}/${partyMax()}개</span></div>
   ${S.parties.map(partyCard).join('')}
