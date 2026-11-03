@@ -1,5 +1,5 @@
 /* ───────── 화면 공통 ───────── */
-const UI = { stack: [], dirty: true, html: '', winKey: '', chips: '', floors: '', fname: '', hold: false, modal: false, smithT: null, pipBig: false };
+const UI = { stack: [], dirty: true, html: '', winKey: '', chips: '', floors: '', fname: '', hold: false, modal: false, smithT: null };
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = n => Math.floor(n).toLocaleString('ko-KR');
@@ -73,11 +73,11 @@ function updateOverlay() {
   const p = viewParty(), L = $('ov-l'), Rr = $('ov-r'), B = $('ov-b');
   if (!p) { L.textContent = '오물거리 · 상단 앞'; Rr.hidden = true; B.hidden = true; return; }
   const e = p.exp;
-  if (!e) { L.textContent = `${p.name} · 오물거리 상단 앞`; Rr.hidden = true; B.hidden = false; B.textContent = p.members.length ? '대기 중 · 원정 메뉴에서 출발' : '파티원이 없어요'; return; }
+  Rr.hidden = true;
+  if (!e) { L.textContent = `${p.name} · 상단 앞`; B.hidden = true; return; }
   L.textContent = `${p.name} · ${whereStr(e)}`;
-  const u = usedOf(p), c = capOf(p);
-  Rr.hidden = false; Rr.innerHTML = `짐 <span class="${u >= c ? 'warn' : 'gold'}">${u}/${c}</span>`;
-  B.hidden = false; B.textContent = expStatus(p);
+  // 작은 창 아래 글은 할 일이 있을 때만 (던전 입구에서 기다리는 중)
+  B.hidden = e.wait !== 'gate'; if (!B.hidden) B.textContent = '던전 입구 · 눌러서 정하기';
 }
 function renderChips() {
   const html = S.parties.map(p => {
@@ -89,7 +89,7 @@ function renderChips() {
 }
 
 /* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
-const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '룬' };
+const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '룬', battle: '전투' };
 const winTop = () => UI.stack[UI.stack.length - 1] || null;
 function winTitle(w) {
   if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';
@@ -131,10 +131,11 @@ window.addEventListener('popstate', e => {
   if (UI.stack.length > n) { UI.stack.length = n; showWin(true); }
 });
 function showWin(scroll) {
-  const top = winTop(), el = $('win');
+  const top = winTop(), el = $('win'), bt = !!top && top.id === 'battle';
   $('stage').classList.toggle('win-open', !!top);
   document.querySelectorAll('.mbtn').forEach(b => b.classList.toggle('on', !!top && UI.stack[0].id === b.dataset.open));
-  if (!top) { el.hidden = true; UI.html = ''; UI.winKey = ''; return; }
+  if (bt !== V.bopen) showBattle(bt);
+  if (!top || bt) { el.hidden = true; UI.html = ''; UI.winKey = ''; return; }
   layoutWin();
   el.hidden = false;
   $('win-title').textContent = winTitle(top);
@@ -149,19 +150,8 @@ function layoutWin() {
   $('app').style.setProperty('--win-top', Math.round(pip.bottom - app.top + 6) + 'px');
   $('app').style.setProperty('--win-bot', Math.round(app.bottom - below) + 'px');
 }
-function setPip(big) {
-  UI.pipBig = !!big;
-  $('pip').classList.toggle('big', UI.pipBig);
-  try { localStorage.setItem('ohmul:pip', UI.pipBig ? '1' : '0'); } catch (_) {}
-  layoutStage();
-}
-// 원정 창 크기가 바뀌면 메뉴·본부·창 자리를 다시 잡는다
-function layoutStage() {
-  const st = $('stage'), pip = $('pip');
-  st.classList.toggle('pipbig', UI.pipBig);
-  st.style.setProperty('--pip-b', Math.round(pip.getBoundingClientRect().bottom - st.getBoundingClientRect().top) + 'px');
-  sizeView(); sizeHQ(); layoutWin();
-}
+// 화면 크기가 바뀌면 원정 창·본부·창 자리를 다시 잡는다
+function layoutStage() { sizeView(); sizeHQ(); layoutWin(); }
 
 /* ───────── 층 버튼과 층 이름 ───────── */
 function floorInfo(f) {
@@ -320,7 +310,7 @@ function showTitle() {
   $('t-sub').textContent = `${WORLD.continent} 대륙 · ${WORLD.empire} · 제도 ${WORLD.capital}`;
   $('t-intro').innerHTML = STORY.intro.map(t => `<p>${esc(t)}</p>`).join('');
   const cv = $('title-cv'), ctx = cv.getContext('2d');
-  const [off, g] = mkCanvas(VW * HI, VH * HI);
+  const [off, g] = mkCanvas(AW * HI, AH * HI);
   g.setTransform(HI, 0, 0, HI, 0, 0);
   const cast = [
     { cls: 'warrior', look: { hair: '#5a3a22', skin: '#e0ac7e' } },
@@ -331,12 +321,11 @@ function showTitle() {
   const draw = now => {
     if ($('title-scr').hidden) return;
     const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    const w = Math.max(VW * HI, Math.round(r.width * dpr)), h = Math.max(VH * HI, Math.round(r.height * dpr));
+    const w = Math.max(AW * HI, Math.round(r.width * dpr)), h = Math.max(PIP_H * HI, Math.round(r.height * dpr));
     if (cv.width !== w) { cv.width = w; cv.height = h; }
-    drawBg(g, 'town', 0, now / 1000);
-    cast.forEach((a, i) => { g.save(); g.translate(56 + i * 34 + (i >= 2 ? 26 : 0), GY); g.scale(i < 2 ? 1 : -1, 1); drawAdv(g, a, now / 1000, {}); g.restore(); });
+    drawStill(g, 'town', cast, now / 1000);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(off, 0, 0, VW * HI, VH * HI, 0, 0, cv.width, cv.height);
+    ctx.drawImage(off, 0, PIP_Y * HI, AW * HI, PIP_H * HI, 0, 0, cv.width, cv.height);
     titleRaf = requestAnimationFrame(draw);
   };
   cancelAnimationFrame(titleRaf);

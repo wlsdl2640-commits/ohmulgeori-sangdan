@@ -41,7 +41,7 @@ function advPoseOf(t, o) {
   return ['idle', Math.floor(t * 1.6 + (o.ph || 0)) % 2];
 }
 // ctx는 두 배 해상도 화면(논리 좌표)
-function drawAdv(ctx, a, t, o = {}) { const [pose, fr] = advPoseOf(t, o); blitHi(ctx, advSprite(a, pose, fr)); }
+function drawAdv(ctx, a, t, o = {}) { const [pose, fr] = advPoseOf(t, o); blitHi(ctx, advSprite(a, pose, fr, o.z || 1)); }
 // 1:1 캔버스(초상화)에 그대로
 function drawAdvHi(ctx, a, t, o = {}) { const [pose, fr] = advPoseOf(t, o), s = advSprite(a, pose, fr); ctx.drawImage(s.cv, -s.ax, -s.ay); }
 
@@ -61,83 +61,16 @@ function monBase(id) {
 const monH = (id, sc) => monBase(id)[1] * monSc(MONS[id], sc);
 const monW = (id, sc) => monBase(id)[0] * monSc(MONS[id], sc);
 const LOOPS = { flyer: 4, worm: 4, ghost: 4, giantgriffon: 4, dragon: 4, whale: 4 };   // 계속 움직이는 몸
+// o.z: 무대 배율 (몸집 sc와 곱한다)
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], sc = monSc(m, o.sc), tt = t + (o.ph || 0);
+  const m = MONS[id], sc = monSc(m, o.sc) * (o.z || 1), tt = t + (o.ph || 0);
   const fr = Math.floor(tt * (m.giant ? 3 : 6)) % 2, loop = LOOPS[m.plan], q = loop ? Math.floor(tt * (m.giant ? 5 : 8)) % loop : 0;
   const [bw, bh] = monBase(id), W = Math.ceil((bw + 34) * sc * HI), H = Math.ceil((bh + 18) * sc * HI);
   const key = 'MH|' + id + '|' + fr + '|' + q + '|' + sc + '|' + (FLASH || '');
-  blitHi(ctx, bakeHi(key, W, H, Math.round(W / 2), H - 4 * sc, D => paintMonHi(D, id, m, fr, q, sc)));
+  blitHi(ctx, bakeHi(key, W, H, Math.round(W / 2), Math.round(H - 4 * sc), D => paintMonHi(D, id, m, fr, q, sc)));
 }
 
-/* ───────── 마차 ───────── */
-// 오른쪽으로 끌려간다. (0,0) = 수레 맨 뒤 바닥, 동물은 앞(오른쪽)
-const WAGON_W = { cart: 24, donkey: 34, wagon: 46, caravan: 58, steel: 54 };
-function wheel(P, cx, r, fr, c) {
-  const cy = -r;
-  for (let i = -r; i <= r; i++) { const k = Math.round(Math.sqrt(r * r - i * i)); P(cx + i, cy - k, 1, 1, c); P(cx + i, cy + k, 1, 1, c); P(cx - k, cy + i, 1, 1, c); P(cx + k, cy + i, 1, 1, c); }
-  const sp = shade(c, 0.25);
-  if (fr % 2) { for (let i = 1; i < r; i++) { P(cx + i, cy + i, 1, 1, sp); P(cx - i, cy - i, 1, 1, sp); P(cx + i, cy - i, 1, 1, sp); P(cx - i, cy + i, 1, 1, sp); } }
-  else { P(cx - r + 1, cy, 2 * r - 1, 1, sp); P(cx, cy - r + 1, 1, 2 * r - 1, sp); }
-  P(cx, cy, 1, 1, '#3a2a1e');
-}
-function beast(P, x0, kind, fr, alt) {
-  const leg = (lx, h, c) => P(lx, -h, 1, h - ((lx + fr) % 2 ? 1 : 0), c);
-  if (kind === 'donkey') {
-    const b = '#8a8078', d = '#5e5650';
-    P(x0, -9, 10, 5, b); P(x0, -5, 10, 1, d); P(x0 + 9, -12, 2, 4, b); P(x0 + 10, -13, 4, 3, b); P(x0 + 13, -12, 1, 2, '#c8c0b8');
-    P(x0 + 10, -16, 1, 3, b); P(x0 + 11, -15, 1, 2, d); P(x0 + 12, -12, 1, 1, '#1a1410'); P(x0 - 1, -8, 1, 3, d);
-    [x0 + 1, x0 + 3, x0 + 7, x0 + 9].forEach(l => leg(l, 4, d));
-  } else if (kind === 'horse') {
-    const b = alt ? '#5a3a22' : '#7a4a2a', d = shade(b, -0.35), mane = '#2e1c12';
-    P(x0, -12, 13, 6, b); P(x0, -12, 13, 1, shade(b, 0.2)); P(x0 + 12, -16, 3, 6, b); P(x0 + 13, -18, 5, 3, b); P(x0 + 17, -17, 1, 2, shade(b, 0.3));
-    P(x0 + 11, -17, 2, 6, mane); P(x0 + 13, -19, 1, 1, mane); P(x0 + 15, -17, 1, 1, '#1a1410'); P(x0 - 2, -11, 2, 6, mane);
-    [x0 + 1, x0 + 3, x0 + 9, x0 + 11].forEach(l => leg(l, 6, d)); P(x0 + 2, -9, 9, 1, '#a8432f');
-  } else if (kind === 'goat') {
-    const b = '#e8e4dc', d = '#a8a49c';
-    P(x0, -9, 10, 5, b); P(x0 + 9, -12, 2, 4, b); P(x0 + 10, -13, 4, 3, b); P(x0 + 12, -11, 1, 2, d);
-    P(x0 + 9, -15, 1, 2, '#9a8a6a'); P(x0 + 8, -16, 1, 2, '#9a8a6a'); P(x0 + 12, -12, 1, 1, '#1a1410'); P(x0 + 13, -10, 1, 2, d);
-    [x0 + 1, x0 + 3, x0 + 7, x0 + 9].forEach(l => leg(l, 4, d));
-  }
-}
-function paintWagon(x, kind, fr) {
-  const P = (px, py, w, h, c) => R(x, px, py, w, h, c);
-  const wood = '#8a5a32', woodD = '#5e3c22', woodL = '#a8743e', cv = '#e8dcb8', cvD = '#c8b890', iron = '#5a5e68';
-  if (kind === 'cart') {
-    P(0, -11, 14, 6, wood); P(0, -11, 14, 1, woodL); P(1, -9, 12, 1, woodD); P(2, -14, 4, 3, '#7a5634'); P(7, -13, 5, 2, '#a8432f');
-    P(14, -9, 9, 1, woodD); P(22, -10, 1, 2, woodD); wheel(P, 7, 3, fr, '#4a3420');
-  } else if (kind === 'donkey') {
-    P(0, -12, 15, 7, wood); P(0, -12, 15, 1, woodL); P(0, -9, 15, 1, woodD); P(2, -15, 5, 3, '#7a5634'); P(8, -14, 5, 2, '#5a6a7a');
-    P(15, -9, 5, 1, woodD); wheel(P, 7, 4, fr, '#4a3420'); beast(P, 20, 'donkey', fr);
-  } else if (kind === 'wagon') {
-    P(0, -13, 24, 7, wood); P(0, -13, 24, 1, woodL); P(0, -9, 24, 1, woodD);
-    P(1, -23, 22, 10, cv); P(3, -24, 18, 1, cv); for (let i = 3; i < 22; i += 5) P(i, -23, 1, 10, cvD); P(0, -14, 24, 1, cvD);
-    P(24, -10, 6, 1, woodD); wheel(P, 5, 4, fr, '#4a3420'); wheel(P, 19, 4, fr + 1, '#4a3420'); beast(P, 30, 'horse', fr);
-  } else if (kind === 'caravan') {
-    P(0, -14, 32, 8, wood); P(0, -14, 32, 1, woodL); P(0, -10, 32, 1, woodD);
-    P(1, -26, 30, 12, '#d8c8a0'); P(3, -27, 26, 1, '#d8c8a0'); for (let i = 3; i < 31; i += 6) P(i, -26, 1, 12, '#b8a880'); P(12, -22, 8, 4, '#a8432f'); P(15, -21, 2, 2, '#f0c24a');
-    P(32, -10, 6, 1, woodD); wheel(P, 6, 5, fr, '#4a3420'); wheel(P, 25, 5, fr + 1, '#4a3420'); beast(P, 37, 'horse', fr, 1); beast(P, 41, 'horse', fr + 1);
-  } else if (kind === 'steel') {
-    P(0, -15, 30, 9, iron); P(0, -15, 30, 1, '#8a8e98'); P(0, -7, 30, 1, '#3a3e48');
-    for (let i = 2; i < 30; i += 5) { P(i, -13, 1, 1, '#c8ccd4'); P(i, -9, 1, 1, '#c8ccd4'); }
-    P(4, -22, 18, 7, '#6a6e78'); P(4, -22, 18, 1, '#9a9ea8'); P(24, -21, 3, 6, '#3a3e48'); P(24, -23, 3, 2, '#e8873a');
-    P(30, -10, 6, 1, '#3a3e48'); wheel(P, 6, 5, fr, '#2a2e36'); wheel(P, 23, 5, fr + 1, '#2a2e36'); beast(P, 36, 'goat', fr); beast(P, 44, 'goat', fr + 1);
-  }
-}
-function drawWagon(ctx, kind, t, moving) {
-  const fr = moving ? Math.floor(t * 8) % 2 : 0;
-  const w = WAGON_W[kind] + 8;
-  blit(ctx, bake('W|' + kind + fr + '|' + (FLASH || ''), w, 34, 3, 31, x => paintWagon(x, kind, fr)));
-}
-
-/* ───────── 야영: 천막과 모닥불 ───────── */
-function drawTent(ctx) {
-  blit(ctx, bake('tent', 30, 20, 14, 18, x => {
-    const c = '#c8a868', l = '#e0c88a', d = '#8a6a3a';
-    for (let i = 0; i < 12; i++) { R(x, -i, -12 + i, i + 1, 1, i % 4 === 0 ? d : l); R(x, 1, -12 + i, i, 1, i % 4 === 0 ? d : c); }
-    for (let i = 0; i < 6; i++) R(x, -i, -6 + i, i * 2 + 1, 1, '#2a1d14');
-    R(x, 0, -14, 1, 3, '#5e3c22'); R(x, -13, -1, 27, 1, d);
-  }));
-}
+/* ───────── 모닥불과 잠든 숨 (본부 화면에서도 쓴다) ───────── */
 function drawFire(ctx, x, y, t, big) {
   // 돌과 장작
   R(ctx, x - 6, y - 1, 2, 1, '#6a6670'); R(ctx, x + 5, y - 1, 2, 1, '#6a6670'); R(ctx, x - 4, y, 9, 1, '#4a4650');
@@ -163,20 +96,7 @@ function drawZ(ctx, x, y, t, ph) {
   }
 }
 
-/* ───────── 들것: 쓰러진 동료를 싣고 간다 ───────── */
-function drawStretcher(ctx, a, t, moving) {
-  const by = moving ? Math.round(Math.sin(t * 9) * 0.6) : 0;
-  ctx.save(); ctx.translate(0, by);
-  R(ctx, -12, -4, 25, 1, '#6b4a2e'); R(ctx, -13, -4, 1, 1, '#8a6a44'); R(ctx, 13, -4, 1, 1, '#8a6a44');
-  R(ctx, -9, -5, 19, 2, '#d8cdb0'); R(ctx, -9, -3, 19, 1, '#a89a7a');
-  R(ctx, -8, -1, 1, 3, '#5e3c22'); R(ctx, 8, -1, 1, 3, '#5e3c22');
-  ctx.translate(0, -3);
-  drawAdv(ctx, a, t, { sleep: 1 });
-  ctx.restore();
-  R(ctx, -1, -15 + by, 3, 1, '#e0503f'); R(ctx, 0, -16 + by, 1, 3, '#e0503f');
-}
-
-/* ───────── 던전 입구 (필드 위에 서 있다) ───────── */
+/* ───────── 던전 입구 (필드 끝, 길 끝에 서 있다) ───────── */
 function paintGate(x, kind, cleared) {
   const P = (px, py, w, h, c) => R(x, px, py, w, h, c), dark = '#120e14';
   if (kind === 'cellar') {          // 버려진 곡물 창고

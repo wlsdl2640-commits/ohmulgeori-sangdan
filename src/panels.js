@@ -572,7 +572,18 @@ function bindUI() {
   $('win-back').addEventListener('click', backWin);
   $('win-x').addEventListener('click', closeWins);
   $('floors').addEventListener('click', e => { const b = e.target.closest('[data-floor]'); if (b) { hqGo(b.dataset.floor); renderFloors(); } });
-  $('pip').addEventListener('click', () => setPip(!UI.pipBig));
+  $('pip').addEventListener('click', () => { if (S) openBattle(); });
+  $('pip').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && S) { e.preventDefault(); openBattle(); } });
+  // 전투 창: 뒤로·닫기, 복귀·던전 입구 단추
+  $('bw-back').addEventListener('click', backWin);
+  $('bw-x').addEventListener('click', backWin);
+  $('bw-close').addEventListener('click', backWin);
+  $('bwin').addEventListener('click', e => {
+    const b = e.target.closest('[data-act]');
+    if (!b || b.disabled || !S) return;
+    ACT[b.dataset.act](b.dataset);
+    renderBattle(); renderChips(); updateHud(); saveGame();
+  });
   // 본부 화면: 누르면 그 자리의 것, 위아래로 밀면 층 이동
   const hq = $('hq');
   let p0 = null;

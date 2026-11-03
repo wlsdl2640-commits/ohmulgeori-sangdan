@@ -18,14 +18,13 @@ function awayReport(r) {
 function startGame() {
   running = true;
   UI.html = ''; UI.chips = ''; UI.floors = ''; UI.fname = '';
-  try { UI.pipBig = localStorage.getItem('ohmul:pip') === '1'; } catch (_) {}
-  $('pip').classList.toggle('big', UI.pipBig);
   layoutStage(); hqGo('shop0', true);
   renderPanel(true); renderChips(); updateHud(); updateOverlay(); renderFloors(); showWin(false);
   clearInterval(uiTimer);
   uiTimer = setInterval(() => {
     if (!S) return;
     updateHud(); updateOverlay(); renderChips(); renderPanel(); renderFloors(); pumpModals();
+    if (V.bopen) renderBattle();
   }, 400);
   renderSpeed();
   lastT = 0;

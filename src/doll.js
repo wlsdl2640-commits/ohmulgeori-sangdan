@@ -196,12 +196,12 @@ function bakeHi(key, w, h, ax, ay, build) {
 function blitHi(ctx, s) { ctx.save(); ctx.scale(1 / HI, 1 / HI); ctx.drawImage(s.cv, -s.ax, -s.ay); ctx.restore(); }
 // 무늬 도우미
 const TX = {
-  fold: (gap = 4, ph = 0) => (x, y, i) => ((Math.round(x) + ph) % gap === 0 && i > 0 ? -1 : 0),
-  chain: () => (x, y) => ((Math.round(x) + Math.round(y)) % 2 ? -1 : 0),
-  scale: () => (x, y) => { const X = Math.round(x), Y = Math.round(y); return (Y % 3 === 0 && (X + (Y % 6 ? 0 : 2)) % 4 !== 0) ? -1 : 0; },
-  noise: (seed = 1, p = 0.18) => (x, y) => { const h = Math.sin(Math.round(x) * 12.9898 + Math.round(y) * 78.233 + seed) * 43758.5453; const f = h - Math.floor(h); return f < p ? -1 : f > 1 - p * 0.6 ? 1 : 0; },
-  grain: () => (x, y) => (Math.round(y + Math.sin(x * 0.7) * 1.2) % 3 === 0 ? -1 : 0),
-  stripe: (gap = 3) => (x, y) => (Math.round(y) % gap === 0 ? -1 : 0),
-  plates: (gap = 5) => (x, y, i) => (Math.round(y) % gap === 0 ? -1 : 0),
-  stars: (seed = 3) => (x, y) => { const h = Math.sin(Math.round(x) * 91.7 + Math.round(y) * 47.3 + seed) * 9137.1; return h - Math.floor(h) > 0.93 ? 4 : 0; }
+  fold: (gap = 4, ph = 0) => (x, y, i) => ((Math.round(x) + ph) % (gap + 1) === 0 && i >= 2 && Math.round(y) % 3 !== 0 ? -1 : 0),
+  chain: () => (x, y, i) => (Math.round(y) % 2 === 0 && (Math.round(x) + Math.round(y) / 2) % 2 === 0 && i >= 2 ? -1 : 0),
+  scale: () => (x, y, i) => { const X = Math.round(x), Y = Math.round(y); return Y % 3 === 0 && (X + (Y % 6 ? 0 : 2)) % 4 === 0 && i >= 1 ? -1 : 0; },
+  noise: () => () => 0,
+  grain: () => (x, y, i) => (Math.round(y + Math.sin(x * 0.7) * 1.2) % 4 === 0 && i >= 2 ? -1 : 0),
+  stripe: (gap = 3) => (x, y, i) => (Math.round(y) % (gap + 2) === 0 && i >= 2 ? -1 : 0),
+  plates: (gap = 5) => (x, y, i) => (Math.round(y) % (gap + 1) === 0 && i >= 1 ? -1 : 0),
+  stars: (seed = 3) => (x, y) => { const h = Math.sin(Math.round(x) * 91.7 + Math.round(y) * 47.3 + seed) * 9137.1; return h - Math.floor(h) > 0.95 ? 4 : 0; }
 };

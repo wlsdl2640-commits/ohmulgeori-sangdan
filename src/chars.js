@@ -48,34 +48,38 @@ function ik2(a, b, l1, l2, bend) {
   const p = (l1 * l1 - l2 * l2 + d * d) / (2 * d), q = Math.sqrt(Math.max(0, l1 * l1 - p * p)), ux = dx / D0, uy = dy / D0;
   return [a[0] + ux * p - uy * q * bend, a[1] + uy * p + ux * q * bend];
 }
-const WALK_HI = [{ f: [5, 0], b: [-4, 0], bob: 0, sw: -3 }, { f: [1, -2], b: [0, 0], bob: -1, sw: 0 }, { f: [-4, 0], b: [5, 0], bob: 0, sw: 3 }, { f: [0, 0], b: [1, -2], bob: -1, sw: 0 }];
-function advJoints(pose, fr, L, wb) {
-  const walk = pose === 'walk', W = walk ? WALK_HI[fr % 4] : { f: [3, 0], b: [-3, 0], bob: pose === 'idle' && fr % 2 ? -1 : 0, sw: 0 };
-  const atk = pose === 'atk' ? fr % 2 : -1, bob = W.bob, ln = atk === 1 ? 2 : atk === 0 ? -1 : 0, sw = W.sw;
-  const J = { bob, ln, atk, walk, sit: pose === 'sit', hip: [ln * 0.5, -16 + bob], neck: [ln, -29 + bob], head: [1 + ln, -36 + bob],
-    fS: [3 + ln, -27 + bob], bS: [-3 + ln, -27 + bob], fF: W.f.slice(), bF: W.b.slice(), ang: -1.15, sw };
-  J.fH = [6 + ln + sw * 0.6, -17 + bob]; J.bH = [-5 + ln - sw * 0.6, -17 + bob];
-  if (L.shield) J.bH = [4 + ln - sw * 0.2, -20 + bob];
-  if (J.sit) { Object.assign(J, { hip: [0, -7], neck: [0, -20], head: [1, -27], fS: [3, -18], bS: [-3, -18], fF: [10, 0], bF: [8, 0], fH: [8, -10], bH: [5, -10], ang: -0.25 }); }
-  else if (MELEE_W.includes(wb) || wb === 'great' || wb === 'hammer') {
-    if (atk === 0) { J.fH = [-1 + ln, -35 + bob]; J.ang = -2.45; }
-    else if (atk === 1) { J.fH = [12 + ln, -22 + bob]; J.ang = wb === 'dagger' ? 0.05 : 0.3; }
-    else J.ang = wb === 'dagger' ? -0.5 : -1.1;
-    if (L.ex && L.ex.includes('twin')) { J.bH = atk === 1 ? [6 + ln, -25 + bob] : [2 + ln - sw * 0.4, -18 + bob]; J.bang = atk === 1 ? -0.6 : -0.7; }
+/* 앞모습 자세: 발밑이 (0,0). 화면 오른쪽 손(R)에 무기, 왼쪽 손(L)에 방패·활·두 번째 무기 */
+function frontJoints(pose, fr, L, wb) {
+  const walk = pose === 'walk', atk = pose === 'atk' ? fr % 2 : -1, sit = pose === 'sit';
+  const bob = walk ? (fr % 2 ? -1 : 0) : pose === 'idle' && fr % 2 ? -1 : 0, y = bob;
+  const J = { bob, atk, walk, sit, fr };
+  J.hipL = [-2.7, -16 + y]; J.hipR = [2.7, -16 + y];
+  J.footL = [-3.3, 0]; J.footR = [3.3, 0];
+  if (walk && fr % 4 === 0) J.footL = [-3.1, -2.4];
+  if (walk && fr % 4 === 2) J.footR = [3.1, -2.4];
+  J.torso = [0, -22.4 + y]; J.neck = [0, -29.4 + y]; J.head = [0, -36.3 + y];
+  J.sL = [-6.1, -27.2 + y]; J.sR = [6.1, -27.2 + y];
+  const sw = walk ? [1.2, 0, -1.2, 0][fr % 4] : 0;
+  J.hL = [-7.4, -18.6 + y + sw]; J.hR = [7.4, -18.6 + y - sw];
+  J.ang = -1.22; J.angL = -1.92;
+  const twin = (L.ex || []).includes('twin');
+  if (L.shield) J.hL = [-4.6, -20.4 + y];
+  if (sit) {
+    Object.assign(J, { hipL: [-2.8, -6], hipR: [2.8, -6], footL: [2.4, -1.6], footR: [-2.4, -1.6], torso: [0, -12.6], neck: [0, -19.6], head: [0, -26.5], sL: [-6.1, -17.4], sR: [6.1, -17.4], hL: [-6.4, -9.4], hR: [6.4, -9.4], ang: -1.35 });
+  } else if (MELEE_W.includes(wb) || wb === 'great' || wb === 'hammer') {
+    if (atk === 0) { J.hR = [6.6, -34.5 + y]; J.ang = -2.05; if (twin) { J.hL = [-6.6, -34.5 + y]; J.angL = -1.1; } }
+    else if (atk === 1) { J.hR = [3.2, -21.5 + y]; J.ang = wb === 'dagger' ? -1.0 : -0.3; if (twin) { J.hL = [-3.2, -21.5 + y]; J.angL = -2.85; } }
+    else if (wb === 'dagger') J.ang = -0.75;
   } else if (wb === 'bow' || wb === 'long') {
-    J.fH = [10 + ln, -24 + bob]; J.bH = atk === 0 ? [1 + ln, -24 + bob] : [5 + ln, -24 + bob]; J.ang = -Math.PI / 2;
+    J.hL = [-9.2, -23.6 + y]; J.hR = atk === 0 ? [-2.4, -23.6 + y] : [-5.2, -24.2 + y]; J.ang = -Math.PI / 2;
   } else if (wb === 'staff' || wb === 'skull' || wb === 'crozier') {
-    if (atk >= 0) { J.fH = [9 + ln, -27 + bob]; J.ang = atk ? -0.85 : -1.3; } else { J.fH = [7 + ln, -18 + bob]; J.ang = -1.5; }
-  } else if (wb === 'lute') { J.fH = [3 + ln, -19 + bob + (atk === 1 ? 1 : 0)]; J.bH = [8 + ln, -26 + bob]; J.ang = -0.55; }
-  else if (wb === 'lance') {
-    if (atk >= 0) { J.fH = [atk ? 11 + ln : 3 + ln, -22 + bob]; J.ang = 0.04; J.bH = [atk ? 6 + ln : -1 + ln, -21 + bob]; }
-    else { J.fH = [6 + ln, -18 + bob]; J.ang = -1.47; }
-  }
-  const hipF = [J.hip[0] + 2, J.hip[1]], hipB = [J.hip[0] - 2, J.hip[1]];
-  J.hipF = hipF; J.hipB = hipB;
-  J.fA = [J.fF[0], J.fF[1] - 2.5]; J.bA = [J.bF[0], J.bF[1] - 2.5];
-  J.fK = ik2(hipF, J.fA, 7.6, 7.6, J.sit ? 1 : -1); J.bK = ik2(hipB, J.bA, 7.6, 7.6, J.sit ? 1 : -1);
-  J.fE = ik2(J.fS, J.fH, 6.2, 6.2, 1); J.bE = ik2(J.bS, J.bH, 6.2, 6.2, 1);
+    if (atk >= 0) { J.hR = [7.2, -27.5 + y]; J.ang = -1.5; } else { J.hR = [8, -19 + y]; J.ang = -1.53; }
+  } else if (wb === 'lute') { J.hL = [-3.4, -20.6 + y]; J.hR = [2.6, -21.6 + y + (atk === 1 ? 1 : 0)]; J.ang = -0.72; }
+  else if (wb === 'lance') { if (atk >= 0) { J.hR = [6.4, atk ? -27 + y : -23 + y]; J.ang = -1.5; } else { J.hR = [7.8, -19 + y]; J.ang = -1.52; } }
+  const kn = (h, f, o) => [(h[0] + f[0]) / 2 + o, (h[1] + f[1] - 2.5) / 2];
+  J.ankL = [J.footL[0], J.footL[1] - 2.6]; J.ankR = [J.footR[0], J.footR[1] - 2.6];
+  J.kL = sit ? [-6.4, -5] : kn(J.hipL, J.footL, -0.3); J.kR = sit ? [6.4, -5] : kn(J.hipR, J.footR, 0.3);
+  J.eL = ik2(J.sL, J.hL, 5.1, 5.1, 1); J.eR = ik2(J.sR, J.hR, 5.1, 5.1, -1);
   return J;
 }
 // 점들을 (x,y) 기준으로 ang만큼 돌린다. 무기는 손잡이(0,0)에서 위(-y)로 뻗게 그린다
@@ -95,11 +99,14 @@ function paintWeaponHi(D, wb, H, ang, tint, L, side) {
     if (g) cap(0, 4.5, 0, 3, 1.4, 1.4, gold);
   } else if (wb === 'axe' || wb === 'gaxe') {
     const g = wb === 'gaxe';
-    cap(0, 4, 0, g ? -20 : -16, 1.2, 1.1, wood, { tex: TX.grain() });
-    const t = g ? -18 : -14;
-    poly([[0.5, t + 3], [5, t - 1], [8, t + 1], [9, t + 6], [7.5, t + 10], [4.5, t + 10], [0.5, t + 7]], M, { line: 1 }, 1.8);
-    if (g) poly([[-0.5, t + 3], [-5, t - 1], [-8, t + 1], [-9, t + 6], [-7.5, t + 10], [-4.5, t + 10], [-0.5, t + 7]], M, { line: 1 }, 1.8);
-    for (let i = 0; i < 5; i++) { const [[px, py]] = R([[8.2 - i * 0.1, t + 2 + i * 1.6]]); D.shadeAt(px, py, 2); }
+    // 자루 끝에 좁은 목, 바깥으로 넓게 휜 날 (큰 도끼는 양날 + 위쪽 창끝)
+    cap(0, 4, 0, g ? -21 : -16, 1.2, 1.1, wood, { tex: TX.grain() });
+    const t = g ? -17 : -13, s = g ? 1.25 : 1;
+    const bit = m => [[0.6 * m, t + 0.6], [3.4 * s * m, t + 1.2], [6.6 * s * m, t - 2.6 * s], [8.6 * s * m, t - 1.4 * s], [9.3 * s * m, t + 2.6], [8.6 * s * m, t + 6.6 * s], [6.6 * s * m, t + 8.4 * s], [3.4 * s * m, t + 4.6], [0.6 * m, t + 5.2]];
+    poly(bit(1), M, { line: 1 }, 1.5);
+    if (g) { poly(bit(-1), M, { line: 1 }, 1.5); poly([[-1, t - 1], [1, t - 1], [0, t - 6]], M, { line: 1 }, 1); }
+    for (let i = 0; i <= 7; i++) { const u = i / 7, [[px, py]] = R([[(8.4 + Math.sin(u * Math.PI) * 0.7) * s, t - 1.2 * s + u * 7.6 * s]]); D.shadeAt(px, py, 2); if (g) { const [[qx, qy]] = R([[-(8.4 + Math.sin(u * Math.PI) * 0.7) * s, t - 1.2 * s + u * 7.6 * s]]); D.shadeAt(qx, qy, 2); } }
+    const [[cx, cy]] = R([[0, t + 2.9]]); D.add(shEll(cx, cy, 1.4, 1.4), mat('#d8a84a', 'gold'), { cast: false });
   } else if (wb === 'club') {
     cap(0, 3, 0, -12, 1.4, 3, mat('#7a5232', 'wood'), { tex: TX.grain() });
   } else if (wb === 'mace' || wb === 'hammer') {
@@ -115,10 +122,10 @@ function paintWeaponHi(D, wb, H, ang, tint, L, side) {
     poly([[-2, -26], [2, -26], [0, -34]], M, { line: 1 }, 1.2);
     poly([[1, -23], [7, -21], [1, -19]], mat(L.c2 || '#c0392b'), { cast: false });
   } else if (wb === 'bow' || wb === 'long') {
-    const h = wb === 'long' ? 15 : 12, gb = wb === 'long' && L.c2 === '#e8c060', bw = mat(gb ? '#e8c060' : '#7a5232', gb ? 'gold' : 'wood');
-    D.add(shCap(x, y - 1, x + 3, y - h * 0.55, 1.2, 1), bw); D.add(shCap(x + 3, y - h * 0.55, x, y - h, 1, 0.8), bw);
-    D.add(shCap(x, y + 1, x + 3, y + h * 0.55, 1.2, 1), bw); D.add(shCap(x + 3, y + h * 0.55, x, y + h, 1, 0.8), bw);
-    for (let i = -h; i <= h; i++) D.px(x - 1 + (H.pull && Math.abs(i) < h * 0.5 ? -(h * 0.5 - Math.abs(i)) * 0.5 : 0), y + i, '#e8e2d0');
+    const h = wb === 'long' ? 15 : 12, gb = wb === 'long' && L.c2 === '#e8c060', bw = mat(gb ? '#e8c060' : '#7a5232', gb ? 'gold' : 'wood'), m = H.mir ? -1 : 1;
+    D.add(shCap(x, y - 1, x + 3 * m, y - h * 0.55, 1.2, 1), bw); D.add(shCap(x + 3 * m, y - h * 0.55, x, y - h, 1, 0.8), bw);
+    D.add(shCap(x, y + 1, x + 3 * m, y + h * 0.55, 1.2, 1), bw); D.add(shCap(x + 3 * m, y + h * 0.55, x, y + h, 1, 0.8), bw);
+    for (let i = -h; i <= h; i++) D.px(x - m + (H.pull && Math.abs(i) < h * 0.5 ? -m * (h * 0.5 - Math.abs(i)) * 0.9 : 0), y + i, '#e8e2d0');
   } else if (wb === 'staff' || wb === 'skull' || wb === 'crozier') {
     cap(0, 9, 0, -21, 1.1, 1.1, wb === 'crozier' ? gold : wood, { tex: wb === 'crozier' ? null : TX.grain() });
     const [[tx, ty]] = R([[0, -24]]);
@@ -139,214 +146,200 @@ function paintAdvHi(D, a, pose, fr, Lx) {
   const cls = CLASSES[a.cls] ? a.cls : 'warrior', L = Lx || LOOKS[cls] || LOOKS[jobBase(cls)] || LOOKS.warrior;
   const lk = a.look || {}, wpn = a.eq && a.eq.weapon, arm = a.eq && a.eq.armor, ex = L.ex || [];
   const wb0 = wpn ? wpn.base : (typeof WEAPON_OF !== 'undefined' && WEAPON_OF[cls]) || 'sword';
-  const wb = L.wv && !(['bow', 'lute'].includes(wb0) && !['long'].includes(L.wv)) ? (L.wv === 'long' ? (wb0 === 'bow' ? 'long' : wb0) : L.wv === 'great' ? (['sword', 'axe'].includes(wb0) ? (wb0 === 'axe' ? 'gaxe' : 'great') : wb0) : L.wv === 'hammer' ? (wb0 === 'mace' ? 'hammer' : wb0) : ['skull', 'crozier'].includes(L.wv) ? (wb0 === 'staff' ? L.wv : wb0) : wb0) : wb0;
+  const wb = L.wv && !(['bow', 'lute'].includes(wb0) && L.wv !== 'long') ? (L.wv === 'long' ? (wb0 === 'bow' ? 'long' : wb0) : L.wv === 'great' ? (['sword', 'axe'].includes(wb0) ? (wb0 === 'axe' ? 'gaxe' : 'great') : wb0) : L.wv === 'hammer' ? (wb0 === 'mace' ? 'hammer' : wb0) : ['skull', 'crozier'].includes(L.wv) ? (wb0 === 'staff' ? L.wv : wb0) : wb0) : wb0;
   if (pose === 'sleep') { sleepHi(D, a, L, lk); return; }
-  const J = advJoints(pose, fr, L, wb);
+  const J = frontJoints(pose, fr, L, wb);
   const skinC = L.skin || lk.skin || SKINS[0], sk = mat(skinC, L.bones ? 'bone' : 'skin'), hr = mat(lk.hair || HAIRS[0], 'hair');
   const c1 = mat(L.c1), c2 = mat(L.c2, /e[0-9a-f]c0|f0c24a|e8c060|d8a84a|e0b040|c9a04a/.test(L.c2) ? 'gold' : 'cloth'), c3 = mat(L.c3 || L.c1);
   const metalC = L.metal || (arm ? ARM_TINT[arm.t] : '#8a8e98'), mt = mat(metalC, 'metal'), gold = mat('#d8a84a', 'gold');
   const wTint = wpn ? WPN_TINT[wpn.t] : '#a8aeb8', boot = mat(BOOT, 'leather'), belt = mat(BELT, 'leather');
   const body = L.body, robe = body === 'robe', plate = body === 'plate' || body === 'scale', style = (a.id || 0) % 3;
-  const [hx, hy] = J.head, sw = J.walk ? J.sw : 0;
+  const [hx, hy] = J.head, [tx, ty] = J.torso, hipY = J.hipL[1];
   const pants = plate ? mt : body === 'bare' ? c1 : body === 'chain' ? mat('#4a4a52') : mat(body === 'coat' ? '#2e2a34' : '#4a3a2e');
-  const sleeve = plate || body === 'chain' ? mt : body === 'bare' ? sk : body === 'leather' ? c1 : c1;
+  const sleeve = plate || body === 'chain' ? mt : body === 'bare' ? sk : c1;
+  const twin = ex.includes('twin'), head = L.head;
+  const hidesHair = ['great', 'winged', 'hood', 'hoodup', 'cowl', 'coif', 'coif2', 'beak', 'dragon', 'glad', 'horn', 'mitre', 'mitre2'].includes(head) || L.bones;
 
-  // ── 등 뒤: 망토·화살통·짐 ──
-  if (L.cape) {
-    const cx = J.neck[0], cy = J.neck[1], fl = J.walk ? 1 + Math.abs(sw) * 0.5 : J.atk === 1 ? 3 : 0;
-    D.add(shPoly([[cx - 1, cy], [cx + 2, cy + 1], [cx - 2, cy + 18], [cx - 9 - fl, cy + 25 + (J.sit ? -8 : 0)], [cx - 6, cy + 3]], 2.4), mat(L.cape), { tex: TX.fold(3, 1) });
+  // ── 등 뒤: 망토·짐·화살통·긴 머리 ──
+  if (L.cape) { const fl = J.atk === 1 ? 1 : J.walk ? (J.fr % 2) : 0; D.add(shPoly([[tx - 5.4, J.neck[1] + 1.4], [tx + 5.4, J.neck[1] + 1.4], [tx + 9 + fl, J.sit ? -1 : -1.5], [tx, J.sit ? -0.5 : -0.5], [tx - 9 - fl, J.sit ? -1 : -1.5]], 2), mat(L.cape), { lift: -0.2 }); }
+  if (ex.includes('pack')) { D.add(shBox(tx - 8.6, J.neck[1] - 4, 17.2, 15, 3, 2.4), mat('#7a5634', 'leather')); D.add(shCap(tx - 7.8, J.neck[1] - 4.6, tx + 7.8, J.neck[1] - 4.6, 2.2), mat(L.c3 || '#a8432f')); }
+  if (ex.includes('quiver')) { D.add(shPoly([[tx + 3.2, J.neck[1] - 6.4], [tx + 7.4, J.neck[1] - 5.6], [tx + 8.6, J.neck[1] + 5], [tx + 5, J.neck[1] + 5]], 1.2), mat('#6a4a2a', 'leather')); for (let i = 0; i < 3; i++) D.add(shCap(tx + 3.8 + i * 1.4, J.neck[1] - 6.6, tx + 4 + i * 1.5, J.neck[1] - 9.6, 0.8, 0.6), mat(L.feather || '#e8e2d0'), { cast: false }); }
+  if (!hidesHair && style === 1) D.add(shBox(hx - 7, hy - 2, 14, 12.6, 3, 1.8), hr);
+  if (['hood', 'hoodup', 'cowl', 'coif', 'coif2'].includes(head)) {
+    const hc = head === 'coif' ? mat('#f4f0e6') : head === 'hoodup' && L.cape ? mat(L.cape) : c1;
+    D.add(shEll(hx, hy + 0.6, 8.6, 8.6), hc);
+    D.add(shPoly([[hx - 8.4, hy + 3], [hx + 8.4, hy + 3], [hx + 9.4, hy + 9.6], [hx - 9.4, hy + 9.6]], 2), hc);
   }
-  if (ex.includes('quiver')) { D.add(shPoly([[-8, -31 + J.bob], [-4, -33 + J.bob], [0, -19 + J.bob], [-4, -17 + J.bob]], 1.6), mat('#6a4a2a', 'leather'), { tex: TX.stripe(4) }); for (let i = 0; i < 3; i++) D.add(shCap(-7 + i * 1.6, -33 + J.bob, -6.4 + i * 1.6, -37 + J.bob, 0.9, 0.9), mat(L.feather || '#e8e2d0', 'cloth'), { cast: false }); }
-  if (ex.includes('pack')) { D.add(shBox(-13, -32 + J.bob, 10, 14, 2.5, 2.5), mat('#7a5634', 'leather'), { tex: TX.stripe(5) }); D.add(shCap(-13, -34 + J.bob, -4, -34 + J.bob, 2.2), mat(L.c3 || '#a8432f')); D.add(shBox(-12, -24 + J.bob, 3, 5, 1, 1), mat('#5a6a7a', 'metal')); }
-  if (ex.includes('sash')) D.add(shPoly([[-4, -18 + J.bob], [-2, -16 + J.bob], [-12 - Math.abs(sw), -10], [-13 - Math.abs(sw), -12]], 1), c3);
-  if (ex.includes('scarf')) D.add(shPoly([[-1, -30 + J.bob], [1, -28 + J.bob], [-9 - Math.abs(sw), -24 + J.bob], [-10 - Math.abs(sw), -27 + J.bob]], 1), c3);
-
-  // ── 뒷팔 (방패·두 번째 무기·책) ──
-  const bSleeve = sleeve;
-  D.add(shCap(J.bS[0], J.bS[1], J.bE[0], J.bE[1], 2.4, 2.1), bSleeve, { lift: -0.25, tex: body === 'chain' ? TX.chain() : null });
-  D.add(shCap(J.bE[0], J.bE[1], J.bH[0], J.bH[1], 2.1, 1.9), plate ? mt : body === 'bare' ? sk : bSleeve, { lift: -0.25 });
-  if (ex.includes('twin')) paintWeaponHi(D, wb === 'great' ? 'sword' : wb, J.bH, J.bang != null ? J.bang : -1.0, wTint, L, 'back');
-  D.add(shEll(J.bH[0], J.bH[1], 2, 2), plate ? mt : sk, { lift: -0.2 });
-  if (ex.includes('book')) D.add(shBox(J.bH[0] - 2, J.bH[1] - 4, 6, 7, 1, 1.4), mat('#3a2a4a', 'leather'), { line: 1 });
-  if (ex.includes('bag')) D.add(shBox(J.bH[0] - 3, J.bH[1], 7, 6, 1.5, 2), mat('#5a3a22', 'leather'));
 
   // ── 다리 ──
-  const leg = (H, K, A, F, lift) => {
-    D.add(shCap(H[0], H[1], K[0], K[1], 2.7, 2.4), pants, { lift, tex: body === 'chain' ? null : null });
-    D.add(shCap(K[0], K[1], A[0], A[1], 2.4, 2.1), plate ? mt : pants, { lift });
-    D.add(shBox(F[0] - 2.6, F[1] - 4.2, 6.4, 4.2, 1.6, 1.6), plate ? mt : boot, { lift });
-    if (plate) D.add(shEll(K[0] + 0.5, K[1], 2.2, 2), mt, { lift });
+  const leg = (H, K, A, F) => {
+    D.add(shCap(H[0], H[1], K[0], K[1], 2.7, 2.4), pants);
+    D.add(shCap(K[0], K[1], A[0], A[1], 2.4, 2.1), plate ? mt : pants);
+    D.add(shBox(F[0] - 2.7, F[1] - 4.3, 5.4, 4.3, 1.5, 1.5), plate ? mt : boot);
+    if (plate) D.add(shEll(K[0], K[1], 2.1, 1.9), mt);
   };
-  if (!robe) leg(J.hipB, J.bK, J.bA, J.bF, -0.3);
-  // 겉옷 자락 (외투·튜닉)
-  if (body === 'coat') D.add(shPoly([[J.hip[0] - 6, J.hip[1] - 2], [J.hip[0] + 5, J.hip[1] - 2], [J.hip[0] + 2, J.hip[1] + 9], [J.hip[0] - 9 - Math.abs(sw) * 0.4, J.hip[1] + 10]], 2), c1, { tex: TX.fold(3, 0) });
+  if (!robe) { leg(J.hipL, J.kL, J.ankL, J.footL); leg(J.hipR, J.kR, J.ankR, J.footR); }
+  // 옷자락
+  if (robe) {
+    const bot = -1, w = J.sit ? 9 : 8.4;
+    D.add(shPoly([[tx - 5.8, hipY - 4], [tx + 5.8, hipY - 4], [tx + w, bot], [tx - w, bot]], 2.4), c1, { tex: TX.fold(5, 2) });
+    D.add(shPoly([[tx - w, bot - 2.4], [tx + w, bot - 2.4], [tx + w + 0.3, bot], [tx - w - 0.3, bot]], 0.8), c2, { cast: false });
+    D.add(shBox(J.footL[0] - 2.4, -2.4, 4.4, 2.4, 1, 1), boot); D.add(shBox(J.footR[0] - 2, -2.4, 4.4, 2.4, 1, 1), boot);
+  }
+  if (body === 'coat') { D.add(shPoly([[tx - 6.2, hipY - 3], [tx - 1, hipY - 1], [tx - 2, hipY + 9], [tx - 8.8, hipY + 8]], 1.6), c1); D.add(shPoly([[tx + 6.2, hipY - 3], [tx + 1, hipY - 1], [tx + 2, hipY + 9], [tx + 8.8, hipY + 8]], 1.6), c1); }
 
   // ── 몸통 ──
-  const tx = (J.neck[0] + J.hip[0]) / 2, ty = (J.neck[1] + J.hip[1]) / 2 + 0.5;
-  if (robe) {
-    const hw = J.sit ? 8 : 8.5, bot = J.sit ? -1 : -1;
-    D.add(shPoly([[tx - 5.5, J.hip[1] - 4], [tx + 5.5, J.hip[1] - 4], [tx + hw + (J.walk ? sw * 0.3 : 0), bot], [tx - hw - 1 + (J.walk ? sw * 0.3 : 0), bot]], 2.4), c1, { tex: TX.fold(4, 2) });
-    D.add(shPoly([[tx - hw - 1 + (J.walk ? sw * 0.3 : 0), bot - 2.5], [tx + hw + (J.walk ? sw * 0.3 : 0), bot - 2.5], [tx + hw + 0.3, bot], [tx - hw - 1.3, bot]], 1), c2, { cast: false });
-    D.add(shBox(J.fF[0] - 1, -2.5, 5, 2.5, 1, 1), boot);
-  }
-  const torsoM = plate ? mt : body === 'chain' ? mt : body === 'bare' ? sk : body === 'leather' ? mat(L.c2, 'leather') : c1;
-  D.add(shEll(tx, ty, plate ? 6.8 : 6.3, 7.6), torsoM, { tex: body === 'chain' ? TX.chain() : body === 'scale' ? TX.scale() : body === 'bare' ? null : TX.fold(5, 1), lift: plate ? 0.05 : 0 });
-  if (body === 'leather') D.add(shEll(tx + 1, ty - 1, 4.2, 6), c1, { cast: false });
-  if (body === 'coat') { D.add(shPoly([[tx - 1, J.neck[1] + 1], [tx + 3, J.neck[1] + 1], [tx + 1, J.hip[1] - 2]], 1), mat('#e8e2d0'), { cast: false }); D.add(shCap(tx + 3.5, J.neck[1] + 1, tx + 2, J.hip[1] - 3, 1, 1), c2, { cast: false }); }
-  if (body === 'bare') { D.add(shCap(tx - 4, J.neck[1] + 2, tx + 4, J.hip[1] - 4, 1.2, 1.2), mat(L.c2, 'leather'), { cast: false }); D.shadeAt(tx + 1, ty - 2, -1); D.shadeAt(tx + 2, ty - 2, -1); D.shadeAt(tx + 1, ty + 2, -1); }
-  if (plate) { D.add(shPoly([[tx - 6, J.hip[1] - 2], [tx + 6, J.hip[1] - 2], [tx + 7, J.hip[1] + 4], [tx - 7, J.hip[1] + 4]], 1.4), mt, { tex: TX.plates(3) }); if (L.stars) D.add(shEll(tx, ty, 5, 6), mat(L.c1, 'cloth'), { tex: TX.stars(), cast: false }); }
-  if (ex.includes('tabard')) { D.add(shPoly([[tx - 2.5, J.neck[1] + 2], [tx + 4, J.neck[1] + 2], [tx + 3.5, J.hip[1] + 5], [tx - 2, J.hip[1] + 5]], 1.2), c1, { tex: TX.fold(3, 1) }); D.add(shPoly([[tx + 0.2, ty - 3], [tx + 1.8, ty - 3], [tx + 1.8, ty + 3], [tx + 0.2, ty + 3]], 0.6), c2, { flat: 3, cast: false }); D.add(shPoly([[tx - 1.4, ty - 1.5], [tx + 3.4, ty - 1.5], [tx + 3.4, ty], [tx - 1.4, ty]], 0.6), c2, { flat: 3, cast: false }); }
-  if (ex.includes('holy')) { D.px(tx + 1, ty - 4, '#e0c060', 1, 6); D.px(tx - 1, ty - 2, '#e0c060', 5, 1); }
-  if (ex.includes('stole')) { D.add(shCap(tx + 2.5, J.neck[1] + 1, tx + 3, J.hip[1] + 8, 1.1, 1.1), c2, { cast: false }); D.add(shCap(tx - 1, J.neck[1] + 1, tx - 0.5, J.hip[1] + 8, 1.1, 1.1), c2, { cast: false }); }
-  // 앞다리
-  if (!robe) leg(J.hipF, J.fK, J.fA, J.fF, 0);
-  // 허리띠
-  if (!robe || J.sit) { D.add(shBox(tx - 6.4, J.hip[1] - 3.2, 12.8, 3, 1, 1), ex.includes('sash') ? c3 : belt, { cast: false }); D.px(tx + 2, J.hip[1] - 2.6, '#f0c860', 2, 2); }
-  else { D.add(shBox(tx - 5.6, J.hip[1] - 4, 11.2, 2.4, 1, 1), c2, { cast: false }); }
+  const torsoM = plate || body === 'chain' ? mt : body === 'bare' ? sk : body === 'leather' ? c1 : c1;
+  D.add(shEll(tx, ty, plate ? 7 : 6.5, 7.6), torsoM, { tex: body === 'chain' ? TX.chain() : body === 'scale' ? TX.scale() : null });
+  if (plate) { D.px(tx - 0.5, ty - 5, rgbHex(MATS[mt].rp[4]), 1, 7); D.add(shBox(tx - 6.4, hipY - 2.4, 12.8, 5.2, 1.6, 1.4), mt, { tex: TX.plates(3) }); if (L.stars) D.add(shEll(tx, ty - 1, 4, 4.6), mat(L.c1), { cast: false }); }
+  if (body === 'leather') { D.add(shPoly([[tx - 6, ty - 6], [tx - 1.2, ty - 6.4], [tx - 1.6, hipY - 2], [tx - 6.2, hipY - 2]], 1.4), mat(L.c2, 'leather')); D.add(shPoly([[tx + 6, ty - 6], [tx + 1.2, ty - 6.4], [tx + 1.6, hipY - 2], [tx + 6.2, hipY - 2]], 1.4), mat(L.c2, 'leather')); }
+  if (body === 'coat') { D.add(shPoly([[tx - 1.8, J.neck[1] + 1], [tx + 1.8, J.neck[1] + 1], [tx + 1.6, hipY - 2], [tx - 1.6, hipY - 2]], 0.8), mat('#e8e2d0'), { cast: false }); D.add(shCap(tx - 2.6, J.neck[1] + 1.4, tx - 1.8, hipY - 3, 0.9), c2, { cast: false }); D.add(shCap(tx + 2.6, J.neck[1] + 1.4, tx + 1.8, hipY - 3, 0.9), c2, { cast: false }); }
+  if (robe) { D.add(shCap(tx, J.neck[1] + 1.6, tx, hipY - 3, 0.8), c2, { cast: false }); D.add(shEll(tx, J.neck[1] + 1.4, 3.6, 1.6), c2, { cast: false }); }
+  if (body === 'bare') { D.add(shCap(tx - 5, J.neck[1] + 2, tx + 4.6, hipY - 4, 1.1), mat(L.c2, 'leather'), { cast: false }); D.px(tx - 2.6, ty - 2, rgbHex(MATS[sk].rp[1]), 2, 1); D.px(tx + 1.6, ty - 2, rgbHex(MATS[sk].rp[1]), 2, 1); }
+  if (ex.includes('tabard')) { D.add(shPoly([[tx - 3.2, J.neck[1] + 2], [tx + 3.2, J.neck[1] + 2], [tx + 3.4, hipY + 6], [tx - 3.4, hipY + 6]], 1), c1, { lift: 0.1 }); D.px(tx - 0.5, ty - 3.5, rgbHex(MATS[c2].rp[3]), 2, 7); D.px(tx - 2.5, ty - 1.5, rgbHex(MATS[c2].rp[3]), 6, 2); }
+  if (ex.includes('holy')) { D.px(tx - 0.5, ty - 4, '#e0c060', 1, 6); D.px(tx - 2.5, ty - 2, '#e0c060', 5, 1); }
+  if (ex.includes('stole')) { D.add(shCap(tx - 2.4, J.neck[1] + 1.5, tx - 2.6, hipY + 8, 1), c2, { cast: false }); D.add(shCap(tx + 2.4, J.neck[1] + 1.5, tx + 2.6, hipY + 8, 1), c2, { cast: false }); }
+  if (!robe || J.sit) { D.add(shBox(tx - 6.4, hipY - 3.4, 12.8, 2.8, 1, 1), ex.includes('sash') ? c3 : belt, { cast: false }); D.px(tx - 1, hipY - 2.8, '#f0c860', 2, 2); }
+  if (ex.includes('sash')) D.add(shPoly([[tx + 3, hipY - 2], [tx + 5, hipY - 1.4], [tx + 6.6, hipY + 7], [tx + 4.6, hipY + 7]], 0.8), c3);
 
-  // ── 머리 ──
-  const head = L.head;
-  const hidesHair = ['great', 'winged', 'hood', 'hoodup', 'cowl', 'coif', 'coif2', 'beak', 'dragon', 'glad', 'horn', 'mitre', 'mitre2'].includes(head) || L.bones;
-  if (!hidesHair) {
-    D.add(shEll(hx - 1.6, hy - 1.2, 7.2, 7), hr, { cast: false, tex: TX.stripe(3) });
-    if (style === 1) D.add(shCap(hx - 4, hy, hx - 5.5, hy + 10, 3.4, 2.2), hr, { tex: TX.fold(2, 0) });
-  }
-  if (['hood', 'hoodup', 'cowl', 'coif', 'coif2'].includes(head)) {
-    const hc = head === 'coif' ? mat('#f4f0e6') : head === 'coif2' ? c1 : head === 'cowl' ? c1 : head === 'hoodup' && L.cape ? mat(L.cape) : c1;
-    D.add(shEll(hx - 1.5, hy + 0.5, 8.4, 8.6), hc, { tex: TX.fold(4, 0) });
-    D.add(shPoly([[hx - 8, hy + 4], [hx + 1, hy + 5], [hx + 4, hy + 9], [hx - 9, hy + 10]], 2), hc);
-  }
-  D.add(shEll(hx, hy, 6.4, 6.8), sk, { cast: false });
-  // 얼굴
-  const ey = hy + 0.5, eyeC = L.eyes || '#20141a';
-  const face = () => {
-    if (L.bones) { D.px(hx + 1, ey - 1, '#1a1020', 2, 3); D.px(hx + 4, ey - 1, '#1a1020', 2, 3); D.px(hx + 1, ey, L.eyes || '#c89aff'); D.px(hx + 4, ey, L.eyes || '#c89aff'); D.px(hx + 2, hy + 4, '#3a3040', 4, 1); D.px(hx + 3, hy + 4, '#e8e4dc'); return; }
-    D.px(hx + 1.5, ey, eyeC, 1, 2); D.px(hx + 4.5, ey, eyeC, 1, 2);
-    if (L.eyes) { D.px(hx + 1.5, ey, L.eyes, 1, 1); D.px(hx + 4.5, ey, L.eyes, 1, 1); }
-    else { D.px(hx + 0.5, ey, '#f4ece0', 1, 1); D.px(hx + 3.5, ey, '#f4ece0', 1, 1); }
-    D.px(hx + 4, hy + 4, rgbHex(MATS[sk].rp[1]), 1, 1);
-    if (ex.includes('paint')) { D.px(hx + 0.5, ey + 2, '#c0392b', 3, 1); D.px(hx + 4, ey + 2, '#c0392b', 2, 1); }
+  // ── 팔: 왼쪽(방패·활) · 오른쪽(무기) ──
+  const arm2 = (S0, E, H, side) => {
+    const wide = robe ? 1 : 0;
+    D.add(shCap(S0[0], S0[1], E[0], E[1], 2.5, 2.2), sleeve, { tex: body === 'chain' ? TX.chain() : null });
+    D.add(shCap(E[0], E[1], H[0], H[1], 2.2, 2 + wide * 1.2), plate ? mt : body === 'bare' ? (ex.includes('manica') && side > 0 ? mat(metalC, 'gold') : sk) : sleeve, { tex: ex.includes('manica') && side > 0 ? TX.plates(2) : null });
+    if (body === 'bare' && !(ex.includes('manica') && side > 0)) D.add(shCap(E[0] + (H[0] - E[0]) * 0.45, E[1] + (H[1] - E[1]) * 0.45, H[0], H[1], 2.3, 2.1), mat('#6a4a2a', 'leather'));
   };
-  if (!['great', 'winged', 'beak', 'dragon'].includes(head)) face();
-  // 앞머리
-  if (!hidesHair && !['tophat', 'wizard', 'widebrim', 'feather', 'beret'].includes(head)) {
-    D.add(shEll(hx - 0.6, hy - 3.6, 7, 4.4), hr, { clip: (px, py) => py < hy - 1.4 + (px - hx) * 0.22, tex: TX.stripe(2) });
-    if (style === 2) for (const [sx, sy] of [[-4, -7], [-1, -8], [2, -7.5]]) D.add(shPoly([[hx + sx - 1.6, hy + sy + 3], [hx + sx + 1.6, hy + sy + 3], [hx + sx - 0.5, hy + sy - 1]], 1), hr);
-    D.add(shCap(hx - 3.6, hy - 2, hx - 4.2, hy + 3, 1.6, 1.2), hr);
-  }
-  paintHeadgear(D, head, hx, hy, L, { mt, c1, c2, c3, gold, hr, sk });
-
-  // ── 방패 (앞으로 든다) ──
+  const bowLike = wb === 'bow' || wb === 'long';
+  arm2(J.sL, J.eL, J.hL, -1);
+  if (bowLike) paintWeaponHi(D, wb, Object.assign([J.hL[0], J.hL[1]], { pull: J.atk === 0, mir: 1 }), J.ang, wTint, L);
+  if (twin) paintWeaponHi(D, wb === 'great' ? 'sword' : wb, J.hL, J.angL, wTint, L, 'back');
+  D.add(shEll(J.hL[0], J.hL[1], 2.1, 2.1), plate ? mt : sk);
+  if (ex.includes('book')) D.add(shBox(J.hL[0] - 3, J.hL[1] - 3, 6, 7, 1, 1.2), mat('#3a2a4a', 'leather'), { line: 1 });
+  if (ex.includes('bag')) D.add(shBox(J.hL[0] - 3.4, J.hL[1], 7, 6, 1.5, 2), mat('#5a3a22', 'leather'));
   if (L.shield && !J.sit) {
-    const [sx, sy] = [J.bH[0] + 4, J.bH[1] - 3];
-    if (L.shield === 'round') { D.add(shEll(sx, sy, 6.5, 7), mat(metalC, 'gold')); D.add(shEll(sx, sy, 4.6, 5), mat('#7a3a24', 'wood'), { cast: false }); D.add(shEll(sx + 0.3, sy, 1.8, 1.8), mat(metalC, 'gold')); }
-    else if (L.shield === 'kite') { D.add(shPoly([[sx - 5.5, sy - 8], [sx + 5.5, sy - 8], [sx + 5, sy + 1], [sx, sy + 11], [sx - 5, sy + 1]], 2.4), mt, { line: 1 }); D.add(shPoly([[sx - 3.8, sy - 6.4], [sx + 3.8, sy - 6.4], [sx + 3.4, sy + 0.6], [sx, sy + 8.4], [sx - 3.4, sy + 0.6]], 1.6), c1, { cast: false }); D.px(sx - 0.5, sy - 5, rgbHex(MATS[c2].rp[3]), 2, 9); D.px(sx - 3, sy - 2, rgbHex(MATS[c2].rp[3]), 7, 2); }
+    const sx = J.hL[0] - 0.4, sy = J.hL[1] - 1.6;
+    if (L.shield === 'round') { D.add(shEll(sx, sy, 6.4, 6.8), mat(metalC, 'gold')); D.add(shEll(sx, sy, 4.6, 4.9), mat('#7a3a24', 'wood'), { cast: false }); D.add(shEll(sx, sy, 1.8, 1.8), mat(metalC, 'gold')); }
+    else if (L.shield === 'kite') { D.add(shPoly([[sx - 5.6, sy - 7.6], [sx + 5.6, sy - 7.6], [sx + 5.2, sy + 1.4], [sx, sy + 10.6], [sx - 5.2, sy + 1.4]], 2.2), mt, { line: 1 }); D.add(shPoly([[sx - 4, sy - 6], [sx + 4, sy - 6], [sx + 3.6, sy + 1], [sx, sy + 8.4], [sx - 3.6, sy + 1]], 1.6), c1, { cast: false }); D.px(sx - 0.5, sy - 4.6, rgbHex(MATS[c2].rp[3]), 2, 9); D.px(sx - 3, sy - 1.6, rgbHex(MATS[c2].rp[3]), 7, 2); }
     else { D.add(shBox(sx - 6, sy - 9, 12, 20, 3, 2.6), mat('#e8c060', 'gold'), { line: 1 }); D.add(shBox(sx - 4.4, sy - 7.4, 8.8, 16.8, 2, 2), mat(L.c1 === '#e8e4d8' ? '#3a5aa8' : L.c1), { cast: false }); D.px(sx - 0.5, sy - 6, '#f4e8a0', 2, 13); D.px(sx - 3.5, sy - 2, '#f4e8a0', 8, 2); }
   }
-  // ── 어깨 ──
-  if (L.sh === 'pauldron') D.add(shEll(J.fS[0] - 0.5, J.fS[1] + 0.5, 4.2, 3.4), plate || body === 'chain' ? mt : L.metal ? mt : mat('#8a98b8', 'metal'), { tex: TX.plates(2) });
-  if (L.sh === 'fur') D.add(shEll(J.fS[0] - 1, J.fS[1] + 0.5, 5, 3.6), mat('#8a6a4a', 'fur'), { tex: TX.noise(4, 0.3) });
-  if (L.sh === 'spike') { D.add(shEll(J.fS[0] - 0.5, J.fS[1] + 0.5, 4.4, 3.6), mt); D.add(shPoly([[J.fS[0] - 2, J.fS[1] - 2], [J.fS[0] + 1, J.fS[1] - 2], [J.fS[0] - 1, J.fS[1] - 7]], 1), mat('#c8c0c8', 'metal')); }
 
-  // ── 앞팔과 무기 ──
-  const fSleeve = sleeve;
-  const bowLike = wb === 'bow' || wb === 'long', pre = bowLike || wb === 'lute';
-  if (pre) { const W2 = { pull: J.atk === 0 }; paintWeaponHi(D, wb, Object.assign([J.fH[0], J.fH[1]], W2), J.ang, wTint, L); }
-  D.add(shCap(J.fS[0], J.fS[1], J.fE[0], J.fE[1], 2.5, 2.2), fSleeve, { tex: body === 'chain' ? TX.chain() : null });
-  D.add(shCap(J.fE[0], J.fE[1], J.fH[0], J.fH[1], 2.2, 2), plate ? mt : body === 'bare' || body === 'chain' ? (ex.includes('manica') ? mat(metalC, 'gold') : body === 'chain' ? mt : sk) : fSleeve, { tex: ex.includes('manica') ? TX.plates(2) : null });
-  if (body === 'bare' && !ex.includes('manica')) D.add(shCap(J.fE[0] + (J.fH[0] - J.fE[0]) * 0.4, J.fE[1] + (J.fH[1] - J.fE[1]) * 0.4, J.fH[0], J.fH[1], 2.3, 2.1), mat('#6a4a2a', 'leather'));
-  if (!pre && !J.sit) paintWeaponHi(D, wb, J.fH, J.ang, wTint, L);
-  D.add(shEll(J.fH[0], J.fH[1], 2.1, 2.1), plate ? mt : sk);
-  if (J.sit && !pre) paintWeaponHi(D, wb, [J.fH[0] + 2, J.fH[1] + 2], -0.3, wTint, L);
-  // 그림자 연기 (그림자 군주)
-  if (ex.includes('wisp')) for (const [wx, wy] of [[-9, -20], [-11, -12], [-7, -8]]) D.px(wx + Math.round(Math.sin(fr + wx) * 1), wy + J.bob, '#7a4ab8', 2, 2);
-  if (L.stars) for (const [sx, sy] of [[-8, -24], [-6, -14], [-10, -18]]) D.px(sx, sy + J.bob, '#fff4b0', 1, 1);
+  // ── 머리 ──
+  if (!hidesHair) { D.add(shEll(hx - 6.6, hy + 1, 1.3, 1.8), sk); D.add(shEll(hx + 6.6, hy + 1, 1.3, 1.8), sk); D.add(shEll(hx, hy - 1.2, 7.2, 7), hr, { cast: false }); }
+  D.add(shEll(hx, hy, 6.4, 6.8), sk, { cast: false });
+  const ey = hy + 0.6, eyeC = L.eyes || '#22161c';
+  if (L.bones) { D.px(hx - 3.4, ey - 1, '#1a1020', 3, 3); D.px(hx + 0.6, ey - 1, '#1a1020', 3, 3); D.px(hx - 2.4, ey, L.eyes || '#c89aff'); D.px(hx + 1.6, ey, L.eyes || '#c89aff'); D.px(hx - 2, hy + 4, '#3a3040', 4, 1); D.px(hx - 1, hy + 4, '#e8e4dc'); D.px(hx + 1, hy + 4, '#e8e4dc'); }
+  else if (!['great', 'winged', 'beak', 'dragon'].includes(head)) {
+    D.px(hx - 2.6, ey, eyeC, 1, 2); D.px(hx + 1.8, ey, eyeC, 1, 2);
+    if (!L.eyes) { D.px(hx - 3.6, ey, '#f4ece0', 1, 1); D.px(hx + 2.8, ey, '#f4ece0', 1, 1); }
+    D.px(hx - 0.5, hy + 4.2, rgbHex(MATS[sk].rp[1]), 2, 1);
+    if (ex.includes('paint')) { D.px(hx - 4, ey + 2.4, '#c0392b', 2, 1); D.px(hx + 2.4, ey + 2.4, '#c0392b', 2, 1); }
+  }
+  if (!hidesHair && !['tophat', 'wizard', 'widebrim', 'beret', 'feather'].includes(head)) {
+    D.add(shEll(hx, hy - 3.6, 7, 4.2), hr, { clip: (px, py) => py < hy - 2 + Math.abs(px - hx - 1.2) * 0.35 });
+    if (style === 2) [[-3.6, -7.6], [0, -8.4], [3.4, -7.6]].forEach(([sx, sy2]) => D.add(shPoly([[hx + sx - 1.8, hy + sy2 + 3], [hx + sx + 1.8, hy + sy2 + 3], [hx + sx + 0.6, hy + sy2 - 1.2]], 1), hr));
+    D.add(shCap(hx - 6, hy - 2.4, hx - 6.2, hy + 3, 1.5, 1.1), hr); D.add(shCap(hx + 6, hy - 2.4, hx + 6.2, hy + 3, 1.5, 1.1), hr);
+  }
+  paintHeadFront(D, head, hx, hy, L, { mt, c1, c2, c3, gold, hr, sk });
+
+  // ── 어깨 ──
+  for (const S0 of [J.sL, J.sR]) {
+    if (L.sh === 'pauldron') D.add(shEll(S0[0], S0[1] + 0.4, 3.8, 3.2), plate || body === 'chain' || L.metal ? mt : mat('#8a98b8', 'metal'), { tex: TX.plates(3) });
+    if (L.sh === 'fur') D.add(shEll(S0[0], S0[1] + 0.4, 4.4, 3.4), mat('#8a6a4a', 'fur'));
+    if (L.sh === 'spike') { D.add(shEll(S0[0], S0[1] + 0.4, 4, 3.4), mt); D.add(shPoly([[S0[0] - 1.6, S0[1] - 2], [S0[0] + 1.6, S0[1] - 2], [S0[0] + Math.sign(S0[0]) * 1.4, S0[1] - 6.4]], 0.8), mat('#c8c0c8', 'metal')); }
+  }
+  // ── 오른팔과 무기 ──
+  const pre = wb === 'lute';
+  if (pre) paintWeaponHi(D, wb, J.hL, J.ang, wTint, L);
+  arm2(J.sR, J.eR, J.hR, 1);
+  if (!bowLike && !pre) paintWeaponHi(D, wb, J.hR, J.ang, wTint, L);
+  D.add(shEll(J.hR[0], J.hR[1], 2.1, 2.1), plate ? mt : sk);
+  if (ex.includes('scarf')) { D.add(shBox(hx - 5, J.neck[1] - 1, 10, 3, 1.4, 1.2), c3, { cast: false }); D.add(shPoly([[hx + 2.4, J.neck[1] + 1], [hx + 4.6, J.neck[1] + 1], [hx + 5.6, J.neck[1] + 7], [hx + 3.4, J.neck[1] + 7]], 0.8), c3); }
+  if (ex.includes('wisp')) for (const [wx, wy] of [[-10, -22], [10, -14], [-9, -8]]) D.px(wx, wy + J.bob - (fr % 2), '#9a6ad8', 2, 2);
+  if (L.stars) for (const [sx, sy] of [[-10, -26], [9, -30], [-8, -12]]) D.px(sx, sy + J.bob, '#fff4b0', 1, 1);
 }
 
-// 머리 장식
-function paintHeadgear(D, head, hx, hy, L, M) {
+// 머리 장식 (앞모습, 좌우 대칭)
+function paintHeadFront(D, head, hx, hy, L, M) {
   const { mt, c1, c2, c3, gold, hr } = M;
   const ink = (x, y, w, h, c) => D.px(x, y, c || INK, w, h);
+  const hood = (m, deep) => D.add(shEll(hx, hy - 0.6, 8.2, 8.4), m, { clip: (px, py) => ((px - hx) / 5.6) ** 2 + ((py - hy - (deep ? 1.6 : 1)) / (deep ? 5.6 : 6.2)) ** 2 > 1 && py < hy + 6 });
   if (head === 'helm') {
-    D.add(shEll(hx - 0.5, hy - 2.6, 7.4, 6.4), mt, { clip: (px, py) => py < hy - 0.6, tex: TX.plates(3) });
-    D.add(shBox(hx - 7.6, hy - 1.8, 15, 2.2, 1, 1), mt, { lift: 0.1 });
-    D.add(shBox(hx + 4.2, hy - 1, 1.8, 6, 0.6, 0.8), mt);
+    D.add(shEll(hx, hy - 2.4, 7.4, 6.6), mt, { clip: (px, py) => py < hy - 0.4 });
+    D.add(shBox(hx - 7.6, hy - 1.8, 15.2, 2.3, 1, 1), mt, { lift: 0.1 });
+    D.add(shBox(hx - 0.8, hy - 0.8, 1.6, 4.8, 0.6, 0.8), mt);
+    D.px(hx - 3, hy - 7, rgbHex(MATS[mt].rp[4]), 2, 2);
   } else if (head === 'great' || head === 'winged') {
-    D.add(shBox(hx - 7, hy - 8, 14.5, 16, 4.2, 3.2), mt, { tex: TX.plates(4) });
-    ink(hx - 0.5, hy, 8, 1); ink(hx + 2.5, hy + 3, 1, 1); ink(hx + 4.5, hy + 3, 1, 1); ink(hx + 2.5, hy + 5, 1, 1); ink(hx + 4.5, hy + 5, 1, 1);
-    D.px(hx + 1.5, hy - 6, rgbHex(MATS[mt].rp[4]), 1, 5);
-    if (head === 'winged') for (const s of [-1, 1]) { const bx = hx + (s < 0 ? -6 : 5.5); D.add(shPoly([[bx, hy - 4], [bx + s * 2, hy - 12], [bx + s * 5, hy - 13], [bx + s * 3, hy - 6]], 1.2), mat('#f4f0e6'), { tex: TX.stripe(2) }); }
-    if (L.plume) D.add(shPoly([[hx - 2, hy - 8], [hx + 1, hy - 9], [hx - 4, hy - 15], [hx - 9, hy - 13]], 1.4), mat(L.plume), { tex: TX.fold(2, 0) });
+    D.add(shBox(hx - 7.2, hy - 8.4, 14.4, 16.4, 4.4, 3.2), mt);
+    ink(hx - 5, hy, 10, 1.2); ink(hx - 0.5, hy, 1, 5); D.px(hx - 5, hy - 1, rgbHex(MATS[mt].rp[4]), 2, 1);
+    D.px(hx - 3, hy + 3, INK, 1, 1); D.px(hx + 2, hy + 3, INK, 1, 1);
+    if (head === 'winged') for (const s of [-1, 1]) { const bx = hx + s * 6.6; D.add(shPoly([[bx, hy - 3], [bx + s * 2.4, hy - 11], [bx + s * 5.6, hy - 12.4], [bx + s * 3.4, hy - 5]], 1.1), mat('#f4f0e6')); }
+    if (L.plume) D.add(shPoly([[hx - 1.6, hy - 8.4], [hx + 1.6, hy - 8.4], [hx + 3, hy - 14], [hx, hy - 16.6], [hx - 2.4, hy - 13.4]], 1.2), mat(L.plume));
   } else if (head === 'glad') {
-    D.add(shEll(hx - 0.5, hy - 2.4, 7.6, 6.8), mat(L.metal || '#c08a3a', 'gold'), { clip: (px, py) => py < hy + 1.2 });
-    D.add(shBox(hx + 2.5, hy - 1, 4, 7, 1.4, 1.4), mat(L.metal || '#c08a3a', 'gold'));
-    D.add(shPoly([[hx - 7, hy - 6], [hx - 3, hy - 11], [hx + 3, hy - 11.5], [hx + 6, hy - 7], [hx + 3, hy - 8.5], [hx - 3, hy - 8]], 1.4), mat('#c0392b'), { tex: TX.fold(2, 0) });
+    const br = mat(L.metal || '#c08a3a', 'gold');
+    D.add(shEll(hx, hy - 2.2, 7.6, 6.8), br, { clip: (px, py) => py < hy + 0.6 });
+    D.add(shBox(hx - 7.4, hy - 1, 3.4, 7, 1.2, 1.2), br); D.add(shBox(hx + 4, hy - 1, 3.4, 7, 1.2, 1.2), br);
+    D.add(shPoly([[hx - 1.8, hy - 8], [hx + 1.8, hy - 8], [hx + 4.2, hy - 12.4], [hx, hy - 14.6], [hx - 4.2, hy - 12.4]], 1.2), mat('#c0392b'));
   } else if (head === 'horn') {
-    D.add(shEll(hx - 0.5, hy - 2.6, 7.4, 6.2), mt, { clip: (px, py) => py < hy - 0.2 });
-    D.add(shBox(hx - 7.4, hy - 1.6, 14.6, 2, 1, 1), mt);
+    D.add(shEll(hx, hy - 2.4, 7.4, 6.4), mt, { clip: (px, py) => py < hy - 0.2 });
+    D.add(shBox(hx - 7.4, hy - 1.6, 14.8, 2.1, 1, 1), mt);
     const bone = mat(L.eyes ? '#3a2a2a' : '#e8e2d0', 'bone');
-    D.add(shCap(hx - 5, hy - 5, hx - 9, hy - 10, 2, 1.4), bone); D.add(shCap(hx - 9, hy - 10, hx - 8, hy - 14, 1.4, 0.6), bone);
-    D.add(shCap(hx + 4, hy - 6, hx + 7, hy - 11, 2, 1.4), bone); D.add(shCap(hx + 7, hy - 11, hx + 5.5, hy - 15, 1.4, 0.6), bone);
+    for (const s of [-1, 1]) { D.add(shCap(hx + s * 5.6, hy - 4.4, hx + s * 9.8, hy - 8.4, 1.9, 1.3), bone); D.add(shCap(hx + s * 9.8, hy - 8.4, hx + s * 9, hy - 13, 1.3, 0.5), bone); }
   } else if (head === 'dragon') {
-    D.add(shBox(hx - 7, hy - 7, 14, 14, 4, 3), mt, { tex: TX.scale() });
-    D.add(shPoly([[hx + 3, hy - 1], [hx + 10, hy + 1], [hx + 9, hy + 3], [hx + 3, hy + 3]], 1.2), mt);
-    ink(hx + 1, hy, 6, 1); D.px(hx + 4, hy, L.c2, 1, 1);
-    D.add(shCap(hx - 4, hy - 6, hx - 10, hy - 11, 1.8, 0.8), mat(L.c2, 'gem')); D.add(shCap(hx + 1, hy - 7, hx - 2, hy - 13, 1.6, 0.6), mat(L.c2, 'gem'));
-  } else if (head === 'hood' || head === 'hoodup') {
-    if (head === 'hoodup') { D.add(shEll(hx - 1.4, hy - 2.6, 8, 6.4), L.cape ? mat(L.cape) : c1, { clip: (px, py) => py < hy - 1.2 || px < hx - 2, tex: TX.fold(3, 1) }); D.add(shPoly([[hx - 2, hy - 8], [hx + 2, hy - 7], [hx - 5, hy - 10]], 1), L.cape ? mat(L.cape) : c1); }
-    else { D.add(shEll(hx - 1.2, hy - 2.8, 7.8, 5.8), c1, { clip: (px, py) => py < hy - 1.5 + (px - hx) * 0.1, tex: TX.fold(3, 0) }); if (L.feather) D.add(shCap(hx + 2, hy - 7, hx + 6, hy - 11, 1.1, 0.6), mat(L.feather)); }
-  } else if (head === 'cowl') {
-    D.add(shEll(hx - 1.2, hy - 2.8, 7.8, 5.8), c1, { clip: (px, py) => py < hy - 1.6, tex: TX.fold(3, 0) });
-    D.add(shBox(hx - 1, hy + 2, 8, 5, 2, 1.6), mat(L.c3 || '#3a3a46'), { cast: false });
-  } else if (head === 'coif' || head === 'coif2') {
-    D.add(shEll(hx - 1.2, hy - 2.8, 7.6, 5.6), head === 'coif' ? mat('#f4f0e6') : c1, { clip: (px, py) => py < hy - 1.8 });
-    D.add(shBox(hx - 7.6, hy - 3.2, 15, 1.6, 0.6, 0.6), head === 'coif' ? c2 : c2, { cast: false });
-  } else if (head === 'wizard') {
-    D.add(shEll(hx, hy - 4.6, 11, 2.4), c1, { tex: TX.fold(4, 0) });
-    D.add(shPoly([[hx - 6, hy - 5], [hx + 6, hy - 5], [hx + 1, hy - 14], [hx - 5, hy - 21], [hx - 3, hy - 13]], 2), c1, { tex: TX.fold(4, 1) });
-    D.add(shBox(hx - 6, hy - 7.6, 12, 2.2, 0.8, 0.8), c2, { cast: false });
-    D.px(hx - 5, hy - 21, rgbHex(MATS[c2].rp[3]), 2, 2);
+    D.add(shBox(hx - 7, hy - 7.6, 14, 15, 4, 3), mt, { tex: TX.scale() });
+    ink(hx - 4.6, hy + 0.2, 9.2, 1.4); D.px(hx - 3, hy + 0.2, L.c2, 1, 1); D.px(hx + 2, hy + 0.2, L.c2, 1, 1);
+    for (const s of [-1, 1]) D.add(shCap(hx + s * 4, hy - 6.6, hx + s * 8.4, hy - 12.6, 1.7, 0.6), mat(L.c2, 'gem'));
+    D.add(shPoly([[hx - 1.6, hy - 7.6], [hx + 1.6, hy - 7.6], [hx, hy - 12]], 0.8), mat(L.c2, 'gem'));
+  } else if (head === 'hood') { hood(c1, false); if (L.feather) D.add(shCap(hx + 3.4, hy - 6.4, hx + 7, hy - 11, 1, 0.5), mat(L.feather)); }
+  else if (head === 'hoodup') { hood(L.cape ? mat(L.cape) : c1, true); D.add(shPoly([[hx - 2.4, hy - 7.6], [hx + 2.4, hy - 7.6], [hx, hy - 11.4]], 1), L.cape ? mat(L.cape) : c1); }
+  else if (head === 'cowl') { hood(c1, false); D.add(shBox(hx - 5, hy + 1.6, 10, 5.2, 2, 1.6), mat(L.c3 || '#3a3a46'), { cast: false }); if (L.eyes) { D.px(hx - 2.6, hy + 0.4, L.eyes, 1, 1); D.px(hx + 1.8, hy + 0.4, L.eyes, 1, 1); } }
+  else if (head === 'coif') { hood(mat('#f4f0e6'), false); D.add(shBox(hx - 5.6, hy - 5, 11.2, 1.6, 0.6, 0.6), c2, { cast: false }); }
+  else if (head === 'coif2') { hood(c1, false); D.add(shBox(hx - 5.6, hy - 5, 11.2, 1.6, 0.6, 0.6), c2, { cast: false }); }
+  else if (head === 'wizard') {
+    D.add(shEll(hx, hy - 4.6, 10.6, 2.4), c1);
+    D.add(shPoly([[hx - 5.8, hy - 5], [hx + 5.8, hy - 5], [hx + 2.2, hy - 13.4], [hx + 6, hy - 19.4], [hx - 1.4, hy - 13.6]], 2), c1);
+    D.add(shBox(hx - 5.8, hy - 7.6, 11.6, 2.2, 0.8, 0.8), c2, { cast: false });
+    D.px(hx + 5, hy - 20, rgbHex(MATS[c2].rp[3]), 2, 2);
   } else if (head === 'mitre' || head === 'mitre2') {
-    const t = head === 'mitre2' ? 18 : 14;
-    D.add(shPoly([[hx - 5.4, hy - 4], [hx + 5.4, hy - 4], [hx + 4, hy - t + 5], [hx, hy - t], [hx - 4, hy - t + 5]], 2), mat('#f4f0e6'), { tex: TX.fold(5, 2) });
-    D.add(shBox(hx - 5.6, hy - 5.6, 11.2, 2, 0.6, 0.6), c2, { cast: false });
+    const t = head === 'mitre2' ? 18 : 14, wm = mat('#f4f0e6');
+    D.add(shPoly([[hx - 5.6, hy - 4], [hx + 5.6, hy - 4], [hx + 4.4, hy - t + 5], [hx, hy - t], [hx - 4.4, hy - t + 5]], 2), wm);
+    D.add(shBox(hx - 5.8, hy - 5.8, 11.6, 2, 0.6, 0.6), c2, { cast: false });
     D.px(hx - 0.5, hy - t + 3, rgbHex(MATS[c2].rp[3]), 1, t - 8); D.px(hx - 2.5, hy - t + 6, rgbHex(MATS[c2].rp[3]), 5, 1);
   } else if (head === 'crown' || head === 'bonecrown') {
     const cm = head === 'crown' ? gold : mat('#e8e4dc', 'bone');
-    D.add(shBox(hx - 6, hy - 7, 12, 3.4, 0.6, 1), cm, { cast: false });
-    for (const sx of [-5, -1.5, 2, 5]) D.add(shPoly([[hx + sx - 1.4, hy - 6.5], [hx + sx + 1.4, hy - 6.5], [hx + sx, hy - 11]], 0.8), cm);
-    if (head === 'crown') { D.px(hx - 1.5, hy - 6, L.gem || '#c0392b', 2, 2); D.px(hx + 3, hy - 6, '#5ac8f0', 1, 1); D.px(hx - 5, hy - 6, '#7ae0a0', 1, 1); }
+    D.add(shBox(hx - 6, hy - 7.4, 12, 3.4, 0.6, 1), cm, { cast: false });
+    for (const sx of [-4.6, -1.5, 1.5, 4.6]) D.add(shPoly([[hx + sx - 1.4, hy - 7], [hx + sx + 1.4, hy - 7], [hx + sx, hy - 11.4]], 0.8), cm);
+    if (head === 'crown') { D.px(hx - 1, hy - 6.6, L.gem || '#c0392b', 2, 2); D.px(hx - 4.4, hy - 6.4, '#5ac8f0', 1, 1); D.px(hx + 3.6, hy - 6.4, '#7ae0a0', 1, 1); }
   } else if (head === 'circlet') {
-    D.add(shBox(hx - 6.6, hy - 4.6, 13.4, 1.6, 0.6, 0.6), gold, { cast: false });
-    D.px(hx + 2.5, hy - 5, L.gem || '#8ab8ff', 2, 2);
+    D.add(shBox(hx - 6.8, hy - 5, 13.6, 1.6, 0.6, 0.6), gold, { cast: false });
+    D.px(hx - 1, hy - 5.4, L.gem || '#8ab8ff', 2, 2);
   } else if (head === 'laurel') {
-    for (let i = 0; i < 6; i++) D.add(shEll(hx - 6 + i * 2.2, hy - 4.6 - Math.sin(i / 5 * Math.PI) * 1.4, 1.6, 1), mat('#5aa84a'), { cast: false });
+    for (let i = 0; i < 7; i++) { const u = i / 6, x = hx - 6.4 + u * 12.8; D.add(shEll(x, hy - 5 - Math.sin(u * Math.PI) * 1.6, 1.5, 0.9, (u - 0.5) * 1.2), mat('#5aa84a'), { cast: false }); }
   } else if (head === 'band' || head === 'goggles') {
-    D.add(shBox(hx - 6.8, hy - 4.4, 13.6, 2.6, 0.8, 0.8), mat(L.c3 || '#c0392b'), { cast: false });
-    D.add(shCap(hx - 6.5, hy - 3.2, hx - 10, hy + 1, 1, 0.8), mat(L.c3 || '#c0392b'));
-    if (head === 'goggles') { D.add(shEll(hx + 1, hy - 4.4, 2, 2), mat('#8a6a3a', 'metal')); D.add(shEll(hx + 5, hy - 4.4, 2, 2), mat('#8a6a3a', 'metal')); D.px(hx + 0.5, hy - 5, '#9ad8f0', 1, 1); D.px(hx + 4.5, hy - 5, '#9ad8f0', 1, 1); }
+    const bm = mat(L.c3 || '#c0392b');
+    D.add(shBox(hx - 7, hy - 4.6, 14, 2.6, 0.8, 0.8), bm, { cast: false });
+    D.add(shCap(hx + 6.6, hy - 3.4, hx + 9.6, hy + 1.6, 1, 0.8), bm);
+    if (head === 'goggles') for (const s of [-1, 1]) { D.add(shEll(hx + s * 2.6, hy - 4.6, 2.2, 2), mat('#8a6a3a', 'metal')); D.px(hx + s * 2.6 - 1, hy - 5.4, '#9ad8f0', 2, 1); }
   } else if (head === 'beret' || head === 'feather') {
     const bm = head === 'beret' ? c1 : mat('#5a6a3a');
-    D.add(shEll(hx + 0.5, hy - 5, 8, 3.6, -0.15), bm, { tex: TX.fold(3, 0) });
-    D.add(shCap(hx - 1, hy - 7, hx - 9, hy - 14, 1.6, 0.6), mat(L.feather || '#e05a4a'), { tex: TX.stripe(2) });
+    D.add(shEll(hx + 1, hy - 5.2, 8.2, 3.6, 0.12), bm);
+    D.add(shCap(hx - 3.6, hy - 6.8, hx - 9.4, hy - 13, 1.5, 0.5), mat(L.feather || '#e05a4a'));
   } else if (head === 'tophat') {
-    D.add(shEll(hx, hy - 4.4, 9, 1.8), c1);
-    D.add(shBox(hx - 5, hy - 15, 10, 11, 1, 1.4), mat('#1e1828'));
-    D.add(shBox(hx - 5, hy - 7, 10, 2, 0.4, 0.4), c1, { cast: false });
+    D.add(shEll(hx, hy - 4.6, 9, 1.9), mat('#1e1828'));
+    D.add(shBox(hx - 5, hy - 15.4, 10, 11, 1, 1.4), mat('#1e1828'));
+    D.add(shBox(hx - 5, hy - 7.4, 10, 2, 0.4, 0.4), c1, { cast: false });
   } else if (head === 'widebrim') {
-    D.add(shEll(hx, hy - 4.2, 11, 2.2), mat('#1e1418'));
-    D.add(shBox(hx - 5.4, hy - 12, 10.8, 8, 1.6, 1.6), mat('#1e1418'));
-    D.add(shBox(hx - 5.4, hy - 6.6, 10.8, 1.6, 0.4, 0.4), c2, { cast: false }); D.px(hx - 0.5, hy - 7, '#f0d070', 2, 2);
+    D.add(shEll(hx, hy - 4.4, 11.4, 2.3), mat('#1e1418'));
+    D.add(shBox(hx - 5.4, hy - 12.4, 10.8, 8.2, 1.6, 1.6), mat('#1e1418'));
+    D.add(shBox(hx - 5.4, hy - 6.8, 10.8, 1.6, 0.4, 0.4), c2, { cast: false }); D.px(hx - 1, hy - 7.2, '#f0d070', 2, 2);
   } else if (head === 'beak') {
-    D.add(shEll(hx, hy - 4.6, 10.5, 2.2), mat('#1e1c22'));
-    D.add(shBox(hx - 5.6, hy - 12, 11.2, 8, 1.6, 1.6), mat('#1e1c22'));
-    D.add(shPoly([[hx + 2, hy - 1], [hx + 12, hy + 4], [hx + 2, hy + 4.5]], 1.2), mat('#d8c8a0', 'bone'));
-    D.add(shEll(hx + 2.5, hy, 1.8, 1.8), mat('#8ad8ff', 'gem')); D.add(shEll(hx + 5.6, hy, 1.6, 1.6), mat('#8ad8ff', 'gem'));
+    D.add(shEll(hx, hy - 4.6, 10.8, 2.3), mat('#1e1c22'));
+    D.add(shBox(hx - 5.6, hy - 12.4, 11.2, 8.2, 1.6, 1.6), mat('#1e1c22'));
+    for (const s of [-1, 1]) D.add(shEll(hx + s * 2.6, hy + 0.2, 2, 2), mat('#8ad8ff', 'gem'));
+    D.add(shPoly([[hx - 2.2, hy + 1.6], [hx + 2.2, hy + 1.6], [hx + 0.4, hy + 9.4]], 1), mat('#d8c8a0', 'bone'));
   } else if (head === 'monocle') {
-    D.add(shEll(hx + 4.5, hy + 1, 1.8, 1.8), mat('#e8c060', 'gold'), { cast: false }); D.px(hx + 4.5, hy + 1, '#cfefff', 1, 1);
+    D.add(shEll(hx + 1.8, hy + 1.2, 2.1, 2.1), mat('#e8c060', 'gold'), { cast: false }); D.px(hx + 1.8, hy + 1, '#cfefff', 1, 1); D.px(hx + 1.8, hy + 0.6, '#22161c', 1, 2);
   }
-  if (head === 'cowl' && L.eyes) { D.px(hx + 1.5, hy + 0.5, L.eyes, 1, 1); D.px(hx + 4.5, hy + 0.5, L.eyes, 1, 1); }
-  if ((L.ex || []).includes('mask')) D.px(hx, hy, '#1e1418', 7, 2);
+  if ((L.ex || []).includes('mask')) { D.px(hx - 5, hy, '#1e1418', 10, 2.4); D.px(hx - 3, hy + 0.6, '#f0e6d8', 1, 1); D.px(hx + 1.6, hy + 0.6, '#f0e6d8', 1, 1); }
 }
 // 침낭에서 잔다 (머리가 오른쪽)
 function sleepHi(D, a, L, lk) {
@@ -358,8 +351,9 @@ function sleepHi(D, a, L, lk) {
   D.px(16, -6, '#3a2a20', 2, 1);
 }
 // 모험가 굽기: 두 배 해상도, 발밑이 (34, 58)
-const ADV_HW = 72, ADV_HH = 66, ADV_AX = 34, ADV_AY = 60;
-function advSprite(a, pose, fr) {
-  const key = 'H|' + advKey(a) + '|' + pose + fr + '|' + (FLASH || '');
-  return bakeHi(key, ADV_HW, ADV_HH, ADV_AX, ADV_AY, D => paintAdvHi(D, a, pose, fr));
+const ADV_HW = 64, ADV_HH = 64, ADV_AX = 32, ADV_AY = 60;
+// z: 배율 (무대 앞줄은 크게). 모양을 그 배율로 다시 찍으니 도트가 뭉개지지 않는다
+function advSprite(a, pose, fr, z = 1) {
+  const key = 'H|' + advKey(a) + '|' + pose + fr + '|' + z + '|' + (FLASH || '');
+  return bakeHi(key, Math.ceil(ADV_HW * z), Math.ceil(ADV_HH * z), Math.round(ADV_AX * z), Math.round(ADV_AY * z), D => { D.sc = z; paintAdvHi(D, a, pose, fr); });
 }

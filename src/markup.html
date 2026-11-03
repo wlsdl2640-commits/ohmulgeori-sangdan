@@ -19,13 +19,34 @@
       <button type="button" class="mbtn" data-open="inv"><img data-px="box" alt="">창고</button>
       <button type="button" class="mbtn" data-open="req"><img data-px="scroll" alt="">의뢰<span class="badge" id="req-badge" hidden></span></button>
     </nav>
-    <section class="pip" id="pip" aria-label="원정 화면. 누르면 크게 보거나 작게 봐요.">
-      <canvas id="cv" width="240" height="128"></canvas>
+    <section class="pip" id="pip" aria-label="원정 화면. 누르면 전투 창이 열려요." role="button" tabindex="0">
+      <canvas id="cv" width="480" height="256"></canvas>
       <div class="callouts" id="callouts" aria-hidden="true"></div>
       <div class="ov ov-l" id="ov-l"></div>
       <div class="ov ov-r" id="ov-r" hidden></div>
       <div class="ov ov-b" id="ov-b" hidden></div>
       <span class="pip-sz" aria-hidden="true"></span>
+    </section>
+    <section class="bwin" id="bwin" hidden aria-label="전투 창">
+      <header class="win-h">
+        <button type="button" class="win-btn" id="bw-back" aria-label="뒤로"><span class="arr"></span>뒤로</button>
+        <h2 id="bw-title"></h2>
+        <button type="button" class="win-btn" id="bw-x" aria-label="닫기">닫기</button>
+      </header>
+      <div class="bw-body">
+        <div class="bw-frame">
+          <canvas id="bcv" width="480" height="400" aria-label="전투 장면"></canvas>
+          <div class="callouts" id="bcallouts" aria-hidden="true"></div>
+          <div class="ov ov-r" id="bw-load" hidden></div>
+        </div>
+        <div class="bw-stat"><span class="bw-st" id="bw-st"></span><span class="bw-prog" aria-hidden="true"><i id="bw-prog"></i></span></div>
+        <div class="bw-log" id="bw-log" role="log" aria-label="전투 기록"></div>
+        <div class="bw-btns">
+          <span id="bw-gate" hidden><button type="button" class="btn sm gold" data-act="gate" data-c="enter">던전 들어가기</button><button type="button" class="btn sm" data-act="gate" data-c="skip">지나가기</button></span>
+          <button type="button" class="btn sm" id="bw-ret" data-act="recall">복귀 명령</button>
+          <button type="button" class="btn sm" id="bw-close">닫기</button>
+        </div>
+      </div>
     </section>
   </section>
 

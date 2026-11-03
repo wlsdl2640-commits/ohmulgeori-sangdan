@@ -23,7 +23,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -1052,7 +1052,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); notesB(); saveGame(); return true; }
     if (![2, 3, 4, 5].includes(v.v)) return false;
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {};
@@ -1067,9 +1067,12 @@ function loadFrom(v) {
     if (old < 5) { migrate5(); saveGame(); }
     S.relics = S.relics || []; S.king = S.king || { favor: {}, visit: null, next: today() + 2 };
     if (!S.raid) raidMonth(true);
+    notesB();
     return true;
   } catch (_) { return false; }
 }
+// 새 전투 화면 안내 (한 번만)
+function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ title: '전투 화면이 새로워졌어요', body: STORY.bview }); } }
 // v0.6: 본부 화면 안내 (한 번만)
 function notes6() { if (!S.flags.v06) { S.flags.v06 = 1; S.modals.push({ title: 'v0.6 업데이트', body: STORY.v06 }); } }
 function resetGame() { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} S = null; }
