@@ -52,7 +52,8 @@ PANELS.hall = () => {
   const list = hallList(), cands = S.advs.filter(a => a.lv >= MAX_LV);
   const sum = {};
   for (const h of list) { const L = HALL_LINE[h.base], m = h.hero ? 2 : 1; for (const k in L) if (typeof L[k] === 'number') sum[k] = (sum[k] || 0) + L[k] * m; sum.expPct = (sum.expPct || 0) + 0.01 * m; }
-  const sumTxt = Object.entries(sum).map(([k, v]) => `${STAT_NAMES[k] || k} ${k === 'carry' ? '+' + v : '+' + (Math.round(v * 1000) / 10) + '%'}`).join(' · ');
+  const HN = { hpPct: 'HP', defPct: '방어력', matkPct: '마법 공격력', expPct: '경험치', crit: '치명타', eva: '회피', healPow: '회복량', rheal: '받는 회복', luck: '전리품', carry: '짐', movePct: '이동 속도', atkPct: '공격력' };
+  const sumTxt = Object.entries(sum).map(([k, v]) => `${HN[k] || STAT_NAMES[k] || k} ${k === 'carry' ? '+' + v : '+' + (Math.round(v * 1000) / 10) + '%'}`).join(' · ');
   return `<div class="card hl"><div class="h">명예의 전당 <small>${list.length}/${HALL_MAX}</small></div><div class="sub">Lv${MAX_LV} 모험가를 은퇴시키면 동상이 서고, 상단 전체가 영구히 강해져요. 은퇴한 모험가는 스승으로 남아 같은 계열의 봉급을 깎아 줘요.</div>${list.length ? `<div class="sub gold-t">지금 효과: ${sumTxt}</div>` : ''}</div>
     ${list.map(hallCard).join('') || '<div class="card"><div class="sub muted">아직 동상이 없어요.</div></div>'}
     <div class="sec"><b>은퇴할 수 있는 모험가</b><span>Lv${MAX_LV}</span></div>
