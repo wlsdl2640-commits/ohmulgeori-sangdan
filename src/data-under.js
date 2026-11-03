@@ -25,7 +25,7 @@ const UNDER_SKILLS = {
   // 투기장 상단
   ar_roar:   { name: '검투사의 함성', cls: ['warrior'],         lv: 20, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'atk', mult: 1.35, dur: 8, tgt: 'party', desc: '8초 동안 파티의 공격력을 올린다.', arena: 1 },
   ar_sand:   { name: '모래 뿌리기',  cls: ['rogue', 'warrior'], lv: 20, cost: { mp: 8 },  cd: 12, kind: 'buff', stat: 'eva', add: 0.2, dur: 6, tgt: 'self', desc: '적의 눈에 모래를 뿌려 6초 동안 공격을 잘 피한다.', arena: 1 },
-  ar_cheer:  { name: '관중의 환호',  cls: ['all'],              lv: 24, cost: { mp: 16 }, cd: 15, kind: 'heal', mult: 1.0, tgt: 'party', desc: '환호에 힘입어 파티 전원이 회복한다.', arena: 1 },
+  ar_cheer:  { name: '관중의 응원',  cls: ['all'],              lv: 24, cost: { mp: 16 }, cd: 15, kind: 'heal', mult: 1.0, tgt: 'party', desc: '환호에 힘입어 파티 전원이 회복한다.', arena: 1 },
   ar_combo:  { name: '투기장 연격',  cls: ['warrior', 'rogue'], lv: 28, cost: { mp: 15 }, cd: 8,  kind: 'dmg',  mult: 0.95, hits: 3, tgt: 'front', desc: '세 번 연달아 벤다.', arena: 1 },
   ar_finish: { name: '피니시',       cls: ['all'],              lv: 34, cost: { mp: 20 }, cd: 14, kind: 'dmg',  mult: 3.4, tgt: 'low', crit: 0.25, desc: '가장 약한 적에게 끝내기 일격.', arena: 1 },
   ar_phalanx:{ name: '방진',         cls: ['warrior', 'cleric'], lv: 30, cost: { mp: 18 }, cd: 20, kind: 'buff', stat: 'def', mult: 1.6, dur: 8, tgt: 'party', desc: '8초 동안 파티의 방어력을 올린다.', arena: 1 }

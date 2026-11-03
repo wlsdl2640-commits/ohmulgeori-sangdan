@@ -51,6 +51,20 @@ const RUNES = {
 const RUNE_IDS = Object.keys(RUNES), RUNE_LV = ['하급', '중급', '상급'];
 RUNE_IDS.forEach(k => RUNE_LV.forEach((n, l) => { ITEMS[`rune_${k}_${l}`] = { name: `${n} ${RUNES[k].name}의 룬`, v: [80, 320, 1200][l], w: 1, icon: 'rune', c: RUNES[k].c, rune: [k, l] }; }));
 const runeId = (k, l) => `rune_${k}_${l}`;
+/* ───────── 세트 효과: 같은 단계 장비를 3·4점 끼면 ───────── */
+const SET_BONUS = { 3: { name: '3점 세트', atkPct: 0.05, matkPct: 0.05, defPct: 0.05 }, 4: { name: '4점 세트', atkPct: 0.08, matkPct: 0.08, defPct: 0.08, hpPct: 0.06 } };
+// 끼고 있는 장비 가운데 가장 많은 같은 단계: { t, n, bonus }
+function setInfo(a) {
+  const cnt = {};
+  for (const [sl] of SLOTS) { const g = a.eq && a.eq[sl]; if (g) cnt[g.t] = (cnt[g.t] || 0) + 1; }
+  let best = null;
+  for (const t in cnt) if (!best || cnt[t] > best.n || (cnt[t] === best.n && +t > best.t)) best = { t: +t, n: cnt[t] };
+  if (!best) return { t: -1, n: 0, bonus: null };
+  return { t: best.t, n: best.n, bonus: best.n >= 4 ? SET_BONUS[4] : best.n >= 3 ? SET_BONUS[3] : null };
+}
+const setBonusText = B => B ? Object.entries(B).filter(([k]) => k !== 'name').map(([k, v]) => `${{ atkPct: '공격력', matkPct: '마법 공격력', defPct: '방어력', hpPct: '최대 HP' }[k] || k} +${Math.round(v * 100)}%`).join(' · ') : '';
+/* ───────── 옵션 재감정: 희귀 이상 장비의 보너스 능력치를 마탑에서 다시 뽑는다 ───────── */
+const REAPPRAISE = { fee: t => Math.round(150 * GTIERS[t].p), crest: 1 };
 const RUNE_FUSE = { n: 3, fee: [600, 2500] };            // 같은 룬 3개 → 한 단계 위 (마탑)
 const RUNE_CARVE = { crest: 2, fee: 300 };               // 증표 2개 + 300G → 하급 룬 (마탑)
 

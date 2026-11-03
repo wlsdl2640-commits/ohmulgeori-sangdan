@@ -86,6 +86,14 @@ const CAST_GAP = 0.9;      // 스킬과 스킬 사이 최소 간격(초)
 const CDR_MAX = 0.5;       // 재사용 감소 합의 상한
 const SM_CD = 0.02;        // 숙련 한 단계마다 재사용 -2%
 const basicCdOf = (spd, mul = 1) => BASIC_CD / Math.max(0.2, spd * mul);
+// 스킬 레벨: 같은 스킬북을 한 권 더 바쳐(고유·기본 스킬은 돈만) 올린다. 단계마다 위력 +8%, 재사용 -4%
+const SK_LV_MAX = 5, SK_LV_POW = 0.08, SK_LV_CD = 0.04;
+const skLv = (a, id) => (a && a.sl && a.sl[id]) || 1;
+const skLvMul = (a, id) => 1 + SK_LV_POW * (skLv(a, id) - 1);
+// 스킬을 lv단계로 올리는 값: 책이 있는 스킬은 책 한 권 + 돈, 고유·기본·각성 스킬은 돈만
+const isInnate = id => Object.values(CLASSES).some(c => c.innate === id);
+const skillNeedsBook = id => { const s = SKILLS[id]; return !!s && !s.own && !s.awk && !isInnate(id); };
+const skillUpCost = (id, lv) => { const s = SKILLS[id]; return Math.round((skillNeedsBook(id) ? Math.max(60, s.lv * 30) : Math.max(150, s.lv * 40)) * lv); };
 
 /* ───────── 스킬 ───────── */
 // cls: 배울 수 있는 직업 (all = 모두), lv: 배울 수 있는 레벨, cost: { mp } 또는 { hp: 최대 HP 비율 }
@@ -93,7 +101,7 @@ const basicCdOf = (spd, mul = 1) => BASIC_CD / Math.max(0.2, spd * mul);
 // haste: 강화 스킬이 함께 주는 공격 속도 배율, passive.spdPct/cdr: 공격 속도·스킬 재사용 감소
 const SKILLS = {
   bash:       { name: '강타',       cls: ['warrior'], lv: 1,  cost: { mp: 6 },    cd: 4,  kind: 'dmg',  mult: 1.8, tgt: 'front', desc: '앞의 적을 세게 내리친다.' },
-  taunt:      { name: '도발',       cls: ['warrior'], lv: 5,  cost: { mp: 8 },    cd: 12, kind: 'taunt', dur: 6, desc: '6초 동안 모든 적이 자신만 노리게 한다.' },
+  taunt:      { name: '도발 1',     cls: ['warrior'], lv: 5,  cost: { mp: 8 },    cd: 12, kind: 'taunt', dur: 6, desc: '6초 동안 모든 적이 자신만 노리게 한다.' },
   ironwall:   { name: '철벽',       cls: ['warrior'], lv: 10, cost: { mp: 12 },   cd: 16, kind: 'buff', stat: 'def', mult: 2, dur: 6, tgt: 'self', desc: '6초 동안 방어력이 두 배가 된다.' },
   sweep:      { name: '휩쓸기',     cls: ['warrior'], lv: 15, cost: { mp: 14 },   cd: 8,  kind: 'dmg',  mult: 1.1, tgt: 'all', desc: '모든 적을 베어 낸다.' },
   berserk:    { name: '광폭화',     cls: ['warrior'], lv: 22, cost: { hp: 0.15 }, cd: 20, kind: 'buff', stat: 'atk', mult: 1.6, haste: 1.25, dur: 8, tgt: 'self', desc: 'HP를 깎아 8초 동안 공격력과 공격 속도를 크게 올린다.' },
@@ -163,7 +171,7 @@ const SKILLS = {
   colosseum:   { name: '콜로세움', cls: ['champion'], lv: 95, own: 1, cost: { mp: 60 }, cd: 20, kind: 'dmg', mult: 4.0, crit: 0.3, tgt: 'all', desc: '경기장 전체를 휩쓰는 전설의 기술.' },
   // 기사 → 성기사
   shieldbash:  { name: '방패 치기', cls: ['knight'], lv: 1, cost: { mp: 6 }, cd: 4, kind: 'dmg', mult: 1.6, tgt: 'front', desc: '방패로 앞의 적을 후려친다.' },
-  provoke:     { name: '도발', cls: ['knight'], lv: 22, own: 1, cost: { mp: 10 }, cd: 12, kind: 'taunt', dur: 7, desc: '7초 동안 모든 적이 자신만 노리게 한다.' },
+  provoke:     { name: '도발 2', cls: ['knight'], lv: 22, own: 1, cost: { mp: 10 }, cd: 12, kind: 'taunt', dur: 7, desc: '7초 동안 모든 적이 자신만 노리게 한다.' },
   fortress:    { name: '요새', cls: ['knight'], lv: 28, own: 1, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'def', mult: 2.2, dur: 8, tgt: 'self', desc: '8초 동안 방어력이 두 배 넘게 오른다.' },
   rally:       { name: '결집', cls: ['knight'], lv: 36, own: 1, cost: { mp: 18 }, cd: 18, kind: 'buff', stat: 'def', mult: 1.35, dur: 10, tgt: 'party', desc: '10초 동안 파티의 방어력을 올린다.' },
   lancecharge: { name: '돌격', cls: ['knight'], lv: 48, own: 1, cost: { mp: 24 }, cd: 12, kind: 'dmg', mult: 3.0, tgt: 'front', desc: '창을 꼬나쥐고 돌진한다.' },

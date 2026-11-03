@@ -83,7 +83,7 @@ function petTick(p, e, team, dm, dt) {
   const sid = 'P' + pet.id, pw = petPow(pet), live = team.filter(up);
   if (!live.length) return;
   const low = live.slice().sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];
-  const sta = f => { if (K.sta && f.hp > 0 && rnd() < K.sta.p) inflictFoe(e, f, K.sta, pw); };
+  const sta = f => { if (K.sta && f.hp > 0 && rnd() < K.sta.p) inflictFoe(e, f, K.sta, pw, sid, 'pet'); };
   if (K.act === 'heal') {
     const h = Math.round(dm[low.id].maxHp * (0.03 + pet.lv * 0.001) * (pet.stage ? 1.8 : 1) * K.pow);
     low.hp = Math.min(dm[low.id].maxHp, low.hp + h); ev(e, 'heal', { s: sid, d: low.id, v: h }); cureSta(e, low, ['bleed']);

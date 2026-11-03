@@ -113,7 +113,7 @@ const AWK_SKILLS = {
   awk_warrior: { name: '용사의 일격',  cls: ['warrior'], lv: 1, cost: { mp: 30 }, cd: 30, kind: 'dmg',  mult: 4.5, tgt: 'all', fx: 'jump', crit: 0.2, awk: 1, desc: '각성기. 모든 적을 한 번에 내리친다.' },
   awk_archer:  { name: '유성우',       cls: ['archer'],  lv: 1, cost: { mp: 30 }, cd: 30, kind: 'dmg',  mult: 1.6, hits: 3, tgt: 'all', fx: 'arrow', awk: 1, desc: '각성기. 화살이 별똥별처럼 쏟아진다.' },
   awk_mage:    { name: '종말의 불꽃',  cls: ['mage'],    lv: 1, cost: { mp: 40 }, cd: 30, kind: 'mdmg', mult: 3.2, tgt: 'all', fx: 'fire', sta: { k: 'burn', p: 1, d: 10, m: 0.3 }, awk: 1, desc: '각성기. 모든 적을 태우고 불을 붙인다.' },
-  awk_cleric:  { name: '기적',         cls: ['cleric'],  lv: 1, cost: { mp: 40 }, cd: 30, kind: 'heal', mult: 3.0, tgt: 'party', cures: STATUS_IDS, awk: 1, desc: '각성기. 파티를 크게 치료하고 모든 상태이상을 푼다.' },
+  awk_cleric:  { name: '신의 기적',    cls: ['cleric'],  lv: 1, cost: { mp: 40 }, cd: 30, kind: 'heal', mult: 3.0, tgt: 'party', cures: STATUS_IDS, awk: 1, desc: '각성기. 파티를 크게 치료하고 모든 상태이상을 푼다.' },
   awk_rogue:   { name: '그림자 처형',  cls: ['rogue'],   lv: 1, cost: { mp: 30 }, cd: 30, kind: 'dmg',  mult: 7.0, tgt: 'low', crit: 1, awk: 1, desc: '각성기. 가장 약한 적을 반드시 치명타로 벤다.' },
   awk_porter:  { name: '거인의 등짐',  cls: ['porter'],  lv: 1, cost: { mp: 30 }, cd: 30, kind: 'buff', stat: 'atk', mult: 1.5, dur: 10, tgt: 'party', awk: 1, desc: '각성기. 10초 동안 파티의 공격력이 크게 오른다.' }
 };

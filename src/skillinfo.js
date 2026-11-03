@@ -15,18 +15,20 @@ const skMul = v => `×${Math.round(v * 100) / 100}`;
 // 스킬 하나의 수치 목록 (문자열 배열)
 function skillSpec(id, a) {
   const s = SKILLS[id]; if (!s) return [];
-  const out = [], d = a ? derive(a) : null, T = a ? TR(a) : {}, M = a ? smMul(a, id) : 1, ml = a ? smLv(a, id) : 0;
+  const out = [], d = a ? derive(a) : null, T = a ? TR(a) : {}, L = a ? skLvMul(a, id) : 1, lv = a ? skLv(a, id) : 1, M = (a ? smMul(a, id) : 1) * L, ml = a ? smLv(a, id) : 0;
+  const lvLine = a ? `스킬 Lv${lv}/${SK_LV_MAX}${lv > 1 ? ` (위력 +${Math.round(SK_LV_POW * (lv - 1) * 100)}% · 재사용 -${Math.round(SK_LV_CD * (lv - 1) * 100)}%)` : ''}` : '';
   if (s.passive) {
-    for (const [k, v] of Object.entries(s.passive)) {
-      const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct'];
-      out.push(`${P[0]} ${P[1] === 'x' ? '×' + (1 + v) : P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`);
+    for (const [k, v0] of Object.entries(s.passive)) {
+      const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct'], v = v0 * L;
+      out.push(`${P[0]} ${P[1] === 'x' ? '×' + (Math.round((1 + v) * 100) / 100) : P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`);
     }
     out.push('지속 효과 · 배우고 있는 동안 늘 적용');
+    if (lvLine) out.push(lvLine);
     return out;
   }
   const magic = s.kind === 'mdmg' || (s.kind === 'dot' && s.magic), hits = s.hits || 1;
   if (s.kind === 'dmg' || s.kind === 'mdmg') {
-    out.push(`${SK_KIND[s.kind]} ${magic ? '마법 공격력' : '공격력'} ${skMul(s.mult)}${hits > 1 ? ` ${hits}연타 (합 ${skMul(s.mult * hits)})` : ''}`);
+    out.push(`${SK_KIND[s.kind]} ${magic ? '마법 공격력' : '공격력'} ${skMul(s.mult * L)}${hits > 1 ? ` ${hits}연타 (합 ${skMul(s.mult * L * hits)})` : ''}`);
     if (d) { const base = (magic ? d.matk : d.atk) * s.mult * M; out.push(`한 방 약 <b>${skRange(base)}</b>${hits > 1 ? ` × ${hits}` : ''} (방어 0 기준)`); }
     out.push(`대상 ${SK_TGT[s.tgt] || s.tgt}`);
     if (s.crit === 1) out.push('반드시 치명타');
@@ -37,19 +39,19 @@ function skillSpec(id, a) {
     if (s.drain) out.push(`준 피해의 ${skPct(s.drain)} 흡혈`);
     if (s.steal) out.push(`맞힌 적마다 금화 +${s.steal}G${hits > 1 ? ` ×${hits}` : ''}`);
   } else if (s.kind === 'dot') {
-    out.push(`${SK_KIND.dot} ${magic ? '마법 공격력' : '공격력'} ${skMul(s.mult)}/초 · ${s.dur}초 (합 ${skMul(s.mult * s.dur)})`);
+    out.push(`${SK_KIND.dot} ${magic ? '마법 공격력' : '공격력'} ${skMul(s.mult * L)}/초 · ${s.dur}초 (합 ${skMul(s.mult * L * s.dur)})`);
     if (d) { const dps = (magic ? d.matk : d.atk) * s.mult * M * (T.dot || 1); out.push(`초당 약 <b>${skN(dps)}</b> × ${s.dur}초 ≈ ${skN(dps * s.dur)}`); }
     out.push(`대상 ${SK_TGT[s.tgt] || s.tgt}`);
   } else if (s.kind === 'heal' && s.tgt === 'self') {
-    out.push(`최대 HP의 ${skPct(s.pct)} 회복`);
+    out.push(`최대 HP의 ${skPct(s.pct * L)} 회복`);
     if (d) out.push(`약 <b>${skN(d.maxHp * s.pct * M * d.healPow * (1 + d.rheal))}</b> 회복`);
   } else if (s.kind === 'heal') {
-    out.push(`치유 마법 공격력 ${skMul(s.mult)} · ${SK_TGT[s.tgt] || s.tgt}`);
+    out.push(`치유 마법 공격력 ${skMul(s.mult * L)} · ${SK_TGT[s.tgt] || s.tgt}`);
     if (d) out.push(`약 <b>${skRange(d.matk * s.mult * M * (T.healPow || 1) * d.healPow)}</b> 회복${s.tgt === 'party' ? ' (한 사람마다)' : ''}`);
     if (s.cures && s.cures.length) out.push(`${s.cures.map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);
     else out.push('출혈 해제');
   } else if (s.kind === 'buff') {
-    out.push(`${SK_BUFF[s.stat] || STAT_NAMES[s.stat] || s.stat} ${s.mult ? skMul(s.mult) : '+' + skPct(s.add) + 'p'}${s.haste ? ` · 공격 속도 ${skMul(s.haste)}` : ''}`);
+    out.push(`${SK_BUFF[s.stat] || STAT_NAMES[s.stat] || s.stat} ${s.mult ? skMul(1 + (s.mult - 1) * L) : '+' + skPct(s.add * L) + 'p'}${s.haste ? ` · 공격 속도 ${skMul(1 + (s.haste - 1) * L)}` : ''}`);
     out.push(`${s.dur}초 · ${SK_TGT[s.tgt] || s.tgt}`);
   } else if (s.kind === 'taunt') {
     out.push(`${s.dur}초 동안 모든 적이 자신만 노린다`);
@@ -65,6 +67,7 @@ function skillSpec(id, a) {
     out.push(`재사용 ${skSec(s.cd)}${a && Math.abs(eff - s.cd) >= 0.05 ? ` → <b>${skSec(eff)}</b>` : ''}`);
   }
   if (a) out.push(`숙련 ${ml}/${SM_MAX}${ml ? ` (위력 +${ml * 3}% · 재사용 -${ml * 2}%)` : ' (쓸수록 위력 +3%, 재사용 -2%씩)'}`);
+  if (lvLine) out.push(lvLine);
   return out;
 }
 const skillSpecLine = (id, a) => `<span class="sk-spec">${skillSpec(id, a).join(' · ')}</span>`;
@@ -104,4 +107,21 @@ function bookFromText(id) {
   const mons = bookFrom(id).filter(m => MONS[m]);
   if (!mons.length) return s.kingdom ? `${KINGDOMS[s.kingdom].name} 상단·의뢰` : s.arena ? '투기장 상단' : '암시장·던전 보물 상자';
   return `떨어뜨리는 몬스터: ${mons.map(m => `${MONS[m].name}${MONS[m].boss && !MONS[m].fb ? '(주인 ' + Math.round(BOOK_RATE.boss * 100) + '%)' : ''}`).join(', ')} · 필드 ${BOOK_RATE.field * 100}% · 던전 ${BOOK_RATE.dungeon * 100}% · 우두머리 ${Math.round(BOOK_RATE.fb * 100)}% · 주인 ${Math.round(BOOK_RATE.boss * 100)}%`;
+}
+
+/* ───────── 전투 통계 (DPS 미터) ───────── */
+// stats = e.stats(원정 중) 또는 p.last.stats(지난 원정), names = {id: 이름} (떠난 모험가용)
+const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', etc: '그 밖' };
+function bstatName(who, names) {
+  if (String(who).charAt(0) === 'P') { const pt = petById(+String(who).slice(1)); return pt ? `펫 ${pt.name}` : '펫'; }
+  const a = advById(+who); return a ? a.name : (names && names[who]) || '?';
+}
+function bstatRows(stats, names) {
+  const ids = Object.keys(stats || {});
+  if (!ids.length) return '<div class="sub muted">아직 기록이 없어요. 전투가 벌어지면 누가 얼마나 때리고 맞았는지 여기에 쌓여요.</div>';
+  const total = Math.max(1, ids.reduce((s, k) => s + (stats[k].dealt || 0), 0)), tk = Math.max(1, ids.reduce((s, k) => s + (stats[k].taken || 0), 0));
+  return ids.sort((x, y) => (stats[y].dealt || 0) - (stats[x].dealt || 0)).map(k => {
+    const r = stats[k], d = r.dealt || 0, top = Object.entries(r.sk || {}).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([sid, v]) => `${SKILLS[sid] ? SKILLS[sid].name : SK_SRC[sid] || sid} ${Math.round(v / Math.max(1, d) * 100)}%`).join(' · ');
+    return `<div class="bst"><div class="row"><b class="grow">${esc(bstatName(k, names))}</b><span class="sub">준 피해 <b>${fmt(Math.round(d))}</b> · ${Math.round(d / total * 100)}%</span></div><div class="bar"><i style="width:${Math.round(d / total * 100)}%"></i></div><div class="sub muted">받은 피해 ${fmt(Math.round(r.taken || 0))} (${Math.round((r.taken || 0) / tk * 100)}%) · 치유 ${fmt(Math.round(r.healed || 0))} · 처치 ${r.kills || 0}${top ? `<br>${top}` : ''}</div></div>`;
+  }).join('') + `<div class="sub muted">파티 전체 피해 ${fmt(Math.round(total))} · 받은 피해 ${fmt(Math.round(tk))}</div>`;
 }

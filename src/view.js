@@ -674,8 +674,12 @@ function renderBattle() {
   const gate = $('bw-gate');
   gate.hidden = !(e && e.wait === 'gate');
   if (!gate.hidden) gate.querySelectorAll('button').forEach(x => { x.dataset.id = p.id; });
+  // 통계 보기: 기록 대신 이번 원정의 전투 통계를 그린다
+  const box = $('bw-log');
+  if (V.bstats) { const html = `<div class="bstats"><div class="sub">${e ? '이번 원정' : '지난 원정'} · 누가 얼마나 때리고 맞았는지</div>${bstatRows(e ? e.stats : p && p.last ? p.last.stats : null, p && p.last ? p.last.names : null)}</div>`; if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; } V.bdrawn = -1; return; }
+  if (box.dataset.h) { box.textContent = ''; delete box.dataset.h; V.bdrawn = -1; }
   // 기록: 새 줄만 붙인다 (파티를 바꾸면 처음부터)
-  const box = $('bw-log'), first = V.log.length ? V.log[0].n : 0;
+  const first = V.log.length ? V.log[0].n : 0;
   if (V.bparty !== V.logP || V.bdrawn < first - 1 || V.bdrawn > V.logN) { box.textContent = ''; V.bdrawn = Math.max(0, first - 1); V.bparty = V.logP; }
   const stick = box.scrollHeight - box.scrollTop - box.clientHeight < 24;
   let html = '';

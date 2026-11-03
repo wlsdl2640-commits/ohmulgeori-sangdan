@@ -170,6 +170,14 @@ textarea.code { width: 100%; min-height: 96px; padding: 8px; font: 11px/1.4 ui-m
 .sk-spec { color: var(--ink-2); font-size: 11.5px; line-height: 1.55; }
 .sk-spec b { color: var(--ink); font-weight: 400; }
 .li.basic { background: var(--panel-2); }
+.bstats { padding: 4px 2px; }
+.bst { padding: 5px 0; border-bottom: 1px solid var(--line); }
+.bst:last-of-type { border-bottom: 0; }
+.bst .bar, .achv .bar { height: 5px; background: var(--line); margin: 3px 0; }
+.bst .bar i, .achv .bar i { display: block; height: 100%; background: #f0c24a; }
+.achv.ok .bar i { background: #7bd36a; }
+.achv.ok { opacity: 0.75; }
+.bw-log .bstats .sub { color: var(--ink-2); }
 .muted { color: var(--ink-3); }
 .gold-t { color: var(--gold); }
 .fame-t { color: var(--fame); }

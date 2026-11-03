@@ -53,6 +53,15 @@
 - 겹치던 스킬 id: mage meteor ↔ sorcerer **meteorfall**, knight rally ↔ warrior **resolve**(TRAIT_SKILLS), bard hymn(치유의 세레나데) ↔ cleric/archer **chant**. migrateSkillIds가 저장을 옮긴다. 새 스킬 id는 `scratchpad/dupcheck.js`로 겹침을 확인할 것.
 - 시험: `scratchpad/skills/sktest.py`(수치·쿨·드랍표·라이선스·이전), `scratchpad/skills/balance.py`(전투 시간·피해 비교, `OLD=1`이면 git HEAD 판).
 
+## 스킬 레벨·설정·전투 통계·업적·세트·재감정 (빌드 23)
+- 스킬 레벨: `a.sl[id]`(1~SK_LV_MAX 5), data-rpg.js `skLv/skLvMul/skillNeedsBook/skillUpCost(id, lv)`, econ.js `skillUpWhy/skillUp/skillToggle`. 전투 적용: core.js cast의 `M = smMul × skLvMul`, buff mult/add/haste에 `L`, passives()에 `× skLvMul`, skillCdOf에 `(1 − 0.04×(lv−1))`. skillinfo.js skillSpec이 `L`을 계수에 곱해 보여 준다.
+- 자동 사용: `a.skoff[id]`(pickSkill이 건너뜀), `a.skpri[id]`(pr +3). 모험가 창 스킬 탭 단추 `data-mact="skup|skoff|skpri"`. 잊으면 sl/skoff/skpri도 지운다.
+- 전투 통계: core.js `ev()`가 `bstat(e, who, k, v, sid)`로 `e.stats[who] = {dealt, taken, healed, kills, sk}`를 쌓는다. 출처는 hit 사건의 `sid`(스킬 id) 또는 `b`(basic)/`ctr`/`pet`/`k:'pet'`(companion)/`dot`; 지속 피해·상태이상 틱은 `by/sid`를 들고 다닌다(f.dot.by, f.sta[k].by, inflictFoe의 by/sid 인자). 처치는 `e.lastHit[uid]`. 그리기는 skillinfo.js `bstatRows(stats, names)`; 전투 창 `#bw-stats`(V.bstats, renderBattle이 `box.dataset.h`로 기록/통계를 바꿔 그린다), 원정대 카드는 `p.last.stats/names`(arrive가 넣는다).
+- 업적 `src/achv.js`: `ACHV`(id·cat·need·get()·rw{gold,fame,item}), `achvTick()`(arrive·onNewDay·panels 클릭 핸들러에서 부른다), `S.achv[id] = 날짜+1`, PANELS.achv, 상단 창 subBtn('achv'). 카운터 `S.stats.bosses`(kill)·`S.stats.raids`(stepRaid)·`S.stats.waves`(waveEnd).
+- 세트 효과: data-gear.js `SET_BONUS`·`setInfo(a)`·`setBonusText`; core.js derive가 `P`에 더한다. 재감정: `REAPPRAISE`, core.js `rollBonus(t, q)`(makeGear도 쓴다, ×0.8~1.3 무작위), econ.js `reappraiseWhy/reappraise`, 창고 장비 설명 ACT `reapp`.
+- 같은 이름 스킬: taunt '도발 1', provoke '도발 2', ar_cheer '관중의 응원', awk_cleric '신의 기적'. 새 스킬 이름은 `scratchpad/datamod2.js` 방식으로 겹침 확인.
+- 시험: `scratchpad/skills/sk2test.py`(논리), `scratchpad/skills/ui23.py`(화면·캡처).
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

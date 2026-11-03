@@ -310,6 +310,29 @@ function plusWhy(g) {
   if (S.gold < plusFee(g)) return '돈이 모자라요';
   return '';
 }
+// 옵션 재감정 (마탑): 희귀 이상 장비의 보너스 능력치를 다시 뽑는다. 돈 + 그 단계 증표
+function reappraiseWhy(g) {
+  if (!g) return '그 장비가 없어요';
+  if (!S.bld.tower) return '마탑이 필요해요';
+  if ((g.q || 0) < 2) return '희귀 등급부터 보너스 능력치가 있어요';
+  const owner = (gearAnyById(g.id) || {}).owner; if (owner && owner.status !== 'idle') return `${owner.name}이(가) 원정에서 돌아온 뒤에`;
+  const crest = 'crest_' + g.t;
+  if (ITEMS[crest] && (S.inv[crest] || 0) < REAPPRAISE.crest) return `${ITEMS[crest].name} ${REAPPRAISE.crest}개가 필요해요`;
+  if (S.gold < REAPPRAISE.fee(g.t)) return `${fmt(REAPPRAISE.fee(g.t))}G가 필요해요`;
+  return '';
+}
+function reappraise(id) {
+  const r = gearAnyById(id); if (!r) return '그 장비가 없어요.';
+  const g = r.g, why = reappraiseWhy(g); if (why) return why + '.';
+  const crest = 'crest_' + g.t; if (ITEMS[crest]) addTo(S.inv, crest, -REAPPRAISE.crest);
+  S.gold -= REAPPRAISE.fee(g.t); S.stats.spent = (S.stats.spent || 0) + REAPPRAISE.fee(g.t);
+  const before = statLine(g.bonus || {});
+  g.bonus = rollBonus(g.t, g.q);
+  if (r.owner) clampVitals(r.owner);
+  log(`마탑에서 「${gearName(g)}」의 옵션을 다시 감정했다: ${before || '없음'} → ${statLine(g.bonus || {})}`, 'good');
+  changed();
+  return '';
+}
 function enhance(id) {
   const r = gearAnyById(id); if (!r) return '그 장비가 없어요.';
   const g = r.g, why = plusWhy(g); if (why) return why + '.';
@@ -438,10 +461,46 @@ function learnSkill(aid, sid) {
   changed();
   return '';
 }
+// 스킬 레벨 올리기: 책이 있는 스킬은 같은 책 한 권 + 돈, 고유·기본·각성 스킬은 돈만. 훈련소에서
+function skillUpWhy(a, id) {
+  const s = SKILLS[id]; if (!a || !s) return '';
+  if (!S.bld.training) return '훈련소가 필요해요';
+  if (!a.skills.includes(id)) return '배운 스킬만';
+  if (a.status !== 'idle') return '상단에 있을 때만';
+  const lv = skLv(a, id);
+  if (lv >= SK_LV_MAX) return `최고 단계(Lv${SK_LV_MAX})예요`;
+  if (skillNeedsBook(id) && !((S.inv['book_' + id] || 0) > 0)) return `스킬북 「${s.name}」이 한 권 더 필요해요`;
+  if (S.gold < skillUpCost(id, lv + 1)) return `${fmt(skillUpCost(id, lv + 1))}G가 필요해요`;
+  return '';
+}
+function skillUp(aid, id) {
+  const a = advById(aid), why = skillUpWhy(a, id);
+  if (!a) return '';
+  if (why) return why + '.';
+  const lv = skLv(a, id) + 1;
+  if (skillNeedsBook(id)) addTo(S.inv, 'book_' + id, -1);
+  S.gold -= skillUpCost(id, lv);
+  a.sl = a.sl || {}; a.sl[id] = lv;
+  log(`${a.name}의 「${SKILLS[id].name}」이(가) Lv${lv}이 됐다. (위력 +${Math.round(SK_LV_POW * (lv - 1) * 100)}% · 재사용 -${Math.round(SK_LV_CD * (lv - 1) * 100)}%)`, 'good');
+  clampVitals(a); changed();
+  return '';
+}
+// 자동 사용 끄기 · 우선 사용
+function skillToggle(aid, id, what) {
+  const a = advById(aid); if (!a || !a.skills.includes(id)) return '';
+  const key = what === 'pri' ? 'skpri' : 'skoff';
+  a[key] = a[key] || {};
+  if (a[key][id]) delete a[key][id]; else a[key][id] = 1;
+  if (what === 'pri' && a.skpri[id] && a.skoff) delete a.skoff[id];
+  if (what === 'off' && a.skoff[id] && a.skpri) delete a.skpri[id];
+  changed();
+  return '';
+}
 function forgetSkill(aid, sid) {
   const a = advById(aid);
   if (!a || sid === CLASSES[a.cls].innate) return;
   a.skills = a.skills.filter(x => x !== sid);
+  if (a.sl) delete a.sl[sid]; if (a.skoff) delete a.skoff[sid]; if (a.skpri) delete a.skpri[sid];
   clampVitals(a); changed();
 }
 const trainedTotal = a => Object.values(a.tr).reduce((s, v) => s + v, 0);
@@ -1037,6 +1096,7 @@ function settle() {
 /* ───────── 시간 흐름 ───────── */
 function onNewDay(k) {
   checkUnlocks();
+  if (typeof achvTick === 'function') achvTick();
   S.ledger = (S.ledger || []).filter(x => x.day > k - 16); S.ledger.push({ day: k, gold: S.gold, earned: S.stats.earned || 0 });   // 수입 그래프용 하루 기록
   if (k % 2 === 0) rollCands();
   S.reqs = S.reqs.filter(r => { if (r.due < k) { log(`${r.client}의 의뢰가 기한을 넘겨 취소됐다.`); return false; } return true; });
@@ -1115,7 +1175,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); saveGame(); return true; }
     if (![2, 3, 4, 5].includes(v.v)) return false;
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1133,6 +1193,7 @@ function loadFrom(v) {
     migrateS();
     notesB();
     notes22();
+    notes23();
     return true;
   } catch (_) { return false; }
 }
@@ -1157,6 +1218,7 @@ function migrateSkillIds() {
 // 새 전투 화면 안내 (한 번만)
 function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ title: '전투 화면이 새로워졌어요', body: STORY.bview }); } }
 // 빌드 22: 기본 공격 5초·스킬 수치·스킬북 드랍표·라이선스 심사 (한 번만, 새 게임은 건너뛴다)
+function notes23() { if (!S.flags.v23) { S.flags.v23 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬 레벨·업적·전투 통계', body: STORY.v23 }); } }
 function notes22() { if (!S.flags.v22) { S.flags.v22 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투와 길드 심사가 바뀌었어요', body: STORY.v22 }); } }
 // v0.6: 본부 화면 안내 (한 번만)
 function notes6() { if (!S.flags.v06) { S.flags.v06 = 1; S.modals.push({ title: 'v0.6 업데이트', body: STORY.v06 }); } }

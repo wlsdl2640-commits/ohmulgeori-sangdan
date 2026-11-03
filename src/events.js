@@ -93,6 +93,7 @@ function waveEnd(p, e, win) {
     const R = waveReward(ev0 || e.wave);
     S.gold += R.gold; S.stats.earned += R.gold; S.fame += R.fame;
     if (ev0) { ev0.done = 1; ev0.won = 1; }
+    S.stats.waves = (S.stats.waves || 0) + 1;
     log(`${p.name}이(가) 하르겐 성문에서 ${F.name}의 몬스터 웨이브를 모두 막아 냈다! 상금 ${g$(R.gold)}, 명성 +${R.fame}`, 'good');
     HOOKS.toast(`방어전 승리 · ${g$(R.gold)} · 명성 +${R.fame}`);
     queueModal({ title: '방어전 승리', body: [`${p.name}이(가) 성문 앞에서 ${e.wave.n}차례 밀려온 몬스터를 모두 쓰러뜨렸다. 시민들이 환호한다.`, `모험가 길드의 상금 ${g$(R.gold)}과 명성 +${R.fame}. 전리품은 창고로.`] });
