@@ -254,9 +254,9 @@ function jobTreeList() {
 PANELS.adv = () => `
   <div class="sec"><b>소속 모험가</b><span>${living().length}/${beds()}명 · 눌러서 자세히</span></div>
   ${living().map(advCard).join('') || '<div class="card"><div class="sub">모험가가 없어요. 아래 여관 손님 중에서 고용하세요.</div></div>'}
-  <details class="card"><summary>라이선스와 전직 안내 · 2차 ${jobOpen(2) ? '열림' : `명성 ${JOB_FAME[2]}`} · 3차 ${jobOpen(3) ? '열림' : `명성 ${JOB_FAME[3]}`}</summary><div class="log">
+  <details class="card"><summary>라이선스와 전직 안내</summary><div class="log">
     <div>모험가는 원정에서 몬스터를 잡고, 필드 보스와 던전을 쓰러뜨리고, 무사히 돌아올 때마다 개인 명성을 쌓아요. 레벨과 개인 명성이 차면 모험가 길드 심사를 받아 ${LICENSE.map(L => L.name).join(' → ')}로 올라가요. 라이선스가 오를수록 능력이 강해지고 봉급도 올라요.</div>
-    <div>2차 전직은 상단 명성 ${JOB_FAME[2]}에 열리고 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 명성 ${JOB_FAME[3]}에 열리고 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 검투사는 Lv30과 투기장 랭킹 점수, 기사는 Lv30과 상단 명성 1000, 광전사는 마계 백작의 성에서 나오는 피눈물이 더 필요해요.</div>${jobTreeList()}
+    <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 검투사는 Lv30과 투기장 랭킹 점수, 기사는 Lv30과 상단 명성 1000, 광전사는 마계 백작의 성에서 나오는 피눈물이 더 필요해요.</div>${jobTreeList()}
     <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이에요.</div></div></details>
   <div class="sec"><b>여관 손님</b><span>이틀마다 새 손님</span></div>
   ${S.cands.map(candCard).join('')}`;

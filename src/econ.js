@@ -757,21 +757,10 @@ function licenseUp(aid) {
 }
 
 /* ───────── 전직 ───────── */
-const jobOpen = t => !!(S.flags['job' + t] || S.fame >= JOB_FAME[t]);
-function checkUnlocks() {
-  for (const t of [2, 3]) {
-    if (S.flags['job' + t] || S.fame < JOB_FAME[t]) continue;
-    S.flags['job' + t] = 1;
-    const Q = JOB_REQ[t];
-    log(`명성이 ${JOB_FAME[t]}에 닿아 ${t}차 전직이 열렸다.`, 'good');
-    queueModal({ title: `${t}차 전직 해금`, body: t === 2
-      ? ['상단의 이름이 알려지자 이름난 스승들이 훈련소를 찾아왔다.', `전사·궁수·도적·마법사·성직자는 Lv${Q.lv} 이상, ${LICENSE[Q.rank].name} 라이선스가 되면 ${g$(Q.fee)}에 세 갈래 2차 직업 중 하나를 고를 수 있다. 직업마다 특성이 다르다.`, '전사라면 회피와 치명타의 검투사, 방어의 기사, 피를 마시는 광전사 중 하나다. 모험가 창에서 고르자.']
-      : ['제국 곳곳의 대가들이 상단의 소문을 듣고 찾아왔다.', `2차 직업 모험가가 Lv${Q.lv} 이상, ${LICENSE[Q.rank].name} 라이선스가 되면 ${g$(Q.fee)}에 3차 직업으로 오를 수 있다.`] });
-  }
-}
+const jobOpen = () => true;   // 전직은 명성으로 열리지 않는다. 직업마다 조건(레벨·라이선스·돈·추가 조건)만 본다
+function checkUnlocks() { S.flags.job2 = 1; S.flags.job3 = 1; }
 function promoWhy(a, cls) {
   const t = jobTier(cls), Q = JOB_REQ[t];
-  if (!jobOpen(t)) return `상단 명성 ${JOB_FAME[t]}에 열려요`;
   const R = CLASSES[cls].req || {};
   if (R.arena && arenaScore() < GLADIATOR_SCORE) return `투기장 랭킹 점수 ${fmt(GLADIATOR_SCORE)} 필요 (지금 ${fmt(arenaScore())})`;
   if (!S.bld.training) return '훈련소가 필요해요';
