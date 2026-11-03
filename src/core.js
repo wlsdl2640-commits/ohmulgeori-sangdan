@@ -104,7 +104,8 @@ function derive(a) {
     counter: Math.min(0.7, (G.counter || 0) + (P.counter || 0) + X('counter')),
     double: Math.min(0.6, (G.double || 0) + (P.double || 0) + X('double')),
     healPow: 1 + X('healPow'), rheal: X('rheal'), hpRegen: X('hpRegen'), mpFlat: X('mpFlat'),
-    spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct')),
+    spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd
+    cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 50%)
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
     move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct')) * (wind ? 1.15 : 1),
     mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3
@@ -491,6 +492,15 @@ function leech(e, a, d, v, magic) {
   ev(e, 'heal', { s: a.id, d: a.id, v: h });
 }
 function stealGold(s, hits) { if (!s.steal) return; const g = Math.round(s.steal * hits); S.gold += g; S.stats.earned += g; }
+// 스킬 재사용 대기시간 = 기본 × (1 − 재사용 감소 − 강화) × (1 − 숙련 2%/단계). 재사용 감소는 합쳐서 50%까지
+function skillCdOf(a, d, id, e) {
+  const s = SKILLS[id]; if (!s || !s.cd) return 0;
+  const cut = Math.min(CDR_MAX, (d.cdr || 0) + (e ? buffAdd(e, a.id, 'cdr') : 0));
+  return Math.max(0.5, s.cd * (1 - cut) * (1 - SM_CD * smLv(a, id)));
+}
+// 기본 공격 대기시간 = 5초 ÷ 공격 속도(강화 포함)
+const basicCd = (a, d, e) => basicCdOf(d.spd, e ? buffMul(e, a.id, 'spd') : 1);
+const basicIsMagic = a => CLASSES[a.cls].act === 'magic';
 function pickSkill(a, d, team, dm, foes, e) {
   const st = e.sta && e.sta[a.id];
   if (st && (st.shock || st.stun)) return null;
@@ -525,7 +535,7 @@ function cast(e, a, d, id, team, dm, foes) {
   const s = SKILLS[id];
   if (s.cost.mp) a.mp -= s.cost.mp;
   if (s.cost.hp) a.hp -= Math.round(d.maxHp * s.cost.hp);
-  e.scd[a.id][id] = s.cd;
+  e.scd[a.id][id] = skillCdOf(a, d, id, e);
   ev(e, 'skill', { s: a.id, id });
   // 숙련도: 쓸수록 위력이 조금씩 오른다 (단계가 오르면 알린다)
   const sm = smLv(a, id), M = smMul(a, id);
@@ -562,8 +572,9 @@ function cast(e, a, d, id, team, dm, foes) {
     ev(e, 'buff', { s: a.id, id, party: true });
   } else if (s.kind === 'buff') {
     const to = s.tgt === 'party' ? 'party' : a.id;
-    e.buffs = e.buffs.filter(b => b.sid !== id);
+    e.buffs = e.buffs.filter(b => b.sid !== id && b.sid !== id + '#h');
     e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult || 0, add: s.add || 0, t: s.dur });
+    if (s.haste) e.buffs.push({ sid: id + '#h', to, stat: 'spd', mult: s.haste, add: 0, t: s.dur });   // 공격 속도도 함께 올리는 강화
     ev(e, 'buff', { s: a.id, id, party: to === 'party' });
   } else if (s.kind === 'taunt') {
     e.taunt = { aid: a.id, t: s.dur };
@@ -574,11 +585,11 @@ function basicAct(e, a, d, team, dm, foes) {
   const act = CLASSES[a.cls].act, T = TR(a), st = e.sta && e.sta[a.id];
   if (st && (st.para || st.stun)) return;
   if (act === 'magic') {
-    const f = foes[0], v = hitFoe(e, f, d.matk * 0.9, rnd() < d.crit, true, a);
-    ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'magic' });
+    const f = foes[0], mk = d.matk * buffMul(e, a.id, 'matk') * BASIC_MAGIC, crit = rnd() < d.crit, v = hitFoe(e, f, mk, crit, true, a);
+    ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: 'magic', b: 1 });
     leech(e, a, d, v, true);
     // 정령술사: 다른 적에게도 번진다
-    if (T.aoe) foes.slice(1).forEach(o => { if (o.hp > 0) { const w = hitFoe(e, o, d.matk * 0.9 * T.aoe, false, true, a); ev(e, 'hit', { s: a.id, d: o.uid, v: w, c: false, k: 'fire' }); } });
+    if (T.aoe) foes.slice(1).forEach(o => { if (o.hp > 0) { const w = hitFoe(e, o, mk * T.aoe, false, true, a); ev(e, 'hit', { s: a.id, d: o.uid, v: w, c: false, k: 'fire', b: 1 }); } });
     return;
   }
   const f = act === 'arrow' ? lowestFoe(foes) : foes[0];
@@ -588,13 +599,13 @@ function basicAct(e, a, d, team, dm, foes) {
     if (f.hp <= 0) break;
     if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); continue; }
     const crit = rnd() < d.crit;
-    const atk = d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * T.hybrid : 0);
+    const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT;   // 5초에 한 번, 그만큼 세게
     const v = hitFoe(e, f, atk, crit, false, a);
-    ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k });
+    ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 });
     leech(e, a, d, v, false);
   }
   // 레인저·용기병: 동물 동료가 함께 문다
-  if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet), false, false, null); ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'pet' }); }
+  if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT, false, false, null); ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'pet' }); }
 }
 // 적이 노릴 상대: 앞줄과 방패를 든 직업이 더 자주 맞는다
 function tankW(a) { const t = TR(a).tank; return Math.max(0, (t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0) + traitSum(a, 'tank')); }
@@ -618,21 +629,31 @@ function battle(p, e, team, dm, dt) {
   e.buffs.forEach(b => { b.t -= dt; });
   e.buffs = e.buffs.filter(b => b.t > 0);
   if (e.taunt) { e.taunt.t -= dt; if (e.taunt.t <= 0) e.taunt = null; }
+  e.gcd = e.gcd || {};
   for (const a of team) {
     if (!up(a)) continue;
     const d = dm[a.id];
     a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.02 * d.mpRegen * dt);
-    const sc = e.scd[a.id] || (e.scd[a.id] = {}), chill = e.sta && e.sta[a.id] && e.sta[a.id].chill ? 0.67 : 1;
-    for (const k in sc) sc[k] = Math.max(0, sc[k] - dt * chill);
     a.mp = Math.min(d.maxMp, a.mp + (d.mpFlat || 0) * dt);
-    e.cd[a.id] = (e.cd[a.id] ?? (0.3 + rnd() * 0.6)) - dt * chill;
-    if (e.cd[a.id] > 0) continue;
-    e.cd[a.id] = 1 / d.spd * (0.9 + rnd() * 0.2);
-    if (e.sta && e.sta[a.id] && e.sta[a.id].stun) continue;
+    const st = e.sta && e.sta[a.id];
+    if (st && st.stun) continue;   // 기절: 모든 대기시간이 멈춘다
+    const sc = e.scd[a.id] || (e.scd[a.id] = {}), chill = st && st.chill ? 0.67 : 1;
+    for (const k in sc) sc[k] = Math.max(0, sc[k] - dt * chill);
+    // 스킬: 저마다의 재사용 대기시간이 돌면 나간다 (스킬과 스킬 사이는 CAST_GAP)
+    e.gcd[a.id] = Math.max(0, (e.gcd[a.id] || 0) - dt);
     const alive = foes.filter(f => f.hp > 0);
     if (!alive.length) break;
-    const sk = pickSkill(a, d, team, dm, alive, e);
-    if (sk) cast(e, a, d, sk, team, dm, alive); else basicAct(e, a, d, team, dm, alive);
+    if (e.gcd[a.id] <= 0) {
+      const sk = pickSkill(a, d, team, dm, alive, e);
+      if (sk) { cast(e, a, d, sk, team, dm, alive); e.gcd[a.id] = CAST_GAP; }
+    }
+    // 기본 공격: 5초 ÷ 공격 속도마다 한 번, 스킬과 상관없이
+    e.cd[a.id] = (e.cd[a.id] ?? (0.3 + rnd() * 0.6)) - dt * chill;
+    if (e.cd[a.id] > 0) continue;
+    e.cd[a.id] = basicCd(a, d, e) * (0.95 + rnd() * 0.1);
+    const alive2 = foes.filter(f => f.hp > 0);
+    if (!alive2.length) break;
+    basicAct(e, a, d, team, dm, alive2);
   }
   petTick(p, e, team, dm, dt);
   for (const f of foes) {
@@ -687,7 +708,7 @@ function kill(p, e, f) {
   if (!f.pvp) dexKill(f.id);   // 도감: 잡은 수
   if (f.giant) { ev(e, 'kill', { d: f.uid, id: f.id, sc: 0 }); e.giantDown = 1; return; }   // 레이드 몬스터는 stepRaid가 마무리한다
   const team = teamOf(p).filter(a => !a.down);
-  team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); });
+  team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); if ((f.fb || f.boss) && !f.pvp) a.bosses = (a.bosses || 0) + 1; });   // 우두머리·주인 처치 수는 라이선스 심사에 쓴다
   const harvest = blessed('harvest') ? 1.15 : 1;
   const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp')) * harvest);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
@@ -703,7 +724,8 @@ function kill(p, e, f) {
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
   if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(f.boss ? 0.25 : 0)));
-  if (rnd() < (f.fb ? 0.3 : f.boss ? 0.6 : (inD ? 0.015 : 0.004) * ap)) { const b = randomBook(Math.max(1, f.lv - 14), f.lv + 2); if (b) loot(p, e, b, 1); }
+  // 스킬북: 몬스터마다 정해진 책만 떨어뜨린다 (data-books.js). 감정 연구·전리품 운이 확률을 올린다
+  for (const sk of monBooks(f.id)) if (ITEMS['book_' + sk] && rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, 'book_' + sk, 1);
   bossParts(p, e, f, inD);
   if (luck && rnd() < luck) { const g = Math.round(f.lv * (2 + rnd() * 3)); S.gold += g; S.stats.earned += g; }
   if (f.fb) { if (S.fields[e.field]) fieldBossDown(p, e, f); }   // 방어전(wave)의 우두머리는 필드 기록이 없다
@@ -869,13 +891,13 @@ function dungeonClear(p, e) {
   if (F.raid) {
     S.flags.guildDown = 1;
     S.fame += 50; S.gold += 5000; S.stats.earned += 5000;
-    team.forEach(a => { a.pf = (a.pf || 0) + 25; });
+    team.forEach(a => { a.pf = (a.pf || 0) + 25; a.dungeons = (a.dungeons || 0) + 1; });
     log(`${p.name}이(가) 암살자 길드장을 쓰러뜨렸다! 길드 금고에서 5,000G, 명성 +50`, 'good');
     queueModal({ title: '암살자 길드 토벌', body: STORY.guild });
   } else if (first) {
     const gold = DUNGEON_GOLD[F.tier] || 3000, fame = 60 + F.tier * 25;
     S.gold += gold; S.fame += fame; S.stats.earned += gold; S.stats.dungeons = (S.stats.dungeons || 0) + 1;
-    team.forEach(a => { a.pf = (a.pf || 0) + 20; });
+    team.forEach(a => { a.pf = (a.pf || 0) + 20; a.dungeons = (a.dungeons || 0) + 1; });
     // 보물 상자: 전설·영웅 장비와 장비 한 점, 스킬북 두 권, 주인의 혼 둘, 중급 룬 둘. 그리고 유물
     e.gbag.push(makeGear(pickOne(GTYPE_IDS), F.tier, 4), makeGear(pickOne(GTYPE_IDS), F.tier, 3), makeGear(pickOne(GTYPE_IDS), F.tier, Math.max(1, rollQuality(0.4))));
     const b1 = randomBook(F.lv, F.lv + 16), b2 = randomBook(F.lv, F.lv + 20);
@@ -937,7 +959,7 @@ function stepRaid(p, e, team, dm, dt, fr) {
     if (!p.exp) return;                 // 전멸
     const dealt = Math.max(0, before - Math.max(0, f.hp));
     if (dealt) { rec.hp = Math.max(0, rec.hp - dealt); rec.me += dealt; e.dealt += dealt; }
-    if (rec.hp <= 0) { raidEnd(rec, 'kill'); raidLeave(p, e, 'raid'); return; }
+    if (rec.hp <= 0) { teamOf(p).filter(a => !a.down).forEach(a => { a.bosses = (a.bosses || 0) + 1; a.dungeons = (a.dungeons || 0) + 1; }); raidEnd(rec, 'kill'); raidLeave(p, e, 'raid'); return; }
     e.rt += dt;
     if (e.foes.length && e.rt >= RAID_FIGHT) raidLeave(p, e, 'time');
     return;

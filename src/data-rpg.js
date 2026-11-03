@@ -76,15 +76,27 @@ const MAX_LV = 100;
 const SKILL_SLOT_LV = [30, 50, 70, 90, 100];
 const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length + (a.hero ? 1 : 0);   // 용사는 각성기 칸이 따로
 
+/* ───────── 기본 공격 · 재사용 대기시간 ─────────
+   기본 공격은 5초마다 한 번(공격 속도로 나눈다), 그 대신 한 방이 세다. 스킬은 저마다의 재사용 대기시간이 돌면 따로 나간다.
+   공격 속도(spd)는 기본 공격 대기시간을, 재사용 감소(cdr)는 스킬 대기시간을 줄인다. 둘 다 특성·지속 스킬·룬·강화 스킬로 모인다. */
+const BASIC_CD = 5;        // 기본 공격 대기시간(초) ÷ 공격 속도
+const BASIC_MULT = 2.5;    // 기본 공격 = 공격력 × 2.5
+const BASIC_MAGIC = 2.3;   // 마법 직업의 기본 공격 = 마법 공격력 × 2.3
+const CAST_GAP = 0.9;      // 스킬과 스킬 사이 최소 간격(초)
+const CDR_MAX = 0.5;       // 재사용 감소 합의 상한
+const SM_CD = 0.02;        // 숙련 한 단계마다 재사용 -2%
+const basicCdOf = (spd, mul = 1) => BASIC_CD / Math.max(0.2, spd * mul);
+
 /* ───────── 스킬 ───────── */
 // cls: 배울 수 있는 직업 (all = 모두), lv: 배울 수 있는 레벨, cost: { mp } 또는 { hp: 최대 HP 비율 }
 // kind: dmg(물리) mdmg(마법) heal buff taunt dot, tgt: front low all self party
+// haste: 강화 스킬이 함께 주는 공격 속도 배율, passive.spdPct/cdr: 공격 속도·스킬 재사용 감소
 const SKILLS = {
   bash:       { name: '강타',       cls: ['warrior'], lv: 1,  cost: { mp: 6 },    cd: 4,  kind: 'dmg',  mult: 1.8, tgt: 'front', desc: '앞의 적을 세게 내리친다.' },
   taunt:      { name: '도발',       cls: ['warrior'], lv: 5,  cost: { mp: 8 },    cd: 12, kind: 'taunt', dur: 6, desc: '6초 동안 모든 적이 자신만 노리게 한다.' },
   ironwall:   { name: '철벽',       cls: ['warrior'], lv: 10, cost: { mp: 12 },   cd: 16, kind: 'buff', stat: 'def', mult: 2, dur: 6, tgt: 'self', desc: '6초 동안 방어력이 두 배가 된다.' },
   sweep:      { name: '휩쓸기',     cls: ['warrior'], lv: 15, cost: { mp: 14 },   cd: 8,  kind: 'dmg',  mult: 1.1, tgt: 'all', desc: '모든 적을 베어 낸다.' },
-  berserk:    { name: '광폭화',     cls: ['warrior'], lv: 22, cost: { hp: 0.15 }, cd: 20, kind: 'buff', stat: 'atk', mult: 1.6, dur: 8, tgt: 'self', desc: 'HP를 깎아 8초 동안 공격력을 크게 올린다.' },
+  berserk:    { name: '광폭화',     cls: ['warrior'], lv: 22, cost: { hp: 0.15 }, cd: 20, kind: 'buff', stat: 'atk', mult: 1.6, haste: 1.25, dur: 8, tgt: 'self', desc: 'HP를 깎아 8초 동안 공격력과 공격 속도를 크게 올린다.' },
   aimed:      { name: '조준 사격',  cls: ['archer'],  lv: 1,  cost: { mp: 5 },    cd: 4,  kind: 'dmg',  mult: 1.7, crit: 0.3, tgt: 'low', fx: 'arrow', desc: '약한 적을 노려 쏜다. 치명타가 잘 터진다.' },
   double:     { name: '연사',       cls: ['archer'],  lv: 6,  cost: { mp: 9 },    cd: 6,  kind: 'dmg',  mult: 1.0, hits: 2, tgt: 'low', fx: 'arrow', desc: '화살 두 발을 연달아 쏜다.' },
   poisonarrow:{ name: '독화살',     cls: ['archer'],  lv: 11, cost: { mp: 10 },   cd: 8,  kind: 'dot',  mult: 0.5, dur: 6, tgt: 'front', fx: 'arrow', desc: '6초 동안 독 피해를 준다.' },
@@ -110,21 +122,21 @@ const SKILLS = {
   meditate:   { name: '명상',       cls: ['all'],     lv: 8,  passive: { mpRegen: 1 }, desc: 'MP 회복이 두 배가 된다.' },
   // ── v0.7: 기본 직업 고레벨 스킬북 ──
   earthsplit:  { name: '대지 가르기', cls: ['warrior'], lv: 32, cost: { mp: 22 }, cd: 10, kind: 'dmg', mult: 1.6, tgt: 'all', desc: '땅을 내리쳐 모든 적을 벤다.' },
-  warcry:      { name: '전쟁의 함성', cls: ['warrior'], lv: 45, cost: { mp: 26 }, cd: 20, kind: 'buff', stat: 'atk', mult: 1.3, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력을 올린다.' },
+  warcry:      { name: '전쟁의 함성', cls: ['warrior'], lv: 45, cost: { mp: 26 }, cd: 20, kind: 'buff', stat: 'atk', mult: 1.3, haste: 1.15, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력과 공격 속도를 올린다.' },
   guardian:    { name: '수호자', cls: ['warrior'], lv: 60, passive: { hpPct: 0.15 }, desc: '최대 HP가 15% 오른다.' },
   titanblow:   { name: '거인의 일격', cls: ['warrior'], lv: 75, cost: { mp: 40 }, cd: 14, kind: 'dmg', mult: 4.2, boss: 1.3, tgt: 'front', desc: '모든 힘을 실어 내리친다. 보스에게 더 아프다.' },
   piercing:    { name: '관통 사격', cls: ['archer'], lv: 30, cost: { mp: 20 }, cd: 9, kind: 'dmg', mult: 1.4, tgt: 'all', fx: 'arrow', desc: '모든 적을 꿰뚫는 화살을 쏜다.' },
   eagleeye:    { name: '매의 눈', cls: ['archer'], lv: 40, passive: { crit: 0.08 }, desc: '치명타 확률이 8%p 오른다.' },
   tripleshot:  { name: '삼연사', cls: ['archer'], lv: 55, cost: { mp: 28 }, cd: 8, kind: 'dmg', mult: 1.2, hits: 3, tgt: 'low', fx: 'arrow', desc: '약한 적에게 화살 세 발을 쏜다.' },
   stormarrows: { name: '폭풍 화살', cls: ['archer'], lv: 75, cost: { mp: 45 }, cd: 14, kind: 'dmg', mult: 2.2, tgt: 'all', fx: 'arrow', desc: '하늘을 덮는 화살을 퍼붓는다.' },
-  quickstep:   { name: '잰걸음', cls: ['rogue'], lv: 30, passive: { eva: 0.06 }, desc: '회피율이 6%p 오른다.' },
+  quickstep:   { name: '잰걸음', cls: ['rogue'], lv: 30, passive: { eva: 0.06, spdPct: 0.08 }, desc: '회피율 6%p, 공격 속도 8%가 오른다.' },
   deadlyvenom: { name: '맹독', cls: ['rogue'], lv: 42, cost: { mp: 24 }, cd: 10, kind: 'dot', mult: 1.2, dur: 8, tgt: 'front', desc: '8초 동안 강한 독 피해를 준다.' },
   blades:      { name: '칼날 폭풍', cls: ['rogue'], lv: 58, cost: { mp: 32 }, cd: 12, kind: 'dmg', mult: 1.5, hits: 2, tgt: 'all', desc: '칼날을 휘둘러 모든 적을 두 번 벤다.' },
   vital:       { name: '급소 노리기', cls: ['rogue'], lv: 75, passive: { crit: 0.1 }, desc: '치명타 확률이 10%p 오른다.' },
   meteor:      { name: '운석 낙하', cls: ['mage'], lv: 35, cost: { mp: 40 }, cd: 14, kind: 'mdmg', mult: 2.4, tgt: 'all', fx: 'fire', desc: '하늘에서 운석을 떨어뜨린다.' },
   manashield:  { name: '마나 보호막', cls: ['mage'], lv: 45, cost: { mp: 24 }, cd: 16, kind: 'buff', stat: 'def', mult: 1.8, dur: 8, tgt: 'self', desc: '8초 동안 방어력이 크게 오른다.' },
   blizzard:    { name: '눈보라', cls: ['mage'], lv: 60, cost: { mp: 45 }, cd: 12, kind: 'mdmg', mult: 1.8, slow: 4, tgt: 'all', fx: 'ice', desc: '모든 적을 얼리고 느리게 한다.' },
-  arcane:      { name: '비전 숙련', cls: ['mage'], lv: 75, passive: { matkPct: 0.15 }, desc: '마법 피해와 치유량이 15% 오른다.' },
+  arcane:      { name: '비전 숙련', cls: ['mage'], lv: 75, passive: { matkPct: 0.15, cdr: 0.1 }, desc: '마법 피해와 치유량이 15% 오르고 스킬 재사용이 10% 빨라진다.' },
   sanctuary:   { name: '성역', cls: ['cleric'], lv: 32, cost: { mp: 30 }, cd: 20, kind: 'buff', stat: 'def', mult: 1.4, dur: 10, tgt: 'party', desc: '10초 동안 파티의 방어력을 올린다.' },
   greatheal:   { name: '대치유', cls: ['cleric'], lv: 45, cost: { mp: 30 }, cd: 6, kind: 'heal', mult: 4.0, tgt: 'low', desc: '가장 다친 동료를 크게 치료한다.' },
   smite:       { name: '천벌', cls: ['cleric'], lv: 60, cost: { mp: 32 }, cd: 9, kind: 'mdmg', mult: 3.0, boss: 1.5, tgt: 'front', fx: 'holy', desc: '하늘의 벌을 내린다. 보스에게 더 아프다.' },
@@ -135,15 +147,18 @@ const SKILLS = {
   toughness:   { name: '강인함', cls: ['all'], lv: 25, passive: { hpPct: 0.08 }, desc: '최대 HP가 8% 오른다.' },
   focus:       { name: '집중', cls: ['all'], lv: 40, passive: { crit: 0.03 }, desc: '치명타 확률이 3%p 오른다.' },
   secondwind:  { name: '재기', cls: ['all'], lv: 55, cost: { mp: 20 }, cd: 30, kind: 'heal', tgt: 'self', pct: 0.3, desc: '최대 HP의 30%를 회복한다.' },
+  haste:       { name: '신속', cls: ['all'], lv: 20, passive: { spdPct: 0.1 }, desc: '공격 속도가 10% 빨라져 기본 공격 대기시간이 줄어든다.' },
+  tactics:     { name: '전술', cls: ['all'], lv: 35, passive: { cdr: 0.08 }, desc: '스킬 재사용 대기시간이 8% 줄어든다.' },
+  rhythm:      { name: '전투 리듬', cls: ['all'], lv: 60, passive: { spdPct: 0.08, cdr: 0.08 }, desc: '공격 속도 8%, 스킬 재사용 감소 8%가 오른다.' },
   // ── 2차·3차 직업 스킬 (own: 스킬북 없이 훈련소에서 배운다. 3차는 2차·기본 직업 스킬도 배울 수 있다) ──
   // 검투사 → 챔피언
   arena:       { name: '투기장 일격', cls: ['gladiator'], lv: 1, cost: { mp: 6 }, cd: 4, kind: 'dmg', mult: 2.0, crit: 0.25, tgt: 'front', desc: '관중을 열광시키는 일격. 치명타가 잘 터진다.' },
   parry:       { name: '흘려 받기', cls: ['gladiator'], lv: 22, own: 1, cost: { mp: 8 }, cd: 12, kind: 'buff', stat: 'eva', add: 0.3, dur: 6, tgt: 'self', desc: '6초 동안 회피율이 크게 오른다.' },
-  roar:        { name: '관중의 함성', cls: ['gladiator'], lv: 28, own: 1, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'atk', mult: 1.25, dur: 8, tgt: 'party', desc: '8초 동안 파티의 공격력을 올린다.' },
+  roar:        { name: '관중의 함성', cls: ['gladiator'], lv: 28, own: 1, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'atk', mult: 1.25, haste: 1.1, dur: 8, tgt: 'party', desc: '8초 동안 파티의 공격력과 공격 속도를 올린다.' },
   execute:     { name: '처형', cls: ['gladiator'], lv: 36, own: 1, cost: { mp: 16 }, cd: 12, kind: 'dmg', mult: 3.2, tgt: 'low', desc: '가장 약한 적에게 결정타를 날린다.' },
   spinslash:   { name: '회전 베기', cls: ['gladiator'], lv: 48, own: 1, cost: { mp: 18 }, cd: 9, kind: 'dmg', mult: 1.6, tgt: 'all', desc: '빙글 돌며 모든 적을 벤다.' },
   glory:       { name: '영광의 일격', cls: ['champion'], lv: 1, cost: { mp: 12 }, cd: 4, kind: 'dmg', mult: 3.0, crit: 0.4, tgt: 'front', desc: '챔피언의 일격. 치명타가 아주 잘 터진다.' },
-  crowd:       { name: '관중의 환호', cls: ['champion'], lv: 60, own: 1, passive: { atkPct: 0.15 }, desc: '공격력이 15% 오른다.' },
+  crowd:       { name: '관중의 환호', cls: ['champion'], lv: 60, own: 1, passive: { atkPct: 0.15, spdPct: 0.05 }, desc: '공격력 15%, 공격 속도 5%가 오른다.' },
   finale:      { name: '피날레', cls: ['champion'], lv: 75, own: 1, cost: { mp: 36 }, cd: 16, kind: 'dmg', mult: 5.0, crit: 0.5, tgt: 'front', desc: '관중이 숨을 멈추는 마지막 일격.' },
   colosseum:   { name: '콜로세움', cls: ['champion'], lv: 95, own: 1, cost: { mp: 60 }, cd: 20, kind: 'dmg', mult: 4.0, crit: 0.3, tgt: 'all', desc: '경기장 전체를 휩쓰는 전설의 기술.' },
   // 기사 → 성기사
@@ -163,18 +178,18 @@ const SKILLS = {
   bloodstrike: { name: '피의 일격', cls: ['berserker'], lv: 1, cost: { hp: 0.05 }, cd: 3.5, kind: 'dmg', mult: 2.3, tgt: 'front', desc: 'HP를 조금 깎아 강하게 내리친다.' },
   whirl:       { name: '회전 도끼', cls: ['berserker'], lv: 22, own: 1, cost: { mp: 8 }, cd: 7, kind: 'dmg', mult: 1.3, tgt: 'all', desc: '도끼를 휘둘러 모든 적을 벤다.' },
   bloodthirst: { name: '피의 갈증', cls: ['berserker'], lv: 28, own: 1, cost: { mp: 10 }, cd: 14, kind: 'heal', tgt: 'self', pct: 0.25, desc: '최대 HP의 25%를 회복한다.' },
-  rampage:     { name: '폭주', cls: ['berserker'], lv: 36, own: 1, cost: { hp: 0.2 }, cd: 20, kind: 'buff', stat: 'atk', mult: 1.9, dur: 8, tgt: 'self', desc: 'HP를 크게 깎아 8초 동안 공격력이 거의 두 배가 된다.' },
+  rampage:     { name: '폭주', cls: ['berserker'], lv: 36, own: 1, cost: { hp: 0.2 }, cd: 20, kind: 'buff', stat: 'atk', mult: 1.9, haste: 1.3, dur: 8, tgt: 'self', desc: 'HP를 크게 깎아 8초 동안 공격력이 거의 두 배가 되고 공격 속도도 오른다.' },
   frenzy:      { name: '광란', cls: ['berserker'], lv: 48, own: 1, passive: { spdPct: 0.15 }, desc: '공격속도가 15% 빨라진다.' },
   bloodfeast:  { name: '피의 만찬', cls: ['bloodlord'], lv: 1, cost: { hp: 0.05 }, cd: 3.5, kind: 'dmg', mult: 3.2, drain: 0.3, tgt: 'front', desc: '베어 낸 피를 그대로 마신다.' },
   bloodlust:   { name: '끝없는 갈증', cls: ['bloodlord'], lv: 60, own: 1, passive: { atkPct: 0.2 }, desc: '공격력이 20% 오른다.' },
-  bloodmoon:   { name: '핏빛 달', cls: ['bloodlord'], lv: 75, own: 1, cost: { hp: 0.2 }, cd: 22, kind: 'buff', stat: 'atk', mult: 2.0, dur: 8, tgt: 'self', desc: 'HP를 바쳐 8초 동안 공격력이 두 배가 된다.' },
+  bloodmoon:   { name: '핏빛 달', cls: ['bloodlord'], lv: 75, own: 1, cost: { hp: 0.2 }, cd: 22, kind: 'buff', stat: 'atk', mult: 2.0, haste: 1.25, dur: 8, tgt: 'self', desc: 'HP를 바쳐 8초 동안 공격력이 두 배가 되고 공격 속도도 오른다.' },
   ragnarok:    { name: '라그나로크', cls: ['bloodlord'], lv: 95, own: 1, cost: { hp: 0.25 }, cd: 20, kind: 'dmg', mult: 4.5, tgt: 'all', desc: 'HP를 크게 깎아 세상을 끝낼 듯 휘두른다.' },
   // 레인저 → 용기병
   beastshot:   { name: '짐승 사냥', cls: ['ranger'], lv: 1, cost: { mp: 7 }, cd: 4, kind: 'dmg', mult: 2.0, crit: 0.2, boss: 1.2, tgt: 'low', fx: 'arrow', desc: '사냥감의 숨통을 노려 쏜다.' },
   trap:        { name: '덫 놓기', cls: ['ranger'], lv: 22, own: 1, cost: { mp: 12 }, cd: 10, kind: 'dot', mult: 0.9, dur: 6, slow: 4, tgt: 'front', desc: '덫에 걸린 적은 6초 동안 피해를 입고 느려진다.' },
   wolfcall:    { name: '늑대 부르기', cls: ['ranger'], lv: 28, own: 1, cost: { mp: 18 }, cd: 10, kind: 'dmg', mult: 1.2, hits: 2, tgt: 'all', desc: '늑대 떼가 모든 적을 물어뜯는다.' },
   camouflage:  { name: '위장', cls: ['ranger'], lv: 36, own: 1, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'eva', add: 0.3, dur: 8, tgt: 'self', desc: '8초 동안 회피율이 크게 오른다.' },
-  instinct:    { name: '사냥꾼의 감', cls: ['ranger'], lv: 42, own: 1, passive: { crit: 0.06 }, desc: '치명타 확률이 6%p 오른다.' },
+  instinct:    { name: '사냥꾼의 감', cls: ['ranger'], lv: 42, own: 1, passive: { crit: 0.06, spdPct: 0.05 }, desc: '치명타 확률 6%p, 공격 속도 5%가 오른다.' },
   arrowstorm:  { name: '화살 폭우', cls: ['ranger'], lv: 48, own: 1, cost: { mp: 34 }, cd: 12, kind: 'dmg', mult: 2.0, tgt: 'all', fx: 'arrow', desc: '모든 적에게 화살비를 쏟는다.' },
   jump:        { name: '도약 찌르기', cls: ['dragoon'], lv: 1, cost: { mp: 7 }, cd: 5, kind: 'dmg', mult: 2.4, tgt: 'low', fx: 'jump', desc: '뛰어올라 약한 적을 창으로 꿰뚫는다.' },
   dragonscale: { name: '용의 비늘', cls: ['dragoon'], lv: 55, own: 1, passive: { defPct: 0.15 }, desc: '방어력이 15% 오른다.' },
@@ -194,22 +209,22 @@ const SKILLS = {
   godseye:     { name: '신의 눈', cls: ['hawkeye'], lv: 75, own: 1, passive: { crit: 0.12 }, desc: '치명타 확률이 12%p 오른다.' },
   lastarrow:   { name: '심판의 화살', cls: ['hawkeye'], lv: 95, own: 1, cost: { mp: 60 }, cd: 20, kind: 'dmg', mult: 9.0, boss: 1.5, tgt: 'front', fx: 'arrow', desc: '단 한 발로 거대한 적을 꿰뚫는다.' },
   // 음유시인 → 마에스트로
-  ballad:      { name: '용기의 노래', cls: ['bard'], lv: 1, cost: { mp: 10 }, cd: 12, kind: 'buff', stat: 'atk', mult: 1.2, dur: 8, tgt: 'party', desc: '8초 동안 파티의 공격력을 올린다.' },
+  ballad:      { name: '용기의 노래', cls: ['bard'], lv: 1, cost: { mp: 10 }, cd: 12, kind: 'buff', stat: 'atk', mult: 1.2, haste: 1.1, dur: 8, tgt: 'party', desc: '8초 동안 파티의 공격력과 공격 속도를 올린다.' },
   lullaby:     { name: '자장가', cls: ['bard'], lv: 22, own: 1, cost: { mp: 14 }, cd: 10, kind: 'mdmg', mult: 0.8, slow: 4, tgt: 'all', desc: '모든 적을 졸리게 해 느려지게 한다.' },
-  hymn:        { name: '치유의 찬가', cls: ['bard'], lv: 28, own: 1, cost: { mp: 18 }, cd: 9, kind: 'heal', mult: 0.9, tgt: 'party', desc: '노래로 파티 전원을 치료한다.' },
-  marchsong:   { name: '행진곡', cls: ['bard'], lv: 36, own: 1, cost: { mp: 16 }, cd: 16, kind: 'buff', stat: 'eva', add: 0.15, dur: 8, tgt: 'party', desc: '8초 동안 파티의 회피율을 올린다.' },
+  hymn:        { name: '치유의 세레나데', cls: ['bard'], lv: 28, own: 1, cost: { mp: 18 }, cd: 9, kind: 'heal', mult: 0.9, tgt: 'party', desc: '노래로 파티 전원을 치료한다.' },
+  marchsong:   { name: '행진곡', cls: ['bard'], lv: 36, own: 1, cost: { mp: 16 }, cd: 16, kind: 'buff', stat: 'eva', add: 0.15, haste: 1.2, dur: 8, tgt: 'party', desc: '8초 동안 파티의 회피율과 공격 속도를 올린다.' },
   warsong:     { name: '전쟁가', cls: ['bard'], lv: 48, own: 1, cost: { mp: 26 }, cd: 18, kind: 'buff', stat: 'atk', mult: 1.35, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력을 크게 올린다.' },
-  symphony:    { name: '교향곡', cls: ['maestro'], lv: 1, cost: { mp: 16 }, cd: 14, kind: 'buff', stat: 'atk', mult: 1.3, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력을 올린다.' },
+  symphony:    { name: '교향곡', cls: ['maestro'], lv: 1, cost: { mp: 16 }, cd: 14, kind: 'buff', stat: 'atk', mult: 1.3, haste: 1.15, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력과 공격 속도를 올린다.' },
   requiem:     { name: '진혼곡', cls: ['maestro'], lv: 60, own: 1, cost: { mp: 34 }, cd: 12, kind: 'mdmg', mult: 2.5, tgt: 'all', desc: '적의 영혼을 잠재우는 노래.' },
   overture:    { name: '서곡', cls: ['maestro'], lv: 75, own: 1, cost: { mp: 40 }, cd: 14, kind: 'heal', mult: 2.0, tgt: 'party', desc: '파티 전원을 크게 치료한다.' },
-  grandfinale: { name: '장엄한 피날레', cls: ['maestro'], lv: 95, own: 1, cost: { mp: 60 }, cd: 24, kind: 'buff', stat: 'atk', mult: 1.8, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력이 크게 오른다.' },
+  grandfinale: { name: '장엄한 피날레', cls: ['maestro'], lv: 95, own: 1, cost: { mp: 60 }, cd: 24, kind: 'buff', stat: 'atk', mult: 1.8, haste: 1.2, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력과 공격 속도가 크게 오른다.' },
   // 암살자 → 그림자 군주
   assassinate: { name: '암살', cls: ['assassin'], lv: 1, cost: { mp: 7 }, cd: 4, kind: 'dmg', mult: 2.4, crit: 1, tgt: 'low', desc: '약한 적의 급소를 반드시 찌른다.' },
   poisonblade: { name: '독날', cls: ['assassin'], lv: 22, own: 1, cost: { mp: 12 }, cd: 8, kind: 'dot', mult: 1.0, dur: 6, tgt: 'front', desc: '독을 바른 칼날로 6초 동안 독 피해를 준다.' },
   vanish:      { name: '은신', cls: ['assassin'], lv: 28, own: 1, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'eva', add: 0.4, dur: 6, tgt: 'self', desc: '6초 동안 그림자에 숨는다.' },
   throatcut:   { name: '목 긋기', cls: ['assassin'], lv: 36, own: 1, cost: { mp: 20 }, cd: 9, kind: 'dmg', mult: 3.2, crit: 0.3, tgt: 'low', desc: '단숨에 숨통을 끊는다.' },
   shadowclone: { name: '분신술', cls: ['assassin'], lv: 48, own: 1, cost: { mp: 26 }, cd: 12, kind: 'dmg', mult: 1.0, hits: 4, tgt: 'front', desc: '분신들과 함께 네 번 벤다.' },
-  killer:      { name: '살수의 본능', cls: ['assassin'], lv: 52, own: 1, passive: { crit: 0.1 }, desc: '치명타 확률이 10%p 오른다.' },
+  killer:      { name: '살수의 본능', cls: ['assassin'], lv: 52, own: 1, passive: { crit: 0.1, spdPct: 0.05 }, desc: '치명타 확률 10%p, 공격 속도 5%가 오른다.' },
   shadowstep:  { name: '그림자 걸음', cls: ['shadowlord'], lv: 1, cost: { mp: 9 }, cd: 4, kind: 'dmg', mult: 2.8, crit: 0.5, tgt: 'low', desc: '그림자를 밟고 나타나 벤다.' },
   nightfall:   { name: '밤의 장막', cls: ['shadowlord'], lv: 60, own: 1, cost: { mp: 26 }, cd: 18, kind: 'buff', stat: 'eva', add: 0.25, dur: 8, tgt: 'party', desc: '8초 동안 파티를 어둠으로 감싼다.' },
   shadowstorm: { name: '그림자 폭풍', cls: ['shadowlord'], lv: 66, own: 1, cost: { mp: 32 }, cd: 10, kind: 'dmg', mult: 2.2, hits: 2, tgt: 'all', desc: '그림자 칼날이 모든 적을 두 번 벤다.' },
@@ -243,7 +258,7 @@ const SKILLS = {
   waterspirit: { name: '물의 정령', cls: ['elementalist'], lv: 36, own: 1, cost: { mp: 24 }, cd: 10, kind: 'heal', mult: 1.0, tgt: 'party', desc: '물의 정령이 파티를 치료한다.' },
   storm:       { name: '정령 폭풍', cls: ['elementalist'], lv: 48, own: 1, cost: { mp: 26 }, cd: 12, kind: 'mdmg', mult: 2.2, tgt: 'all', fx: 'bolt', desc: '모든 정령이 함께 휘몰아친다.' },
   spiritking:  { name: '정령왕의 분노', cls: ['elementlord'], lv: 1, cost: { mp: 16 }, cd: 5, kind: 'mdmg', mult: 1.8, tgt: 'all', fx: 'wind', desc: '정령왕의 분노가 모든 적을 덮친다.' },
-  spiritlink:  { name: '정령 교감', cls: ['elementlord'], lv: 60, own: 1, passive: { matkPct: 0.15 }, desc: '마법 피해와 치유량이 15% 오른다.' },
+  spiritlink:  { name: '정령 교감', cls: ['elementlord'], lv: 60, own: 1, passive: { matkPct: 0.15, cdr: 0.06 }, desc: '마법 피해와 치유량이 15% 오르고 스킬 재사용이 6% 빨라진다.' },
   elemental:   { name: '4원소 폭발', cls: ['elementlord'], lv: 75, own: 1, cost: { mp: 48 }, cd: 14, kind: 'mdmg', mult: 3.0, tgt: 'all', fx: 'bolt', desc: '네 정령의 힘을 한꺼번에 터뜨린다.' },
   genesis:     { name: '천지창조', cls: ['elementlord'], lv: 95, own: 1, cost: { mp: 70 }, cd: 20, kind: 'mdmg', mult: 6.0, tgt: 'all', fx: 'fire', desc: '세상이 처음 생기던 날의 힘.' },
   // 네크로맨서 → 리치
@@ -253,7 +268,7 @@ const SKILLS = {
   raise:       { name: '해골 병사', cls: ['necromancer'], lv: 36, own: 1, cost: { mp: 28 }, cd: 12, kind: 'mdmg', mult: 1.2, hits: 3, tgt: 'all', fx: 'dark', desc: '해골 병사들이 모든 적을 세 번 친다.' },
   deathwave:   { name: '죽음의 파도', cls: ['necromancer'], lv: 48, own: 1, cost: { hp: 0.15 }, cd: 14, kind: 'mdmg', mult: 2.4, tgt: 'all', fx: 'dark', desc: 'HP를 바쳐 모든 적에게 죽음의 파도를 보낸다.' },
   soulrend:    { name: '영혼 찢기', cls: ['lich'], lv: 1, cost: { mp: 14 }, cd: 4, kind: 'mdmg', mult: 3.0, drain: 0.35, tgt: 'front', fx: 'dark', desc: '적의 영혼을 찢어 생명을 빼앗는다.' },
-  lichmind:    { name: '리치의 지혜', cls: ['lich'], lv: 60, own: 1, passive: { matkPct: 0.2 }, desc: '마법 피해가 20% 오른다.' },
+  lichmind:    { name: '리치의 지혜', cls: ['lich'], lv: 60, own: 1, passive: { matkPct: 0.2, cdr: 0.08 }, desc: '마법 피해가 20% 오르고 스킬 재사용이 8% 빨라진다.' },
   deathplague: { name: '죽음의 역병', cls: ['lich'], lv: 75, own: 1, cost: { mp: 40 }, cd: 12, kind: 'dot', magic: 1, mult: 2.0, dur: 8, tgt: 'all', fx: 'dark', desc: '8초 동안 모든 적이 썩어 간다.' },
   apocalypse:  { name: '종말', cls: ['lich'], lv: 95, own: 1, cost: { hp: 0.2 }, cd: 20, kind: 'mdmg', mult: 6.0, tgt: 'all', fx: 'dark', desc: 'HP를 바쳐 종말을 부른다.' },
   // 마검사 → 마검성
@@ -268,8 +283,8 @@ const SKILLS = {
   dragonheart: { name: '용의 심장 꿰기', cls: ['dslayer'], lv: 95, own: 1, cost: { mp: 60 }, cd: 20, kind: 'dmg', mult: 7.0, crit: 0.3, tgt: 'low', fx: 'arrow', desc: '가장 약한 적의 심장을 꿰는 필살의 한 발.' },
   arcanebolt:  { name: '마력탄', cls: ['sorcerer'], lv: 1, cost: { mp: 10 }, cd: 4, kind: 'mdmg', mult: 2.4, crit: 0.15, tgt: 'front', fx: 'spell', desc: '응축한 마력을 쏜다. 치명타가 잘 터진다.' },
   manaward:    { name: '마력 방벽', cls: ['sorcerer'], lv: 22, own: 1, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'def', mult: 1.6, dur: 8, tgt: 'self', desc: '8초 동안 마력 방벽으로 방어력이 크게 오른다.' },
-  meteor:      { name: '유성 낙하', cls: ['sorcerer'], lv: 28, own: 1, cost: { mp: 22 }, cd: 12, kind: 'mdmg', mult: 1.5, tgt: 'all', fx: 'fire', sta: { k: 'burn', p: 0.3, d: 8, m: 0.3 }, desc: '하늘에서 유성을 떨어뜨려 모든 적을 태운다.' },
-  arcanefocus: { name: '마력 집중', cls: ['sorcerer'], lv: 36, own: 1, passive: { matkPct: 0.1, crit: 0.05 }, desc: '마법 공격력 10%, 치명 5%가 오른다.' },
+  meteorfall:  { name: '유성 낙하', cls: ['sorcerer'], lv: 28, own: 1, cost: { mp: 22 }, cd: 12, kind: 'mdmg', mult: 1.5, tgt: 'all', fx: 'fire', sta: { k: 'burn', p: 0.3, d: 8, m: 0.3 }, desc: '하늘에서 유성을 떨어뜨려 모든 적을 태운다.' },
+  arcanefocus: { name: '마력 집중', cls: ['sorcerer'], lv: 36, own: 1, passive: { matkPct: 0.1, crit: 0.05, cdr: 0.05 }, desc: '마법 공격력 10%, 치명 5%, 스킬 재사용 감소 5%가 오른다.' },
   disintegrate:{ name: '분해', cls: ['sorcerer'], lv: 48, own: 1, cost: { mp: 30 }, cd: 12, kind: 'mdmg', mult: 4.2, tgt: 'low', fx: 'spell', desc: '가장 약한 적을 마력으로 분해한다.' },
   arcanestorm: { name: '마력 폭풍', cls: ['archmage'], lv: 1, cost: { mp: 20 }, cd: 5, kind: 'mdmg', mult: 2.4, tgt: 'all', fx: 'bolt', desc: '마력의 폭풍이 모든 적을 휩쓴다.' },
   amplify:     { name: '마력 증폭', cls: ['archmage'], lv: 60, own: 1, cost: { mp: 28 }, cd: 18, kind: 'buff', stat: 'matk', mult: 1.4, dur: 8, tgt: 'party', desc: '8초 동안 파티의 마법 공격력을 올린다.' },
@@ -281,7 +296,7 @@ const SKILLS = {
   arcaneguard: { name: '마력 갑주', cls: ['spellblade'], lv: 36, own: 1, cost: { mp: 16 }, cd: 16, kind: 'buff', stat: 'def', mult: 1.8, dur: 8, tgt: 'self', desc: '8초 동안 마력의 갑옷을 두른다.' },
   spellsword:  { name: '마검 일섬', cls: ['spellblade'], lv: 48, own: 1, cost: { mp: 26 }, cd: 12, kind: 'dmg', mult: 3.5, tgt: 'front', desc: '마력을 실은 한 줄기 베기.' },
   starblade:   { name: '별의 검', cls: ['arcblade'], lv: 1, cost: { mp: 14 }, cd: 4, kind: 'mdmg', mult: 3.0, tgt: 'front', fx: 'holy', desc: '별빛을 두른 검으로 벤다.' },
-  manaburst:   { name: '마력 해방', cls: ['arcblade'], lv: 60, own: 1, cost: { mp: 30 }, cd: 18, kind: 'buff', stat: 'atk', mult: 1.6, dur: 8, tgt: 'self', desc: '8초 동안 공격력이 크게 오른다.' },
+  manaburst:   { name: '마력 해방', cls: ['arcblade'], lv: 60, own: 1, cost: { mp: 30 }, cd: 18, kind: 'buff', stat: 'atk', mult: 1.6, haste: 1.2, dur: 8, tgt: 'self', desc: '8초 동안 공격력과 공격 속도가 크게 오른다.' },
   dimension:   { name: '차원 베기', cls: ['arcblade'], lv: 75, own: 1, cost: { mp: 40 }, cd: 12, kind: 'dmg', mult: 3.0, tgt: 'all', desc: '공간째로 모든 적을 벤다.' },
   swordsaint:  { name: '검성의 일격', cls: ['arcblade'], lv: 95, own: 1, cost: { mp: 70 }, cd: 20, kind: 'mdmg', mult: 5.5, tgt: 'all', fx: 'bolt', desc: '검과 마법이 하나 된 궁극의 일격.' },
   // 사제 → 대주교
@@ -302,7 +317,7 @@ const SKILLS = {
   panacea:     { name: '만병통치약', cls: ['plaguedoc'], lv: 42, own: 1, cost: { mp: 22 }, cd: 12, kind: 'heal', mult: 1.2, tgt: 'party', desc: '파티 전원을 치료한다.' },
   epidemic:    { name: '역병 확산', cls: ['plaguedoc'], lv: 48, own: 1, cost: { mp: 30 }, cd: 12, kind: 'dot', magic: 1, mult: 1.4, dur: 8, tgt: 'all', fx: 'dark', desc: '8초 동안 모든 적에게 역병이 번진다.' },
   cureall:     { name: '명의의 손', cls: ['physician'], lv: 1, cost: { mp: 12 }, cd: 3, kind: 'heal', mult: 3.5, tgt: 'low', desc: '어떤 상처도 꿰매는 손.' },
-  surgeon:     { name: '명의', cls: ['physician'], lv: 60, own: 1, passive: { matkPct: 0.15 }, desc: '치유량과 마법 피해가 15% 오른다.' },
+  surgeon:     { name: '명의', cls: ['physician'], lv: 60, own: 1, passive: { matkPct: 0.15, cdr: 0.06 }, desc: '치유량과 마법 피해가 15% 오르고 스킬 재사용이 6% 빨라진다.' },
   blackdeath:  { name: '흑사병', cls: ['physician'], lv: 75, own: 1, cost: { mp: 40 }, cd: 12, kind: 'dot', magic: 1, mult: 2.2, dur: 8, tgt: 'all', fx: 'dark', desc: '8초 동안 모든 적에게 지독한 병을 퍼뜨린다.' },
   elixir:      { name: '불사의 영약', cls: ['physician'], lv: 95, own: 1, cost: { mp: 60 }, cd: 18, kind: 'heal', mult: 3.5, tgt: 'party', desc: '파티 전원을 거의 다 치료한다.' },
   // 퇴마사 → 심판관
@@ -369,7 +384,7 @@ const QUALITY = [
   { name: '신성', m: 4.0,  c: '#fff4b0' }
 ];
 const runeSlots = g => (g ? g.q || 0 : 0);
-const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐' };
+const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
 const PCT_STATS = ['crit', 'eva'];
 
 const PLUS_MUL = 0.06;   // 강화 한 단계마다 기본 능력치 +6%

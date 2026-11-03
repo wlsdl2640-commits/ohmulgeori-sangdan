@@ -784,8 +784,8 @@ function licenseUp(aid) {
   const a = advById(aid), L = a && licNext(a);
   if (!a || !L) return '';
   if (a.status !== 'idle') return '상단에 있을 때만 심사를 받을 수 있어요.';
-  if (a.lv < L.lv) return `Lv${L.lv} 이상이어야 해요.`;
-  if ((a.pf || 0) < L.pf) return `개인 명성이 ${L.pf} 이상이어야 해요.`;
+  const miss = licReqs(a).find(r => !r.ok);
+  if (miss) return `${miss.label} ${miss.need} 이상이어야 해요. (지금 ${miss.cur})`;
   if (S.gold < L.fee) return '심사비가 모자라요.';
   S.gold -= L.fee;
   a.rank = (a.rank || 0) + 1;
@@ -1115,7 +1115,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); saveGame(); return true; }
     if (![2, 3, 4, 5].includes(v.v)) return false;
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1132,13 +1132,32 @@ function loadFrom(v) {
     if (!S.raid) raidMonth(true);
     migrateS();
     notesB();
+    notes22();
     return true;
   } catch (_) { return false; }
 }
 // 의상·숙련도 칸 (없으면 만든다)
-function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); }
+function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); migrateSkillIds(); }
+// 겹치던 스킬 id를 갈랐다: 결의(resolve)·치유의 찬가(chant)·유성 낙하(meteorfall). 옛 저장의 스킬·스킬북·숙련도를 옮기고, 라이선스 심사용 처치 수를 어림한다
+function migrateSkillIds() {
+  const ren = (a, from, to) => { if (!a.skills) return; a.skills = a.skills.map(id => (id === from ? to : id)); if (a.sm && a.sm[from] != null) { a.sm[to] = (a.sm[to] || 0) + a.sm[from]; delete a.sm[from]; } };
+  S.advs.concat(S.cands || []).forEach(a => {
+    const chain = CLASSES[a.cls] ? chainOf(a.cls) : [];
+    if (!chain.includes('knight')) ren(a, 'rally', 'resolve');
+    if (!chain.includes('bard')) ren(a, 'hymn', 'chant');
+    if (chain.includes('sorcerer')) ren(a, 'meteor', 'meteorfall');
+    if (a.skills) a.skills = a.skills.filter((id, i) => SKILLS[id] && a.skills.indexOf(id) === i);
+    if (a.bosses == null) a.bosses = Math.round((a.kills || 0) / 60);
+    if (a.dungeons == null) a.dungeons = Math.min(S.stats.dungeons || 0, Math.floor((a.trips || 0) / 15));
+  });
+  const inv = S.inv || {};
+  [['book_rally', 'book_resolve'], ['book_hymn', 'book_chant']].forEach(([f, t]) => { if (inv[f]) { inv[t] = (inv[t] || 0) + inv[f]; delete inv[f]; } });
+  for (const k in inv) if (!ITEMS[k]) delete inv[k];
+}
 // 새 전투 화면 안내 (한 번만)
 function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ title: '전투 화면이 새로워졌어요', body: STORY.bview }); } }
+// 빌드 22: 기본 공격 5초·스킬 수치·스킬북 드랍표·라이선스 심사 (한 번만, 새 게임은 건너뛴다)
+function notes22() { if (!S.flags.v22) { S.flags.v22 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투와 길드 심사가 바뀌었어요', body: STORY.v22 }); } }
 // v0.6: 본부 화면 안내 (한 번만)
 function notes6() { if (!S.flags.v06) { S.flags.v06 = 1; S.modals.push({ title: 'v0.6 업데이트', body: STORY.v06 }); } }
 function resetGame() { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} S = null; }

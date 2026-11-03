@@ -44,7 +44,9 @@ const RUNES = {
   def:  { name: '수호',   st: 'def',  v: [3, 8, 16],         c: '#9aa0a8' },
   hp:   { name: '생명',   st: 'hp',   v: [20, 50, 100],      c: '#ff7a8a' },
   crit: { name: '예리함', st: 'crit', v: [0.01, 0.02, 0.04], c: '#f7e04a' },
-  eva:  { name: '바람',   st: 'eva',  v: [0.01, 0.02, 0.04], c: '#8ad8ff' }
+  eva:  { name: '바람',   st: 'eva',  v: [0.01, 0.02, 0.04], c: '#8ad8ff' },
+  haste: { name: '신속',  st: 'spdPct', v: [0.03, 0.06, 0.1],  c: '#ffe08a' },   // 공격 속도 → 기본 공격 대기시간 ↓
+  time: { name: '시간',   st: 'cdr',  v: [0.02, 0.04, 0.07], c: '#c8a8ff' }    // 스킬 재사용 감소
 };
 const RUNE_IDS = Object.keys(RUNES), RUNE_LV = ['하급', '중급', '상급'];
 RUNE_IDS.forEach(k => RUNE_LV.forEach((n, l) => { ITEMS[`rune_${k}_${l}`] = { name: `${n} ${RUNES[k].name}의 룬`, v: [80, 320, 1200][l], w: 1, icon: 'rune', c: RUNES[k].c, rune: [k, l] }; }));

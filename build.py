@@ -6,7 +6,7 @@ from PIL import Image
 
 ROOT = pathlib.Path(__file__).parent
 SRC, FONTS, DIST = ROOT / 'src', ROOT / 'fonts', ROOT / 'dist'
-JS = ['data.js', 'data-rpg.js', 'data-biz.js', 'data-gear.js', 'data-world.js', 'data-skin.js', 'data-under.js', 'data-trait.js', 'data-demon.js', 'data-herb.js', 'data-pet.js', 'sprites.js', 'pxa.js', 'pxs.js', 'pxmon.js', 'pxmon2.js', 'pxpet.js', 'pxraid.js', 'art.js', 'bg.js', 'arena.js', 'scene.js', 'woods.js', 'front.js', 'demon.js', 'pxhq.js', 'people.js', 'audio.js', 'core.js', 'econ.js', 'pet.js', 'iso.js', 'ui.js', 'view.js', 'panels.js', 'hero.js', 'under.js', 'map.js', 'events.js', 'dex.js', 'hall.js', 'main.js']
+JS = ['data.js', 'data-rpg.js', 'data-biz.js', 'data-gear.js', 'data-world.js', 'data-skin.js', 'data-under.js', 'data-trait.js', 'data-demon.js', 'data-herb.js', 'data-pet.js', 'data-books.js', 'sprites.js', 'pxa.js', 'pxs.js', 'pxmon.js', 'pxmon2.js', 'pxpet.js', 'pxraid.js', 'art.js', 'bg.js', 'arena.js', 'scene.js', 'woods.js', 'front.js', 'demon.js', 'pxhq.js', 'people.js', 'audio.js', 'core.js', 'econ.js', 'pet.js', 'iso.js', 'ui.js', 'view.js', 'skillinfo.js', 'panels.js', 'hero.js', 'under.js', 'map.js', 'events.js', 'dex.js', 'hall.js', 'main.js']
 NAME = '오물거리 상단'
 VERSION = '0.7.0'
 

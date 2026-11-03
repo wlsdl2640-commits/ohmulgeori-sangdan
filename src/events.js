@@ -178,7 +178,7 @@ function eventCard(id) {
     const D = KINGDOMS[ev0.k], v = S.king && S.king.visit && S.king.visit.k === ev0.k;
     return `<div class="card hl"><div class="h">${D.name} 축제 <small>D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">축제 동안 ${D.name} 상단이 사 가는 값이 <b>두 배</b>, 가져온 물건과 스킬북은 <b>30% 할인</b>.</div><div class="sub muted">${v ? '지금 상단이 와 있어요 · 상단 창 → 왕국 교역' : '상단이 곧 찾아와요'}</div></div><button type="button" class="btn gold block" data-act="sub" data-id="co_king">왕국 교역 열기</button>`;
   }
-  const rows = ev0.stock.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow stack"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].desc || (ITEMS[o.it].book ? SKILLS[ITEMS[o.it].book].desc : '')}</span></div><button type="button" class="btn sm gold" data-act="merbuy" data-id="${ev0.id}" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${fmt(o.price)}G</button></div>`).join('');
+  const rows = ev0.stock.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow stack"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].desc || (ITEMS[o.it].book ? `${SKILLS[ITEMS[o.it].book].desc}<br>${skillSpecLine(ITEMS[o.it].book)}` : '')}</span></div><button type="button" class="btn sm gold" data-act="merbuy" data-id="${ev0.id}" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${fmt(o.price)}G</button></div>`).join('');
   return `<div class="card hl"><div class="h">떠돌이 상인 <small>${FIELDS[ev0.at].name} 근처 · D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">"어디서도 못 구하는 것들이지. 값은 좀 나가네." 마법사의 돌, 알, 스킬북, 룬, 약초를 판다.</div></div><div class="list">${rows}</div>`;
 }
 Object.assign(ACT, {

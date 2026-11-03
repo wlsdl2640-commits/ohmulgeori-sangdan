@@ -393,7 +393,7 @@ function stretcherHi(g, a, t, moving) {
 /* ───────── 사건 → 효과와 전투 기록 ───────── */
 const PROJ = { arrow: 0.18, magic: 0.24, fire: 0.26, ice: 0.22, bolt: 0.06, holy: 0.1, wind: 0.24, dark: 0.26, jump: 0.2, spell: 0.2, note: 0.24, pet: 0 };
 const SKILL_CLS = { heal: 'heal', buff: 'buff', taunt: 'buff', mdmg: 'magic', dot: 'dot' };
-const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0' };
+const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0', spd: '#ffe08a', matk: '#c89aff', block: '#9aa0a8', counter: '#f0c070', rheal: '#8af08a' };
 const HIT_C = { melee: ['#ffffff', '#fff2a0'], jump: ['#fff2a0', '#ffffff'], pet: ['#f0c070', '#ffffff'], arrow: ['#e8e2d0', '#ffffff'], magic: ['#b48aff', '#ffffff'], spell: ['#8ab8ff', '#ffffff'], fire: ['#ff7a2a', '#ffe08a'], ice: ['#8ad8ff', '#ffffff'], bolt: ['#fff8a0', '#ffffff'], holy: ['#fff0b0', '#ffffff'], wind: ['#7ae0a0', '#c8ffd8'], dark: ['#7a3ad0', '#d8a8ff'], note: ['#f0d870', '#ffffff'] };
 function events(e, pos, t, team, p) {
   const at = k => (pos[k] != null ? pos[k] : V.last[k]);

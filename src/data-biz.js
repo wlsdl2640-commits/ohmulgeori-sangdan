@@ -119,8 +119,26 @@ const LICENSE = [
   { name: '동장', c: '#c08a5a', mul: 1 }, { name: '은장', c: '#c8ccd4', mul: 1.05 }, { name: '금장', c: '#f0c24a', mul: 1.11 },
   { name: '백은', c: '#e8f4ff', mul: 1.18 }, { name: '백금', c: '#d8f0ff', mul: 1.28 }
 ];
-// LICENSE_UP[r]: r → r+1 조건 (레벨, 개인 명성, 길드 심사비)
-const LICENSE_UP = [{ lv: 12, pf: 40, fee: 300 }, { lv: 24, pf: 150, fee: 1200 }, { lv: 36, pf: 400, fee: 4000 }, { lv: 48, pf: 900, fee: 12000 }];
+// LICENSE_UP[r]: r → r+1 조건 (레벨, 개인 명성, 길드 심사비, 처치 수, 우두머리·주인 처치 수, 던전 공략 수)
+// 길드는 레벨만 보지 않는다. 몬스터를 얼마나 잡았고 우두머리를 몇이나 쓰러뜨렸는지, 던전을 공략해 봤는지를 따진다.
+const LICENSE_UP = [
+  { lv: 18, pf: 100,  fee: 1000,  kills: 300,  bosses: 3 },
+  { lv: 32, pf: 350,  fee: 4000,  kills: 1200, bosses: 15, dungeons: 1 },
+  { lv: 48, pf: 800,  fee: 12000, kills: 3000, bosses: 40, dungeons: 3 },
+  { lv: 65, pf: 1500, fee: 35000, kills: 6000, bosses: 80, dungeons: 6 }
+];
+// 심사 조건 하나하나 (UI와 심사가 같은 표를 본다)
+function licReqs(a) {
+  const L = LICENSE_UP[a.rank || 0]; if (!L) return [];
+  const out = [
+    { k: 'lv', label: '레벨', cur: a.lv, need: L.lv, ok: a.lv >= L.lv },
+    { k: 'pf', label: '개인 명성', cur: Math.floor(a.pf || 0), need: L.pf, ok: (a.pf || 0) >= L.pf },
+    { k: 'kills', label: '처치', cur: a.kills || 0, need: L.kills, ok: (a.kills || 0) >= L.kills },
+    { k: 'bosses', label: '우두머리·주인 처치', cur: a.bosses || 0, need: L.bosses, ok: (a.bosses || 0) >= L.bosses }
+  ];
+  if (L.dungeons) out.push({ k: 'dungeons', label: '던전·레이드 공략', cur: a.dungeons || 0, need: L.dungeons, ok: (a.dungeons || 0) >= L.dungeons });
+  return out;
+}
 
 /* ───────── 전직 ───────── */
 // 상단 명성이 오르면 훈련소에 스승이 찾아와 2차(명성 40)·3차(명성 300) 전직이 열린다

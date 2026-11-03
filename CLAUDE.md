@@ -44,6 +44,15 @@
 - 모험가 창(advDetail)은 탭 `UI.advTab`(sum·stat·job·skill·gear·etc, `data-mact="atab"`). 시험은 먼저 탭을 눌러야 단추가 보인다.
 - 전직 조건: data-demon.js `CLASSES[c].req`와 `jobReqWhy/jobReqText`(lv·fame·item·itemAny·kills·dexFull·bld·arenaWins·relics·cleared). 계열 맨 앞 2차는 레벨만. 마도사(sorcerer)→대마도사(archmage) 추가, 마법 버프 stat 'matk' 지원.
 
+## 스킬 수치·기본 공격 5초·스킬북 드랍표·라이선스 (빌드 22)
+- 전투 타이밍(core.js battle): 기본 공격은 `e.cd[a.id]`(= `basicCd(a,d,e)` = `BASIC_CD 5 ÷ (d.spd × 강화 'spd')`, 피해 ×`BASIC_MULT 2.5`/마법 `BASIC_MAGIC 2.3`, 사건에 `b: 1`), 스킬은 `e.scd[a.id][id]`(= `skillCdOf(a,d,id,e)` = `s.cd × (1 − min(0.5, d.cdr + 강화 'cdr')) × (1 − 0.02×숙련)`)가 돌면 `pickSkill`로 바로 나가고 스킬 사이는 `e.gcd[a.id]`(CAST_GAP 0.9). 기절은 모든 대기시간을 멈춘다. 상수는 data-rpg.js 맨 위. 옛 저장의 e.gcd는 battle이 만든다.
+- 공격 속도·재사용 감소: `derive().spd`(직업 × 민첩 × (1+지속 spdPct+특성+룬 G.spdPct)), `derive().cdr`(지속 cdr+특성+룬, 상한 CDR_MAX). 룬 haste/time(data-gear.js RUNES, st 'spdPct'/'cdr' — statLine이 %로 보여 준다), 특성 tactician, 공용 스킬북 haste/tactics/rhythm, 강화 스킬의 `haste:`는 cast가 `sid + '#h'`로 'spd' 강화를 하나 더 민다.
+- 스킬 설명은 `src/skillinfo.js`: `skillSpec(id, a?)`(문자열 배열)·`skillSpecLine`·`basicSpec(a)`·`speedBreakdown(a)`·`bookFromText(id)`. panels.js 스킬 탭(기본 공격 줄 `.li.basic`)·능력치 탭·창고 스킬북·왕국 물건, dex.js skillRow·monCard, events.js 상인, under.js 투기장 상단·암시장이 쓴다. 새 스킬 필드를 더하면 skillSpec에 줄을 더할 것.
+- 스킬북 드랍표 `src/data-books.js`: `BOOK_MONS`(스킬 → 몬스터 id들), `MON_BOOKS`, `monBooks(id)`, `bookRate(f, area)`(BOOK_RATE field .004·dungeon .008·fb .08·boss .25). core.js kill()이 randomBook 대신 이것을 돈다(던전 보물 상자는 아직 randomBook). 새 스킬북을 만들면 여기에도 넣어야 한다(sktest가 빠진 책을 잡는다).
+- 라이선스: data-biz.js `LICENSE_UP`(lv·pf·fee·kills·bosses·dungeons)과 `licReqs(a)`; econ.js licenseUp과 panels.js 라이선스 줄이 같은 표를 본다. `a.bosses`(kill: fb/boss, 레이드 처치)·`a.dungeons`(던전 첫 공략·길드 토벌·레이드 처치)는 econ.js migrateSkillIds가 옛 저장에 어림해 넣는다.
+- 겹치던 스킬 id: mage meteor ↔ sorcerer **meteorfall**, knight rally ↔ warrior **resolve**(TRAIT_SKILLS), bard hymn(치유의 세레나데) ↔ cleric/archer **chant**. migrateSkillIds가 저장을 옮긴다. 새 스킬 id는 `scratchpad/dupcheck.js`로 겹침을 확인할 것.
+- 시험: `scratchpad/skills/sktest.py`(수치·쿨·드랍표·라이선스·이전), `scratchpad/skills/balance.py`(전투 시간·피해 비교, `OLD=1`이면 git HEAD 판).
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

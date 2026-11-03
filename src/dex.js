@@ -76,8 +76,10 @@ function monCard(id) {
   let drops = '';
   if (lvl >= 2) {
     const rows = (m.drops || []).map(([it, ch, q]) => ITEMS[it] ? `<div class="row sub">${iconImg(it)}<span class="grow">${ITEMS[it].name}${q ? ` ×${q}` : ''}</span><b class="num">${lvl >= 3 ? Math.round(ch * 100) + '%' : '?%'}</b></div>` : '').join('');
-    const extra = m.giant ? `<div class="sub muted">레이드 등수 보상: ${ITEMS['rp_' + where[0].raid] ? ITEMS['rp_' + where[0].raid].name : '부속품'}, ${ITEMS['rh_' + where[0].raid] ? ITEMS['rh_' + where[0].raid].name : '심장'}</div>` : m.boss ? '<div class="sub muted">던전을 처음 공략하면 보물 상자(장비·스킬북·주인의 혼·룬)와 유물</div>' : `<div class="sub muted">필드에서는 약초 12%${lvl >= 3 ? ', 장비 0.6%, 스킬북 0.4% (던전 2.5%/1.5%)' : ''}. 우두머리로 나오면 증표·핵·혼</div>`;
-    drops = `<div class="sec" style="margin-top:6px"><b>전리품</b><span>${lvl >= 3 ? '확률' : '15마리부터 확률'}</span></div>${rows || '<div class="sub muted">떨어뜨리는 것 없음</div>'}${extra}`;
+    const bookRow = (m.boss && !m.fb) ? BOOK_RATE.boss : BOOK_RATE.field;
+    const books = monBooks(id).filter(sk => ITEMS['book_' + sk]).map(sk => `<div class="row sub">${iconImg('book_' + sk)}<span class="grow">${ITEMS['book_' + sk].name} <span class="muted">· ${SKILLS[sk].cls.includes('all') ? '누구나' : SKILLS[sk].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')} Lv${SKILLS[sk].lv}</span></span><b class="num">${lvl >= 3 ? (Math.round(bookRow * 1000) / 10) + '%' : '?%'}</b></div>`).join('');
+    const extra = m.giant ? `<div class="sub muted">레이드 등수 보상: ${ITEMS['rp_' + where[0].raid] ? ITEMS['rp_' + where[0].raid].name : '부속품'}, ${ITEMS['rh_' + where[0].raid] ? ITEMS['rh_' + where[0].raid].name : '심장'}</div>` : m.boss && !m.fb ? '<div class="sub muted">던전을 처음 공략하면 보물 상자(장비·스킬북·주인의 혼·룬)와 유물</div>' : `<div class="sub muted">필드에서는 약초 12%${lvl >= 3 ? ', 장비 0.6% (던전 2.5%)' : ''}. 스킬북은 던전 안에서 ${BOOK_RATE.dungeon * 100}%, 우두머리로 나오면 ${Math.round(BOOK_RATE.fb * 100)}%, 주인이면 ${Math.round(BOOK_RATE.boss * 100)}%. 우두머리로 나오면 증표·핵·혼도</div>`;
+    drops = `<div class="sec" style="margin-top:6px"><b>전리품</b><span>${lvl >= 3 ? '확률' : '15마리부터 확률'}</span></div>${rows || '<div class="sub muted">떨어뜨리는 것 없음</div>'}${books ? `<div class="sub muted" style="margin-top:4px">스킬북</div>${books}` : ''}${extra}`;
   } else drops = `<div class="sub muted">5마리 잡으면 전리품이, 15마리면 확률이 열려요.</div>`;
   const sta = lvl >= 4 ? `<div class="sub ok-t">완전 기록: 이 몬스터에게 주는 피해 +3%${m.sta ? ` · 거는 상태이상: ${STATUS[m.sta.k].name} (${Math.round(m.sta.p * 100)}%)` : ''}</div>` : `<div class="sub muted">30마리 잡으면 완전 기록 (피해 +3%${m.sta ? ', 상태이상 정보' : ''})</div>`;
   return `<details class="card dexm"><summary><span class="row"><img class="dexi" src="${monIconURL(id)}" alt=""><span class="grow stack"><span>${m.name} ${tags}</span><span class="sub">${where.map(w => esc(w.where)).join(' · ') || '?'} · 잡음 <b class="num">${k}</b> · 기록 ${lvl}/4</span></span></span></summary>
@@ -90,7 +92,7 @@ function clsCard(c) {
   const req = t === 1 ? '여관에서 고용' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${jobReqText(c) ? ` · ${jobReqText(c)}` : ''}`;
   return `<details class="card"><summary><span class="row"><img class="por" src="${clsIconURL(c)}" alt=""><span class="grow stack"><span>${C.name}${tierTag(c)}${n ? ` <span class="tag ok-t">${n}명</span>` : ''}</span><span class="sub">${C.desc}</span></span></span></summary>
     <div class="stats"><span>힘 <b>${C.base.str}</b> +${C.grow.str}/Lv</span><span>체력 <b>${C.base.vit}</b> +${C.grow.vit}/Lv</span><span>민첩 <b>${C.base.agi}</b> +${C.grow.agi}/Lv</span><span>지능 <b>${C.base.int}</b> +${C.grow.int}/Lv</span></div>
-    <div class="stats"><span>공격 속도 <b>${C.spd}</b></span><span>치명 <b>${Math.round(C.crit * 100)}%</b></span><span>짐 <b>${C.carry}</b></span>${C.salary ? `<span>봉급 <b>${C.salary}G</b></span>` : ''}</div>
+    <div class="stats"><span>공격 속도 <b>×${C.spd}</b> (기본 공격 ${Math.round(BASIC_CD / C.spd * 10) / 10}초)</span><span>치명 <b>${Math.round(C.crit * 100)}%</b></span><span>짐 <b>${C.carry}</b></span>${C.salary ? `<span>봉급 <b>${C.salary}G</b></span>` : ''}</div>
     ${trText(c) ? `<div class="sub gold-t">${trText(c)}</div>` : ''}
     ${JOB_TRAITS[c] ? `<div class="sub gold-t">직업 특성 「${JOB_TRAITS[c].name}」 ${JOB_TRAITS[c].desc}</div>` : ''}
     <div class="sub">기본 스킬 「${SKILLS[C.innate] ? SKILLS[C.innate].name : '-'}」 · ${req}</div>
@@ -111,8 +113,8 @@ function skillHow(id) {
 }
 function skillRow(id) {
   const s = SKILLS[id], who = S.advs.filter(a => a.skills.includes(id)).map(a => a.name), book = S.inv['book_' + id] || 0;
-  const eff = s.passive ? '지속 효과' : `${KIND_TXT[s.kind] || s.kind}${s.mult ? ` ×${s.mult}` : ''}${s.hits ? ` ×${s.hits}회` : ''}${s.tgt === 'all' ? ' · 전체' : s.tgt === 'party' ? ' · 파티' : s.tgt === 'low' ? ' · 약한 적' : s.tgt === 'self' ? ' · 자신' : ''}${s.dur ? ` · ${s.dur}초` : ''}${s.sta ? ` · ${STATUS[s.sta.k].name} ${Math.round(s.sta.p * 100)}%` : ''}`;
-  return `<div class="li${who.length ? ' on' : ''}"><div class="grow stack"><span>${s.name} <span class="muted">· Lv${s.lv} · ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}</span></span><span class="sub">${eff} · ${s.desc}</span><span class="sub muted">${skillHow(id)}${s.cls.includes('all') ? ' · 누구나' : ''}${who.length ? ` · 배움: ${who.map(esc).join(', ')}` : ''}${book ? ` · 스킬북 ${book}권` : ''}</span></div></div>`;
+  const from = !s.own && !s.awk && !Object.values(CLASSES).some(C => C.innate === id) ? bookFromText(id) : skillHow(id);
+  return `<div class="li${who.length ? ' on' : ''}"><div class="grow stack"><span>${s.name} <span class="muted">· Lv${s.lv} · ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span><span class="sub muted">${from}${s.cls.includes('all') ? ' · 누구나' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}`}${who.length ? ` · 배움: ${who.map(esc).join(', ')}` : ''}${book ? ` · 스킬북 ${book}권` : ''}</span></div></div>`;
 }
 function dexSkills() {
   const groups = [['warrior', '전사 계열'], ['archer', '궁수 계열'], ['mage', '마법사 계열'], ['cleric', '성직자 계열'], ['rogue', '도적 계열'], ['porter', '짐꾼'], ['all', '누구나']];

@@ -13,7 +13,8 @@ const TRAITS = {
   sturdy:    { name: '단단함',     desc: '방어력 +15%',                  defPct: 0.15 },
   faith:     { name: '믿음',       desc: '회복 스킬 회복량 +15%',        healPow: 0.15 },
   sage:      { name: '현자',       desc: '마법 공격력 +15%',             matkPct: 0.15 },
-  quick:     { name: '재빠름',     desc: '공격 속도 +10%',               spdPct: 0.10 },
+  quick:     { name: '재빠름',     desc: '공격 속도 +10% (기본 공격 대기 ↓)', spdPct: 0.10 },
+  tactician: { name: '전술가',     desc: '스킬 재사용 대기시간 -8%',     cdr: 0.08 },
   flurry:    { name: '연타꾼',     desc: '연타 확률 +15%',               double: 0.15 },
   healthy:   { name: '건강함',     desc: '초당 HP 1% 재생',              hpRegen: 0.01 },
   blessedT:  { name: '축복받음',   desc: '받는 회복량 +15%',             rheal: 0.15 },
@@ -98,9 +99,9 @@ const TRAIT_SKILLS = {
   parasting:{ name: '마비 침',    cls: ['rogue'],           lv: 14, cost: { mp: 10 }, cd: 9,  kind: 'dmg', mult: 1.2, tgt: 'front', sta: { k: 'para', p: 0.6, d: 3 }, desc: '적을 찔러 3초 동안 공격을 못 하게 한다.' },
   iceprison:{ name: '얼음 감옥',  cls: ['mage'],            lv: 26, cost: { mp: 18 }, cd: 14, kind: 'mdmg', mult: 1.6, tgt: 'front', fx: 'ice', sta: { k: 'stun', p: 0.7, d: 2.5 }, desc: '적을 얼려 잠시 아무것도 못 하게 한다.' },
   weaken:   { name: '약화의 저주', cls: ['mage', 'cleric'], lv: 18, cost: { mp: 14 }, cd: 12, kind: 'mdmg', mult: 0.6, tgt: 'all', fx: 'dark', sta: { k: 'weak', p: 0.8, d: 8 }, desc: '모든 적의 힘을 8초 동안 깎는다.' },
-  rally:    { name: '결의',       cls: ['warrior'],         lv: 26, cost: { mp: 14 }, cd: 18, kind: 'buff', stat: 'block', add: 0.25, dur: 8, tgt: 'party', desc: '8초 동안 파티의 방어 확률을 올린다.' },
+  resolve:  { name: '결의',       cls: ['warrior'],         lv: 26, cost: { mp: 14 }, cd: 18, kind: 'buff', stat: 'block', add: 0.25, dur: 8, tgt: 'party', desc: '8초 동안 파티의 방어 확률을 올린다.' },
   riposte:  { name: '되치기',     cls: ['rogue', 'warrior'], lv: 22, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'counter', add: 0.3, dur: 8, tgt: 'self', desc: '8초 동안 맞으면 되받아친다.' },
-  hymn:     { name: '치유의 찬가', cls: ['cleric', 'archer'], lv: 20, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'rheal', add: 0.3, dur: 10, tgt: 'party', desc: '10초 동안 파티가 받는 회복량을 올린다.' }
+  chant:    { name: '치유의 찬가', cls: ['cleric', 'archer'], lv: 20, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'rheal', add: 0.3, dur: 10, tgt: 'party', desc: '10초 동안 파티가 받는 회복량을 올린다.' }
 };
 Object.assign(SKILLS, TRAIT_SKILLS);
 Object.keys(TRAIT_SKILLS).forEach(id => { const s = SKILLS[id]; SKILL_IDS.push(id); BOOK_IDS.push(id); ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + s.lv * 35, w: 1, icon: 'book', c: BOOK_COLORS[s.cls[0]] || '#4a8ac8', book: id }; });
