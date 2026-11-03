@@ -85,8 +85,8 @@ function drawFrame(now, vt) {
   V.lastF = now;
   const g = V.g, w = V.w, dp = clockDp();
   const F = e && FIELDS[e.field];
-  const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg) : 'town';
-  const bg = e ? getBg(id) : arenaBg(id);
+  const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg === 'forest' && e.stage > 20 ? 'primeval' : F.bg) : 'town';
+  const bg = e ? getBg(id) : arenaBg(id), oy = e && bg.tall ? 0 : BG_OY;
   // 옆으로 흐르는 풍경: 간 거리만큼
   if (e) { const target = routePos(e) * 1.6; if (Math.abs(target - V.scroll) > 200) V.scroll = target; else V.scroll += (target - V.scroll) * 0.2; } else V.scroll = 0;
   let T;
@@ -97,21 +97,21 @@ function drawFrame(now, vt) {
     if (bg.under) R(g, 0, 0, AW, AH, '#000');
     else { R(g, 0, 0, AW, BG_OY + 1, T.sky[0]); if (T.star > 0.02) for (const st of STARS) { const tw = 0.55 + 0.45 * Math.sin(t * (1.5 + st.b * 2) + st.p), a = T.star * tw * (0.5 + st.b * 0.5); if (a > 0.05) R(g, st.x, Math.round(st.y * BG_OY / 70), 1, 1, `rgba(255,250,235,${a.toFixed(2)})`); } }
     g.save(); g.translate(0, BG_OY); drawSky(g, id, V.scroll, t, dp); g.restore();
-    w.save(); w.translate(0, BG_OY); drawLand(w, id, V.scroll, t, T); w.restore();
-    if (id === 'forest') { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
-    if (bg.under) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
+    w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
+    if (id === 'forest' && !bg.tall) { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
+    if (bg.under && !bg.tall) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
   } else { T = bg.under ? todAt(dp, 'plains') : arenaSky(g, id, t, dp); if (bg.under) R(g, 0, 0, AW, AH, '#000'); w.drawImage(bg.cv, 0, 0, AW, AH); }
   const lights = [], post = [];
   const dark = bg.under ? 0.34 : T.dark[1], dcol = bg.under ? '#05040a' : T.dark[0];
   if (e) fieldScene(w, t, p, e, lights, post, dark, bg); else townScene(w, t, p, lights, post, dark);
-  if (e) { w.save(); w.translate(0, BG_OY); drawFore(w, id, V.scroll); w.restore(); for (const l of bgLights(id, V.scroll, dark)) lights.push({ x: l.x, y: l.y + BG_OY, r: l.r, c: l.c, glow: l.glow, flick: l.flick }); }
+  if (e) { w.save(); w.translate(0, oy); drawFore(w, id, V.scroll); w.restore(); for (const l of bgLights(id, V.scroll, dark)) lights.push({ x: l.x, y: l.y + oy, r: l.r, c: l.c, glow: l.glow, flick: l.flick }); }
   else stageLights(id, bg, lights, dark);
   if (dark > 0.01) applyDark(w, dark, dcol, lights);
   g.drawImage(V.wc, 0, 0, AW, AH);
   if (dark > 0.05) glows(g, lights, dark);
-  if (e) { g.save(); g.translate(0, BG_OY); bgEmit(g, id, V.scroll, t, dark); g.restore(); }
+  if (e) { g.save(); g.translate(0, oy); bgEmit(g, id, V.scroll, t, dark); g.restore(); }
   for (const f of post) f(g);
-  if (e) { fx(g, t); g.save(); g.translate(0, BG_OY); drawAmbient(g, id, V.scroll, t, T); g.restore(); }
+  if (e) { fx(g, t); g.save(); g.translate(0, bg.tall ? 0 : BG_OY); drawAmbient(g, id, V.scroll, t, T); g.restore(); }
   else ambient(g, id, t, T);
   present();
 }
@@ -191,10 +191,11 @@ function townScene(w, t, p, lights, post, dark) {
 const ORBIT = { elementalist: ['#7ae0a0', '#f0a040'], necromancer: ['#b88aff', '#6a4aa8'] };
 const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168]];
 const ZS = 1.25;   // 옆모습 배율
+const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
 const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, (y - 166) / 32))));
 const SHADOW_R = 9;
 function foeSlots(foes) {
-  if (foes.length === 1) { const f = foes[0]; return [f.giant ? [182, 190] : [150, 194]]; }
+  if (foes.length === 1) { const f = foes[0]; if (f.giant) { const z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; } return [[150, 194]]; }
   return foes.map((f, i) => { const [x, y] = SLOT_P[Math.min(5, i)]; return [AW - x + 6 - (f.boss ? 12 : 0), y]; });
 }
 function fieldScene(w, t, p, e, lights, post, dark, bg) {
@@ -207,9 +208,10 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const appr = fighting ? 0 : Math.max(0, Math.min(1, gap / 30));
   V.giant = foes.some(f => f.giant);
   for (const f of e.foes.concat(e.next || [])) V.fname[f.uid] = f.name || MONS[f.id].name;
-  const pos = {}, n = team.length, draws = [];
-  team.forEach((a, i) => { pos['a' + a.id] = SLOT_P[Math.min(5, i)].slice(); });
-  foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [x + appr * 90, y]; });
+  const pos = {}, n = team.length, draws = [], dir = e.mode === 'return' ? -1 : 1, mx = x => (dir > 0 ? x : AW - x);
+  V.dir = dir;
+  team.forEach((a, i) => { const [x, y] = SLOT_P[Math.min(5, i)]; pos['a' + a.id] = [mx(x), y]; });
+  foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   Object.assign(V.last, pos);
   events(e, pos, t, team, p);
 
@@ -222,19 +224,18 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
 
   // 야영: 모닥불을 둘러앉는다
   if (camping) {
-    const cx = AW / 2, cy = 184;
-    w.save(); w.translate(cx - 74, GY + BG_OY - 2); drawTentHi(w); w.restore();
-    const sleep = e.camp.t > 1.5;
+    const cx = AW / 2, cy = GL + 16, sleep = e.camp.t > 1.5;
+    w.save(); w.translate(cx + 78, GL + 4); drawTentHi(w); w.restore();
     team.forEach((a, i) => {
-      const k = n > 1 ? i / (n - 1) : 0.5, ang = Math.PI * (0.1 + 0.8 * k), rx = sleep ? 78 : 60, x = Math.round(cx - Math.cos(ang) * rx), y = Math.round(cy - Math.sin(ang) * 14 + 6);
+      const side = i % 2 ? 1 : -1, k = Math.floor(i / 2), zz = sleep && (a.fat || 0) > 4;
+      const x = cx + side * (zz ? 26 + k * 24 : 18 + k * 17), y = cy;
       pos['a' + a.id] = [x, y];
-      const zz = sleep && (a.fat || 0) > 4;
-      shadowAt(w, x, y, zz ? 15 : 9);
-      w.save(); w.translate(x, y); drawAdv(w, a, t, { sit: !zz, sleep: zz, z: ZP }); w.restore();
-      if (zz) post.push(g => drawZ(g, x + 9, y - 16, t, i * 0.3));
+      shadowAt(w, x, y, zz ? 14 : 8);
+      w.save(); w.translate(x, y); w.scale(side > 0 ? -1 : 1, 1); drawAdv(w, a, t, { sit: !zz, sleep: zz, z: ZS, side: 1 }); w.restore();
+      if (zz) post.push(g => drawZ(g, x - side * 8, y - 14, t, i * 0.3));
     });
-    post.push(g => fireHi(g, cx, cy + 10, t));
-    lights.push({ x: cx, y: cy + 4, r: 90, c: '#f09040', glow: 1, flick: 1 });
+    post.push(g => fireHi(g, cx, cy, t));
+    lights.push({ x: cx, y: cy - 6, r: 90, c: '#f09040', glow: 1, flick: 1 });
     return;
   }
 
@@ -251,17 +252,17 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
 
   // 적
   foes.forEach((f, i) => {
-    const [x, y] = pos['f' + f.uid], z = f.giant ? ZE : zAt(y), lg = (V.lunge['f' + f.uid] || 0) > t ? -5 : 0;
+    const [x, y] = pos['f' + f.uid], z = f.giant ? giantZ(f) : zAt(y), lg = (V.lunge['f' + f.uid] || 0) > t ? -5 * dir : 0;
     draws.push({ y, f: g => {
       g.save(); g.translate(x + lg, y);
       shadowAt(g, 0, 0, Math.min(46, eW(f) * 0.45 * z / ZE));
-      g.scale(-1, 1);
+      g.scale(-dir, 1);
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
       drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z });
       FLASH = null; g.restore();
     } });
     if (!fighting) return;
-    if (f.giant) post.push(g => { const fr0 = Math.max(0, f.hp / f.maxHp); bar(g, x, y + 4, 100, fr0, '#e0503f', 3); drawNum(g, x, y + 9, Math.ceil(fr0 * 100) + '%', '#ffffff'); });
+    if (f.giant) post.push(g => { const fr0 = Math.max(0, f.hp / f.maxHp); bar(g, Math.min(x, AW - 56), y + 4, 100, fr0, '#e0503f', 3); drawNum(g, Math.min(x, AW - 56), y + 9, Math.ceil(fr0 * 100) + '%', '#ffffff'); });
     else post.push(g => {
       const bw = Math.max(14, Math.min(30, eW(f) * 0.6 * z / ZE));
       bar(g, x, y + 3, bw, f.hp / f.maxHp, f.boss ? '#f0b43c' : '#e0503f');
@@ -276,16 +277,16 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const [x0, y0] = pos['a' + a.id], z = zAt(y0);
     const ft = V.fall['a' + a.id], falling = ft && t - ft < 0.5;
     if (a.down && !falling) {   // 들것 위에 누워 있다
-      draws.push({ y: y0, f: g => { shadowAt(g, x0, y0, 18 * z / ZS); g.save(); g.translate(x0, y0); g.scale(z / ZS, z / ZS); stretcherHi(g, a, t, walking); g.restore(); } });
+      draws.push({ y: y0, f: g => { shadowAt(g, x0, y0, 18 * z / ZS); g.save(); g.translate(x0, y0); g.scale(dir * z / ZS, z / ZS); stretcherHi(g, a, t, walking); g.restore(); } });
       return;
     }
     const at = V.atk['a' + a.id], lunging = at && t - at < 0.26, atkF = lunging ? (t - at < 0.08 ? 0 : 1) : 0;
     const melee = CLASSES[a.cls].act === 'melee';
     const jt = V.jump['a' + a.id], jy = jt && t - jt < 0.4 ? -Math.round(Math.sin((t - jt) / 0.4 * Math.PI) * 14) : 0;
-    const dx = (lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0), y = y0 + jy;
+    const dx = ((lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy;
     draws.push({ y: y0, f: g => {
       shadowAt(g, x0 + dx, y0, (jy ? 7 : SHADOW_R) * z / ZS);
-      g.save(); g.translate(x0 + dx, y);
+      g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
       if (falling) { const k = Math.min(1, (t - ft) / 0.3); g.rotate(-k * k * Math.PI / 2); }
       FLASH = (V.flash['a' + a.id] || 0) > t ? '#ffffff' : null;
       drawAdv(g, a, t, { walk: walking && !falling, ph: i * 0.5, atk: lunging, atkF, z, side: 1 });
@@ -302,7 +303,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   });
   // 뒤에 선 것부터 그린다
   draws.sort((a, b) => a.y - b.y).forEach(d => d.f(w));
-  if (dark > 0.25 && team.length && !bg.under) { const [px0, py0] = pos['a' + team[0].id], lx = px0 + 11, ly = py0 - 12; lights.push({ x: lx, y: ly, r: 70, c: '#f0c060', glow: 1, flick: 1 }); post.push(g => { R(g, lx - 1, ly - 1.5, 2.5, 3, '#f7d070'); R(g, lx - 0.5, ly - 0.5, 1, 1, '#ffffff'); }); }
+  if (dark > 0.25 && team.length && !bg.under) { const [px0, py0] = pos['a' + team[0].id], lx = px0 + 11 * dir, ly = py0 - 12; lights.push({ x: lx, y: ly, r: 70, c: '#f0c060', glow: 1, flick: 1 }); post.push(g => { R(g, lx - 1, ly - 1.5, 2.5, 3, '#f7d070'); R(g, lx - 0.5, ly - 0.5, 1, 1, '#ffffff'); }); }
   else if (bg.under && team.length) lights.push({ x: 80, y: 170, r: 96, c: '#f0c060' });
   if (waiting) post.push(g => { const k = Math.floor(t * 2) % 2; drawNum(g, 190, GY + BG_OY - 40 - k, '?', '#f0b43c'); });
 }
@@ -375,9 +376,10 @@ function events(e, pos, t, team, p) {
   const at = k => (pos[k] != null ? pos[k] : V.last[k]);
   const jx = () => { V.nj = ((V.nj || 0) + 1) % 5; return (V.nj - 2) * 5; }, jy = () => (V.nj % 2) * -5;   // 숫자가 겹치지 않게 조금씩 비킨다
   const foe = uid => e.foes.find(o => o.uid === uid);
-  const fmid = uid => { const f = foe(uid), q = at('f' + uid); return q ? [q[0], q[1] - (f ? Math.min(44, eH(f) * zAt(q[1]) / ZE) : 12) * 0.5] : null; };
-  const ftop = uid => { const f = foe(uid), q = at('f' + uid); return q ? [q[0], q[1] - (f ? Math.min(60, eH(f) * zAt(q[1]) / ZE) : 16) - 4] : null; };
-  const amid = id => { const q = at('a' + id); return q ? [q[0] + 4, q[1] - 12 * zAt(q[1])] : null; };
+  const fz = (f, y) => (f && f.giant ? giantZ(f) : zAt(y));
+  const fmid = uid => { const f = foe(uid), q = at('f' + uid); return q ? [q[0], q[1] - (f ? Math.min(60, monH(f.id, f.sc) * fz(f, q[1])) : 12) * 0.5] : null; };
+  const ftop = uid => { const f = foe(uid), q = at('f' + uid); return q ? [q[0], q[1] - (f ? Math.min(90, monH(f.id, f.sc) * fz(f, q[1])) : 16) - 4] : null; };
+  const amid = id => { const q = at('a' + id); return q ? [q[0] + 4 * (V.dir || 1), q[1] - 12 * zAt(q[1])] : null; };
   const atop = id => { const q = at('a' + id); return q ? [q[0], q[1] - 21 * zAt(q[1]) - 6] : null; };
   for (const x of e.ev) {
     if (x.n <= V.lastN) continue;
@@ -401,7 +403,7 @@ function events(e, pos, t, team, p) {
       else if (x.k === 'wind') V.fx.push(Object.assign({ k: 'gust', c: c1, c2 }, P));
       else if (x.k === 'bolt') V.fx.push({ k: 'bolt', x: fm[0], y: fm[1] + 8, t0: t, d: 0.22 });
       else if (x.k === 'holy') V.fx.push({ k: 'pillar', x: fm[0], y: fm[1] + 10, t0: t, d: 0.45, c: c1, c2 });
-      if (x.k === 'melee' || x.k === 'jump' || x.k === 'pet') V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: 1 });
+      if (x.k === 'melee' || x.k === 'jump' || x.k === 'pet') V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: V.dir || 1 });
       V.fx.push({ k: 'burst', x: fm[0], y: fm[1], t0: t + delay, d: x.c ? 0.4 : 0.28, c: c1, c2, big: x.c });
       V.flash['f' + x.d] = t + delay + 0.09;
       if (x.dot) V.fx.push({ k: 'spark', x: fm[0], y: fm[1], t0: t + delay, d: 0.5, c: '#7ad83c' });
@@ -418,7 +420,7 @@ function events(e, pos, t, team, p) {
       V.flash['a' + x.d] = t + 0.1;
       const fm = fmid(x.s);
       if (fm && x.k === 'magic') V.fx.push({ k: 'orb', x0: fm[0], y0: fm[1], x1: am[0], y1: am[1], t0: t - 0.12, d: 0.14, c: '#d86aff', c2: '#ffffff', size: 2 });
-      V.fx.push({ k: 'slash', x: am[0], y: am[1], t0: t, d: 0.18, c: '#ff8a7a', dir: -1 });
+      V.fx.push({ k: 'slash', x: am[0], y: am[1], t0: t, d: 0.18, c: '#ff8a7a', dir: -(V.dir || 1) });
       V.fx.push({ k: 'burst', x: am[0], y: am[1], t0: t, d: 0.25, c: '#ff6a5a', c2: '#ffd0c0' });
       V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 6, s: String(x.v), c: x.c ? '#ff9a3a' : '#ff6a5a', t0: t, d: 0.7 });
     } else if (x.type === 'miss') {
@@ -446,7 +448,7 @@ function events(e, pos, t, team, p) {
       list.forEach(id => { const aq = at('a' + id); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.7, c: col }); });
     } else if (x.type === 'kill') {
       const q = at('f' + x.d);
-      if (q) V.ghosts.push({ id: x.id, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -1, z: zAt(q[1]) });
+      if (q) V.ghosts.push({ id: x.id, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });
     } else if (x.type === 'loot' || x.type === 'gear') {
       const gh = V.ghosts[V.ghosts.length - 1], q = gh ? [gh.x, gh.y] : [160, 180];
       V.fx.push({ k: 'icon', id: x.type === 'gear' ? { icon: GTYPES[x.base].icon, c: TIER_COLORS[x.t] } : x.id, x: q[0] + (x.type === 'gear' ? 6 : 0), y: q[1] - 10, t0: t + 0.3, d: x.type === 'gear' ? 1.4 : 0.9 });

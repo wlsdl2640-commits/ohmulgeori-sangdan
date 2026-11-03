@@ -54,16 +54,17 @@ const monSc = (m, sc) => sc || Math.max(1, Math.round(m.scale || 1));
 const MON_DIM = {};
 function monBase(id) {
   if (MON_DIM[id]) return MON_DIM[id];
+  if (typeof PXG_DIM !== 'undefined' && PXG_DIM[id]) return (MON_DIM[id] = PXG_DIM[id]);
   const M = PXM[id];
   if (!M) return (MON_DIM[id] = [12, 12]);
-  const rows = pxRows(M.g), b = M.big || 1;
-  return (MON_DIM[id] = [Math.max(...rows.map(r => r.length)) * b, rows.length * b]);
+  const rows = pxRows(M.g);
+  return (MON_DIM[id] = [Math.max(...rows.map(r => r.length)), rows.length]);
 }
 const monH = (id, sc) => monBase(id)[1] * monSc(MONS[id], sc);
 const monW = (id, sc) => monBase(id)[0] * monSc(MONS[id], sc);
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], M = PXM[id] || PXM.rat, sc = monSc(m, o.sc) * (o.z || 1) * (M.big || 1), tt = t + (o.ph || 0);
-  const fr = Math.floor(tt * (m.giant ? 3 : 5)) % 2, s = pxMonSprite(PXM[id] ? id : 'rat', fr);
+  const m = MONS[id], sc = monSc(m, o.sc) * (o.z || 1), tt = t + (o.ph || 0);
+  const fr = Math.floor(tt * (m.giant ? 3 : 5)) % 2, s = pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);
   if (sc === 1) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(sc, sc); pxBlit(ctx, s); ctx.restore();
 }

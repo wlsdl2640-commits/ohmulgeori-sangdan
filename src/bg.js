@@ -11,6 +11,7 @@ const rgba = (h, a) => { const c = hex2(h); return `rgba(${c[0]},${c[1]},${c[2]}
 const DAY_SKY = {
   plains:   ['#4f8fd6', '#86b8e6', '#d2e8f0'],
   forest:   ['#3f7a86', '#6a9e9a', '#b4d2bc'],
+  primeval: ['#2e5a5a', '#4a7a70', '#8ab098'],
   mountain: ['#5a6aa8', '#8f9cc8', '#d6d6e2'],
   valley:   ['#3f8fdc', '#74b4e8', '#c8e4f2'],
   snow:     ['#6a8ccc', '#a2bce0', '#e6eef6'],
