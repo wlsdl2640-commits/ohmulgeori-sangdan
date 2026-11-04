@@ -1189,7 +1189,7 @@ function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
     if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); saveGame(); return true; }
-    if (![2, 3, 4, 5].includes(v.v)) return false;
+    if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
     S.bank = S.bank || { offers: [], deps: [], loans: [] };

@@ -257,7 +257,12 @@ async function openExport() {
   $('code-copy').onclick = async () => { say((await copyText($('code-out'))) ? '저장 코드를 복사했어요' : '코드를 길게 눌러 전체 선택한 뒤 복사해 주세요'); };
   if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '오물거리 상단 저장 코드', text: code }); } catch (_) {} };
   // 설치한 앱의 WebView는 내려받기를 못 해서 파일 단추를 숨긴다 (복사·백업 슬롯을 쓴다)
-  if ($('code-file')) $('code-file').onclick = () => { try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' })); a.download = `ohmulgeori-save-${new Date().toISOString().slice(0, 10)}.txt`; document.body.append(a); a.click(); a.remove(); say('저장 파일을 내려받았어요'); } catch (_) { say('파일로 저장할 수 없어요. 코드를 복사해 주세요'); } };
+  if ($('code-file')) $('code-file').onclick = async () => {
+    const name = `ohmulgeori-save-${new Date().toISOString().slice(0, 10)}.txt`;
+    // claude.ai 아티팩트 뷰어 안에서는 보통 내려받기가 막혀 있어 뷰어의 저장 창(downloads 기능)을 쓴다
+    try { if (window.claude && typeof window.claude.use === 'function') { const dl = await window.claude.use('downloads'); if (dl) { await dl.save({ filename: name, data: code }); say('저장 파일을 내려받았어요'); return; } } } catch (e) { if (e && e.code === 'declined') return; }
+    try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' })); a.download = name; document.body.append(a); a.click(); a.remove(); say('저장 파일을 내려받았어요'); } catch (_) { say('파일로 저장할 수 없어요. 코드를 복사해 주세요'); }
+  };
 }
 // 저장 객체를 지금 게임으로 (첫 화면이면 done이 게임을 시작한다)
 function applySave(v, done) {

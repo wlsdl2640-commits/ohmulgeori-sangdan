@@ -74,11 +74,11 @@
 - 새 직업 데이터: data-rpg.js CLASSES(coachman·caravanmaster·scout·pathfinder, bow cls), SKILLS(whipcrack…summit), econ.js WEAPON_OF, pxa.js PXL, data.js BIOS, data-trait.js JOB_TRAITS, data-demon.js req. 시험 `scratchpad/skills/portertest.py`·`ui25.py`, 도트 시트 `scratchpad/px/t_porter2.js`.
 
 ## 저장 코드·백업 슬롯 (빌드 26)
-- 버그 원인: ui.js parseSave가 `[1,2,3,4].includes(v.v)`로 판을 검사했는데 빌드 22부터 저장은 v5 → 모든 새 코드가 거부됐다. 이제 econ.js `const SAVE_V = 5`(blankState `v: SAVE_V`)가 기준이고, `v.v > SAVE_V`만 'newer'로 막는다. **저장 판을 올릴 때는 SAVE_V만 올린다.**
+- 버그 원인: ui.js parseSave가 `[1,2,3,4].includes(v.v)`로 판을 검사했는데 빌드 22부터 저장은 v5 → 모든 새 코드가 거부됐다. 이제 econ.js `const SAVE_V = 5`(blankState `v: SAVE_V`)가 기준이고, parseSave는 `v.v > SAVE_V`만 'newer'로, loadFrom은 `v.v < 2 || v.v > SAVE_V`만 거부한다. **저장 판을 올릴 때는 SAVE_V만 올린다(판 목록을 손으로 적지 않는다).**
 - 코드 형식: `OHMUL2:` = deflate(CompressionStream) + base64, `OHMUL1:` = base64만(옛 코드·압축 못 하는 브라우저), 맨 JSON도 받는다. ui.js `saveCode()`(async)·`parseSave(txt)`(async, 앞뒤 글·공백·따옴표 무시, 실패하면 `Error(SAVE_ERR 키)`: prefix/b64/zip/nozip/json/shape/newer)·`applySave(v, done)`(loadFrom → saveGame → 화면 갱신, done은 첫 화면에서 게임 시작).
-- 창: `openExport()`(요약 `saveSummary(S)`·KB, 복사/공유 navigator.share/파일로 저장 Blob), `openImport(done)`(#code-in, 붙여 넣기 clipboard.readText, 파일에서 `<input type=file id=code-filein>`, 오류는 #code-err, 게임 중이면 confirmBox). 첫 화면 「저장 코드로 이어하기」도 openImport를 쓴다.
+- 창: `openExport()`(요약 `saveSummary(S)`·KB, 복사/공유 navigator.share/파일로 저장 — 앱(isApp)에서는 WebView가 내려받기를 못 해 숨기고, claude.ai 아티팩트 안에서는 `window.claude.use('downloads')`로 저장하므로 아티팩트를 올릴 때 `capabilities: {downloads: true}`를 넣는다; 그 밖에는 Blob 내려받기), `openImport(done)`(#code-in, 붙여 넣기 clipboard.readText, 파일에서 `<input type=file id=code-filein>`, 오류는 #code-err, 게임 중이면 confirmBox). 첫 화면 「저장 코드로 이어하기」도 openImport를 쓴다.
 - 백업 슬롯: localStorage `${SAVE_KEY}:slot1..3`에 `{at, name, sum, data}`; `slotInfo/slotSave/slotLoad/slotClear/slotRows`(SLOT_N 3). 설정 창(PANELS.co_set) 「저장 코드」 절 + 「백업 슬롯」 목록, ACT `slotsave/slotload/slotclear`.
-- 시험: `scratchpad/skills/savetest.py`(논리, 하네스에 localStorage 폴리필), `scratchpad/skills/saveui.py`(내보내기→불러오기 왕복, 잘린 코드 오류 글, 첫 화면 이어하기; pagehide 자동 저장 때문에 init 스크립트에서 sessionStorage 'wipe'로 지운다).
+- 시험: `scratchpad/skills/savetest.py`(논리, 하네스에 localStorage 폴리필), `scratchpad/skills/saveui.py`(내보내기→불러오기 왕복, 잘린 코드 오류 글, 첫 화면 이어하기는 저장 없는 새 브라우저 컨텍스트에서 — 같은 탭에서 다시 열면 새 문서가 옛 sessionStorage 스냅샷을 봐 시드가 다시 깔리는 플레이크가 있었다).
 
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
