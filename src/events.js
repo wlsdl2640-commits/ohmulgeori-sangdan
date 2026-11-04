@@ -77,7 +77,7 @@ function stepWave(p, e, team, dm, dt, fr) {
     tire(team, FATIGUE.fight * fr * dt);
     battle(p, e, team, dm, dt);
     if (!p.exp) return;
-    if (!e.foes.length) { W.cur++; if (W.cur >= W.n) waveEnd(p, e, true); else { e.gap = 2.5; ev(e, 'wave', { cur: W.cur, n: W.n }); } }
+    if (!e.foes.length && !e.done) { W.cur++; if (W.cur >= W.n) waveEnd(p, e, true); else { e.gap = 2.5; ev(e, 'wave', { cur: W.cur, n: W.n }); } }
     return;
   }
   if (e.done) { e.pos -= moveOf(p) * 1.2 * dt; if (e.pos <= 0) arrive(p); return; }

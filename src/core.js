@@ -809,16 +809,31 @@ function battle(p, e, team, dm, dt) {
     if (e.flee <= 0) {
       const imm = e.fleeImm; e.fleeImm = 0;
       e.flee = 0; e.foes = []; e.next = null; e.cd = {}; e.buffs = []; e.taunt = null; e.hpW = null;
-      ev(e, 'flee', {});
-      if (imm) { log(`${p.name}은(는) 공격이 통하지 않는 적을 피해 싸움에서 빠져나왔다.`, 'bad'); if (e.mode === 'advance') recall(p, 'imm'); return; }
+      ev(e, 'flee', { skip: imm && e.area !== 'wave' && (imm === 1 || e.mode !== 'advance') ? 1 : 0 });
+      if (imm) {
+        // 성문 방어전: 물러나면 진다 / 우두머리(던전 주인·필드 우두머리·레이드): 넘을 수 없으니 돌아온다 / 그 밖: 싸움만 피하고 길을 이어 간다
+        if (e.area === 'wave') { log(`${p.name}은(는) 공격이 통하지 않는 무리에 밀려 성문에서 물러났다.`, 'bad'); waveEnd(p, e, false); return; }
+        if (imm === 2 && e.mode === 'advance') { log(`${p.name}은(는) 공격이 통하지 않는 우두머리를 넘지 못하고 발길을 돌렸다.`, 'bad'); recall(p, 'imm'); return; }
+        e.skipped = (e.skipped || 0) + 1;
+        log(`${p.name}은(는) 공격이 통하지 않는 적을 피해 싸움에서 빠져나와 ${e.mode === 'advance' ? '길을 이어 간다' : '돌아가는 길을 서두른다'}.`, 'bad');
+        return;
+      }
       log(`${p.name}은(는) 쓰러진 동료를 들쳐 메고 싸움에서 빠져나왔다.`, 'bad');
       return;
     }
   }
   // 면역뿐이라 아무 피해도 못 주면 물러난다 (강철에 무속성만, 빛·신성에 속성만 …)
+  // 적 무리가 바뀌면(새 무리·방어전 다음 차례·소환) 처음부터 다시 잰다
+  const sig = foes.map(f => f.uid).join(',');
+  if (e.hpS !== sig) { e.hpS = sig; e.hpW = null; e.noDmg = 0; }
   const hpNow = foes.reduce((t, f) => t + Math.max(0, f.hp), 0);
   if (e.hpW == null || hpNow < e.hpW - 0.5) { e.hpW = hpNow; e.noDmg = 0; } else e.noDmg = (e.noDmg || 0) + dt;
-  if (e.noDmg > 14 && !e.flee && !foes.some(f => f.pvp)) { const f0 = foes.find(f => f.hp > 0); e.flee = 2.5; e.fleeImm = 1; e.noDmg = 0; ev(e, 'immflee', {}); log(`${p.name}의 공격이 ${f0 ? f0.name || MONS[f0.id].name : '적'}에게 통하지 않는다! 싸움에서 물러난다. (${f0 ? monElNote(f0.id) : ''})`, 'bad'); HOOKS.toast(`${p.name}: 공격이 통하지 않아 물러납니다`); }
+  if (e.noDmg > 14 && !e.flee && !foes.some(f => f.pvp)) {
+    const live = foes.filter(f => f.hp > 0), bossF = live.find(f => f.boss || f.fb), boss = !!bossF || e.area === 'raid', f0 = bossF || live[0];
+    e.flee = 2.5; e.fleeImm = boss ? 2 : 1; e.noDmg = 0; ev(e, 'immflee', { boss: boss ? 1 : 0 });
+    log(`${p.name}의 공격이 ${f0 ? f0.name || MONS[f0.id].name : '적'}에게 통하지 않는다! ${boss ? '넘을 수 없는 상대라 물러난다' : '싸움을 피해 지나간다'}.${f0 && monElNote(f0.id) ? ` (${monElNote(f0.id)})` : ''}`, 'bad');
+    HOOKS.toast(`${p.name}: 공격이 통하지 않아 ${boss ? '돌아옵니다' : '싸움을 피해 지나갑니다'}`);
+  }
   e.buffs.forEach(b => { b.t -= dt; });
   e.buffs = e.buffs.filter(b => b.t > 0 && !(b.stat === 'shield' && b.hp <= 0));   // 다 깨진 보호막은 걷는다
   if (e.taunt) { e.taunt.t -= dt; if (e.taunt.t <= 0) e.taunt = null; }

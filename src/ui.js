@@ -91,7 +91,7 @@ function updateOverlay() {
 function renderChips() {
   const html = S.parties.map(p => {
     const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.camp ? 'camp' : e.wait ? 'wait' : e.mode === 'return' ? 'back' : 'go';
-    const st = !e ? '대기' : e.area === 'raid' ? '레이드' : e.area === 'trade' ? `교역 ${e.leg === 'back' ? '귀환' : e.stage + '/' + e.dist}` : e.area === 'dungeon' ? `${FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
+    const st = !e ? '대기' : e.area === 'raid' ? '레이드' : e.area === 'trade' ? `교역 ${e.leg === 'back' ? '귀환' : e.stage + '/' + e.dist}` : e.area === 'dungeon' ? `${FIELDS[e.field].treasure ? FIELDS[e.field].dungeon.name : FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
     return `<button type="button" class="pchip${S.view === p.id ? ' on' : ''}" data-view="${p.id}"><i class="dot ${cls}"></i>${esc(p.name)} · ${st}</button>`;
   }).join('');
   if (html !== UI.chips) { $('pchips').innerHTML = html; UI.chips = html; }

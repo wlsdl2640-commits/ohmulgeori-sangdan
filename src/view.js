@@ -771,7 +771,7 @@ function logEvent(x, e, p) {
   if (x.type === 'mastery') { const s = SKILLS[x.id]; if (s) add(`${ally(A(x.s))}의 「${esc(s.name)}」 숙련도가 ${x.lv}단계가 되었습니다. (위력 +${x.lv * 3}%)`, 'lvl'); return; }
   if (x.type === 'spawn') { const fs = e.foes.map(f => f.name || MONS[f.id].name); if (fs.length) add(`${x.boss ? '<i class="lg-c">보스!</i> ' : x.amb ? '<i class="lg-c">기습!</i> ' : ''}${fs.map(foe).join(', ')} 출현`, x.boss ? 'warn' : ''); return; }
   if (x.type === 'clear') return add('전투에서 이겼습니다.', 'dim');
-  if (x.type === 'flee') return add('파티가 전투에서 물러났습니다.', 'bad');
+  if (x.type === 'flee') return add(x.skip ? '파티가 싸움을 피해 지나갑니다.' : '파티가 전투에서 물러났습니다.', 'bad');
   if (x.type === 'camp') return add(x.tent ? '텐트를 치고 쉬어 갑니다. 피로가 빨리 풀립니다.' : '모닥불을 피우고 쉬어 갑니다.', 'dim');
   if (x.type === 'wake') return add('다시 길을 나섭니다.', 'dim');
   if (x.type === 'enter') return add(`${esc(FIELDS[e.field].dungeon.name)}에 들어섰습니다.`, 'warn');

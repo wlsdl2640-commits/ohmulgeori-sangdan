@@ -52,7 +52,7 @@ const MON_TAG = {
   worldserpent: 'kaiju|earth', corruptheart: 'plant demon|evil',
   cloudsheep: 'beast|wind', skyray: 'beast|wind', thunderbird: 'beast|thunder', pegasus: 'beast|wind', cloudgiant: 'kaiju|wind',
   skyknight: 'human|steel', skytitan: 'kaiju|storm', skyemperor: 'human divine|light',
-  mimic: 'monster|', goldgolem: 'construct|steel', treasureguard: 'construct|steel',
+  mimic: 'monster|', goldgolem: 'construct|steel', treasureguard: 'construct|earth',   // 보물 던전 주인은 강철이 아니다 (무속성 파티도 지도를 헛쓰지 않게)
   stormcloud: 'elemental|thunder', thunderhawk: 'beast|thunder', stormgolem: 'construct|steel thunder', raiju: 'beast|thunder',
   tempestknight: 'human|storm', thunderdragon: 'dragon kaiju|thunder', stormking: 'human divine|storm',
   ruinguard: 'construct|earth', fallenangel: 'demon|evil', seraphknight: 'undead divine|holy', sphinx: 'beast monster|earth',
