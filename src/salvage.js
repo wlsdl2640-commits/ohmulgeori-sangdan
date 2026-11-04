@@ -128,7 +128,7 @@ function salvScene(it, t) {
   staffAt(it, STAFF.sorter, 3.6, 2.8, 'read', t, 'f', 0);
   const n = Math.min(3, salvPicks().length), ph = phaseOf(S.t);
   if (ph === 1 || ph === 2) return;
-  const spots = [[6.6, 3.1], [5.0, 7.5], [2.4, 6.2]];
+  const spots = [[7.6, 2.4], [5.0, 7.5], [2.4, 6.2]];
   for (let i = 0; i < n; i++) staffAt(it, SALVORS()[i], spots[i][0], spots[i][1], i === 2 ? 'idle' : 'carry', t + i * 0.37, 'f', i % 2);
 }
 Object.assign(ACT, {
