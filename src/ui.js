@@ -133,7 +133,7 @@ function closeWins() {
 window.addEventListener('popstate', e => {
   if (UI.skipPop) { UI.skipPop = 0; return; }
   const n = (e.state && e.state.w) || 0;
-  if (UI.modal && $('m-btns').children.length === 1) { closeModal(); if (UI.stack.length) try { history.pushState({ w: UI.stack.length }, ''); } catch (_) {} return; }
+  if (UI.modal && $('m-btns').querySelectorAll('button:not(.skipall)').length === 1) { closeModal(); if (UI.stack.length) try { history.pushState({ w: UI.stack.length }, ''); } catch (_) {} return; }
   if (UI.stack.length > n) { UI.stack.length = n; showWin(true); }
 });
 function showWin(scroll) {
@@ -297,7 +297,10 @@ function pumpModals() {
     openModal(m.title, (m.body || []).map(t => `<p>${esc(t)}</p>`).join(''), [{ label: '지나가기', fn: () => { gateChoice(p, 'skip'); renderPanel(true); } }, { label: '들어가기', cls: 'gold', fn: () => { gateChoice(p, 'enter'); S.view = p.id; renderPanel(true); renderChips(); } }]);
     return;
   }
-  openModal(m.title, (m.body || []).map(t => `<p>${esc(t)}</p>`).join(''));
+  const rest = S.modals.filter(x => !x.gate).length;   // 뒤에 기다리는 알림 (던전 입구 질문은 남긴다)
+  const btns = [{ label: '확인', cls: 'gold' }];
+  if (rest >= 1) btns.unshift({ label: `모두 넘기기 (${rest + 1})`, cls: 'skipall', fn: () => { S.modals = S.modals.filter(x => x.gate); } });
+  openModal(m.title, (m.body || []).map(t => `<p>${esc(t)}</p>`).join(''), btns);
 }
 function confirmBox(title, text, ok, fn, danger) {
   openModal(title, `<p>${esc(text)}</p>`, [{ label: '취소' }, { label: ok, cls: danger ? 'red' : 'gold', fn }]);

@@ -582,6 +582,7 @@ function invDetail(k, rate) {
 /* 의뢰 */
 PANELS.req = () => `
   <div class="sec"><b>의뢰 게시판</b><span>이틀마다 새 의뢰</span></div>
+  <div class="card${autoReqOn() ? ' hl' : ''}"><div class="row"><div class="grow stack"><span>의뢰품 자동 전달 <span class="tag ${autoReqOn() ? 'ok-t' : 'muted'}">${autoReqOn() ? '켬' : '끔'}</span></span><span class="sub">창고에 의뢰품이 다 있으면 원정대가 돌아올 때와 날이 바뀔 때 저절로 전달해요. 장비 의뢰는 일반·고급의 강화 안 한 것만 내주고, 좋은 장비뿐이면 직접 전달해야 해요.</span></div><button type="button" class="btn sm${autoReqOn() ? ' on' : ''}" data-act="autoreq">${autoReqOn() ? '끄기' : '켜기'}</button></div></div>
   ${S.reqs.map(r => { const have = reqHave(r), ok = have >= r.qty, dd = r.due - today();
     const icon = r.gear ? gImg({ base: r.gear.split(':')[0], t: +r.gear.split(':')[1] }, 'ico lg') : iconImg(r.item, 'ico lg');
     return `<div class="card${ok ? ' hl' : ''}${r.special ? ' special' : ''}">
@@ -710,6 +711,7 @@ const ACT = {
   unslot: d => setSlot(+d.i, null),
   tier: d => { const s = S.shop.slots[+d.i]; if (s) { s.tier = +d.t; changed(); } },
   fulfill: d => say(fulfill(+d.id)),
+  autoreq: () => { S.autoReq = !autoReqOn(); if (S.autoReq) { const n = autoFulfill(); if (n) say(`의뢰 ${n}개를 바로 전달했어요.`); } },
   export: () => openExport(),
   import: () => openImport(),
   update: () => checkUpdate(true),

@@ -62,6 +62,10 @@
 - 같은 이름 스킬: taunt '도발 1', provoke '도발 2', ar_cheer '관중의 응원', awk_cleric '신의 기적'. 새 스킬 이름은 `scratchpad/datamod2.js` 방식으로 겹침 확인.
 - 시험: `scratchpad/skills/sk2test.py`(논리), `scratchpad/skills/ui23.py`(화면·캡처).
 
+## 의뢰 자동 전달·알림 넘기기 (빌드 24)
+- econ.js `autoReqOn()`(S.autoReq !== false, 기본 켬)·`autoFulfill()`(arrive에서 autoSellRun 앞, onNewDay의 genReq 뒤)·`fulfill(id, auto)`(auto면 `reqGearCheap`한 장비만)·`reqGearPick`(싼 장비부터). 의뢰 창 ACT `autoreq`.
+- ui.js pumpModals: 뒤에 gate 아닌 알림이 더 있으면 `모두 넘기기 (n)` 단추(.skipall)가 `S.modals`에서 gate 아닌 것을 지운다. 뒤로 가기의 1단추 판정은 `.skipall`을 뺀다. 시험 `scratchpad/skills/reqtest.py`·`reqtest_ui.py`.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

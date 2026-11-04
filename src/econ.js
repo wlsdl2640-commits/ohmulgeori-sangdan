@@ -739,18 +739,29 @@ function genReq() {
 }
 const reqHave = r => (r.gear ? gearsOfKey('g:' + r.gear).length : S.inv[r.item] || 0);
 const reqName = r => (r.gear ? `${GTIERS[+r.gear.split(':')[1]].name} ${GTYPES[r.gear.split(':')[0]].name}` : ITEMS[r.item].name);
-function fulfill(id) {
+// 장비 의뢰에 내줄 것: 가장 싼 것부터 (등급 낮고, 강화·룬 없는 것)
+const reqGearPick = r => gearsOfKey('g:' + r.gear).slice().sort((a, b) => ((a.q || 0) - (b.q || 0)) || ((a.plus || 0) - (b.plus || 0)) || ((a.runes || []).length - (b.runes || []).length))[0];
+const reqGearCheap = g => !!g && (g.q || 0) <= 1 && !(g.plus || 0) && !(g.runes || []).length;
+function fulfill(id, auto) {
   const r = S.reqs.find(x => x.id === id);
   if (!r) return '';
   if (reqHave(r) < r.qty) return `${reqName(r)}이(가) 모자라요.`;
-  if (r.gear) { const it = gearsOfKey('g:' + r.gear)[0]; S.gear = S.gear.filter(x => x !== it); }
+  if (r.gear) { const it = reqGearPick(r); if (auto && !reqGearCheap(it)) return '좋은 장비뿐이라 자동으로는 내주지 않아요.'; S.gear = S.gear.filter(x => x !== it); }
   else addTo(S.inv, r.item, -r.qty);
   S.gold += r.reward; S.fame += r.fame; S.stats.earned += r.reward; S.stats.reqs = (S.stats.reqs || 0) + 1;
   S.reqs = S.reqs.filter(x => x !== r);
-  log(`${r.client}의 의뢰를 끝냈다. ${g$(r.reward)}, 명성 +${r.fame}`, 'good');
+  log(`${auto ? '창고에 있던 의뢰품을 저절로 전달해 ' : ''}${r.client}의 의뢰를 끝냈다. ${g$(r.reward)}, 명성 +${r.fame}`, 'good');
   HOOKS.toast(`의뢰 완료 · ${g$(r.reward)} · 명성 +${r.fame}`);
   changed();
   return '';
+}
+// 자동 전달: 창고에 의뢰품이 다 있으면 저절로 전달한다 (장비는 일반·고급의 미강화품만). 원정대가 돌아올 때·날이 바뀔 때
+const autoReqOn = () => !S || S.autoReq !== false;
+function autoFulfill() {
+  if (!S || !autoReqOn()) return 0;
+  let n = 0;
+  for (const r of S.reqs.slice()) if (reqHave(r) >= r.qty && !fulfill(r.id, true)) n++;
+  return n;
 }
 
 /* ───────── 은행 ───────── */
@@ -1101,6 +1112,7 @@ function onNewDay(k) {
   if (k % 2 === 0) rollCands();
   S.reqs = S.reqs.filter(r => { if (r.due < k) { log(`${r.client}의 의뢰가 기한을 넘겨 취소됐다.`); return false; } return true; });
   if (k % 2 === 1 || S.reqs.length < 2) genReq();
+  autoFulfill();
   if (S.bld.bank) bankDay(k);
   researchDay(k);
   raidDay();

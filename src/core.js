@@ -877,6 +877,7 @@ function arrive(p) {
   for (const [k, q] of Object.entries(e.bag)) addTo(S.inv, k, q);
   for (const [k, q] of Object.entries(e.sup)) addTo(S.inv, k, q);
   e.gbag.forEach(g => S.gear.push(g));
+  autoFulfill();   // 의뢰품이 다 모였으면 먼저 전달하고, 남는 것을 판다
   autoSellRun(p.name);
   const team = p.members.map(advById).filter(Boolean);
   const hurt = team.filter(a => a.down || a.inj);
