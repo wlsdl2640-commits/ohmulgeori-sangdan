@@ -245,7 +245,7 @@ function bldCard(id, full) {
   if (!full && lv && BLD_SUM[id]) body = BLD_SUM[id]();
   if (id === 'temple' && (full || !lv)) body = lv ? templeBox() : innCare();
   if (id === 'shop' && lv) body = `<div class="sub">진열대 ${slotCount()}칸 · 손님 수 ×${traffic().toFixed(2)} · 진열은 창고 창에서 해요.</div>`;
-  if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 자기 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div>`;
+  if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 자기 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div><div class="btns"><button type="button" class="btn sm gold" data-act="advguest">여관 손님 ${S.cands.length}명 보기 ›</button></div>`;
   const open = !full && lv && BLD_INNER[id] ? `<button type="button" class="btn sm gold" data-act="bopen" data-id="${id}">${BLD_INNER[id]} ›</button>` : '';
   const sum = !full && lv && id === 'temple' && patients().length ? `<span class="sub red-t">환자 ${patients().length}명</span>` : '';
   return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? 'Lv' + lv : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}${open || sum ? `<div class="row">${sum}<span class="grow"></span>${open}</div>` : ''}</div>`;
@@ -293,19 +293,37 @@ function candCard(c) {
 function jobTreeList() {
   return ['warrior', 'archer', 'rogue', 'mage', 'cleric'].map(b => `<div><b>${CLASSES[b].name}</b> → ${nextJobs(b).map(c => `${CLASSES[c].name}(${nextJobs(c).map(x => CLASSES[x].name).join('')})`).join(' · ')}</div>`).join('') + '<div class="muted">짐꾼은 짐꾼 그대로예요.</div>';
 }
-PANELS.adv = () => `
-  <div class="sec"><b>소속 모험가</b><span>${living().length}/${beds()}명 · 눌러서 자세히</span></div>
-  ${S.gear.length && S.advs.some(a => a.status === 'idle') ? '<div class="btns"><button type="button" class="btn sm gold" data-act="autoeqall">대기 중인 모험가 모두 가장 좋은 장비 끼우기</button></div>' : ''}
-  ${living().map(advCard).join('') || '<div class="card"><div class="sub">모험가가 없어요. 아래 여관 손님 중에서 고용하세요.</div></div>'}
+// 모험가 창 탭: 기본 직업 계열(2·3차 전직도 계열을 따른다) + 여관 손님
+const ADV_CATS = [['warrior', '전사'], ['archer', '궁수'], ['mage', '마법사'], ['cleric', '성직자'], ['rogue', '도적'], ['porter', '짐꾼'], ['guest', '여관']];
+const advCatOf = a => jobBase(a.cls);
+const advCatN = k => (k === 'guest' ? S.cands.length : living().filter(a => advCatOf(a) === k).length);
+function advCatCur() {
+  if (UI.advCat && ADV_CATS.some(([k]) => k === UI.advCat)) return UI.advCat;
+  const first = ADV_CATS.find(([k]) => k !== 'guest' && advCatN(k) > 0);
+  return first ? first[0] : 'guest';
+}
+const advCatBar = cur => `<div class="tabs advcat">${ADV_CATS.map(([k, n]) => { const c = advCatN(k); return `<button type="button" class="tab${cur === k ? ' on' : ''}${c ? '' : ' none'}" data-act="advcat" data-id="${k}">${n}<small>${k === 'guest' ? `손님 ${c}` : `${c}명`}</small></button>`; }).join('')}</div>`;
+const ADV_GUIDE = () => `
   <details class="card"><summary>라이선스와 전직 안내</summary><div class="log">
     <div>모험가는 원정에서 몬스터를 잡고, 필드 보스와 던전을 쓰러뜨리고, 무사히 돌아올 때마다 개인 명성을 쌓아요. 레벨·개인 명성·처치 수·우두머리 처치 수·던전 공략 수가 차면 모험가 길드 심사를 받아 ${LICENSE.map(L => L.name).join(' → ')}로 올라가요 (${LICENSE_UP.map((L, i) => `${LICENSE[i + 1].name} Lv${L.lv}·명성 ${L.pf}·처치 ${fmt(L.kills)}·우두머리 ${L.bosses}${L.dungeons ? '·던전 ' + L.dungeons : ''}·${fmt(L.fee)}G`).join(', ')}). 라이선스가 오를수록 능력이 강해지고 봉급도 올라요.</div>
     <div>전투에서 기본 공격은 ${BASIC_CD}초 ÷ 공격 속도마다 한 번 나가고(공격력 ×${BASIC_MULT}), 스킬은 저마다의 재사용 대기시간이 돌면 따로 나가요. 공격 속도는 민첩·특성 「재빠름」·지속 스킬 「신속」·신속의 룬·강화 스킬로, 스킬 재사용 감소는 지속 스킬 「전술」·특성 「전술가」·시간의 룬·숙련도로 모여요. 스킬 창에서 모든 스킬의 계수·피해·확률·대기시간을 볼 수 있어요.</div>
     <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·레인저·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>
     <div>2차·3차 직업은 역할이 갈려요. 전사: 기사=탱커(도발·엄호·받는 피해 감소) · 검투사=지속딜(연계) · 광전사=한방딜(분노·처형) · 마검사=브루저(마법 검+보호막). 마법사: 네크로맨서=지속딜(저주·역병) · 마도사=한방딜(긴 쿨 큰 한 방·처형) · 정령술사=혼합(광역+치유·방어). 궁수: 레인저=지속딜(연사·늑대) · 저격수=한방딜(선공·관통·처형) · 괴물사냥꾼=혼합(표식·보스). 도적: 쌍검사=지속딜 · 암살자=한방딜 · 보물 사냥꾼=혼합(금화·연막·대박). 성직자: 사제=치유·보호막·부활(3차) · 역병의사=재생+지속 딜 · 퇴마사=전투 사제(때리면 파티가 회복). 짐꾼: 음유시인=공격 버퍼 · 마부=방어 버퍼(보호막·엄호) · 정찰가=디버퍼(표식·약점 간파).</div>
     <div>장치: 연계 — 기본 공격을 맞힐 때마다 피해가 쌓이고(5중첩) 빗나가거나 기절하면 끊겨요. 처형 — HP 30% 아래 적에게 더 큰 피해. 표식 — 걸린 적이 받는 피해 +20%. 보호막 — 피해를 대신 받는 임시 HP(HP 막대 위 하늘색). 엄호 — 동료가 노려지면 탱커가 대신 맞아요. 재생 — 초당 회복이 이어져요.</div>${jobTreeList()}
-    <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이고, 2차 각성하면 ${MAX_LV2}까지 올라가요.</div></div></details>
-  <div class="sec"><b>여관 손님</b><span>이틀마다 새 손님</span></div>
-  ${S.cands.map(candCard).join('')}`;
+    <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이고, 2차 각성하면 ${MAX_LV2}까지 올라가요.</div></div></details>`;
+PANELS.adv = () => {
+  const cur = advCatCur(), free = Math.max(0, beds() - living().length);
+  const head = `<div class="sec"><b>소속 모험가</b><span>${living().length}/${beds()}명${cur === 'guest' ? '' : ' · 눌러서 자세히'}</span></div>${advCatBar(cur)}`;
+  if (cur === 'guest') return `${head}
+  <div class="sec"><b>여관 손님</b><span>이틀마다 새 손님 · 빈 방 ${free}개</span></div>
+  ${free ? '' : '<div class="sub red-t">여관 방이 다 찼어요. 여관을 넓히거나 모험가를 내보내야 고용할 수 있어요.</div>'}
+  ${S.cands.map(candCard).join('') || '<div class="card"><div class="sub">지금은 여관에 묵는 손님이 없어요. 이틀마다 새 손님이 와요.</div></div>'}`;
+  const list = living().filter(a => advCatOf(a) === cur);
+  return `${head}
+  ${S.gear.length && S.advs.some(a => a.status === 'idle') ? '<div class="btns"><button type="button" class="btn sm gold" data-act="autoeqall">대기 중인 모험가 모두 가장 좋은 장비 끼우기</button></div>' : ''}
+  ${list.map(advCard).join('') || `<div class="card"><div class="sub">${CLASSES[cur].name} 계열 모험가가 없어요. 「여관」 탭의 손님 중에서 고용하세요.</div></div>`}
+  ${ADV_GUIDE()}`;
+};
 
 /* 모험가 상세 창 */
 function advDetail(a) {
@@ -756,6 +774,8 @@ const ACT = {
   exptab: d => { UI.expTab = d.id === 'raid' ? 'raid' : +d.id; const top = winTop(); if (top) top.tab = UI.expTab; renderPanel(true); $('panel') && ($('panel').scrollTop = 0); },
   delparty: d => { const p = findP(d.id); if (p) confirmBox('파티 삭제', `${p.name}을(를) 지울까요? 모험가는 상단에 남아요.`, '삭제', () => { deleteParty(p.id); renderPanel(true); renderChips(); }, true); },
   sell: d => sellGuild(d.it, +d.q),
+  advcat: d => { UI.advCat = d.id; const top = winTop(); if (top) top.tab = d.id; renderPanel(true); $('panel') && ($('panel').scrollTop = 0); },
+  advguest: () => { UI.advCat = 'guest'; openWin('adv'); },
   invtab: d => { UI.invTab = d.id; UI.invSel = null; const top = winTop(); if (top) top.tab = d.id; renderPanel(true); },
   ausfx: () => { auSet('sfx', !AU.sfx); renderPanel(true); },
   aubgm: () => { auSet('bgm', !AU.bgm); renderPanel(true); },

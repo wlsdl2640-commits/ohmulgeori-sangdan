@@ -539,3 +539,8 @@ details.card > .list { margin-top: 8px; }
 .fbtn.trade { box-shadow: inset 0 0 0 1px #7a5a2a; }
 .fbtn.trade.on { box-shadow: inset 0 0 0 2px var(--gold); }
 .tyt { display: inline-block; padding: 0 4px; margin-right: 3px; font-size: 11px; border: 1px solid #3a4050; color: var(--ink-2); }
+/* ── 빌드 34: 모험가 계열 탭 · 던전 수거소 ── */
+.tabs.advcat .tab { padding: 6px 1px; font-size: 12px; letter-spacing: -.03em; white-space: nowrap; }
+.tabs.advcat .tab small { display: block; margin-top: 1px; font-size: 9px; color: var(--ink-3); }
+.tabs.advcat .tab.on small { color: var(--gold); }
+.tabs.advcat .tab.none:not(.on) { opacity: .55; }

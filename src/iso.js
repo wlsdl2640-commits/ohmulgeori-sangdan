@@ -18,7 +18,8 @@ const FLOOR_INFO = {
   tower:    { name: '마탑', win: 'b:tower' },
   airfield: { name: '비행장', win: 'b:airfield' },
   smithy:   { name: '대장간', win: 'b:smithy', under: 1 },
-  bank:     { name: '은행 금고', win: 'b:bank', under: 1 }
+  bank:     { name: '은행 금고', win: 'b:bank', under: 1 },
+  salvage:  { name: '던전 수거소', win: 'b:salvage', under: 1 }
 };
 const ROOM_C = {
   shop:     { wall: '#d6ba90', wall2: '#bc9e74', base: '#6a4a2a', fl: ['#9e774a', '#916c42'], plank: 1 },
@@ -33,7 +34,8 @@ const ROOM_C = {
   kitchen:  { wall: '#e0c8a0', wall2: '#c8ae86', base: '#6a4a2a', fl: ['#b8a07a', '#ac946e'], stone: 1 },
   tower:    { wall: '#5e4e80', wall2: '#4c3e6c', base: '#241c3a', fl: ['#6c5c8e', '#605082'] },
   smithy:   { wall: '#706458', wall2: '#5e544a', base: '#342c26', fl: ['#5c544c', '#524a42'], stone: 1 },
-  bank:     { wall: '#7c7c88', wall2: '#686874', base: '#34343e', fl: ['#a4a4ae', '#94949e'], stone: 1 }
+  bank:     { wall: '#7c7c88', wall2: '#686874', base: '#34343e', fl: ['#a4a4ae', '#94949e'], stone: 1 },
+  salvage:  { wall: '#8a7c68', wall2: '#746856', base: '#3a3026', fl: ['#6e6658', '#645c50'], stone: 1 }
 };
 const SEATS = 6;   // 여관 한 층의 방 수
 
@@ -54,6 +56,7 @@ function hqFloors() {
   const down = [];
   if (b.smithy) down.push({ id: 'smithy' });
   if (b.bank) down.push({ id: 'bank' });
+  if (b.salvage) down.push({ id: 'salvage' });   // 던전 수거소: 맨 아래 지하 창고
   const out = [];
   for (let k = up.length - 1; k >= 0; k--) out.push(Object.assign(up[k], { label: (k + 2) + 'F', lv: k + 2 }));
   out.push({ id: 'shop', label: '1F', lv: 1 });
@@ -150,6 +153,40 @@ const F = {
   stove: x => { ibox(x, 0, 0.2, 2, 0.8, 14, '#8a7a6a', '#6a5a4e', '#5a4a40'); ibox(x, 0.1, 0.25, 1.8, 0.7, 1, '#3a3430', '#2a2420', '#221c18', 14); const [fx, fy] = L(1, 1, 5); R(x, Math.round(fx) - 6, Math.round(fy) - 4, 12, 5, '#2a1a10'); R(x, Math.round(fx) - 4, Math.round(fy) - 3, 8, 3, '#f08a3c'); R(x, Math.round(fx) - 2, Math.round(fy) - 3, 4, 2, '#fff2a0'); const [px, py] = L(0.6, 0.5, 15); ell(x, Math.round(px), Math.round(py), 5, 2, '#3a3a44'); R(x, Math.round(px) - 4, Math.round(py) - 3, 8, 3, '#4a4a54'); const [qx, qy] = L(1.4, 0.5, 15); ell(x, Math.round(qx), Math.round(qy), 4, 2, '#2a2a30'); R(x, Math.round(qx) + 3, Math.round(qy) - 1, 5, 1, '#5e4028'); },
   pantry: x => { ibox(x, 0, 0.6, 2, 0.4, 26, '#9a7048', '#7a5432', '#664424'); for (let r = 0; r < 3; r++) { ibox(x, 0, 0.6, 2, 0.4, 1, '#b08454', '#8a6238', '#6e4c2a', 7 + r * 8); for (let i = 0; i < 5; i++) { const [px, py] = L(0.2 + i * 0.38, 0.95, 8 + r * 8); const c = ['#e8dcc0', '#c8504a', '#f0b43c', '#7ab85a', '#d8642a'][(i + r) % 5]; R(x, Math.round(px) - 1, Math.round(py) - 4, 3, 4, c); } } },
   pot: x => { ell(x, 0, 2, 11, 5, '#2a2a30'); ell(x, 0, -2, 12, 6, '#3a3a44'); ell(x, 0, -4, 10, 4, '#2a2a30'); ell(x, 0, -4, 8, 3, '#c8803a'); R(x, -1, -12, 2, 8, '#8a6238'); for (let i = 0; i < 3; i++) R(x, -4 + i * 4, -9 - (i % 2) * 2, 1, 2, 'rgba(230,230,230,0.6)'); },
+  // 빌드 34: 던전 수거소 — 던전 지도 게시판 · 분류대 · 부속품 칸 · 자루 · 손수레
+  mapboard: x => {
+    ibox(x, 0.1, 0.72, 2.8, 0.18, 28, '#7a5432', '#6e4c2a', '#5e4028', 4);
+    poly(x, [L(0.25, 0.9, 7), L(2.75, 0.9, 7), L(2.75, 0.9, 30), L(0.25, 0.9, 30)], '#d8c49a');
+    poly(x, [L(0.25, 0.9, 7), L(2.75, 0.9, 7), L(2.75, 0.9, 8.5), L(0.25, 0.9, 8.5)], '#b8a47a');
+    const pts = [[0.45, 11], [0.8, 17], [1.2, 13], [1.55, 22], [1.95, 16], [2.3, 25], [2.55, 19]];
+    for (let i = 0; i < pts.length - 1; i++) for (let k = 0; k < 6; k++) { const a = pts[i], b = pts[i + 1], u = k / 6; const [px, py] = L(a[0] + (b[0] - a[0]) * u, 0.9, a[1] + (b[1] - a[1]) * u); R(x, Math.round(px), Math.round(py), 1, 1, '#8a6a4a'); }
+    pts.forEach(([u, z], i) => { const [px, py] = L(u, 0.9, z); R(x, Math.round(px) - 1, Math.round(py) - 1, 3, 3, '#3a2a1a'); R(x, Math.round(px), Math.round(py), 1, 1, ['#e0503f', '#4a7af0', '#5ac84a', '#f0c24a', '#c03ad8', '#e0503f', '#f08a3c'][i]); });
+    for (const u of [0.35, 2.6]) { const [px, py] = L(u, 0.9, 0); R(x, Math.round(px), Math.round(py) - 4, 2, 4, '#5e4028'); }
+  },
+  sorttable: x => {
+    ibox(x, 0.1, 0.1, 1.8, 0.8, 2, '#9a7a52', '#7a5a36', '#644828', 9); R(x, -8, 2, 1, 8, '#5e4028'); R(x, 9, 2, 1, 8, '#5e4028');
+    for (const [c, u, v] of [['#e8e0c8', 0.45, 0.35], ['#5fbf5a', 0.95, 0.3], ['#8ad8ff', 1.45, 0.4], ['#f0c24a', 0.7, 0.65], ['#8a6a4a', 1.3, 0.7]]) { const [px, py] = L(u, v, 11); R(x, Math.round(px) - 2, Math.round(py) - 1, 5, 2, shade(c, -0.15)); R(x, Math.round(px) - 1, Math.round(py) - 2, 3, 1, c); R(x, Math.round(px), Math.round(py) - 3, 1, 1, shade(c, 0.25)); }
+    const [lx, ly] = L(1.7, 0.75, 11); R(x, Math.round(lx) - 2, Math.round(ly) - 1, 4, 2, '#f0e8d0'); R(x, Math.round(lx) - 1, Math.round(ly) - 1, 2, 1, '#8a6a4a');
+  },
+  bins: x => {
+    for (const u of [0, 1]) {
+      ibox(x, 0.05 + u, 0.25, 0.9, 0.65, 11, '#5e4028', '#8a6238', '#6e4c2a');
+      ibox(x, 0.12 + u, 0.32, 0.76, 0.51, 1, ['#e8e0c8', '#a8c8e0'][u], ['#c8c0a8', '#88a8c0'][u], ['#b0a890', '#7898b0'][u], 10);
+      for (let i = 0; i < 3; i++) { const [px, py] = L(0.3 + u + i * 0.2, 0.55, 12); R(x, Math.round(px), Math.round(py) - 1, 2, 2, [['#d8d0b8', '#f0e8d0', '#c0b8a0'], ['#8ad8ff', '#5ac8f0', '#c8f0ff']][u][i]); }
+    }
+  },
+  sacks: x => {
+    ell(x, -3, 0, 5, 4, '#a8946a'); ell(x, -3, -2, 4, 3, '#c0aa7a'); R(x, -4, -6, 2, 2, '#7a6444');
+    ell(x, 4, 1, 5, 4, '#9a8660'); ell(x, 4, -1, 4, 3, '#b49e72'); R(x, 3, -5, 2, 2, '#7a6444');
+    ell(x, 0, -6, 4, 3, '#b49e72'); ell(x, 0, -8, 3, 2, '#c8b282'); R(x, -1, -11, 2, 2, '#7a6444');
+  },
+  cart: x => {
+    ibox(x, 0.15, 0.2, 1.6, 0.6, 5, '#a07848', '#7e5a32', '#6a4826', 5);
+    ibox(x, 0.12, 0.17, 1.66, 0.66, 1, '#b08454', '#8a6238', '#6e4c2a', 10);
+    for (const [u, c] of [[0.5, '#c0aa7a'], [0.95, '#b49e72'], [1.35, '#a8946a']]) { const [px, py] = L(u, 0.5, 11); ell(x, Math.round(px), Math.round(py) - 2, 3, 2, c); R(x, Math.round(px), Math.round(py) - 5, 1, 1, '#7a6444'); }
+    for (const u of [0.45, 1.45]) { const [px, py] = L(u, 0.85, 3); ell(x, Math.round(px), Math.round(py), 3, 3, '#3a3040'); R(x, Math.round(px), Math.round(py), 1, 1, '#9aa0a8'); }
+    const [hx, hy] = L(1.85, 0.5, 9); R(x, Math.round(hx), Math.round(hy) - 1, 6, 1, '#6e4c2a');
+  },
   bollard: x => { ibox(x, 0.3, 0.3, 0.4, 0.4, 8, '#6a6a72', '#52525a', '#42424a'); R(x, -1, -9, 2, 1, '#9aa0a8'); },
   flywagon: x => { ibox(x, 0.2, 0.2, 2.6, 1.2, 14, '#8a6238', '#6e4c2a', '#5e4028'); ibox(x, 0.1, 0.1, 2.8, 1.4, 3, '#a07848', '#7e5a32', '#6a4826', 14); for (const sx of [-18, 14]) { R(x, sx, -24, 10, 2, '#e8e0d0'); R(x, sx + 2, -27, 8, 3, '#e8e0d0'); R(x, sx + 4, -30, 6, 3, '#d8d0c0'); } R(x, -4, -9, 8, 5, '#2a2a34'); }
 };
@@ -167,10 +204,11 @@ const LAYOUT = {
   stable: [['hay', 0, 0, 1, 1, 8, 'b:stable'], ['hay', 1, 0, 1, 1, 8, 'b:stable'], ['trough', 3, 0, 2, 1, 8, 'b:stable'], ['trough', 6, 0, 2, 1, 8, 'b:stable'], ['fence', 0, 4, 2, 1, 14], ['fence', 0, 7, 2, 1, 14], ['barrel', 8, 8, 1, 1, 12], ['crate', 8, 7, 1, 1, 10], ['lamp', 8, 1, 1, 1, 28]],
   library: [['bigbooks', 0, 0, 3, 1, 36, 'b:library'], ['bigbooks', 3.5, 0, 3, 1, 36, 'b:library'], ['books', 0, 3, 2, 1, 30, 'b:library'], ['table', 4, 4, 2, 1, 16, 'b:library'], ['lectern', 7, 2, 1, 1, 14, 'b:library'], ['stool', 5, 5.5, 1, 1, 6], ['lamp', 8, 7, 1, 1, 28], ['plant', 0, 8, 1, 1, 18]],
   kitchen: [['stove', 1, 0, 2, 1, 22, 'b:kitchen'], ['pantry', 4, 0, 2, 1, 28, 'b:kitchen'], ['pot', 6.5, 3.5, 1, 1, 14, 'b:kitchen'], ['table', 2, 4, 2, 1, 16, 'b:kitchen'], ['stool', 2.5, 5.6, 1, 1, 6], ['stool', 4, 5.6, 1, 1, 6], ['barrel', 8, 1, 1, 1, 12], ['crate', 8, 2, 1, 1, 10], ['crate', 0, 6, 1, 1, 10], ['lamp', 0, 3, 1, 1, 28], ['plant', 8, 8, 1, 1, 18]],
+  salvage: [['mapboard', 1, 0, 3, 1, 34, 'b:salvage'], ['bins', 5, 0, 2, 1, 14, 'b:salvage'], ['sorttable', 3, 3.5, 2, 1, 14, 'b:salvage'], ['sacks', 8, 0, 1, 1, 14], ['sacks', 8, 1.3, 1, 1, 14], ['cart', 6, 5.6, 2, 1, 16], ['crate', 0, 5, 1, 1, 10], ['crate', 0, 6, 1, 1, 10], ['crate', 1, 6.1, 1, 1, 10], ['barrel', 8, 8, 1, 1, 12], ['lamp', 0, 3, 1, 1, 28], ['lamp', 8, 4, 1, 1, 28], ['chest', 0, 8, 1, 1, 10, 'inv']],
   airfield: [['flywagon', 2, 2, 3, 2, 30, 'b:airfield'], ['windsock', 8, 0, 1, 1, 34], ['bollard', 0, 7, 1, 1, 8], ['bollard', 3, 7, 1, 1, 8], ['bollard', 6, 7, 1, 1, 8], ['crate', 7, 0, 1, 1, 10], ['crate', 0, 0, 1, 1, 10], ['barrel', 8, 5, 1, 1, 12], ['lamp', 0, 4, 1, 1, 28]]
 };
 const STAND_POS = [[2, 3], [4, 3], [6, 3], [2, 5], [4, 5], [6, 5], [3, 7], [5, 7], [7, 7], [8, 4]];
-const CENTERED = ['barrel', 'plant', 'lamp', 'dummy', 'cauldron', 'gold', 'coal', 'circle', 'scope', 'pot'];
+const CENTERED = ['barrel', 'plant', 'lamp', 'dummy', 'cauldron', 'gold', 'coal', 'circle', 'scope', 'pot', 'sacks'];
 // 여관 방 r: 뒤쪽 셋 (ty 0~3), 앞쪽 셋 (ty 5~8)
 const roomAt = r => ({ tx: (r % 3) * 3, ty: r < 3 ? 0 : 5 });
 const BED_SPOT = [[2, 3], [4, 3], [6, 3], [1, 6], [3, 6], [5, 6], [7, 6]];   // 신전 환자 침대
@@ -365,6 +403,15 @@ function wallDecor(g, f, night) {
     for (let i = 0; i < 2; i++) poly(g, [scr(0, 5 + i * 1.6, 28), scr(0, 6.2 + i * 1.6, 28), scr(0, 6.2 + i * 1.6, 44), scr(0, 5 + i * 1.6, 44)], ['#3f6a9a', '#6a4a8a'][i]);
   } else if (f.id === 'airfield') {
     winR(g, 1, 3, 20, 48, sky); winR(g, 5, 7, 20, 48, sky); winL(g, 1, 3, 20, 48, sky); winL(g, 5, 7, 20, 48, sky);
+  } else if (f.id === 'salvage') {
+    // 왼쪽 벽: 공략한 던전마다 주인 부속품을 하나씩 올려 둔 선반 두 단
+    for (const z of [34, 46]) { poly(g, [scr(0, 0.7, z), scr(0, 6.6, z), scr(0, 6.6, z + 1.6), scr(0, 0.7, z + 1.6)], '#6e4c2a'); poly(g, [scr(0, 0.7, z - 1), scr(0, 6.6, z - 1), scr(0, 6.6, z), scr(0, 0.7, z)], '#4a3020'); }
+    salvTrophies().forEach((c, i) => { const [x, y] = scr(0, 1.1 + (i % 6) * 0.95, i < 6 ? 35.6 : 47.6); R(g, Math.round(x) - 1, Math.round(y) - 4, 3, 4, c); R(g, Math.round(x) - 1, Math.round(y) - 4, 1, 1, '#fff6d8'); R(g, Math.round(x) - 1, Math.round(y), 3, 1, shade(c, -0.35)); });
+    // 뒤 벽: 곡괭이·삽 걸이와 수거소 간판
+    for (let i = 0; i < 3; i++) { const [x, y] = scr(5.5 + i * 0.75, 0, 42); R(g, Math.round(x), Math.round(y), 1, 13, '#8a6238'); if (i === 1) R(g, Math.round(x) - 2, Math.round(y) + 12, 5, 3, '#9aa0a8'); else R(g, Math.round(x) - 3, Math.round(y), 7, 2, '#9aa0a8'); }
+    poly(g, [scr(1.3, 0, 40), scr(3.7, 0, 40), scr(3.7, 0, 47), scr(1.3, 0, 47)], '#5e4028');
+    poly(g, [scr(1.45, 0, 41), scr(3.55, 0, 41), scr(3.55, 0, 46), scr(1.45, 0, 46)], '#8a6a3a');
+    for (let i = 0; i < 3; i++) poly(g, [scr(1.75 + i * 0.6, 0, 42.5), scr(2.1 + i * 0.6, 0, 42.5), scr(2.1 + i * 0.6, 0, 44.5), scr(1.75 + i * 0.6, 0, 44.5)], '#e8d8a8');
   } else if (f.id === 'bank') {
     poly(g, [scr(0, 3, 22), scr(0, 6, 22), scr(0, 6, 42), scr(0, 3, 42)], '#4a4a56');
     poly(g, [scr(0, 3.2, 24), scr(0, 5.8, 24), scr(0, 5.8, 40), scr(0, 3.2, 40)], '#2a2a34');
@@ -397,6 +444,7 @@ function sceneOf(f, t) {
   if (f.id === 'stable') stableScene(it, t);
   if (f.id === 'library') { staffAt(it, STAFF.sage, 6.5, 4.6, 'read', t, 'b', 1); }
   if (f.id === 'airfield') { staffAt(it, STAFF.coach, 6.2, 3.2, 'idle', t, 'f', 0); }
+  if (f.id === 'salvage') salvScene(it, t);
   return out;
 }
 // 마구간: 산 말과 맨 펫이 칸마다 서 있다 (누르면 마구간 창)
@@ -597,6 +645,7 @@ function hqLights(f, t) {
   if (f.id === 'tower') add(4.5, 4.5, 20, 56, '#b88aff');
   if (f.id === 'smithy') { add(2, 1.6, 8, 64, '#f08a3c'); add(5, 5, 30, 34, '#f0c060'); }
   if (f.id === 'bank') { add(0.5, 6.5, 26, 40, '#f0c060'); add(7.5, 1.5, 6, 30, '#f0d070'); }
+  if (f.id === 'salvage') { add(0.5, 3.5, 26, 36, '#f0c060'); add(8.5, 4.5, 26, 36, '#f0c060'); add(4, 4, 18, 30, '#e8c890'); }
   if (f.id === 'stable') { add(8.5, 1.5, 26, 40, '#f0c060'); add(2.5, 4.5, 20, 34, '#f0c060'); }
   if (f.id === 'library') { add(8.5, 7.5, 26, 40, '#f0c060'); add(4.5, 4.5, 18, 36, '#f0d070'); }
   if (f.id === 'airfield') { add(0.5, 4.5, 26, 40, '#f0c060'); add(3.5, 3, 20, 46, '#bfe0ff'); }

@@ -65,6 +65,10 @@ const ACHV = [
   { id: 'hero2', cat: '모험가', name: '한계를 넘어', desc: '2차 각성한 초월 용사 1명', need: 1, get: () => S.advs.filter(a => a.hero2).length + ((S.hall || []).filter(h => h.hero2).length), rw: { gold: 50000, fame: 50, item: ['wizstone', 1] } },
   { id: 'lv150', cat: '모험가', name: '별에 닿다', desc: '모험가 Lv150', need: 1, get: () => (S.advs.some(a => a.lv >= 150) || (S.hall || []).some(h => h.lv >= 150) ? 1 : 0), rw: { gold: 100000, fame: 80, item: ['bloomstone', 1] } }
 ];
+ACHV.push(   // 빌드 34: 던전 수거소
+  { id: 'salv1', cat: '살림', name: '수거꾼의 첫 짐', desc: '던전 수거소가 부속품 50개 가져오기', need: 50, get: () => S.stats.salvaged || 0, rw: { gold: 3000 } },
+  { id: 'salv2', cat: '살림', name: '주인의 흔적', desc: '수거소가 던전 주인 부속품 20개 가져오기', need: 20, get: () => S.stats.salvBoss || 0, rw: { gold: 20000, fame: 15 } }
+);
 const ACHV_CATS = ['사냥', '장사', '모험가', '살림'];
 const achvDone = () => Object.keys(S.achv || {}).length;
 function achvCur(A) { try { return Math.min(A.need, A.get() || 0); } catch (_) { return 0; } }

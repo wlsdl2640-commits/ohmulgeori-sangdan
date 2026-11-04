@@ -19,7 +19,12 @@ const STAFF = {
   clerk:   { key: 'Sclerk', hair: '#30304a', skin: '#f1c9a5', body: '#2a3a5a', legs: '#2a2a3a', glasses: 1, tie: 1, style: 0 },
   innkeep: { key: 'Sinn', hair: '#7a2f22', skin: '#e0ac7e', body: '#8a5a9a', legs: '#4a3a2a', apron: '#e8dcb8', style: 1 },
   coach:   { key: 'Scoach', hair: '#5a3a22', skin: '#c68a5e', body: '#a8432f', legs: '#3a3040', style: 2, beard: 1 },
-  cook:    { key: 'Scook', hair: '#3a2a1a', skin: '#f1c9a5', body: '#f4f0e4', legs: '#4a3a2a', apron: '#e8e2d0', style: 0, hat: 'band', mustache: 1 }
+  cook:    { key: 'Scook', hair: '#3a2a1a', skin: '#f1c9a5', body: '#f4f0e4', legs: '#4a3a2a', apron: '#e8e2d0', style: 0, hat: 'band', mustache: 1 },
+  // 빌드 34: 던전 수거소 (장부 담당 · 수거꾼 셋)
+  sorter:  { key: 'Ssorter', hair: '#4a3020', skin: '#e0ac7e', body: '#7a6a4a', legs: '#3a3040', apron: '#c8b890', glasses: 1, style: 1 },
+  salvor:  { key: 'Ssalv1', hair: '#3a2a1a', skin: '#c68a5e', body: '#5a6a3a', legs: '#3a3a2a', style: 2, hat: 'cap', hatc: '#8a6a3a', bag: 1 },
+  salvor2: { key: 'Ssalv2', hair: '#8a5a2a', skin: '#f1c9a5', body: '#6a4a3a', legs: '#2a2a3a', style: 0, hat: 'scarf', hatc: '#a8432f', bag: 1 },
+  salvor3: { key: 'Ssalv3', hair: '#2a2a2a', skin: '#e0ac7e', body: '#3f5a7a', legs: '#3a3040', style: 3, beard: 1, bag: 1 }
 };
 // 본부의 작은 모험가: 직업 차림(PXL)에서 색과 모자를 고른다
 const HAT_OF = { helm: 'helm', great: 'greathelm', winged: 'greathelm', glad: 'bronze', horn: 'horns', dragon: 'dragon', hood: 'hood', hoodup: 'hood', cowl: 'hood', coif: 'hood', coif2: 'hood',

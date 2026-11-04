@@ -18,13 +18,13 @@ function blankState(company) {
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
-    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0 },
+    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0, salvage: 0 },
     stable: { horses: {} }, league: null, presets: [], wx: { seed: Math.floor(Math.random() * 1e9) },
     settleDay: MONTH_DAYS,
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -725,6 +725,7 @@ function upgrade(bid) {
   if (bid === 'stable' && lv === 0) queueModal({ title: '마구간', body: STORY.stable });
   if (bid === 'library' && lv === 0) queueModal({ title: '도서관', body: STORY.library });
   if (bid === 'kitchen' && lv === 0) queueModal({ title: '주방', body: STORY.kitchen });
+  if (bid === 'salvage' && lv === 0) queueModal({ title: '던전 수거소', body: STORY.salvage });
   log(`${B.name}을(를) ${lv ? 'Lv' + (lv + 1) + '로 넓혔다' : '지었다'}.`, 'good');
   changed();
   return '';
@@ -1143,7 +1144,9 @@ function onNewDay(k) {
   if (k % 2 === 0) rollCands();
   S.reqs = S.reqs.filter(r => { if (r.due < k) { log(`${r.client}의 의뢰가 기한을 넘겨 취소됐다.`); return false; } return true; });
   if (k % 2 === 1 || S.reqs.length < 2) genReq();
+  const salv = salvageDay(k);   // 던전 수거소: 새벽에 수거꾼이 돌아온다 (의뢰 자동 전달보다 먼저)
   autoFulfill();
+  if (salv) autoSellRun('수거소');
   if (S.bld.bank) bankDay(k);
   researchDay(k);
   raidDay();
@@ -1222,14 +1225,14 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
     S.bank = S.bank || { offers: [], deps: [], loans: [] };
     S.research = S.research || { lv: {}, cur: null }; S.spons = S.spons || {};
     ALL_FIELDS.forEach(f => { S.fields[f] = S.fields[f] || newField(); });
-    ['smithy', 'bank', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    ['smithy', 'bank', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen', 'salvage'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
     S.stable = S.stable || { horses: {} };
     const old = S.v;
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
@@ -1249,6 +1252,7 @@ function loadFrom(v) {
     notes30();
     if (old < 7) { migrate7(); saveGame(); }
     notes31();
+    notes34();
     return true;
   } catch (_) { return false; }
 }
@@ -1286,6 +1290,7 @@ function migrate7() {
   if (cut) log(`파티 인원 규칙이 바뀌었다 (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지). 넘치던 ${cut}명을 대기로 돌렸다.`);
   if (wt) log(`모험가 ${wt}명이 날씨를 타는 체질을 드러냈다. 모험가 창의 특성에서 볼 수 있다.`);
 }
+function notes34() { if (!S.flags.v34) { S.flags.v34 = 1; S.bld.salvage = S.bld.salvage || 0; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '던전 수거소', body: STORY.v34 }); } }
 function notes31() { if (!S.flags.v31) { S.flags.v31 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 · 요리 · 교역 · 2차 각성', body: STORY.v31 }); } }
 function notes30() { if (!S.flags.v30) { S.flags.v30 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '북쪽 변경 · 하늘 · 마구간', body: STORY.v30 }); } }
 // 의상·숙련도 칸 (없으면 만든다)

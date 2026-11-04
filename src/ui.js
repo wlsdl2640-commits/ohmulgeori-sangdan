@@ -198,7 +198,7 @@ function hqOpen(h) {
   if (!w) return;
   if (w.startsWith('b:')) openWin('b', { b: w.slice(2) }); else openWin(w);
 }
-const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0', stable: 'stable0', library: 'library0', airfield: 'airfield0', kitchen: 'kitchen0' };
+const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0', stable: 'stable0', library: 'library0', airfield: 'airfield0', kitchen: 'kitchen0', salvage: 'salvage0' };
 
 /* ───────── 배속 ───────── */
 function renderSpeed() {
