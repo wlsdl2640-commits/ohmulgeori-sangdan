@@ -167,6 +167,79 @@ function frontSlots(n) {
   for (let i = 0; i < front; i++) out.push([Math.round(120 + (i - (front - 1) / 2) * 44 + (front === back ? 22 : 0)), 191]);
   return out;
 }
+/* ───────── 왕국 상단의 마차: 방문하는 동안 상단 앞 오른쪽에 서 있고, 올 때 굴러 들어오고 갈 때 굴러 나간다 ───────── */
+const COACH_PARK = 166;   // 서 있을 때 마차 몸통 왼쪽 끝 x (말은 그 왼쪽, 문 앞을 가리지 않게)
+const COACH_RUN = 3.2;    // 들어오고 나가는 데 걸리는 시간(초)
+function coachState(t) {
+  const v = S.king && S.king.visit, k = v ? v.k : null;
+  if (k !== V.coachK) {   // 방문이 시작됐거나(들어온다) 끝났다(나간다)
+    if (k) V.coach = { k, t0: t, out: 0 };
+    else if (V.coach) { V.coach.out = 1; V.coach.t0 = t; }
+    V.coachK = k;
+  }
+  const c = V.coach;
+  if (!c || !KINGDOMS[c.k]) return null;
+  const p = Math.min(1, (t - c.t0) / COACH_RUN), far = AW + 120;
+  if (c.out) { if (p >= 1) { V.coach = null; return null; } return { k: c.k, x: Math.round(COACH_PARK + (far - COACH_PARK) * p * p), moving: 1 }; }
+  const ease = 1 - Math.pow(1 - p, 3);
+  return { k: c.k, x: Math.round(far - (far - COACH_PARK) * ease), moving: p < 1 };
+}
+// 왼쪽을 보는 화려한 사륜마차. X: 몸통 왼쪽 끝, gy: 땅. 왕국 색 몸통에 금 테두리, 백마 두 필, 마부.
+// 작은 캔버스에 원래 크기로 그린 뒤 COACH_Z배로 또렷하게 키워 붙인다 (사람보다 큼직하게)
+const COACH_Z = 1.5, COACH_OX = 52, COACH_OY = 57;
+function drawCoach(w0, X, gy, t, D, moving, lights, dark) {
+  if (!V.coachCv) V.coachCv = mkCanvas(112, 60);
+  const [cv, w] = V.coachCv; w.clearRect(0, 0, cv.width, cv.height);
+  const x = COACH_OX, gy0 = COACH_OY;
+  shadowAt(w0, X + 24 * COACH_Z, gy, 30); shadowAt(w0, X - 22 * COACH_Z, gy, 14);
+  const C = D.c, Cd = shade(C, -0.38), Cl = shade(C, 0.22), G = D.c2, Gd = shade(G, -0.3), Gl = shade(G, 0.35);
+  const WD = '#4a3020', WDd = '#2e1c10', IR = '#26262e', GL = '#1a1a26';
+  const bob = moving ? (Math.floor(t * 8) % 2 ? -1 : 0) : 0;
+  const horse = (hx, hy, c, ph) => {   // hx: 가슴 앞(왼쪽) x, hy: 발 딛는 선
+    const cd = shade(c, -0.28), mane = '#3a2a22';
+    [[hx + 4, 0], [hx + 7, 2], [hx + 14, 1], [hx + 17, 3]].forEach(([lx, k]) => { const sw = moving ? Math.round(Math.sin(t * 15 + k * 1.6 + ph) * 2) : 0; R(w, lx + sw, hy - 8, 2, 8, k % 2 ? cd : c); R(w, lx + sw, hy - 1, 2, 1, '#1e1a1a'); });
+    ell(w, hx + 11, hy - 11, 9, 4, c); R(w, hx + 4, hy - 9, 14, 1, cd);
+    R(w, hx + 2, hy - 18, 4, 7, c); R(w, hx + 1, hy - 20, 4, 3, c); R(w, hx - 3, hy - 20, 5, 3, c); R(w, hx - 3, hy - 18, 3, 1, cd);
+    R(w, hx + 2, hy - 22, 1, 2, c); R(w, hx + 4, hy - 22, 1, 2, c); R(w, hx - 2, hy - 19, 1, 1, '#1a1a1a');
+    for (let i = 0; i < 6; i++) R(w, hx + 5 + i, hy - 20 + i, 1, 2, mane);
+    const tf = Math.round(Math.sin(t * 3 + ph)); R(w, hx + 20, hy - 13, 1, 3, mane); R(w, hx + 21 + tf, hy - 11, 1, 5, mane);
+    R(w, hx + 8, hy - 14, 1, 6, G); R(w, hx - 3, hy - 18, 6, 1, G); R(w, hx + 1, hy - 23, 1, 1, G);   // 금 마구와 깃
+  };
+  const wheel = (cx, cy, r) => {
+    disc(w, cx, cy, r, IR); disc(w, cx, cy, r - 1, '#5a4a3a'); disc(w, cx, cy, r - 2, '#16141a');
+    const a0 = moving ? -t * 9 : 0.4;
+    for (let i = 0; i < 4; i++) { const a = a0 + i * Math.PI / 4; for (let s = -(r - 2); s <= r - 2; s++) R(w, Math.round(cx + Math.cos(a) * s), Math.round(cy + Math.sin(a) * s), 1, 1, '#c8a060'); }
+    disc(w, cx, cy, 1, G);
+  };
+  const gyS = gy; const y = gy0 + bob; gy = gy0;
+  horse(x - 30, gy - 2, '#d8d0c4', 1.3); horse(x - 33, gy, '#ece6dc', 0);
+  R(w, x - 12, y - 11, 16, 1, WD); R(w, x - 14, y - 12, 3, 1, WD);   // 끌채
+  for (let i = 0; i < 25; i++) R(w, x - 6 - i, y - 35 + Math.round(i * 0.68), 1, 1, '#5a4a3a');   // 고삐
+  // 차대·발판·몸통
+  R(w, x + 2, y - 12, 42, 2, WDd); R(w, x - 2, y - 11, 5, 2, WD); R(w, x + 44, y - 10, 4, 1, WD);
+  R(w, x + 4, y - 32, 38, 19, C); R(w, x + 6, y - 13, 34, 2, C); R(w, x + 8, y - 11, 30, 1, Cd);
+  R(w, x + 4, y - 32, 38, 1, Cl); R(w, x + 4, y - 14, 38, 1, Cd);
+  R(w, x + 4, y - 25, 38, 1, G); R(w, x + 4, y - 16, 38, 1, Gd); R(w, x + 4, y - 32, 1, 18, Gd); R(w, x + 41, y - 32, 1, 18, Gd);
+  for (const wx of [x + 8, x + 30]) { R(w, wx, y - 30, 8, 7, GL); R(w, wx, y - 30, 2, 7, G); R(w, wx + 6, y - 30, 2, 7, G); R(w, wx + 2, y - 29, 4, 2, '#4a5a7a'); }
+  R(w, x + 19, y - 31, 9, 17, Cd); R(w, x + 20, y - 30, 7, 15, C); R(w, x + 21, y - 29, 5, 5, GL); R(w, x + 22, y - 28, 3, 1, '#4a5a7a');
+  disc(w, x + 23, y - 20, 2, G); R(w, x + 22, y - 21, 3, 1, Gl); R(w, x + 26, y - 23, 1, 2, Gl);   // 문장과 손잡이
+  // 지붕과 짐 난간, 꼭대기 장식, 뒤 짐가방
+  R(w, x + 2, y - 35, 42, 3, '#2a2228'); R(w, x + 2, y - 35, 42, 1, '#3e343a'); R(w, x + 6, y - 37, 34, 2, '#3a2e34'); for (let i = 0; i < 6; i++) R(w, x + 8 + i * 6, y - 38, 1, 1, G);
+  R(w, x + 22, y - 40, 2, 3, G); R(w, x + 21, y - 41, 4, 1, Gl);
+  R(w, x + 42, y - 24, 5, 10, '#6a4a30'); R(w, x + 42, y - 24, 5, 1, '#8a6a44'); R(w, x + 43, y - 20, 3, 1, G);
+  // 앞 등불
+  R(w, x + 1, y - 31, 1, 3, IR); R(w, x - 1, y - 28, 4, 5, '#3a3a40'); R(w, x, y - 27, 2, 3, dark > 0.12 ? '#ffe8a0' : '#f0c060');
+  if (lights && dark > 0.12) lights.push({ x: X + 1 * COACH_Z, y: gyS - 26 * COACH_Z, r: 34, c: '#f0c060', glow: 1, flick: 1 });
+  // 마부석과 마부 (모자·얼굴·왕국 색 외투·채찍)
+  R(w, x - 6, y - 33, 14, 2, WD); R(w, x - 6, y - 31, 2, 3, WD); R(w, x + 6, y - 31, 2, 3, WD);
+  R(w, x - 3, y - 31, 2, 3, '#2a2228'); R(w, x, y - 31, 2, 3, '#2a2228'); R(w, x - 3, y - 28, 2, 1, '#1a1a1a'); R(w, x, y - 28, 2, 1, '#1a1a1a');   // 다리·구두
+  R(w, x - 3, y - 38, 7, 5, G); R(w, x - 3, y - 38, 7, 1, Gl); R(w, x - 5, y - 36, 3, 1, G); R(w, x - 6, y - 36, 1, 1, '#e8b890');   // 외투·팔·손
+  R(w, x - 1, y - 41, 3, 3, '#e8b890'); R(w, x - 2, y - 43, 5, 2, '#2a2228'); R(w, x - 1, y - 45, 3, 2, '#2a2228'); R(w, x - 2, y - 42, 5, 1, G);   // 얼굴·모자
+  if (moving) { R(w, x - 9, y - 45, 1, 9, '#6a4a30'); R(w, x - 12 + (Math.floor(t * 6) % 2), y - 47, 3, 2, '#6a4a30'); }
+  // 바퀴 (가까운 쪽이라 몸통 위에)
+  wheel(x + 37, gy - 8, 8); wheel(x + 9, gy - 6, 6);
+  w0.drawImage(cv, 0, 0, cv.width, cv.height, X - COACH_OX * COACH_Z, gyS - COACH_OY * COACH_Z, cv.width * COACH_Z, cv.height * COACH_Z);
+}
 function townScene(w, t, p, lights, post, dark) {
   // 거리를 지나가는 사람들 (파티 뒤, 밤에는 한 명만)
   TOWNSFOLK.forEach((v, i) => {
@@ -174,6 +247,8 @@ function townScene(w, t, p, lights, post, dark) {
     const span = AW + 70, k = ((t * v.sp + v.off) % span + span) % span, x = v.dir > 0 ? k - 35 : AW + 35 - k;
     w.save(); w.translate(Math.round(x), 181); shadowAt(w, 0, 0, 7); if (v.dir < 0) w.scale(-1, 1); drawAdv(w, v, t, { walk: 1, ph: i, side: 1, z: zq(1.1) }); w.restore();
   });
+  const coach = coachState(t);   // 왕국 상단의 마차 (파티 뒤)
+  if (coach) drawCoach(w, coach.x, 181, t, KINGDOMS[coach.k], coach.moving, lights, dark);
   let list = p ? teamOf(p) : [];
   if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6);
   list = list.slice(0, 6);

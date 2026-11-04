@@ -12,16 +12,17 @@ Object.assign(KINGDOMS.sarak,    { sells: ['scorpion_stinger', 'sand_silk', 'wor
 
 // 드랍으로는 얻을 수 없는 스킬: 왕국 상단(kingdom)과 투기장 상단(arena)에서만 판다
 const UNDER_SKILLS = {
-  kn_charge: { name: '기사단 돌격',  cls: ['warrior'],          lv: 24, cost: { mp: 14 }, cd: 9,  kind: 'dmg',  mult: 2.6, tgt: 'front', crit: 0.1, desc: '잉그리시아 기사단의 돌격. 앞의 적을 꿰뚫는다.', kingdom: 'inglisia' },
-  kn_wall:   { name: '왕국 방패술',  cls: ['warrior'],          lv: 30, cost: { mp: 16 }, cd: 18, kind: 'buff', stat: 'def', mult: 1.5, dur: 8, tgt: 'party', desc: '8초 동안 파티의 방어력을 올린다.', kingdom: 'inglisia' },
-  fr_wit:    { name: '상인의 재치',  cls: ['rogue', 'archer'],  lv: 26, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'eva', add: 0.15, dur: 8, tgt: 'party', desc: '8초 동안 파티가 공격을 더 잘 피한다.', kingdom: 'frama' },
-  fr_song:   { name: '남해의 노래',  cls: ['archer', 'cleric'], lv: 32, cost: { mp: 18 }, cd: 12, kind: 'heal', mult: 1.1, tgt: 'party', desc: '파티 전원을 치료하는 바닷노래.', kingdom: 'frama' },
-  el_arrow:  { name: '정령의 화살',  cls: ['archer'],           lv: 28, cost: { mp: 14 }, cd: 7,  kind: 'mdmg', mult: 2.4, tgt: 'low', fx: 'arrow', desc: '정령의 힘을 실은 화살. 마법 피해를 준다.', kingdom: 'elves' },
-  el_breath: { name: '숲의 숨결',    cls: ['cleric', 'mage'],   lv: 34, cost: { mp: 20 }, cd: 14, kind: 'heal', mult: 1.3, tgt: 'party', desc: '세계수의 숨결로 파티를 치료한다.', kingdom: 'elves' },
-  dw_smash:  { name: '브론하임 강타', cls: ['warrior', 'porter'], lv: 30, cost: { mp: 16 }, cd: 10, kind: 'dmg', mult: 3.2, tgt: 'front', fx: 'jump', desc: '드워프식 망치질. 한 놈을 크게 친다.', kingdom: 'dwarves' },
-  dw_grit:   { name: '광부의 끈기',  cls: ['porter', 'warrior'], lv: 26, cost: { mp: 10 }, cd: 20, kind: 'buff', stat: 'def', mult: 2.2, dur: 7, tgt: 'self', desc: '7초 동안 방어력이 크게 오른다.', kingdom: 'dwarves' },
-  sa_mirage: { name: '사막의 신기루', cls: ['mage'],            lv: 32, cost: { mp: 22 }, cd: 11, kind: 'mdmg', mult: 1.4, tgt: 'all', fx: 'fire', desc: '모든 적을 태우는 신기루.', kingdom: 'sarak' },
-  sa_curse:  { name: '술탄의 저주',  cls: ['mage', 'cleric'],   lv: 36, cost: { mp: 18 }, cd: 12, kind: 'dot',  mult: 0.9, dur: 8, tgt: 'all', magic: 1, fx: 'dark', desc: '8초 동안 모든 적에게 저주 피해를 준다.', kingdom: 'sarak' },
+  // 왕국 상단 스킬북: 비싸고 2차 전직 뒤에만 배운다. 같은 레벨대 고유 스킬보다 한 수 위
+  kn_charge: { name: '기사단 돌격',  cls: ['warrior'],          lv: 24, tier: 2, cost: { mp: 14 }, cd: 9,  kind: 'dmg',  mult: 3.4, tgt: 'front', crit: 0.15, boss: 1.2, sta: { k: 'stun', p: 0.25, d: 1.5, m: 0 }, desc: '잉그리시아 기사단의 돌격. 앞의 적을 꿰뚫고 잠시 비틀거리게 한다.', kingdom: 'inglisia' },
+  kn_wall:   { name: '왕국 방패술',  cls: ['warrior'],          lv: 30, tier: 2, cost: { mp: 16 }, cd: 16, kind: 'buff', stat: 'def', mult: 1.7, dur: 10, tgt: 'party', desc: '10초 동안 파티의 방어력을 크게 올린다.', kingdom: 'inglisia' },
+  fr_wit:    { name: '상인의 재치',  cls: ['rogue', 'archer'],  lv: 26, tier: 2, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'eva', add: 0.22, haste: 1.1, dur: 10, tgt: 'party', desc: '10초 동안 파티가 공격을 더 잘 피하고 손이 빨라진다.', kingdom: 'frama' },
+  fr_song:   { name: '남해의 노래',  cls: ['archer', 'cleric'], lv: 32, tier: 2, cost: { mp: 18 }, cd: 11, kind: 'heal', mult: 1.5, tgt: 'party', desc: '파티 전원을 크게 치료하는 바닷노래.', kingdom: 'frama' },
+  el_arrow:  { name: '정령의 화살',  cls: ['archer'],           lv: 28, tier: 2, cost: { mp: 14 }, cd: 7,  kind: 'mdmg', mult: 3.2, tgt: 'low', fx: 'arrow', crit: 0.15, desc: '정령의 힘을 실은 화살. 큰 마법 피해를 주고 적을 얼린다.', kingdom: 'elves' },
+  el_breath: { name: '숲의 숨결',    cls: ['cleric', 'mage'],   lv: 34, tier: 2, cost: { mp: 20 }, cd: 14, kind: 'heal', mult: 1.7, tgt: 'party', cures: ['poison', 'bleed'], desc: '세계수의 숨결로 파티를 크게 치료하고 중독·출혈을 푼다.', kingdom: 'elves' },
+  dw_smash:  { name: '브론하임 강타', cls: ['warrior', 'porter'], lv: 30, tier: 2, cost: { mp: 16 }, cd: 11, kind: 'dmg', mult: 4.2, tgt: 'front', fx: 'jump', sta: { k: 'stun', p: 0.3, d: 2, m: 0 }, desc: '드워프식 망치질. 한 놈을 크게 치고 기절시킨다.', kingdom: 'dwarves' },
+  dw_grit:   { name: '광부의 끈기',  cls: ['porter', 'warrior'], lv: 26, tier: 2, cost: { mp: 10 }, cd: 20, kind: 'buff', stat: 'def', mult: 2.6, dur: 9, tgt: 'self', desc: '9초 동안 방어력이 아주 크게 오른다.', kingdom: 'dwarves' },
+  sa_mirage: { name: '사막의 신기루', cls: ['mage'],            lv: 32, tier: 2, cost: { mp: 22 }, cd: 11, kind: 'mdmg', mult: 1.9, tgt: 'all', fx: 'fire', desc: '모든 적을 태우는 신기루.', kingdom: 'sarak' },
+  sa_curse:  { name: '술탄의 저주',  cls: ['mage', 'cleric'],   lv: 36, tier: 2, cost: { mp: 18 }, cd: 12, kind: 'dot',  mult: 1.1, dur: 8, tgt: 'all', magic: 1, fx: 'dark', desc: '8초 동안 모든 적에게 저주 피해를 준다.', kingdom: 'sarak' },
   // 투기장 상단
   ar_roar:   { name: '검투사의 함성', cls: ['warrior'],         lv: 20, cost: { mp: 14 }, cd: 16, kind: 'buff', stat: 'atk', mult: 1.35, dur: 8, tgt: 'party', desc: '8초 동안 파티의 공격력을 올린다.', arena: 1 },
   ar_sand:   { name: '모래 뿌리기',  cls: ['rogue', 'warrior'], lv: 20, cost: { mp: 8 },  cd: 12, kind: 'buff', stat: 'eva', add: 0.2, dur: 6, tgt: 'self', desc: '적의 눈에 모래를 뿌려 6초 동안 공격을 잘 피한다.', arena: 1 },
@@ -34,7 +35,7 @@ Object.assign(SKILLS, UNDER_SKILLS);
 Object.keys(UNDER_SKILLS).forEach(id => {
   const s = SKILLS[id];
   SKILL_IDS.push(id);
-  ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 120 + s.lv * 50, w: 1, icon: 'book', c: s.arena ? '#f0b43c' : (BOOK_COLORS[s.cls[0]] || '#4a8ac8'), book: id, rare: 1 };
+  ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: s.kingdom ? 500 + s.lv * 110 : 120 + s.lv * 50, w: 1, icon: 'book', c: s.arena ? '#f0b43c' : (BOOK_COLORS[s.cls[0]] || '#4a8ac8'), book: id, rare: 1 };   // 왕국 책은 비싸다 (Lv24 3,140G ~ Lv36 4,460G)
 });
 
 // 투기장 상단에서만 파는 장비 (떨어지지도, 만들 수도 없다)

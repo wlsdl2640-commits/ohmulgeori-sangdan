@@ -476,6 +476,8 @@ details.card > .list { margin-top: 8px; }
 .trait.job { border-color: var(--gold-d); background: #2a2418; }
 .trait.job b { color: var(--gold); }
 .trait .btn.xs { margin-top: 3px; padding: 2px 6px; font-size: 10px; min-height: 0; }
+.trait.empty { border-style: dashed; border-color: #3a5a4a; background: transparent; }
+.trait.empty b { color: #6a9a80; }
 
 /* ───────── 펫 ───────── */
 .peti { flex: none; width: 28px; height: 22px; image-rendering: pixelated; }
@@ -500,6 +502,8 @@ details.card > .list { margin-top: 8px; }
 .mnode.fest .mn { background: #e07aa0; color: #fff; }
 
 .tabs.adv { margin: 8px 0; }
+.tabs.exp { z-index: 3; }
+.tabs.dest { position: static; z-index: auto; }   /* 파티 카드 안의 목적지 탭은 고정하지 않는다 — 파티 탭 바 아래로 지나간다 */
 .tabs.exp .tab { padding: 6px 1px; font-size: 12px; }
 .tabs.exp .tab small { display: block; margin-top: 1px; font-size: 9px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tabs.exp .tab.on small { color: var(--gold); }

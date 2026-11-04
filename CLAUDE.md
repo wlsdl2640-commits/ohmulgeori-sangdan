@@ -80,6 +80,15 @@
 - 백업 슬롯: localStorage `${SAVE_KEY}:slot1..3`에 `{at, name, sum, data}`; `slotInfo/slotSave/slotLoad/slotClear/slotRows`(SLOT_N 3). 설정 창(PANELS.co_set) 「저장 코드」 절 + 「백업 슬롯」 목록, ACT `slotsave/slotload/slotclear`.
 - 시험: `scratchpad/skills/savetest.py`(논리, 하네스에 localStorage 폴리필), `scratchpad/skills/saveui.py`(내보내기→불러오기 왕복, 잘린 코드 오류 글, 첫 화면 이어하기는 저장 없는 새 브라우저 컨텍스트에서 — 같은 탭에서 다시 열면 새 문서가 옛 sessionStorage 스냅샷을 봐 시드가 다시 깔리는 플레이크가 있었다).
 
+## 개화석·돌 드랍·레이드 탭·왕국 마차·왕국 스킬북 (빌드 28)
+- 특성 돌: data-trait.js `TRAIT_MAX 3`, `innateTraits(a)`, `canBloom(a)`, `bloomTrait(a)`(직업 특성 앞에 끼움), `ITEMS.bloomstone`(use 'bloom'), `STONE_DROP {bloomstone: {fb .06, lord .15, boss .2, raidN [2,1,1,0]}, wizstone: {fb/lord/boss .04, raidP [.2,.1,.06,.04]}}`, `STONE_IDS`, `stonePct`, `stoneFromText(k)`. econ.js `useBloom(aid)`. core.js kill() → `stoneDrops(p, e, f, luck)`(field의 fb/lord, dungeon의 boss만; e.bag에 직접 넣어 짐이 차도 안 잃음). econ.js raidReward가 raidN/raidP 처리. 마법사의 돌 판매 제거: under.js arenaShop·bmRefresh, events.js newMerchant, data-demon.js 보스 drops.
+- 화면: panels.js `emptyTraitChips(a, bloom)`(.trait.empty 점선), 모험가 창 특성 머리글 「타고난 n/3」, mact `bloom`; 창고 돌 설명 `stoneFromText`; 레이드 보상 줄에 돌; dex.js 보스 extra 글에 `stoneTxt`.
+- 레이드 탭: panels.js `raidCard(r, full, send)` + `raidSendRows(r)`(파티마다 「도전」, ACT `raidgo` → `p.dest = fid; startExp`). 
+- 탭 겹침: style.css `.tabs.dest { position: static }`(파티 카드 안 목적지 탭은 고정 안 함), `.tabs.exp z-index 3`.
+- 왕국 마차: view.js `COACH_PARK 166`, `COACH_RUN 3.2초`, `coachState(t)`(V.coachK로 방문 시작/끝 감지 → V.coach {k, t0, out}), `drawCoach(w0, X, gy, t, D, moving, lights, dark)`는 112×60 캔버스(V.coachCv)에 원래 크기로 그려 `COACH_Z 1.5`배로 붙인다(원점 COACH_OX 52, COACH_OY 57). townScene에서 행인 뒤·파티 앞에 그린다. 밤에는 등불 light. 캡처 `scratchpad/front/coachshot.py`.
+- 왕국 스킬북: data-under.js 10개에 `tier: 2`·위력 상향, 값 `500 + lv*110`; data-rpg.js canLearn이 `s.tier`(jobTier ≥) 검사; econ.js learnSkill 메시지; skillinfo.js skillSpec 끝에 「n차 전직 후 배움」.
+- 시험: `scratchpad/skills/stone28.py`(논리), `scratchpad/skills/ui28.py`(화면: 빈 자리·개화·창고·왕국 교역·탭 겹침 elementFromPoint·레이드 탭 출발). 직업 밸런스 측정 `scratchpad/skills/classbal.py`(차수별 Lv18/40/70, DPS·버팀·치유·기준 파티 시간).
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

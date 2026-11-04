@@ -67,6 +67,7 @@ function skillSpec(id, a) {
     out.push(`재사용 ${skSec(s.cd)}${a && Math.abs(eff - s.cd) >= 0.05 ? ` → <b>${skSec(eff)}</b>` : ''}`);
   }
   if (a) out.push(`숙련 ${ml}/${SM_MAX}${ml ? ` (위력 +${ml * 3}% · 재사용 -${ml * 2}%)` : ' (쓸수록 위력 +3%, 재사용 -2%씩)'}`);
+  if (s.tier) out.push(`${s.tier}차 전직 후 배움`);
   if (lvLine) out.push(lvLine);
   return out;
 }

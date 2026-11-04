@@ -50,7 +50,7 @@ Object.assign(MONS, {
   swampthing:{ name: '늪지 괴물',     plan: 'golem', body: '#4a6a3a', dark: '#2a4a24', mh: 2.4, ma: 1.4, md: 1.5, spd: 0.7, minS: 6, sta: { k: 'poison', p: 0.3, d: 8, m: 0.3 }, drops: [['swamp_moss', 0.5]] },
   toadking:  { name: '두꺼비 왕',     plan: 'blob',  body: '#8aa84a', dark: '#4a6a2a', fb: 1, scale: 2, mh: 1.8, ma: 1.2, md: 1.0, spd: 0.8, sta: { k: 'poison', p: 0.3, d: 8, m: 0.3 }, drops: [['toad_oil', 0.7], ['frog_leg', 1, 2]] },
   hydra:     { name: '히드라',        plan: 'worm',  body: '#3a8a6a', dark: '#1e5a44', fb: 5, scale: 3, mh: 2.8, ma: 1.6, md: 1.4, spd: 0.8, aoe: 1, sta: { k: 'poison', p: 0.35, d: 10, m: 0.35 }, drops: [['hydra_fang', 0.8], ['swamp_moss', 1, 2]] },
-  swampwitch:{ name: '늪지의 마녀',   plan: 'ghost', body: '#3a2a4a', dark: '#1e1430', skin: '#a8c88a', boss: 1, scale: 2, mh: 5.5, ma: 1.9, md: 1.3, spd: 0.9, magic: 1, aoe: 1, sta: { k: 'poison', p: 0.4, d: 10, m: 0.35 }, drops: [['witch_cauldron', 1], ['swamp_moss', 1, 3], ['wizstone', 0.2]] },
+  swampwitch:{ name: '늪지의 마녀',   plan: 'ghost', body: '#3a2a4a', dark: '#1e1430', skin: '#a8c88a', boss: 1, scale: 2, mh: 5.5, ma: 1.9, md: 1.3, spd: 0.9, magic: 1, aoe: 1, sta: { k: 'poison', p: 0.4, d: 10, m: 0.35 }, drops: [['witch_cauldron', 1], ['swamp_moss', 1, 3]] },
   // 메마른 땅
   imp:       { name: '임프',          plan: 'biped', body: '#c84a3a', dark: '#7a2a22', mh: 0.8, ma: 1.2, md: 0.5, spd: 1.3, eva: 0.15, magic: 1, minS: 1, sta: { k: 'burn', p: 0.2, d: 8, m: 0.25 }, drops: [['imp_horn', 0.6]] },
   hellhound: { name: '헬하운드',      plan: 'quad',  body: '#3a2a2a', dark: '#1e1414', mh: 1.3, ma: 1.3, md: 0.7, spd: 1.35, minS: 2, sta: { k: 'burn', p: 0.3, d: 8, m: 0.3 }, drops: [['hound_fang', 0.5]] },
@@ -59,7 +59,7 @@ Object.assign(MONS, {
   flesh:     { name: '실험체 골렘',   plan: 'golem', body: '#9a7a7a', dark: '#5a3a3a', mh: 2.6, ma: 1.2, md: 1.6, spd: 0.6, sta: { k: 'weak', p: 0.2, d: 8, m: 0.2 }, drops: [['lab_vial', 0.4], ['ogre_tooth', 0.1]] },
   cerberus:  { name: '케르베로스',    plan: 'quad',  body: '#4a2a2a', dark: '#241414', fb: 1, scale: 2, mh: 2.0, ma: 1.4, md: 0.9, spd: 1.2, sta: { k: 'burn', p: 0.4, d: 8, m: 0.3 }, drops: [['cerberus_collar', 0.6], ['hound_fang', 1, 2]] },
   ogreking:  { name: '오거 대왕',     plan: 'giant', body: '#b08060', dark: '#704a30', fb: 5, scale: 3, mh: 3.0, ma: 1.8, md: 1.5, spd: 0.7, aoe: 1, sta: { k: 'stun', p: 0.25, d: 2, m: 0 }, drops: [['ogre_crown', 0.8], ['ogre_tooth', 1, 2]] },
-  chimera:   { name: '키메라',        plan: 'quad',  body: '#c89a4a', dark: '#7a5a2a', boss: 1, scale: 2, mh: 6, ma: 2.0, md: 1.5, spd: 1.0, aoe: 1, sta: { k: 'burn', p: 0.4, d: 10, m: 0.35 }, drops: [['chimera_mane', 1], ['lab_vial', 1, 2], ['wizstone', 0.3]] },
+  chimera:   { name: '키메라',        plan: 'quad',  body: '#c89a4a', dark: '#7a5a2a', boss: 1, scale: 2, mh: 6, ma: 2.0, md: 1.5, spd: 1.0, aoe: 1, sta: { k: 'burn', p: 0.4, d: 10, m: 0.35 }, drops: [['chimera_mane', 1], ['lab_vial', 1, 2]] },
   // 백작의 성
   vbat:      { name: '흡혈 박쥐',     plan: 'flyer', body: '#5a3a6a', dark: '#30203a', mh: 0.9, ma: 1.2, md: 0.4, spd: 1.6, eva: 0.25, minS: 1, sta: { k: 'bleed', p: 0.25, d: 8, m: 0.25 }, drops: [['vbat_wing', 0.6], ['blood_tear', 0.015]] },
   ghoul:     { name: '구울',          plan: 'biped', body: '#7a8a6a', dark: '#44503a', mh: 1.6, ma: 1.3, md: 0.8, spd: 1.0, minS: 1, sta: { k: 'weak', p: 0.2, d: 8, m: 0.2 }, drops: [['ghoul_nail', 0.55]] },
@@ -71,7 +71,7 @@ Object.assign(MONS, {
   skelwar:   { name: '스켈레톤 전사', plan: 'biped', body: '#d8d0c0', dark: '#8a8070', mh: 1.5, ma: 1.3, md: 1.2, spd: 1.0, drops: [['bone_dust', 0.5]] },
   skelarc:   { name: '스켈레톤 궁수', plan: 'biped', body: '#d8d0c0', dark: '#8a8070', mh: 1.1, ma: 1.4, md: 0.6, spd: 1.2, eva: 0.1, drops: [['bone_arrow', 0.4], ['bone_dust', 0.3]] },
   skelmage:  { name: '스켈레톤 법사', plan: 'biped', body: '#d8d0c0', dark: '#8a8070', mh: 1.0, ma: 1.6, md: 0.5, spd: 0.9, magic: 1, sta: { k: 'chill', p: 0.3, d: 6, m: 0.3 }, drops: [['dark_tome', 0.3], ['bone_dust', 0.3]] },
-  lichking:  { name: '리치 킹',       plan: 'ghost', body: '#3a2a5a', dark: '#1e1434', skin: '#d8d0c0', boss: 1, scale: 2, mh: 6.5, ma: 2.2, md: 1.6, spd: 0.9, eva: 0.1, magic: 1, aoe: 1, sta: { k: 'chill', p: 0.4, d: 8, m: 0.35 }, drops: [['lich_phylactery', 1], ['bone_dust', 1, 3], ['wizstone', 0.3]] }
+  lichking:  { name: '리치 킹',       plan: 'ghost', body: '#3a2a5a', dark: '#1e1434', skin: '#d8d0c0', boss: 1, scale: 2, mh: 6.5, ma: 2.2, md: 1.6, spd: 0.9, eva: 0.1, magic: 1, aoe: 1, sta: { k: 'chill', p: 0.4, d: 8, m: 0.35 }, drops: [['lich_phylactery', 1], ['bone_dust', 1, 3]] }
 });
 
 /* ───────── 필드 ───────── */

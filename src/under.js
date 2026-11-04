@@ -169,7 +169,7 @@ function arenaShop() {
   const t = arenaTier();
   const gear = ARENA_GEAR.map(b => ({ kind: 'gear', base: b, t, q: 3, price: GTYPES[b].slot === 'acc' ? 150 : 100 + t * 30 }));
   const books = ARENA_BOOKS.map(id => ({ kind: 'book', id, price: 50 + SKILLS[id].lv * 2 }));
-  return gear.concat(books, [{ kind: 'item', id: 'wizstone', price: 200 }]);
+  return gear.concat(books);   // 마법사의 돌은 빌드 28부터 팔지 않는다 (우두머리·던전 주인·레이드에서만)
 }
 function arenaBuy(kind, id) {
   const U = S.under.arena, o = arenaShop().find(x => x.kind === kind && (x.base === id || x.id === id));
@@ -190,7 +190,6 @@ function bmRefresh(k) {
   const kb = KINGDOM_IDS.flatMap(x => KINGDOMS[x].books || []);
   for (let i = 0; i < 2; i++) { const id = rnd() < 0.2 ? pickOne(kb) : pickOne(BOOK_IDS); B.stock.push({ kind: 'item', it: 'book_' + id, price: Math.round(ITEMS['book_' + id].v * 2.5 / 10) * 10 }); }
   const r = runeId(pickOne(RUNE_IDS), rnd() < 0.3 ? 1 : 0); if (ITEMS[r]) B.stock.push({ kind: 'item', it: r, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
-  if (rnd() < 0.25) B.stock.push({ kind: 'item', it: 'wizstone', price: Math.round(ITEMS.wizstone.v * 1.5 / 10) * 10 });
 }
 function bmBuy(i) {
   const B = S.under.bm, o = B.stock[i];

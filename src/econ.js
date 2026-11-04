@@ -449,6 +449,7 @@ function learnSkill(aid, sid) {
   if (!S.bld.training) return '훈련소가 있어야 스킬을 배울 수 있어요.';
   if (!a || a.status !== 'idle') return '대기 중인 모험가만 배울 수 있어요.';
   if (a.skills.includes(sid)) return '이미 배운 스킬이에요.';
+  if (s.tier && jobTier(a.cls) < s.tier) return `${s.name}은(는) ${s.tier}차 전직 후에 배울 수 있어요.`;
   if (!canLearn(a, sid)) return `${s.name}은(는) ${s.cls.includes('all') ? '' : s.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·') + ' '}Lv${s.lv} 이상만 배울 수 있어요.`;
   if (a.skills.length >= skillSlots(a)) { const nx = SKILL_SLOT_LV.find(l => a.lv < l); return `스킬 칸 ${skillSlots(a)}개가 꽉 찼어요. 하나를 잊거나${nx ? ` Lv${nx}에 칸이 늘어나면` : ''} 배울 수 있어요.`; }
   if (!s.own && !((S.inv['book_' + sid] || 0) > 0)) return '스킬북이 없어요.';
@@ -901,6 +902,20 @@ function useStone(aid, tid) {
   changed();
   return '';
 }
+// 개화석: 타고난 특성이 3개가 안 되는 모험가에게 새 특성 하나
+function useBloom(aid) {
+  const a = advById(aid);
+  if (!a) return '';
+  if ((S.inv.bloomstone || 0) < 1) return '개화석이 없어요.';
+  if (!canBloom(a)) return `타고난 특성이 이미 ${TRAIT_MAX}개예요.`;
+  const nt = bloomTrait(a);
+  if (!nt) return '피울 수 있는 특성이 없어요.';
+  addTo(S.inv, 'bloomstone', -1);
+  log(`개화석: ${a.name}에게 「${TRAITS[nt].name}」 특성이 피어났다.`, 'good');
+  queueModal({ title: '개화석', adv: a.id, body: [`개화석이 녹아들며 ${a.name}의 숨어 있던 재능이 피어났다.`, `새 특성 「${TRAITS[nt].name}」 (${TRAITS[nt].desc}) · 타고난 특성 ${innateTraits(a).length}/${TRAIT_MAX}`] });
+  changed();
+  return '';
+}
 function promote(aid, cls) {
   const a = advById(aid);
   if (!a || !nextJobs(a.cls).includes(cls)) return '';
@@ -1001,6 +1016,10 @@ function raidReward(rec, i, half) {
   if (W.gear) { const q = Math.max(2, W.gear - (half ? 1 : 0)), g = makeGear(pickOne(GTYPE_IDS), raidTier(R.lv), q); S.gear.push(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }
   const rl = W.rune - (half ? 1 : 0);
   if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); addTo(S.inv, id, 1); got.push(ITEMS[id].name); }
+  // 특성 돌: 개화석은 등수별 개수(몬스터가 떠나면 절반), 마법사의 돌은 등수별 낮은 확률
+  const ri4 = Math.min(i, 3), bn = STONE_DROP.bloomstone.raidN[ri4], bq = half ? Math.floor(bn / 2) : bn;
+  if (bq > 0) { addTo(S.inv, 'bloomstone', bq); got.push(`개화석 ${bq}개`); }
+  if (rnd() < STONE_DROP.wizstone.raidP[ri4] * k) { addTo(S.inv, 'wizstone', 1); got.push('마법사의 돌'); }
   return `우리 상단 ${i + 1}위! 보상: ${got.join(', ')}`;
 }
 function raidEnd(rec, how) {
@@ -1188,7 +1207,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1208,6 +1227,7 @@ function loadFrom(v) {
     notes22();
     notes23();
     notes25();
+    notes28();
     return true;
   } catch (_) { return false; }
 }
@@ -1232,6 +1252,7 @@ function migrateSkillIds() {
 // 새 전투 화면 안내 (한 번만)
 function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ title: '전투 화면이 새로워졌어요', body: STORY.bview }); } }
 // 빌드 22: 기본 공격 5초·스킬 수치·스킬북 드랍표·라이선스 심사 (한 번만, 새 게임은 건너뛴다)
+function notes28() { if (!S.flags.v28) { S.flags.v28 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '개화석·레이드 탭·왕국 마차', body: STORY.v28 }); } }
 function notes25() { if (!S.flags.v25) { S.flags.v25 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '원정대 탭·대형·마부·정찰가', body: STORY.v25 }); } }
 function notes23() { if (!S.flags.v23) { S.flags.v23 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬 레벨·업적·전투 통계', body: STORY.v23 }); } }
 function notes22() { if (!S.flags.v22) { S.flags.v22 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투와 길드 심사가 바뀌었어요', body: STORY.v22 }); } }

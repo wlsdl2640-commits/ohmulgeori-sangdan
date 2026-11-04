@@ -760,6 +760,7 @@ function kill(p, e, f) {
   // 스킬북: 몬스터마다 정해진 책만 떨어뜨린다 (data-books.js). 감정 연구·전리품 운이 확률을 올린다
   for (const sk of monBooks(f.id)) if (ITEMS['book_' + sk] && rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, 'book_' + sk, 1);
   bossParts(p, e, f, inD);
+  stoneDrops(p, e, f, luck);
   if (luck && rnd() < luck) { const g = Math.round(f.lv * (2 + rnd() * 3)); S.gold += g; S.stats.earned += g; }
   if (f.fb) { if (S.fields[e.field]) fieldBossDown(p, e, f); }   // 방어전(wave)의 우두머리는 필드 기록이 없다
   else if (f.boss && e.area === 'dungeon') dungeonClear(p, e);
@@ -773,6 +774,12 @@ function bossParts(p, e, f, inD) {
     else { loot(p, e, 'core_' + t, 1); loot(p, e, 'crest_' + t, 2); if (fs.cleared && rnd() < 0.12 + relic('drop')) loot(p, e, 'soul_' + t, 1); }
     if (rnd() < (f.fb >= 5 ? 0.5 : 0.25)) loot(p, e, runeId(pickOne(RUNE_IDS), f.fb >= 5 && rnd() < 0.3 ? 1 : 0), 1);
   } else if (inD && rnd() < (f.boss ? 1 : 0.02)) loot(p, e, runeId(pickOne(RUNE_IDS), f.boss ? 1 : 0), 1);
+}
+// 특성 돌(개화석·마법사의 돌): 필드의 우두머리·주인과 던전 주인이 가끔 남긴다 (data-trait.js STONE_DROP). 전리품 운이 조금 올린다
+function stoneDrops(p, e, f, luck) {
+  const kind = e.area === 'field' && f.fb ? (f.fb >= 5 ? 'lord' : 'fb') : e.area === 'dungeon' && f.boss && !f.fb ? 'boss' : null;
+  if (!kind) return;
+  for (const it of STONE_IDS) if (rnd() < STONE_DROP[it][kind] * (1 + (luck || 0))) { addTo(e.bag, it, 1); ev(e, 'loot', { id: it }); log(`${p.name}이(가) ${f.name}에게서 ${ITEMS[it].name}을(를) 얻었다!`, 'good'); }   // 짐이 가득 차도 잃지 않는다
 }
 function fieldBossDown(p, e, f) {
   const fs = S.fields[e.field], F = FIELDS[e.field], k = f.fb;

@@ -262,6 +262,8 @@ function advCard(a) {
 }
 // 특성 칩: 이름 + 효과
 const traitChips = (a, stone) => (a.traits || []).map(id => TRAITS[id] ? `<span class="trait${TRAITS[id].job ? ' job' : ''}" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b> <small>${esc(TRAITS[id].desc)}${TRAITS[id].job ? ' · 직업 특성' : ''}</small>${stone && !TRAITS[id].job ? `<button type="button" class="btn xs" data-mact="stone" data-t="${id}">돌로 바꾸기</button>` : ''}</span>` : '').join('');
+// 타고난 특성의 빈 자리 (3개까지). bloom이면 개화석 단추
+const emptyTraitChips = (a, bloom) => { let out = ''; for (let i = innateTraits(a).length; i < TRAIT_MAX; i++) out += `<span class="trait empty"><b>빈 자리</b> <small>개화석으로 피워요</small>${bloom && !out ? '<button type="button" class="btn xs gold" data-mact="bloom">개화석 쓰기</button>' : ''}</span>`; return out; };
 function candCard(c) {
   let cond = '', why = '';
   if (c.cond && c.cond.type === 'gift') { const have = S.inv[c.cond.item] || 0; cond = `<div class="row sub">${iconImg(c.cond.item)}<span class="grow">조건: ${ITEMS[c.cond.item].name} ${c.cond.qty}개 선물 (보유 ${have})</span></div>`; if (have < c.cond.qty) why = '선물이 모자라요'; }
@@ -271,7 +273,7 @@ function candCard(c) {
   const C = CLASSES[c.cls], d = derive(c);
   return `<div class="card">
     <div class="row"><img class="por" src="${portrait(c)}" alt=""><div class="grow"><div class="h">${esc(c.name)} <small>${C.name} Lv${c.lv}</small> ${licTag(c)}</div><div class="sub">${C.desc}</div></div><div class="eqs">${eqIcons(c)}</div></div>
-    <div class="traits">${traitChips(c)}</div>
+    <div class="traits">${traitChips(c)}${emptyTraitChips(c)}</div>
     <div class="stats"><span>힘 <b>${d.T.str}</b></span><span>체력 <b>${d.T.vit}</b></span><span>민첩 <b>${d.T.agi}</b></span><span>지능 <b>${d.T.int}</b></span><span>HP <b>${d.maxHp}</b></span><span>MP <b>${d.maxMp}</b></span><span>봉급 <b>${fmt(c.salary)}G/월</b></span></div>
     <div class="sub muted">${esc(c.bio)}</div>${cond}
     <div class="row"><span class="sub grow">${why ? `<span class="red-t">${why}</span>` : '고용할 수 있어요'}</span><button type="button" class="btn sm gold" data-act="hire" data-id="${c.id}"${why ? ' disabled' : ''}>고용 · 계약금 ${fmt(c.fee)}G</button></div>
@@ -331,8 +333,9 @@ function advDetail(a) {
   let body = '';
   if (tab === 'sum') body = `
     <div class="card"><div class="h">${esc(a.name)} <span class="muted">· ${CLASSES[a.cls].name} Lv${a.lv}</span>${tierTag(a.cls)} ${licTag(a)}${a.hero ? ' <span class="tag gold-t">용사</span>' : ''}${injTag(a)}</div>${trText(a.cls) ? `<div class="sub gold-t">${trText(a.cls)}</div>` : ''}<div class="sub">경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0} · 개인 명성 ${Math.floor(a.pf || 0)}</div></div>
-    <div class="sec"><b>특성</b><span>${(S.inv.wizstone || 0) ? `마법사의 돌 ${S.inv.wizstone}개 · 타고난 특성을 바꿔요` : '타고난 것 · 마법사의 돌로 바꿀 수 있어요'}</span></div>
-    <div class="traits">${traitChips(a, idle && (S.inv.wizstone || 0) > 0) || '<span class="sub muted">없음</span>'}</div>
+    <div class="sec"><b>특성</b><span>타고난 ${innateTraits(a).length}/${TRAIT_MAX}${(S.inv.wizstone || 0) ? ` · 마법사의 돌 ${S.inv.wizstone}개` : ''}${(S.inv.bloomstone || 0) ? ` · 개화석 ${S.inv.bloomstone}개` : ''}</span></div>
+    <div class="traits">${traitChips(a, idle && (S.inv.wizstone || 0) > 0)}${emptyTraitChips(a, idle && (S.inv.bloomstone || 0) > 0)}</div>
+    <div class="sub muted">마법사의 돌은 타고난 특성 하나를 다른 것으로 바꾸고, 개화석은 빈 자리에 새 특성을 피워요. 둘 다 필드의 우두머리·주인, 던전 주인, 레이드 등수 보상에서 나와요.</div>
     ${notes}
     <div class="sec"><b>모험가 라이선스</b><span>지금 ${L.name}${L.mul > 1 ? ` · 능력 ×${L.mul}` : ''}</span></div>
     <div class="list">${lic}</div>
@@ -388,6 +391,7 @@ function advAct(aid, b) {
   if (k === 'promo') { const c = b.dataset.c; confirmBox('전직', `${x.name}을(를) ${CLASSES[c].name}(으)로 전직시킬까요? ${fmt(JOB_REQ[jobTier(c)].fee)}G가 들고, 되돌릴 수 없어요.`, '전직', () => { say(promote(aid, c)); renderPanel(true); updateHud(); saveGame(); }, false); return; }
   if (k === 'rune') { openWin('rune', { gid: +b.dataset.g }); return; }
   if (k === 'stone') { const t = b.dataset.t; confirmBox('마법사의 돌', `${x.name}의 「${TRAITS[t].name}」을(를) 무작위 다른 특성으로 바꿀까요? 마법사의 돌 1개를 써요.`, '바꾸기', () => { say(useStone(aid, t)); renderPanel(true); saveGame(); }, false); return; }
+  if (k === 'bloom') { confirmBox('개화석', `${x.name}에게 새 특성을 피울까요? 무작위로 하나가 생기고 개화석 1개를 써요. (타고난 특성 ${innateTraits(x).length}/${TRAIT_MAX})`, '피우기', () => { say(useBloom(aid)); renderPanel(true); saveGame(); }, false); return; }
   if (k === 'treat') m = treat(aid, b.dataset.k);
   if (k === 'post') m = postHealer(aid, !x.post);
   if (k === 'fire') { confirmBox('모험가 내보내기', `${x.name}을(를) 내보낼까요? 끼고 있던 장비는 창고로 돌아와요.`, '내보내기', () => { const r = fire(aid); say(r); if (!r) backWin(); renderPanel(true); saveGame(); }, true); return; }
@@ -472,20 +476,31 @@ function partyCard(p) {
     <div class="btns"><button type="button" class="btn gold grow" data-act="go" data-id="${p.id}"${team.length && !block.length && isUnlocked(dest) ? '' : ' disabled'}>${DF.giant ? `${DF.name} 레이드 도전` : `${DF.name}${DF.raid ? '' : ` ${DF.no}-${st}`}(으)로 출발`}</button><button type="button" class="btn" data-act="delparty" data-id="${p.id}">파티 삭제</button></div>
   </div>`;
 }
-function raidCard(r, full) {
+function raidCard(r, full, send) {
   const R = RAIDS[r.id], st = raidStand(r), my = st.findIndex(x => x.me), dd = S.settleDay - today();
   const state = r.done === 1 ? '<span class="ok-t">쓰러짐</span>' : r.done === 2 ? '<span class="muted">떠남</span>' : `D-${dd} · 남은 HP ${pct(r.hp, r.max)}%`;
   const rows = (r.final || st.map(x => ({ n: x.n, d: Math.round(x.d), me: x.me }))).slice(0, full ? 8 : 3).map((x, i) => `<div class="row sub${x.me ? ' gold-t' : ''}"><span class="rkn">${i + 1}</span><span class="grow">${esc(x.n)}</span><span class="num">${fmt(x.d)}</span></div>`).join('');
   const mine = r.me > 0 ? `우리 상단 ${my + 1}위 · ${fmt(r.me)}` : '아직 도전하지 않았어요';
   return `<div class="card raidc" style="--rc:${R.c}"><div class="row"><span class="rbadge">Lv${R.lv}</span><div class="grow"><div class="h">${R.name}</div><div class="sub">${state} · ${mine}</div></div>${full ? '' : `<button type="button" class="btn sm" data-act="raidopen" data-id="${r.id}">순위</button>`}</div>
     <div class="bar big raid"><i style="width:${pct(r.hp, r.max)}%"></i></div>${rows}
-    ${full ? `<div class="sub muted">${R.desc}</div>` : ''}</div>`;
+    ${full ? `<div class="sub muted">${R.desc}</div>` : ''}${send ? raidSendRows(r) : ''}</div>`;
+}
+// 레이드 탭에서 바로 보내기: 파티마다 「도전」 단추 (원정 중·레벨 부족·못 가는 사람이 있으면 막힘)
+function raidSendRows(r) {
+  const R = RAIDS[r.id], fid = 'raid_' + r.id, need = R.lv - RAID_GAP;
+  if (r.done) return '';
+  const rows = S.parties.map(p => {
+    const team = teamOf(p), avg = Math.round(avgLvOf(p)), block = team.map(cantGo).filter(Boolean);
+    const why = p.exp ? `원정 중 · ${whereStr(p.exp)}` : !team.length ? '파티원이 없어요' : avg < need ? `평균 Lv${need}+ 필요` : block.length ? block[0] : '';
+    return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : ''}</span><button type="button" class="btn sm gold" data-act="raidgo" data-id="${p.id}" data-f="${fid}"${why ? ' disabled' : ''}>도전</button></div>`;
+  }).join('');
+  return `<div class="sec" style="margin-top:6px"><b>보낼 파티</b><span>평균 Lv${need}+ · 보급품은 파티 탭에서</span></div>${rows || '<div class="sub muted">파티가 없어요. 「+ 새 파티」로 만들어요.</div>'}`;
 }
 PANELS.raid = w => {
   const r = raidRec(w.r);
   if (!r) return '<div class="card"><div class="sub">이번 달 레이드가 아니에요.</div></div>';
   const R = RAIDS[r.id];
-  const rew = RAID_REWARD.map((W, i) => `<div class="row sub"><span class="rkn">${i < 3 ? i + 1 + '위' : '참가'}</span><span class="grow">${fmt(Math.round(raidGold(R.lv) * W.gold))}G · 명성 ${W.fame} · 부속품 ${W.part}${W.heart ? ' · ' + ITEMS['rh_' + r.id].name : ''}${W.gear ? ` · ${QUALITY[W.gear].name} 장비` : ''}${W.rune >= 0 ? ` · ${RUNE_LV[W.rune]} 룬` : ''}</span></div>`).join('');
+  const rew = RAID_REWARD.map((W, i) => `<div class="row sub"><span class="rkn">${i < 3 ? i + 1 + '위' : '참가'}</span><span class="grow">${fmt(Math.round(raidGold(R.lv) * W.gold))}G · 명성 ${W.fame} · 부속품 ${W.part}${W.heart ? ' · ' + ITEMS['rh_' + r.id].name : ''}${W.gear ? ` · ${QUALITY[W.gear].name} 장비` : ''}${W.rune >= 0 ? ` · ${RUNE_LV[W.rune]} 룬` : ''}${STONE_DROP.bloomstone.raidN[i] ? ` · 개화석 ${STONE_DROP.bloomstone.raidN[i]}` : ''} · 마법사의 돌 ${stonePct(STONE_DROP.wizstone.raidP[i])}</span></div>`).join('');
   return `${raidCard(r, true)}
     <div class="sec"><b>순위 보상</b><span>달이 바뀌기 전에 쓰러뜨려야 보상을 다 받아요</span></div><div class="card">${rew}</div>
     <div class="sub">원정 창에서 파티 목적지를 이 레이드로 고르세요. 파티 평균 Lv${R.lv - RAID_GAP} 이상이면 도전할 수 있고, 한 번에 ${RAID_FIGHT}초 동안 싸우고 물러나요. 다른 상단과 왕국 원정대는 날마다 몬스터를 두드려요.</div>`;
@@ -508,7 +523,7 @@ PANELS.exp = () => {
   if (tab !== 'raid' && !ids.includes(tab)) tab = ids.includes(S.view) ? S.view : ids[0] || 'raid';
   UI.expTab = tab; const top = winTop(); if (top && top.id === 'exp') top.tab = tab;
   const bar = `<div class="tabs exp">${S.parties.map(p => `<button type="button" class="tab${tab === p.id ? ' on' : ''}" data-act="exptab" data-id="${p.id}">${esc(p.name)}<small>${p.exp ? esc(whereStr(p.exp)) : p.members.length ? `대기 · ${p.members.length}명` : '비어 있음'}</small></button>`).join('')}${S.parties.length < partyMax() ? '<button type="button" class="tab add" data-act="newparty">+<small>새 파티</small></button>' : ''}<button type="button" class="tab${tab === 'raid' ? ' on' : ''}" data-act="exptab" data-id="raid">레이드<small>${S.raid ? `D-${S.settleDay - today()}` : '-'}</small></button></div>`;
-  if (tab === 'raid') return `${bar}<div class="sec" style="margin-top:0"><b>이번 달 레이드</b><span>${S.raid ? `D-${S.settleDay - today()} · 파티 탭의 목적지에서 골라요` : '없음'}</span></div>${S.raid ? S.raid.list.map(r => raidCard(r, false)).join('') : '<div class="card"><div class="sub">이번 달 레이드가 없어요.</div></div>'}${S.parties.length ? '' : '<div class="sub muted">파티가 없어요. 「+ 새 파티」로 만들어요.</div>'}`;
+  if (tab === 'raid') return `${bar}<div class="sec" style="margin-top:0"><b>이번 달 레이드</b><span>${S.raid ? `D-${S.settleDay - today()} · 파티를 골라 바로 보내요` : '없음'}</span></div>${S.raid ? S.raid.list.map(r => raidCard(r, false, true)).join('') : '<div class="card"><div class="sub">이번 달 레이드가 없어요.</div></div>'}${S.parties.length ? '' : '<div class="sub muted">파티가 없어요. 「+ 새 파티」로 만들어요.</div>'}`;
   const p = S.parties.find(x => x.id === tab);
   if (!p) return `${bar}<div class="card"><div class="sub">파티가 없어요. 「+ 새 파티」를 눌러 만들고 모험가를 넣어 주세요.</div></div>`;
   return `${bar}${partyCard(p)}${S.parties.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지 · 상단 랭크가 오르면 더 만들 수 있어요.</div>` : ''}`;
@@ -578,7 +593,7 @@ function invDetail(k, rate) {
     desc = I.desc; extra = `${FIELDS[PETS[I.egg].field] ? FIELDS[PETS[I.egg].field].name : ''}의 우두머리·던전 주인이 남겨요 · 상단에 두면 ${petHomeText(I.egg)}`;
     btns += `<button type="button" class="btn sm gold" data-act="bopen" data-id="pen">사육장에서 품기</button>`;
   } else if (cat === 'sup' && I.use) {
-    desc = I.desc; extra = '암시장·투기장 상단·마계 던전 주인에게서 얻어요 · 모험가 창의 특성에서 써요';
+    desc = I.desc; extra = `${stoneFromText(k)} · 모험가 창의 특성에서 써요`;
   } else if (cat === 'sup') {
     desc = I.heal ? `HP ${Math.round(potionHeal(k))} 회복 (기본 ${I.heal}) · 다친 동료에게 저절로 써요` : I.mana ? `MP ${I.mana} 회복 · 마나가 바닥난 시전자에게 저절로 써요` : `${cureName(I.cure)} 치료 · ${I.desc || ''}`;
     const r = RECIPES.find(x => x.out === k);
@@ -691,6 +706,7 @@ const ACT = {
   sup: d => setSup(+d.id, d.it, +d.d),
   dest: d => { const p = findP(d.id); if (p) p.dest = d.f; },
   go: d => { const p = findP(d.id); if (!p) return; const m = startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 출발!`); } },
+  raidgo: d => { const p = findP(d.id); if (!p || p.exp) return; p.dest = d.f; const m = startExp(p, d.f); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 레이드 출발!`); } },
   recall: d => { const p = findP(d.id); if (p) recall(p, 'order'); },
   gate: d => { const p = findP(d.id); if (p) { gateChoice(p, d.c); S.view = p.id; } },
   wagon: d => say(buyWagon(+d.id, d.w)),

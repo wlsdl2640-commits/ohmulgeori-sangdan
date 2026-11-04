@@ -373,7 +373,7 @@ BOOK_IDS.forEach(id => {
   ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + s.lv * 35, w: 1, icon: 'book', c: BOOK_COLORS[s.cls[0]], book: id };
 });
 // 3차 직업은 2차·기본 직업의 스킬도 배울 수 있다
-const canLearn = (a, id) => { const s = SKILLS[id]; return (s.cls.includes('all') || chainOf(a.cls).some(c => s.cls.includes(c))) && a.lv >= s.lv; };
+const canLearn = (a, id) => { const s = SKILLS[id]; return (s.cls.includes('all') || chainOf(a.cls).some(c => s.cls.includes(c))) && a.lv >= s.lv && (!s.tier || jobTier(a.cls) >= s.tier); };   // tier: 그 차수 전직 뒤에만 (왕국 스킬북 2)
 
 /* ───────── 장비 ───────── */
 // 단계별 재료: [단단한 것, 질긴 것, 마력 있는 것]

@@ -133,7 +133,6 @@ const festBuyMul = kid => (festOf(kid) ? 0.7 : 1);
 function newMerchant(k) {
   const pool = TIER_FIELDS.filter(isUnlocked); if (!pool.length) return null;
   const at = pickOne(pool), stock = [];
-  stock.push({ it: 'wizstone', n: 1, price: Math.round(ITEMS.wizstone.v * 2) });
   const eggs = PET_IDS.filter(x => isUnlocked(PETS[x].field)).sort(() => rnd() - 0.5).slice(0, 2);
   eggs.forEach(x => stock.push({ it: 'egg_' + x, n: 1, price: Math.round(ITEMS['egg_' + x].v * 2.2 / 10) * 10 }));
   const b = pickOne(BOOK_IDS); if (ITEMS['book_' + b]) stock.push({ it: 'book_' + b, n: 1, price: Math.round(ITEMS['book_' + b].v * 2.5 / 10) * 10 });
@@ -181,7 +180,7 @@ function eventCard(id) {
     return `<div class="card hl"><div class="h">${D.name} 축제 <small>D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">축제 동안 ${D.name} 상단이 사 가는 값이 <b>두 배</b>, 가져온 물건과 스킬북은 <b>30% 할인</b>.</div><div class="sub muted">${v ? '지금 상단이 와 있어요 · 상단 창 → 왕국 교역' : '상단이 곧 찾아와요'}</div></div><button type="button" class="btn gold block" data-act="sub" data-id="co_king">왕국 교역 열기</button>`;
   }
   const rows = ev0.stock.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow stack"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].desc || (ITEMS[o.it].book ? `${SKILLS[ITEMS[o.it].book].desc}<br>${skillSpecLine(ITEMS[o.it].book)}` : '')}</span></div><button type="button" class="btn sm gold" data-act="merbuy" data-id="${ev0.id}" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${fmt(o.price)}G</button></div>`).join('');
-  return `<div class="card hl"><div class="h">떠돌이 상인 <small>${FIELDS[ev0.at].name} 근처 · D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">"어디서도 못 구하는 것들이지. 값은 좀 나가네." 마법사의 돌, 알, 스킬북, 룬, 약초를 판다.</div></div><div class="list">${rows}</div>`;
+  return `<div class="card hl"><div class="h">떠돌이 상인 <small>${FIELDS[ev0.at].name} 근처 · D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">"어디서도 못 구하는 것들이지. 값은 좀 나가네." 알, 스킬북, 룬, 약초를 판다.</div></div><div class="list">${rows}</div>`;
 }
 Object.assign(ACT, {
   wavego: d => { const m = startWave(+d.p, +d.id); if (m) say(m); else { say('방어전 시작!'); showWin(false); } },

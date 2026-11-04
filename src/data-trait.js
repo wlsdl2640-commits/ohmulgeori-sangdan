@@ -179,3 +179,28 @@ function rerollTrait(a, id) {
   a.traits[a.traits.indexOf(id)] = nt;
   return [id, nt];
 }
+
+/* ───────── 개화석: 타고난 특성이 3개가 안 되는 모험가에게 새 특성 하나를 피운다 ───────── */
+const TRAIT_MAX = 3;   // 타고난 특성 자리 (직업 특성은 따로 센다)
+const innateTraits = a => ((a && a.traits) || []).filter(t => !isJobTrait(t));
+const canBloom = a => innateTraits(a).length < TRAIT_MAX;
+ITEMS.bloomstone = { name: '개화석', v: 6000, w: 1, icon: 'gem', c: '#5ae0a8', use: 'bloom', desc: '타고난 특성이 3개가 안 되는 모험가에게 숨은 특성 하나를 피워 낸다. 직업 특성은 세지 않는다. 모험가 창에서 쓴다.' };
+// 빈 자리에 무작위 새 특성. 새 특성 id 또는 null
+function bloomTrait(a) {
+  if (!canBloom(a)) return null;
+  const pool = ROLL_TRAIT_IDS.filter(t => !a.traits.includes(t));
+  if (!pool.length) return null;
+  const nt = pickOne(pool), i = a.traits.findIndex(isJobTrait);
+  if (i < 0) a.traits.push(nt); else a.traits.splice(i, 0, nt);   // 직업 특성 앞에 끼운다 (타고난 것이 먼저)
+  return nt;
+}
+// 특성 돌이 나오는 곳: 우두머리(1-10~40) fb · 필드의 주인(1-50) lord · 던전 주인 boss · 레이드 등수(1위·2위·3위·참가)
+// 마법사의 돌은 어디서나 4% 수준으로 낮다 (투기장 상단·암시장·떠돌이 상인에서는 더 이상 팔지 않는다)
+const STONE_DROP = {
+  bloomstone: { fb: 0.06, lord: 0.15, boss: 0.20, raidN: [2, 1, 1, 0] },          // raidN: 등수별 개수
+  wizstone:   { fb: 0.04, lord: 0.04, boss: 0.04, raidP: [0.2, 0.1, 0.06, 0.04] }  // raidP: 등수별 확률
+};
+const STONE_IDS = Object.keys(STONE_DROP);
+const stonePct = x => (Math.round(x * 1000) / 10) + '%';
+const stoneRaidText = k => { const T = STONE_DROP[k]; return T.raidN ? `레이드 1위 ${T.raidN[0]}개·2위 ${T.raidN[1]}개·3위 ${T.raidN[2]}개` : `레이드 1위 ${stonePct(T.raidP[0])}·2위 ${stonePct(T.raidP[1])}·3위 ${stonePct(T.raidP[2])}·참가 ${stonePct(T.raidP[3])}`; };
+const stoneFromText = k => { const T = STONE_DROP[k]; return T ? `우두머리 ${stonePct(T.fb)} · 필드의 주인 ${stonePct(T.lord)} · 던전 주인 ${stonePct(T.boss)} · ${stoneRaidText(k)} (전리품 운이 조금 올려요)` : ''; };
