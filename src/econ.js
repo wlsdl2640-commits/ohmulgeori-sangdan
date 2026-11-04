@@ -10,7 +10,7 @@ const newField = () => ({ best: 0, cleared: false, found: false, boss: {} });
 
 function blankState(company) {
   return {
-    v: 5, seq: 1, t: 0, lastSeen: Date.now(),
+    v: SAVE_V, seq: 1, t: 0, lastSeen: Date.now(),
     company: (company || '').trim().slice(0, 12) || '등불 상단',
     gold: 1000, fame: 0, rank: 0, unlocked: [],
     inv: { pot_s: 6, mp_s: 2, herb: 6 },
@@ -1171,6 +1171,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
+const SAVE_V = 5;   // 지금 저장 판 (migrate5까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();

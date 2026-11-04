@@ -73,6 +73,13 @@
 - 정찰가: `scoutMove(p)`(moveOf에 ×(1+)), `tentOf(p)`(TR.tent 최대) → startCamp가 `e.camp.tent`에 넣고 stepCamp가 피로 회복 ×tent, HP ×1.25, 밤습격 확률 ×0.5. view.js 야영 장면은 tent면 큰 텐트(drawTentHi ×1.7) + 나란히 눕기 + `lanternHi`; expStatus·camp 로그 글도 바뀐다.
 - 새 직업 데이터: data-rpg.js CLASSES(coachman·caravanmaster·scout·pathfinder, bow cls), SKILLS(whipcrack…summit), econ.js WEAPON_OF, pxa.js PXL, data.js BIOS, data-trait.js JOB_TRAITS, data-demon.js req. 시험 `scratchpad/skills/portertest.py`·`ui25.py`, 도트 시트 `scratchpad/px/t_porter2.js`.
 
+## 저장 코드·백업 슬롯 (빌드 26)
+- 버그 원인: ui.js parseSave가 `[1,2,3,4].includes(v.v)`로 판을 검사했는데 빌드 22부터 저장은 v5 → 모든 새 코드가 거부됐다. 이제 econ.js `const SAVE_V = 5`(blankState `v: SAVE_V`)가 기준이고, `v.v > SAVE_V`만 'newer'로 막는다. **저장 판을 올릴 때는 SAVE_V만 올린다.**
+- 코드 형식: `OHMUL2:` = deflate(CompressionStream) + base64, `OHMUL1:` = base64만(옛 코드·압축 못 하는 브라우저), 맨 JSON도 받는다. ui.js `saveCode()`(async)·`parseSave(txt)`(async, 앞뒤 글·공백·따옴표 무시, 실패하면 `Error(SAVE_ERR 키)`: prefix/b64/zip/nozip/json/shape/newer)·`applySave(v, done)`(loadFrom → saveGame → 화면 갱신, done은 첫 화면에서 게임 시작).
+- 창: `openExport()`(요약 `saveSummary(S)`·KB, 복사/공유 navigator.share/파일로 저장 Blob), `openImport(done)`(#code-in, 붙여 넣기 clipboard.readText, 파일에서 `<input type=file id=code-filein>`, 오류는 #code-err, 게임 중이면 confirmBox). 첫 화면 「저장 코드로 이어하기」도 openImport를 쓴다.
+- 백업 슬롯: localStorage `${SAVE_KEY}:slot1..3`에 `{at, name, sum, data}`; `slotInfo/slotSave/slotLoad/slotClear/slotRows`(SLOT_N 3). 설정 창(PANELS.co_set) 「저장 코드」 절 + 「백업 슬롯」 목록, ACT `slotsave/slotload/slotclear`.
+- 시험: `scratchpad/skills/savetest.py`(논리, 하네스에 localStorage 폴리필), `scratchpad/skills/saveui.py`(내보내기→불러오기 왕복, 잘린 코드 오류 글, 첫 화면 이어하기; pagehide 자동 저장 때문에 init 스크립트에서 sessionStorage 'wipe'로 지운다).
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

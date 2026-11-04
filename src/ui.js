@@ -203,47 +203,115 @@ function setSpeed(n) {
   renderSpeed(); saveGame();
 }
 
-/* ───────── 저장 코드 ───────── */
+/* ───────── 저장 코드 ─────────
+   OHMUL2: deflate 압축 + base64 (짧다). OHMUL1: base64만 (압축을 못 하는 브라우저). 맨 JSON도 받는다. */
 function b64(u8) { let s = ''; for (let i = 0; i < u8.length; i += 8192) s += String.fromCharCode.apply(null, u8.subarray(i, i + 8192)); return btoa(s); }
 function unb64(b) { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
-function saveCode() { saveGame(); return 'OHMUL1:' + b64(new TextEncoder().encode(JSON.stringify(S))); }
-function parseSave(txt) {
-  txt = (txt || '').trim();
-  const raw = txt.startsWith('OHMUL1:') ? new TextDecoder().decode(unb64(txt.slice(7).replace(/\s+/g, ''))) : txt;
-  const v = JSON.parse(raw);
-  if (!v || !Array.isArray(v.advs) || ![1, 2, 3, 4].includes(v.v)) throw new Error('bad save');
+const canZip = () => typeof CompressionStream !== 'undefined' && typeof DecompressionStream !== 'undefined';
+// 쓰기 쪽 약속은 읽기 쪽이 실패하면 함께 거부되므로(잘린 코드) 따로 삼킨다 — 안 그러면 unhandledrejection
+const pipeU8 = (st, u8) => { const w = st.writable.getWriter(); w.write(u8).catch(() => {}); w.close().catch(() => {}); return new Response(st.readable).arrayBuffer().then(b => new Uint8Array(b)); };
+const zipU8 = u8 => pipeU8(new CompressionStream('deflate'), u8);
+const unzipU8 = u8 => pipeU8(new DecompressionStream('deflate'), u8);
+async function saveCode() {
+  saveGame();
+  const u8 = new TextEncoder().encode(JSON.stringify(S));
+  if (canZip()) { try { return 'OHMUL2:' + b64(await zipU8(u8)); } catch (_) {} }
+  return 'OHMUL1:' + b64(u8);
+}
+const SAVE_ERR = { prefix: '저장 코드가 아니에요. 「OHMUL1:」이나 「OHMUL2:」로 시작하는 코드를 통째로 붙여 넣어 주세요.', b64: '코드에 다른 글자가 섞였거나 일부가 빠졌어요. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인해 주세요.', zip: '코드가 중간에 잘렸어요. 끝까지 전부 복사했는지 확인해 주세요.', nozip: '이 브라우저는 압축 저장 코드를 풀 수 없어요. 최신 브라우저나 앱에서 불러와 주세요.', json: '코드가 깨졌어요. 메신저가 긴 글을 자르지 않았는지 확인해 주세요.', shape: '오물거리 상단의 저장 코드가 아니에요.', newer: '더 새로운 판에서 만든 저장이에요. 앱을 업데이트한 뒤 불러와 주세요.' };
+// 저장 코드 → 저장 객체. 못 풀면 Error(SAVE_ERR의 키)
+async function parseSave(txt) {
+  txt = String(txt || '').trim();
+  const m = txt.match(/OHMUL(\d)\s*:\s*([\s\S]*)$/);
+  let raw;
+  if (m) {
+    const body = m[2].replace(/[^A-Za-z0-9+/=]/g, '');
+    if (!body) throw new Error('b64');
+    let u8;
+    try { u8 = unb64(body); } catch (_) { throw new Error('b64'); }
+    if (m[1] === '2') { if (!canZip()) throw new Error('nozip'); try { u8 = await unzipU8(u8); } catch (_) { throw new Error('zip'); } }
+    raw = new TextDecoder().decode(u8);
+  } else if (txt.startsWith('{')) raw = txt;
+  else throw new Error('prefix');
+  let v;
+  try { v = JSON.parse(raw); } catch (_) { throw new Error('json'); }
+  if (!v || typeof v !== 'object' || !Array.isArray(v.advs) || !v.parties) throw new Error('shape');
+  if (typeof v.v !== 'number' || v.v < 1) throw new Error('shape');
+  if (v.v > SAVE_V) throw new Error('newer');
   return v;
 }
 async function copyText(el) {
   try { await navigator.clipboard.writeText(el.value); return true; } catch (_) {}
-  try { el.focus(); el.select(); return document.execCommand('copy'); } catch (_) { return false; }
+  try { el.focus(); el.select(); el.setSelectionRange(0, el.value.length); return document.execCommand('copy'); } catch (_) { return false; }
 }
-function openExport() {
-  openModal('저장 코드', `<p>아래 코드를 복사해 메모장이나 메신저 나에게 보내기 등에 보관하세요. 다른 기기나 새로 설치한 앱에서 「저장 코드로 불러오기」에 붙여 넣으면 지금 진행 상황이 그대로 옮겨져요.</p>
-    <textarea class="code" id="code-out" readonly rows="5">${saveCode()}</textarea>
-    <div class="btns"><button type="button" class="btn sm gold" id="code-copy">복사하기</button></div>`, [{ label: '닫기' }]);
-  $('code-copy').onclick = async () => { say((await copyText($('code-out'))) ? '저장 코드를 복사했어요' : '코드를 길게 눌러 직접 복사해 주세요'); };
+const canShare = () => { try { return !!(navigator.share); } catch (_) { return false; } };
+const saveSummary = v => { try { const p = dateParts(v.t || 0); return `${p.m}월 ${p.d}일 · 모험가 ${(v.advs || []).length}명 · ${fmt(Math.round(v.gold || 0))}G · 명성 ${Math.floor(v.fame || 0)}`; } catch (_) { return '저장'; } };
+async function openExport() {
+  openModal('저장 코드', '<p>코드를 만드는 중…</p>', [{ label: '닫기' }]);
+  const code = await saveCode();
+  const kb = Math.round(code.length / 1024 * 10) / 10;
+  $('m-body').innerHTML = `<p>아래 코드를 복사해 메모장이나 메신저 「나에게 보내기」에 보관하세요. 다른 기기나 새로 설치한 앱에서 「저장 코드로 불러오기」에 통째로 붙여 넣으면 지금 진행 상황이 그대로 옮겨져요.</p>
+    <p class="sub muted">${saveSummary(S)} · 코드 ${kb}KB${code.startsWith('OHMUL2') ? ' (압축)' : ''}. 긴 코드는 메신저가 자를 수 있으니 메모장에 보관하는 편이 안전해요.</p>
+    <textarea class="code" id="code-out" readonly rows="5">${code}</textarea>
+    <div class="btns"><button type="button" class="btn sm gold" id="code-copy">복사하기</button>${canShare() ? '<button type="button" class="btn sm" id="code-share">공유하기</button>' : ''}${isApp() ? '' : '<button type="button" class="btn sm" id="code-file">파일로 저장</button>'}</div>`;
+  $('code-copy').onclick = async () => { say((await copyText($('code-out'))) ? '저장 코드를 복사했어요' : '코드를 길게 눌러 전체 선택한 뒤 복사해 주세요'); };
+  if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '오물거리 상단 저장 코드', text: code }); } catch (_) {} };
+  // 설치한 앱의 WebView는 내려받기를 못 해서 파일 단추를 숨긴다 (복사·백업 슬롯을 쓴다)
+  if ($('code-file')) $('code-file').onclick = () => { try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' })); a.download = `ohmulgeori-save-${new Date().toISOString().slice(0, 10)}.txt`; document.body.append(a); a.click(); a.remove(); say('저장 파일을 내려받았어요'); } catch (_) { say('파일로 저장할 수 없어요. 코드를 복사해 주세요'); } };
+}
+// 저장 객체를 지금 게임으로 (첫 화면이면 done이 게임을 시작한다)
+function applySave(v, done) {
+  v.lastSeen = Date.now();
+  if (!loadFrom(v)) { say('저장을 불러오지 못했어요'); return false; }
+  saveGame();
+  UI.html = ''; UI.chips = ''; if (typeof V !== 'undefined') V.mode = '';
+  if (done) done(); else { renderPanel(true); renderChips(); updateHud(); renderSpeed(); }
+  say('저장을 불러왔어요');
+  return true;
 }
 // done: 불러온 뒤 할 일 (첫 화면에서 부를 때 게임을 시작한다)
 function openImport(done) {
-  openModal('저장 코드로 불러오기', `<p>복사해 둔 저장 코드를 붙여 넣으세요. 지금 이 기기의 진행 상황은 불러온 저장으로 바뀌어요.</p>
-    <textarea class="code" id="code-in" rows="5" placeholder="OHMUL1:..."></textarea>
-    <p class="sub red-t" id="code-err" hidden>저장 코드가 올바르지 않아요. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인해 주세요.</p>
-    <div class="btns"><button type="button" class="btn sm gold" id="code-load">불러오기</button></div>`, [{ label: '닫기' }]);
-  $('code-load').onclick = () => {
+  openModal('저장 코드로 불러오기', `<p>복사해 둔 저장 코드를 붙여 넣거나 저장 파일을 고르세요. 지금 이 기기의 진행 상황은 불러온 저장으로 바뀌어요.</p>
+    <textarea class="code" id="code-in" rows="5" placeholder="OHMUL2:... 또는 OHMUL1:..."></textarea>
+    <p class="sub red-t" id="code-err" hidden></p>
+    <div class="btns"><button type="button" class="btn sm gold" id="code-load">불러오기</button><button type="button" class="btn sm" id="code-paste">붙여 넣기</button><label class="btn sm" for="code-filein">파일에서</label><input type="file" id="code-filein" accept=".txt,text/plain,application/json" hidden></div>`, [{ label: '닫기' }]);
+  const fail = k => { const el = $('code-err'); el.textContent = SAVE_ERR[k] || SAVE_ERR.json; el.hidden = false; };
+  const tryLoad = async txt => {
     let v;
-    try { v = parseSave($('code-in').value); } catch (_) { $('code-err').hidden = false; return; }
-    const apply = () => {
-      v.lastSeen = Date.now();
-      if (!loadFrom(v)) { say('저장을 불러오지 못했어요'); return; }
-      saveGame();
-      UI.html = ''; UI.chips = ''; V.mode = '';
-      if (done) done(); else { renderPanel(true); renderChips(); updateHud(); renderSpeed(); }
-      say('저장을 불러왔어요');
-    };
-    if (S) confirmBox('저장 불러오기', '지금 진행 상황을 이 저장으로 바꿀까요? 되돌릴 수 없어요.', '불러오기', apply, true);
-    else { closeModal(); apply(); }
+    try { v = await parseSave(txt); } catch (e) { fail(e && e.message); return; }
+    $('code-err').hidden = true;
+    const go = () => applySave(v, done);
+    if (S) confirmBox('저장 불러오기', `지금 진행 상황을 이 저장(${saveSummary(v)})으로 바꿀까요? 되돌릴 수 없어요.`, '불러오기', go, true);
+    else { closeModal(); go(); }
   };
+  $('code-load').onclick = () => tryLoad($('code-in').value);
+  $('code-paste').onclick = async () => { try { const t = await navigator.clipboard.readText(); if (t) { $('code-in').value = t; tryLoad(t); } else say('클립보드가 비어 있어요'); } catch (_) { say('붙여 넣기 권한이 없어요. 칸을 길게 눌러 붙여 넣어 주세요'); } };
+  $('code-filein').onchange = async e => { const f = e.target.files && e.target.files[0]; if (!f) return; try { const t = await f.text(); $('code-in').value = t; tryLoad(t); } catch (_) { fail('json'); } };
+}
+
+/* ───────── 백업 슬롯: 이 기기에 저장 셋 ───────── */
+const SLOT_N = 3;
+const slotKey = i => `${SAVE_KEY}:slot${i}`;
+function slotInfo(i) { try { const raw = localStorage.getItem(slotKey(i)); if (!raw) return null; const o = JSON.parse(raw); return { at: o.at, sum: o.sum, name: o.name }; } catch (_) { return null; } }
+function slotSave(i) {
+  if (!S) return '';
+  saveGame();
+  try { localStorage.setItem(slotKey(i), JSON.stringify({ at: Date.now(), name: S.company || '', sum: saveSummary(S), data: JSON.stringify(S) })); } catch (_) { return '저장 공간이 모자라요. 다른 슬롯을 비우거나 저장 코드를 파일로 보관해 주세요.'; }
+  return '';
+}
+function slotLoad(i) {
+  let v;
+  try { const o = JSON.parse(localStorage.getItem(slotKey(i)) || 'null'); v = o && JSON.parse(o.data); } catch (_) { v = null; }
+  if (!v || !Array.isArray(v.advs)) return '슬롯이 비어 있거나 깨졌어요.';
+  return applySave(v) ? '' : '불러오지 못했어요.';
+}
+function slotClear(i) { try { localStorage.removeItem(slotKey(i)); } catch (_) {} }
+const slotWhen = t => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+function slotRows() {
+  let out = '';
+  // 찬 슬롯은 글이 길어 세로로(.col): 이름·요약 위, 단추 줄 아래
+  for (let i = 1; i <= SLOT_N; i++) { const o = slotInfo(i); out += `<div class="li${o ? ' col' : ''}"><div class="grow stack"><span>슬롯 ${i} ${o ? `<span class="muted">· ${slotWhen(o.at)}에 저장</span>` : '<span class="muted">· 비어 있음</span>'}</span>${o ? `<span class="sub">${esc(o.name || '')} · ${esc(o.sum || '')}</span>` : ''}</div><div class="btns"><button type="button" class="btn sm${o ? '' : ' gold'}" data-act="slotsave" data-i="${i}">${o ? '덮어쓰기' : '저장'}</button>${o ? `<button type="button" class="btn sm gold" data-act="slotload" data-i="${i}">불러오기</button><button type="button" class="btn sm" data-act="slotclear" data-i="${i}">비우기</button>` : ''}</div></div>`; }
+  return out;
 }
 
 /* ───────── 앱 업데이트 알림 (설치한 앱에서만) ───────── */

@@ -128,8 +128,12 @@ PANELS.co_goal = () => {
 };
 PANELS.co_log = () => `<div class="card"><div class="log">${S.log.slice(0, 40).map(l => `<div class="${l.kind}"><span class="d">${l.d}</span>${esc(l.text)}</div>`).join('') || '<div>아직 소식이 없어요.</div>'}</div></div>`;
 PANELS.co_set = () => `<div class="card"><div class="sub">진행 상황은 이 기기에 자동 저장돼요. 앱을 닫아도 최대 ${Math.round(offlineCap() / 3600)}시간까지 원정과 판매가 계속되고, 날짜와 시각은 그대로예요.</div>
-    <div class="sub">저장 코드를 복사해 두면 다른 기기나 새로 설치한 앱으로 진행 상황을 옮길 수 있어요.</div>
-    <div class="btns"><button type="button" class="btn sm" data-act="export">저장 코드 복사</button><button type="button" class="btn sm" data-act="import">저장 코드로 불러오기</button>${isApp() ? '<button type="button" class="btn sm" data-act="update">업데이트 확인</button>' : ''}</div>
+    <div class="sec"><b>저장 코드</b><span>다른 기기로 옮기기</span></div>
+    <div class="sub">저장 코드를 복사·공유·파일로 두면 다른 기기나 새로 설치한 앱으로 진행 상황을 옮길 수 있어요. 코드는 압축되어 짧고, 붙여 넣을 때 앞뒤 공백이나 줄바꿈은 알아서 지워요.</div>
+    <div class="btns"><button type="button" class="btn sm gold" data-act="export">저장 코드 만들기</button><button type="button" class="btn sm" data-act="import">저장 코드로 불러오기</button>${isApp() ? '<button type="button" class="btn sm" data-act="update">업데이트 확인</button>' : ''}</div>
+    <div class="sec"><b>백업 슬롯</b><span>이 기기에 ${SLOT_N}개</span></div>
+    <div class="sub">지금 진행 상황을 슬롯에 넣어 두고, 잘못됐을 때 되돌릴 수 있어요. 자동 저장과는 따로예요.</div>
+    <div class="list">${slotRows()}</div>
     <div class="sec"><b>소리</b><span>효과음과 배경음</span></div>
     <div class="btns"><button type="button" class="btn sm${AU.sfx ? ' on' : ''}" data-act="ausfx">효과음 ${AU.sfx ? '켬' : '끔'}</button><button type="button" class="btn sm${AU.bgm ? ' on' : ''}" data-act="aubgm">배경음 ${AU.bgm ? '켬' : '끔'}</button><span class="step"><button type="button" class="btn sm" data-act="auvol" data-d="-0.1">−</button><span>음량 ${Math.round(AU.vol * 100)}%</span><button type="button" class="btn sm" data-act="auvol" data-d="0.1">+</button></span></div>
     <div class="sub muted">배경음은 상단 앞·필드·던전·보스·투기장·마계마다 달라요. 소리는 화면을 한 번 누른 뒤부터 나요.</div>
@@ -726,6 +730,9 @@ const ACT = {
   autoreq: () => { S.autoReq = !autoReqOn(); if (S.autoReq) { const n = autoFulfill(); if (n) say(`의뢰 ${n}개를 바로 전달했어요.`); } },
   export: () => openExport(),
   import: () => openImport(),
+  slotsave: d => { const i = +d.i; if (slotInfo(i)) confirmBox('슬롯 덮어쓰기', `슬롯 ${i}의 저장을 지금 진행 상황으로 바꿀까요?`, '저장', () => { say(slotSave(i) || `슬롯 ${i}에 저장했어요`); renderPanel(true); }, false); else say(slotSave(i) || `슬롯 ${i}에 저장했어요`); },
+  slotload: d => { const i = +d.i, o = slotInfo(i); if (!o) return; confirmBox('슬롯 불러오기', `지금 진행 상황을 슬롯 ${i}(${o.sum})으로 바꿀까요? 되돌릴 수 없어요.`, '불러오기', () => { const r = slotLoad(i); if (r) say(r); renderPanel(true); renderChips(); updateHud(); }, true); },
+  slotclear: d => { const i = +d.i; confirmBox('슬롯 비우기', `슬롯 ${i}을(를) 비울까요?`, '비우기', () => { slotClear(i); renderPanel(true); }, true); },
   update: () => checkUpdate(true),
   reset: () => confirmBox('처음부터 다시', '저장된 진행 상황이 모두 지워져요. 되돌릴 수 없어요.', '모두 지우기', () => { closeWins(); resetGame(); showTitle(); }, true)
 };
