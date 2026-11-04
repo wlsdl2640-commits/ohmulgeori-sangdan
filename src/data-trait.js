@@ -38,7 +38,7 @@ const TRAIT_IDS = Object.keys(TRAITS);
 function rollTraits() {
   const n = 1 + (rnd() < 0.5 ? 1 : 0) + (rnd() < 0.3 ? 1 : 0), out = [];
   while (out.length < n) { const t = pickOne(TRAIT_IDS); if (!out.includes(t)) out.push(t); }
-  return out;
+  return typeof rollWeak === 'function' ? rollWeak(out) : out;   // 체질 (빌드 31, data-life.js)
 }
 const traitSum = (a, k) => (a.traits || []).reduce((s, id) => s + ((TRAITS[id] && TRAITS[id][k]) || 0), 0) + (typeof hallBonus === 'function' && S && S.hall ? hallBonus(k) : 0);   // 명예의 전당 동상 보너스도 더한다
 // 직업 특성 + 타고난 특성
@@ -153,6 +153,8 @@ const JOB_TRAITS = {
   dragoon:     { name: '용기병의 창',     desc: '공격력 +10% · 회피 +8%',         atkPct: 0.10, eva: 0.08 },
   hawkeye:     { name: '신궁의 집중',     desc: '치명타 +15%',                    crit: 0.15 },
   dslayer:     { name: '용살자의 심장',   desc: '보스 피해 +15% · 전리품 +10%',   bossDmg: 0.15, luck: 0.10 },
+  huntsman:    { name: '짐승 사냥법',     desc: '짐승에게 주는 피해 +15% · 전리품 +5%', vsBeast: 0.15, luck: 0.05 },
+  kaijuhunter: { name: '괴수의 숨통',     desc: '괴수에게 주는 피해 +20% · 짐승 +10%', vsKaiju: 0.20, vsBeast: 0.10 },
   maestro:     { name: '거장의 악장',     desc: '회복량 +12% · 초당 MP +2',       healPow: 0.12, mpFlat: 2 },
   caravanmaster: { name: '대상단의 깃발', desc: '짐 +8 · 방어력 +10% · 전리품 +5%', carry: 8, defPct: 0.10, luck: 0.05 },
   pathfinder:  { name: '개척자의 발',     desc: '회피 +10% · 이동 속도 +12%',     eva: 0.10, movePct: 0.12 },
@@ -164,7 +166,9 @@ const JOB_TRAITS = {
   archmage:    { name: '대마도사의 권능', desc: '마법 공격력 +12% · 치명타 +6%',  matkPct: 0.12, crit: 0.06 },
   archbishop:  { name: '대주교의 축성',   desc: '회복량 +15% · 받는 회복량 +10%', healPow: 0.15, rheal: 0.10 },
   physician:   { name: '명의의 처방',     desc: '마법 공격력 +8% · 회복량 +8%',   matkPct: 0.08, healPow: 0.08 },
-  inquisitor:  { name: '심판의 권능',     desc: '보스 피해 +18%',                 bossDmg: 0.18 }
+  inquisitor:  { name: '심판의 권능',     desc: '보스 피해 +18%',                 bossDmg: 0.18 },
+  elemancer:   { name: '원소의 결',       desc: '약점 속성 피해 +10% · 마법 공격력 +5%', elw: 0.10, matkPct: 0.05 },
+  alchemist:   { name: '현자의 공식',     desc: '약점 속성 피해 +15% · 마법 공격력 +8%', elw: 0.15, matkPct: 0.08 }
 };
 Object.entries(JOB_TRAITS).forEach(([cls, t]) => { TRAITS['j_' + cls] = Object.assign({ job: cls }, t); });
 const jobTraitOf = cls => (JOB_TRAITS[cls] ? 'j_' + cls : null);

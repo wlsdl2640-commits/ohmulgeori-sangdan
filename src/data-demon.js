@@ -146,7 +146,7 @@ STORY.castle = ['리치 킹이 성물함과 함께 부서졌다. 백작의 성�
 
 /* ───────── 전직 조건: 계열마다 맨 앞 2차 직업은 레벨만, 나머지는 저마다 추가 조건 ─────────
    req: lv(최소 레벨) · fame(상단 명성) · item([부속품, 개수], 전직 때 씀) · itemAny([머리글자, 개수], 어느 단계든) · kills(그 모험가의 처치 수)
-        dexFull(도감 완전 기록 몬스터 수) · bld(시설) · arenaWins(투기장 승리) · relics(유물 수) · cleared(공략한 던전 수) */
+        dexFull(도감 완전 기록 몬스터 수) · bld(시설) · arenaWins(투기장 승리) · relics(유물 수) · cleared(공략한 던전 수) · tkills([몬스터 타입, 수], 상단 도감 기준 처치 수) */
 CLASSES.gladiator.req = { lv: 30 };
 CLASSES.knight.req = { lv: 30, fame: 1000 };
 CLASSES.berserker.req = { item: ['blood_tear', 1] };
@@ -161,6 +161,8 @@ CLASSES.plaguedoc.req = { bld: 'temple' };
 CLASSES.exorcist.req = { cleared: 1 };
 CLASSES.coachman.req = { wagon: 1 };   // 상단에 말이 끄는 마차(짐수레 이상) 한 대
 CLASSES.scout.req = { trips: 20 };     // 본인 원정 20회
+CLASSES.huntsman.req = { tkills: ['beast', 400] };       // 상단 도감 기준 짐승 처치
+CLASSES.elemancer.req = { tkills: ['elemental', 120] };  // 상단 도감 기준 원소 처치
 const REQ_NAME = { itemAny: { soul_: '던전 주인의 혼(어느 단계든)' } };
 function jobReqText(c) {
   const R = CLASSES[c] && CLASSES[c].req; if (!R) return '';
@@ -178,6 +180,7 @@ function jobReqText(c) {
   if (R.cleared) out.push(`던전 공략 ${R.cleared}곳`);
   if (R.wagon) out.push('말이 끄는 마차(짐수레 이상) 보유');
   if (R.trips) out.push(`본인 원정 ${R.trips}회`);
+  if (R.tkills) out.push(`${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 (상단 도감)`);
   return out.join(' · ');
 }
 // 모자란 조건 하나를 말로 (없으면 '')
@@ -195,5 +198,6 @@ function jobReqWhy(a, c) {
   if (R.cleared) { const n = TIER_FIELDS.filter(f => S.fields[f] && S.fields[f].cleared).length; if (n < R.cleared) return `던전 공략 ${R.cleared}곳 필요 (지금 ${n}곳)`; }
   if (R.wagon && !S.parties.some(p => p.wagon && WAGONS[p.wagon] && WAGONS[p.wagon].horse)) return '말이 끄는 마차(짐수레 이상)가 있는 파티가 필요해요';
   if (R.trips && (a.trips || 0) < R.trips) return `본인 원정 ${R.trips}회 필요 (지금 ${a.trips || 0}회)`;
+  if (R.tkills) { const n = typeKills(R.tkills[0]); if (n < R.tkills[1]) return `${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 필요 (상단 도감 ${fmt(n)}마리)`; }
   return '';
 }

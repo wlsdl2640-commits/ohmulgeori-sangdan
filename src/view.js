@@ -96,6 +96,7 @@ function drawFrame(now, vt) {
   else { R(g, 0, 0, AW, BG_OY + 1, T.sky[0]); if (T.star > 0.02) for (const st of STARS) { const tw = 0.55 + 0.45 * Math.sin(t * (1.5 + st.b * 2) + st.p), a = T.star * tw * (0.5 + st.b * 0.5); if (a > 0.05) R(g, st.x, Math.round(st.y * BG_OY / 70), 1, 1, `rgba(255,250,235,${a.toFixed(2)})`); } }
   g.save(); g.translate(0, BG_OY); drawSky(g, id, V.scroll, t, dp); g.restore();
   w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
+  if (!bg.under) groundWx(w, wxNow(e || null), oy);   // 겨울 눈 덮인 땅 · 젖은 땅
   if (id === 'forest' && !bg.tall) { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
   if (bg.under && !bg.tall) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
   const lights = [], post = [];
@@ -110,6 +111,7 @@ function drawFrame(now, vt) {
   for (const f of post) f(g);
   if (e) fx(g, t);
   g.save(); g.translate(0, bg.tall ? 0 : BG_OY); drawAmbient(g, id, V.scroll, t, T); g.restore();
+  if (!bg.under) drawWeather(g, wxNow(e || null), t, BG_OY);   // 비·눈·바람·안개 (실내·던전은 없다)
   present();
 }
 // 작은 창에는 가운데 띠, 열려 있으면 전투 창에는 무대 전체
@@ -249,6 +251,7 @@ function townScene(w, t, p, lights, post, dark) {
   });
   const coach = coachState(t);   // 왕국 상단의 마차 (파티 뒤)
   if (coach) drawCoach(w, coach.x, 181, t, KINGDOMS[coach.k], coach.moving, lights, dark);
+  if (p && p.wagon) drawRig(w, 30, 182, t, p, false, 1);   // 상단 앞에 세워 둔 이 파티의 마차
   let list = p ? teamOf(p) : [];
   if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6);
   list = list.slice(0, 6);
@@ -317,8 +320,11 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       w.save(); w.translate(x, y); w.scale(tent ? 1 : side > 0 ? -1 : 1, 1); drawAdv(w, a, t, { sit: !zz, sleep: zz, z: ZS, side: 1 }); w.restore();
       if (zz) post.push(g => drawZ(g, x + (tent ? 8 : -side * 8), y - 14, t, i * 0.3));
     });
+    const cw = wxNow(e);
     if (tent) { const lx = cx - 14 + team.length * 20 + 6; post.push(g => lanternHi(g, lx, cy - 2, t)); lights.push({ x: lx, y: cy - 8, r: 80, c: '#f0c060', glow: 1, flick: 1 }); }
-    else { post.push(g => fireHi(g, cx, cy, t)); lights.push({ x: cx, y: cy - 6, r: 90, c: '#f09040', glow: 1, flick: 1 }); }
+    else if (campWet(p, cw)) { post.push(g => { R(g, cx - 5, cy - 2, 11, 1, '#5e3c22'); R(g, cx - 4, cy - 3, 3, 1, '#4a3020'); R(g, cx + 2, cy - 3, 3, 1, '#4a3020'); for (let i = 0; i < 4; i++) { const k = ((t * 0.5 + i * 0.25) % 1); R(g, cx + Math.round(Math.sin(i * 5 + t) * 2), cy - 6 - Math.round(k * 16), 1, 1, `rgba(170,170,180,${(0.6 * (1 - k)).toFixed(2)})`); } }); }   // 비: 꺼진 장작에서 연기만
+    else { const windy = campWindy(p, cw); post.push(g => fireHi(g, cx + (windy ? Math.round(Math.sin(t * 9)) : 0), cy, t)); lights.push({ x: cx, y: cy - 6, r: windy ? 55 : 90, c: '#f09040', glow: 1, flick: 1 }); }
+    if (p.wagon && !bg.under) drawRig(w, tent ? 214 : 26, GL + 10, t, p, false, tent ? -1 : 1);
     return;
   }
 
@@ -373,6 +379,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       g.restore();
     } });
   }
+  // 마차: 파티 뒤를 따라온다 (던전·레이드·투기장에는 두고 온다)
+  if (p.wagon && !bg.under && (e.area === 'field' || e.area === 'trade' || e.area === 'wave')) draws.push({ y: 160, f: g => drawRig(g, mx(20), 170, t, p, walking, dir) });
   // 파티
   team.forEach((a, i) => {
     const [x0, y0] = pos['a' + a.id], z = zAt(y0);
@@ -545,7 +553,9 @@ function events(e, pos, t, team, p) {
       V.fx.push({ k: 'burst', x: fm[0], y: fm[1], t0: t + delay, d: x.c ? 0.4 : 0.28, c: c1, c2, big: x.c });
       V.flash['f' + x.d] = t + delay + 0.09;
       if (x.dot) V.fx.push({ k: 'spark', x: fm[0], y: fm[1], t0: t + delay, d: 0.5, c: '#7ad83c' });
-      else V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: x.c ? '#f7e04a' : '#ffffff', t0: t + delay, d: x.c ? 0.9 : 0.7, big: x.c });
+      else if (x.imm) V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: '면역', c: '#a9b0bd', t0: t + delay, d: 0.8 });
+      else V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: x.c ? '#f7e04a' : x.wk ? '#ffa04a' : x.res ? '#9ab4d0' : '#ffffff', t0: t + delay, d: x.c ? 0.9 : 0.7, big: x.c || x.wk });
+      if (x.wk && !x.c) V.fx.push({ k: 'num', x: ft[0], y: ft[1] - 8, s: '약점', c: '#ffa04a', t0: t + delay, d: 0.7 });
       if (x.c) V.fx.push({ k: 'num', x: ft[0], y: ft[1] - 8, s: 'CRITICAL', c: '#ffb43c', t0: t + delay, d: 0.8 });
     } else if (x.type === 'fmiss') {
       const ft = ftop(x.d);
@@ -727,7 +737,8 @@ function logEvent(x, e, p) {
     if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') return add(`${foe(jo(Fn(x.d), '이', '가'))} ${x.k === 'curse' ? '저주' : x.k === 'burn' ? '화상' : x.k === 'bleed' ? '출혈' : '독'}(으)로 ${num(x.v)} 피해를 입었습니다.`, 'dim');
     if (x.pet) return add(`펫 ${ally(A(x.s))}의 ${PET_ACT_NAME[PETS[(petById(+String(x.s).slice(1)) || { kind: 'wolf' }).kind].act] || '공격'}! ${foe(Fn(x.d))}에게 ${num(x.v)} 피해.`);
     if (x.k === 'pet') return add(`${ally(A(x.s))}의 동료 짐승이 ${foe(Fn(x.d))}에게 ${num(x.v)} 피해!`);
-    return add(`${x.ctr ? '<i class="lg-c">반격!</i> ' : ''}${x.c ? '<i class="lg-c">치명타!</i> ' : ''}${ally(jo(A(x.s), '이', '가'))} ${foe(Fn(x.d))}에게 ${num(x.v, x.c ? 'c' : '')} 피해를 줬습니다.`);
+    if (x.imm) return add(`${foe(Fn(x.d))}에게는 ${ally(A(x.s))}의 공격이 통하지 않는다! <i class="lg-c">면역</i>`, 'dim');
+    return add(`${x.ctr ? '<i class="lg-c">반격!</i> ' : ''}${x.wk ? '<i class="lg-c">약점!</i> ' : ''}${x.c ? '<i class="lg-c">치명타!</i> ' : ''}${ally(jo(A(x.s), '이', '가'))} ${foe(Fn(x.d))}에게 ${num(x.v, x.c ? 'c' : '')} 피해를 줬습니다.`);
   }
   if (x.type === 'fmiss') return add(`${ally(A(x.s))}의 공격이 ${foe(Fn(x.d))}에게 빗나갔습니다.`, 'dim');
   if (x.type === 'hurt' && x.dot) return add(`${ally(jo(A(x.d), '이', '가'))} ${STATUS[x.k] ? STATUS[x.k].name : '독'}(으)로 ${num(x.v, 'r')} 피해를 입었습니다.`, 'dim');

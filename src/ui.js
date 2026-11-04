@@ -43,7 +43,7 @@ function updateHud() {
   $('h-gold').textContent = fmt(S.gold);
   $('h-fame').textContent = fmt(S.fame);
   const p = dateParts(S.t), ph = phaseOf(S.t), hd = $('h-date');
-  const html = `${p.m}월 ${p.d}일 <span class="clk">${clockStr(S.t)}</span> <span class="ph ph-${PHASES[ph].id}">${PHASES[ph].name}</span>`;
+  const html = `<span class="dl">${p.m}월 ${p.d}일 <span class="clk">${clockStr(S.t)}</span> <span class="ph ph-${PHASES[ph].id}">${PHASES[ph].name}</span></span>${hudWeather()}`;   // 시계 아래 날씨
   if (hd.innerHTML !== html) hd.innerHTML = html;
   const dd = S.settleDay - today(), r = $('h-rent');
   r.textContent = `정산 D-${dd}`;
@@ -51,7 +51,7 @@ function updateHud() {
   const n = S.reqs.filter(q => reqHave(q) >= q.qty).length, b = $('req-badge');
   b.hidden = !n; b.textContent = n;
 }
-const WHY = { over: '레이드가 끝나 복귀 중', raid: '레이드 몬스터를 쓰러뜨리고 복귀 중', time: '레이드에서 물러나 복귀 중', retreat: '레이드에서 빠져나와 복귀 중', full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '쓰러진 동료를 들것에 싣고 복귀 중', boss: '던전의 주인을 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중', sleep: '잠이 모자라 복귀 중' };
+const WHY = { trade: '교역을 마치고 돌아오는 중', imm: '공격이 통하지 않아 복귀 중', over: '레이드가 끝나 복귀 중', raid: '레이드 몬스터를 쓰러뜨리고 복귀 중', time: '레이드에서 물러나 복귀 중', retreat: '레이드에서 빠져나와 복귀 중', full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '쓰러진 동료를 들것에 싣고 복귀 중', boss: '던전의 주인을 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중', sleep: '잠이 모자라 복귀 중' };
 function expStatus(p) {
   const e = p.exp;
   if (!e) return p.members.length ? '상단에서 대기 중' : '파티원이 없어요';
@@ -59,7 +59,10 @@ function expStatus(p) {
   if (e.area === 'raid' && e.foes.length) return `${RAIDS[e.raid].name}와(과) 싸우는 중! · ${Math.max(0, Math.ceil(RAID_FIGHT - e.rt))}초 · 피해 ${fmt(e.dealt)}`;
   if (e.area === 'raid' && e.mode === 'advance') return `${RAIDS[e.raid].name}에게 다가가는 중`;
   if (e.foes.length) { const fb = e.foes.find(f => f.fb); return fb ? `필드 보스 ${fb.name}와(과) 싸우는 중!` : e.foes.some(f => f.boss) ? '던전의 주인과 싸우는 중!' : e.camp ? '야영지 습격!' : '전투 중'; }
-  if (e.camp) return e.camp.tent ? (e.camp.t > 1.5 ? `텐트에서 자는 중 (피로 회복 ×${e.camp.tent})` : '텐트를 치는 중') : e.camp.t > 1.5 ? '모닥불 곁에서 자는 중' : '모닥불을 피우는 중';
+  if (e.camp) { const w = wxNow(e), cf = e.camp.wxf != null ? e.camp.wxf : campWxF(p, w), cft = cf !== 1 ? ` · 날씨 ×${Math.round(cf * 100) / 100}` : '';
+    if (e.camp.tent) return e.camp.t > 1.5 ? `${e.camp.tent >= 2 ? '대형 ' : ''}텐트에서 자는 중 (피로 회복 ×${e.camp.tent}${cft})` : '텐트를 치는 중';
+    if (campWet(p, w)) return e.camp.t > 1.5 ? `모닥불 없이 젖은 채 노숙 중${cft}` : '비를 피할 곳을 찾는 중';
+    return e.camp.t > 1.5 ? `${campWindy(p, w) ? '바람에 흔들리는 ' : ''}모닥불 곁에서 자는 중${cft}` : '모닥불을 피우는 중'; }
   if (e.wait === 'gate') return `${F.dungeon.name} 입구 · 들어갈지 정해 주세요`;
   const tired = teamOf(p).some(a => (a.fat || 0) >= 60), carry = teamOf(p).filter(a => a.down).length;
   if (e.mode === 'return') return (WHY[e.why] || '복귀 중') + (carry && e.why !== 'loss' ? ` · 들것 ${carry}` : '') + (tired ? ' · 지침' : '');
@@ -71,6 +74,7 @@ function whereStr(e) {
   if (e.area === 'raid') return `레이드 · ${F.name}`;
   if (e.area === 'wave') return `하르겐 성문 · ${e.wave.cur + 1}/${e.wave.n}번째 무리`;
   if (e.area === 'arena') return '지하 투기장';
+  if (e.area === 'trade') return tradeWhere(e);
   return e.area === 'dungeon' ? `${F.dungeon.name} ${e.stage}층` : `${F.name} ${F.no}-${e.stage}`;
 }
 function updateOverlay() {
@@ -80,13 +84,14 @@ function updateOverlay() {
   Rr.hidden = true;
   if (!e) { L.textContent = `${p.name} · 상단 앞`; B.hidden = true; return; }
   L.textContent = `${p.name} · ${whereStr(e)}`;
+  const w = wxNow(e); if (!w.indoor) L.textContent += ` · ${wxLabel(w)}`;
   // 작은 창 아래 글은 할 일이 있을 때만 (던전 입구에서 기다리는 중)
   B.hidden = e.wait !== 'gate'; if (!B.hidden) B.textContent = '던전 입구 · 눌러서 정하기';
 }
 function renderChips() {
   const html = S.parties.map(p => {
     const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.camp ? 'camp' : e.wait ? 'wait' : e.mode === 'return' ? 'back' : 'go';
-    const st = !e ? '대기' : e.area === 'raid' ? '레이드' : e.area === 'dungeon' ? `${FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
+    const st = !e ? '대기' : e.area === 'raid' ? '레이드' : e.area === 'trade' ? `교역 ${e.leg === 'back' ? '귀환' : e.stage + '/' + e.dist}` : e.area === 'dungeon' ? `${FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
     return `<button type="button" class="pchip${S.view === p.id ? ' on' : ''}" data-view="${p.id}"><i class="dot ${cls}"></i>${esc(p.name)} · ${st}</button>`;
   }).join('');
   if (html !== UI.chips) { $('pchips').innerHTML = html; UI.chips = html; }
@@ -193,7 +198,7 @@ function hqOpen(h) {
   if (!w) return;
   if (w.startsWith('b:')) openWin('b', { b: w.slice(2) }); else openWin(w);
 }
-const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0', stable: 'stable0', library: 'library0', airfield: 'airfield0' };
+const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0', stable: 'stable0', library: 'library0', airfield: 'airfield0', kitchen: 'kitchen0' };
 
 /* ───────── 배속 ───────── */
 function renderSpeed() {

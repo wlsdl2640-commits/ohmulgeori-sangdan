@@ -8,6 +8,7 @@ Object.assign(MONS, {
   pvph: { name: '모험가', plan: 'human', body: '#8a8a8a', dark: '#5a5a5a', mh: 1, ma: 1, md: 1, spd: 1, minS: 1, magic: 1, drops: [] }
 });
 MON_DIM.pvp = MON_DIM.pvpm = MON_DIM.pvph = [18, 26];
+['pvp', 'pvpm', 'pvph'].forEach(id => { MONS[id].ty = ['human']; MONS[id].el = []; });   // 투기장 상대: 인간 (속성 상성은 받지 않는다)
 FIELDS.arena = { no: 0, name: '지하 투기장', lv: 1, bg: 'arena', tier: 3, arena: 1, mons: [], dungeon: null, desc: '' };
 
 const underOpen = () => (S.rank || 0) >= UNDER_RANK;

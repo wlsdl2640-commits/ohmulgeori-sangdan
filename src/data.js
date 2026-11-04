@@ -27,12 +27,12 @@ const phaseFrac = t => (((t % DAY_SEC) + DAY_SEC) % DAY_SEC) / (DAY_SEC / 4) % 1
 // 게임 속 시계 (자정을 넘겨도 날짜는 새벽 4시에 바뀐다)
 function clockOf(t) { const f = (((t % DAY_SEC) + DAY_SEC) % DAY_SEC) / DAY_SEC, mins = Math.floor(HOUR0 * 60 + f * 1440) % 1440; return { h: Math.floor(mins / 60), m: mins % 60 }; }
 const clockStr = t => { const c = clockOf(t); return String(c.h).padStart(2, '0') + ':' + String(Math.floor(c.m / 10) * 10).padStart(2, '0'); };
-// 필드 몬스터 레벨: 네 스테이지마다 1씩 오른다 (1-50에서 +12)
-const fieldLv = (F, stage) => F.lv + Math.floor((stage - 1) / 4);
+// 필드 몬스터 레벨: 네 스테이지마다 1씩 오른다 (1-50에서 +12). F.span이 있으면 1-50에서 +span (구름섬 너머의 섬: 10)
+const fieldLv = (F, stage) => F.lv + (F.span ? Math.floor((stage - 1) * F.span / (FIELD_STAGES - 1)) : Math.floor((stage - 1) / 4));
 const minStage = m => 1 + ((m.minS || 1) - 1) * 3;
 // 던전 몬스터는 필드 끝(1-50)보다 강하다
-const dungeonLv = (F, floor) => F.lv + 10 + floor;
-const dungeonBossLv = F => F.lv + 17;
+const dungeonLv = (F, floor) => (F.span ? F.lv + F.span - 5 + floor : F.lv + 10 + floor);
+const dungeonBossLv = F => (F.span ? F.lv + F.span + 2 : F.lv + 17);
 
 /* ───────── 부속품·물품 ───────── */
 // v: 기준가(G), w: 무게, icon: 아이콘 모양, c: 아이콘 색
@@ -207,6 +207,8 @@ const BIOS = {
   bloodlord:    ['피 냄새를 맡으면 눈빛이 바뀐다.'], ranger: ['늑대 한 마리가 늘 그림자처럼 따라다닌다.'],
   sniper:       ['바람 소리만 듣고 거리를 잰다.'], hawkeye: ['천 걸음 밖 사과도 맞힌다는 소문이 있다.'],
   mhunter:      ['벽에 걸린 뿔 하나하나에 이야기가 있다.', '사냥감을 보면 먼저 가죽 값부터 센다.'], dslayer: ['용의 비늘로 만든 외투를 입는다.'],
+  huntsman:     ['발자국만 보고 무슨 짐승이 언제 지나갔는지 안다.', '사냥개 세 마리와 함께 산다.'], kaijuhunter: ['산만 한 괴수의 뼈로 활을 깎았다.'],
+  elemancer:    ['여섯 원소의 주문을 동시에 외우다 혀를 깨문 적이 있다.', '약점을 찾는 눈이 날카롭다.'], alchemist: ['납을 금으로 바꿨다는 소문이 있지만 본인은 웃기만 한다.'],
   bard:         ['노래 한 곡이면 지친 동료도 다시 일어난다.', '짐을 지고도 노래가 끊기지 않는다.'], maestro: ['그의 연주가 끝나면 전장이 조용해진다.'],
   coachman:     ['말이 먼저 알아보고 고개를 숙인다.', '고삐를 쥐면 수레도 춤춘다.'], caravanmaster: ['그가 이끄는 행렬은 산도 넘고 사막도 건넌다.'],
   scout:        ['지도보다 발자국을 더 믿는다.', '어디서든 바람을 등지고 텐트를 친다.'], pathfinder: ['아무도 가지 않은 길에만 발자국을 남긴다.'],

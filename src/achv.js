@@ -56,7 +56,14 @@ const ACHV = [
   { id: 'dex1', cat: '살림', name: '도감 수집가', desc: '몬스터 완전 기록 10종', need: 10, get: () => Object.values((S.dex && S.dex.kills) || {}).filter(n => n >= DEX_K[3]).length, rw: { gold: 5000, fame: 10 } },
   { id: 'dex2', cat: '살림', name: '몬스터 박사', desc: '몬스터 완전 기록 30종', need: 30, get: () => Object.values((S.dex && S.dex.kills) || {}).filter(n => n >= DEX_K[3]).length, rw: { gold: 20000, fame: 20, item: ['wizstone', 1] } },
   { id: 'bld', cat: '살림', name: '번듯한 상단', desc: '시설 단계 합 20', need: 20, get: () => Object.values(S.bld || {}).reduce((s, v) => s + (v || 0), 0), rw: { gold: 5000, fame: 10 } },
-  { id: 'bld2', cat: '살림', name: '하르겐의 랜드마크', desc: '시설 단계 합 50', need: 50, get: () => Object.values(S.bld || {}).reduce((s, v) => s + (v || 0), 0), rw: { gold: 40000, fame: 30, item: ['wizstone', 1] } }
+  { id: 'bld2', cat: '살림', name: '하르겐의 랜드마크', desc: '시설 단계 합 50', need: 50, get: () => Object.values(S.bld || {}).reduce((s, v) => s + (v || 0), 0), rw: { gold: 40000, fame: 30, item: ['wizstone', 1] } },
+  // 빌드 31
+  { id: 'trade1', cat: '장사', name: '첫 교역', desc: '교역로로 이웃 나라에 한 번 다녀오기', need: 1, get: () => S.stats.trades || 0, rw: { gold: 3000, fame: 5 } },
+  { id: 'trade2', cat: '장사', name: '대상단', desc: '교역 20번', need: 20, get: () => S.stats.trades || 0, rw: { gold: 30000, fame: 20 } },
+  { id: 'cook1', cat: '살림', name: '첫 도시락', desc: '주방에서 요리 10번', need: 10, get: () => S.stats.cooked || 0, rw: { gold: 2000 } },
+  { id: 'cook2', cat: '살림', name: '상단의 요리사', desc: '주방에서 요리 200번', need: 200, get: () => S.stats.cooked || 0, rw: { gold: 15000, fame: 10 } },
+  { id: 'hero2', cat: '모험가', name: '한계를 넘어', desc: '2차 각성한 초월 용사 1명', need: 1, get: () => S.advs.filter(a => a.hero2).length + ((S.hall || []).filter(h => h.hero2).length), rw: { gold: 50000, fame: 50, item: ['wizstone', 1] } },
+  { id: 'lv150', cat: '모험가', name: '별에 닿다', desc: '모험가 Lv150', need: 1, get: () => (S.advs.some(a => a.lv >= 150) || (S.hall || []).some(h => h.lv >= 150) ? 1 : 0), rw: { gold: 100000, fame: 80, item: ['bloomstone', 1] } }
 ];
 const ACHV_CATS = ['사냥', '장사', '모험가', '살림'];
 const achvDone = () => Object.keys(S.achv || {}).length;

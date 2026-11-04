@@ -615,7 +615,7 @@ function heroBust(a) {
 /* ───────── 화면 ───────── */
 const ARR_L = '<span class="tri l"></span>', ARR_R = '<span class="tri r"></span>';
 function heroPanel(a) {
-  const need = expNeed(a.lv), xp = a.lv >= MAX_LV ? 1 : Math.min(1, a.exp / need);
+  const need = expNeed(a.lv), xp = a.lv >= lvCap(a) ? 1 : Math.min(1, a.exp / need);
   const slots = skillSlots(a), hexes = [];
   for (let k = 0; k < slots; k++) {
     const id = a.skills[k], s = id && SKILLS[id];
@@ -630,13 +630,13 @@ function heroPanel(a) {
         <div class="hero-stage">
           <div class="hero-nav"><button type="button" class="hero-arr" data-mact="hprev" aria-label="이전 모험가">${ARR_L}</button><span class="hero-cls">${esc(CLASSES[a.cls].name)}</span><button type="button" class="hero-arr" data-mact="hnext" aria-label="다음 모험가">${ARR_R}</button></div>
           <canvas id="hero-cv" width="${HERO.W}" height="${HERO.H}"></canvas>
-          <div class="hero-lv">Lv.${a.lv}${a.hero ? ' <small>용사</small>' : ''}</div>
+          <div class="hero-lv">Lv.${a.lv}${a.hero2 ? ' <small>초월 용사</small>' : a.hero ? ' <small>용사</small>' : ''}</div>
           <div class="hero-xp"><div class="hbar"><i style="width:${(xp * 100).toFixed(1)}%"></i></div><button type="button" class="hero-mag${UI.heroDet === false ? '' : ' on'}" data-mact="hdet" aria-label="자세히"><img src="${pxURL('mag')}" alt=""></button></div>
         </div>
         <div class="hero-side"><div class="hero-por"><img src="${heroBust(a)}" alt=""></div><div class="hero-sk">${hexes.join('')}</div></div>
       </div>
       <div class="hero-party">${thumbs}</div>
-      <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait${TRAITS[id].job ? ' job' : ''}" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}</div>
+      <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait${TRAITS[id].job ? ' job' : ''}${TRAITS[id].neg ? ' neg' : ''}" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}</div>
     </div>
 `;
 }

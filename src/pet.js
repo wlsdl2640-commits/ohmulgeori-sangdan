@@ -1,3 +1,5 @@
+// 펫 공격의 속성 (그림 효과로 정한다)
+const PET_FX_EL = { ice: 'ice', fire: 'fire', bolt: 'thunder', wind: 'wind', dark: 'dark', holy: 'holy' };
 /* ───────── 펫 살림: 부화·먹이·성장·진화·전투 행동 ───────── */
 function petState() { if (!S.pets) S.pets = []; if (!S.pen) S.pen = { inc: [] }; return S.pen; }
 // 알 품기
@@ -92,11 +94,11 @@ function petTick(p, e, team, dm, dt) {
     e.buffs.push({ sid: 'pet', to: 'party', stat: K.act === 'song' ? 'atk' : 'def', mult: pet.stage ? 1.25 : 1.15, add: 0, t: 6 });
     ev(e, 'buff', { s: sid, id: 'pet_' + K.act, party: true, pet: K.act });
   } else if (K.act === 'splash') {
-    alive.forEach(f => { const v = hitFoe(e, f, pw * 0.6, false, true, null); ev(e, 'hit', { s: sid, d: f.uid, v, k: K.fx || 'ice', pet: 1 }); sta(f); });
+    alive.forEach(f => { const v = hitFoe(e, f, pw * 0.6, false, true, null, PET_FX_EL[K.fx || 'ice'] || 'none'); ev(e, 'hit', Object.assign({ s: sid, d: f.uid, v, k: K.fx || 'ice', pet: 1 }, hitTag())); if (v) sta(f); });
   } else {
-    const f = alive[0], magic = !!K.magic, v = hitFoe(e, f, pw, rnd() < 0.1, magic, null);
-    ev(e, 'hit', { s: sid, d: f.uid, v, k: K.fx || 'pet', pet: 1 });
-    sta(f);
+    const f = alive[0], magic = !!K.magic, v = hitFoe(e, f, pw, rnd() < 0.1, magic, null, PET_FX_EL[K.fx] || 'none');
+    ev(e, 'hit', Object.assign({ s: sid, d: f.uid, v, k: K.fx || 'pet', pet: 1 }, hitTag()));
+    if (v) sta(f);
     if (K.act === 'web') f.slow = 4;
     if (K.act === 'drain') { const h = Math.round(v * 0.5); low.hp = Math.min(dm[low.id].maxHp, low.hp + h); ev(e, 'heal', { s: sid, d: low.id, v: h }); }
   }

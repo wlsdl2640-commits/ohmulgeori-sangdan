@@ -2,7 +2,7 @@
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
   gladiator: 'sword', champion: 'sword', knight: 'sword', paladin: 'sword', berserker: 'axe', bloodlord: 'axe',
-  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute', coachman: 'club', caravanmaster: 'axe', scout: 'bow', pathfinder: 'bow', mhunter: 'bow', dslayer: 'bow', sorcerer: 'staff', archmage: 'staff',
+  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute', coachman: 'club', caravanmaster: 'axe', scout: 'bow', pathfinder: 'bow', mhunter: 'bow', dslayer: 'bow', huntsman: 'bow', kaijuhunter: 'bow', sorcerer: 'staff', archmage: 'staff', elemancer: 'staff', alchemist: 'staff',
   assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'dagger', masterthief: 'dagger',
   elementalist: 'staff', elementlord: 'staff', necromancer: 'staff', lich: 'staff', spellblade: 'sword', arcblade: 'sword',
   priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
@@ -18,13 +18,13 @@ function blankState(company) {
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
-    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0 },
-    stable: { horses: {} }, league: null,
+    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0 },
+    stable: { horses: {} }, league: null, presets: [], wx: { seed: Math.floor(Math.random() * 1e9) },
     settleDay: MONTH_DAYS,
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -252,6 +252,7 @@ function toggleMember(pid, aid) {
   if (!p || !a || p.exp || a.status !== 'idle') return;
   if (!p.members.includes(aid) && a.post) { HOOKS.toast(`${a.name}은(는) 신전에서 일하는 중이에요`); return; }
   if (!p.members.includes(aid) && isPorter(a) && portersOf(p).length >= 1) { HOOKS.toast('짐꾼 계열은 파티당 한 명만 넣을 수 있어요'); return; }
+  if (!p.members.includes(aid) && !isPorter(a) && fightersOf(p).length >= PARTY_FIGHTERS) { HOOKS.toast(`파티는 짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지예요`); return; }
   if (p.members.includes(aid)) p.members = p.members.filter(x => x !== aid);
   else { const o = partyOf(aid); if (o) { if (o.exp) return; o.members = o.members.filter(x => x !== aid); } p.members.push(aid); }
   changed();
@@ -723,6 +724,7 @@ function upgrade(bid) {
   if (bid === 'airfield' && lv === 0) queueModal({ title: '비행장', body: S.fields.roots && S.fields.roots.cleared ? STORY.skyOpen : STORY.airfield });
   if (bid === 'stable' && lv === 0) queueModal({ title: '마구간', body: STORY.stable });
   if (bid === 'library' && lv === 0) queueModal({ title: '도서관', body: STORY.library });
+  if (bid === 'kitchen' && lv === 0) queueModal({ title: '주방', body: STORY.kitchen });
   log(`${B.name}을(를) ${lv ? 'Lv' + (lv + 1) + '로 넓혔다' : '지었다'}.`, 'good');
   changed();
   return '';
@@ -1158,7 +1160,8 @@ function autoDepart(p) {
   if (p.dest && FIELDS[p.dest] && FIELDS[p.dest].treasure && !isUnlocked(p.dest)) return;   // 보물 지도를 다 썼으면 다시 떠나지 않는다
   const team = p.members.map(advById).filter(Boolean);
   if (!team.length || team.some(a => a.status !== 'idle' || a.inj || a.post || (a.sleep || 0) > SLEEP.ready || a.hp < derive(a).maxHp * 0.85 || (a.fat || 0) > FATIGUE.depart)) return;
-  startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains');
+  if (p.repeatLeft != null && p.repeatLeft <= 0) { p.repeat = false; p.repeatLeft = null; log(`${p.name}의 반복 출발이 정한 횟수를 다 채웠다.`); return; }
+  if (!startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains') && p.repeatLeft != null) p.repeatLeft--;
 }
 function stepHome(dt) {
   const m = (spn('clinic') >= 2 ? 2 : 1) * (1 + relic('rest') + petHome('rest')), rest = SLEEP.rest(S.bld.inn) * (isNight() ? 1.6 : 0.8) * (1 + relic('rest') + petHome('rest')) * dt;
@@ -1202,7 +1205,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 6;   // 지금 저장 판 (migrate6까지 옮긴 상태)
+const SAVE_V = 7;   // 지금 저장 판 (migrate7까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1219,14 +1222,14 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
     S.bank = S.bank || { offers: [], deps: [], loans: [] };
     S.research = S.research || { lv: {}, cur: null }; S.spons = S.spons || {};
     ALL_FIELDS.forEach(f => { S.fields[f] = S.fields[f] || newField(); });
-    ['smithy', 'bank', 'tower', 'temple', 'stable', 'library', 'airfield'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    ['smithy', 'bank', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
     S.stable = S.stable || { horses: {} };
     const old = S.v;
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
@@ -1244,6 +1247,8 @@ function loadFrom(v) {
     notes29();
     if (old < 6) { migrate6(); saveGame(); }
     notes30();
+    if (old < 7) { migrate7(); saveGame(); }
+    notes31();
     return true;
   } catch (_) { return false; }
 }
@@ -1265,6 +1270,23 @@ function migrate6() {
   S.v = 6;
   if (n) log(`마구간이 생겼다. 마차를 끌던 말 ${n}마리를 마구간 장부에 올렸다.`);
 }
+// 빌드 31: 날씨 씨앗, 주방, 편성, 파티 인원(짐꾼 계열 빼고 넷), 체질 특성 (자리가 있는 모험가 셋 중 하나꼴)
+function migrate7() {
+  S.wx = S.wx || { seed: Math.floor(Math.random() * 1e9) };
+  S.bld.kitchen = S.bld.kitchen || 0; S.presets = S.presets || [];
+  let cut = 0, wt = 0;
+  for (const p of S.parties) cut += trimParty(p);
+  for (const a of S.advs) {
+    if (innateTraits(a).length >= TRAIT_MAX || rnd() >= 0.33 || (a.traits || []).some(t => TRAITS[t] && (TRAITS[t].wxCold || TRAITS[t].wxHot || TRAITS[t].wxWet || TRAITS[t].wxWind || TRAITS[t].wxColdRes || TRAITS[t].wxHotRes))) continue;
+    const t = rnd() < 0.6 ? pickOne(WEAK_TRAIT_IDS) : pickOne(['coldRes', 'hotRes']), i = a.traits.findIndex(isJobTrait);
+    if (i < 0) a.traits.push(t); else a.traits.splice(i, 0, t);
+    wt++;
+  }
+  S.v = 7;
+  if (cut) log(`파티 인원 규칙이 바뀌었다 (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지). 넘치던 ${cut}명을 대기로 돌렸다.`);
+  if (wt) log(`모험가 ${wt}명이 날씨를 타는 체질을 드러냈다. 모험가 창의 특성에서 볼 수 있다.`);
+}
+function notes31() { if (!S.flags.v31) { S.flags.v31 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 · 요리 · 교역 · 2차 각성', body: STORY.v31 }); } }
 function notes30() { if (!S.flags.v30) { S.flags.v30 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '북쪽 변경 · 하늘 · 마구간', body: STORY.v30 }); } }
 // 의상·숙련도 칸 (없으면 만든다)
 function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); migrateSkillIds(); }

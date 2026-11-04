@@ -88,6 +88,7 @@ function monCard(id) {
   const sta = lvl >= 4 ? `<div class="sub ok-t">완전 기록: 이 몬스터에게 주는 피해 +3%${m.sta ? ` · 거는 상태이상: ${STATUS[m.sta.k].name} (${Math.round(m.sta.p * 100)}%)` : ''}</div>` : `<div class="sub muted">30마리 잡으면 완전 기록 (피해 +3%${m.sta ? ', 상태이상 정보' : ''})</div>`;
   const rr = dexRare(id), rareRow = m.boss || m.giant || m.fb ? '' : rr ? `<div class="sub gold-t">★ 희귀종 ${rr}마리 기록: 이 종에게 주는 피해 +${Math.round(RARE.dmg * 100)}% · 전리품 +${Math.round(RARE.drop * 100)}%</div>` : `<div class="sub muted">희귀종(반짝이는 개체, 1/${Math.round(1 / RARE.p)})을 잡으면 이 종에게 피해 +${Math.round(RARE.dmg * 100)}%·전리품 +${Math.round(RARE.drop * 100)}%</div>`;
   return `<details class="card dexm"><summary><span class="row"><img class="dexi" src="${monIconURL(id)}" alt=""><span class="grow stack"><span>${m.name} ${tags}${rr ? ' <span class="tag gold-t">★희귀</span>' : ''}</span><span class="sub">${where.map(w => esc(w.where)).join(' · ') || '?'} · 잡음 <b class="num">${k}</b> · 기록 ${lvl}/4</span></span></span></summary>
+    <div class="sub">${monTypes(id).map(t => `<span class="tyt">${MTYPES[t] ? MTYPES[t].name : t}</span>`).join('')} 속성 ${monEls(id).length ? monEls(id).map(elTag).join('·') : '<span class="muted">없음</span>'}${monElNote(id) ? ` <span class="muted">· ${monElNote(id)}</span>` : ''}</div>
     ${stats}${drops}${sta}${rareRow}</details>`;
 }
 

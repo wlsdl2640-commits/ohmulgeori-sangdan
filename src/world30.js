@@ -166,27 +166,31 @@ BLD_BOX.library = () => {
 };
 
 /* ───────── 비행장: 비행 마차 제작 · 구름섬 원정 ───────── */
+// 비행장에서 고른 섬 (열린 섬만)
+const skyDestOf = () => { const d = UI.skyDest; return d && SKY_IDS.includes(d) && isUnlocked(d) ? d : 'sky'; };
 function skyGo(pid) {
   const p = findP(pid); if (!p) return '';
   if (p.exp) return '원정 중인 파티예요.';
-  p.dest = 'sky';
-  const m = startExp(p, 'sky');
+  const fid = skyDestOf();
+  p.dest = fid;
+  const m = startExp(p, fid);
   if (m) return m;
   S.view = p.id; renderChips();
   return '';
 }
 BLD_SUM.airfield = () => `<div class="sub">${isUnlocked('sky') ? `구름섬 원정 가능 · 비행 마차를 단 파티 ${S.parties.filter(p => wagonFly(p)).length}대` : '구름섬은 세계수의 심장을 공략하면 열려요'}</div>`;
 BLD_BOX.airfield = () => {
-  const open = isUnlocked('sky'), F = FIELDS.sky, fs = S.fields.sky || {};
+  const fid = skyDestOf(), open = isUnlocked(fid), F = FIELDS[fid], fs = S.fields[fid] || {};
+  const isles = SKY_IDS.filter(f => FIELDS[f].region === 'sky').map(f => `<button type="button" class="chip${f === fid ? ' on' : ''}" data-act="skydest" data-f="${f}"${isUnlocked(f) ? '' : ' disabled'}>${FIELDS[f].name}${isUnlocked(f) ? '' : ' 🔒'}</button>`).join('');
   const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length;
   const rows = S.parties.map(p => { const team = teamOf(p), avg = Math.round(avgLvOf(p)), block = team.map(cantGo).filter(Boolean), fly = wagonFly(p), W = WAGONS.sky;
-    const why = p.exp ? `원정 중 · ${whereStr(p.exp)}` : !team.length ? '파티원이 없어요' : !fly ? (p.wagon === 'sky' ? wagonWhy(p) : '비행 마차가 없어요') : portersOf(p).length > 1 ? '짐꾼 계열은 한 명만' : block.length ? block[0] : !open ? '구름섬이 아직 안 열렸어요' : '';
+    const why = p.exp ? `원정 중 · ${whereStr(p.exp)}` : !team.length ? '파티원이 없어요' : !fly ? (p.wagon === 'sky' ? wagonWhy(p) : '비행 마차가 없어요') : partyWhy(p) ? partyWhy(p) : block.length ? block[0] : !open ? '구름섬이 아직 안 열렸어요' : '';
     const buy = p.wagon === 'sky' ? '' : `<button type="button" class="btn sm" data-act="wagon" data-id="${p.id}" data-w="sky"${!p.exp && S.gold + wagonBack(p) >= W.cost ? '' : ' disabled'}>비행 마차 ${fmt(Math.max(0, W.cost - wagonBack(p)))}G</button>`;
-    return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg} · ${p.wagon ? rigName(p) : '마차 없음'}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : '<br><span class="ok-t">날아갈 준비가 됐어요</span>'}</span><button type="button" class="btn sm gold" data-act="skygo" data-id="${p.id}"${why ? ' disabled' : ''}>구름섬 출발</button></div>${buy ? `<div class="btns" style="margin-top:-2px;margin-bottom:6px">${buy}</div>` : ''}`; }).join('');
-  return `<div class="card hl"><div class="h">${F.name} <small>Lv${F.lv}~${F.lv + 12}</small></div><div class="sub">${F.desc}</div><div class="sub ${open ? 'ok-t' : 'red-t'}">${open ? `열림 · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}` : F.unlock}</div></div>
+    return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg} · ${p.wagon ? rigName(p) : '마차 없음'}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : '<br><span class="ok-t">날아갈 준비가 됐어요</span>'}</span><button type="button" class="btn sm gold" data-act="skygo" data-id="${p.id}"${why ? ' disabled' : ''}>${fid === 'sky' ? '구름섬' : F.name} 출발</button></div>${buy ? `<div class="btns" style="margin-top:-2px;margin-bottom:6px">${buy}</div>` : ''}`; }).join('');
+  return `<div class="chips">${isles}</div><div class="card hl"><div class="h">${F.name} <small>Lv${F.lv}~${fieldLv(F, FIELD_STAGES)}</small></div><div class="sub">${F.desc}</div><div class="sub ${open ? 'ok-t' : 'red-t'}">${open ? `열림 · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}` : F.unlock}</div></div>
     <div class="sub">비행 마차(${fmt(WAGONS.sky.cost)}G · 짐 +${WAGONS.sky.cap} · 이동 ×${WAGONS.sky.spd})는 여기서 만들어요. 마구간에서 그리폰·와이번·페가수스(다 자란 펫)를 매면 그리폰 마차·와이번 마차·페가수스 마차가 되고, 그래야 구름섬으로 날아가요. 비행장 2단계면 비행 마차 짐 +20%.</div>
     <div class="sec"><b>보낼 파티</b><span>보급품·목적지 거점은 원정대 창에서</span></div>${rows || '<div class="sub muted">파티가 없어요.</div>'}
-    <div class="sub muted">하늘 지도는 지도 창의 「${SKY_NAME}」 탭에서 봐요. 구름섬에는 앞으로 새 필드와 던전이 더 생겨요.</div>`;
+    <div class="sub muted">하늘 지도는 지도 창의 「${SKY_NAME}」 탭에서 봐요. 구름섬 너머로 천둥 봉우리(Lv120) → 천계의 유적 폐허(Lv130) → 별의 정원(Lv140)이 이어지고, 앞 섬의 던전을 공략하면 다음 섬이 열려요.</div>`;
 };
 
 /* ───────── 상단 랭킹: 달마다 이웃 상단들과 겨룬다 ─────────
@@ -278,8 +282,22 @@ function skyMapArt() {
   for (let i = 0; i < 14; i++) R(g, cx + 22, cy + 10 + i, 2, 1, i % 3 ? '#9ad8ff' : '#ffffff'); ell(g, cx + 23, cy + 25, 5, 2, 'rgba(255,255,255,0.6)');
   // 신전 (던전 자리)
   const tx = cx + 26, ty = cy - 14; R(g, tx - 9, ty - 2, 18, 8, '#e8e4d8'); R(g, tx - 11, ty - 4, 22, 2, '#f8f4ec'); for (let i = 0; i < 5; i++) R(g, tx - 8 + i * 4, ty - 2, 1, 8, '#b8b4a8'); R(g, tx - 7, ty - 9, 14, 5, '#d8d4c8'); R(g, tx - 1, ty - 11, 2, 2, '#f0c24a');
-  // 작은 섬들 (앞으로 생길 땅)
-  for (const [ix, iy, iw] of [[36, 40, 16], [196, 46, 14], [60, 122, 12], [206, 116, 18]]) { for (let i = 0; i < 6; i++) R(g, ix - iw + i, iy + 2 + i, iw * 2 - i * 2, 1, '#6a6a7a'); ell(g, ix, iy, iw, 3, '#5a9a4a'); R(g, ix - 4, iy - 2, 2, 1, '#7ab85a'); }
+  // 하늘길 (구름섬 → 천둥 봉우리 → 유적 폐허 → 별의 정원)
+  for (const [ax, ay, bx, by] of [[150, 76, 184, 52], [204, 58, 204, 106], [184, 116, 70, 48]]) for (let i = 0; i <= 24; i++) if (i % 3 < 2) R(g, Math.round(ax + (bx - ax) * i / 24), Math.round(ay + (by - ay) * i / 24), 2, 1, 'rgba(255,255,255,0.55)');
+  // 천둥 봉우리: 먹구름 아래 뾰족한 바위와 첨탑
+  { const ix = 196, iy = 44; for (let i = 0; i < 14; i++) R(g, ix - 22 + i, iy + 2 + i, 44 - i * 2, 1, i % 4 === 0 ? '#3a4054' : '#4a5068'); ell(g, ix, iy, 24, 6, '#5a6078'); for (const [px, ph] of [[-12, 12], [-3, 18], [8, 14], [16, 9]]) for (let i = 0; i < ph; i++) R(g, ix + px - Math.round((ph - i) / 4), iy - i, Math.max(1, Math.round((ph - i) / 2)), 1, i % 4 ? '#6a7088' : '#8a94b0');
+    ell(g, ix + 2, iy - 26, 22, 5, '#3a4058'); ell(g, ix - 8, iy - 28, 12, 4, '#2e3448'); for (let i = 0; i < 6; i++) R(g, ix - 6 + (i % 2) * 3, iy - 22 + i * 2, 2, 2, '#ffe060');
+    R(g, ix + 17, iy - 26, 3, 14, '#3a3e54'); R(g, ix + 16, iy - 28, 5, 2, '#8ad8ff'); }
+  // 천계의 유적 폐허: 흰 기둥과 무너진 아치
+  { const ix = 198, iy = 118; for (let i = 0; i < 12; i++) R(g, ix - 24 + i, iy + 2 + i, 48 - i * 2, 1, i % 4 === 0 ? '#8a7a5a' : '#a8987a'); ell(g, ix, iy, 26, 6, '#d8ccb0'); ell(g, ix - 4, iy - 1, 16, 3, '#e8dcc0');
+    for (const px of [-16, -9, 6, 14]) { const h = 8 + ((px + 20) % 7); R(g, ix + px, iy - h, 3, h, '#f4ecd8'); R(g, ix + px - 1, iy - h - 1, 5, 1, '#fff8e8'); }
+    for (let i = 0; i <= 10; i++) R(g, ix - 24 + i * 2, iy - 12 - Math.round(Math.sin(Math.PI * i / 10) * 5), 2, 2, '#f0e8d0'); R(g, ix - 3, iy - 4, 4, 4, '#f0c24a'); }
+  // 별의 정원: 밤하늘 빛무리 속 별꽃 나무
+  { const ix = 50, iy = 40; ell(g, ix, iy - 6, 34, 18, 'rgba(40,40,110,0.35)'); for (let i = 0; i < 12; i++) R(g, ix - 22 + i, iy + 2 + i, 44 - i * 2, 1, i % 4 === 0 ? '#2a2a5a' : '#3a3a6a'); ell(g, ix, iy, 24, 5, '#4a4a8a'); ell(g, ix + 4, iy - 1, 14, 3, '#5a5aa0');
+    for (const px of [-12, 0, 12]) { R(g, ix + px, iy - 9, 1, 9, '#6a5a8a'); ell(g, ix + px, iy - 11, 5, 3, '#5a4a9a'); R(g, ix + px - 2, iy - 12, 1, 1, '#fff0a0'); R(g, ix + px + 2, iy - 10, 1, 1, '#fff0a0'); }
+    for (let i = 0; i < 18; i++) R(g, ix - 30 + Math.floor(r() * 60), iy - 30 + Math.floor(r() * 26), 1, 1, i % 3 ? '#fff0a0' : '#ffffff'); }
+  // 작은 섬들
+  for (const [ix, iy, iw] of [[60, 122, 12], [150, 132, 8]]) { for (let i = 0; i < 6; i++) R(g, ix - iw + i, iy + 2 + i, iw * 2 - i * 2, 1, '#6a6a7a'); ell(g, ix, iy, iw, 3, '#5a9a4a'); R(g, ix - 4, iy - 2, 2, 1, '#7ab85a'); }
   // 비행 마차 (상단 → 구름섬)
   R(g, 20, 118, 8, 4, '#8a6238'); R(g, 18, 116, 12, 2, '#a07848'); R(g, 16, 114, 4, 2, '#e8e0d0'); R(g, 28, 114, 4, 2, '#e8e0d0'); R(g, 22, 116, 3, 2, '#2a2a34');
   for (let i = 0; i < 12; i++) R(g, 30 + i * 7, 112 - i * 2, 3, 1, 'rgba(255,255,255,0.5)');
@@ -301,6 +319,7 @@ Object.assign(ACT, {
   libtab: d => { UI.libTab = d.t; renderPanel(true); },
   libbuy: d => say(buyLibMat(d.k, +d.n)),
   libcraft: d => say(craftBook(d.sk)),
-  skygo: d => { const m = skyGo(+d.id); if (m) say(m); else { say(`${findP(+d.id).name} 구름섬으로 출발!`); showWin(false); } }
+  skydest: d => { UI.skyDest = d.f; renderPanel(true); },
+  skygo: d => { const m = skyGo(+d.id); if (m) say(m); else { say(`${findP(+d.id).name} ${FIELDS[skyDestOf()].name}(으)로 출발!`); showWin(false); } }
 });
 Object.assign(ACT_SFX, { buyhorse: 'buy', sellhorse: 'coin', hitch: 'buff', wplus: 'forge', libcraft: 'buff', libbuy: 'buy', buyshoe: 'buy', skygo: 'open' });

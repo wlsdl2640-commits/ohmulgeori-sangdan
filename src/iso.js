@@ -8,6 +8,7 @@ const isoX = (tx, ty) => (tx - ty) * TW / 2, isoY = (tx, ty) => (tx + ty) * TH /
 const FLOOR_INFO = {
   shop:     { name: '상점 · 본부', win: 'inv' },
   alchemy:  { name: '연금술 공방', win: 'b:alchemy' },
+  kitchen:  { name: '주방', win: 'b:kitchen' },
   training: { name: '훈련소', win: 'adv' },
   temple:   { name: '신전', win: 'b:temple' },
   inn:      { name: '여관', win: 'adv' },
@@ -29,6 +30,7 @@ const ROOM_C = {
   temple:   { wall: '#e6e2d6', wall2: '#cdc8b8', base: '#8a8478', fl: ['#cac4b6', '#b8b2a4'] },
   training: { wall: '#c8a67c', wall2: '#ae8c64', base: '#5e4630', fl: ['#6e8e5c', '#628252'] },
   alchemy:  { wall: '#9cb696', wall2: '#86a080', base: '#465640', fl: ['#7c8272', '#707666'] },
+  kitchen:  { wall: '#e0c8a0', wall2: '#c8ae86', base: '#6a4a2a', fl: ['#b8a07a', '#ac946e'], stone: 1 },
   tower:    { wall: '#5e4e80', wall2: '#4c3e6c', base: '#241c3a', fl: ['#6c5c8e', '#605082'] },
   smithy:   { wall: '#706458', wall2: '#5e544a', base: '#342c26', fl: ['#5c544c', '#524a42'], stone: 1 },
   bank:     { wall: '#7c7c88', wall2: '#686874', base: '#34343e', fl: ['#a4a4ae', '#94949e'], stone: 1 }
@@ -39,6 +41,7 @@ const SEATS = 6;   // 여관 한 층의 방 수
 function hqFloors() {
   const b = S.bld, up = [];
   if (b.alchemy) up.push({ id: 'alchemy' });
+  if (b.kitchen) up.push({ id: 'kitchen' });
   if (b.training) up.push({ id: 'training' });
   if (b.temple) up.push({ id: 'temple' });
   const nInn = Math.max(1, Math.ceil(beds() / SEATS));
@@ -143,6 +146,10 @@ const F = {
   bigbooks: x => { ibox(x, 0, 0.6, 3, 0.4, 36, '#5a3a22', '#44301a', '#362412'); for (let r = 0; r < 4; r++) for (let i = 0; i < 11; i++) { const [px, py] = L(0.12 + i * 0.26, 0.95); R(x, Math.round(px), Math.round(py) - 8 - r * 8, 1, 6, ['#a8432f', '#3f6a9a', '#4f8a43', '#c08a3a', '#6a4a8a', '#c8b890'][(i * 5 + r) % 6]); } },
   lectern: x => { ibox(x, 0.3, 0.3, 0.4, 0.4, 14, '#8a6238', '#6e4c2a', '#5e4028'); ibox(x, 0.1, 0.2, 0.8, 0.6, 2, '#a07848', '#7e5a32', '#6a4826', 14); R(x, -3, -18, 6, 3, '#f0e8d0'); R(x, -2, -17, 4, 1, '#8a8070'); },
   windsock: x => { R(x, -1, -34, 2, 34, '#5a5a62'); for (let i = 0; i < 5; i++) R(x, 1 + i * 3, -33 + (i % 2), 3, 5 - Math.floor(i / 2), i % 2 ? '#f0f0f0' : '#f08a3c'); },
+  // 주방: 화덕 · 식료품 선반 · 큰 솥
+  stove: x => { ibox(x, 0, 0.2, 2, 0.8, 14, '#8a7a6a', '#6a5a4e', '#5a4a40'); ibox(x, 0.1, 0.25, 1.8, 0.7, 1, '#3a3430', '#2a2420', '#221c18', 14); const [fx, fy] = L(1, 1, 5); R(x, Math.round(fx) - 6, Math.round(fy) - 4, 12, 5, '#2a1a10'); R(x, Math.round(fx) - 4, Math.round(fy) - 3, 8, 3, '#f08a3c'); R(x, Math.round(fx) - 2, Math.round(fy) - 3, 4, 2, '#fff2a0'); const [px, py] = L(0.6, 0.5, 15); ell(x, Math.round(px), Math.round(py), 5, 2, '#3a3a44'); R(x, Math.round(px) - 4, Math.round(py) - 3, 8, 3, '#4a4a54'); const [qx, qy] = L(1.4, 0.5, 15); ell(x, Math.round(qx), Math.round(qy), 4, 2, '#2a2a30'); R(x, Math.round(qx) + 3, Math.round(qy) - 1, 5, 1, '#5e4028'); },
+  pantry: x => { ibox(x, 0, 0.6, 2, 0.4, 26, '#9a7048', '#7a5432', '#664424'); for (let r = 0; r < 3; r++) { ibox(x, 0, 0.6, 2, 0.4, 1, '#b08454', '#8a6238', '#6e4c2a', 7 + r * 8); for (let i = 0; i < 5; i++) { const [px, py] = L(0.2 + i * 0.38, 0.95, 8 + r * 8); const c = ['#e8dcc0', '#c8504a', '#f0b43c', '#7ab85a', '#d8642a'][(i + r) % 5]; R(x, Math.round(px) - 1, Math.round(py) - 4, 3, 4, c); } } },
+  pot: x => { ell(x, 0, 2, 11, 5, '#2a2a30'); ell(x, 0, -2, 12, 6, '#3a3a44'); ell(x, 0, -4, 10, 4, '#2a2a30'); ell(x, 0, -4, 8, 3, '#c8803a'); R(x, -1, -12, 2, 8, '#8a6238'); for (let i = 0; i < 3; i++) R(x, -4 + i * 4, -9 - (i % 2) * 2, 1, 2, 'rgba(230,230,230,0.6)'); },
   bollard: x => { ibox(x, 0.3, 0.3, 0.4, 0.4, 8, '#6a6a72', '#52525a', '#42424a'); R(x, -1, -9, 2, 1, '#9aa0a8'); },
   flywagon: x => { ibox(x, 0.2, 0.2, 2.6, 1.2, 14, '#8a6238', '#6e4c2a', '#5e4028'); ibox(x, 0.1, 0.1, 2.8, 1.4, 3, '#a07848', '#7e5a32', '#6a4826', 14); for (const sx of [-18, 14]) { R(x, sx, -24, 10, 2, '#e8e0d0'); R(x, sx + 2, -27, 8, 3, '#e8e0d0'); R(x, sx + 4, -30, 6, 3, '#d8d0c0'); } R(x, -4, -9, 8, 5, '#2a2a34'); }
 };
@@ -159,10 +166,11 @@ const LAYOUT = {
   bank: [['vault', 3, 0, 3, 1, 42, 'b:bank'], ['counter', 2, 3, 3, 1, 16, 'b:bank'], ['gold', 7, 1, 1, 1, 12, 'b:bank'], ['chest', 1, 0, 1, 1, 10, 'b:bank'], ['chest', 7, 3, 1, 1, 10, 'b:bank'], ['lamp', 0, 6, 1, 1, 28], ['plant', 8, 8, 1, 1, 18]],
   stable: [['hay', 0, 0, 1, 1, 8, 'b:stable'], ['hay', 1, 0, 1, 1, 8, 'b:stable'], ['trough', 3, 0, 2, 1, 8, 'b:stable'], ['trough', 6, 0, 2, 1, 8, 'b:stable'], ['fence', 0, 4, 2, 1, 14], ['fence', 0, 7, 2, 1, 14], ['barrel', 8, 8, 1, 1, 12], ['crate', 8, 7, 1, 1, 10], ['lamp', 8, 1, 1, 1, 28]],
   library: [['bigbooks', 0, 0, 3, 1, 36, 'b:library'], ['bigbooks', 3.5, 0, 3, 1, 36, 'b:library'], ['books', 0, 3, 2, 1, 30, 'b:library'], ['table', 4, 4, 2, 1, 16, 'b:library'], ['lectern', 7, 2, 1, 1, 14, 'b:library'], ['stool', 5, 5.5, 1, 1, 6], ['lamp', 8, 7, 1, 1, 28], ['plant', 0, 8, 1, 1, 18]],
+  kitchen: [['stove', 1, 0, 2, 1, 22, 'b:kitchen'], ['pantry', 4, 0, 2, 1, 28, 'b:kitchen'], ['pot', 6.5, 3.5, 1, 1, 14, 'b:kitchen'], ['table', 2, 4, 2, 1, 16, 'b:kitchen'], ['stool', 2.5, 5.6, 1, 1, 6], ['stool', 4, 5.6, 1, 1, 6], ['barrel', 8, 1, 1, 1, 12], ['crate', 8, 2, 1, 1, 10], ['crate', 0, 6, 1, 1, 10], ['lamp', 0, 3, 1, 1, 28], ['plant', 8, 8, 1, 1, 18]],
   airfield: [['flywagon', 2, 2, 3, 2, 30, 'b:airfield'], ['windsock', 8, 0, 1, 1, 34], ['bollard', 0, 7, 1, 1, 8], ['bollard', 3, 7, 1, 1, 8], ['bollard', 6, 7, 1, 1, 8], ['crate', 7, 0, 1, 1, 10], ['crate', 0, 0, 1, 1, 10], ['barrel', 8, 5, 1, 1, 12], ['lamp', 0, 4, 1, 1, 28]]
 };
 const STAND_POS = [[2, 3], [4, 3], [6, 3], [2, 5], [4, 5], [6, 5], [3, 7], [5, 7], [7, 7], [8, 4]];
-const CENTERED = ['barrel', 'plant', 'lamp', 'dummy', 'cauldron', 'gold', 'coal', 'circle', 'scope'];
+const CENTERED = ['barrel', 'plant', 'lamp', 'dummy', 'cauldron', 'gold', 'coal', 'circle', 'scope', 'pot'];
 // 여관 방 r: 뒤쪽 셋 (ty 0~3), 앞쪽 셋 (ty 5~8)
 const roomAt = r => ({ tx: (r % 3) * 3, ty: r < 3 ? 0 : 5 });
 const BED_SPOT = [[2, 3], [4, 3], [6, 3], [1, 6], [3, 6], [5, 6], [7, 6]];   // 신전 환자 침대
@@ -336,6 +344,10 @@ function wallDecor(g, f, night) {
   } else if (f.id === 'training') {
     winR(g, 3, 6, 30, 44, sky);
     for (let i = 0; i < 3; i++) poly(g, [scr(0, 2 + i * 2, 30), scr(0, 2.8 + i * 2, 30), scr(0, 2.8 + i * 2, 44), scr(0, 2 + i * 2, 44)], ['#a8432f', '#3f6a9a', '#c08a3a'][i]);
+  } else if (f.id === 'kitchen') {
+    winL(g, 3, 5, 26, 42, sky); winR(g, 6.4, 7.8, 26, 42, sky);
+    for (let i = 0; i < 4; i++) { const [x, y] = scr(0, 6 + i * 0.5, 40); R(g, Math.round(x) - 1, Math.round(y), 1, 5, '#5e4028'); R(g, Math.round(x) - 3, Math.round(y) + 5, 5, 3, ['#3a3a44', '#8a6238', '#3a3a44', '#c8a060'][i]); }
+    for (let i = 0; i < 3; i++) { const [x, y] = scr(0.6 + i * 0.5, 0, 46); R(g, Math.round(x), Math.round(y), 1, 6, '#5a7a4a'); R(g, Math.round(x) - 1, Math.round(y) + 6, 3, 2, ['#e0d0a0', '#c84a3a', '#7ab85a'][i]); }
   } else if (f.id === 'alchemy') {
     winL(g, 3, 5, 26, 42, sky);
     for (let i = 0; i < 5; i++) { const [x, y] = scr(3.4 + i * 0.4, 0, 46); R(g, Math.round(x), Math.round(y), 1, 6, '#5a7a4a'); R(g, Math.round(x) - 1, Math.round(y) + 6, 3, 3, ['#5ac84a', '#c8a040', '#a85ac8', '#5ac84a', '#e0503f'][i]); }
@@ -378,6 +390,7 @@ function sceneOf(f, t) {
   if (f.id === 'pen') penScene(it, t);
   if (f.id === 'training') trainScene(it, t);
   if (f.id === 'alchemy') staffAt(it, STAFF.alchem, 2.6, 4.6, 'stir', t, 'f', 1);
+  if (f.id === 'kitchen') staffAt(it, STAFF.cook, 2.2, 1.9, 'stir', t, 'f', 0);
   if (f.id === 'tower') { staffAt(it, STAFF.sage, 2.2, 6.4, 'read', t, 'b', 1); }
   if (f.id === 'smithy') staffAt(it, STAFF.smith, 4.5, 2.3, 'hammer', t, 'f', 0, 2.6);
   if (f.id === 'bank') staffAt(it, STAFF.clerk, 3.5, 2.4, 'idle', t, 'f', 0);
@@ -580,6 +593,7 @@ function hqLights(f, t) {
   if (f.id === 'temple') { add(4.5, 0.5, 16, 52, '#f7d070'); add(0.5, 3.5, 26, 34, '#f0c060'); add(8.5, 3.5, 26, 34, '#f0c060'); }
   if (f.id === 'training') add(4.5, 4.5, 40, 60, '#f0c060');
   if (f.id === 'alchemy') add(4, 4, 6, 48, '#7af070');
+  if (f.id === 'kitchen') { add(2, 1, 4, 52, '#f08a3c'); add(0.5, 3.5, 26, 34, '#f0c060'); }
   if (f.id === 'tower') add(4.5, 4.5, 20, 56, '#b88aff');
   if (f.id === 'smithy') { add(2, 1.6, 8, 64, '#f08a3c'); add(5, 5, 30, 34, '#f0c060'); }
   if (f.id === 'bank') { add(0.5, 6.5, 26, 40, '#f0c060'); add(7.5, 1.5, 6, 30, '#f0d070'); }

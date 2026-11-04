@@ -18,7 +18,8 @@ const STAFF = {
   sage:    { key: 'Ssage', hair: '#e8e4dc', skin: '#f1c9a5', body: '#3f2f6a', legs: '#3f2f6a', robe: 1, hat: 'wizard', hatc: '#3f2f6a', beard: 1, trim: '#d9b44a' },
   clerk:   { key: 'Sclerk', hair: '#30304a', skin: '#f1c9a5', body: '#2a3a5a', legs: '#2a2a3a', glasses: 1, tie: 1, style: 0 },
   innkeep: { key: 'Sinn', hair: '#7a2f22', skin: '#e0ac7e', body: '#8a5a9a', legs: '#4a3a2a', apron: '#e8dcb8', style: 1 },
-  coach:   { key: 'Scoach', hair: '#5a3a22', skin: '#c68a5e', body: '#a8432f', legs: '#3a3040', style: 2, beard: 1 }
+  coach:   { key: 'Scoach', hair: '#5a3a22', skin: '#c68a5e', body: '#a8432f', legs: '#3a3040', style: 2, beard: 1 },
+  cook:    { key: 'Scook', hair: '#3a2a1a', skin: '#f1c9a5', body: '#f4f0e4', legs: '#4a3a2a', apron: '#e8e2d0', style: 0, hat: 'band', mustache: 1 }
 };
 // 본부의 작은 모험가: 직업 차림(PXL)에서 색과 모자를 고른다
 const HAT_OF = { helm: 'helm', great: 'greathelm', winged: 'greathelm', glad: 'bronze', horn: 'horns', dragon: 'dragon', hood: 'hood', hoodup: 'hood', cowl: 'hood', coif: 'hood', coif2: 'hood',

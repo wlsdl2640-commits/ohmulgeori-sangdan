@@ -20,7 +20,7 @@ const MAP_NODES = {
 };
 // 하늘 지도 (구름섬): 따로 그린 지도 위에 놓인다
 const SKY_MAP_W = 240, SKY_MAP_H = 150;
-const MAP_NODES_SKY = { sky: { x: 118, y: 84, dun: [26, -14] } };
+const MAP_NODES_SKY = { sky: { x: 118, y: 84, dun: [26, -14] }, thunder: { x: 196, y: 44, dun: [18, -16] }, ruins: { x: 198, y: 118, dun: [-22, -6] }, stargarden: { x: 50, y: 40, dun: [20, -14] } };
 const MAP_EXTRA = [];   // 지도 그림에 덧그리는 함수들 (world30.js)
 const MAP_KINGS = { inglisia: { x: 22, y: 134 }, frama: { x: 58, y: 186 }, elves: { x: 24, y: 48 }, dwarves: { x: 128, y: 26 }, sarak: { x: 226, y: 178 } };
 const MAP_ORGS = {
@@ -182,7 +182,7 @@ function mapDetail() {
   // 원정 목적지
   let fid = sel.id, F, title, sub, dungeon = sel.k === 'dungeon';
   if (sel.k === 'raid') { fid = 'raid_' + sel.id; F = FIELDS[fid]; const R = RAIDS[sel.id], r = raidRec(sel.id); title = `레이드 · ${R.name}`; sub = `Lv${R.lv} · 남은 HP ${pct(r.hp, r.max)}% · ${R.desc}`; }
-  else { F = FIELDS[fid]; const fs = S.fields[fid]; const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length; title = dungeon ? F.dungeon.name : F.name; sub = dungeon ? `${fs.cleared ? '공략 완료 · 다시 들어가면 주인이 기다린다' : '한 번만 공략할 수 있다'} · 몬스터 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)}, 주인 Lv${dungeonBossLv(F)}` : F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : `Lv${F.lv}~${F.lv + 12} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`} · ${F.desc}`; }
+  else { F = FIELDS[fid]; const fs = S.fields[fid]; const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length; title = dungeon ? F.dungeon.name : F.name; sub = dungeon ? `${fs.cleared ? '공략 완료 · 다시 들어가면 주인이 기다린다' : '한 번만 공략할 수 있다'} · 몬스터 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)}, 주인 Lv${dungeonBossLv(F)}` : F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : `Lv${F.lv}~${fieldLv(F, FIELD_STAGES)} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`} · ${F.desc}`; }
   const ok = isUnlocked(fid);
   const why = !ok ? (F.unlock || (F.giant ? '이번 달에는 열리지 않은 레이드' : `상단 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열려요`)) : '';
   const note = ok && F.region === 'sky' ? '비행 마차에 그리폰·와이번·페가수스를 맨 파티만 갈 수 있어요. 비행장 창에서도 보낼 수 있어요.' : '';
@@ -200,7 +200,7 @@ function talkCard(id) {
     ${K ? `<div class="sub">${K.desc}</div>` : ''}
     ${K && !open ? `<div class="sub muted">${FIELDS[K.need] ? FIELDS[K.need].name + '이(가) 열리면 찾아와요.' : ''}</div>` : ''}
     ${K && q ? `<div class="sub">의뢰 진행: ${kqText(q)} <b class="num">${kqProgress(id)}</b></div>` : K && nq ? `<div class="sub muted">받을 수 있는 의뢰가 있어요.</div>` : K ? '<div class="sub ok-t">모든 의뢰를 마쳤어요.</div>' : ''}
-    <div class="btns"><button type="button" class="btn sm gold" data-act="talk" data-id="${id}">이야기하기</button>${K && v ? `<button type="button" class="btn sm" data-act="sub" data-id="co_king">교역</button>` : ''}</div></div>`;
+    <div class="btns"><button type="button" class="btn sm gold" data-act="talk" data-id="${id}">이야기하기</button>${K && v ? `<button type="button" class="btn sm" data-act="sub" data-id="co_king">교역</button>` : ''}${K && open ? `<button type="button" class="btn sm" data-act="tradego" data-k="${id}">교역로로 가기 · ${TRADE[id].dist}구간</button>` : ''}</div></div>`;
 }
 // 지도 창: 대륙 / 하늘 탭. 하늘 지도는 세계수 던전을 공략하면 보인다 (구름섬은 비행장까지 지어야 간다)
 PANELS.map = () => {

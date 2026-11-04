@@ -463,7 +463,7 @@ html, body { overflow-x: hidden; }
 details.card > .list { margin-top: 8px; }
 
 /* ───────── 창고: 분류 탭과 칸 격자 ───────── */
-.tabs.inv .tab { padding: 6px 1px; font-size: 11px; letter-spacing: -.02em; }
+.tabs.inv .tab { padding: 6px 1px; font-size: 11px; letter-spacing: -.04em; white-space: nowrap; }
 .tabs.inv .tab small { display: block; margin-top: 1px; font-size: 9px; color: var(--ink-3); }
 .tabs.inv .tab.on small { color: var(--gold); }
 .igrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; margin: 6px 0 8px; padding: 6px; background: #121620; border: 2px solid var(--line); box-shadow: inset 0 2px 0 rgba(0, 0, 0, .35); }
@@ -520,3 +520,22 @@ details.card > .list { margin-top: 8px; }
 .tabs.exp .tab.on small { color: var(--gold); }
 .tabs.exp .tab.add { flex: 0 0 auto; padding: 6px 8px; color: var(--gold); }
 .tabs.adv .tab { font-size: 12px; padding: 7px 1px; }
+
+/* ── 빌드 31: 날씨 · 도시락 · 교역 · 속성 ── */
+.hv.date { flex-direction: column; align-items: flex-end; gap: 0; line-height: 1.2; }
+.hv.date .dl { white-space: nowrap; }
+.hv.date .wx { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; white-space: nowrap; }
+.wxi { width: 11px; height: 11px; image-rendering: pixelated; vertical-align: -1px; margin-right: 2px; }
+.wxi.big { width: 28px; height: 28px; margin-right: 6px; }
+.wx-hot { color: #ff9a6a; } .wx-cold { color: #8ac4ff; } .wx-ok { color: #8ae0a0; }
+.trait.neg { border-color: #6a2a2a; background: #2a1618; }
+.trait.neg b { color: #ff8a7a; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 3px 0 4px; }
+.chip { min-height: 28px; padding: 3px 9px; font-size: 12px; color: var(--ink-2); background: #171b24; border: 2px solid #000; box-shadow: inset 0 0 0 1px #2a3040; }
+.chip.on { color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-d); background: #2a2418; }
+.tog { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
+.tog input { width: 18px; height: 18px; accent-color: var(--gold); }
+.elt { font-weight: 700; }
+.fbtn.trade { box-shadow: inset 0 0 0 1px #7a5a2a; }
+.fbtn.trade.on { box-shadow: inset 0 0 0 2px var(--gold); }
+.tyt { display: inline-block; padding: 0 4px; margin-right: 3px; font-size: 11px; border: 1px solid #3a4050; color: var(--ink-2); }

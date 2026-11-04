@@ -12,6 +12,8 @@ const skSec = v => `${Math.round(v * 10) / 10}초`;
 const skN = v => fmt(Math.round(v));
 const skRange = v => `${skN(v * 0.85)}~${skN(v * 1.15)}`;
 const skMul = v => `×${Math.round(v * 100) / 100}`;
+// 속성 한 줄: 무속성이면 강철에 면역, 속성이면 빛·신성에 면역
+const skElLine = s => (s.els ? `속성 ${s.els.map(elTag).join('·')} 가운데 적의 약점으로 · 빛·신성 몬스터에게 면역` : elOf(s) === 'none' ? `속성 ${elTag('none')} · 강철 몬스터에게 면역` : `속성 ${elTag(elOf(s))} · 같은 계열·빛·신성 몬스터에게 면역`);
 // 스킬 하나의 수치 목록 (문자열 배열)
 function skillSpec(id, a) {
   const s = SKILLS[id]; if (!s) return [];
@@ -40,18 +42,23 @@ function skillSpec(id, a) {
     if (s.gamble) out.push(`${skPct(s.gamble.p)} 확률로 ×${s.gamble.mult} 대박 (평균 ${skMul(1 + s.gamble.p * (s.gamble.mult - 1))})`);
     if (s.drain) out.push(`준 피해의 ${skPct(s.drain)} 흡혈`);
     if (s.steal) out.push(`맞힌 적마다 금화 +${s.steal}G${hits > 1 ? ` ×${hits}` : ''}`);
+    out.push(skElLine(s));
+    if (s.vs) out.push(Object.entries(s.vs).map(([t, v]) => `${MTYPES[t] ? MTYPES[t].name : t}에게 ×${v}`).join(' · '));
+    if (s.armor) out.push('강철의 무속성 면역을 꿰뚫는다 (피해 80%)');
   } else if (s.kind === 'dot') {
     out.push(`${SK_KIND.dot} ${magic ? '마법 공격력' : '공격력'} ${skMul(s.mult * L)}/초 · ${s.dur}초 (합 ${skMul(s.mult * L * s.dur)})`);
     if (d) { const dps = (magic ? d.matk : d.atk) * s.mult * M * (T.dot || 1); out.push(`초당 약 <b>${skN(dps)}</b> × ${s.dur}초 ≈ ${skN(dps * s.dur)}`); }
     out.push(`대상 ${SK_TGT[s.tgt] || s.tgt}`);
+    out.push(skElLine(s));
   } else if (s.kind === 'heal' && s.tgt === 'self') {
     out.push(`최대 HP의 ${skPct(s.pct * L)} 회복`);
     if (d) out.push(`약 <b>${skN(d.maxHp * s.pct * M * d.healPow * (1 + d.rheal))}</b> 회복`);
   } else if (s.kind === 'heal') {
     out.push(`치유 마법 공격력 ${skMul(s.mult * L)} · ${SK_TGT[s.tgt] || s.tgt}`);
     if (d) out.push(`약 <b>${skRange(d.matk * s.mult * M * (T.healPow || 1) * d.healPow)}</b> 회복${s.tgt === 'party' ? ' (한 사람마다)' : ''}`);
-    if (s.cures && s.cures.length) out.push(`${s.cures.map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);
+    if (s.cures && s.cures.length) out.push(`${s.cures.length >= STATUS_IDS.length - 1 ? '모든 상태이상' : s.cures.map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);
     else out.push('출혈 해제');
+    if (s.reviveAll) out.push(`쓰러진 동료를 모두 최대 HP의 ${skPct(s.reviveAll)}로 일으킨다 · 부상도 남지 않는다`);
   } else if (s.kind === 'buff') {
     out.push(`${SK_BUFF[s.stat] || STAT_NAMES[s.stat] || s.stat} ${s.mult ? skMul(1 + (s.mult - 1) * L) : '+' + skPct(s.add * L) + 'p'}${s.haste ? ` · 공격 속도 ${skMul(1 + (s.haste - 1) * L)}` : ''}`);
     out.push(`${s.dur}초 · ${SK_TGT[s.tgt] || s.tgt}`);

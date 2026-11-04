@@ -62,9 +62,10 @@ KINGDOMS.sarak.sells.push('fireherb');
 KINGDOMS.dwarves.sells.push('boltbranch');
 
 /* ───────── 창고 분류 ───────── */
-const INV_CATS = [['mat', '부속품'], ['herb', '약초'], ['sup', '소모품'], ['book', '스킬북'], ['rune', '룬'], ['gear', '장비']];
+const INV_CATS = [['mat', '부속품'], ['herb', '약초'], ['sup', '소모품'], ['food', '요리'], ['book', '스킬북'], ['rune', '룬'], ['gear', '장비']];
 function itemCat(k) {
   const I = ITEMS[k]; if (!I) return 'mat';
+  if (I.dish || I.food) return 'food';
   if (I.herb) return 'herb';
   if (I.potion || I.sup || I.heal || I.mana || I.use) return 'sup';
   if (I.book) return 'book';

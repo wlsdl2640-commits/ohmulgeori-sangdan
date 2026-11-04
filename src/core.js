@@ -32,7 +32,7 @@ const isNight = () => phaseOf(S.t) === 3;
 /* ───────── 모험가 능력치 ───────── */
 function expNeed(lv) { return Math.round(30 * Math.pow(lv, 1.8)); }
 function growStats(a, n) {
-  const g = CLASSES[a.cls].grow, mul = a.hero ? 1.2 : 1;
+  const g = CLASSES[a.cls].grow, mul = a.hero2 ? 1.35 : a.hero ? 1.2 : 1;   // 용사는 1.2배, 2차 각성하면 1.35배로 자란다
   for (let i = 0; i < n; i++) for (const [k] of STATS) { const v = g[k] * mul, f = Math.floor(v); a.st[k] += f + (rnd() < v - f ? 1 : 0); }
 }
 function makeAdv(o = {}) {
@@ -71,7 +71,34 @@ function awaken(aid) {
   const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk);
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
   log(`${a.name}이(가) 각성해 용사가 되었다! 각성기 「${SKILLS[sk].name}」. 상단 명성 +30`, 'good');
-  queueModal({ title: '각성', body: [`${a.name}의 안에서 잠들어 있던 힘이 깨어났다. 모험가 길드 명예의 벽에 「용사」로 이름이 새겨진다.`, `각성기 「${SKILLS[sk].name}」: ${SKILLS[sk].desc}`, '능력이 15% 오르고, 레벨이 오를 때마다 더 크게 자란다.'] });
+  queueModal({ title: '각성', body: [`${a.name}의 안에서 잠들어 있던 힘이 깨어났다. 모험가 길드 명예의 벽에 「용사」로 이름이 새겨진다.`, `각성기 「${SKILLS[sk].name}」: ${SKILLS[sk].desc}`, '능력이 15% 오르고, 레벨이 오를 때마다 더 크게 자란다.', `Lv${AWAKEN2.lv}이 되면 2차 각성으로 레벨 상한을 ${MAX_LV2}까지 풀 수 있다.`] });
+  changed();
+  return '';
+}
+/* ───────── 2차 각성: Lv100 용사의 한계를 풀어 Lv150까지 ───────── */
+const soulCount = () => Object.keys(S.inv).filter(k => k.startsWith('soul_')).reduce((n, k) => n + S.inv[k], 0);
+function awaken2Why(a) {
+  if (a.hero2) return '이미 2차 각성했어요';
+  if (!a.hero) return '먼저 각성해 용사가 되어야 해요';
+  if (a.lv < AWAKEN2.lv) return `Lv${AWAKEN2.lv}부터`;
+  if ((a.rank || 0) < AWAKEN2.rank) return `${LICENSE[AWAKEN2.rank].name} 라이선스 필요`;
+  if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
+  if ((S.inv[AWAKEN2.core] || 0) < AWAKEN2.cores) return `${ITEMS[AWAKEN2.core].name} ${AWAKEN2.cores}개 필요 (창고 ${S.inv[AWAKEN2.core] || 0})`;
+  if (soulCount() < AWAKEN2.souls) return `주인의 혼 ${AWAKEN2.souls}개 필요 (지금 ${soulCount()})`;
+  if (S.gold < AWAKEN2.fee) return `${fmt(AWAKEN2.fee)}G 필요`;
+  return '';
+}
+function awaken2(aid) {
+  const a = advById(aid); if (!a) return '';
+  const why = awaken2Why(a); if (why) return why + '.';
+  let need = AWAKEN2.souls;
+  for (const k of Object.keys(S.inv).filter(k => k.startsWith('soul_')).sort()) { const t = Math.min(need, S.inv[k]); addTo(S.inv, k, -t); need -= t; if (!need) break; }
+  addTo(S.inv, AWAKEN2.core, -AWAKEN2.cores);
+  S.gold -= AWAKEN2.fee; a.hero2 = true; S.fame += 60; a.exp = 0;
+  const sk = awk2SkillOf(a); if (!a.skills.includes(sk)) a.skills.splice(a.skills.includes(awkSkillOf(a)) ? 1 : 0, 0, sk);
+  const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
+  log(`${a.name}이(가) 2차 각성했다! 레벨 상한이 ${MAX_LV2}까지 풀렸다. 2차 각성기 「${SKILLS[sk].name}」. 상단 명성 +60`, 'good');
+  queueModal({ title: '2차 각성', body: [`${a.name}이(가) 용사의 한계를 넘었다. 몸 안에서 별빛 같은 힘이 넘친다.`, `2차 각성기 「${SKILLS[sk].name}」: ${SKILLS[sk].desc}`, `레벨 상한 ${MAX_LV} → ${MAX_LV2}. 능력이 15% 더 오르고, 레벨이 오를 때마다 1.35배로 자란다. 스킬 칸이 하나 늘었다.`] });
   changed();
   return '';
 }
@@ -85,19 +112,21 @@ function passives(a) {
   for (const id of a.skills || []) { const P = SKILLS[id] && SKILLS[id].passive; if (P) { const L = skLvMul(a, id); for (const k in P) p[k] = (p[k] || 0) + P[k] * L; } }   // 스킬 레벨만큼 커진다
   return p;
 }
-function derive(a) {
+// 원정 중이면 날씨·도시락 효과가 얹힌다 (weather.js expMods)
+function derive(a) { return expMods(deriveBase(a), a); }
+function deriveBase(a) {
   const C = CLASSES[a.cls], jb = jobBase(a.cls), G = gearSum(a), P = passives(a), L = a.lv, T = {};
   const SB = setInfo(a).bonus; if (SB) for (const k in SB) if (typeof SB[k] === 'number') P[k] = (P[k] || 0) + SB[k];   // 세트 효과
   for (const [k] of STATS) T[k] = Math.max(0, a.st[k] + a.tr[k] + (G[k] || 0));
   let atk = jb === 'archer' ? T.str * 0.5 + T.agi * 0.75 : jb === 'rogue' ? T.str * 0.8 + T.agi * 0.45 : T.str * 1.1;
   atk += L * 0.4 + (G.atk || 0);
-  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul * (a.hero ? 1.15 : 1);
+  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul * (a.hero ? 1.15 : 1) * (a.hero2 ? 1.15 : 1);
   const X = k => traitSum(a, k);   // 타고난 특성
   return {
     T, atk: atk * war * lic * (1 + (P.atkPct || 0) + X('atkPct')),
     matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0) + X('matkPct')) * war * lic,
     def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08 + X('defPct')) * (earth ? 1.1 : 1) * lic,
-    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct'))),
+    maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct') + relic('hp'))),   // 유물: 세계수의 씨앗·별의 여왕의 왕관
     maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct'))),
     eva: Math.min(0.6, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva')),
     crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0) + X('crit')),
@@ -114,10 +143,11 @@ function derive(a) {
 }
 function clampVitals(a) { const d = derive(a); a.hp = Math.min(a.hp, d.maxHp); a.mp = Math.min(a.mp == null ? d.maxMp : a.mp, d.maxMp); }
 function addExp(a, n) {
-  if (a.lv >= MAX_LV) { a.exp = 0; return false; }
+  const cap = lvCap(a);   // Lv100, 2차 각성하면 150
+  if (a.lv >= cap) { a.exp = 0; return false; }
   a.exp += Math.round(n * (1 + traitSum(a, 'expPct')));
   let up = false;
-  while (a.lv < MAX_LV && a.exp >= expNeed(a.lv)) {
+  while (a.lv < cap && a.exp >= expNeed(a.lv)) {
     const before = derive(a);
     a.exp -= expNeed(a.lv); a.lv++; up = true;
     growStats(a, 1);
@@ -125,7 +155,7 @@ function addExp(a, n) {
     a.hp = Math.min(after.maxHp, a.hp + (after.maxHp - before.maxHp));
     a.mp = Math.min(after.maxMp, a.mp + (after.maxMp - before.maxMp));
   }
-  if (a.lv >= MAX_LV) a.exp = 0;
+  if (a.lv >= cap) a.exp = 0;
   return up;
 }
 const advById = id => S.advs.find(a => a.id === id);
@@ -174,7 +204,7 @@ const scoutMove = p => Math.max(0, ...teamOf(p).filter(a => !a.down).map(a => TR
 const tentOf = p => Math.max(1, ...teamOf(p).filter(a => !a.down).map(a => TR(a).tent || 1));
 // 쓰러진 동료는 짐을 못 들고, 들것이 자리를 차지한다
 function capOf(p) { const all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + wagonCap(p)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
-function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) : wOf(p.sup); }
+function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) + wOf(p.exp.cargo || {}) : wOf(p.sup); }
 // 파티 이동속도 = 가장 빠른(민첩한) 모험가의 속도 × 피로 × 마차
 function moveOf(p) { const all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4; return ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * wagonSpd(p) * (1 + scoutMove(p)) * (st.length < all.length ? 0.8 : 1) * (1 + petHome('move')); }
 const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v * (v > 0 ? 1 - traitSum(a, 'fatigue') : 1))); });
@@ -216,6 +246,7 @@ function areaDef(e) { const F = FIELDS[e.field]; return e.area === 'dungeon' ? F
 // 던전 층수: 보물 던전은 셋, 나머지는 다섯
 const floorsOf = e => (FIELDS[e.field] && FIELDS[e.field].treasure ? TREASURE_FLOORS : DUNGEON_FLOORS);
 function makeEncs(e) {
+  if (e.area === 'trade') return rnd() < (e.mode === 'return' ? 0.45 : 0.6) + (isNight() ? 0.15 : 0) ? [ri(30, 75)] : [];   // 교역로: 산적과 짐승이 가끔
   const night = e.area === 'field' && isNight();
   if (e.mode === 'return') return rnd() < (night ? 0.55 : 0.4) ? [ri(30, 70)] : [];
   if (e.area === 'dungeon') return e.stage === floorsOf(e) ? [35, 80] : [30, 70];
@@ -258,6 +289,7 @@ function nightMore(e) {
   return Math.floor(m) + (rnd() < m % 1 ? 1 : 0);
 }
 function rollFoes(e, idx, extra = 0) {
+  if (e.area === 'trade') { const T = TRADE[FIELDS[e.field].trade], n = Math.min(4, 1 + (rnd() < 0.4 ? 1 : 0) + (isNight() && rnd() < 0.5 ? 1 : 0) + extra); return Array.from({ length: n }, () => foeFrom(pickOne(T.mons), Math.max(1, (e.lvo || T.lv) + ri(-1, 1)))); }
   const F = FIELDS[e.field], A = areaDef(e);
   const last = e.mode === 'advance' && idx === e.encs.length - 1;
   const dboss = e.area === 'dungeon' && e.stage === floorsOf(e) && last;
@@ -280,7 +312,7 @@ function rollFoes(e, idx, extra = 0) {
 function spawn(p, e) {
   e.foes = e.next || rollFoes(e, e.ei - 1);
   e.next = null;
-  e.cd = {}; e.buffs = []; e.taunt = null;
+  e.cd = {}; e.buffs = []; e.taunt = null; e.hpW = null; e.noDmg = 0;
   const fb = e.foes.find(f => f.fb), rare = e.foes.find(f => f.rare);
   ev(e, 'spawn', { boss: e.foes.some(f => f.boss), name: fb ? fb.name : '', rare: rare ? 1 : 0 });
   if (rare) { log(`${p.name} 앞에 ${rare.name}이(가) 나타났다! 희귀종이다.`, 'good'); HOOKS.toast(`희귀종 출현 · ${rare.name}`); }
@@ -328,7 +360,8 @@ function startExp(p, fid) {
   if (why) return why + '.';
   const GR = FIELDS[fid].giant && RAIDS[FIELDS[fid].giant];
   if (GR && avgLvOf(p) < GR.lv - RAID_GAP) return `${GR.name} 레이드는 파티 평균 Lv${GR.lv - RAID_GAP} 이상이어야 도전할 수 있어요.`;
-  if (portersOf(p).length > 1) return '짐꾼 계열은 파티당 한 명만 넣을 수 있어요.';
+  const pw = partyWhy(p); if (pw) return pw;
+  if (FIELDS[fid].trade) { const tw = tradeWhy(p); if (tw) return tw; if (!Object.keys(tradeCargoPlan(p, FIELDS[fid].trade).cargo).length) return `${KINGDOMS[FIELDS[fid].trade].name}이(가) 원하는 물건이 창고에 없어요.`; }
   if (FIELDS[fid].region === 'sky' && !wagonFly(p)) return `${FIELDS[fid].name}은(는) 비행 마차에 그리폰·와이번·페가수스를 맨 파티만 갈 수 있어요.`;
   if (FIELDS[fid].treasure && (S.inv.tmap || 0) < 1) return '보물 지도가 없어요.';
   const sup = {};
@@ -336,10 +369,12 @@ function startExp(p, fid) {
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
   formParty(p);
   p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
-  if (FIELDS[fid].treasure) { addTo(S.inv, 'tmap', -1); p.exp.lvo = Math.max(8, Math.min(MAX_LV, Math.round(avgLvOf(p)))); p.exp.chests = 0; }
+  p.exp.food = packFood(p);   // 도시락
+  if (FIELDS[fid].trade) tradeSetup(p, p.exp);
+  if (FIELDS[fid].treasure) { addTo(S.inv, 'tmap', -1); p.exp.lvo = Math.max(8, Math.min(MAX_LV2, Math.round(avgLvOf(p)))); p.exp.chests = 0; }
   team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.stats.trips++;
-  log(`${p.name}이(가) ${FIELDS[fid].name}(으)로 출발했다.${FIELDS[fid].treasure ? ' 보물 지도 한 장을 썼다.' : wagonFly(p) ? ` ${rigName(p)}이(가) 하늘로 떠올랐다.` : ''}`);
+  if (!FIELDS[fid].trade) log(`${p.name}이(가) ${FIELDS[fid].name}(으)로 출발했다.${p.exp.food ? ` 도시락 ${FOODS[p.exp.food].name}을(를) 챙겼다.` : ''}${FIELDS[fid].treasure ? ' 보물 지도 한 장을 썼다.' : wagonFly(p) ? ` ${rigName(p)}이(가) 하늘로 떠올랐다.` : ''}`);
   changed();
   return '';
 }
@@ -355,6 +390,7 @@ function recall(p, why = '') {
   if (why === 'ahead') log(`${p.name}은(는) 앞쪽 몬스터가 너무 강해 보여 발길을 돌렸다.`);
   if (why === 'sleep') log(`${p.name}은(는) 며칠째 제대로 못 자 상단으로 돌아간다.`);
   if (why === 'end') log(`${p.name}이(가) ${FIELDS[e.field].name}의 끝에 닿아 발길을 돌렸다.`, 'good');
+  if (why === 'imm') log(`${p.name}은(는) 공격이 통하지 않는 적을 만나 상단으로 돌아간다.`);
   changed();
 }
 // 던전 입구 앞에서: 들어간다 / 지나간다(돌아간다)
@@ -387,7 +423,8 @@ function stepCamp(p, e, team, dm, dt) {
   const c = e.camp;
   c.t += dt;
   const tm = c.tent || 1;   // 텐트: 피로 회복 1.5~2배, HP 회복 1.25배
-  team.forEach(a => { const d = dm[a.id]; a.fat = Math.max(0, (a.fat || 0) - FATIGUE.sleep * tm * dt); a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.02 * (tm > 1 ? 1.25 : 1) * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
+  c.wxf = campWxF(p, wxNow(e));   // 날씨: 노숙이면 비·강풍·추위·더위에 회복이 줄어든다 (텐트가 막는다)
+  team.forEach(a => { const d = dm[a.id]; a.fat = Math.max(0, (a.fat || 0) - FATIGUE.sleep * tm * c.wxf * dt); a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.02 * (tm > 1 ? 1.25 : 1) * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
   if (c.amb && c.t >= c.amb) {
     c.amb = 0;
     e.foes = rollFoes(e, -1, 1); e.cd = {}; e.buffs = []; e.taunt = null;
@@ -399,16 +436,20 @@ function stepCamp(p, e, team, dm, dt) {
   if (c.t >= (c.night ? FATIGUE.nightRest : 6) && Math.max(...f) <= 15 && f.reduce((s, v) => s + v, 0) / f.length <= FATIGUE.wake) { e.camp = null; ev(e, 'wake', {}); }
 }
 
+// 쓰러진 동료까지 (부활 스킬이 찾는다. 원정 상태에 사람을 넣지 않으려고 따로 둔다)
+const TEAM_ALL = new WeakMap();
+const downedOf = (e, team) => (TEAM_ALL.get(e) || team).filter(y => y.down);
 function stepExp(p, dt) {
   const e = p.exp;
   const all = teamOf(p);
+  if (e) TEAM_ALL.set(e, all);
   if (!all.length) { p.exp = null; changed(); return; }
   const team = all.filter(a => !a.down);
   if (!team.length) { wipe(p); return; }
   e.potCd = Math.max(0, e.potCd - dt);
   e.mpCd = Math.max(0, e.mpCd - dt);
   // 숙면 피로: 원정 내내 쌓이고 여관에서만 풀린다
-  const sl = (SLEEP.field + (e.foes.length ? SLEEP.fight : 0)) * dt;
+  const ff = foodFx(e), sl = (SLEEP.field + (e.foes.length ? SLEEP.fight : 0)) * dt * (1 - (ff.sleep || 0));   // 도시락: 숙면 피로가 덜 쌓인다
   all.forEach(a => { a.sleep = Math.min(100, (a.sleep || 0) + sl * (1 - traitSum(a, 'sleepy'))); });
   const dm = {};
   e.sta = e.sta || {};
@@ -421,7 +462,7 @@ function stepExp(p, dt) {
   // 광전사: 체력이 줄수록 공격력이 오른다
   team.forEach(a => { const r = TR(a).rage; if (r) dm[a.id].atk *= 1 + r * Math.max(0, 1 - a.hp / dm[a.id].maxHp); const fz = traitSum(a, 'frenzy'); if (fz && a.hp < dm[a.id].maxHp * 0.5) dm[a.id].atk *= 1 + fz; });
   usePotions(p, e, team, dm);
-  const fr = blessed('moon') ? 0.75 : 1;
+  const fr = (blessed('moon') ? 0.75 : 1) * (1 - (ff.fat || 0));   // 도시락: 피로가 덜 쌓인다
   if (e.area === 'raid') { stepRaid(p, e, team, dm, dt, fr); return; }
   if (e.area === 'arena') { stepArena(p, e, team, dm, dt, fr); return; }
   if (e.area === 'wave') { stepWave(p, e, team, dm, dt, fr); return; }
@@ -449,6 +490,7 @@ function stepExp(p, dt) {
   }
 }
 function stageClear(p, e) {
+  if (e.area === 'trade') { tradeStage(p, e); return; }
   const fs = S.fields[e.field], F = FIELDS[e.field];
   if (e.area === 'field') {
     if (e.stage > fs.best) { fs.best = e.stage; if (e.stage % 5 === 0) { S.fame += 1; log(`${p.name}이(가) ${F.no}-${e.stage}까지 처음으로 진출했다. 명성 +1`, 'good'); } }
@@ -504,15 +546,18 @@ function inflictAdv(e, a, o, atk) {
   e.sta = e.sta || {};
   const st = e.sta[a.id] || (e.sta[a.id] = {}), k = o.k;
   if (k === 'bleed' || k === 'poison' || k === 'burn') {
-    const res = k === 'burn' ? traitSum(a, 'resBurn') : traitSum(a, 'resPoison');
+    const res = Math.min(0.9, (k === 'burn' ? traitSum(a, 'resBurn') : traitSum(a, 'resPoison')) + (foodFx(e).sta || 0));
     const dps = Math.max(1, Math.round((atk || 10) * (o.m || 0.25) * (1 - res)));
     if (st[k] && st[k].dps >= dps) { st[k].t = Math.max(st[k].t, o.d || 8); return; }
     st[k] = { t: o.d || 8, dps, acc: 0 };
   } else if (k === 'weak') { st.weak = Math.max(st.weak || 0, o.d || 8); }
-  else { const d = (o.d || 3) * (1 - traitSum(a, 'resCc')); if (d <= 0.2) return; st[k] = Math.max(st[k] || 0, d); if (k === 'stun' || k === 'para') comboBreak(e, a.id); }   // 기절·마비면 연계가 끊긴다
+  else { const d = (o.d || 3) * (1 - traitSum(a, 'resCc')) * (1 - (foodFx(e).sta || 0)); if (d <= 0.2) return; st[k] = Math.max(st[k] || 0, d); if (k === 'stun' || k === 'para') comboBreak(e, a.id); }   // 기절·마비면 연계가 끊긴다
   ev(e, 'sta', { d: a.id, k, side: 'a' });
 }
+// 몬스터 속성에 따라 걸리지 않는 상태이상: 불 계열은 화상, 물·빙결 계열은 냉기, 번개는 감전, 강철은 중독·출혈
+const STA_EL = { burn: 'fire', chill: 'ice', shock: 'thunder', poison: 'none', bleed: 'none' };
 function inflictFoe(e, f, o, atk, by, sid) {
+  if (STA_EL[o.k] && elemBase(STA_EL[o.k], f) === 0) return;
   const st = f.sta || (f.sta = {}), k = o.k;
   if (k === 'bleed' || k === 'poison' || k === 'burn') { const dps = Math.max(1, Math.round((atk || 10) * (o.m || 0.25))); if (st[k] && st[k].dps >= dps) { st[k].t = Math.max(st[k].t, o.d || 8); return; } st[k] = { t: o.d || 8, dps, acc: 0, by: by || 0, sid: sid || 'dot' }; }
   else st[k] = Math.max(st[k] || 0, (o.d || 3) * (f.boss && k !== 'mark' ? 0.5 : 1));   // 표식은 보스에게도 온전히
@@ -556,8 +601,11 @@ const buffAdd = (e, aid, stat) => e.buffs.reduce((m, b) => (b.stat === stat && (
 const lowestFoe = foes => foes.reduce((x, f) => (f.hp < x.hp ? f : x), foes[0]);
 const up = x => x.hp > 0 && !x.down;
 // 직업 특성: 방어 관통·치명 배율·첫 공격·보스 피해
-function hitFoe(e, f, atk, crit, magic, a) {
+function hitFoe(e, f, atk, crit, magic, a, el, sk) {
   const T = a ? TR(a) : {};
+  const em = elemMul(el, f, a, sk);   // 속성 상성 (0 = 면역)
+  HIT.imm = em === 0 ? 1 : 0; HIT.wk = em > 1 ? 1 : 0; HIT.res = em > 0 && em < 1 ? 1 : 0;
+  if (em === 0) return 0;
   let def = magic ? f.def * 0.5 : f.def, m = crit ? T.critMul || 1.75 : 1;
   if (T.pen) def *= 1 - T.pen;
   if (T.first && f.hp >= f.maxHp) m *= T.first;
@@ -569,6 +617,7 @@ function hitFoe(e, f, atk, crit, magic, a) {
   if (f.sta && f.sta.mark) m *= 1 + MARK_BONUS;                                           // 표식: 받는 피해 +20%
   if (a && T.combo && e.combo && e.combo[a.id]) m *= 1 + T.combo * e.combo[a.id];        // 연계 (지속딜): 중첩만큼
   if (f.sta && f.sta.weak) def *= 0.8;
+  m *= em * typeMul(a, f, sk);   // 몬스터 타입 특공 (사냥꾼·괴수사냥꾼·퇴마사 …)
   const v = Math.max(1, Math.round(atk * (0.85 + rnd() * 0.3) * red(def) * m));
   f.hp -= v;
   return v;
@@ -586,7 +635,7 @@ function partyDrain(e, team, dm, a, v) {
 // 흡혈 (물리·마법)
 function leech(e, a, d, v, magic) {
   const T = TR(a), k = magic ? T.mdrain : T.lifesteal;
-  if (!k || a.hp >= d.maxHp) return;
+  if (!k || !v || a.hp >= d.maxHp) return;
   const h = Math.max(1, Math.round(v * k));
   a.hp = Math.min(d.maxHp, a.hp + h);
   ev(e, 'heal', { s: a.id, d: a.id, v: h });
@@ -596,10 +645,10 @@ function stealGold(s, hits) { if (!s.steal) return; const g = Math.round(s.steal
 function skillCdOf(a, d, id, e) {
   const s = SKILLS[id]; if (!s || !s.cd) return 0;
   const cut = Math.min(CDR_MAX, (d.cdr || 0) + (e ? buffAdd(e, a.id, 'cdr') : 0));
-  return Math.max(0.5, s.cd * (1 - cut) * (1 - SM_CD * smLv(a, id)) * (1 - SK_LV_CD * (skLv(a, id) - 1)));
+  return Math.max(0.5, s.cd * (1 - cut) * (1 - SM_CD * smLv(a, id)) * (1 - SK_LV_CD * (skLv(a, id) - 1)) * (d.wxSk || 1));   // 더위: 스킬 재사용이 길어진다
 }
 // 기본 공격 대기시간 = 5초 ÷ 공격 속도(강화 포함)
-const basicCd = (a, d, e) => basicCdOf(d.spd, e ? buffMul(e, a.id, 'spd') : 1);
+const basicCd = (a, d, e) => basicCdOf(d.spd, e ? buffMul(e, a.id, 'spd') : 1) * (d.wxBa || 1);   // 추위: 기본 공격 대기가 길어진다
 const basicIsMagic = a => CLASSES[a.cls].act === 'magic';
 function pickSkill(a, d, team, dm, foes, e) {
   const st = e.sta && e.sta[a.id];
@@ -618,6 +667,7 @@ function pickSkill(a, d, team, dm, foes, e) {
     } else if (s.kind === 'heal') {
       const hurt = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * (s.tgt === 'party' ? 0.7 : 0.6));
       if (s.tgt === 'party' ? hurt.length >= 2 : hurt.length >= 1) pr = s.tgt === 'party' ? 11 : 10;
+      if (s.reviveAll && downedOf(e, team).length) pr = 13;   // 천상의 기적: 쓰러진 동료가 있으면 가장 먼저
     } else if (s.kind === 'buff') {
       if (!e.buffs.some(b => b.sid === id)) pr = foes.some(f => f.boss) || foes.length >= 2 ? 7 : 4;
     } else if (s.kind === 'shield') {   // 보호막: 아직 없을 때. 자기 보호막은 다쳤거나 보스일 때
@@ -628,7 +678,7 @@ function pickSkill(a, d, team, dm, foes, e) {
       const hurt = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * 0.85 && !buffAdd(e, x.id, 'regen'));
       if (s.tgt === 'party' ? hurt.length >= 2 : hurt.length >= 1) pr = s.tgt === 'party' ? 9 : 8;
     } else if (s.kind === 'revive') {   // 부활: 쓰러진 동료가 있으면 무엇보다 먼저, 싸움마다 한 번
-      if (team.some(x => x.down) && !(e.rev && e.rev[a.id])) pr = 12;
+      if (downedOf(e, team).length && !(e.rev && e.rev[a.id])) pr = 12;
     } else if (s.kind === 'cure') {
       if (team.some(x => up(x) && e.sta && e.sta[x.id] && s.cures.some(k => e.sta[x.id][k]))) pr = 9;
     } else if (s.kind === 'taunt') {
@@ -637,6 +687,10 @@ function pickSkill(a, d, team, dm, foes, e) {
       const tg = s.tgt === 'all' ? foes : [foes[0]];
       if (tg.some(f => !f.dot && f.hp > f.maxHp * 0.4)) pr = s.tgt === 'all' && foes.length >= 2 ? 7 : 5;
     } else pr = s.tgt === 'all' ? (foes.length >= 2 ? 8 : 2) : (foes.some(f => f.boss) ? 6 : 5);
+    if (pr && (s.kind === 'dmg' || s.kind === 'mdmg' || s.kind === 'dot')) {   // 속성: 면역이면 쓰지 않고, 약점이면 먼저
+      const tg = s.tgt === 'all' ? foes : [s.tgt === 'low' ? lowestFoe(foes) : foes[0]], em = Math.max(...tg.map(f => skillElMul(s, f, a) * typeMul(a, f, s)));
+      if (em <= 0) pr = 0; else if (em > 1.2) pr += 2; else if (em < 1) pr -= 1;
+    }
     if (pr && a.skpri && a.skpri[id]) pr += 3;   // 우선 사용
     if (pr > bp) { bp = pr; best = id; }
   }
@@ -662,8 +716,9 @@ function cast(e, a, d, id, team, dm, foes) {
       if (s.exec && f.hp <= f.maxHp * EXEC_HP) atk *= s.exec;   // 스킬 자체의 처형 보너스
       if (s.gamble) { const jack = rnd() < s.gamble.p; if (jack) { atk *= s.gamble.mult; ev(e, 'jackpot', { s: a.id }); } }   // 대박: 확률로 몇 배
       const crit = s.crit === 1 || rnd() < d.crit + (s.crit || 0) + buffAdd(e, a.id, 'crit');
-      const v = hitFoe(e, f, atk, crit, magic, a);
-      ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: s.fx || (magic ? 'magic' : CLASSES[a.cls].act === 'arrow' ? 'arrow' : 'melee'), sid: id });
+      const v = hitFoe(e, f, atk, crit, magic, a, skillEl(s, f, a), s);
+      ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: s.fx || (magic ? 'magic' : CLASSES[a.cls].act === 'arrow' ? 'arrow' : 'melee'), sid: id }, hitTag()));
+      if (!v) continue;   // 면역: 상태이상도 걸리지 않는다
       if (s.sta && (f.hp > 0 || s.sta.k === 'mark') && rnd() < s.sta.p) inflictFoe(e, f, s.sta, atk, a.id, id);
       if (s.slow) f.slow = s.slow;
       if (s.drain) { const h = Math.round(v * s.drain); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); }
@@ -673,7 +728,7 @@ function cast(e, a, d, id, team, dm, foes) {
     stealGold(s, tg.length * (s.hits || 1));
   } else if (s.kind === 'dot') {
     const tg = s.tgt === 'all' ? foes : [foes[0]];
-    tg.forEach(f => { f.dot = { dps: (s.magic ? d.matk * buffMul(e, a.id, 'matk') : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M * (TR(a).dot || 1), t: s.dur, magic: !!s.magic, by: a.id, sid: id }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
+    tg.forEach(f => { if (skillElMul(s, f, a) <= 0) { HIT.imm = 1; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', imm: 1 }); return; } f.dot = { dps: (s.magic ? d.matk * buffMul(e, a.id, 'matk') : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M * (TR(a).dot || 1) * skillElMul(s, f, a), t: s.dur, magic: !!s.magic, by: a.id, sid: id }; f.dotT = 0; if (s.slow) f.slow = s.slow; ev(e, 'hit', { s: a.id, d: f.uid, v: 0, k: s.fx || 'melee', dot: 1 }); });
   } else if (s.kind === 'heal' && s.tgt === 'self') {
     const h = Math.round(d.maxHp * s.pct * M * d.healPow * (1 + d.rheal + buffAdd(e, a.id, 'rheal'))); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); cureSta(e, a, ['bleed']);
   } else if (s.kind === 'heal') {
@@ -681,6 +736,8 @@ function cast(e, a, d, id, team, dm, foes) {
     const alive = team.filter(up);
     const tg = s.tgt === 'party' ? alive : [alive.sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0]];
     tg.forEach(x => { const h = Math.round(pow * (0.9 + rnd() * 0.2) * (1 + dm[x.id].rheal + buffAdd(e, x.id, 'rheal'))); x.hp = Math.min(dm[x.id].maxHp, x.hp + h); ev(e, 'heal', { s: a.id, d: x.id, v: h }); cureSta(e, x, s.cures || ['bleed']); });
+    if (s.reviveAll) downedOf(e, team).forEach(x => { x.down = false; x.hp = Math.max(1, Math.round(derive(x).maxHp * s.reviveAll)); x.inj = null; ev(e, 'revive', { s: a.id, d: x.id }); log(`${a.name}의 「${s.name}」에 ${x.name}이(가) 다시 일어섰다!`, 'good'); });   // 2차 각성기: 쓰러진 동료를 모두
+    if (s.reviveAll && e.flee && !downedOf(e, team).length) e.flee = 0;
   } else if (s.kind === 'cure') {
     team.filter(up).forEach(x => cureSta(e, x, s.cures));
     ev(e, 'buff', { s: a.id, id, party: true });
@@ -704,20 +761,20 @@ function cast(e, a, d, id, team, dm, foes) {
     tg.forEach(x => { e.buffs = e.buffs.filter(b => b.sid !== id + '@' + x.id); e.buffs.push({ sid: id + '@' + x.id, to: x.id, stat: 'regen', add: hps, t: s.dur }); });
     ev(e, 'buff', { s: a.id, id, party: s.tgt === 'party' });
   } else if (s.kind === 'revive') {   // 부활: 쓰러진 동료 하나를 일으킨다 (싸움마다 한 번)
-    const x = team.find(y => y.down);
-    if (x) { x.down = false; x.hp = Math.max(1, Math.round(dm[x.id].maxHp * s.pct * M)); x.inj = null; e.rev = e.rev || {}; e.rev[a.id] = 1; if (e.flee && !team.some(y => y.down)) e.flee = 0; ev(e, 'revive', { s: a.id, d: x.id }); log(`${a.name}이(가) 쓰러진 ${x.name}을(를) 일으켜 세웠다!`, 'good'); }
+    const x = downedOf(e, team)[0];
+    if (x) { x.down = false; x.hp = Math.max(1, Math.round(derive(x).maxHp * s.pct * M)); x.inj = null; e.rev = e.rev || {}; e.rev[a.id] = 1; if (e.flee && !downedOf(e, team).length) e.flee = 0; ev(e, 'revive', { s: a.id, d: x.id }); log(`${a.name}이(가) 쓰러진 ${x.name}을(를) 일으켜 세웠다!`, 'good'); }
   }
 }
 function basicAct(e, a, d, team, dm, foes) {
   const act = CLASSES[a.cls].act, T = TR(a), st = e.sta && e.sta[a.id];
   if (st && (st.para || st.stun)) return;
   if (act === 'magic') {
-    const f = foes[0], mk = d.matk * buffMul(e, a.id, 'matk') * BASIC_MAGIC, crit = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, f, mk, crit, true, a);
-    ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: 'magic', b: 1 });
+    const f = foes[0], mk = d.matk * buffMul(e, a.id, 'matk') * BASIC_MAGIC, crit = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, f, mk, crit, true, a, 'none');
+    ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: 'magic', b: 1 }, hitTag()));
     leech(e, a, d, v, true);
     partyDrain(e, team, dm, a, v);
     // 정령술사: 다른 적에게도 번진다
-    if (T.aoe) foes.slice(1).forEach(o => { if (o.hp > 0) { const w = hitFoe(e, o, mk * T.aoe, false, true, a); ev(e, 'hit', { s: a.id, d: o.uid, v: w, c: false, k: 'fire', b: 1 }); } });
+    if (T.aoe) foes.slice(1).forEach(o => { if (o.hp > 0) { const w = hitFoe(e, o, mk * T.aoe, false, true, a, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: o.uid, v: w, c: false, k: 'fire', b: 1 }, hitTag())); } });
     return;
   }
   const f = act === 'arrow' ? lowestFoe(foes) : foes[0];
@@ -728,13 +785,14 @@ function basicAct(e, a, d, team, dm, foes) {
     if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }
     const crit = rnd() < d.crit + buffAdd(e, a.id, 'crit');
     const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT;   // 5초에 한 번, 그만큼 세게
-    const v = hitFoe(e, f, atk, crit, false, a);
-    ev(e, 'hit', { s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 });
+    const v = hitFoe(e, f, atk, crit, false, a, 'none');
+    ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 }, hitTag()));
+    if (!v) continue;
     leech(e, a, d, v, false);
     comboUp(e, a);   // 연계 중첩 (지속딜)
   }
   // 레인저·용기병: 동물 동료가 함께 문다
-  if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT, false, false, null); ev(e, 'hit', { s: a.id, d: f.uid, v, c: false, k: 'pet' }); }
+  if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT, false, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: false, k: 'pet' }, hitTag())); }
 }
 // 적이 노릴 상대: 앞줄과 방패를 든 직업이 더 자주 맞는다
 function tankW(a) { const t = TR(a).tank; return Math.max(0, (t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0) + traitSum(a, 'tank')); }
@@ -749,12 +807,18 @@ function battle(p, e, team, dm, dt) {
   if (e.flee) {
     e.flee -= dt;
     if (e.flee <= 0) {
-      e.flee = 0; e.foes = []; e.next = null; e.cd = {}; e.buffs = []; e.taunt = null;
+      const imm = e.fleeImm; e.fleeImm = 0;
+      e.flee = 0; e.foes = []; e.next = null; e.cd = {}; e.buffs = []; e.taunt = null; e.hpW = null;
       ev(e, 'flee', {});
+      if (imm) { log(`${p.name}은(는) 공격이 통하지 않는 적을 피해 싸움에서 빠져나왔다.`, 'bad'); if (e.mode === 'advance') recall(p, 'imm'); return; }
       log(`${p.name}은(는) 쓰러진 동료를 들쳐 메고 싸움에서 빠져나왔다.`, 'bad');
       return;
     }
   }
+  // 면역뿐이라 아무 피해도 못 주면 물러난다 (강철에 무속성만, 빛·신성에 속성만 …)
+  const hpNow = foes.reduce((t, f) => t + Math.max(0, f.hp), 0);
+  if (e.hpW == null || hpNow < e.hpW - 0.5) { e.hpW = hpNow; e.noDmg = 0; } else e.noDmg = (e.noDmg || 0) + dt;
+  if (e.noDmg > 14 && !e.flee && !foes.some(f => f.pvp)) { const f0 = foes.find(f => f.hp > 0); e.flee = 2.5; e.fleeImm = 1; e.noDmg = 0; ev(e, 'immflee', {}); log(`${p.name}의 공격이 ${f0 ? f0.name || MONS[f0.id].name : '적'}에게 통하지 않는다! 싸움에서 물러난다. (${f0 ? monElNote(f0.id) : ''})`, 'bad'); HOOKS.toast(`${p.name}: 공격이 통하지 않아 물러납니다`); }
   e.buffs.forEach(b => { b.t -= dt; });
   e.buffs = e.buffs.filter(b => b.t > 0 && !(b.stat === 'shield' && b.hp <= 0));   // 다 깨진 보호막은 걷는다
   if (e.taunt) { e.taunt.t -= dt; if (e.taunt.t <= 0) e.taunt = null; }
@@ -840,8 +904,8 @@ function hitAdv(p, e, f, x, mult, dm) {
   if (ms && rnd() < ms.p) inflictAdv(e, x, ms, f.atk);
   const st = e.sta && e.sta[x.id];
   if (!(st && (st.para || st.stun)) && rnd() < Math.min(0.7, (d.counter || 0) + buffAdd(e, x.id, 'counter'))) {
-    const cv = hitFoe(e, f, d.atk * buffMul(e, x.id, 'atk') * 0.8, rnd() < d.crit, false, x);
-    ev(e, 'hit', { s: x.id, d: f.uid, v: cv, c: false, k: 'melee', ctr: 1 });
+    const cv = hitFoe(e, f, d.atk * buffMul(e, x.id, 'atk') * 0.8, rnd() < d.crit, false, x, 'none');
+    ev(e, 'hit', Object.assign({ s: x.id, d: f.uid, v: cv, c: false, k: 'melee', ctr: 1 }, hitTag()));
   }
 }
 function kill(p, e, f) {
@@ -853,7 +917,7 @@ function kill(p, e, f) {
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); if ((f.fb || f.boss) && !f.pvp) a.bosses = (a.bosses || 0) + 1; });   // 우두머리·주인 처치 수는 라이선스 심사에 쓴다
   const harvest = blessed('harvest') ? 1.15 : 1;
-  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (f.rare ? RARE.exp : f.nest ? 1.5 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp')) * harvest);
+  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (f.rare ? RARE.exp : f.nest ? 1.5 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp') + (foodFx(e).exp || 0)) * harvest);
   if (f.rare && !f.pvp) rareDown(p, e, f);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
   ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0, adv: f.adv || null });
@@ -862,7 +926,7 @@ function kill(p, e, f) {
   kqKill(f.id);
   const luck = Math.max(0, ...team.map(a => TQ(a, 'luck'))), hunt = Math.max(0, ...team.map(a => TQ(a, 'drop')));   // 보물 사냥꾼의 운, 괴물사냥꾼의 손질
   const pet = petOfParty(p), petLuck = (pet ? (PETS[pet.kind].luck || 0) + (pet.trait === 'lucky' ? 0.08 : 0) : 0) + petHome('luck');
-  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt + petLuck + (dexRare(f.id) ? RARE.drop : 0)) * harvest, fbm = f.fb ? 3 : f.nest || f.rare ? 2 : 1;
+  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt + petLuck + (dexRare(f.id) ? RARE.drop : 0) + (foodFx(e).luck || 0)) * harvest, fbm = f.fb ? 3 : f.nest || f.rare ? 2 : 1;
   for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
   if (e.area === 'field' && rnd() < 0.12 * harvest * (1 + petHome('herb'))) loot(p, e, pickOne(F.herbs || ['herb']), 1);   // 약초 줍기
   const ap = 1 + rlv('appraise') * 0.25;
@@ -1023,6 +1087,7 @@ function wipe(p) {
 }
 function arrive(p) {
   const e = p.exp;
+  if (e.area === 'trade') tradeHome(p, e);   // 교역: 못 판 짐은 창고로, 보고
   const got = Object.assign({}, e.bag), val = vOf(got);
   for (const [k, q] of Object.entries(e.bag)) addTo(S.inv, k, q);
   for (const [k, q] of Object.entries(e.sup)) addTo(S.inv, k, q);
@@ -1031,7 +1096,7 @@ function arrive(p) {
   autoSellRun(p.name);
   const team = p.members.map(advById).filter(Boolean);
   const hurt = team.filter(a => a.down || a.inj);
-  team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; });
+  team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; clampVitals(a); });
   team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 상단을 떠났다.'));
   const n = Object.values(got).reduce((s, q) => s + q, 0);
   if (e.area === 'arena') log(`${p.name}이(가) 투기장에서 돌아왔다.`);
@@ -1042,6 +1107,7 @@ function arrive(p) {
   HOOKS.toast(`${p.name} 귀환 · 부속품 ${n}개${e.gbag.length ? ` · 장비 ${e.gbag.length}개` : ''}${hurt.length ? ` · 부상 ${hurt.length}명` : ''}`);
   p.last = { got, gear: e.gbag.length, kills: e.kills, field: e.field, hurt: hurt.length, stats: e.stats || null, names: Object.fromEntries(team.map(a => [a.id, a.name])), area: e.area };
   p.exp = null;
+  if (trimParty(p)) log(`${p.name}은(는) 인원이 넘쳐 레벨이 낮은 모험가를 대기로 돌렸다. (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지)`);
   if (!S.flags.firstReturn) { S.flags.firstReturn = 1; queueModal({ title: '첫 원정', body: STORY.firstReturn }); }
   if (typeof achvTick === 'function') achvTick();
   changed();
@@ -1112,6 +1178,7 @@ function isUnlocked(fid) {
   if (fid === 'sewer') return (S.rank || 0) >= UNDER_RANK;
   const F = FIELDS[fid];
   if (F && F.treasure) return (S.inv.tmap || 0) > 0;   // 보물 지도가 있을 때만
+  if (F && F.trade) return kingOpen(F.trade);           // 교역로: 길을 아는 나라
   if (F && F.giant) { const r = raidRec(F.giant); return !!(r && !r.done); }
   if (F && F.region === 'sky') return !!(S.fields[F.after] && S.fields[F.after].cleared && (S.bld.airfield || 0) > 0);   // 구름섬: 세계수 던전 + 비행장
   if (F && F.after) return !!(S.fields[F.after] && S.fields[F.after].cleared);   // 마계·변경: 앞 땅의 던전을 공략하면
