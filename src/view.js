@@ -271,7 +271,7 @@ function staDots(g, st, x, y) {
 }
 /* ───────── 원정 (옆모습): 파티는 왼쪽, 적은 오른쪽. 앞줄이 크고 뒷줄이 작다 ───────── */
 const ORBIT = { elementalist: ['#7ae0a0', '#f0a040'], necromancer: ['#b88aff', '#6a4aa8'] };
-const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168]];
+const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168], [36, 196], [26, 184], [44, 172], [16, 176]];   // 7번째부터는 레이드대(짐꾼 포함 10명)
 const ZS = 1.25;   // 옆모습 배율
 const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
 const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, (y - 166) / 32))));
@@ -292,9 +292,9 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   for (const f of e.foes.concat(e.next || [])) V.fname[f.uid] = f.name || MONS[f.id].name;
   const pos = {}, n = team.length, draws = [], dir = e.mode === 'return' ? -1 : 1, mx = x => (dir > 0 ? x : AW - x);
   V.dir = dir;
-  team.forEach((a, i) => { const [x, y] = SLOT_P[Math.min(5, i)]; pos['a' + a.id] = [mx(x), y]; });
+  team.forEach((a, i) => { const [x, y] = SLOT_P[Math.min(SLOT_P.length - 1, i)]; pos['a' + a.id] = [mx(x), y]; });
   const pet = petOfParty(p);
-  if (pet) pos['aP' + pet.id] = [mx(34), 197];
+  if (pet) pos['aP' + pet.id] = n > 6 ? [mx(8), 199] : [mx(34), 197];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   Object.assign(V.last, pos);
   events(e, pos, t, team, p);

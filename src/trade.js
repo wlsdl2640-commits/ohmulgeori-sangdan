@@ -92,7 +92,7 @@ function tradeInfo(p, dest) {
 Object.assign(ACT, {
   tbud: d => { const p = findP(+d.id); if (p) { p.tradeBuy = +d.b; changed(); renderPanel(true); } },
   // 지도의 왕국 카드에서: 쉬고 있는 첫 파티의 목적지를 그 나라 교역로로 하고 원정대 창을 연다
-  tradego: d => { const p = S.parties.find(x => !x.exp && x.members.length) || S.parties.find(x => !x.exp); if (!p) { say('쉬고 있는 파티가 없어요.'); return; } p.dest = 'trade_' + d.k; UI.destTab = 'trade'; UI.expTab = p.id; openWin('exp'); }
+  tradego: d => { const p = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly); if (!p) { say('쉬고 있는 파티가 없어요.'); return; } p.dest = 'trade_' + d.k; UI.destTab = 'trade'; UI.expTab = p.id; openWin('exp'); }
 });
 
 /* ───────── 눈에 보이는 마차: 원정 화면에서 파티 뒤를 따라오고, 상단 앞에는 세워 둔다 ───────── */

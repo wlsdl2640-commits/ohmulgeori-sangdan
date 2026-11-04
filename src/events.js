@@ -43,6 +43,7 @@ function waveWhy(ev0, p) {
   if (ev0.party) return '이미 파티가 나가 있어요';
   if (!p) return '보낼 파티를 고르세요';
   if (p.exp) return '원정 중인 파티예요';
+  if (p.raidOnly) return '레이드 전용 파티는 레이드에만 나가요';
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
   if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요';
   const why = team.map(cantGo).find(Boolean);
@@ -197,7 +198,7 @@ function eventCard(id) {
   const ev0 = evOf(id), k = today();
   if (!ev0 || ev0.done) return '<div class="card"><div class="sub muted">끝난 이벤트예요.</div></div>';
   if (ev0.type === 'wave') {
-    const F = FIELDS[ev0.from], R = waveReward(ev0), parties = S.parties.filter(p => !p.exp), sp = parties.find(p => p.id === UI.mapP) || parties[0], why = waveWhy(ev0, sp);
+    const F = FIELDS[ev0.from], R = waveReward(ev0), parties = S.parties.filter(p => !p.exp && !p.raidOnly), sp = parties.find(p => p.id === UI.mapP) || parties[0], why = waveWhy(ev0, sp);
     const picker = parties.length ? `<div class="btns">${parties.map(p => `<button type="button" class="btn sm${sp && sp.id === p.id ? ' on' : ''}" data-act="mapparty" data-id="${p.id}">${esc(p.name)} · ${p.members.length}명 · Lv${Math.round(avgLvOf(p))}</button>`).join('')}</div>` : '<div class="sub red-t">대기 중인 파티가 없어요.</div>';
     return `<div class="card hl"><div class="h">몬스터 웨이브 <small>성문까지 D-${Math.max(0, ev0.arrive - k)}</small></div><div class="sub">${F.name}의 몬스터 떼가 하르겐으로 몰려온다. ${ev0.n}차례 밀려오고(Lv${ev0.lv}~${ev0.lv + ev0.n * 2}), 마지막엔 우두머리가 온다.</div><div class="sub muted">몬스터: ${F.mons.map(m => MONS[m].name).join(', ')}</div><div class="sub gold-t">막으면 상금 ${fmt(R.gold)}G · 명성 +${R.fame} · 전리품</div></div>
       ${ev0.party ? `<div class="sub ok-t">${esc((findP(ev0.party) || {}).name || '파티')}이(가) 성문에서 싸우는 중</div>` : `<div class="sec"><b>방어전 파티</b><span>보급품은 원정대 창의 설정대로</span></div>${picker}${why ? `<div class="sub red-t">${esc(why)}</div>` : ''}<button type="button" class="btn gold block" data-act="wavego" data-id="${ev0.id}" data-p="${sp ? sp.id : 0}"${why ? ' disabled' : ''}>${sp ? `${esc(sp.name)} 방어전 시작` : '방어전 시작'}</button>`}`;

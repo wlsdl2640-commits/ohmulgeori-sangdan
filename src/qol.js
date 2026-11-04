@@ -2,9 +2,30 @@
    모두 자동 장착 · 파티 편성 저장/불러오기 · 반복 출발 횟수 · 부속품·장비 한꺼번에 팔기 · 파티 모두 출발/복귀.
    파티 인원: 짐꾼 계열을 빼고 넷까지, 짐꾼 계열 한 명을 더해 모두 다섯. */
 const fightersOf = p => teamOf(p).filter(a => !isPorter(a));
+/* 레이드 전용 파티 (빌드 36): 일반 파티 6개가 다 열린 뒤(S랭크) 하나 더 열린다. 레이드에만 나가고, 원정대 창의 레이드 탭에서 꾸린다. 짐꾼 포함 10명 */
+const isRaidParty = p => !!(p && p.raidOnly);
+const regularParties = () => S.parties.filter(p => !p.raidOnly);
+const raidParty = () => S.parties.find(p => p.raidOnly) || null;
+const raidPartyOpen = () => (S.rank || 0) >= RAID_PARTY_RANK;
+const fighterCap = p => (isRaidParty(p) ? RAID_FIGHTERS : PARTY_FIGHTERS);
+function raidPartyEnsure() {
+  if (!S || !S.parties || !raidPartyOpen() || raidParty()) return raidParty();
+  const p = newParty('레이드대', []);
+  Object.assign(p, { raidOnly: true, sup: { pot_m: 4 }, safe: false, auto: false, campNight: false, dest: null });
+  S.parties.push(p);
+  log(`레이드 전용 파티 「레이드대」가 열렸다. 원정대 창의 레이드 탭에서 짐꾼 포함 ${RAID_FIGHTERS + 1}명까지 꾸려 레이드에 보낸다.`, 'good');
+  if (S.modals) queueModal({ title: '레이드 전용 파티', body: [`상단이 ${RANKS[RAID_PARTY_RANK].name}랭크가 되어 일반 파티 ${PARTY_MAX[RAID_PARTY_RANK]}개에 더해 레이드 전용 파티 「레이드대」가 열렸다.`, `레이드대는 짐꾼 계열을 빼고 ${RAID_FIGHTERS}명, 짐꾼 계열 한 명을 더해 모두 ${RAID_FIGHTERS + 1}명까지 꾸릴 수 있고, 레이드에만 나간다. 원정대 창의 「레이드」 탭에서 꾸리고 보낸다.`] });
+  return p;
+}
+// 이번 달에 나갈 수 있는 레이드 (레이드대의 목적지)
+function raidDestOf(p) {
+  if (p.dest && FIELDS[p.dest] && FIELDS[p.dest].giant && isUnlocked(p.dest)) return p.dest;
+  const r = S.raid && S.raid.list.find(x => !x.done && isUnlocked('raid_' + x.id));
+  return r ? 'raid_' + r.id : (S.raid && S.raid.list[0] ? 'raid_' + S.raid.list[0].id : 'raid_' + Object.keys(RAIDS)[0]);
+}
 function partyWhy(p) {
   if (portersOf(p).length > 1) return '짐꾼 계열은 파티당 한 명만 넣을 수 있어요.';
-  if (fightersOf(p).length > PARTY_FIGHTERS) return `파티는 짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지예요. ${fightersOf(p).length - PARTY_FIGHTERS}명을 빼야 출발해요.`;
+  if (fightersOf(p).length > fighterCap(p)) return `${isRaidParty(p) ? '레이드대는' : '파티는'} 짐꾼 계열을 빼고 ${fighterCap(p)}명까지예요. ${fightersOf(p).length - fighterCap(p)}명을 빼야 출발해요.`;
   return '';
 }
 // 인원을 넘는 파티: 레벨이 낮은 쪽부터 뺀다 (대기 중일 때만)
@@ -12,7 +33,7 @@ function trimParty(p) {
   if (p.exp) return 0;
   let n = 0;
   const f = fightersOf(p).sort((a, b) => b.lv - a.lv);
-  f.slice(PARTY_FIGHTERS).forEach(a => { p.members = p.members.filter(id => id !== a.id); n++; });
+  f.slice(fighterCap(p)).forEach(a => { p.members = p.members.filter(id => id !== a.id); n++; });
   const ps = portersOf(p).sort((a, b) => b.lv - a.lv);
   ps.slice(1).forEach(a => { p.members = p.members.filter(id => id !== a.id); n++; });
   return n;
@@ -98,7 +119,7 @@ function sellLowGear() {
 /* 파티 모두 출발 · 모두 복귀 */
 function departAll() {
   let n = 0; const why = [];
-  for (const p of S.parties) { if (p.exp || !p.members.length) continue; const m = startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) why.push(`${p.name}: ${m}`); else n++; }
+  for (const p of S.parties) { if (p.exp || !p.members.length || p.raidOnly) continue; const m = startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) why.push(`${p.name}: ${m}`); else n++; }
   return n ? (why.length ? `${n}팀 출발 · ${why[0]}` : `${n}팀이 출발했어요.`) : why[0] || '출발할 파티가 없어요.';
 }
 function recallAll() { let n = 0; for (const p of S.parties) if (p.exp && p.exp.mode === 'advance' && p.exp.area !== 'raid' && p.exp.area !== 'arena') { recall(p, ''); n++; } return n ? `${n}팀을 불러들였어요.` : '불러들일 파티가 없어요.'; }

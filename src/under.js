@@ -100,6 +100,7 @@ function pvpFoe(a) {
 function startArena(pid, oi) {
   const p = S.parties.find(x => x.id === pid), U = S.under && S.under.arena, opp = U && U.opps[oi];
   if (!p || !opp) return '';
+  if (p.raidOnly) return '레이드 전용 파티는 레이드에만 나가요.';
   if (!underOpen()) return '아직 지하수로에 갈 수 없어요.';
   if (p.exp) return '원정 중인 파티예요.';
   if (U.fights >= ARENA_PER_DAY) return `오늘은 더 싸울 수 없어요 (하루 ${ARENA_PER_DAY}판).`;
@@ -289,7 +290,7 @@ PANELS.under = () => {
   </div>`;
 };
 PANELS.ar = () => {
-  const A = S.under.arena, parties = S.parties.filter(p => !p.exp), sel = parties.find(p => p.id === UI.arP) || parties[0];
+  const A = S.under.arena, parties = S.parties.filter(p => !p.exp && !p.raidOnly), sel = parties.find(p => p.id === UI.arP) || parties[0];
   const prog = Math.min(100, A.score / GLADIATOR_SCORE * 100);
   const head = `<div class="card hl"><div class="row"><div class="grow"><div class="h">${esc(S.company)} <small>${A.wins}승 ${A.losses}패</small></div><div class="sub">랭킹 점수 <b class="gold-t">${fmt(A.score)}</b> · ${coinTag(A.coins)} · 오늘 ${A.fights}/${ARENA_PER_DAY}판</div></div></div>
     <div class="sub">검투사 전직 조건: 랭킹 점수 ${fmt(GLADIATOR_SCORE)} <span class="${A.score >= GLADIATOR_SCORE ? 'ok-t' : 'muted'}">(${fmt(A.score)}/${fmt(GLADIATOR_SCORE)})</span></div><div class="bar xp big"><i style="width:${prog.toFixed(1)}%"></i></div>

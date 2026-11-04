@@ -75,7 +75,8 @@ const wxTCls = w => (!w || w.indoor || w.T == null ? '' : w.T > 0 ? 'wx-hot' : w
 function wxFx(w, a, ff) {
   if (!w || w.indoor || w.T == null) return null;
   ff = ff || {};
-  const coldRes = traitSum(a, 'wxColdRes') > 0 || !!ff.coldRes, hotRes = traitSum(a, 'wxHotRes') > 0 || !!ff.hotRes;
+  const coldRes = !!ff.coldRes, hotRes = !!ff.hotRes;   // 도시락(뜨거운 수프·얼음 빙수)만 추위·더위를 막는다
+  const W = (a && a.wxt && TRAITS[a.wxt]) || {};          // 날씨 특성: 모험가마다 하나 (그 날씨에 약하다)
   let T = w.T, res = false;
   if (T < 0 && coldRes) { T = 0; res = true; }
   if (T > 0 && hotRes) { T = 0; res = true; }
@@ -84,12 +85,21 @@ function wxFx(w, a, ff) {
   if (T < 0) { move = T === -2 ? 0.85 : 0.92; ba = T === -2 ? 1.25 : 1.1; }
   const SK = WX_SKY[w.sky] || {};
   if (SK.move) move *= SK.move;
-  if (w.T < 0 && !coldRes) stat += traitSum(a, 'wxCold');
-  if (w.T > 0 && !hotRes) stat += traitSum(a, 'wxHot');
-  if (SK.wet || w.sky === 'snow') stat += traitSum(a, 'wxWet');
-  if (w.wind === 2) stat += traitSum(a, 'wxWind');
+  if (w.T < 0 && !coldRes) stat += W.wxCold || 0;
+  if (w.T > 0 && !hotRes) stat += W.wxHot || 0;
+  if (SK.wet || w.sky === 'snow') stat += W.wxWet || 0;
+  if (w.wind === 2) stat += W.wxWind || 0;
   return { stat: Math.max(0.4, stat), move, sk, ba, res };
 }
+// 이 날씨에 약한 모험가인가 (날씨 특성) — 도시락이 막아 주면 아니다
+function wxtHits(a, w, ff) {
+  const W = a && a.wxt && TRAITS[a.wxt]; ff = ff || {};
+  if (!W || !w || w.indoor || w.T == null) return false;
+  const SK = WX_SKY[w.sky] || {};
+  return !!((W.wxCold && w.T < 0 && !ff.coldRes) || (W.wxHot && w.T > 0 && !ff.hotRes) || (W.wxWet && (SK.wet || w.sky === 'snow')) || (W.wxWind && w.wind === 2));
+}
+// 날씨 특성 칩 (모험가 창·여관 손님)
+const wxtChip = a => { const W = a && a.wxt && TRAITS[a.wxt]; return W ? `<span class="trait neg wxt" title="${esc(W.desc)}"><b>${W.name}</b> <small>${esc(W.desc)} · 날씨 특성</small></span>` : ''; };
 // 야영(노숙)의 피로 회복 배율
 function campWxF(p, w) {
   if (!w || w.indoor || w.T == null) return 1;
@@ -158,7 +168,7 @@ const wxImg = w => `<img class="wxi" src="${wxIconURL(wxIcon(w))}" alt="">`;
 // 효과 한 줄 (모험가 없이 일반 체질 기준)
 function wxFxText(w, p) {
   if (!w || w.indoor) return '날씨 영향 없음';
-  const f = wxFx(w, { traits: [] }, null), out = [];
+  const f = wxFx(w, { traits: [] }, null), out = [];   // 날씨 특성 없이 (누구나 받는 몫)
   out.push(`능력치 ${f.stat >= 1 ? '+' : ''}${Math.round((f.stat - 1) * 100)}%`);
   if (f.move < 1) out.push(`이동 ×${f.move.toFixed(2)}`);
   if (f.sk > 1) out.push(`스킬 재사용 ×${f.sk}`);
@@ -187,7 +197,7 @@ PANELS.co_wx = () => {
       <div>더우면 이동 ×0.92(무더위 ×0.85)·스킬 재사용 ×1.1(×1.25). 추우면 이동 ×0.92(×0.85)·기본 공격 대기 ×1.1(×1.25). 비·눈은 걸음을 늦추고, 폭설은 크게 늦춘다.</div>
       <div>땅의 기후: 사막·메마른 땅·화산은 덥고, 설산은 언제나 춥다(여름 한낮에도 쌀쌀함). 늪지대는 비가, 바람계곡은 강풍이 잦다. 던전·지하는 날씨가 없지만 화구는 덥고 얼음 신전은 춥다.</div>
       <div>야영(노숙) 피로 회복: 온화함 ×1.1 · 더움·쌀쌀함 ×0.9 · 그보다 심하면 ×0.7. 비·폭설은 모닥불을 못 피워 ×0.4, 강풍은 모닥불이 약해 ×0.7. 정찰가의 텐트는 비·바람을, 탐험가의 대형 텐트는 추위까지 막는다.</div>
-      <div>체질: 추위·더위·비·바람에 약한 모험가는 그 날씨에 능력치 -10% 더. 추위·더위에 강하면 그 디버프를 받지 않는다. 뜨거운 수프·얼음 빙수 도시락도 같은 효과.</div>
+      <div>날씨 특성: 모험가마다 하나씩 추위·더위·비·바람 가운데 하나에 약하다(타고난 특성 3칸과 따로). 추위·더위 디버프는 누구나 받고, 그 날씨에 약한 모험가는 능력치 -10%를 더 받는다. 뜨거운 수프·얼음 빙수 도시락은 추위·더위 디버프를 막는다.</div>
     </div></details>`;
 };
 // 땅 위: 겨울에는 눈이 덮이고, 비가 오면 젖어 어둡다 (사람을 그리기 전에)

@@ -24,7 +24,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -135,7 +135,7 @@ function migrate4() {
     const e = p.exp;
     if (e) { e.home = 1; if (e.wait === 'gate' && e.area === 'field' && e.stage < FIELD_STAGES) e.wait = null; }
   });
-  if (S.parties.length > partyMax()) S.flags.overParty = 1;
+  if (S.parties.filter(p => !p.raidOnly).length > partyMax()) S.flags.overParty = 1;
   if (!S.flags.v05) {
     S.flags.v05 = 1;
     const body = STORY.v05.slice();
@@ -231,7 +231,7 @@ function fire(id) {
 
 /* ───────── 파티 ───────── */
 function createParty() {
-  if (S.parties.length >= partyMax()) return `지금 상단 랭크에서는 파티를 ${partyMax()}개까지 만들 수 있어요.`;
+  if (regularParties().length >= partyMax()) return partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? `파티는 ${partyMax()}개까지예요. 레이드 전용 파티는 원정대 창의 레이드 탭에서 꾸려요.` : `지금 상단 랭크에서는 파티를 ${partyMax()}개까지 만들 수 있어요.`;
   let n = 1;
   while (S.parties.some(p => p.name === `${n}팀`)) n++;
   const p = newParty(`${n}팀`, []);
@@ -242,7 +242,7 @@ function createParty() {
 }
 function deleteParty(pid) {
   const p = S.parties.find(x => x.id === pid);
-  if (!p || p.exp) return;
+  if (!p || p.exp || p.raidOnly) return;   // 레이드대는 지우지 않는다
   S.parties = S.parties.filter(x => x !== p);
   if (S.view === pid) S.view = S.parties[0] ? S.parties[0].id : null;
   changed();
@@ -252,7 +252,7 @@ function toggleMember(pid, aid) {
   if (!p || !a || p.exp || a.status !== 'idle') return;
   if (!p.members.includes(aid) && a.post) { HOOKS.toast(`${a.name}은(는) 신전에서 일하는 중이에요`); return; }
   if (!p.members.includes(aid) && isPorter(a) && portersOf(p).length >= 1) { HOOKS.toast('짐꾼 계열은 파티당 한 명만 넣을 수 있어요'); return; }
-  if (!p.members.includes(aid) && !isPorter(a) && fightersOf(p).length >= PARTY_FIGHTERS) { HOOKS.toast(`파티는 짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지예요`); return; }
+  if (!p.members.includes(aid) && !isPorter(a) && fightersOf(p).length >= fighterCap(p)) { HOOKS.toast(`${p.raidOnly ? '레이드대는' : '파티는'} 짐꾼 계열을 빼고 ${fighterCap(p)}명까지예요`); return; }
   if (p.members.includes(aid)) p.members = p.members.filter(x => x !== aid);
   else { const o = partyOf(aid); if (o) { if (o.exp) return; o.members = o.members.filter(x => x !== aid); } p.members.push(aid); }
   changed();
@@ -888,7 +888,7 @@ function licenseUp(aid) {
 
 /* ───────── 전직 ───────── */
 const jobOpen = () => true;   // 전직은 명성으로 열리지 않는다. 직업마다 조건(레벨·라이선스·돈·추가 조건)만 본다
-function checkUnlocks() { S.flags.job2 = 1; S.flags.job3 = 1; }
+function checkUnlocks() { S.flags.job2 = 1; S.flags.job3 = 1; if (S.parties && (S.rank || 0) >= RAID_PARTY_RANK) raidPartyEnsure(); }
 function promoWhy(a, cls) {
   const t = jobTier(cls), Q = JOB_REQ[t];
   const R = CLASSES[cls].req || {};
@@ -1208,7 +1208,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 7;   // 지금 저장 판 (migrate7까지 옮긴 상태)
+const SAVE_V = 8;   // 지금 저장 판 (migrate8까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1225,7 +1225,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1253,6 +1253,8 @@ function loadFrom(v) {
     if (old < 7) { migrate7(); saveGame(); }
     notes31();
     notes34();
+    if (old < 8) { migrate8(); saveGame(); }
+    notes36();
     return true;
   } catch (_) { return false; }
 }
@@ -1278,18 +1280,28 @@ function migrate6() {
 function migrate7() {
   S.wx = S.wx || { seed: Math.floor(Math.random() * 1e9) };
   S.bld.kitchen = S.bld.kitchen || 0; S.presets = S.presets || [];
-  let cut = 0, wt = 0;
+  let cut = 0;
   for (const p of S.parties) cut += trimParty(p);
-  for (const a of S.advs) {
-    if (innateTraits(a).length >= TRAIT_MAX || rnd() >= 0.33 || (a.traits || []).some(t => TRAITS[t] && (TRAITS[t].wxCold || TRAITS[t].wxHot || TRAITS[t].wxWet || TRAITS[t].wxWind || TRAITS[t].wxColdRes || TRAITS[t].wxHotRes))) continue;
-    const t = rnd() < 0.6 ? pickOne(WEAK_TRAIT_IDS) : pickOne(['coldRes', 'hotRes']), i = a.traits.findIndex(isJobTrait);
-    if (i < 0) a.traits.push(t); else a.traits.splice(i, 0, t);
-    wt++;
-  }
   S.v = 7;
   if (cut) log(`파티 인원 규칙이 바뀌었다 (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지). 넘치던 ${cut}명을 대기로 돌렸다.`);
-  if (wt) log(`모험가 ${wt}명이 날씨를 타는 체질을 드러냈다. 모험가 창의 특성에서 볼 수 있다.`);
 }
+// 빌드 36: 날씨 특성은 타고난 특성과 따로, 모험가마다 하나(약함만). 특성 칸에 있던 체질(약함·강함)을 빼고,
+// 약한 체질이 있었으면 그것을, 없으면 무작위 하나를 a.wxt로 준다 (그만큼 특성 칸이 빈다)
+function migrate8() {
+  let moved = 0;
+  const fix = a => {
+    if (!a) return;
+    const had = (a.traits || []).find(t => WEAK_TRAIT_IDS.includes(t));
+    const before = (a.traits || []).length;
+    a.traits = (a.traits || []).filter(t => !WX_OLD_TRAITS.includes(t));
+    if (a.traits.length < before) moved++;
+    if (!WEAK_TRAIT_IDS.includes(a.wxt)) a.wxt = had || rollWxt();
+  };
+  S.advs.forEach(fix); (S.cands || []).forEach(fix);
+  S.v = 8;
+  if (moved) log(`날씨 특성이 따로 생겼다. 모험가 ${moved}명의 체질을 특성 칸에서 날씨 특성으로 옮겼다.`);
+}
+function notes36() { if (!S.flags.v36) { S.flags.v36 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 특성', body: STORY.v36 }); } }
 function notes34() { if (!S.flags.v34) { S.flags.v34 = 1; S.bld.salvage = S.bld.salvage || 0; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '던전 수거소', body: STORY.v34 }); } }
 function notes31() { if (!S.flags.v31) { S.flags.v31 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 · 요리 · 교역 · 2차 각성', body: STORY.v31 }); } }
 function notes30() { if (!S.flags.v30) { S.flags.v30 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '북쪽 변경 · 하늘 · 마구간', body: STORY.v30 }); } }

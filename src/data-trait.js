@@ -38,7 +38,7 @@ const TRAIT_IDS = Object.keys(TRAITS);
 function rollTraits() {
   const n = 1 + (rnd() < 0.5 ? 1 : 0) + (rnd() < 0.3 ? 1 : 0), out = [];
   while (out.length < n) { const t = pickOne(TRAIT_IDS); if (!out.includes(t)) out.push(t); }
-  return typeof rollWeak === 'function' ? rollWeak(out) : out;   // 체질 (빌드 31, data-life.js)
+  return out;   // 날씨 특성은 따로 (a.wxt, data-life.js rollWxt)
 }
 const traitSum = (a, k) => (a.traits || []).reduce((s, id) => s + ((TRAITS[id] && TRAITS[id][k]) || 0), 0) + (typeof hallBonus === 'function' && S && S.hall ? hallBonus(k) : 0);   // 명예의 전당 동상 보너스도 더한다
 // 직업 특성 + 타고난 특성

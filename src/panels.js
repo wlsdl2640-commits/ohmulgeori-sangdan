@@ -65,7 +65,7 @@ PANELS.co = () => {
   return `
   <div class="card hl">
     <div class="row"><span class="rk">${RANKS[S.rank || 0].name}</span><div class="grow"><div class="h">${esc(S.company)}${S.league && S.league.last && S.league.last.rank === 1 ? ' <small class="gold-t">이달의 상단</small>' : ''}</div><div class="sub">${RANKS[S.rank || 0].title} · ${WORLD.capital} ${WORLD.street} 입구 · 제국력 ${p.y}년</div></div></div>
-    <div class="stats"><span>모험가 <b>${living().length}/${beds()}</b></span><span>파티 <b>${S.parties.length}/${partyMax()}</b></span><span>처치 <b>${fmt(S.stats.kills)}</b></span><span>부상 <b class="${patients().length ? 'red-t' : ''}">${patients().length}</b></span><span>던전 <b>${TIER_FIELDS.filter(f => S.fields[f].cleared).length}/${TIER_FIELDS.length}</b></span></div>
+    <div class="stats"><span>모험가 <b>${living().length}/${beds()}</b></span><span>파티 <b>${regularParties().length}/${partyMax()}${raidParty() ? ' + 레이드대' : ''}</b></span><span>처치 <b>${fmt(S.stats.kills)}</b></span><span>부상 <b class="${patients().length ? 'red-t' : ''}">${patients().length}</b></span><span>던전 <b>${TIER_FIELDS.filter(f => S.fields[f].cleared).length}/${TIER_FIELDS.length}</b></span></div>
   </div>
   <div class="submenu">
     ${subBtn('co_rank', '상단 랭크', q ? `다음 ${RANKS[(S.rank || 0) + 1].name}랭크 조건 ${done}/${q.length}` : '가장 높은 랭크', rankReady())}
@@ -284,7 +284,7 @@ function candCard(c) {
   const C = CLASSES[c.cls], d = derive(c);
   return `<div class="card">
     <div class="row"><img class="por" src="${portrait(c)}" alt=""><div class="grow"><div class="h">${esc(c.name)} <small>${C.name} Lv${c.lv}</small> ${licTag(c)}</div><div class="sub">${C.desc}</div></div><div class="eqs">${eqIcons(c)}</div></div>
-    <div class="traits">${traitChips(c)}${emptyTraitChips(c)}</div>
+    <div class="traits">${traitChips(c)}${emptyTraitChips(c)}${wxtChip(c)}</div>
     <div class="stats"><span>힘 <b>${d.T.str}</b></span><span>체력 <b>${d.T.vit}</b></span><span>민첩 <b>${d.T.agi}</b></span><span>지능 <b>${d.T.int}</b></span><span>HP <b>${d.maxHp}</b></span><span>MP <b>${d.maxMp}</b></span><span>봉급 <b>${fmt(c.salary)}G/월</b></span></div>
     <div class="sub muted">${esc(c.bio)}</div>${cond}
     <div class="row"><span class="sub grow">${why ? `<span class="red-t">${why}</span>` : '고용할 수 있어요'}</span><button type="button" class="btn sm gold" data-act="hire" data-id="${c.id}"${why ? ' disabled' : ''}>고용 · 계약금 ${fmt(c.fee)}G</button></div>
@@ -367,6 +367,7 @@ function advDetail(a) {
     <div class="card"><div class="h">${esc(a.name)} <span class="muted">· ${CLASSES[a.cls].name} Lv${a.lv}</span>${tierTag(a.cls)} ${licTag(a)}${heroTag(a)}${injTag(a)}</div>${trText(a.cls) ? `<div class="sub gold-t">${trText(a.cls)}</div>` : ''}<div class="sub">${a.lv >= lvCap(a) ? `최고 레벨${a.hero2 ? '' : a.hero ? ` (Lv${AWAKEN2.lv} 2차 각성으로 ${MAX_LV2}까지)` : ''}` : `경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))}`} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0} · 개인 명성 ${Math.floor(a.pf || 0)}</div></div>
     <div class="sec"><b>특성</b><span>타고난 ${innateTraits(a).length}/${TRAIT_MAX}${(S.inv.wizstone || 0) ? ` · 마법사의 돌 ${S.inv.wizstone}개` : ''}${(S.inv.bloomstone || 0) ? ` · 개화석 ${S.inv.bloomstone}개` : ''}</span></div>
     <div class="traits">${traitChips(a, idle && (S.inv.wizstone || 0) > 0)}${emptyTraitChips(a, idle && (S.inv.bloomstone || 0) > 0)}</div>
+    ${a.wxt ? `<div class="sec"><b>날씨 특성</b><span>모험가마다 하나 · 타고난 특성과 따로</span></div><div class="traits">${wxtChip(a)}</div>` : ''}
     <div class="sub muted">마법사의 돌은 타고난 특성 하나를 다른 것으로 바꾸고, 개화석은 빈 자리에 새 특성을 피워요. 둘 다 필드의 우두머리·주인, 던전 주인, 레이드 등수 보상에서 나와요.</div>
     ${notes}
     <div class="sec"><b>모험가 라이선스</b><span>지금 ${L.name}${L.mul > 1 ? ` · 능력 ×${L.mul}` : ''}</span></div>
@@ -451,7 +452,7 @@ const FORM_TXT = ['앞줄', '가운데', '뒷줄'];
 const formTag = a => `<span class="tag muted">${FORM_TXT[formRank(a.cls)]}</span>`;
 function partyCard(p) {
   const e = p.exp, on = S.view === p.id;
-  const head = `<div class="row"><div class="grow"><div class="h">${esc(p.name)} <small>${p.members.length}명 · 전투원 ${fightersOf(p).length}/${PARTY_FIGHTERS} · 짐꾼 ${portersOf(p).length}/1</small></div><div class="sub" data-pst="${p.id}"></div></div>${on ? '<span class="tag gold-t">화면에 표시 중</span>' : `<button type="button" class="btn sm" data-act="view" data-id="${p.id}">화면 보기</button>`}</div>`;
+  const head = `<div class="row"><div class="grow"><div class="h">${esc(p.name)} <small>${p.members.length}명 · 전투원 ${fightersOf(p).length}/${fighterCap(p)} · 짐꾼 ${portersOf(p).length}/1${p.raidOnly ? ' · 레이드 전용' : ''}</small></div><div class="sub" data-pst="${p.id}"></div></div>${on ? '<span class="tag gold-t">화면에 표시 중</span>' : `<button type="button" class="btn sm" data-act="view" data-id="${p.id}">화면 보기</button>`}</div>`;
   const DM = { ask: '멈추고 묻기', enter: '바로 들어가기', skip: '지나가기' };
   const toggles = `<button type="button" class="btn sm${p.auto ? ' on' : ''}" data-act="auto" data-id="${p.id}">짐 차면 복귀 ${p.auto ? '켬' : '끔'}</button><button type="button" class="btn sm${p.safe ? ' on' : ''}" data-act="safe" data-id="${p.id}">위험하면 복귀 ${p.safe ? '켬' : '끔'}</button><button type="button" class="btn sm${p.campNight !== false ? ' on' : ''}" data-act="camp" data-id="${p.id}">밤에는 야영 ${p.campNight !== false ? '켬' : '끔'}</button><button type="button" class="btn sm${p.repeat ? ' on' : ''}" data-act="repeat" data-id="${p.id}">돌아오면 다시 출발 ${p.repeat ? '켬' : '끔'}</button><button type="button" class="btn sm${p.autoBuy ? ' on' : ''}" data-act="autobuy" data-id="${p.id}">보급품 모자라면 사기 ${p.autoBuy ? '켬' : '끔'}</button><button type="button" class="btn sm on" data-act="dmode" data-id="${p.id}">던전 앞에서: ${DM[p.dmode || 'ask']}</button>`;
   if (e) {
@@ -459,7 +460,7 @@ function partyCard(p) {
     const gate = e.wait === 'gate';
     return `<div class="card${on || gate ? ' hl' : ''}">${head}
       <div class="sub" data-pwhere="${p.id}"></div>
-      ${(() => { const w = wxNow(e); return w.indoor ? '' : `<div class="row sub">${wxImg(w)}<span class="grow"><span class="${wxTCls(w)}">${wxLabel(w)}</span> · ${wxFxText(w, p)}</span></div>`; })()}
+      ${(() => { const w = wxNow(e); if (w.indoor) return ''; const weak = teamOf(p).filter(a => wxtHits(a, w, foodFx(e))); return `<div class="row sub">${wxImg(w)}<span class="grow"><span class="${wxTCls(w)}">${wxLabel(w)}</span> · ${wxFxText(w, p)}${weak.length ? ` · <span class="red-t">이 날씨에 약함: ${weak.map(a => esc(a.name)).join('·')} -10% 더</span>` : ''}</span></div>`; })()}
       ${foodOf(e) ? `<div class="sub gold-t">도시락 ${FOODS[foodOf(e)].name} · ${foodFxText(FOODS[foodOf(e)].fx)}</div>` : ''}
       ${e.area === 'trade' ? `<div class="sub">${e.leg === 'back' ? `${KINGDOMS[e.trade.k].name}에서 ${g$(e.trade.sold || 0)}에 팔고 돌아오는 중` : `교역품 ${Object.values(e.cargo || {}).reduce((t, q) => t + q, 0)}개를 싣고 ${KINGDOMS[e.trade.k].name}(으)로`}</div>` : ''}
       <div class="bar big load"><i data-prog="${p.id}"></i></div>
@@ -469,7 +470,7 @@ function partyCard(p) {
       <div class="row sub"><span class="grow">짐 <b data-load="${p.id}"></b> · 처치 <b data-kills="${p.id}"></b>${p.wagon ? ` · ${rigName(p)}` : ''}${F.treasure ? ` · 상자 ${e.chests || 0}` : ''}</span><span data-sup="${p.id}"></span></div>
       <div class="btns">${e.mode === 'advance' ? `<button type="button" class="btn sm" data-act="recall" data-id="${p.id}">복귀</button>` : ''}${toggles}</div></div>`;
   }
-  const dest = p.dest && isUnlocked(p.dest) ? p.dest : 'plains', DF = FIELDS[dest];
+  const dest = p.raidOnly ? raidDestOf(p) : p.dest && isUnlocked(p.dest) ? p.dest : 'plains', DF = FIELDS[dest];
   const team = teamOf(p), block = team.map(cantGo).filter(Boolean);
   const cps = checkpoints(dest), st = cps.includes(p.start) ? p.start : 1;
   const cap = capOf(p), supW = wOf(p.sup);
@@ -478,16 +479,16 @@ function partyCard(p) {
   const wagonList = S.bld.stable ? '' : ['cart'].map(w => { const W = WAGONS[w], own = p.wagon === w, back = wagonBack(p); return `<div class="li${own ? ' on' : ''}"><div class="grow"><span>${W.name} <span class="muted">짐 +${W.cap} · 이동 ×${W.spd}</span></span><span class="sub muted">${W.desc}</span></div>${own ? '<span class="tag gold-t">쓰는 중</span>' : `<button type="button" class="btn sm" data-act="wagon" data-id="${p.id}" data-w="${w}"${S.gold + back >= W.cost ? '' : ' disabled'}>${fmt(W.cost - back)}G</button>`}</div>`; }).join('');
   const hurt = team.some(a => a.hp < derive(a).maxHp * 0.7);
   const avg = Math.round(avgLvOf(p));
-  const demon = DEMON_IDS, skyIds = SKY_IDS, dtab = UI.destTab || (demon.includes(dest) ? 'demon' : skyIds.includes(dest) ? 'sky' : FIELDS[dest] && FIELDS[dest].trade ? 'trade' : 'base');
-  const raids = dtab === 'base' ? (S.raid ? S.raid.list.filter(r => !r.done) : []).map(r => { const R = RAIDS[r.id], fid = 'raid_' + r.id, ok = avg >= R.lv - RAID_GAP;
+  const demon = DEMON_IDS, skyIds = SKY_IDS, dtab = p.raidOnly ? 'raid' : UI.destTab || (demon.includes(dest) ? 'demon' : skyIds.includes(dest) ? 'sky' : FIELDS[dest] && FIELDS[dest].trade ? 'trade' : 'base');
+  const raids = dtab === 'base' || dtab === 'raid' ? (S.raid ? S.raid.list.filter(r => !r.done) : []).map(r => { const R = RAIDS[r.id], fid = 'raid_' + r.id, ok = avg >= R.lv - RAID_GAP;
     return `<button type="button" class="fbtn raid giant${dest === fid ? ' on' : ''}" data-act="dest" data-id="${p.id}" data-f="${fid}"${ok ? '' : ' disabled'}><span>레이드 · ${R.name}</span><small>Lv${R.lv} · 남은 HP ${pct(r.hp, r.max)}%${ok ? '' : ` · 평균 Lv${R.lv - RAID_GAP}+`}</small></button>`; }).join('') : '';
-  const fieldIds = dtab === 'trade' ? [] : dtab === 'demon' ? demon : dtab === 'sky' ? skyIds : ALL_FIELDS.filter(f => !demon.includes(f) && !skyIds.includes(f) && !FIELDS[f].hidden && (f !== 'alley' || isUnlocked('alley')));
+  const fieldIds = dtab === 'trade' || dtab === 'raid' ? [] : dtab === 'demon' ? demon : dtab === 'sky' ? skyIds : ALL_FIELDS.filter(f => !demon.includes(f) && !skyIds.includes(f) && !FIELDS[f].hidden && (f !== 'alley' || isUnlocked('alley')));
   const fields = fieldIds.map(fid => {
     const F = FIELDS[fid], ok = isUnlocked(fid), fs = S.fields[fid];
     const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length;
     const sub = F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : ok ? `Lv${F.lv}~${fieldLv(F, FIELD_STAGES)} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}${F.region === 'sky' ? (wagonFly(p) ? ` · ${rigName(p)}` : ' · 비행 마차 필요') : ''}` : (F.unlock || `상단 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열림`);
     return `<button type="button" class="fbtn${dest === fid ? ' on' : ''}${F.raid ? ' raid' : ''}${F.demon ? ' demon' : ''}${F.frontier ? ' front' : ''}${F.region === 'sky' ? ' skyf' : ''}" data-act="dest" data-id="${p.id}" data-f="${fid}"${ok ? '' : ' disabled'}><span>${F.name}</span><small>${sub}</small></button>`;
-  }).join('') + (dtab === 'trade' ? tradeDestButtons(p, dest) : '') + (dtab === 'base' ? (() => { const n = S.inv.tmap || 0, T = FIELDS.treasure; return `<button type="button" class="fbtn treasure${dest === 'treasure' ? ' on' : ''}" data-act="dest" data-id="${p.id}" data-f="treasure"${n ? '' : ' disabled'}><span>${T.name}</span><small>${n ? `보물 지도 ${n}장 · 파티 Lv${avg} 기준 ${TREASURE_FLOORS}층 · 상자와 수호자` : '보물 지도가 있어야 가요 (우두머리 4%·주인 8%)'}</small></button>`; })() : '');
+  }).join('') + (dtab === 'trade' ? tradeDestButtons(p, dest) : '') + (dtab === 'base' && !p.raidOnly ? (() => { const n = S.inv.tmap || 0, T = FIELDS.treasure; return `<button type="button" class="fbtn treasure${dest === 'treasure' ? ' on' : ''}" data-act="dest" data-id="${p.id}" data-f="treasure"${n ? '' : ' disabled'}><span>${T.name}</span><small>${n ? `보물 지도 ${n}장 · 파티 Lv${avg} 기준 ${TREASURE_FLOORS}층 · 상자와 수호자` : '보물 지도가 있어야 가요 (우두머리 4%·주인 8%)'}</small></button>`; })() : '');
   const destTabs = `<div class="tabs dest"><button type="button" class="tab${dtab === 'base' ? ' on' : ''}" data-act="desttab" data-t="base">필드</button><button type="button" class="tab${dtab === 'demon' ? ' on' : ''}" data-act="desttab" data-t="demon">${DEMON_NAME}${isUnlocked('swamp') ? '' : ' <small>잠김</small>'}</button><button type="button" class="tab${dtab === 'sky' ? ' on' : ''}" data-act="desttab" data-t="sky">${SKY_NAME}${isUnlocked('sky') ? '' : ' <small>잠김</small>'}</button><button type="button" class="tab${dtab === 'trade' ? ' on' : ''}" data-act="desttab" data-t="trade">교역</button></div>`;
   const last = p.last ? `<div class="sub muted">지난 원정: ${FIELDS[p.last.field] ? FIELDS[p.last.field].name : '?'}, 처치 ${p.last.kills}마리, 부속품 ${Object.values(p.last.got).reduce((s, q) => s + q, 0)}개${p.last.gear ? `, 장비 ${p.last.gear}개` : ''}</div>${p.last.stats && Object.keys(p.last.stats).length ? `<details class="card"><summary>지난 원정 전투 통계 <span class="muted">준 피해 · 받은 피해 · 치유 · 스킬 비중</span></summary><div class="bstats">${bstatRows(p.last.stats, p.last.names)}</div></details>` : ''}` : '';
   return `<div class="card${on ? ' hl' : ''}">${head}
@@ -498,8 +499,8 @@ function partyCard(p) {
     ${S.bld.pen || S.pets.length ? petRow(p) : ''}
     <div class="sec"><b>보급품</b><span>물약과 치료 소모품 · 가져간 것만 써요</span></div>
     ${SUPPLY_IDS.filter(k => (S.inv[k] || 0) > 0 || (p.sup[k] || 0) > 0 || k === 'pot_s').map(k => `<div class="row">${iconImg(k)}<span class="grow sub">${ITEMS[k].name} <span class="muted">창고 ${S.inv[k] || 0}</span></span><span class="step"><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="-1">−</button><span>${p.sup[k] || 0}</span><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="1">+</button></span></div>`).join('')}
-    <div class="sec"><b>목적지</b><span>파티 평균 Lv${avg}</span></div>
-    ${destTabs}<div class="fields">${fields}${raids}</div>
+    <div class="sec"><b>${p.raidOnly ? '도전할 레이드' : '목적지'}</b><span>파티 평균 Lv${avg}</span></div>
+    ${p.raidOnly ? '' : destTabs}<div class="fields">${fields}${raids || (p.raidOnly ? '<div class="sub muted">이번 달에 도전할 수 있는 레이드가 없어요.</div>' : '')}</div>
     ${dtab === 'demon' && !isUnlocked('swamp') ? '<div class="sub muted">마계는 사라크 사막의 왕릉을 공략하면 열려요. 늪지대 → 메마른 땅 → 백작의 성 차례로 열려요.</div>' : ''}
     ${dtab === 'sky' ? `<div class="sub muted">${isUnlocked('sky') ? `구름섬은 비행 마차(비행장에서 제작)에 그리폰·와이번·페가수스를 맨 파티만 가요. ${wagonFly(p) ? `이 파티: ${rigName(p)} ✓` : `이 파티: ${p.wagon ? rigName(p) : '마차 없음'} ✗`}` : '구름섬은 세계수의 심장을 공략하고 비행장을 지으면 열려요. 비행 마차에 그리폰·와이번·페가수스를 매야 날아갈 수 있어요.'}</div>` : ''}
     ${dtab === 'trade' ? (DF.trade ? tradeInfo(p, dest) : '<div class="sub muted">교역: 말이 끄는 마차에 그 나라가 원하는 물건을 창고에서 싣고 가서 다 팔고, 그 나라 특산물을 싸게 사 와요. 위에서 나라를 골라요.</div>') : ''}
@@ -507,8 +508,8 @@ function partyCard(p) {
     <div class="sub">짐 한도 ${cap} · 물약이 ${supW} 차지${fast ? ` · 이동속도 ${(moveOf(p)).toFixed(1)} (가장 민첩한 ${esc(fast.name)} 기준${wagonOf(p) ? ', 마차 포함' : ''}${scoutMove(p) ? `, 정찰가 +${Math.round(scoutMove(p) * 100)}%` : ''})` : ''}${tentOf(p) > 1 ? ` · 야영은 텐트 (피로 회복 ×${tentOf(p)})` : ''}</div>
     ${wagonWhy(p) ? `<div class="sub red-t">${rigName(p)}: ${wagonWhy(p)}.</div>` : coachOf(p) && wagonOf(p) ? `<div class="sub ok-t">마부 ${esc(coachOf(p).name)}이(가) ${rigName(p)}을(를) 몰아요 · 마차 짐 +${Math.round((TR(coachOf(p)).wagon || 0) * 100)}%${TR(coachOf(p)).wagonSpd ? ` · 마차 속도 +${Math.round(TR(coachOf(p)).wagonSpd * 100)}%` : ''}</div>` : ''}
     ${portersOf(p).length > 1 ? '<div class="sub red-t">짐꾼 계열은 파티당 한 명만 넣을 수 있어요. 한 명을 빼야 출발해요.</div>' : ''}
-    <div class="row sub"><span class="grow">마차 · ${p.wagon ? `${rigName(p)} (짐 +${wagonCap(p) || WAGONS[p.wagon].cap} · 이동 ×${wagonSpd(p).toFixed(2)}${wagonWhy(p) ? ', 못 끎' : ''})${horseOf(p) ? ` · 끄는 ${horseOf(p).petName ? `펫 ${esc(horseOf(p).petName)}(${horseOf(p).name})` : horseOf(p).name}` : ''}` : '없음'}</span>${S.bld.stable ? `<button type="button" class="btn sm" data-act="bopen" data-id="stable" data-p="${p.id}">마구간 ›</button>` : ''}</div>
-    ${S.bld.stable ? '' : `<details class="card"><summary>마차 · 손수레만 살 수 있어요 · 말이 끄는 마차는 마구간에서</summary><div class="sub muted">손수레는 파티가 직접 끌어요. 짐수레부터는 마구간을 짓고 말을 매야 하고, 짐꾼 계열이 파티에 있어야 끌어요.</div><div class="list">${wagonList}</div></details>`}
+    ${p.raidOnly ? '' : `<div class="row sub"><span class="grow">마차 · ${p.wagon ? `${rigName(p)} (짐 +${wagonCap(p) || WAGONS[p.wagon].cap} · 이동 ×${wagonSpd(p).toFixed(2)}${wagonWhy(p) ? ', 못 끎' : ''})${horseOf(p) ? ` · 끄는 ${horseOf(p).petName ? `펫 ${esc(horseOf(p).petName)}(${horseOf(p).name})` : horseOf(p).name}` : ''}` : '없음'}</span>${S.bld.stable ? `<button type="button" class="btn sm" data-act="bopen" data-id="stable" data-p="${p.id}">마구간 ›</button>` : ''}</div>`}
+    ${S.bld.stable || p.raidOnly ? '' : `<details class="card"><summary>마차 · 손수레만 살 수 있어요 · 말이 끄는 마차는 마구간에서</summary><div class="sub muted">손수레는 파티가 직접 끌어요. 짐수레부터는 마구간을 짓고 말을 매야 하고, 짐꾼 계열이 파티에 있어야 끌어요.</div><div class="list">${wagonList}</div></details>`}
     ${hurt ? '<div class="sub red-t">다친 모험가가 있어요. 상단에 두면 체력이 서서히 차요.</div>' : ''}
     ${tired.length ? `<div class="sub warn">${tired.map(a => esc(a.name)).join(', ')}이(가) 지쳐 있어요. 상단에서 쉬면 피로가 풀려요.</div>` : ''}
     ${block.length ? `<div class="sub red-t">${block.map(esc).join('<br>')}</div>` : ''}
@@ -534,7 +535,7 @@ function raidCard(r, full, send) {
 function raidSendRows(r) {
   const R = RAIDS[r.id], fid = 'raid_' + r.id, need = R.lv - RAID_GAP;
   if (r.done) return '';
-  const rows = S.parties.map(p => {
+  const rows = S.parties.slice().sort((a, b) => (b.raidOnly ? 1 : 0) - (a.raidOnly ? 1 : 0)).map(p => {
     const team = teamOf(p), avg = Math.round(avgLvOf(p)), block = team.map(cantGo).filter(Boolean);
     const why = p.exp ? `원정 중 · ${whereStr(p.exp)}` : !team.length ? '파티원이 없어요' : avg < need ? `평균 Lv${need}+ 필요` : block.length ? block[0] : '';
     return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : ''}</span><button type="button" class="btn sm gold" data-act="raidgo" data-id="${p.id}" data-f="${fid}"${why ? ' disabled' : ''}>도전</button></div>`;
@@ -563,16 +564,23 @@ PANELS.rune = w => {
     <div class="sec"><b>창고의 룬</b><span>마탑에서 새기고 합쳐요</span></div><div class="list">${add || '<div class="li"><span class="sub">룬이 없어요. 필드 보스와 던전, 레이드에서 얻거나 마탑에서 새겨요.</span></div>'}</div>`;
 };
 PANELS.exp = () => {
-  const ids = S.parties.map(p => p.id);
+  raidPartyEnsure();
+  const regs = regularParties(), rp = raidParty(), ids = regs.map(p => p.id);
   let tab = UI.expTab;
+  if (rp && tab === rp.id) tab = 'raid';   // 레이드대는 레이드 탭에서 꾸린다
   if (tab !== 'raid' && !ids.includes(tab)) tab = ids.includes(S.view) ? S.view : ids[0] || 'raid';
   UI.expTab = tab; const top = winTop(); if (top && top.id === 'exp') top.tab = tab;
-  const bar = `<div class="tabs exp">${S.parties.map(p => `<button type="button" class="tab${tab === p.id ? ' on' : ''}" data-act="exptab" data-id="${p.id}">${esc(p.name)}<small>${p.exp ? esc(whereStr(p.exp)) : p.members.length ? `대기 · ${p.members.length}명` : '비어 있음'}</small></button>`).join('')}${S.parties.length < partyMax() ? '<button type="button" class="tab add" data-act="newparty">+<small>새 파티</small></button>' : ''}<button type="button" class="tab${tab === 'raid' ? ' on' : ''}" data-act="exptab" data-id="raid">레이드<small>${S.raid ? `D-${S.settleDay - today()}` : '-'}</small></button></div>`;
-  if (tab === 'raid') return `${bar}<div class="sec" style="margin-top:0"><b>이번 달 레이드</b><span>${S.raid ? `D-${S.settleDay - today()} · 파티를 골라 바로 보내요` : '없음'}</span></div>${S.raid ? S.raid.list.map(r => raidCard(r, false, true)).join('') : '<div class="card"><div class="sub">이번 달 레이드가 없어요.</div></div>'}${S.parties.length ? '' : '<div class="sub muted">파티가 없어요. 「+ 새 파티」로 만들어요.</div>'}`;
-  const p = S.parties.find(x => x.id === tab);
+  const tabTxt = p => (p.exp ? esc(whereStr(p.exp)) : p.members.length ? `대기 · ${p.members.length}명` : '비어 있음');
+  const bar = `<div class="tabs exp">${regs.map(p => `<button type="button" class="tab${tab === p.id ? ' on' : ''}" data-act="exptab" data-id="${p.id}">${esc(p.name)}<small>${tabTxt(p)}</small></button>`).join('')}${regs.length < partyMax() ? '<button type="button" class="tab add" data-act="newparty">+ 새 파티</button>' : ''}<button type="button" class="tab${tab === 'raid' ? ' on' : ''}" data-act="exptab" data-id="raid">레이드<small>${rp ? `레이드대 · ${rp.exp ? '도전 중' : `${rp.members.length}명`}` : S.raid ? `${S.raid.list.filter(r => !r.done).length}개` : '없음'}</small></button></div>`;
+  if (tab === 'raid') {
+    const rpBox = rp ? `<div class="sec" style="margin-top:0"><b>레이드 전용 파티</b><span>짐꾼 포함 ${RAID_FIGHTERS + 1}명까지 · 레이드에만 나가요</span></div>${partyCard(rp)}`
+      : `<div class="card dim"><div class="h">레이드 전용 파티 <small>잠김</small></div><div class="sub">일반 파티 ${PARTY_MAX[RAID_PARTY_RANK]}개가 다 열린 뒤 상단이 ${RANKS[RAID_PARTY_RANK].name}랭크가 되면, 레이드에만 나가는 큰 파티 하나가 더 열려요. 짐꾼 계열을 빼고 ${RAID_FIGHTERS}명, 짐꾼 한 명을 더해 모두 ${RAID_FIGHTERS + 1}명까지.</div></div>`;
+    return `${bar}${rpBox}<div class="sec"><b>이번 달 레이드</b><span>${S.raid ? `D-${S.settleDay - today()} · 파티를 골라 바로 보내요` : '없음'}</span></div>${S.raid ? S.raid.list.map(r => raidCard(r, false, true)).join('') : '<div class="card"><div class="sub">이번 달 레이드가 없어요.</div></div>'}${S.parties.length ? '' : '<div class="sub muted">파티를 먼저 만들어 주세요.</div>'}`;
+  }
+  const p = regs.find(x => x.id === tab);
   if (!p) return `${bar}<div class="card"><div class="sub">파티가 없어요. 「+ 새 파티」를 눌러 만들고 모험가를 넣어 주세요.</div></div>`;
-  const allBtns = S.parties.length > 1 ? `<div class="btns"><button type="button" class="btn sm" data-act="allgo"${S.parties.some(x => !x.exp && x.members.length) ? '' : ' disabled'}>대기 파티 모두 출발</button><button type="button" class="btn sm" data-act="allback"${S.parties.some(x => x.exp && x.exp.mode === 'advance') ? '' : ' disabled'}>원정 파티 모두 복귀</button></div>` : '';
-  return `${bar}${allBtns}${partyCard(p)}${S.parties.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지 · 상단 랭크가 오르면 더 만들 수 있어요.</div>` : ''}`;
+  const allBtns = regs.length > 1 ? `<div class="btns"><button type="button" class="btn sm" data-act="allgo"${regs.some(x => !x.exp && x.members.length) ? '' : ' disabled'}>대기 파티 모두 출발</button><button type="button" class="btn sm" data-act="allback"${S.parties.some(x => x.exp && x.exp.mode === 'advance') ? '' : ' disabled'}>원정 파티 모두 복귀</button></div>` : '';
+  return `${bar}${allBtns}${partyCard(p)}${regs.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지${partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? (rp ? ' · 레이드 전용 파티는 레이드 탭에서 꾸려요' : ` · ${RANKS[RAID_PARTY_RANK].name}랭크가 되면 레이드 전용 파티가 하나 더 열려요`) : ' · 상단 랭크가 오르면 더 만들 수 있어요'}.</div>` : ''}`;
 };
 
 /* 창고 */
@@ -755,7 +763,7 @@ const ACT = {
   desttab: d => { UI.destTab = d.t; renderPanel(true); },
   sup: d => setSup(+d.id, d.it, +d.d),
   dest: d => { const p = findP(d.id); if (p) p.dest = d.f; },
-  go: d => { const p = findP(d.id); if (!p) return; const m = startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 출발!`); } },
+  go: d => { const p = findP(d.id); if (!p) return; const m = startExp(p, p.raidOnly ? (p.dest = raidDestOf(p)) : p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 출발!`); } },
   raidgo: d => { const p = findP(d.id); if (!p || p.exp) return; p.dest = d.f; const m = startExp(p, d.f); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 레이드 출발!`); } },
   recall: d => { const p = findP(d.id); if (p) recall(p, 'order'); },
   gate: d => { const p = findP(d.id); if (p) { gateChoice(p, d.c); S.view = p.id; } },

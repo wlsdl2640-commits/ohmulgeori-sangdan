@@ -89,7 +89,7 @@ function updateOverlay() {
   B.hidden = e.wait !== 'gate'; if (!B.hidden) B.textContent = '던전 입구 · 눌러서 정하기';
 }
 function renderChips() {
-  const html = S.parties.map(p => {
+  const html = S.parties.slice().sort((a, b) => (a.raidOnly ? 1 : 0) - (b.raidOnly ? 1 : 0)).map(p => {   // 레이드대는 맨 끝
     const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.camp ? 'camp' : e.wait ? 'wait' : e.mode === 'return' ? 'back' : 'go';
     const st = !e ? '대기' : e.area === 'raid' ? '레이드' : e.area === 'trade' ? `교역 ${e.leg === 'back' ? '귀환' : e.stage + '/' + e.dist}` : e.area === 'dungeon' ? `${FIELDS[e.field].treasure ? FIELDS[e.field].dungeon.name : FIELDS[e.field].raid ? '은신처' : '던전'} ${e.stage}층` : `${FIELDS[e.field].no}-${e.stage}`;
     return `<button type="button" class="pchip${S.view === p.id ? ' on' : ''}" data-view="${p.id}"><i class="dot ${cls}"></i>${esc(p.name)} · ${st}</button>`;

@@ -42,7 +42,7 @@ function makeAdv(o = {}) {
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
-    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, traits: o.traits || rollTraits(),
+    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
     salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
   };
   growStats(a, lv - 1);
@@ -353,6 +353,7 @@ function cantGo(a) {
 const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (C.row != null) return C.row; return C.act === 'melee' ? 0 : C.act === 'arrow' ? 1 : 2; };
 function formParty(p) { p.members = p.members.map((id, i) => [id, i]).sort((x, y) => { const a = advById(x[0]), b = advById(y[0]); return (a ? formRank(a.cls) : 2) - (b ? formRank(b.cls) : 2) || x[1] - y[1]; }).map(x => x[0]); }
 function startExp(p, fid) {
+  if (p.raidOnly && !(FIELDS[fid] && FIELDS[fid].giant)) return '레이드 전용 파티는 레이드에만 나가요. 원정대 창의 레이드 탭에서 보내요.';
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
   if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요.';
   if (!isUnlocked(fid)) return FIELDS[fid] && FIELDS[fid].giant ? '이번 달에는 열리지 않은 레이드예요.' : '아직 갈 수 없는 곳이에요.';

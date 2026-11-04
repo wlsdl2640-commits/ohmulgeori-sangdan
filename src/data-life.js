@@ -42,25 +42,24 @@ const CLIMATE = {
 // 던전 안은 날씨가 없지만 몇 곳은 늘 덥거나 춥다 (던전 그림 id → 온도)
 const DUNGEON_CLIMATE = { crater: 2, icetemple: -2, tomb: 1 };
 
-/* 체질 특성: 날씨에 약하거나 강한 몸 (약한 체질은 새 모험가에게만 붙는다) */
+/* 날씨 특성 (빌드 36): 모험가마다 하나씩, 타고난 특성 3칸과 따로 a.wxt에 둔다. 날씨에 약한 것만 있다.
+   추위·더위 디버프는 누구나 받고, 그 날씨에 약한 모험가는 능력치 -10%를 더 받는다 (weather.js wxFx). */
 Object.assign(TRAITS, {
-  coldWeak: { name: '추위에 약함', desc: '쌀쌀함·추위·강추위에 능력치 -10% 더', neg: 1, wxCold: -0.1 },
-  hotWeak:  { name: '더위에 약함', desc: '더움·무더위·열대야에 능력치 -10% 더', neg: 1, wxHot: -0.1 },
-  wetWeak:  { name: '비에 약함',   desc: '비·눈이 오면 능력치 -10%', neg: 1, wxWet: -0.1 },
-  windWeak: { name: '바람에 약함', desc: '강풍이 불면 능력치 -10%', neg: 1, wxWind: -0.1 },
-  coldRes:  { name: '추위에 강함', desc: '추운 날씨의 능력치·이동·공격 디버프를 받지 않음', wxColdRes: 1 },
-  hotRes:   { name: '더위에 강함', desc: '더운 날씨의 능력치·이동·공격 디버프를 받지 않음', wxHotRes: 1 }
+  coldWeak: { name: '추위에 약함', desc: '쌀쌀함·추위·강추위에 능력치 -10% 더', neg: 1, wxt: 1, wxCold: -0.1 },
+  hotWeak:  { name: '더위에 약함', desc: '더움·무더위·열대야에 능력치 -10% 더', neg: 1, wxt: 1, wxHot: -0.1 },
+  wetWeak:  { name: '비에 약함',   desc: '비·눈이 오면 능력치 -10%', neg: 1, wxt: 1, wxWet: -0.1 },
+  windWeak: { name: '바람에 약함', desc: '강풍이 불면 능력치 -10%', neg: 1, wxt: 1, wxWind: -0.1 },
+  // 빌드 31~35의 「강함」 체질: 이제 없다 (옛 저장은 migrate8이 날씨 특성으로 바꾼다). 남은 기록이 깨지지 않게 이름만 둔다
+  coldRes:  { name: '추위에 강함', desc: '(없어진 특성)', legacy: 1 },
+  hotRes:   { name: '더위에 강함', desc: '(없어진 특성)', legacy: 1 }
 });
 const WEAK_TRAIT_IDS = ['coldWeak', 'hotWeak', 'wetWeak', 'windWeak'];
-TRAIT_IDS.push('coldRes', 'hotRes'); ROLL_TRAIT_IDS.push('coldRes', 'hotRes');
-// 새 모험가 넷 중 한 명꼴로 약한 체질을 타고난다 (rollTraits가 부른다)
-function rollWeak(out) {
-  if (rnd() >= 0.25) return out;
-  const w = pickOne(WEAK_TRAIT_IDS);
-  if (out.includes(w)) return out;
-  if (out.length >= TRAIT_MAX) out[out.length - 1] = w; else out.push(w);
-  return out;
-}
+const WX_OLD_TRAITS = WEAK_TRAIT_IDS.concat(['coldRes', 'hotRes']);   // 예전에 특성 칸에 들어가 있던 체질들
+const rollWxt = () => pickOne(WEAK_TRAIT_IDS);
+STORY.v36 = [
+  '빌드 36: 날씨 특성이 타고난 특성과 따로 생겼다. 모험가마다 추위·더위·비·바람 가운데 하나에 약한 날씨 특성을 하나씩 갖는다(모험가 창 · 여관 손님 카드).',
+  '추위·더위 디버프는 누구나 받고, 그 날씨에 약한 모험가는 능력치 -10%를 더 받는다. 추위·더위에 강한 체질은 없어졌고, 특성 칸에 있던 체질은 날씨 특성으로 옮겨 그 칸이 비었다.'
+];
 
 /* ───────── 요리: 주방에서 만든 도시락을 원정 출발 때 들려 보낸다 ───────── */
 Object.assign(ITEMS, {

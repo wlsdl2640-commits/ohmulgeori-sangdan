@@ -96,7 +96,7 @@ function buyShoe(n) {
 const horseLine = k => { const H = HORSES[k]; return `짐 ×${H.cap} · 속도 ×${H.spd}${H.fly ? ' · 비행' : ''}${H.steel ? ' · 강철 마차' : ''}`; };
 BLD_SUM.stable = () => `<div class="sub">말 ${stableHorses().length}/${stableCap()}마리 · 마차 ${S.parties.filter(p => p.wagon).length}대 · 강화 +${wagonPlusMax()}까지</div>`;
 BLD_BOX.stable = () => {
-  const parties = S.parties, sp = parties.find(p => p.id === UI.stableP) || parties[0];
+  const parties = S.parties.filter(p => !p.raidOnly), sp = parties.find(p => p.id === UI.stableP) || parties[0];
   const picker = parties.length ? `<div class="btns">${parties.map(p => `<button type="button" class="btn sm${sp && sp.id === p.id ? ' on' : ''}" data-act="stablep" data-id="${p.id}">${esc(p.name)}<span class="muted"> · ${p.wagon ? rigName(p) : '마차 없음'}</span></button>`).join('')}</div>` : '<div class="sub muted">파티가 없어요.</div>';
   // 1) 고른 파티의 마차
   let rig = '';
@@ -183,7 +183,7 @@ BLD_BOX.airfield = () => {
   const fid = skyDestOf(), open = isUnlocked(fid), F = FIELDS[fid], fs = S.fields[fid] || {};
   const isles = SKY_IDS.filter(f => FIELDS[f].region === 'sky').map(f => `<button type="button" class="chip${f === fid ? ' on' : ''}" data-act="skydest" data-f="${f}"${isUnlocked(f) ? '' : ' disabled'}>${FIELDS[f].name}${isUnlocked(f) ? '' : ' 🔒'}</button>`).join('');
   const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length;
-  const rows = S.parties.map(p => { const team = teamOf(p), avg = Math.round(avgLvOf(p)), block = team.map(cantGo).filter(Boolean), fly = wagonFly(p), W = WAGONS.sky;
+  const rows = S.parties.filter(p => !p.raidOnly).map(p => { const team = teamOf(p), avg = Math.round(avgLvOf(p)), block = team.map(cantGo).filter(Boolean), fly = wagonFly(p), W = WAGONS.sky;
     const why = p.exp ? `원정 중 · ${whereStr(p.exp)}` : !team.length ? '파티원이 없어요' : !fly ? (p.wagon === 'sky' ? wagonWhy(p) : '비행 마차가 없어요') : partyWhy(p) ? partyWhy(p) : block.length ? block[0] : !open ? '구름섬이 아직 안 열렸어요' : '';
     const buy = p.wagon === 'sky' ? '' : `<button type="button" class="btn sm" data-act="wagon" data-id="${p.id}" data-w="sky"${!p.exp && S.gold + wagonBack(p) >= W.cost ? '' : ' disabled'}>비행 마차 ${fmt(Math.max(0, W.cost - wagonBack(p)))}G</button>`;
     return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg} · ${p.wagon ? rigName(p) : '마차 없음'}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : '<br><span class="ok-t">날아갈 준비가 됐어요</span>'}</span><button type="button" class="btn sm gold" data-act="skygo" data-id="${p.id}"${why ? ' disabled' : ''}>${fid === 'sky' ? '구름섬' : F.name} 출발</button></div>${buy ? `<div class="btns" style="margin-top:-2px;margin-bottom:6px">${buy}</div>` : ''}`; }).join('');
