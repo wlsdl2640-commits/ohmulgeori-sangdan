@@ -140,13 +140,35 @@ const avgLvOf = p => { const t = teamOf(p); return t.length ? t.reduce((s, a) =>
 const wOf = bag => Object.entries(bag).reduce((s, [k, q]) => s + (ITEMS[k] ? ITEMS[k].w * q : 0), 0);
 const vOf = bag => Object.entries(bag).reduce((s, [k, q]) => s + (ITEMS[k] ? ITEMS[k].v * q : 0), 0);
 const gW = list => (list || []).reduce((s, g) => s + GTYPES[g.base].w, 0);
-// 마부: 당나귀 수레부터는 마부(또는 캐러밴 마스터)가 있어야 끈다. 마부가 마차 짐을 더 싣고 더 빨리 몬다
+// 짐꾼 계열(짐꾼·음유시인·마부·정찰가…)은 파티당 한 명. 손수레 말고는 짐꾼 계열이 있어야 마차를 끈다. 마부는 마차 짐을 더 싣고 더 빨리 몬다
+const isPorter = a => !!a && jobBase(a.cls) === 'porter';
+const portersOf = p => teamOf(p).filter(isPorter);
+const porterOf = p => portersOf(p).filter(a => !a.down)[0] || null;
 const coachOf = p => teamOf(p).filter(a => !a.down && (TR(a).wagon || 0) > 0).sort((x, y) => (TR(y).wagon || 0) - (TR(x).wagon || 0))[0] || null;
 const wagonOwned = p => (p.wagon && WAGONS[p.wagon]) || null;
-const wagonWhy = p => { const w = wagonOwned(p); return w && w.coach && !coachOf(p) ? '마부가 없어 끌 수 없어요' : ''; };
-const wagonOf = p => { const w = wagonOwned(p); return w && !(w.coach && !coachOf(p)) ? w : null; };
-const wagonCap = p => { const w = wagonOf(p); if (!w) return 0; const c = coachOf(p); return Math.round(w.cap * (1 + (c ? TR(c).wagon || 0 : 0))); };
-const wagonSpd = p => { const w = wagonOf(p); if (!w) return 1; const c = coachOf(p); return w.spd * (1 + (c ? TR(c).wagonSpd || 0 : 0)); };
+// 맨 말: 'h:종류'(마구간에서 산 말) 또는 'p:펫id'(다 자란 펫). HORSES 항목에 id·펫 정보를 붙여 돌려준다
+function horseOf(p) {
+  if (!p || !p.horse) return null;
+  if (p.horse.startsWith('h:')) { const k = p.horse.slice(2); return HORSES[k] && !HORSES[k].pet ? Object.assign({ id: k }, HORSES[k]) : null; }
+  const pet = petById(+p.horse.slice(2)); if (!pet || !pet.stage) return null;
+  const k = horseOfPet(pet.kind); return k ? Object.assign({ id: k, petId: pet.id, petName: pet.name }, HORSES[k]) : null;
+}
+function wagonWhy(p) {
+  const w = wagonOwned(p); if (!w || !w.horse) return '';
+  if (!porterOf(p)) return '짐꾼 계열이 파티에 있어야 끌 수 있어요';
+  const h = horseOf(p);
+  if (!h) return p.horse && p.horse.startsWith('p:') ? '맨 펫이 없거나 아직 다 자라지 않았어요' : w.horse === 'fly' ? '마구간에서 그리폰·와이번·페가수스(다 자란 펫)를 매어야 해요' : w.horse === 'goat' ? '마구간에서 고산지대 산양(다 자란 펫)을 매어야 해요' : '마구간에서 말을 매어야 해요';
+  if (w.horse === 'goat' && !h.steel) return '고산지대 산양이 끌어야 해요';
+  if (w.horse === 'fly' && !h.fly) return '그리폰·와이번·페가수스가 끌어야 해요';
+  return '';
+}
+const wagonOf = p => { const w = wagonOwned(p); return w && !wagonWhy(p) ? w : null; };
+const wagonPlus = p => Math.max(0, Math.min(WAGON_PLUS_MAX, p.wagonPlus || 0));
+const wagonCap = p => { const w = wagonOf(p); if (!w) return 0; const c = coachOf(p), h = horseOf(p); return Math.round(w.cap * (h ? h.cap : 1) * (1 + wagonPlus(p) * WAGON_PLUS.cap) * (1 + (c ? TR(c).wagon || 0 : 0)) * (w.fly && (S.bld.airfield || 0) >= 2 ? 1.2 : 1)); };
+const wagonSpd = p => { const w = wagonOf(p); if (!w) return 1; const c = coachOf(p), h = horseOf(p); return w.spd * (h ? h.spd : 1) * (1 + wagonPlus(p) * WAGON_PLUS.spd) * (1 + (c ? TR(c).wagonSpd || 0 : 0)); };
+const wagonFly = p => { const w = wagonOf(p), h = horseOf(p); return !!(w && w.fly && h && h.fly); };
+// 마차 이름: 비행 마차에 그리폰을 매면 그리폰 마차
+function rigName(p) { const w = wagonOwned(p); if (!w) return ''; const h = horseOf(p); return (w.fly && h && h.fly ? `${h.name} 마차` : w.name) + (wagonPlus(p) ? ` +${wagonPlus(p)}` : ''); }
 // 정찰가: 파티 이동 속도와 텐트(야영 피로 회복 배율)
 const scoutMove = p => Math.max(0, ...teamOf(p).filter(a => !a.down).map(a => TR(a).scout || 0));
 const tentOf = p => Math.max(1, ...teamOf(p).filter(a => !a.down).map(a => TR(a).tent || 1));
@@ -191,10 +213,12 @@ const red = def => 60 / (60 + Math.max(0, def) * 1.5);
 const DIFF = { hp: 1.22, atk: 1.16 };   // v0.5: 더 어렵게
 
 function areaDef(e) { const F = FIELDS[e.field]; return e.area === 'dungeon' ? F.dungeon : F; }
+// 던전 층수: 보물 던전은 셋, 나머지는 다섯
+const floorsOf = e => (FIELDS[e.field] && FIELDS[e.field].treasure ? TREASURE_FLOORS : DUNGEON_FLOORS);
 function makeEncs(e) {
   const night = e.area === 'field' && isNight();
   if (e.mode === 'return') return rnd() < (night ? 0.55 : 0.4) ? [ri(30, 70)] : [];
-  if (e.area === 'dungeon') return e.stage === DUNGEON_FLOORS ? [35, 80] : [30, 70];
+  if (e.area === 'dungeon') return e.stage === floorsOf(e) ? [35, 80] : [30, 70];
   return [25 + ri(-4, 4), 55 + ri(-4, 4), 85 + ri(-4, 4)];
 }
 function foeFrom(id, lv) {
@@ -202,6 +226,19 @@ function foeFrom(id, lv) {
   if (S && S.advs) dexSeen(id);   // 도감: 만난 몬스터
   return { uid: nid(), id, lv, hp, maxHp: hp, atk: mAtk(m, lv) * DIFF.atk, def: mDef(m, lv), spd: m.spd, eva: m.eva || 0, cd: 0.6 + rnd() * 0.8, boss: !!m.boss, dot: null, dotT: 0, slow: 0 };
 }
+// 희귀종: 아주 가끔 반짝이는 개체. 체력·공격·방어·회피가 높고 경험치가 많다 (data-sky.js RARE)
+function makeRare(f) {
+  f.rare = 1; f.name = RARE.name + MONS[f.id].name;
+  f.hp = f.maxHp = Math.round(f.maxHp * RARE.hp); f.atk *= RARE.atk; f.def *= RARE.def; f.eva = Math.min(0.6, (f.eva || 0) + RARE.eva);
+  return f;
+}
+// 둥지 몬스터: 둥지 이벤트가 있는 필드에서 섞여 나온다. 강하고 전리품이 두 배
+function makeNestFoe(f) {
+  f.nest = 1; f.name = NEST.name + MONS[f.id].name;
+  f.hp = f.maxHp = Math.round(f.maxHp * NEST.hp); f.atk *= NEST.atk;
+  return f;
+}
+const nestAt = fid => (typeof evActive === 'function' ? evActive('nest').find(x => x.at === fid) : null) || null;
 // 필드 보스: 10 스테이지마다. k = 1~5 (1-50은 그 필드의 주인)
 function fieldBoss(F, stage, lv) {
   const k = Math.round(stage / BOSS_EVERY), pool = F.mons.filter(id => minStage(MONS[id]) <= stage);
@@ -223,26 +260,30 @@ function nightMore(e) {
 function rollFoes(e, idx, extra = 0) {
   const F = FIELDS[e.field], A = areaDef(e);
   const last = e.mode === 'advance' && idx === e.encs.length - 1;
-  const dboss = e.area === 'dungeon' && e.stage === DUNGEON_FLOORS && last;
+  const dboss = e.area === 'dungeon' && e.stage === floorsOf(e) && last;
   const fboss = e.area === 'field' && e.stage % BOSS_EVERY === 0 && last;
-  const lv = e.area === 'dungeon' ? (F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);
+  const lv = e.area === 'dungeon' ? (F.treasure ? Math.max(1, (e.lvo || 10) + e.stage - 3) : F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);   // 보물 던전: 파티 평균 -2 ~ 0
   const pool = A.mons.filter(id => e.area === 'dungeon' || minStage(MONS[id]) <= e.stage);
   const out = [];
-  if (dboss) { out.push(foeFrom(A.boss, F.raid ? F.lv + 14 : dungeonBossLv(F))); out.push(foeFrom(pickOne(pool), lv)); }
+  if (dboss) { out.push(foeFrom(A.boss, F.treasure ? (e.lvo || 10) + 2 : F.raid ? F.lv + 14 : dungeonBossLv(F))); out.push(foeFrom(pickOne(pool), lv)); }
   else if (fboss) { out.push(fieldBoss(F, e.stage, lv)); for (let i = 0; i < (e.stage >= 30 ? 2 : 1); i++) out.push(foeFrom(pickOne(pool), lv)); }
   else {
+    const nest = e.area === 'field' && e.mode === 'advance' ? nestAt(e.field) : null;
     let n = e.mode === 'return' ? 1 : 1 + ri(0, Math.min(2, Math.floor(e.stage / 5))) + (e.area === 'dungeon' ? 1 : 0);
-    n = Math.min(5, n + nightMore(e) + extra);
-    for (let i = 0; i < n; i++) out.push(foeFrom(pickOne(pool), lv));
+    n = Math.min(5, n + nightMore(e) * (F.frontier && e.field === 'grave' ? 2 : 1) + extra + (nest ? NEST.extra : 0));
+    for (let i = 0; i < n; i++) { const f = foeFrom(pickOne(pool), lv); if (nest && rnd() < NEST.p) makeNestFoe(f); out.push(f); }
   }
+  // 희귀종: 우두머리·주인·던전 주인이 아닌 몬스터 하나가 아주 가끔 반짝인다
+  if (!e.pvp && !F.giant) for (const f of out) if (!f.boss && !f.fb && !f.nest && rnd() < RARE.p) { makeRare(f); break; }
   return out;
 }
 function spawn(p, e) {
   e.foes = e.next || rollFoes(e, e.ei - 1);
   e.next = null;
   e.cd = {}; e.buffs = []; e.taunt = null;
-  const fb = e.foes.find(f => f.fb);
-  ev(e, 'spawn', { boss: e.foes.some(f => f.boss), name: fb ? fb.name : '' });
+  const fb = e.foes.find(f => f.fb), rare = e.foes.find(f => f.rare);
+  ev(e, 'spawn', { boss: e.foes.some(f => f.boss), name: fb ? fb.name : '', rare: rare ? 1 : 0 });
+  if (rare) { log(`${p.name} 앞에 ${rare.name}이(가) 나타났다! 희귀종이다.`, 'good'); HOOKS.toast(`희귀종 출현 · ${rare.name}`); }
 }
 function ev(e, type, data) {
   if (e.ev) { e.ev.push(Object.assign({ n: ++e.evN, type }, data)); if (e.ev.length > 50) e.ev.shift(); }
@@ -287,14 +328,18 @@ function startExp(p, fid) {
   if (why) return why + '.';
   const GR = FIELDS[fid].giant && RAIDS[FIELDS[fid].giant];
   if (GR && avgLvOf(p) < GR.lv - RAID_GAP) return `${GR.name} 레이드는 파티 평균 Lv${GR.lv - RAID_GAP} 이상이어야 도전할 수 있어요.`;
+  if (portersOf(p).length > 1) return '짐꾼 계열은 파티당 한 명만 넣을 수 있어요.';
+  if (FIELDS[fid].region === 'sky' && !wagonFly(p)) return `${FIELDS[fid].name}은(는) 비행 마차에 그리폰·와이번·페가수스를 맨 파티만 갈 수 있어요.`;
+  if (FIELDS[fid].treasure && (S.inv.tmap || 0) < 1) return '보물 지도가 없어요.';
   const sup = {};
   if (p.autoBuy) for (const [k, q] of Object.entries(p.sup)) { const short = q - (S.inv[k] || 0); if (short > 0 && ITEMS[k] && ITEMS[k].buy) { const cost = buyPrice(k) * short; if (S.gold >= cost) { S.gold -= cost; S.stats.spent = (S.stats.spent || 0) + cost; addTo(S.inv, k, short); log(`${p.name} 출발 전에 ${ITEMS[k].name} ${short}개를 ${g$(cost)}에 사 두었다.`); } } }
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
   formParty(p);
   p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
+  if (FIELDS[fid].treasure) { addTo(S.inv, 'tmap', -1); p.exp.lvo = Math.max(8, Math.min(MAX_LV, Math.round(avgLvOf(p)))); p.exp.chests = 0; }
   team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.stats.trips++;
-  log(`${p.name}이(가) ${FIELDS[fid].name}(으)로 출발했다.`);
+  log(`${p.name}이(가) ${FIELDS[fid].name}(으)로 출발했다.${FIELDS[fid].treasure ? ' 보물 지도 한 장을 썼다.' : wagonFly(p) ? ` ${rigName(p)}이(가) 하늘로 떠올랐다.` : ''}`);
   changed();
   return '';
 }
@@ -427,9 +472,20 @@ function stageClear(p, e) {
     }
     if (p.safe && fieldLv(F, e.stage + 1) + ((e.stage + 1) % BOSS_EVERY === 0 ? 2 : 0) > avgLvOf(p) + 3) { e.stage++; e.pos = 0; e.ei = 0; e.encs = []; e.next = null; recall(p, 'ahead'); return; }
     e.stage++;
-  } else if (e.stage < DUNGEON_FLOORS) e.stage++;
+  } else if (e.stage < floorsOf(e)) { if (F.treasure) treasureChest(p, e); e.stage++; }
   e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
   changed();
+}
+// 보물 던전: 층을 지날 때마다 상자 하나 (돈·황금 가루·가끔 장비나 스킬북)
+function treasureChest(p, e) {
+  const L = e.lvo || 10, gold = Math.round((400 + L * 60) * (0.8 + rnd() * 0.5) / 10) * 10;
+  S.gold += gold; S.stats.earned += gold; e.chests = (e.chests || 0) + 1;
+  const got = [g$(gold)];
+  addTo(e.bag, 'gold_dust', 1); got.push('황금 가루');
+  if (rnd() < 0.35) { const g = makeGear(pickOne(GTYPE_IDS), Math.min(GTIERS.length - 1, raidTier(L)), Math.max(1, rollQuality(0.3))); e.gbag.push(g); got.push(`${QUALITY[g.q].name} 장비`); }
+  if (rnd() < 0.3) { const b = randomBook(Math.max(1, L - 20), L + 5); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); } }
+  ev(e, 'chest', {});
+  log(`${p.name}이(가) 보물고 ${e.stage}층의 상자를 열었다: ${got.join(', ')}`, 'good');
 }
 function stageBack(p, e) {
   if (e.area === 'dungeon') {
@@ -508,6 +564,7 @@ function hitFoe(e, f, atk, crit, magic, a) {
   if (T.bossDmg && f.boss) m *= T.bossDmg;
   if (a && f.boss) m *= 1 + traitSum(a, 'bossDmg');
   if (a && !f.pvp && dexKills(f.id) >= DEX_K[3]) m *= 1.03;   // 도감 완전 기록
+  if (a && !f.pvp && dexRare(f.id)) m *= 1 + RARE.dmg;         // 희귀종 기록: 그 종에게 주는 피해 +15%
   if (T.exec && f.hp <= f.maxHp * EXEC_HP) m *= T.exec;                                  // 처형 (한방딜): HP 30% 아래 적
   if (f.sta && f.sta.mark) m *= 1 + MARK_BONUS;                                           // 표식: 받는 피해 +20%
   if (a && T.combo && e.combo && e.combo[a.id]) m *= 1 + T.combo * e.combo[a.id];        // 연계 (지속딜): 중첩만큼
@@ -796,7 +853,8 @@ function kill(p, e, f) {
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); if ((f.fb || f.boss) && !f.pvp) a.bosses = (a.bosses || 0) + 1; });   // 우두머리·주인 처치 수는 라이선스 심사에 쓴다
   const harvest = blessed('harvest') ? 1.15 : 1;
-  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp')) * harvest);
+  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (f.rare ? RARE.exp : f.nest ? 1.5 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp')) * harvest);
+  if (f.rare && !f.pvp) rareDown(p, e, f);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
   ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0, adv: f.adv || null });
   petKill(p, e, f, xp);
@@ -804,16 +862,19 @@ function kill(p, e, f) {
   kqKill(f.id);
   const luck = Math.max(0, ...team.map(a => TQ(a, 'luck'))), hunt = Math.max(0, ...team.map(a => TQ(a, 'drop')));   // 보물 사냥꾼의 운, 괴물사냥꾼의 손질
   const pet = petOfParty(p), petLuck = (pet ? (PETS[pet.kind].luck || 0) + (pet.trait === 'lucky' ? 0.08 : 0) : 0) + petHome('luck');
-  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt + petLuck) * harvest, fbm = f.fb ? 3 : 1;
+  const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt + petLuck + (dexRare(f.id) ? RARE.drop : 0)) * harvest, fbm = f.fb ? 3 : f.nest || f.rare ? 2 : 1;
   for (const [it, ch, q] of m.drops) if (rnd() < Math.min(1, ch * dropMul * fbm)) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1));
   if (e.area === 'field' && rnd() < 0.12 * harvest * (1 + petHome('herb'))) loot(p, e, pickOne(F.herbs || ['herb']), 1);   // 약초 줍기
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
-  if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), F.tier, rollQuality(f.boss ? 0.25 : 0)));
+  const gt = F.treasure ? Math.min(GTIERS.length - 1, raidTier(e.lvo || 10)) : F.tier;   // 보물 던전은 파티 레벨에 맞는 단계
+  if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), gt, rollQuality(f.boss ? 0.25 : 0)));
   // 스킬북: 몬스터마다 정해진 책만 떨어뜨린다 (data-books.js). 감정 연구·전리품 운이 확률을 올린다
   for (const sk of monBooks(f.id)) if (ITEMS['book_' + sk] && rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, 'book_' + sk, 1);
   bossParts(p, e, f, inD);
   stoneDrops(p, e, f, luck);
+  mapDrops(p, e, f, luck);
+  if (f.nest) nestKill(p, e, f);
   if (luck && rnd() < luck) { const g = Math.round(f.lv * (2 + rnd() * 3)); S.gold += g; S.stats.earned += g; }
   if (f.fb) { if (S.fields[e.field]) fieldBossDown(p, e, f); }   // 방어전(wave)의 우두머리는 필드 기록이 없다
   else if (f.boss && e.area === 'dungeon') dungeonClear(p, e);
@@ -833,6 +894,20 @@ function stoneDrops(p, e, f, luck) {
   const kind = e.area === 'field' && f.fb ? (f.fb >= 5 ? 'lord' : 'fb') : e.area === 'dungeon' && f.boss && !f.fb ? 'boss' : null;
   if (!kind) return;
   for (const it of STONE_IDS) if (rnd() < STONE_DROP[it][kind] * (1 + (luck || 0))) { addTo(e.bag, it, 1); ev(e, 'loot', { id: it }); log(`${p.name}이(가) ${f.name}에게서 ${ITEMS[it].name}을(를) 얻었다!`, 'good'); }   // 짐이 가득 차도 잃지 않는다
+}
+// 보물 지도: 필드의 우두머리(4%)·주인(8%)이 남긴다 (data-sky.js TMAP_DROP)
+function mapDrops(p, e, f, luck) {
+  if (e.area !== 'field' || !f.fb) return;
+  if (rnd() < (f.fb >= 5 ? TMAP_DROP.lord : TMAP_DROP.fb) * (1 + (luck || 0))) { addTo(e.bag, 'tmap', 1); ev(e, 'loot', { id: 'tmap' }); log(`${p.name}이(가) ${f.name}에게서 낡은 보물 지도를 얻었다!`, 'good'); HOOKS.toast('보물 지도를 얻었다'); }
+}
+// 희귀종을 잡으면: 도감에 기록(그 종 피해 +15%·전리품 +25%), 개화석 하나
+function rareDown(p, e, f) {
+  const first = !dexRare(f.id);
+  dexRareKill(f.id);
+  addTo(e.bag, 'bloomstone', 1); ev(e, 'loot', { id: 'bloomstone' });
+  S.fame += 2; S.stats.rares = (S.stats.rares || 0) + 1;
+  log(`${p.name}이(가) 희귀종 ${f.name}을(를) 쓰러뜨렸다! 개화석을 남겼다. 명성 +2${first ? ` · 도감에 기록: ${MONS[f.id].name}에게 주는 피해 +${Math.round(RARE.dmg * 100)}%, 전리품 +${Math.round(RARE.drop * 100)}%` : ''}`, 'good');
+  HOOKS.toast(`희귀종 격파 · ${f.name}`);
 }
 function fieldBossDown(p, e, f) {
   const fs = S.fields[e.field], F = FIELDS[e.field], k = f.fb;
@@ -980,6 +1055,7 @@ function leave(a, why) {
 }
 function dungeonClear(p, e) {
   const fs = S.fields[e.field], F = FIELDS[e.field];
+  if (F.treasure) { treasureClear(p, e); return; }
   const first = !fs.cleared;
   fs.cleared = true;
   const team = teamOf(p).filter(a => !a.down);
@@ -1003,10 +1079,29 @@ function dungeonClear(p, e) {
     if (newRelic) (S.relics = S.relics || []).push(e.field);
     log(`${p.name}이(가) ${F.dungeon.name}의 주인 ${MONS[F.dungeon.boss].name}을(를) 쓰러뜨렸다! 보물 ${g$(gold)}, 명성 +${fame}${newRelic ? `, 유물 「${RL.name}」` : ''}`, 'good');
     queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 전설·영웅 장비, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 상단 창의 유물에서 볼 수 있다.`] : []) });
+    if (e.field === 'barren' && STORY.frontier) queueModal({ title: '북쪽 변경', body: STORY.frontier });   // 빌드 30: 안개 묘지가 열린다
+    if (e.field === 'roots' && S.bld.airfield && STORY.skyOpen) queueModal({ title: '구름 위의 섬', body: STORY.skyOpen });
   } else {
     S.fame += 3;
     log(`${p.name}이(가) ${MONS[F.dungeon.boss].name}을(를) 또 쓰러뜨렸다. 명성 +3`, 'good');
   }
+  e.mode = 'return'; e.why = 'boss'; e.ei = 0; e.encs = []; e.next = null;
+  changed();
+}
+// 보물 던전의 수호자를 쓰러뜨리면: 큰 돈, 황금 가루, 좋은 장비 하나, 스킬북, 개화석(절반 확률). 몇 번이고 갈 수 있다
+function treasureClear(p, e) {
+  const L = e.lvo || 10, team = teamOf(p).filter(a => !a.down);
+  const gold = Math.round((2500 + L * 220) * (0.9 + rnd() * 0.4) / 10) * 10;
+  S.gold += gold; S.stats.earned += gold; S.fame += 6; S.stats.tmaps = (S.stats.tmaps || 0) + 1;
+  team.forEach(a => { a.pf = (a.pf || 0) + 6; });
+  const got = [g$(gold), '명성 +6'];
+  addTo(e.bag, 'gold_dust', 3); got.push('황금 가루 3');
+  const g = makeGear(pickOne(GTYPE_IDS), Math.min(GTIERS.length - 1, raidTier(L)), rnd() < 0.3 ? 4 : 3); e.gbag.push(g); got.push(`${QUALITY[g.q].name} ${gearName(g)}`);
+  const b = randomBook(Math.max(1, L - 15), L + 10); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); }
+  if (rnd() < 0.5) { addTo(e.bag, 'bloomstone', 1); got.push('개화석'); }
+  if (rnd() < 0.1) { addTo(e.bag, 'wizstone', 1); got.push('마법사의 돌'); }
+  log(`${p.name}이(가) 보물고의 수호자를 쓰러뜨리고 보물을 챙겼다: ${got.join(', ')}`, 'good');
+  queueModal({ title: '보물 던전 공략', body: [`${p.name}이(가) 보물 지도의 끝에서 보물 수호자를 쓰러뜨렸다. 상자 ${(e.chests || 0) + 1}개를 열었다.`, `보상: ${got.join(', ')}.`, '보물 지도는 필드의 우두머리와 주인이 가끔 남긴다. 다음 지도를 찾으면 또 떠날 수 있다.'] });
   e.mode = 'return'; e.why = 'boss'; e.ei = 0; e.encs = []; e.next = null;
   changed();
 }
@@ -1016,8 +1111,10 @@ function isUnlocked(fid) {
   if (fid === 'alley') return !S.flags.guildDown && raidReady();
   if (fid === 'sewer') return (S.rank || 0) >= UNDER_RANK;
   const F = FIELDS[fid];
+  if (F && F.treasure) return (S.inv.tmap || 0) > 0;   // 보물 지도가 있을 때만
   if (F && F.giant) { const r = raidRec(F.giant); return !!(r && !r.done); }
-  if (F && F.after) return !!(S.fields[F.after] && S.fields[F.after].cleared);   // 마계: 앞 땅의 던전을 공략하면
+  if (F && F.region === 'sky') return !!(S.fields[F.after] && S.fields[F.after].cleared && (S.bld.airfield || 0) > 0);   // 구름섬: 세계수 던전 + 비행장
+  if (F && F.after) return !!(S.fields[F.after] && S.fields[F.after].cleared);   // 마계·변경: 앞 땅의 던전을 공략하면
   return !!F && !F.raid && (S.rank || 0) >= F.no - 1;
 }
 

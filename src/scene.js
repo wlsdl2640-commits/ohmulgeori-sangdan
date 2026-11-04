@@ -193,9 +193,9 @@ function buildDesert() {
   return { back, far, mid, gr, fore, clouds: 2, ambient: 'sand' };
 }
 
-function buildUnder(kind) {
-  const r = rng(kind.length * 13);
-  const pal = {
+// 지하 던전 색과 장식: 새 던전은 뒤 파일(sky.js)에서 UNDER_PAL·UNDER_DECOR에 더한다
+const UNDER_DECOR = {};
+const UNDER_PAL = {
     cellar: { wall: '#3a302a', line: '#2a221e', floor: '#5a4632', fl: '#4a3a28' },
     cave:   { wall: '#2a2a22', line: '#1e1e18', floor: '#2f2a20', fl: '#3a3428' },
     mine:   { wall: '#2e2b30', line: '#222024', floor: '#3a3438', fl: '#2a2628' },
@@ -208,7 +208,10 @@ function buildUnder(kind) {
     hut:    { wall: '#4a3a2a', line: '#2e2418', floor: '#3a3a28', fl: '#2e2e20', torch: '#8af0a0' },
     lab:    { wall: '#3a3a44', line: '#26262e', floor: '#4a4a52', fl: '#3a3a42', torch: '#6ae8a0' },
     torture:{ wall: '#2a2228', line: '#1a1418', floor: '#302830', fl: '#241c24', torch: '#e05a3a' }
-  }[kind];
+};
+function buildUnder(kind) {
+  const r = rng(kind.length * 13);
+  const pal = UNDER_PAL[kind] || UNDER_PAL.cave;
   const [mid, m] = mkCanvas(480, 128);
   R(m, 0, 0, 480, 104, pal.wall);
   for (let y = 4; y < 104; y += 8) {
@@ -259,6 +262,7 @@ function buildUnder(kind) {
     for (let x = 30; x < 480; x += 97) { R(m, x, 94, 6, 6, '#e8e0d0'); R(m, x + 1, 96, 1, 2, '#1a1418'); R(m, x + 4, 96, 1, 2, '#1a1418'); R(m, x + 8, 98, 8, 2, '#e8e0d0'); }
     for (let x = 0; x < 480; x += 23) R(m, x, 100 - (x % 5), 2, 1, '#6a1a1a');
   }
+  if (UNDER_DECOR[kind]) UNDER_DECOR[kind](m, r);
   // 횃불 받침 (불꽃은 따로 그린다)
   for (let x = 40; x < 480; x += 120) { R(m, x, 52, 2, 9, '#5e4630'); R(m, x - 1, 51, 4, 2, '#3a2a1e'); }
   const [gr, g] = mkCanvas(480, 28);
@@ -272,7 +276,7 @@ function buildUnder(kind) {
   const [fore, fo] = mkCanvas(480, 128);
   for (let x = 90; x < 480; x += 200) { R(fo, x, 0, 12, 128, shade(pal.wall, -0.45)); R(fo, x, 0, 2, 128, shade(pal.wall, -0.3)); R(fo, x - 2, 0, 16, 6, shade(pal.wall, -0.5)); }
   const torch = pal.torch || '#f0a03a';
-  return { under: true, wall: pal.wall, torch, mid, gr, foreTall: fore, ambient: 'dust', dark: kind === 'arena' ? 0.14 : kind === 'torture' ? 0.42 : undefined,
+  return { under: true, wall: pal.wall, torch, mid, gr, foreTall: fore, ambient: 'dust', dark: kind === 'arena' ? 0.14 : kind === 'torture' ? 0.42 : pal.dark,
     emit(g, off, t) { for (let x = 40; x < 480; x += 120) { const xx = ((x - off) % 480 + 480) % 480; for (const tx of [xx, xx - 480]) { if (tx < -8 || tx > VW + 8) continue; const fl = Math.floor(t * 9 + x) % 3; R(g, tx - 1, 47 - fl, 4, 4 + fl, torch); R(g, tx, 46 - fl, 2, 3, '#f7e04a'); R(g, tx, 48, 2, 2, '#fff2c0'); } } },
     lights(off) { const out = []; for (let x = 40; x < 480; x += 120) { const xx = ((x - off) % 480 + 480) % 480; for (const tx of [xx, xx - 480]) if (tx > -40 && tx < VW + 40) out.push({ x: tx + 1, y: 48, r: 34, c: torch, glow: 1 }); } return out; } };
 }
@@ -408,6 +412,7 @@ function drawAmbient(g, id, scroll, t, T) {
   if (amb === 'town') {
     for (let i = 0; i < 3; i++) { const k = wrap(t * 0.25 + i * 0.33, 1); R(g, 159 - i * 40 + Math.round(Math.sin(t + i) * 2), Math.round(46 - k * 30), 2, 2, `rgba(200,200,210,${(0.5 * (1 - k)).toFixed(2)})`); }
   }
+  if (b.ambientFn) b.ambientFn(g, scroll, t, T, oy, wrap);
 }
 // 예전 호출과의 호환 (첫 화면 등)
 function drawBg(ctx, id, scroll, t) { const T = drawSky(ctx, id, scroll, t, clockDp()); drawLand(ctx, id, scroll, t, T); }

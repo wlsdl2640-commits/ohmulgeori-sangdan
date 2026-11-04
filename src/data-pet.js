@@ -38,6 +38,8 @@ BUILD_ORDER.splice(BUILD_ORDER.indexOf('inn') + 1, 0, 'pen');
 const penCap = () => 2 + (S.bld.pen || 0) * 2;
 const petById = id => (S && S.pets ? S.pets.find(x => x.id === id) : null);
 const petOfParty = p => (p && p.pet ? petById(p.pet) : null);
-const petsAtHome = () => (S && S.pets ? S.pets.filter(x => !S.parties.some(p => p.pet === x.id)) : []);
+// 마차에 맨 펫(마구간): 파티 p.horse = 'p:펫id'. 맨 펫은 싸우지도, 상단에 힘을 주지도 않는다
+const petHitched = id => !!(S && S.parties.some(p => p.horse === 'p:' + id));
+const petsAtHome = () => (S && S.pets ? S.pets.filter(x => !S.parties.some(p => p.pet === x.id) && !petHitched(x.id)) : []);
 // 상단에 남은 펫의 효과 합
 const petHome = k => petsAtHome().reduce((s, x) => s + (PETS[x.kind].home[0] === k ? PETS[x.kind].home[1] * (x.stage ? 1.5 : 1) : 0), 0);

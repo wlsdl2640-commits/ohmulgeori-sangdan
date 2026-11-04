@@ -116,6 +116,7 @@ function setPartyPet(pid, petId) {
   if (p.exp) return '원정 중에는 바꿀 수 없어요.';
   if (!petId) { p.pet = null; changed(); return ''; }
   const pet = petById(petId); if (!pet) return '';
+  if (petHitched(petId)) return `${pet.name}은(는) 마차를 끌고 있어요. 마구간에서 풀어 주세요.`;
   const other = S.parties.find(x => x.pet === petId && x.id !== pid);
   if (other) { if (other.exp) return `${pet.name}은(는) ${other.name}과 원정 중이에요.`; other.pet = null; }
   p.pet = petId; changed();
@@ -124,6 +125,7 @@ function setPartyPet(pid, petId) {
 function releasePet(petId) {
   const pet = petById(petId); if (!pet) return '';
   if (S.parties.some(x => x.pet === petId && x.exp)) return '원정 중인 펫은 보낼 수 없어요.';
+  if (petHitched(petId)) return '마차를 끌고 있는 펫이에요. 마구간에서 먼저 풀어 주세요.';
   S.parties.forEach(x => { if (x.pet === petId) x.pet = null; });
   S.pets = S.pets.filter(x => x.id !== petId);
   log(`${pet.name}을(를) 들판에 놓아 주었다.`);

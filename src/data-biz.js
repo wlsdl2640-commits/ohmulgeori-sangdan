@@ -30,14 +30,15 @@ const BLESSINGS = {
 };
 const BLESS_IDS = Object.keys(BLESSINGS);
 
-/* ───────── 마차 (파티마다 하나) ───────── */
-// cap: 늘어나는 짐, spd: 이동속도 배율
+/* ───────── 마차 몸체 (파티마다 하나) ─────────
+   cap: 늘어나는 짐, spd: 이동속도 배율. horse: 말이 끌어야 한다 (1 아무 말 · 'goat' 고산지대 산양 · 'fly' 날개 달린 펫).
+   손수레 말고는 짐꾼 계열이 파티에 있어야 끈다. 말은 마구간(data-sky.js HORSES)에서 매고, 말의 cap·spd 배율이 곱해진다. */
 const WAGONS = {
-  cart:    { name: '손수레',           cost: 400,   cap: 20,  spd: 0.97, desc: '파티가 번갈아 끄는 작은 수레.' },
-  donkey:  { name: '당나귀 수레',      cost: 1500,  cap: 45,  spd: 1.0,  coach: 1, desc: '고집 센 당나귀가 끄는 수레. 마부가 있어야 끈다.' },
-  wagon:   { name: '짐마차',           cost: 4000,  cap: 90,  spd: 1.05, coach: 1, desc: '말 한 마리가 끄는 지붕 달린 마차. 마부가 있어야 끈다.' },
-  caravan: { name: '대형 마차',        cost: 9000,  cap: 160, spd: 1.03, coach: 1, desc: '말 두 마리가 끄는 상단용 대형 마차. 마부가 있어야 끈다.' },
-  steel:   { name: '드워프 강철 마차', cost: 16000, cap: 260, spd: 1.1,  need: 'dwarves', tier: 2, coach: 1, desc: '드워프 광산 조합이 만든 강철 마차. 산양 두 마리가 끈다. 마부가 있어야 끈다.' }
+  cart:    { name: '손수레',           cost: 400,   cap: 20,  spd: 0.97, desc: '파티가 번갈아 끄는 작은 수레. 말도 짐꾼도 필요 없다.' },
+  donkey:  { name: '짐수레',           cost: 1500,  cap: 45,  spd: 1.0,  horse: 1, desc: '말 한 마리가 끄는 작은 수레.' },
+  wagon:   { name: '짐마차',           cost: 4000,  cap: 90,  spd: 1.05, horse: 1, desc: '지붕 달린 마차. 비를 맞지 않는다.' },
+  caravan: { name: '대형 마차',        cost: 9000,  cap: 160, spd: 1.03, horse: 1, desc: '상단용 대형 마차. 짐을 아주 많이 싣는다.' },
+  steel:   { name: '드워프 강철 마차', cost: 16000, cap: 260, spd: 1.1,  need: 'dwarves', tier: 2, horse: 'goat', desc: '드워프 광산 조합이 만든 강철 마차. 고산지대 산양만 끌 수 있다.' }
 };
 const WAGON_IDS = Object.keys(WAGONS);
 

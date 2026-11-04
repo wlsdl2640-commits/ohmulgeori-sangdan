@@ -18,7 +18,8 @@ function blankState(company) {
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
-    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0 },
+    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0 },
+    stable: { horses: {} }, league: null,
     settleDay: MONTH_DAYS,
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
@@ -30,7 +31,7 @@ function blankState(company) {
   };
 }
 function newParty(name, members) {
-  return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null, wagon: null, dmode: 'ask', campNight: true, start: 1, pet: null };
+  return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null, wagon: null, horse: null, wagonPlus: 0, dmode: 'ask', campNight: true, start: 1, pet: null };
 }
 function starterGear(a) { a.eq.weapon = makeGear(WEAPON_OF[a.cls], 0, 0); const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp; }
 function newGame(company) {
@@ -250,6 +251,7 @@ function toggleMember(pid, aid) {
   const p = S.parties.find(x => x.id === pid), a = advById(aid);
   if (!p || !a || p.exp || a.status !== 'idle') return;
   if (!p.members.includes(aid) && a.post) { HOOKS.toast(`${a.name}은(는) 신전에서 일하는 중이에요`); return; }
+  if (!p.members.includes(aid) && isPorter(a) && portersOf(p).length >= 1) { HOOKS.toast('짐꾼 계열은 파티당 한 명만 넣을 수 있어요'); return; }
   if (p.members.includes(aid)) p.members = p.members.filter(x => x !== aid);
   else { const o = partyOf(aid); if (o) { if (o.exp) return; o.members = o.members.filter(x => x !== aid); } p.members.push(aid); }
   changed();
@@ -623,19 +625,23 @@ function stepCare(dt) {
   }
 }
 
-/* ───────── 마차 ───────── */
-const wagonOpen = w => !WAGONS[w].need || spn(WAGONS[w].need) >= WAGONS[w].tier;
+/* ───────── 마차 몸체 (말은 마구간 world30.js) ───────── */
+const wagonOpen = w => (!WAGONS[w].need || spn(WAGONS[w].need) >= WAGONS[w].tier) && (!WAGONS[w].bld || (S.bld[WAGONS[w].bld] || 0) > 0);
+const wagonOpenWhy = w => (WAGONS[w].need && spn(WAGONS[w].need) < WAGONS[w].tier ? '드워프 광산 조합 후원 2단계가 필요해요' : WAGONS[w].bld && !(S.bld[WAGONS[w].bld] || 0) ? `${BUILDINGS[WAGONS[w].bld].name}이(가) 있어야 만들어요` : '');
+// 마차 되팔기: 몸값의 절반 + 강화에 든 돈의 절반
+const wagonBack = p => (p.wagon && WAGONS[p.wagon] ? Math.round(WAGONS[p.wagon].cost * 0.5) + Math.round(Array.from({ length: p.wagonPlus || 0 }, (_, i) => wagonPlusCost(p.wagon, i).gold).reduce((a, b) => a + b, 0) * 0.5) : 0);
 function buyWagon(pid, w) {
   const p = S.parties.find(x => x.id === pid), W = WAGONS[w];
   if (!p || !W) return '';
   if (p.exp) return '원정 중에는 마차를 바꿀 수 없어요.';
-  if (!wagonOpen(w)) return '드워프 광산 조합 후원 2단계가 필요해요.';
+  if (!wagonOpen(w)) return wagonOpenWhy(w) + '.';
   if (p.wagon === w) return '이미 이 마차를 쓰고 있어요.';
-  const back = p.wagon ? Math.round(WAGONS[p.wagon].cost * 0.5) : 0;
+  const back = wagonBack(p);
   if (S.gold + back < W.cost) return '돈이 모자라요.';
-  S.gold += back - W.cost;
-  log(`${p.name}에게 ${W.name}을(를) 마련했다.${back ? ` 쓰던 ${WAGONS[p.wagon].name}은(는) ${g$(back)}에 넘겼다.` : ''}`, 'good');
-  p.wagon = w;
+  S.gold += back - W.cost; S.stats.spent = (S.stats.spent || 0) + W.cost;
+  log(`${p.name}에게 ${W.name}을(를) 마련했다.${back ? ` 쓰던 ${rigName(p)}은(는) ${g$(back)}에 넘겼다.` : ''}`, 'good');
+  p.wagon = w; p.wagonPlus = 0;
+  if (!W.horse && p.horse) unhitch(p);
   changed();
   return '';
 }
@@ -714,6 +720,9 @@ function upgrade(bid) {
   S.gold -= cost; S.bld[bid] = lv + 1;
   if (bid === 'bank' && lv === 0) bankRoll();
   if (bid === 'temple' && lv === 0) { blessRoll(); queueModal({ title: '신전', body: STORY.temple.concat([`이번 달에는 「${BLESSINGS[S.bless.id].name}」: ${BLESSINGS[S.bless.id].desc}`]) }); }
+  if (bid === 'airfield' && lv === 0) queueModal({ title: '비행장', body: S.fields.roots && S.fields.roots.cleared ? STORY.skyOpen : STORY.airfield });
+  if (bid === 'stable' && lv === 0) queueModal({ title: '마구간', body: STORY.stable });
+  if (bid === 'library' && lv === 0) queueModal({ title: '도서관', body: STORY.library });
   log(`${B.name}을(를) ${lv ? 'Lv' + (lv + 1) + '로 넓혔다' : '지었다'}.`, 'good');
   changed();
   return '';
@@ -1118,6 +1127,7 @@ function settle() {
   if (gone.length) lines.push(`두 달째 봉급을 못 받은 ${gone.join(', ')}은(는) 상단을 떠난다. 원정 중이면 돌아온 뒤에 떠난다.`);
   if (!S.flags.guildDown) lines.push(`다음 달 자릿세는 ${g$(rent())}이다.`);
   if (S.bld.temple) { blessRoll(); lines.push(`신전: 이번 달에는 「${BLESSINGS[S.bless.id].name}」. ${BLESSINGS[S.bless.id].desc}`); }
+  leagueMonth(lines);
   log(`${pm}월 정산을 마쳤다.`, unpaid.length ? 'bad' : '');
   queueModal({ title: `${pm}월 정산`, body: lines });
   raidMonth(false);
@@ -1139,11 +1149,13 @@ function onNewDay(k) {
   underTick();
   penDay(k);
   eventsDay(k);
-  if (k >= S.settleDay) { settle(); seasonEnd(); S.settleDay += MONTH_DAYS; }
+  leagueDay();
+  if (k >= S.settleDay) { settle(); seasonEnd(); S.settleDay += MONTH_DAYS; leagueState(); }
   if (!S.flags.guildDown && !S.flags.raidTold && raidReady()) { S.flags.raidTold = 1; queueModal({ title: '시민회의 부탁', body: STORY.guildReady }); }
   changed();
 }
 function autoDepart(p) {
+  if (p.dest && FIELDS[p.dest] && FIELDS[p.dest].treasure && !isUnlocked(p.dest)) return;   // 보물 지도를 다 썼으면 다시 떠나지 않는다
   const team = p.members.map(advById).filter(Boolean);
   if (!team.length || team.some(a => a.status !== 'idle' || a.inj || a.post || (a.sleep || 0) > SLEEP.ready || a.hp < derive(a).maxHp * 0.85 || (a.fat || 0) > FATIGUE.depart)) return;
   startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains');
@@ -1190,7 +1202,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 5;   // 지금 저장 판 (migrate5까지 옮긴 상태)
+const SAVE_V = 6;   // 지금 저장 판 (migrate6까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1207,14 +1219,15 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
     S.bank = S.bank || { offers: [], deps: [], loans: [] };
     S.research = S.research || { lv: {}, cur: null }; S.spons = S.spons || {};
     ALL_FIELDS.forEach(f => { S.fields[f] = S.fields[f] || newField(); });
-    ['smithy', 'bank', 'tower', 'temple'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    ['smithy', 'bank', 'tower', 'temple', 'stable', 'library', 'airfield'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    S.stable = S.stable || { horses: {} };
     const old = S.v;
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
@@ -1229,9 +1242,30 @@ function loadFrom(v) {
     notes25();
     notes28();
     notes29();
+    if (old < 6) { migrate6(); saveGame(); }
+    notes30();
     return true;
   } catch (_) { return false; }
 }
+// 빌드 30: 마차에 말을 맨다. 말이 끌던 마차를 가진 파티에는 그에 맞는 말을 마구간에 넣어 주고(짐수레=당나귀, 짐마차=갈마, 대형 마차=흑마), 드워프 강철 마차에는 다 자란 산양 펫을 매어 준다
+function migrate6() {
+  S.stable = S.stable || { horses: {} };
+  const give = { donkey: 'donkey', wagon: 'gray', caravan: 'black' };
+  let n = 0;
+  for (const p of S.parties) {
+    if (p.wagonPlus == null) p.wagonPlus = 0;
+    if (p.horse === undefined) p.horse = null;
+    const w = p.wagon && WAGONS[p.wagon];
+    if (!w || !w.horse || p.horse) continue;
+    if (p.wagon === 'steel') {
+      const pet = Object.assign(newPet('goat'), { lv: PET_EVO_LV, stage: 1, aff: 50 });
+      S.pets.push(pet); p.horse = 'p:' + pet.id; n++;
+    } else { const k = give[p.wagon] || 'donkey'; S.stable.horses[k] = (S.stable.horses[k] || 0) + 1; p.horse = 'h:' + k; n++; }
+  }
+  S.v = 6;
+  if (n) log(`마구간이 생겼다. 마차를 끌던 말 ${n}마리를 마구간 장부에 올렸다.`);
+}
+function notes30() { if (!S.flags.v30) { S.flags.v30 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '북쪽 변경 · 하늘 · 마구간', body: STORY.v30 }); } }
 // 의상·숙련도 칸 (없으면 만든다)
 function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); migrateSkillIds(); }
 // 겹치던 스킬 id를 갈랐다: 결의(resolve)·치유의 찬가(chant)·유성 낙하(meteorfall). 옛 저장의 스킬·스킬북·숙련도를 옮기고, 라이선스 심사용 처치 수를 어림한다

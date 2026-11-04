@@ -7,6 +7,9 @@ function dexState() { if (!S.dex) S.dex = { kills: {}, seen: {}, items: {}, gear
 const dexKills = id => (S && S.dex && S.dex.kills[id]) || 0;
 function dexSeen(id) { dexState().seen[id] = 1; }
 function dexKill(id) { const D = dexState(); D.kills[id] = (D.kills[id] || 0) + 1; }
+// 희귀종 기록: 반짝이는 개체를 잡은 수. 하나라도 있으면 그 종에게 피해 +15%, 전리품 +25%
+const dexRare = id => (S && S.dex && S.dex.rare && S.dex.rare[id]) || 0;
+function dexRareKill(id) { const D = dexState(); D.rare = D.rare || {}; D.rare[id] = (D.rare[id] || 0) + 1; }
 // 옛 저장: 가 본 필드의 몬스터는 만난 것으로
 function dexMigrate() {
   if (S.dex) return;
@@ -83,8 +86,9 @@ function monCard(id) {
     drops = `<div class="sec" style="margin-top:6px"><b>전리품</b><span>${lvl >= 3 ? '확률' : '15마리부터 확률'}</span></div>${rows || '<div class="sub muted">떨어뜨리는 것 없음</div>'}${books ? `<div class="sub muted" style="margin-top:4px">스킬북</div>${books}` : ''}${extra}`;
   } else drops = `<div class="sub muted">5마리 잡으면 전리품이, 15마리면 확률이 열려요.</div>`;
   const sta = lvl >= 4 ? `<div class="sub ok-t">완전 기록: 이 몬스터에게 주는 피해 +3%${m.sta ? ` · 거는 상태이상: ${STATUS[m.sta.k].name} (${Math.round(m.sta.p * 100)}%)` : ''}</div>` : `<div class="sub muted">30마리 잡으면 완전 기록 (피해 +3%${m.sta ? ', 상태이상 정보' : ''})</div>`;
-  return `<details class="card dexm"><summary><span class="row"><img class="dexi" src="${monIconURL(id)}" alt=""><span class="grow stack"><span>${m.name} ${tags}</span><span class="sub">${where.map(w => esc(w.where)).join(' · ') || '?'} · 잡음 <b class="num">${k}</b> · 기록 ${lvl}/4</span></span></span></summary>
-    ${stats}${drops}${sta}</details>`;
+  const rr = dexRare(id), rareRow = m.boss || m.giant || m.fb ? '' : rr ? `<div class="sub gold-t">★ 희귀종 ${rr}마리 기록: 이 종에게 주는 피해 +${Math.round(RARE.dmg * 100)}% · 전리품 +${Math.round(RARE.drop * 100)}%</div>` : `<div class="sub muted">희귀종(반짝이는 개체, 1/${Math.round(1 / RARE.p)})을 잡으면 이 종에게 피해 +${Math.round(RARE.dmg * 100)}%·전리품 +${Math.round(RARE.drop * 100)}%</div>`;
+  return `<details class="card dexm"><summary><span class="row"><img class="dexi" src="${monIconURL(id)}" alt=""><span class="grow stack"><span>${m.name} ${tags}${rr ? ' <span class="tag gold-t">★희귀</span>' : ''}</span><span class="sub">${where.map(w => esc(w.where)).join(' · ') || '?'} · 잡음 <b class="num">${k}</b> · 기록 ${lvl}/4</span></span></span></summary>
+    ${stats}${drops}${sta}${rareRow}</details>`;
 }
 
 /* ───────── 직업 ───────── */

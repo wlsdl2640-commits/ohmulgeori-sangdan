@@ -1,6 +1,6 @@
 /* ───────── 지도 이벤트: 하르겐 몬스터 웨이브 방어전 · 왕국 축제 · 떠돌이 상인 ─────────
    S.events = [{ id, type: 'wave'|'fest'|'merchant', ... }], S.evNext = { wave, fest, merchant } (다음에 뜨는 날) */
-const EV_GAP = { wave: [9, 14], fest: [10, 16], merchant: [6, 10] };
+const EV_GAP = { wave: [9, 14], fest: [10, 16], merchant: [6, 10], nest: [7, 12] };
 const WAVE_FIELD = 'wave';
 FIELDS[WAVE_FIELD] = { no: 0, name: '하르겐 성문', lv: 1, bg: 'front', tier: 0, mons: [], raid: 1, dungeon: null, next: null, event: 1, desc: '제도 하르겐의 성문 앞. 몰려오는 몬스터를 막는다.' };
 Object.assign(WIN_TITLE, { merchant: '떠돌이 상인' });
@@ -17,12 +17,13 @@ function eventsDay(k) {
   for (const ev0 of E) {
     if (ev0.type === 'wave' && !ev0.done && k >= ev0.arrive && !ev0.party) waveFail(ev0, '막는 파티가 없어');
     if ((ev0.type === 'fest' || ev0.type === 'merchant') && k >= ev0.end) ev0.done = 1;
+    if (ev0.type === 'nest' && !ev0.done && k >= ev0.end) { ev0.done = 1; log(`${FIELDS[ev0.at].name}의 몬스터 둥지가 흩어졌다. (${ev0.got}/${ev0.need})`); }
   }
   S.events = E.filter(x => !x.done || (x.type === 'wave' && k < x.arrive + 2));
-  for (const type of ['wave', 'fest', 'merchant']) {
+  for (const type of ['wave', 'fest', 'merchant', 'nest']) {
     if (N[type] == null) N[type] = k + ri(2, EV_GAP[type][1]);
     if (k < N[type] || evActive(type).length) continue;
-    const made = type === 'wave' ? newWave(k) : type === 'fest' ? newFest(k) : newMerchant(k);
+    const made = type === 'wave' ? newWave(k) : type === 'fest' ? newFest(k) : type === 'nest' ? newNest(k) : newMerchant(k);
     if (made) { if (!S.events.includes(made)) S.events.push(made); N[type] = k + ri(EV_GAP[type][0], EV_GAP[type][1]); }
   }
 }
@@ -154,6 +155,31 @@ function merchantBuy(evId, i) {
   changed();
   return `${ITEMS[o.it].name}을(를) 샀어요.`;
 }
+/* 몬스터 둥지: 열린 필드 하나에 사흘 동안 둥지가 생긴다. 둥지 몬스터를 NEST.need마리 잡으면 치운 보상 */
+function newNest(k) {
+  const pool = TIER_FIELDS.filter(f => isUnlocked(f) && FIELDS[f].mons.length && (S.fields[f].best || 0) >= 5); if (!pool.length) return null;
+  const at = pickOne(pool), F = FIELDS[at];
+  const ev0 = { id: nid(), type: 'nest', at, born: k, end: k + NEST.days, need: NEST.need, got: 0, done: 0 };
+  log(`${F.name}에 몬스터 둥지가 생겼다! ${NEST.days}일 동안 둥지 몬스터(강하고 전리품 두 배)가 섞여 나온다. ${NEST.need}마리 잡으면 둥지를 치운 보상을 받는다.`, 'warn');
+  HOOKS.toast(`몬스터 둥지 · ${F.name} · ${NEST.days}일`);
+  queueModal({ title: '몬스터 둥지', body: [`${F.name}에 몬스터 둥지가 생겼다. ${NEST.days}일 동안 그 필드에서 둥지 몬스터가 섞여 나온다. 보통 개체보다 체력 ${Math.round((NEST.hp - 1) * 100)}%·공격 ${Math.round((NEST.atk - 1) * 100)}% 강하고, 전리품을 두 배로 떨어뜨린다.`, `둥지 몬스터를 ${NEST.need}마리 잡으면 둥지를 치운 것으로 보고 모험가 길드가 상금과 명성, 그리고 그 필드의 알을 준다. 원정대 창에서 ${F.name}(으)로 파티를 보내자.`] });
+  return ev0;
+}
+function nestReward(ev0) { const F = FIELDS[ev0.at]; return { gold: Math.round((F.lv * 90 + 1200) / 10) * 10, fame: 12 + F.tier * 3 }; }
+// 둥지 몬스터를 잡을 때 (kill에서 부른다)
+function nestKill(p, e, f) {
+  const ev0 = nestAt(e.field); if (!ev0 || ev0.done) return;
+  ev0.got++;
+  if (ev0.got < ev0.need) { if (ev0.got % 4 === 0) log(`${p.name}이(가) ${FIELDS[ev0.at].name}의 둥지 몬스터를 ${ev0.got}/${ev0.need}마리 잡았다.`); return; }
+  ev0.done = 1; ev0.won = 1;
+  const R = nestReward(ev0), F = FIELDS[ev0.at], kinds = petsOfField(ev0.at), egg = kinds.length ? 'egg_' + pickOne(kinds) : null;
+  S.gold += R.gold; S.stats.earned += R.gold; S.fame += R.fame; S.stats.nests = (S.stats.nests || 0) + 1;
+  if (egg) addTo(S.inv, egg, 1);
+  teamOf(p).filter(a => !a.down).forEach(a => { a.pf = (a.pf || 0) + 4; });
+  log(`${p.name}이(가) ${F.name}의 몬스터 둥지를 치웠다! 상금 ${g$(R.gold)}, 명성 +${R.fame}${egg ? `, ${ITEMS[egg].name}` : ''}`, 'good');
+  HOOKS.toast(`둥지 소탕 · ${g$(R.gold)} · 명성 +${R.fame}`);
+  queueModal({ title: '둥지 소탕', body: [`${p.name}이(가) ${F.name}의 둥지 몬스터 ${ev0.need}마리를 잡아 둥지를 치웠다.`, `모험가 길드의 상금 ${g$(R.gold)}과 명성 +${R.fame}${egg ? `. 둥지에서 ${ITEMS[egg].name}을(를) 찾아 창고에 넣었다` : ''}.`] });
+}
 /* 지도 노드와 카드 */
 function eventNodes(sel) {
   const out = [], k = today();
@@ -164,6 +190,7 @@ function eventNodes(sel) {
   }
   for (const ev0 of evActive('merchant')) { const A = MAP_NODES[ev0.at]; out.push(mapNodeHtml('event', ev0.id, A.x - 18, A.y + 14, `evn mer${sel.k === 'event' && sel.id === ev0.id ? ' on' : ''}`, '<i class="mn">$</i>', '떠돌이 상인')); }
   for (const ev0 of evActive('fest')) { const P = MAP_KINGS[ev0.k]; out.push(mapNodeHtml('event', ev0.id, P.x + 14, P.y - 6, `evn fest${sel.k === 'event' && sel.id === ev0.id ? ' on' : ''}`, '<i class="mn">★</i>', '축제')); }
+  for (const ev0 of evActive('nest')) { const A = MAP_NODES[ev0.at]; if (!A || FIELDS[ev0.at].region === 'sky') continue; out.push(mapNodeHtml('event', ev0.id, A.x + 16, A.y - 12, `evn nest${sel.k === 'event' && sel.id === ev0.id ? ' on' : ''}`, '<i class="mn">◉</i>', `둥지 ${ev0.got}/${ev0.need}`)); }
   return out.join('');
 }
 function eventCard(id) {
@@ -174,6 +201,11 @@ function eventCard(id) {
     const picker = parties.length ? `<div class="btns">${parties.map(p => `<button type="button" class="btn sm${sp && sp.id === p.id ? ' on' : ''}" data-act="mapparty" data-id="${p.id}">${esc(p.name)} · ${p.members.length}명 · Lv${Math.round(avgLvOf(p))}</button>`).join('')}</div>` : '<div class="sub red-t">대기 중인 파티가 없어요.</div>';
     return `<div class="card hl"><div class="h">몬스터 웨이브 <small>성문까지 D-${Math.max(0, ev0.arrive - k)}</small></div><div class="sub">${F.name}의 몬스터 떼가 하르겐으로 몰려온다. ${ev0.n}차례 밀려오고(Lv${ev0.lv}~${ev0.lv + ev0.n * 2}), 마지막엔 우두머리가 온다.</div><div class="sub muted">몬스터: ${F.mons.map(m => MONS[m].name).join(', ')}</div><div class="sub gold-t">막으면 상금 ${fmt(R.gold)}G · 명성 +${R.fame} · 전리품</div></div>
       ${ev0.party ? `<div class="sub ok-t">${esc((findP(ev0.party) || {}).name || '파티')}이(가) 성문에서 싸우는 중</div>` : `<div class="sec"><b>방어전 파티</b><span>보급품은 원정대 창의 설정대로</span></div>${picker}${why ? `<div class="sub red-t">${esc(why)}</div>` : ''}<button type="button" class="btn gold block" data-act="wavego" data-id="${ev0.id}" data-p="${sp ? sp.id : 0}"${why ? ' disabled' : ''}>${sp ? `${esc(sp.name)} 방어전 시작` : '방어전 시작'}</button>`}`;
+  }
+  if (ev0.type === 'nest') {
+    const F = FIELDS[ev0.at], R = nestReward(ev0), kinds = petsOfField(ev0.at);
+    return `<div class="card hl"><div class="h">몬스터 둥지 <small>${F.name} · D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">${F.name}에 둥지 몬스터(체력 ×${NEST.hp}·공격 ×${NEST.atk}, 전리품 두 배)가 섞여 나온다. 잡은 수 <b class="num">${ev0.got}/${ev0.need}</b></div><div class="sub muted">몬스터: ${F.mons.map(m => MONS[m].name).join(', ')}</div><div class="sub gold-t">치우면 상금 ${fmt(R.gold)}G · 명성 +${R.fame}${kinds.length ? ` · ${kinds.map(x => ITEMS['egg_' + x].name).join('/')}` : ''}</div></div>
+      <button type="button" class="btn gold block" data-act="mapexp" data-f="${ev0.at}" data-d="0">원정대 창에서 보내기</button>`;
   }
   if (ev0.type === 'fest') {
     const D = KINGDOMS[ev0.k], v = S.king && S.king.visit && S.king.visit.k === ev0.k;

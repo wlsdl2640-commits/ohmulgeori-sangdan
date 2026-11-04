@@ -12,8 +12,16 @@ const MAP_NODES = {
   sewer:    { x: 150, y: 176, dun: [20, 0] },
   swamp:    { x: 44, y: 222, dun: [22, -8] },
   barren:   { x: 122, y: 224, dun: [24, -8] },
-  castle:   { x: 200, y: 222, dun: [-24, -8] }
+  castle:   { x: 200, y: 222, dun: [-24, -8] },
+  // 북쪽 변경 (빌드 30)
+  grave:    { x: 34, y: 112, dun: [-14, 14] },
+  volcano:  { x: 158, y: 22, dun: [22, 10] },
+  roots:    { x: 76, y: 34, dun: [-22, 8] }
 };
+// 하늘 지도 (구름섬): 따로 그린 지도 위에 놓인다
+const SKY_MAP_W = 240, SKY_MAP_H = 150;
+const MAP_NODES_SKY = { sky: { x: 118, y: 84, dun: [26, -14] } };
+const MAP_EXTRA = [];   // 지도 그림에 덧그리는 함수들 (world30.js)
 const MAP_KINGS = { inglisia: { x: 22, y: 134 }, frama: { x: 58, y: 186 }, elves: { x: 24, y: 48 }, dwarves: { x: 128, y: 26 }, sarak: { x: 226, y: 178 } };
 const MAP_ORGS = {
   city:   { x: 120, y: 148, name: '제도 하르겐 · 모험가 길드', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
@@ -60,6 +68,7 @@ function mapArt() {
   R(g, 0, 232, 1, 8, '#3a2a3a');
   // 뒷골목·지하수로 (도시 근처 어두운 땅)
   ell(g, 92, 166, 12, 8, '#5a5a5a'); ell(g, 150, 178, 14, 9, '#4a5048'); ell(g, 150, 178, 8, 4, '#2e4a4a');
+  MAP_EXTRA.forEach(f => f(g, r));
   // 길
   const road = (x0, y0, x1, y1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i += 3) { const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); R(g, x, y, 2, 1, '#8a6a3a'); } };
   road(120, 150, 84, 118); road(84, 118, 44, 78); road(84, 118, 122, 60); road(122, 60, 176, 94); road(176, 94, 204, 42); road(120, 150, 206, 150); road(120, 150, 92, 164); road(120, 150, 150, 176);
@@ -144,16 +153,20 @@ function kqKill(id) { if (!S.kq) return; for (const k in S.kq) { const q = kqOf(
 
 /* ───────── 지도 화면 ───────── */
 Object.assign(WIN_TITLE, { map: '지도', talk: '이야기' });
-function mapNodeHtml(kind, id, x, y, cls, inner, label) {
-  return `<button type="button" class="mnode ${cls}" style="left:${(x / MAP_W * 100).toFixed(2)}%;top:${(y / MAP_H * 100).toFixed(2)}%" data-act="mapsel" data-k="${kind}" data-id="${id}">${inner}<span class="ml">${label}</span></button>`;
+function mapNodeHtml(kind, id, x, y, cls, inner, label, W = MAP_W, H = MAP_H) {
+  return `<button type="button" class="mnode ${cls}" style="left:${(x / W * 100).toFixed(2)}%;top:${(y / H * 100).toFixed(2)}%" data-act="mapsel" data-k="${kind}" data-id="${id}">${inner}<span class="ml">${label}</span></button>`;
 }
-function mapNodes() {
-  const sel = UI.mapSel || {}, out = [];
+function mapNodes(skyMap) {
+  const sel = UI.mapSel || {}, out = [], NODES = skyMap ? MAP_NODES_SKY : MAP_NODES, W = skyMap ? SKY_MAP_W : MAP_W, H = skyMap ? SKY_MAP_H : MAP_H;
   for (const fid of ALL_FIELDS) {
-    const N = MAP_NODES[fid]; if (!N) continue;
+    const N = NODES[fid]; if (!N) continue;
     const F = FIELDS[fid], ok = isUnlocked(fid), fs = S.fields[fid] || {}, on = sel.k === 'field' && sel.id === fid;
-    out.push(mapNodeHtml('field', fid, N.x, N.y, `fld${ok ? '' : ' lock'}${on ? ' on' : ''}${F.raid ? ' raid' : ''}`, `<i class="mn">${F.raid ? '!' : F.no}</i>`, F.name));
-    if (N.dun && F.dungeon && (fs.found || fs.cleared)) out.push(mapNodeHtml('dungeon', fid, N.x + N.dun[0], N.y + N.dun[1], `dun${fs.cleared ? ' done' : ''}${sel.k === 'dungeon' && sel.id === fid ? ' on' : ''}`, `<i class="mn">${fs.cleared ? '★' : '▣'}</i>`, F.dungeon.name));
+    out.push(mapNodeHtml('field', fid, N.x, N.y, `fld${ok ? '' : ' lock'}${on ? ' on' : ''}${F.raid ? ' raid' : ''}${F.frontier ? ' front' : ''}${F.region === 'sky' ? ' skyf' : ''}`, `<i class="mn">${F.raid ? '!' : F.no}</i>`, F.name, W, H));
+    if (N.dun && F.dungeon && (fs.found || fs.cleared)) out.push(mapNodeHtml('dungeon', fid, N.x + N.dun[0], N.y + N.dun[1], `dun${fs.cleared ? ' done' : ''}${sel.k === 'dungeon' && sel.id === fid ? ' on' : ''}`, `<i class="mn">${fs.cleared ? '★' : '▣'}</i>`, F.dungeon.name, W, H));
+  }
+  if (skyMap) {   // 하늘 지도: 구름섬 둥지
+    for (const ev0 of evActive('nest')) { const A = MAP_NODES_SKY[ev0.at]; if (A) out.push(mapNodeHtml('event', ev0.id, A.x + 16, A.y - 12, `evn nest${sel.k === 'event' && sel.id === ev0.id ? ' on' : ''}`, '<i class="mn">◉</i>', `둥지 ${ev0.got}/${ev0.need}`, W, H)); }
+    return out.join('');
   }
   if (S.raid) for (const r of S.raid.list) { if (r.done) continue; const R = RAIDS[r.id], N = MAP_NODES[MAP_RAID[r.id] || 'plains']; out.push(mapNodeHtml('raid', r.id, N.x - 16, N.y - 14, `rd${sel.k === 'raid' && sel.id === r.id ? ' on' : ''}`, `<i class="mn" style="background:${R.c}">☠</i>`, R.name)); }
   for (const k of KINGDOM_IDS) { const P = MAP_KINGS[k], open = kingOpen(k); out.push(mapNodeHtml('king', k, P.x, P.y + 10, `kg${open ? '' : ' lock'}${sel.k === 'king' && sel.id === k ? ' on' : ''}`, `<img src="${emblemURL(k)}" alt="">`, KINGDOMS[k].name.replace(/ .*/, ''))); }
@@ -163,7 +176,7 @@ function mapNodes() {
 }
 function mapDetail() {
   const sel = UI.mapSel;
-  if (!sel) { const evs = evState().filter(x => !x.done); return `<div class="card"><div class="sub">필드·던전·레이드를 누르면 어떤 곳인지 볼 수 있어요. 원정은 원정대 창에서 보내요. 왕국과 단체를 누르면 이야기할 수 있어요.</div>${evs.length ? `<div class="sub gold-t">지금 지도 위: ${evs.map(x => x.type === 'wave' ? `⚔ 몬스터 웨이브 (D-${Math.max(0, x.arrive - today())})` : x.type === 'fest' ? `★ ${KINGDOMS[x.k].name} 축제` : '$ 떠돌이 상인').join(' · ')}</div>` : ''}</div>`; }
+  if (!sel) { const evs = evState().filter(x => !x.done); return `<div class="card"><div class="sub">필드·던전·레이드를 누르면 어떤 곳인지 볼 수 있어요. 원정은 원정대 창에서 보내요. 왕국과 단체를 누르면 이야기할 수 있어요.</div>${evs.length ? `<div class="sub gold-t">지금 지도 위: ${evs.map(x => x.type === 'wave' ? `⚔ 몬스터 웨이브 (D-${Math.max(0, x.arrive - today())})` : x.type === 'fest' ? `★ ${KINGDOMS[x.k].name} 축제` : x.type === 'nest' ? `◉ ${FIELDS[x.at].name} 둥지 ${x.got}/${x.need}` : '$ 떠돌이 상인').join(' · ')}</div>` : ''}</div>`; }
   if (sel.k === 'king' || sel.k === 'org') return talkCard(sel.id);
   if (sel.k === 'event') return eventCard(+sel.id);
   // 원정 목적지
@@ -172,9 +185,10 @@ function mapDetail() {
   else { F = FIELDS[fid]; const fs = S.fields[fid]; const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length; title = dungeon ? F.dungeon.name : F.name; sub = dungeon ? `${fs.cleared ? '공략 완료 · 다시 들어가면 주인이 기다린다' : '한 번만 공략할 수 있다'} · 몬스터 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)}, 주인 Lv${dungeonBossLv(F)}` : F.raid ? '암살자 길드 토벌 · Lv28+ 권장' : `Lv${F.lv}~${F.lv + 12} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`} · ${F.desc}`; }
   const ok = isUnlocked(fid);
   const why = !ok ? (F.unlock || (F.giant ? '이번 달에는 열리지 않은 레이드' : `상단 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열려요`)) : '';
+  const note = ok && F.region === 'sky' ? '비행 마차에 그리폰·와이번·페가수스를 맨 파티만 갈 수 있어요. 비행장 창에서도 보낼 수 있어요.' : '';
   const mons = !F.giant && F.mons.length ? `<div class="sub muted">몬스터: ${(dungeon ? F.dungeon.mons : F.mons).map(id => MONS[id].name).join(', ')}${dungeon ? ` · 주인 ${MONS[F.dungeon.boss].name}` : F.bosses ? ` · 우두머리 ${F.bosses.map(id => MONS[id].name).filter((v, i, a) => a.indexOf(v) === i).join(', ')}` : ''}</div>` : '';
   return `<div class="card hl"><div class="h">${esc(title)}</div><div class="sub">${sub}</div>${mons}</div>
-    ${why ? `<div class="sub red-t">${esc(why)}</div>` : ''}
+    ${why ? `<div class="sub red-t">${esc(why)}</div>` : ''}${note ? `<div class="sub gold-t">${esc(note)}</div>` : ''}
     <button type="button" class="btn gold block" data-act="mapexp" data-f="${fid}" data-d="${dungeon ? 1 : 0}"${ok ? '' : ' disabled'}>원정대 창에서 보내기</button>`;
 }
 function talkCard(id) {
@@ -188,7 +202,15 @@ function talkCard(id) {
     ${K && q ? `<div class="sub">의뢰 진행: ${kqText(q)} <b class="num">${kqProgress(id)}</b></div>` : K && nq ? `<div class="sub muted">받을 수 있는 의뢰가 있어요.</div>` : K ? '<div class="sub ok-t">모든 의뢰를 마쳤어요.</div>' : ''}
     <div class="btns"><button type="button" class="btn sm gold" data-act="talk" data-id="${id}">이야기하기</button>${K && v ? `<button type="button" class="btn sm" data-act="sub" data-id="co_king">교역</button>` : ''}</div></div>`;
 }
-PANELS.map = () => `<div class="map-wrap"><img class="map-img" src="${mapArt()}" alt="세계 지도">${mapNodes()}</div>${mapDetail()}`;
+// 지도 창: 대륙 / 하늘 탭. 하늘 지도는 세계수 던전을 공략하면 보인다 (구름섬은 비행장까지 지어야 간다)
+PANELS.map = () => {
+  const skyOpen = !!(S.fields.roots && S.fields.roots.cleared) || (S.bld.airfield || 0) > 0;
+  let tab = UI.mapTab || 'land'; if (tab === 'sky' && !skyOpen) tab = 'land';
+  const sel = UI.mapSel; if (sel && sel.k === 'field' && FIELDS[sel.id] && FIELDS[sel.id].region === 'sky') tab = 'sky';
+  const bar = `<div class="tabs"><button type="button" class="tab${tab === 'land' ? ' on' : ''}" data-act="maptab" data-t="land">대륙</button><button type="button" class="tab${tab === 'sky' ? ' on' : ''}" data-act="maptab" data-t="sky">${SKY_NAME}${skyOpen ? '' : ' <small>잠김</small>'}</button></div>`;
+  if (tab === 'sky') return `${bar}<div class="map-wrap sky"><img class="map-img" src="${skyMapArt()}" alt="하늘 지도">${mapNodes(true)}</div>${mapDetail()}`;
+  return `${bar}<div class="map-wrap"><img class="map-img" src="${mapArt()}" alt="세계 지도">${mapNodes()}</div>${mapDetail()}`;
+};
 // 이야기 창: 문장과 초상, 선택지
 function talkLines(id) {
   const K = KINGDOMS[id];
@@ -222,9 +244,10 @@ function mapGo(pid, fid, dungeon) {
 }
 Object.assign(ACT, {
   mapsel: d => { UI.mapSel = { k: d.k, id: d.id }; renderPanel(true); },
+  maptab: d => { UI.mapTab = d.t; UI.mapSel = null; renderPanel(true); },
   mapparty: d => { UI.mapP = +d.id; renderPanel(true); },
   mapgo: d => { const m = mapGo(+d.p, d.f, d.d === '1'); if (m) say(m); else { say(`${findP(+d.p).name} 출발!`); showWin(false); } },
-  mapexp: d => { const p = S.parties.find(x => !x.exp); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } UI.expTab = p.id; } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : 'base'; menuOpen('exp'); },
+  mapexp: d => { const p = S.parties.find(x => !x.exp); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } UI.expTab = p.id; } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : FIELDS[d.f] && FIELDS[d.f].region === 'sky' ? 'sky' : 'base'; menuOpen('exp'); },
   talk: d => openWin('talk', { who: d.id, mode: '' }),
   talkmode: d => { const top = winTop(); if (top && top.id === 'talk') { top.mode = d.m; renderPanel(true); } },
   talknote: () => say('지금은 그 왕국 상단이 와 있지 않아요. 찾아오면 지도나 상단 창의 교역에서 거래해요.'),

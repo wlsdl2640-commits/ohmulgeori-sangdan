@@ -170,13 +170,18 @@ function floorInfo(f) {
   if (f.id === 'tower') return S.research.cur ? `연구 중: ${RESEARCH[S.research.cur.k].name}` : '연구를 쉬고 있어요';
   if (f.id === 'smithy') return `보관 중인 장비 ${S.gear.length}개`;
   if (f.id === 'bank') return `거래 ${S.bank.deps.length + S.bank.loans.length}/${bankCap()}건`;
+  if (typeof FLOOR_TXT !== 'undefined' && FLOOR_TXT[f.id]) return FLOOR_TXT[f.id]();
   return '';
 }
 function renderFloors() {
   if (!S) return;
   const L = hqFloors().reverse(), cur = hqFloor(HQ.cur);   // 아래층부터 왼쪽에
   const html = L.map(f => `<button type="button" class="fl${f.key === cur.key ? ' on' : ''}${f.under ? ' ug' : ''}" data-floor="${f.key}" aria-label="${f.label} ${esc(f.name)}"${f.key === cur.key ? ' aria-current="true"' : ''}>${f.id === 'tower' ? '탑' : f.label}</button>`).join('');
-  if (html !== UI.floors) { $('floors').innerHTML = html; UI.floors = html; }
+  if (html !== UI.floors) {
+    const nav = $('floors'); nav.innerHTML = html; UI.floors = html;
+    const b = nav.querySelector('.fl.on');   // 층이 많으면 지금 층 단추가 보이게 옆으로 민다
+    if (b) { const l = b.offsetLeft, r = l + b.offsetWidth; if (l < nav.scrollLeft) nav.scrollLeft = l - 6; else if (r > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = r - nav.clientWidth + 6; }
+  }
   const fn = `<b>${cur.label}</b>${esc(cur.name)}<small>${esc(floorInfo(cur))}</small>`;
   if (fn !== UI.fname) { $('floor-name').innerHTML = fn; UI.fname = fn; }
 }
@@ -188,7 +193,7 @@ function hqOpen(h) {
   if (!w) return;
   if (w.startsWith('b:')) openWin('b', { b: w.slice(2) }); else openWin(w);
 }
-const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0' };
+const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0', stable: 'stable0', library: 'library0', airfield: 'airfield0' };
 
 /* ───────── 배속 ───────── */
 function renderSpeed() {

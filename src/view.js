@@ -52,7 +52,7 @@ function bar(g, x, y, w, f, col, h = 1.5) {
 /* 스킬 이름은 글자로 띄운다 (화면 위 DOM). 작은 창과 전투 창 모두 */
 function callout(x, y, text, cls) {
   if (document.hidden) return;
-  const k = Math.min(2.5, (S && S.speed) || 1), dur = cls === 'boss' ? 2.3 : 1.1;
+  const k = Math.min(2.5, (S && S.speed) || 1), dur = cls === 'boss' || cls === 'rare' ? 2.3 : 1.1;
   const boxes = V.bopen ? [['bcallouts', 0, AH]] : [['callouts', PIP_Y, PIP_H]];
   for (const [id, y0, h] of boxes) {
     const box = $(id);
@@ -344,9 +344,11 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       g.scale(-dir, 1);
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
       if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 모험가 옆모습
-      else drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z });
+      else { drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
       FLASH = null; g.restore();
     } });
+    if (f.rare) post.push(g => { const h = eH(f) * z / ZE; for (let k = 0; k < 4; k++) { const ph = t * 1.6 + k * 1.57, sx = x + Math.cos(ph) * (10 + k * 3), sy = y - h * (0.3 + 0.6 * ((Math.sin(ph * 0.7 + k) + 1) / 2)), on = Math.sin(t * 5 + k * 2) > 0; if (on) { R(g, Math.round(sx), Math.round(sy) - 1, 1, 3, '#fff6c0'); R(g, Math.round(sx) - 1, Math.round(sy), 3, 1, '#ffd040'); } } });
+    if (f.nest) post.push(g => { const yy = y - eH(f) * z / ZE - 5; R(g, x - 3, yy, 7, 2, '#a8743e'); R(g, x - 2, yy - 1, 5, 1, '#d8b878'); R(g, x - 1, yy - 2, 1, 1, '#f0e8d8'); R(g, x + 1, yy - 2, 1, 1, '#f0e8d8'); });
     if (!fighting) return;
     if (f.giant) post.push(g => { const fr0 = Math.max(0, f.hp / f.maxHp); bar(g, Math.min(x, AW - 56), y + 4, 100, fr0, '#e0503f', 3); drawNum(g, Math.min(x, AW - 56), y + 9, Math.ceil(fr0 * 100) + '%', '#ffffff'); });
     else post.push(g => {
@@ -632,7 +634,9 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'spawn' && (x.boss || x.amb)) {
       V.shake = x.boss ? 6 : 4;
       if (x.name) callout(170, 120, x.name, 'boss');
-    }
+      if (x.rare) callout(170, 104, '희귀종 출현!', 'rare');
+    } else if (x.type === 'spawn' && x.rare) { callout(170, 120, '희귀종 출현!', 'rare'); sfx('buff'); }
+    else if (x.type === 'chest') { V.fx.push({ k: 'num', x: AW / 2, y: 96, s: 'TREASURE', c: '#ffd84a', t0: t + 0.1, d: 1.6, big: 1 }); callout(AW / 2, 120, '보물 상자를 열었다', 'boss'); }
     else if (x.type === 'enter') V.shake = 3;
   }
 }
