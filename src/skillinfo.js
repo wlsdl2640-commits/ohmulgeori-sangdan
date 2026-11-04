@@ -3,8 +3,8 @@
    skillSpec(id, a)     — 모험가 창용 (그 모험가의 공격력·숙련·재사용 감소를 넣은 실제 수치)
    basicSpec(a)         — 기본 공격 (5초 ÷ 공격 속도, 공격력 ×2.5) */
 const SK_TGT = { front: '앞의 적', low: '가장 약한 적', all: '모든 적', self: '자신', party: '파티 전원' };
-const SK_KIND = { dmg: '물리 피해', mdmg: '마법 피해', heal: '치유', buff: '강화', dot: '지속 피해', taunt: '도발', cure: '해제' };
-const SK_BUFF = { atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '공격 속도', heal: '회복량' };
+const SK_KIND = { dmg: '물리 피해', mdmg: '마법 피해', heal: '치유', buff: '강화', dot: '지속 피해', taunt: '도발', cure: '해제', shield: '보호막', regen: '재생', revive: '부활' };
+const SK_BUFF = { atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '공격 속도', heal: '회복량', crit: '치명타', guard: '받는 피해 감소', cdr: '스킬 재사용 감소' };
 // 지속 효과 이름과 표기 방식: pct(배율 %) · pp(%p 더함) · neg(줄임) · x(배)
 const SK_PASS = { atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['공격 속도', 'pct'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'] };
 const skPct = v => `${Math.round(v * 1000) / 10}%`;
@@ -36,6 +36,8 @@ function skillSpec(id, a) {
     else if (d) out.push(`치명타 ${skPct(d.crit)}`);
     if (d) out.push(`치명타 피해 ×${T.critMul || 1.75}`);
     if (s.boss) out.push(`보스에게 ×${s.boss}`);
+    if (s.exec) out.push(`HP ${skPct(EXEC_HP)} 아래 적에게 ×${s.exec} (처형)`);
+    if (s.gamble) out.push(`${skPct(s.gamble.p)} 확률로 ×${s.gamble.mult} 대박 (평균 ${skMul(1 + s.gamble.p * (s.gamble.mult - 1))})`);
     if (s.drain) out.push(`준 피해의 ${skPct(s.drain)} 흡혈`);
     if (s.steal) out.push(`맞힌 적마다 금화 +${s.steal}G${hits > 1 ? ` ×${hits}` : ''}`);
   } else if (s.kind === 'dot') {
@@ -57,6 +59,16 @@ function skillSpec(id, a) {
     out.push(`${s.dur}초 동안 모든 적이 자신만 노린다`);
   } else if (s.kind === 'cure') {
     out.push(`${(s.cures || []).map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제 · 파티 전원`);
+  } else if (s.kind === 'shield') {
+    out.push(s.pct ? `보호막 최대 HP의 ${skPct(s.pct * L)}` : `보호막 마법 공격력 ${skMul(s.mult * L)}`);
+    if (d) out.push(`약 <b>${skN((s.pct ? d.maxHp * s.pct : d.matk * s.mult * (T.healPow || 1) * d.healPow) * M)}</b> 흡수${s.tgt === 'party' ? ' (한 사람마다)' : ''}`);
+    out.push(`${s.dur}초 · ${SK_TGT[s.tgt] || s.tgt} · 피해를 대신 받는 임시 HP`);
+  } else if (s.kind === 'regen') {
+    out.push(`재생 마법 공격력 ${skMul(s.mult * L)}/초 · ${s.dur}초 (합 ${skMul(s.mult * L * s.dur)})`);
+    if (d) { const hps = d.matk * s.mult * M * (T.healPow || 1) * d.healPow; out.push(`초당 약 <b>${skN(hps)}</b> × ${s.dur}초 ≈ ${skN(hps * s.dur)}`); }
+    out.push(`대상 ${SK_TGT[s.tgt] || s.tgt}`);
+  } else if (s.kind === 'revive') {
+    out.push(`쓰러진 동료를 최대 HP의 ${skPct(s.pct * L)}로 일으킨다 · 싸움마다 한 번 · 부상도 남지 않는다`);
   }
   if (s.sta) { const St = STATUS[s.sta.k]; out.push(`${St ? St.name : s.sta.k} ${skPct(s.sta.p)} · ${s.sta.d}초${s.sta.m ? ` · 초당 스킬 공격력의 ${skPct(s.sta.m)}` : ''}`); }
   if (s.slow) out.push(`${s.slow}초 느려짐 (적 공격 간격 ×1.6)`);

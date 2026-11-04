@@ -396,6 +396,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     post.push(g => {
       bar(g, x0, y0 + 3, 22, a.hp / d.maxHp, '#e0503f');
       bar(g, x0, y0 + 5.5, 22, a.mp / Math.max(1, d.maxMp), '#4a8ae8', 1);
+      const shp = e.buffs.reduce((s2, b) => s2 + (b.stat === 'shield' && b.to === a.id ? Math.max(0, b.hp) : 0), 0); if (shp) bar(g, x0, y0 + 1.5, 22, Math.min(1, shp / d.maxHp), '#8ad8ff', 1);   // 보호막
       if ((a.fat || 0) >= 60) R(g, x0 + 12.5, y0 + 3, 1.5, 1.5, a.fat >= 85 ? '#e0503f' : '#f0b43c');
       staDots(g, e.sta && e.sta[a.id], x0 - 11, y0);
       if (e.taunt && e.taunt.aid === a.id) drawNum(g, x0, y - 21 * z - 6, '!', '#ff5a4a');
@@ -490,8 +491,8 @@ function stretcherHi(g, a, t, moving) {
 
 /* ───────── 사건 → 효과와 전투 기록 ───────── */
 const PROJ = { arrow: 0.18, magic: 0.24, fire: 0.26, ice: 0.22, bolt: 0.06, holy: 0.1, wind: 0.24, dark: 0.26, jump: 0.2, spell: 0.2, note: 0.24, pet: 0 };
-const SKILL_CLS = { heal: 'heal', buff: 'buff', taunt: 'buff', mdmg: 'magic', dot: 'dot' };
-const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0', spd: '#ffe08a', matk: '#c89aff', block: '#9aa0a8', counter: '#f0c070', rheal: '#8af08a' };
+const SKILL_CLS = { heal: 'heal', buff: 'buff', taunt: 'buff', mdmg: 'magic', dot: 'dot', shield: 'buff', regen: 'heal', revive: 'heal' };
+const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0', spd: '#ffe08a', matk: '#c89aff', block: '#9aa0a8', counter: '#f0c070', rheal: '#8af08a', shield: '#8ad8ff', regen: '#8af08a', crit: '#ffd060', cdr: '#c0a0ff', guard: '#9ab0c8' };
 const HIT_C = { melee: ['#ffffff', '#fff2a0'], jump: ['#fff2a0', '#ffffff'], pet: ['#f0c070', '#ffffff'], arrow: ['#e8e2d0', '#ffffff'], magic: ['#b48aff', '#ffffff'], spell: ['#8ab8ff', '#ffffff'], fire: ['#ff7a2a', '#ffe08a'], ice: ['#8ad8ff', '#ffffff'], bolt: ['#fff8a0', '#ffffff'], holy: ['#fff0b0', '#ffffff'], wind: ['#7ae0a0', '#c8ffd8'], dark: ['#7a3ad0', '#d8a8ff'], note: ['#f0d870', '#ffffff'] };
 function events(e, pos, t, team, p) {
   const at = k => (pos[k] != null ? pos[k] : V.last[k]);
@@ -507,7 +508,7 @@ function events(e, pos, t, team, p) {
     if (x.type === 'hit') { if (!x.dot && x.v) sfx(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k]); }
     else if (x.type === 'hurt' && !x.dot) sfx('hurt');
     else if (x.type === 'heal' || x.type === 'pot' || x.type === 'fheal') sfx(x.type === 'pot' ? 'pot' : 'heal');
-    else if (x.type === 'buff') sfx('buff');
+    else if (x.type === 'buff' || x.type === 'revive' || (x.type === 'shield' && x.on)) sfx('buff');
     else if (x.type === 'kill') sfx('kill');
     else if (x.type === 'lvl' || x.type === 'petlvl') sfx('lvl');
     else if (x.type === 'down') sfx('down');
@@ -592,6 +593,16 @@ function events(e, pos, t, team, p) {
       if (x.pet) { const pq = at('a' + x.s); if (pq) callout(pq[0], pq[1] - 18, PET_ACT_NAME[x.pet] + '!', 'buff'); }
       const list = x.party ? team.map(a => a.id) : [x.s];
       list.forEach(id => { const aq = at('a' + id); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.7, c: col }); });
+    } else if (x.type === 'shield') {   // 보호막이 생기거나 깎일 때: 하늘색 테
+      const aq = at('a' + x.d); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: x.on ? 0.7 : 0.35, c: '#8ad8ff' });
+    } else if (x.type === 'cover') {    // 엄호: 탱커 위에 방패 글자
+      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '엄호!', 'buff');
+    } else if (x.type === 'combo') {    // 연계: 중첩 수
+      const aq = at('a' + x.s); if (aq && (x.c === 3 || x.c === COMBO_MAX)) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, x.c === COMBO_MAX ? '연계 MAX' : `연계 ${x.c}`, '');
+    } else if (x.type === 'jackpot') {  // 대박
+      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '대박!', 'buff');
+    } else if (x.type === 'revive') {   // 부활: 금빛 테
+      const aq = at('a' + x.d); if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 1.0, c: '#ffe08a' }); callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '부활!', 'buff'); }
     } else if (x.type === 'kill') {
       const q = at('f' + x.d);
       if (q) V.ghosts.push({ id: x.id, adv: x.adv || null, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });
@@ -722,7 +733,13 @@ function logEvent(x, e, p) {
   if (x.type === 'miss') return add(`${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
   if (x.type === 'aoe') return add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn');
   if (x.type === 'heal' && typeof x.s === 'string') { const pt = petById(+x.s.slice(1)); return add(`펫 ${ally(pt ? pt.name : '펫')}의 ${pt ? PET_ACT_NAME[PETS[pt.kind].act] : '회복'}! ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 회복.`); }
+  if (x.type === 'heal' && x.rg) return add(`${ally(jo(A(x.d), '이', '가'))} 재생으로 HP를 ${num(x.v, 'g')} 회복했습니다.`, 'dim');
   if (x.type === 'heal') return add(x.s === x.d ? `${ally(jo(A(x.d), '이', '가'))} HP를 ${num(x.v, 'g')} 회복했습니다.` : `${ally(jo(A(x.s), '이', '가'))} ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 치유했습니다.`);
+  if (x.type === 'shield') return add(x.on ? `${ally(A(x.d))}에게 보호막 ${num(x.v, 'b')}이 생겼습니다.` : `${ally(A(x.d))}의 보호막이 ${num(x.v, 'b')}을(를) 막아냈습니다.`, 'dim');
+  if (x.type === 'cover') return add(`${ally(jo(A(x.s), '이', '가'))} ${ally(A(x.d))}을(를) 감싸 대신 맞았습니다!`, 'sk');
+  if (x.type === 'combo') { if (x.c === 3 || x.c === COMBO_MAX) add(`${ally(A(x.s))}의 연계 ${x.c}중첩! (피해 +${Math.round((TR(advById(x.s) || { cls: 'warrior' }).combo || 0) * x.c * 100)}%)`, 'dim'); return; }
+  if (x.type === 'jackpot') return add(`<i class="lg-c">대박!</i> ${ally(A(x.s))}의 한 방이 크게 터졌습니다.`, 'lvl');
+  if (x.type === 'revive') return add(`<i class="lg-c">부활!</i> ${ally(jo(A(x.s), '이', '가'))} 쓰러진 ${ally(A(x.d))}을(를) 일으켜 세웠습니다.`, 'lvl');
   if (x.type === 'pot' && x.k) return add(`${ally(jo(A(x.d), '이', '가'))} ${ITEMS[x.k].name}(으)로 ${cureName(ITEMS[x.k].cure)}을(를) 풀었습니다.`);
   if (x.type === 'pot') return add(`${ally(jo(A(x.d), '이', '가'))} 회복 물약으로 HP ${num(x.v, 'g')} 회복.`);
   if (x.type === 'mana') return add(`${ally(jo(A(x.d), '이', '가'))} 마나 물약으로 MP ${num(x.v, 'b')} 회복.`);

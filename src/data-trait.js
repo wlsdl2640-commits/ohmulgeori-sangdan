@@ -53,7 +53,8 @@ const STATUS = {
   shock:  { name: '감전', c: '#ffe84a', cc: 1, desc: '스킬을 쓸 수 없다.' },
   para:   { name: '마비', c: '#c08aff', cc: 1, desc: '기본 공격을 할 수 없다.' },
   stun:   { name: '기절', c: '#ffffff', cc: 1, desc: '아무것도 할 수 없다.' },
-  weak:   { name: '쇠약', c: '#a0a0a0', desc: '공격력·마법·방어력이 20% 깎인다.' }
+  weak:   { name: '쇠약', c: '#a0a0a0', desc: '공격력·마법·방어력이 20% 깎인다.' },
+  mark:   { name: '표식', c: '#ff9a3a', desc: '받는 피해가 20% 늘어난다. (적에게만 걸린다)' }
 };
 const STATUS_IDS = Object.keys(STATUS);
 const CC_IDS = ['chill', 'shock', 'para', 'stun'];

@@ -89,6 +89,14 @@
 - 왕국 스킬북: data-under.js 10개에 `tier: 2`·위력 상향, 값 `500 + lv*110`; data-rpg.js canLearn이 `s.tier`(jobTier ≥) 검사; econ.js learnSkill 메시지; skillinfo.js skillSpec 끝에 「n차 전직 후 배움」.
 - 시험: `scratchpad/skills/stone28.py`(논리), `scratchpad/skills/ui28.py`(화면: 빈 자리·개화·창고·왕국 교역·탭 겹침 elementFromPoint·레이드 탭 출발). 직업 밸런스 측정 `scratchpad/skills/classbal.py`(차수별 Lv18/40/70, DPS·버팀·치유·기준 파티 시간).
 
+## 직업 역할 개편 (빌드 29)
+- 장치(core.js): `hitFoe`에 처형 `T.exec`(EXEC_HP 0.3)·표식 `f.sta.mark`(MARK_BONUS 0.2)·연계 `T.combo × e.combo[aid]`; `comboUp`(basicAct 적중)·`comboBreak`(빗나감, inflictAdv stun/para); 보호막 = buff `{stat:'shield', hp, max}`(hitAdv가 먼저 깎고 ev 'shield', 다 깨지면 battle 첫머리에서 걷음); 엄호 = battle의 적 표적 고른 뒤 `TR(x).cover` 확률로 대체(도발 중엔 안 함, HP 25% 아래·기절이면 못 함, ev 'cover'); 재생 = buff `{stat:'regen', add: hps}`를 battle이 1초마다 적용(e.rg 누적, ev heal rg:1); 부활 = cast kind 'revive'(`e.rev[aid]` 싸움당 1회, `x.inj = null`, flee 취소); 성스러운 흡수 `partyDrain`(T.pdrain); 대박 `s.gamble {p, mult}`(ev 'jackpot'); 강화 stat 'crit'(cast·basicAct buffAdd)·'guard'(hitAdv)·'cdr'(skillCdOf 기존).
+- 상수 data-rpg.js `COMBO_MAX 5 · EXEC_HP 0.3 · MARK_BONUS 0.2`, `BASIC_MAGIC 2.1`, 화염구 1.8. STATUS에 `mark`(적 전용, tickFoeSta 목록에 포함, 보스도 지속 온전).
+- pickSkill 우선순위: revive 12 > heal 10/11 > regen 8/9 > cure 9 > shield 5~8(파티는 2명 이상 보호막 없을 때, 자기는 다쳤거나 보스/2마리↑) > buff 4/7.
+- 데이터: data-rpg.js CLASSES 2차·3차 tr(combo/exec/cover/pdrain/guard/tank 0) + desc에 역할 표기, 고유 스킬 블록 전면 교체(새 id: wagonwall·spotweak·holyshield·regenall·starward·encore·resurrect; 3차 첫 고유 Lv55). 기존 id는 모두 유지(저장 호환).
+- 화면: view.js ev 'shield'/'cover'/'combo'(3·MAX만)/'revive'/'jackpot' 연출·기록, HP 막대 위 보호막 띠, SKILL_CLS/BUFF_C 추가; skillinfo.js SK_KIND shield/regen/revive, exec·gamble 줄; panels.js TR_TXT combo/exec/cover/pdrain/wagon/scout/tent/drop, 전직 안내에 역할표.
+- 시험: `scratchpad/skills/role29.py`(장치 논리), `classbal.py`로 측정(2차 지속≈한방 250~340, 혼합 185~240). 연계는 「맞으면 끊김」으로 하면 근접이 못 쌓아서 빗나감·기절에서만 끊기게 했다.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

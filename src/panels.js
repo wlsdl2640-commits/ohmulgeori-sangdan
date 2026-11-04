@@ -8,11 +8,13 @@ function statLine(st) {
 const clsList = cls => (cls.includes('all') ? '모든 직업' : cls.map(c => CLASSES[c].name + (jobTier(c) === 1 ? ' 계열' : '')).join('·'));
 // 직업 특성을 글로
 const TR_TXT = {
-  critMul: v => `치명타 피해 ×${v}`, guard: v => `받는 피해 -${Math.round(v * 100)}%`, tank: () => '적이 자주 노린다',
+  critMul: v => `치명타 피해 ×${v}`, guard: v => (v < 0 ? `받는 피해 +${Math.round(-v * 100)}%` : `받는 피해 -${Math.round(v * 100)}%`), tank: v => (v < 0 ? '적이 덜 노린다' : v >= 2 ? '적이 아주 자주 노린다' : '적이 자주 노린다'),
   lifesteal: v => `준 피해의 ${Math.round(v * 100)}% 흡혈`, rage: v => `체력이 줄수록 공격력 최대 +${Math.round(v * 100)}%`, pet: () => '동물 동료가 함께 공격',
   pen: v => `방어 ${Math.round(v * 100)}% 무시`, first: v => `싸움 첫 공격 ×${v}`, double: v => `${Math.round(v * 100)}% 확률로 두 번 공격`,
   luck: v => `전리품·금화 +${Math.round(v * 100)}%`, aoe: v => `마법이 다른 적에게 ${Math.round(v * 100)}% 번짐`, mdrain: v => `마법 피해의 ${Math.round(v * 100)}% 흡수`,
-  hybrid: v => `기본 공격에 마법 피해 ${Math.round(v * 100)}%`, healPow: v => `치유량 ×${v}`, dot: v => `지속 피해 ×${v}`, bossDmg: v => `보스 피해 ×${v}`, aura: v => `파티 공격력 +${Math.round(v * 100)}%`
+  hybrid: v => `기본 공격에 마법 피해 ${Math.round(v * 100)}%`, healPow: v => `치유량 ×${v}`, dot: v => `지속 피해 ×${v}`, bossDmg: v => `보스 피해 ×${v}`, aura: v => `파티 공격력 +${Math.round(v * 100)}%`,
+  combo: v => `연계: 기본 공격을 맞힐 때마다 피해 +${Math.round(v * 100)}% (${COMBO_MAX}중첩, 빗나가거나 기절하면 끊김)`, exec: v => `처형: HP ${Math.round(EXEC_HP * 100)}% 아래 적에게 ×${v}`, cover: v => `엄호: 동료가 노려지면 ${Math.round(v * 100)}%로 대신 맞음`,
+  pdrain: v => `성스러운 흡수: 마법 피해의 ${Math.round(v * 100)}%만큼 가장 다친 동료 회복`, wagon: v => `마차 짐 +${Math.round(v * 100)}%`, wagonSpd: v => `마차 속도 +${Math.round(v * 100)}%`, scout: v => `파티 이동 속도 +${Math.round(v * 100)}%`, tent: v => `야영은 텐트 (피로 회복 ×${v})`, drop: v => `전리품 +${Math.round(v * 100)}%`
 };
 const trText = c => Object.entries(CLASSES[c].tr || {}).map(([k, v]) => (TR_TXT[k] ? TR_TXT[k](v) : '')).filter(Boolean).join(' · ');
 const tierTag = c => (jobTier(c) > 1 ? ` <span class="tag fame-t">${jobTier(c)}차</span>` : '');
@@ -288,7 +290,9 @@ PANELS.adv = () => `
   <details class="card"><summary>라이선스와 전직 안내</summary><div class="log">
     <div>모험가는 원정에서 몬스터를 잡고, 필드 보스와 던전을 쓰러뜨리고, 무사히 돌아올 때마다 개인 명성을 쌓아요. 레벨·개인 명성·처치 수·우두머리 처치 수·던전 공략 수가 차면 모험가 길드 심사를 받아 ${LICENSE.map(L => L.name).join(' → ')}로 올라가요 (${LICENSE_UP.map((L, i) => `${LICENSE[i + 1].name} Lv${L.lv}·명성 ${L.pf}·처치 ${fmt(L.kills)}·우두머리 ${L.bosses}${L.dungeons ? '·던전 ' + L.dungeons : ''}·${fmt(L.fee)}G`).join(', ')}). 라이선스가 오를수록 능력이 강해지고 봉급도 올라요.</div>
     <div>전투에서 기본 공격은 ${BASIC_CD}초 ÷ 공격 속도마다 한 번 나가고(공격력 ×${BASIC_MULT}), 스킬은 저마다의 재사용 대기시간이 돌면 따로 나가요. 공격 속도는 민첩·특성 「재빠름」·지속 스킬 「신속」·신속의 룬·강화 스킬로, 스킬 재사용 감소는 지속 스킬 「전술」·특성 「전술가」·시간의 룬·숙련도로 모여요. 스킬 창에서 모든 스킬의 계수·피해·확률·대기시간을 볼 수 있어요.</div>
-    <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·레인저·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>${jobTreeList()}
+    <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·레인저·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>
+    <div>2차·3차 직업은 역할이 갈려요. 전사: 기사=탱커(도발·엄호·받는 피해 감소) · 검투사=지속딜(연계) · 광전사=한방딜(분노·처형) · 마검사=브루저(마법 검+보호막). 마법사: 네크로맨서=지속딜(저주·역병) · 마도사=한방딜(긴 쿨 큰 한 방·처형) · 정령술사=혼합(광역+치유·방어). 궁수: 레인저=지속딜(연사·늑대) · 저격수=한방딜(선공·관통·처형) · 괴물사냥꾼=혼합(표식·보스). 도적: 쌍검사=지속딜 · 암살자=한방딜 · 보물 사냥꾼=혼합(금화·연막·대박). 성직자: 사제=치유·보호막·부활(3차) · 역병의사=재생+지속 딜 · 퇴마사=전투 사제(때리면 파티가 회복). 짐꾼: 음유시인=공격 버퍼 · 마부=방어 버퍼(보호막·엄호) · 정찰가=디버퍼(표식·약점 간파).</div>
+    <div>장치: 연계 — 기본 공격을 맞힐 때마다 피해가 쌓이고(5중첩) 빗나가거나 기절하면 끊겨요. 처형 — HP 30% 아래 적에게 더 큰 피해. 표식 — 걸린 적이 받는 피해 +20%. 보호막 — 피해를 대신 받는 임시 HP(HP 막대 위 하늘색). 엄호 — 동료가 노려지면 탱커가 대신 맞아요. 재생 — 초당 회복이 이어져요.</div>${jobTreeList()}
     <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이에요.</div></div></details>
   <div class="sec"><b>여관 손님</b><span>이틀마다 새 손님</span></div>
   ${S.cands.map(candCard).join('')}`;
