@@ -66,6 +66,13 @@
 - econ.js `autoReqOn()`(S.autoReq !== false, 기본 켬)·`autoFulfill()`(arrive에서 autoSellRun 앞, onNewDay의 genReq 뒤)·`fulfill(id, auto)`(auto면 `reqGearCheap`한 장비만)·`reqGearPick`(싼 장비부터). 의뢰 창 ACT `autoreq`.
 - ui.js pumpModals: 뒤에 gate 아닌 알림이 더 있으면 `모두 넘기기 (n)` 단추(.skipall)가 `S.modals`에서 gate 아닌 것을 지운다. 뒤로 가기의 1단추 판정은 `.skipall`을 뺀다. 시험 `scratchpad/skills/reqtest.py`·`reqtest_ui.py`.
 
+## 원정대 탭·대형·마부·정찰가 (빌드 25)
+- 원정대 창 `PANELS.exp`: `UI.expTab`(파티 id | 'raid'), 탭 `.tabs.exp`(ACT `exptab`, `newparty`가 새 파티 탭으로). 파티 탭은 `partyCard(p)` 하나 + 그 안의 `freeList(p)`(이 파티에 「넣기」). map.js `mapexp`가 `UI.expTab`을 맞춘다.
+- 대형: core.js `formRank(cls)`(CLASSES[c].row 우선, 없으면 act melee 0 · arrow 1 · 그 밖 2; porter·bard·maestro·coachman·caravanmaster는 row 2)·`formParty(p)`가 p.members를 안정 정렬. startExp·startArena(under.js)·startWave(events.js)에서 부른다. SLOT_P[0]이 맨 앞, pickTarget이 index 0에 가중치.
+- 마부: core.js `coachOf(p)`(TR.wagon > 0인 가장 큰 사람)·`wagonOwned/wagonWhy/wagonOf`(WAGONS[w].coach면 마부 없을 때 null)·`wagonCap`(×(1+TR.wagon))·`wagonSpd`(×(1+TR.wagonSpd)). capOf/moveOf가 쓴다. 전직 조건 `req.wagon`(어느 파티든 coach 마차), 정찰가 `req.trips`(a.trips).
+- 정찰가: `scoutMove(p)`(moveOf에 ×(1+)), `tentOf(p)`(TR.tent 최대) → startCamp가 `e.camp.tent`에 넣고 stepCamp가 피로 회복 ×tent, HP ×1.25, 밤습격 확률 ×0.5. view.js 야영 장면은 tent면 큰 텐트(drawTentHi ×1.7) + 나란히 눕기 + `lanternHi`; expStatus·camp 로그 글도 바뀐다.
+- 새 직업 데이터: data-rpg.js CLASSES(coachman·caravanmaster·scout·pathfinder, bow cls), SKILLS(whipcrack…summit), econ.js WEAPON_OF, pxa.js PXL, data.js BIOS, data-trait.js JOB_TRAITS, data-demon.js req. 시험 `scratchpad/skills/portertest.py`·`ui25.py`, 도트 시트 `scratchpad/px/t_porter2.js`.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

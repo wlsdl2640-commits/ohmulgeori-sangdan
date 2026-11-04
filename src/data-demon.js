@@ -159,6 +159,8 @@ CLASSES.duelist.req = { arenaWins: 10 };
 CLASSES.treasure.req = { relics: 1 };
 CLASSES.plaguedoc.req = { bld: 'temple' };
 CLASSES.exorcist.req = { cleared: 1 };
+CLASSES.coachman.req = { wagon: 1 };   // 상단에 마차(당나귀 수레 이상) 한 대
+CLASSES.scout.req = { trips: 20 };     // 본인 원정 20회
 const REQ_NAME = { itemAny: { soul_: '던전 주인의 혼(어느 단계든)' } };
 function jobReqText(c) {
   const R = CLASSES[c] && CLASSES[c].req; if (!R) return '';
@@ -174,6 +176,8 @@ function jobReqText(c) {
   if (R.arenaWins) out.push(`투기장 ${R.arenaWins}승`);
   if (R.relics) out.push(`유물 ${R.relics}개`);
   if (R.cleared) out.push(`던전 공략 ${R.cleared}곳`);
+  if (R.wagon) out.push('마차(당나귀 수레 이상) 보유');
+  if (R.trips) out.push(`본인 원정 ${R.trips}회`);
   return out.join(' · ');
 }
 // 모자란 조건 하나를 말로 (없으면 '')
@@ -189,5 +193,7 @@ function jobReqWhy(a, c) {
   if (R.arenaWins && ((S.under && S.under.arena && S.under.arena.wins) || 0) < R.arenaWins) return `투기장 ${R.arenaWins}승 필요 (지금 ${(S.under && S.under.arena && S.under.arena.wins) || 0}승)`;
   if (R.relics && (S.relics || []).length < R.relics) return `유물 ${R.relics}개 필요 (지금 ${(S.relics || []).length}개)`;
   if (R.cleared) { const n = TIER_FIELDS.filter(f => S.fields[f] && S.fields[f].cleared).length; if (n < R.cleared) return `던전 공략 ${R.cleared}곳 필요 (지금 ${n}곳)`; }
+  if (R.wagon && !S.parties.some(p => p.wagon && WAGONS[p.wagon] && WAGONS[p.wagon].coach)) return '마차(당나귀 수레 이상)가 있는 파티가 필요해요';
+  if (R.trips && (a.trips || 0) < R.trips) return `본인 원정 ${R.trips}회 필요 (지금 ${a.trips || 0}회)`;
   return '';
 }

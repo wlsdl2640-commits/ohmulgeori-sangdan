@@ -55,6 +55,7 @@ function startWave(pid, evId) {
   for (const [k, q] of Object.entries(p.sup || {})) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
   const e = newExp(WAVE_FIELD, sup, 1);
   e.area = 'wave'; e.encs = []; e.wave = { id: ev0.id, from: ev0.from, n: ev0.n, cur: 0, lv: ev0.lv }; e.done = 0; e.gap = 1.5; e.pos = STAGE_LEN * 0.3;
+  formParty(p);
   p.exp = e; ev0.party = p.id;
   team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.view = p.id;

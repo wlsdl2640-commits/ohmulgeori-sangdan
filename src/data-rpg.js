@@ -9,7 +9,7 @@ const CLASSES = {
   mage:    { name: '마법사', base: { str: 1, vit: 3, agi: 4, int: 9 }, grow: { str: 0.2, vit: 0.8, agi: 0.8, int: 2.4 }, spd: 0.7,  crit: 0.05, carry: 6,  salary: 160, act: 'magic', innate: 'fireball',  tunic: '#5a3d8c', trim: '#5ad6e8', desc: '지능이 높아 강한 마법을 쓴다.' },
   cleric:  { name: '성직자', base: { str: 3, vit: 5, agi: 3, int: 7 }, grow: { str: 0.6, vit: 1.3, agi: 0.6, int: 1.7 }, spd: 0.8,  crit: 0.03, carry: 8,  salary: 150, act: 'heal',  innate: 'heal',      tunic: '#d8d4c8', trim: '#d9b44a', desc: '다친 동료를 치료한다.' },
   rogue:   { name: '도적',   base: { str: 5, vit: 4, agi: 8, int: 1 }, grow: { str: 1.2, vit: 0.9, agi: 2.0, int: 0.2 }, spd: 1.25, crit: 0.15, carry: 12, salary: 130, act: 'melee', innate: 'backstab',  tunic: '#3a3a46', trim: '#9aa0a8', desc: '빠르고 치명타가 잦다.' },
-  porter:  { name: '짐꾼',   base: { str: 8, vit: 7, agi: 2, int: 1 }, grow: { str: 1.8, vit: 1.6, agi: 0.4, int: 0.2 }, spd: 0.6,  crit: 0.02, carry: 30, salary: 80,  act: 'melee', innate: 'throwjunk', tunic: '#9a7a4f', trim: '#5e4630', desc: '싸움은 약하지만 짐을 아주 많이 든다.' }
+  porter:  { name: '짐꾼',   base: { str: 8, vit: 7, agi: 2, int: 1 }, grow: { str: 1.8, vit: 1.6, agi: 0.4, int: 0.2 }, spd: 0.6,  crit: 0.02, carry: 30, salary: 80,  act: 'melee', innate: 'throwjunk', tunic: '#9a7a4f', trim: '#5e4630', row: 2, desc: '싸움은 약하지만 짐을 아주 많이 든다.' }
 };
 // 2차·3차 직업 (special). tier 2는 기본 직업에서 셋 중 하나를 고르고, tier 3은 그 2차의 다음 단계.
 // tr: 직업 특성 (전투 계산에 쓰인다)
@@ -30,8 +30,12 @@ Object.assign(CLASSES, {
   dragoon:     SP({ name: '용기병',     tier: 3, from: 'ranger',     base: { str: 10, vit: 8, agi: 10, int: 2 }, grow: { str: 2.0, vit: 1.6, agi: 2.0, int: 0.3 }, spd: 1.05, crit: 0.1,  carry: 12, salary: 300, act: 'melee', innate: 'jump',        tunic: '#2f5a6a', trim: '#7ad8c8', tr: { pet: 0.4 }, desc: '와이번을 길들인 레인저. 하늘에서 창을 내리꽂고 와이번이 함께 싸운다.' }),
   sniper:      SP({ name: '저격수',     tier: 2, from: 'archer',     base: { str: 6, vit: 4, agi: 11, int: 3 },  grow: { str: 1.2, vit: 0.9, agi: 2.5, int: 0.4 }, spd: 0.85, crit: 0.18, salary: 230, act: 'arrow', innate: 'headshot',    tunic: '#3a4a3a', trim: '#9aa0a8', tr: { pen: 0.3, first: 2.0 }, desc: '멀리서 단 한 발로 끝낸다. 방어를 꿰뚫고, 싸움의 첫 발이 특히 아프다.' }),
   hawkeye:     SP({ name: '신궁',       tier: 3, from: 'sniper',     base: { str: 8, vit: 6, agi: 14, int: 4 },  grow: { str: 1.5, vit: 1.1, agi: 2.9, int: 0.5 }, spd: 0.9,  crit: 0.25, salary: 300, act: 'arrow', innate: 'divinearrow', tunic: '#2a3a5a', trim: '#f0d870', tr: { pen: 0.5, first: 2.5 }, desc: '신의 눈을 가진 궁수. 그의 화살은 빗나가지 않는다.' }),
-  bard:        SP({ name: '음유시인',   tier: 2, from: 'porter',     base: { str: 6, vit: 7, agi: 6, int: 7 },   grow: { str: 1.1, vit: 1.4, agi: 1.3, int: 1.5 }, spd: 1.0,  crit: 0.06, carry: 22, salary: 220, act: 'arrow', innate: 'ballad',      tunic: '#8a3a6a', trim: '#f0c24a', tr: { aura: 0.08 }, desc: '노래로 동료의 힘을 북돋운다. 함께 다니는 파티 모두의 공격력이 오른다.' }),
-  maestro:     SP({ name: '마에스트로', tier: 3, from: 'bard',       base: { str: 8, vit: 9, agi: 8, int: 10 }, grow: { str: 1.4, vit: 1.7, agi: 1.6, int: 2.0 }, spd: 1.0,  crit: 0.08, carry: 24, salary: 290, act: 'arrow', innate: 'symphony',    tunic: '#5a2a6a', trim: '#fff2c0', tr: { aura: 0.15 }, desc: '전설의 노래꾼. 그가 부르면 전장 전체가 춤춘다.' }),
+  bard:        SP({ name: '음유시인',   tier: 2, from: 'porter',     base: { str: 6, vit: 7, agi: 6, int: 7 },   grow: { str: 1.1, vit: 1.4, agi: 1.3, int: 1.5 }, spd: 1.0,  crit: 0.06, carry: 22, salary: 220, act: 'arrow', innate: 'ballad',      tunic: '#8a3a6a', trim: '#f0c24a', row: 2, tr: { aura: 0.08 }, desc: '노래로 동료의 힘을 북돋운다. 함께 다니는 파티 모두의 공격력이 오르고, 갖가지 강화 노래를 부른다.' }),
+  maestro:     SP({ name: '마에스트로', tier: 3, from: 'bard',       base: { str: 8, vit: 9, agi: 8, int: 10 }, grow: { str: 1.4, vit: 1.7, agi: 1.6, int: 2.0 }, spd: 1.0,  crit: 0.08, carry: 24, salary: 290, act: 'arrow', innate: 'symphony',    tunic: '#5a2a6a', trim: '#fff2c0', row: 2, tr: { aura: 0.15 }, desc: '전설의 노래꾼. 그가 부르면 전장 전체가 춤춘다.' }),
+  coachman:    SP({ name: '마부',       tier: 2, from: 'porter',     base: { str: 9, vit: 9, agi: 5, int: 2 },   grow: { str: 1.8, vit: 1.8, agi: 0.9, int: 0.3 }, spd: 0.75, crit: 0.04, carry: 32, salary: 220, act: 'melee', innate: 'whipcrack',   tunic: '#7a5232', trim: '#c9a04a', row: 2, tr: { wagon: 0.25, wagonSpd: 0.05 }, desc: '말과 수레를 다루는 짐꾼. 당나귀 수레부터는 마부가 있어야 끌 수 있고, 마차에 짐을 25% 더 싣는다.' }),
+  caravanmaster: SP({ name: '캐러밴 마스터', tier: 3, from: 'coachman', base: { str: 11, vit: 11, agi: 7, int: 3 }, grow: { str: 2.1, vit: 2.0, agi: 1.1, int: 0.4 }, spd: 0.8, crit: 0.06, carry: 36, salary: 290, act: 'melee', innate: 'stampede', tunic: '#2f5a3a', trim: '#e0c060', row: 2, tr: { wagon: 0.5, wagonSpd: 0.15 }, desc: '대상단의 행렬을 이끄는 마부의 정점. 마차에 짐을 50% 더 싣고 15% 빨리 몬다.' }),
+  scout:       SP({ name: '정찰가',     tier: 2, from: 'porter',     base: { str: 6, vit: 7, agi: 10, int: 3 },  grow: { str: 1.2, vit: 1.4, agi: 2.2, int: 0.4 }, spd: 1.05, crit: 0.1,  carry: 22, salary: 220, act: 'arrow', innate: 'ambush',      tunic: '#6a7a3a', trim: '#c9a04a', tr: { scout: 0.15, tent: 1.5, tank: -0.3 }, desc: '길을 찾는 짐꾼. 파티 이동 속도가 15% 오르고, 야영지에 텐트를 쳐 잘 때 피로가 1.5배 빨리 풀린다.' }),
+  pathfinder:  SP({ name: '탐험가',     tier: 3, from: 'scout',      base: { str: 8, vit: 9, agi: 13, int: 4 },  grow: { str: 1.5, vit: 1.7, agi: 2.6, int: 0.5 }, spd: 1.1,  crit: 0.14, carry: 24, salary: 290, act: 'arrow', innate: 'farsight',    tunic: '#c8a868', trim: '#8a3a2a', tr: { scout: 0.25, tent: 2.0, luck: 0.1, tank: -0.3 }, desc: '지도에 없는 길을 여는 정찰가의 정점. 이동 속도 +25%, 텐트에서 피로가 두 배로 풀리고 전리품이 는다.' }),
   mhunter:     SP({ name: '괴물사냥꾼', tier: 2, from: 'archer',     base: { str: 7, vit: 6, agi: 9, int: 2 },   grow: { str: 1.4, vit: 1.3, agi: 2.1, int: 0.3 }, spd: 0.95, crit: 0.12, carry: 12, salary: 230, act: 'arrow', innate: 'huntmark',    tunic: '#5a4a2a', trim: '#c8b080', tr: { bossDmg: 1.2, drop: 0.25 }, desc: '몬스터의 급소와 가죽 벗기는 법을 안다. 보스에게 강하고 부속품을 더 챙긴다.' }),
   dslayer:     SP({ name: '드래곤 슬레이어', tier: 3, from: 'mhunter', base: { str: 10, vit: 8, agi: 12, int: 3 }, grow: { str: 1.9, vit: 1.6, agi: 2.5, int: 0.4 }, spd: 1.0,  crit: 0.15, carry: 12, salary: 300, act: 'arrow', innate: 'dragonpierce', tunic: '#3a2a2a', trim: '#e05a3a', tr: { bossDmg: 1.5, drop: 0.35, pen: 0.2 }, desc: '용을 잡은 사냥꾼. 어떤 거대한 몬스터도 사냥감일 뿐이다.' }),
   // ── 도적 ──
@@ -226,6 +230,26 @@ const SKILLS = {
   requiem:     { name: '진혼곡', cls: ['maestro'], lv: 60, own: 1, cost: { mp: 34 }, cd: 12, kind: 'mdmg', mult: 2.5, tgt: 'all', desc: '적의 영혼을 잠재우는 노래.' },
   overture:    { name: '서곡', cls: ['maestro'], lv: 75, own: 1, cost: { mp: 40 }, cd: 14, kind: 'heal', mult: 2.0, tgt: 'party', desc: '파티 전원을 크게 치료한다.' },
   grandfinale: { name: '장엄한 피날레', cls: ['maestro'], lv: 95, own: 1, cost: { mp: 60 }, cd: 24, kind: 'buff', stat: 'atk', mult: 1.8, haste: 1.2, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력과 공격 속도가 크게 오른다.' },
+  // 마부 → 캐러밴 마스터
+  whipcrack:   { name: '채찍질', cls: ['coachman'], lv: 1, cost: { mp: 6 }, cd: 5, kind: 'dmg', mult: 1.7, slow: 3, tgt: 'front', desc: '채찍으로 앞의 적을 후려쳐 3초 동안 느리게 한다.' },
+  horsecare:   { name: '말 돌보기', cls: ['coachman'], lv: 22, own: 1, passive: { carryPct: 0.2, movePct: 0.05 }, desc: '짐 20%, 이동 속도 5%가 오른다.' },
+  gallop:      { name: '전속력', cls: ['coachman'], lv: 28, own: 1, cost: { mp: 12 }, cd: 16, kind: 'buff', stat: 'eva', add: 0.15, haste: 1.15, dur: 8, tgt: 'party', desc: '8초 동안 파티의 회피율과 공격 속도를 올린다.' },
+  wheelcrush:  { name: '마차 돌진', cls: ['coachman'], lv: 36, own: 1, cost: { mp: 18 }, cd: 11, kind: 'dmg', mult: 1.5, tgt: 'all', sta: { k: 'stun', p: 0.2, d: 2, m: 0 }, desc: '마차를 몰아 모든 적을 들이받는다. 기절시킬 수 있다.' },
+  cargoshield: { name: '짐칸 방패', cls: ['coachman'], lv: 48, own: 1, passive: { hpPct: 0.12, defPct: 0.1 }, desc: '최대 HP 12%, 방어력 10%가 오른다.' },
+  stampede:    { name: '마차 질주', cls: ['caravanmaster'], lv: 1, cost: { mp: 10 }, cd: 5, kind: 'dmg', mult: 2.2, tgt: 'all', desc: '마차 행렬이 모든 적을 짓밟는다.' },
+  roadlord:    { name: '길의 주인', cls: ['caravanmaster'], lv: 60, own: 1, passive: { atkPct: 0.12, carryPct: 0.2 }, desc: '공격력 12%, 짐 20%가 오른다.' },
+  convoy:      { name: '호위 대형', cls: ['caravanmaster'], lv: 75, own: 1, cost: { mp: 28 }, cd: 18, kind: 'buff', stat: 'def', mult: 1.5, dur: 10, tgt: 'party', desc: '10초 동안 파티의 방어력을 올린다.' },
+  grandcaravan:{ name: '대상단의 행진', cls: ['caravanmaster'], lv: 95, own: 1, cost: { mp: 60 }, cd: 20, kind: 'dmg', mult: 4.0, tgt: 'all', sta: { k: 'stun', p: 0.3, d: 2, m: 0 }, desc: '대상단의 마차 행렬이 전장을 휩쓴다.' },
+  // 정찰가 → 탐험가
+  ambush:      { name: '기습 사격', cls: ['scout'], lv: 1, cost: { mp: 6 }, cd: 4, kind: 'dmg', mult: 1.9, crit: 0.3, tgt: 'low', fx: 'arrow', desc: '숨어 있다가 약한 적을 쏜다. 치명타가 잘 터진다.' },
+  pathfind:    { name: '길잡이', cls: ['scout'], lv: 22, own: 1, passive: { movePct: 0.15, eva: 0.04 }, desc: '이동 속도 15%, 회피 4%p가 오른다.' },
+  snare:       { name: '올가미', cls: ['scout'], lv: 28, own: 1, cost: { mp: 12 }, cd: 9, kind: 'dot', mult: 0.8, dur: 6, slow: 4, tgt: 'front', desc: '올가미에 걸린 적은 6초 동안 피해를 입고 느려진다.' },
+  campcraft:   { name: '야영 기술', cls: ['scout'], lv: 36, own: 1, passive: { hpPct: 0.08, eva: 0.04 }, desc: '최대 HP 8%, 회피 4%p가 오른다.' },
+  volley:      { name: '연속 사격', cls: ['scout'], lv: 48, own: 1, cost: { mp: 24 }, cd: 11, kind: 'dmg', mult: 1.4, hits: 2, tgt: 'all', fx: 'arrow', desc: '모든 적에게 화살을 두 발씩 쏜다.' },
+  farsight:    { name: '원거리 저격', cls: ['pathfinder'], lv: 1, cost: { mp: 12 }, cd: 5, kind: 'dmg', mult: 2.6, crit: 0.35, tgt: 'low', fx: 'arrow', desc: '멀리서 약한 적의 급소를 쏜다.' },
+  mapmaker:    { name: '지도 제작', cls: ['pathfinder'], lv: 60, own: 1, passive: { crit: 0.08, movePct: 0.1 }, desc: '치명타 8%p, 이동 속도 10%가 오른다.' },
+  drumbeat:    { name: '탐험대의 북소리', cls: ['pathfinder'], lv: 75, own: 1, cost: { mp: 30 }, cd: 18, kind: 'buff', stat: 'atk', mult: 1.3, haste: 1.15, dur: 10, tgt: 'party', desc: '10초 동안 파티의 공격력과 공격 속도를 올린다.' },
+  summit:      { name: '정상 등반', cls: ['pathfinder'], lv: 95, own: 1, cost: { mp: 60 }, cd: 18, kind: 'dmg', mult: 3.5, hits: 2, crit: 0.3, tgt: 'all', fx: 'arrow', desc: '높은 곳에서 모든 적에게 두 발씩 퍼붓는다.' },
   // 암살자 → 그림자 군주
   assassinate: { name: '암살', cls: ['assassin'], lv: 1, cost: { mp: 7 }, cd: 4, kind: 'dmg', mult: 2.4, crit: 1, tgt: 'low', desc: '약한 적의 급소를 반드시 찌른다.' },
   poisonblade: { name: '독날', cls: ['assassin'], lv: 22, own: 1, cost: { mp: 12 }, cd: 8, kind: 'dot', mult: 1.0, dur: 6, tgt: 'front', desc: '독을 바른 칼날로 6초 동안 독 피해를 준다.' },
@@ -365,7 +389,7 @@ const SLOTS = [['weapon', '무기'], ['armor', '방어구'], ['acc', '장신구'
 // st: 단계 힘(p)을 곱하는 능력치, mat: 재료 개수 [단단, 질긴, 마력]
 const GTYPES = {
   sword:   { name: '장검',     slot: 'weapon', cls: ['warrior', 'duelist', 'spellblade'],                     st: { atk: 4.2, vit: 0.5 },           w: 3, icon: 'sword',  mat: [3, 1, 0] },
-  bow:     { name: '활',       slot: 'weapon', cls: ['archer'],                      st: { atk: 3.6, agi: 0.8 },           w: 2, icon: 'bow',    mat: [2, 2, 0] },
+  bow:     { name: '활',       slot: 'weapon', cls: ['archer', 'scout', 'pathfinder'],                      st: { atk: 3.6, agi: 0.8 },           w: 2, icon: 'bow',    mat: [2, 2, 0] },
   staff:   { name: '지팡이',   slot: 'weapon', cls: ['mage', 'priest', 'exorcist'],                        st: { matk: 4.2, int: 0.8, mp: 4 },   w: 2, icon: 'staff',  mat: [1, 0, 3] },
   mace:    { name: '철퇴',     slot: 'weapon', cls: ['cleric', 'knight'],                      st: { atk: 2.4, matk: 2.6, int: 0.5 }, w: 3, icon: 'mace',  mat: [3, 0, 1] },
   dagger:  { name: '단검',     slot: 'weapon', cls: ['rogue', 'gladiator', 'bard'],                       st: { atk: 3.2, agi: 0.6, crit: 0.006 }, w: 1, icon: 'dagger', mat: [2, 1, 0] },

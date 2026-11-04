@@ -224,7 +224,7 @@ Object.assign(ACT, {
   mapsel: d => { UI.mapSel = { k: d.k, id: d.id }; renderPanel(true); },
   mapparty: d => { UI.mapP = +d.id; renderPanel(true); },
   mapgo: d => { const m = mapGo(+d.p, d.f, d.d === '1'); if (m) say(m); else { say(`${findP(+d.p).name} 출발!`); showWin(false); } },
-  mapexp: d => { const p = S.parties.find(x => !x.exp); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : 'base'; menuOpen('exp'); },
+  mapexp: d => { const p = S.parties.find(x => !x.exp); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } UI.expTab = p.id; } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : 'base'; menuOpen('exp'); },
   talk: d => openWin('talk', { who: d.id, mode: '' }),
   talkmode: d => { const top = winTop(); if (top && top.id === 'talk') { top.mode = d.m; renderPanel(true); } },
   talknote: () => say('지금은 그 왕국 상단이 와 있지 않아요. 찾아오면 지도나 상단 창의 교역에서 거래해요.'),

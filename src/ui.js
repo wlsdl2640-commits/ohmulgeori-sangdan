@@ -59,7 +59,7 @@ function expStatus(p) {
   if (e.area === 'raid' && e.foes.length) return `${RAIDS[e.raid].name}와(과) 싸우는 중! · ${Math.max(0, Math.ceil(RAID_FIGHT - e.rt))}초 · 피해 ${fmt(e.dealt)}`;
   if (e.area === 'raid' && e.mode === 'advance') return `${RAIDS[e.raid].name}에게 다가가는 중`;
   if (e.foes.length) { const fb = e.foes.find(f => f.fb); return fb ? `필드 보스 ${fb.name}와(과) 싸우는 중!` : e.foes.some(f => f.boss) ? '던전의 주인과 싸우는 중!' : e.camp ? '야영지 습격!' : '전투 중'; }
-  if (e.camp) return e.camp.t > 1.5 ? '모닥불 곁에서 자는 중' : '모닥불을 피우는 중';
+  if (e.camp) return e.camp.tent ? (e.camp.t > 1.5 ? `텐트에서 자는 중 (피로 회복 ×${e.camp.tent})` : '텐트를 치는 중') : e.camp.t > 1.5 ? '모닥불 곁에서 자는 중' : '모닥불을 피우는 중';
   if (e.wait === 'gate') return `${F.dungeon.name} 입구 · 들어갈지 정해 주세요`;
   const tired = teamOf(p).some(a => (a.fat || 0) >= 60), carry = teamOf(p).filter(a => a.down).length;
   if (e.mode === 'return') return (WHY[e.why] || '복귀 중') + (carry && e.why !== 'loss' ? ` · 들것 ${carry}` : '') + (tired ? ' · 지침' : '');

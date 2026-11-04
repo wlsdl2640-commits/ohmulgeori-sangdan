@@ -140,12 +140,21 @@ const avgLvOf = p => { const t = teamOf(p); return t.length ? t.reduce((s, a) =>
 const wOf = bag => Object.entries(bag).reduce((s, [k, q]) => s + (ITEMS[k] ? ITEMS[k].w * q : 0), 0);
 const vOf = bag => Object.entries(bag).reduce((s, [k, q]) => s + (ITEMS[k] ? ITEMS[k].v * q : 0), 0);
 const gW = list => (list || []).reduce((s, g) => s + GTYPES[g.base].w, 0);
-const wagonOf = p => (p.wagon && WAGONS[p.wagon]) || null;
+// 마부: 당나귀 수레부터는 마부(또는 캐러밴 마스터)가 있어야 끈다. 마부가 마차 짐을 더 싣고 더 빨리 몬다
+const coachOf = p => teamOf(p).filter(a => !a.down && (TR(a).wagon || 0) > 0).sort((x, y) => (TR(y).wagon || 0) - (TR(x).wagon || 0))[0] || null;
+const wagonOwned = p => (p.wagon && WAGONS[p.wagon]) || null;
+const wagonWhy = p => { const w = wagonOwned(p); return w && w.coach && !coachOf(p) ? '마부가 없어 끌 수 없어요' : ''; };
+const wagonOf = p => { const w = wagonOwned(p); return w && !(w.coach && !coachOf(p)) ? w : null; };
+const wagonCap = p => { const w = wagonOf(p); if (!w) return 0; const c = coachOf(p); return Math.round(w.cap * (1 + (c ? TR(c).wagon || 0 : 0))); };
+const wagonSpd = p => { const w = wagonOf(p); if (!w) return 1; const c = coachOf(p); return w.spd * (1 + (c ? TR(c).wagonSpd || 0 : 0)); };
+// 정찰가: 파티 이동 속도와 텐트(야영 피로 회복 배율)
+const scoutMove = p => Math.max(0, ...teamOf(p).filter(a => !a.down).map(a => TR(a).scout || 0));
+const tentOf = p => Math.max(1, ...teamOf(p).filter(a => !a.down).map(a => TR(a).tent || 1));
 // 쓰러진 동료는 짐을 못 들고, 들것이 자리를 차지한다
-function capOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + (w ? w.cap : 0)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
+function capOf(p) { const all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + wagonCap(p)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
 function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) : wOf(p.sup); }
 // 파티 이동속도 = 가장 빠른(민첩한) 모험가의 속도 × 피로 × 마차
-function moveOf(p) { const w = wagonOf(p), all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4; return ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * (w ? w.spd : 1) * (st.length < all.length ? 0.8 : 1) * (1 + petHome('move')); }
+function moveOf(p) { const all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4; return ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * wagonSpd(p) * (1 + scoutMove(p)) * (st.length < all.length ? 0.8 : 1) * (1 + petHome('move')); }
 const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v * (v > 0 ? 1 - traitSum(a, 'fatigue') : 1))); });
 function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete bag[k]; }
 
@@ -267,6 +276,9 @@ function cantGo(a) {
   if ((a.sleep || 0) >= SLEEP.block) return `${a.name}이(가) 너무 피곤해요. 여관에서 더 자야 해요`;
   return '';
 }
+// 전투 대형: 근접은 맨 앞, 원거리 딜러는 가운데, 짐꾼·마법사·치유사는 맨 뒤 (출발할 때 줄을 세운다)
+const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (C.row != null) return C.row; return C.act === 'melee' ? 0 : C.act === 'arrow' ? 1 : 2; };
+function formParty(p) { p.members = p.members.map((id, i) => [id, i]).sort((x, y) => { const a = advById(x[0]), b = advById(y[0]); return (a ? formRank(a.cls) : 2) - (b ? formRank(b.cls) : 2) || x[1] - y[1]; }).map(x => x[0]); }
 function startExp(p, fid) {
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
   if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요.';
@@ -278,6 +290,7 @@ function startExp(p, fid) {
   const sup = {};
   if (p.autoBuy) for (const [k, q] of Object.entries(p.sup)) { const short = q - (S.inv[k] || 0); if (short > 0 && ITEMS[k] && ITEMS[k].buy) { const cost = buyPrice(k) * short; if (S.gold >= cost) { S.gold -= cost; S.stats.spent = (S.stats.spent || 0) + cost; addTo(S.inv, k, short); log(`${p.name} 출발 전에 ${ITEMS[k].name} ${short}개를 ${g$(cost)}에 사 두었다.`); } } }
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
+  formParty(p);
   p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
   team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.stats.trips++;
@@ -321,13 +334,15 @@ function gateChoice(p, choice) {
 
 /* ───────── 야영: 지치면 모닥불을 피우고 잔다 ───────── */
 function startCamp(p, e) {
-  e.camp = { t: 0, night: isNight(), amb: isNight() && e.area === 'field' && rnd() < (blessed('moon') ? 0.11 : 0.22) ? 4 + rnd() * 10 : 0 };
-  ev(e, 'camp', {});
+  const tent = tentOf(p);   // 정찰가가 있으면 텐트: 피로가 더 풀리고 밤습격도 반으로
+  e.camp = { t: 0, night: isNight(), tent: tent > 1 ? tent : 0, amb: isNight() && e.area === 'field' && rnd() < (blessed('moon') ? 0.11 : 0.22) * (tent > 1 ? 0.5 : 1) ? 4 + rnd() * 10 : 0 };
+  ev(e, 'camp', { tent: e.camp.tent ? 1 : 0 });
 }
 function stepCamp(p, e, team, dm, dt) {
   const c = e.camp;
   c.t += dt;
-  team.forEach(a => { const d = dm[a.id]; a.fat = Math.max(0, (a.fat || 0) - FATIGUE.sleep * dt); a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.02 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
+  const tm = c.tent || 1;   // 텐트: 피로 회복 1.5~2배, HP 회복 1.25배
+  team.forEach(a => { const d = dm[a.id]; a.fat = Math.max(0, (a.fat || 0) - FATIGUE.sleep * tm * dt); a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.02 * (tm > 1 ? 1.25 : 1) * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
   if (c.amb && c.t >= c.amb) {
     c.amb = 0;
     e.foes = rollFoes(e, -1, 1); e.cd = {}; e.buffs = []; e.taunt = null;

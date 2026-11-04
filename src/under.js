@@ -111,6 +111,7 @@ function startArena(pid, oi) {
   S.gold -= fee; U.fights++;
   const e = newExp('arena', {}, 1);
   e.area = 'arena'; e.encs = []; e.opp = oi; e.oppName = opp.name; e.oppTier = opp.tier; e.oppLv = opp.lv; e.done = 0;
+  formParty(p);
   p.exp = e;
   team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.view = p.id;

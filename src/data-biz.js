@@ -34,10 +34,10 @@ const BLESS_IDS = Object.keys(BLESSINGS);
 // cap: 늘어나는 짐, spd: 이동속도 배율
 const WAGONS = {
   cart:    { name: '손수레',           cost: 400,   cap: 20,  spd: 0.97, desc: '파티가 번갈아 끄는 작은 수레.' },
-  donkey:  { name: '당나귀 수레',      cost: 1500,  cap: 45,  spd: 1.0,  desc: '고집 센 당나귀가 끄는 수레.' },
-  wagon:   { name: '짐마차',           cost: 4000,  cap: 90,  spd: 1.05, desc: '말 한 마리가 끄는 지붕 달린 마차.' },
-  caravan: { name: '대형 마차',        cost: 9000,  cap: 160, spd: 1.03, desc: '말 두 마리가 끄는 상단용 대형 마차.' },
-  steel:   { name: '드워프 강철 마차', cost: 16000, cap: 260, spd: 1.1,  need: 'dwarves', tier: 2, desc: '드워프 광산 조합이 만든 강철 마차. 산양 두 마리가 끈다.' }
+  donkey:  { name: '당나귀 수레',      cost: 1500,  cap: 45,  spd: 1.0,  coach: 1, desc: '고집 센 당나귀가 끄는 수레. 마부가 있어야 끈다.' },
+  wagon:   { name: '짐마차',           cost: 4000,  cap: 90,  spd: 1.05, coach: 1, desc: '말 한 마리가 끄는 지붕 달린 마차. 마부가 있어야 끈다.' },
+  caravan: { name: '대형 마차',        cost: 9000,  cap: 160, spd: 1.03, coach: 1, desc: '말 두 마리가 끄는 상단용 대형 마차. 마부가 있어야 끈다.' },
+  steel:   { name: '드워프 강철 마차', cost: 16000, cap: 260, spd: 1.1,  need: 'dwarves', tier: 2, coach: 1, desc: '드워프 광산 조합이 만든 강철 마차. 산양 두 마리가 끈다. 마부가 있어야 끈다.' }
 };
 const WAGON_IDS = Object.keys(WAGONS);
 

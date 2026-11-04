@@ -230,18 +230,20 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
 
   // 야영: 모닥불을 둘러앉는다
   if (camping) {
-    const cx = AW / 2, cy = GL + 16, sleep = e.camp.t > 1.5;
-    w.save(); w.translate(cx + 78, GL + 4); drawTentHi(w); w.restore();
+    const cx = AW / 2, cy = GL + 16, sleep = e.camp.t > 1.5, tent = !!e.camp.tent;
+    if (tent) {   // 정찰가의 텐트: 모닥불 대신 큰 텐트를 치고 그 옆에 나란히 눕는다
+      w.save(); w.translate(cx - 62, GL + 2); w.scale(1.7, 1.7); drawTentHi(w); w.restore();
+    } else { w.save(); w.translate(cx + 78, GL + 4); drawTentHi(w); w.restore(); }
     team.forEach((a, i) => {
       const side = i % 2 ? 1 : -1, k = Math.floor(i / 2), zz = sleep && (a.fat || 0) > 4;
-      const x = cx + side * (zz ? 26 + k * 24 : 18 + k * 17), y = cy;
+      const x = tent ? cx - 14 + i * 20 : cx + side * (zz ? 26 + k * 24 : 18 + k * 17), y = tent ? cy + 2 : cy;
       pos['a' + a.id] = [x, y];
       shadowAt(w, x, y, zz ? 14 : 8);
-      w.save(); w.translate(x, y); w.scale(side > 0 ? -1 : 1, 1); drawAdv(w, a, t, { sit: !zz, sleep: zz, z: ZS, side: 1 }); w.restore();
-      if (zz) post.push(g => drawZ(g, x - side * 8, y - 14, t, i * 0.3));
+      w.save(); w.translate(x, y); w.scale(tent ? 1 : side > 0 ? -1 : 1, 1); drawAdv(w, a, t, { sit: !zz, sleep: zz, z: ZS, side: 1 }); w.restore();
+      if (zz) post.push(g => drawZ(g, x + (tent ? 8 : -side * 8), y - 14, t, i * 0.3));
     });
-    post.push(g => fireHi(g, cx, cy, t));
-    lights.push({ x: cx, y: cy - 6, r: 90, c: '#f09040', glow: 1, flick: 1 });
+    if (tent) { const lx = cx - 14 + team.length * 20 + 6; post.push(g => lanternHi(g, lx, cy - 2, t)); lights.push({ x: lx, y: cy - 8, r: 80, c: '#f0c060', glow: 1, flick: 1 }); }
+    else { post.push(g => fireHi(g, cx, cy, t)); lights.push({ x: cx, y: cy - 6, r: 90, c: '#f09040', glow: 1, flick: 1 }); }
     return;
   }
 
@@ -360,6 +362,27 @@ function drawTentHi(ctx) {
 .vccccccccccccccccccccccccccccccccccccv.
 `), 0, 10);
   pxBlit(ctx, pxBake('tentHi', g, { Q: '#e0c88a', C: '#c8a868', c: '#8a6a3a', K: '#2a1d14', v: '#6b4a2e' }, 20, 25));
+}
+// 텐트 옆 등불
+function lanternHi(g, x, y, t) {
+  const gr = pxGrid(8, 14);
+  pxPut(gr, pxRows(`
+...vv...
+..vKKv..
+..KYYK..
+..KYYK..
+..KyyK..
+..vKKv..
+...vv...
+...v....
+...v....
+...v....
+..vvv...
+`), 0, 0);
+  const f = Math.floor(t * 6) % 2;
+  g.save(); g.translate(x, y);
+  pxBlit(g, pxBake('lanternHi' + f, gr, { v: '#5e3c22', K: '#3a2a1a', Y: f ? '#fff0a0' : '#f0c040', y: '#f08a2a' }, 4, 13));
+  g.restore();
 }
 function fireHi(g, x, y, t) {
   g.save(); g.translate(x, y);
@@ -642,7 +665,7 @@ function logEvent(x, e, p) {
   if (x.type === 'spawn') { const fs = e.foes.map(f => f.name || MONS[f.id].name); if (fs.length) add(`${x.boss ? '<i class="lg-c">보스!</i> ' : x.amb ? '<i class="lg-c">기습!</i> ' : ''}${fs.map(foe).join(', ')} 출현`, x.boss ? 'warn' : ''); return; }
   if (x.type === 'clear') return add('전투에서 이겼습니다.', 'dim');
   if (x.type === 'flee') return add('파티가 전투에서 물러났습니다.', 'bad');
-  if (x.type === 'camp') return add('모닥불을 피우고 쉬어 갑니다.', 'dim');
+  if (x.type === 'camp') return add(x.tent ? '텐트를 치고 쉬어 갑니다. 피로가 빨리 풀립니다.' : '모닥불을 피우고 쉬어 갑니다.', 'dim');
   if (x.type === 'wake') return add('다시 길을 나섭니다.', 'dim');
   if (x.type === 'enter') return add(`${esc(FIELDS[e.field].dungeon.name)}에 들어섰습니다.`, 'warn');
   if (x.type === 'turn') return add('상단으로 발길을 돌립니다.', 'dim');
