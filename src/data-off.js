@@ -31,7 +31,7 @@ const ammoUnit = g => (GTYPES[g.base] && GTYPES[g.base].unit) || '개';
 const ammoTag = (g, a) => (isAmmo(g) ? `${fmt(ammoLeft(g, a))}/${fmt(ammoMax(g, a))}${ammoUnit(g)}` : '');
 // 화살을 쓰는 직업: 기본 공격이 사격(act arrow)이고 궁수 계열 또는 정찰가 계열 (음유시인은 음표라서 아님)
 const needsArrows = a => !!a && CLASSES[a.cls].act === 'arrow' && (jobBase(a.cls) === 'archer' || chainOf(a.cls).includes('scout'));
-const hasAmmoSlot = a => GTYPE_IDS.some(b => GTYPES[b].slot === 'ammo' && gearFits(a, { base: b, t: 0 }));
+const hasAmmoSlot = a => needsArrows(a);   // 화살 칸은 활을 쏘는 직업만 (창을 드는 용기병은 없음)
 // 한 번에 n개를 쓴다 (모자라면 false, 아무것도 안 씀)
 function useAmmo(g, a, n = 1) {
   const left = ammoLeft(g, a); if (left < n) return false;

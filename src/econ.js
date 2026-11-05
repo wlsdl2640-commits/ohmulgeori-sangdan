@@ -271,7 +271,7 @@ function equip(aid, gid) {
   if (!a || i < 0) return '장비를 찾을 수 없어요.';
   if (a.status !== 'idle') return '원정 중에는 장비를 바꿀 수 없어요.';
   const g = S.gear[i];
-  if (!gearFits(a, g)) return `${a.name}은(는) 이 장비를 쓸 수 없어요.`;
+  if (!gearFits(a, g) || (GTYPES[g.base].slot === 'ammo' && !needsArrows(a))) return `${a.name}은(는) 이 장비를 쓸 수 없어요.`;
   const slot = GTYPES[g.base].slot;
   S.gear.splice(i, 1);
   if (a.eq[slot]) S.gear.push(a.eq[slot]);
@@ -375,6 +375,7 @@ function autoEquip(aid) {
   let n = 0;
   for (const [slot] of SLOTS) {
     const sc = g => gearScore(g) + mastGearBonus(a, g);   // 숙련한 무기·갑옷을 조금 더 쳐준다
+    if (slot === 'ammo' && !needsArrows(a)) continue;   // 화살 칸은 활을 쏘는 직업만
     const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g)).sort((x, y) => sc(y) - sc(x))[0];
     if (best && sc(best) > (a.eq[slot] ? sc(a.eq[slot]) : -1)) { equip(aid, best.id); n++; }
   }
@@ -984,7 +985,8 @@ function promote(aid, cls) {
   a.skills = [C1.innate, ...a.skills.filter(id => id !== C1.innate)].slice(0, skillSlots(a));
   if (a.post && !isHealer(cls)) a.post = null;
   SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } });
-  if (needsArrows(a) && !a.eq.ammo) { a.eq.ammo = makeGear('arrows', arrowTierOf(a.lv), 0); log(`${a.name}이(가) 활을 쏘게 되어 화살을 받았다.`); }   // 정찰가처럼 새로 활을 쏘는 직업
+  if (needsArrows(a) && !a.eq.ammo) { a.eq.ammo = makeGear('arrows', arrowTierOf(a.lv), 0); log(`${a.name}이(가) 활을 쏘게 되어 화살을 받았다.`); }
+  if (!needsArrows(a) && a.eq.ammo) { S.gear.push(a.eq.ammo); a.eq.ammo = null; }   // 창을 드는 용기병처럼 활을 안 쏘면 화살은 창고로   // 정찰가처럼 새로 활을 쏘는 직업
   if (!a.eq.weapon) a.eq.weapon = makeGear(WEAPON_OF[cls], wasT, 0);   // 길드가 새 직업에 맞는 무기를 준다
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
   clampVitals(a);

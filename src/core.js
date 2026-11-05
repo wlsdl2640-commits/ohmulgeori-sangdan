@@ -105,7 +105,7 @@ function awaken2(aid) {
 }
 function gearSum(a) {
   const s = {};
-  for (const [slot] of SLOTS) { const g = a.eq && a.eq[slot]; if (!g || (isAmmo(g) && ammoLeft(g, a) <= 0)) continue; const gs = gearStats(g); for (const k in gs) s[k] = (s[k] || 0) + gs[k]; }   // 다 쓴 화살·표창은 능력치 없음
+  for (const [slot] of SLOTS) { const g = a.eq && a.eq[slot]; if (!g || (isAmmo(g) && ammoLeft(g, a) <= 0) || (slot === 'ammo' && !needsArrows(a))) continue; const gs = gearStats(g); for (const k in gs) s[k] = (s[k] || 0) + gs[k]; }   // 다 쓴 화살·표창은 능력치 없음
   return s;
 }
 function passives(a) {
@@ -805,9 +805,9 @@ function basicAct(e, a, d, team, dm, foes) {
     leech(e, a, d, v, false);
     comboUp(e, a);   // 연계 중첩 (지속딜)
   }
-  // 표창: 기본 공격마다 하나를 더 던진다 (남은 적 중 가장 약한 적)
+  // 표창: 기본 공격마다 하나를 더 던진다 (남은 적 중 가장 약한 적, 직업 특성은 안 탄다)
   const sh = a.eq && a.eq.off;
-  if (isAmmo(sh) && sh.base === 'shuriken' && useAmmo(sh, a, 1)) { const live = foes.filter(x => x.hp > 0); if (live.length) { const tg = lowestFoe(live), c = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, tg, d.atk * buffMul(e, a.id, 'atk') * BASIC_MULT * SHURI_MUL, c, false, a, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: tg.uid, v, c, k: 'arrow', sid: 'shuri' }, hitTag())); } }
+  if (isAmmo(sh) && sh.base === 'shuriken' && useAmmo(sh, a, 1)) { const live = foes.filter(x => x.hp > 0); if (live.length) { const tg = lowestFoe(live), c = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, tg, d.atk * buffMul(e, a.id, 'atk') * BASIC_MULT * SHURI_MUL, c, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: tg.uid, v, c, k: 'arrow', sid: 'shuri' }, hitTag())); } }
   // 레인저·용기병: 동물 동료가 함께 문다
   if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT, false, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: false, k: 'pet' }, hitTag())); }
 }
