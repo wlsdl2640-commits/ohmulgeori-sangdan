@@ -3,11 +3,12 @@ python3 catalog.py [check]  → 빠진 것 / 남는 것 확인
 python3 catalog.py pages    → sheet_01.png …"""
 import sys, json, pathlib, importlib
 D = pathlib.Path(__file__).parent; sys.path.insert(0, str(D))
-MODS = ['w5', 'w9', 'c_archer', 'c_rogue', 'c_mage', 'c_cleric', 'c_porter', 'c_all', 'c_g1', 'c_g2', 'c_g3', 'c_g4', 'c_g5', 'c_g6']
+MODS = ['w5', 'w9', 'c_archer', 'c_rogue', 'c_mage', 'c_cleric', 'c_porter', 'c_all', 'c_g1', 'c_g2', 'c_g3', 'c_g4', 'c_g5', 'c_g6', 'fix_a', 'fix_b', 'fix_c', 'fix_d', 'fix_e']
 def collect():
     out = {}
     for m in MODS:
-        mod = importlib.import_module(m)
+        try: mod = importlib.import_module(m)
+        except ModuleNotFoundError: continue
         for k, v in mod.ICONS.items():
             out[k] = v
     return out
