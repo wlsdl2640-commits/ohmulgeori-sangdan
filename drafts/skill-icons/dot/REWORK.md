@@ -44,3 +44,8 @@ fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar
 사용자: (pick_arrow_redo_1 에 표시 → data/pick_arrow_redo_1_marked.png) 별똥별 화살 3 · 거신 낙하 3 동그라미, 유성우 X
 - 확정: starfall = var_ar2.starfall_7 (별자리 활), titanfall = var_ar2.titanfall_7 (지평선 거인 그림자) → pick_ar.py, ../final_snap (306개 확정)
 - 유성우 셋째 판: var_ar3.py (awk_archer_9..12, 시트에는 1~4) — 사용자가 고른 것처럼 또렷한 그림자 + 밝은 빛줄기. pick_arrow_redo2_1.png
+
+# 7단계 (2026-11-06 00:08)
+사용자: "4번의 배경에 별똥별 화살 속 이미지를 결합해서 시안 4개 제작"
+- 배경 = 유성우 셋째 판 4번(오로라 + 눈 덮인 숲, 오로라는 반투명으로 손봄), 그림 = 별똥별 화살(별자리 활 + 금 화살) 쪽
+- var_ar4.py (awk_archer_13..16, 시트에는 1~4): 1 별자리 활 → 금 화살 / 2 별자리 활이 쏜 화살이 숲으로 쏟아짐 / 3 큰 금빛 별똥별 화살 / 4 별 촉 화살 셋. pick_arrow_redo3_1.png
