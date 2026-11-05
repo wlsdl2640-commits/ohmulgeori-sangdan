@@ -188,7 +188,7 @@ function arenaBuy(kind, id) {
 function bmRefresh(k) {
   const B = S.under.bm, t0 = arenaTier();
   B.day = k; B.stock = [];
-  for (let i = 0; i < 3; i++) { const t = Math.max(0, t0 - (rnd() < 0.4 ? 1 : 0)), q = pickOne([2, 2, 3, 3, 4]); const g = makeGear(pickOne(GTYPE_IDS), t, q); B.stock.push({ kind: 'gear', g, price: Math.round(gearValue(g) * 3 / 10) * 10 }); }
+  for (let i = 0; i < 3; i++) { const t = Math.max(0, t0 - (rnd() < 0.4 ? 1 : 0)), q = pickOne([2, 2, 3, 3, 4]); const g = makeGear(dropBase(), t, q); B.stock.push({ kind: 'gear', g, price: Math.round(gearValue(g) * 3 / 10) * 10 }); }
   const kb = KINGDOM_IDS.flatMap(x => KINGDOMS[x].books || []);
   for (let i = 0; i < 2; i++) { const id = rnd() < 0.2 ? pickOne(kb) : pickOne(BOOK_IDS); B.stock.push({ kind: 'item', it: 'book_' + id, price: Math.round(ITEMS['book_' + id].v * 2.5 / 10) * 10 }); }
   const r = runeId(pickOne(RUNE_IDS), rnd() < 0.3 ? 1 : 0); if (ITEMS[r]) B.stock.push({ kind: 'item', it: r, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
@@ -206,7 +206,7 @@ function bmBuy(i) {
 /* ───────── 경매장: 날마다 한 점, 새벽 4시에 낙찰 ───────── */
 function auRefresh(k) {
   const A = S.under.au, t = Math.min(GTIERS.length - 1, arenaTier() + (rnd() < 0.3 ? 1 : 0)), q = rnd() < 0.6 ? 5 : 6;
-  const g = makeGear(pickOne(GTYPE_IDS), t, q), start = Math.round(gearValue(g) * 4 / 100) * 100;
+  const g = makeGear(dropBase(), t, q), start = Math.round(gearValue(g) * 4 / 100) * 100;
   A.day = k; A.g = g; A.start = start; A.price = start; A.top = null; A.held = 0; A.bids = 0;
   A.npc = pickOne(ARENA_NAMES); A.npcMax = Math.round(start * (2.2 + rnd() * 1.6) / 100) * 100;
   A.will = 0.8; A.out = 0;   // 되칠 마음: 부를 때마다 줄고, 한 번 물러서면 끝

@@ -156,7 +156,7 @@ function smithyBox() {
   const chips = GTIERS.map((T, i) => `<button type="button" class="btn sm${i === t ? ' on' : ''}" data-act="smithT" data-i="${i}"${S.bld.smithy >= T.smith ? '' : ' disabled'}>${T.name}</button>`).join('');
   const qchips = [0, 3, 4, 5, 6].map(k => `<button type="button" class="btn sm q${k}${k === q ? ' on' : ''}" data-act="smithQ" data-q="${k}">${k ? QUALITY[k].name : '일반 제작'}</button>`).join('');
   const B = q >= 3 ? BOSS_RECIPE[q] : null;
-  const rows = GTYPE_IDS.map(b => {
+  const rows = CRAFT_IDS.map(b => {
     const g = { base: b, t, q }, ok = canSmith(b, t, q);
     return `<div class="li">${gImg(g, 'ico q-b q' + q)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${clsList(GTYPES[b].cls)} · Lv${GTIERS[t].lv}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" title="${esc(buyAmmoWhy(b, t))}"${buyAmmoWhy(b, t) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t))}G</button>` : ''}</div></div>`;
   }).join('');
@@ -457,8 +457,8 @@ function advAct(aid, b) {
 // 원정 카드: 화살·표창 남은 수 (궁수는 0이면 빨갛게)
 function ammoBrief(a) {
   const out = [];
-  if (needsArrows(a)) { const g = a.eq.ammo, n = g ? ammoLeft(g, a) : 0; out.push(`<span class="${n ? (n < ammoMax(g, a) * 0.2 ? 'gold-t' : '') : 'red-t'}">화살 ${fmt(n)}발</span>`); }
-  const sh = a.eq && a.eq.off; if (isAmmo(sh)) out.push(`표창 ${fmt(ammoLeft(sh, a))}개`);
+  if (needsArrows(a)) { const g = a.eq.ammo, n = g ? ammoLeft(g, a) : 0; out.push(`<span class="${n ? (n < ammoMax(g, a) * 0.2 ? 'gold-t' : '') : 'red-t'}">${g && GTYPES[g.base].el ? GTYPES[g.base].name : '화살'} ${fmt(n)}발</span>`); }
+  const sh = a.eq && a.eq.off; if (isAmmo(sh)) { const n = ammoLeft(sh, a); out.push(`<span class="${n ? (n < ammoMax(sh, a) * 0.2 ? 'gold-t' : '') : 'red-t'}">표창 ${fmt(n)}개</span>`); }   // 빌드 39: 적으면 금색, 0이면 빨강
   return out.length ? ' · ' + out.join(' · ') : '';
 }
 function memberRow(a, btns) {

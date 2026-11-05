@@ -139,7 +139,7 @@ function elemMul(el, f, a, s) {
 // 여러 속성 스킬: 그 적에게 가장 잘 듣는 속성
 function skillEl(s, f, a) {
   if (!s) return 'none';
-  if (!s.els) return elOf(s);
+  if (!s.els) return s.el || (a && typeof arrowSkill === 'function' && arrowSkill(s) && arrowEl(a)) || 'none';   // 속성 없는 화살 스킬은 끼운 화살의 속성 (빌드 39)
   let best = s.els[0], bm = -1;
   for (const el of s.els) { const m = elemMul(el, f, a, s); if (m > bm) { bm = m; best = el; } }
   return best;

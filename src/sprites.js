@@ -61,7 +61,29 @@ const ICON_PX = {
   core:    ['...kkkk...', '..kbbbbk..', '.kb#ll#bk.', 'kb#lll##bk', 'kb######bk', 'kb##dd##bk', '.kb####bk.', '..kbbbbk..', '...kkkk...', '..........'],
   soul:    ['....k.....', '...k#k....', '...k#lk...', '..k#ll#k..', '..k#ll#k..', '.k##l###k.', '.k#l##l#k.', '.k##ll##k.', '..kdddk...', '...kkk....']
 };
+// 부장비 그림을 10×10으로 (진열대·손님 손): 2×2칸마다 많은 색(테두리보다 안쪽 색), 칠한 칸 둘레에 다시 테두리
+const OFF_MINI = {};
+function offMini(base, t) {
+  const k = base + ':' + offLook(t); if (OFF_MINI[k] !== undefined) return OFF_MINI[k];
+  const cells = typeof OFFICON !== 'undefined' && OFFICON[base] ? skiCells('o:' + k) : null;
+  if (!cells) return (OFF_MINI[k] = null);
+  const lum = h => { const n = parseInt(h.slice(1), 16); return 0.3 * (n >> 16) + 0.59 * ((n >> 8) & 255) + 0.11 * (n & 255); };
+  const g = Array.from({ length: 10 }, () => new Array(10).fill(null));
+  for (let y = 0; y < 10; y++) for (let x = 0; x < 8; x++) {
+    const cs = [0, 1, 16, 17].map(o => cells[2 * y * 16 + 2 * x + o]).filter(c => c !== '#ff00ff');
+    if (cs.length < 2) continue;
+    const inner = cs.filter(c => lum(c) > 45), pool = inner.length ? inner : cs, cnt = {};
+    pool.forEach(c => { cnt[c] = (cnt[c] || 0) + 1; });
+    g[y][x + 1] = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a] || lum(b) - lum(a))[0];
+  }
+  const out = g.map(r => r.slice());
+  for (let y = 0; y < 10; y++) for (let x = 0; x < 10; x++) if (!g[y][x] && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => { const v = g[y + dy] && g[y + dy][x + dx]; return v && v !== '#1a1414'; })) out[y][x] = '#1a1414';
+  return (OFF_MINI[k] = out);
+}
+// 진열대에 놓인 장비 키('g:종류:단계')의 아이콘
+const gearKeyIcon = key => { const [, b, t] = key.split(':'); return { icon: GTYPES[b].icon, c: TIER_COLORS[+t], off: typeof OFFICON !== 'undefined' && OFFICON[b] ? b : null, t: +t }; };
 function drawIcon(ctx, id, ox = 0, oy = 0) {
+  if (id && typeof id === 'object' && id.off) { const m = offMini(id.off, id.t); if (m) { m.forEach((r, y) => r.forEach((c, x) => { if (c) R(ctx, ox + x, oy + y, 1, 1, c); })); return; } }
   const it = typeof id === 'object' ? id : ITEMS[id]; if (!it) return;
   const pat = ICON_PX[it.icon] || ICON_PX.gem;
   const map = { '#': it.c, l: shade(it.c, 0.45), d: shade(it.c, -0.4), k: '#1a1410', r: '#c0392b', b: '#c9a04a', w: '#8a5a32', p: '#e8dcb8', s: '#e8e2d0', g: '#4a4652', G: '#6e6a78' };

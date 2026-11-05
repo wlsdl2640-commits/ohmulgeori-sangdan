@@ -24,7 +24,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -376,7 +376,7 @@ function autoEquip(aid) {
   for (const [slot] of SLOTS) {
     const sc = g => gearScore(g) + mastGearBonus(a, g);   // 숙련한 무기·갑옷을 조금 더 쳐준다
     if (slot === 'ammo' && !needsArrows(a)) continue;   // 화살 칸은 활을 쏘는 직업만
-    const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g)).sort((x, y) => sc(y) - sc(x))[0];
+    const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g) && !GTYPES[g.base].el).sort((x, y) => sc(y) - sc(x))[0];   // 속성 화살은 출발할 때 고른다
     if (best && sc(best) > (a.eq[slot] ? sc(a.eq[slot]) : -1)) { equip(aid, best.id); n++; }
   }
   return n ? '' : '더 좋은 장비가 없어요.';
@@ -782,7 +782,7 @@ function genReq() {
   const client = special ? pickOne(SPECIAL_CLIENTS) : pickOne(CLIENTS);
   const mult = (special ? 2.3 : 1) * (1 + 0.06 * (S.rank || 0));
   if (S.bld.smithy && rnd() < 0.3) {
-    const t = ri(0, maxGearTier()), base = pickOne(GTYPE_IDS), v = gearValue({ base, t, q: 0 });
+    const t = ri(0, maxGearTier()), base = dropBase(), v = gearValue({ base, t, q: 0 });
     S.reqs.push({ id: nid(), client, gear: `${base}:${t}`, qty: 1, reward: Math.round(v * (1.8 + rnd() * 0.5) * mult / 5) * 5, fame: Math.round((2 + t) * (special ? 3 : 1)), due: today() + ri(5, 9), special });
     return;
   }
@@ -1070,7 +1070,7 @@ function raidReward(rec, i, half) {
   got.push(g$(gold), `명성 +${fame}`);
   const np = Math.max(1, Math.round(W.part * k)); addTo(S.inv, 'rp_' + rec.id, np); got.push(`${ITEMS['rp_' + rec.id].name} ${np}개`);
   if (W.heart && !half) { addTo(S.inv, 'rh_' + rec.id, W.heart); got.push(ITEMS['rh_' + rec.id].name); }
-  if (W.gear) { const q = Math.max(2, W.gear - (half ? 1 : 0)), g = makeGear(pickOne(GTYPE_IDS), raidTier(R.lv), q); S.gear.push(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }
+  if (W.gear) { const q = Math.max(2, W.gear - (half ? 1 : 0)), g = makeGear(dropBase(), raidTier(R.lv), q); S.gear.push(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }
   const rl = W.rune - (half ? 1 : 0);
   if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); addTo(S.inv, id, 1); got.push(ITEMS[id].name); }
   // 특성 돌: 개화석은 등수별 개수(몬스터가 떠나면 절반), 마법사의 돌은 등수별 낮은 확률
@@ -1253,7 +1253,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 9;   // 지금 저장 판 (migrate9까지 옮긴 상태)
+const SAVE_V = 10;   // 지금 저장 판 (migrate10까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1270,7 +1270,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); notes38(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); notes38(); notes39(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1303,6 +1303,8 @@ function loadFrom(v) {
     notes37();
     if (old < 9) { migrate9(); saveGame(); }
     notes38();
+    if (old < 10) { migrate10(); saveGame(); }
+    notes39();
     return true;
   } catch (_) { return false; }
 }
@@ -1348,6 +1350,26 @@ function migrate9() {
   S.v = 9;
   if (n) log(`부장비 칸이 생겼다. 활을 쏘는 모험가 ${n}명에게 화살을 나눠 주었다.`);
 }
+// 빌드 39: 방패가 네 종류(원형·히터·카이트·탑). 옛 방패는 그때 보이던 모양 그대로(단계 모습 → 종류)로 바꾸고, 방패가 없는 전사·마부 계열에게 방패를 준다
+function migrate10() {
+  const KIND = ['buckler', 'shield', 'kite', 'tower'], kind = t => KIND[offLook(t)];
+  const conv = g => { if (g && g.base === 'shield') g.base = kind(g.t); };
+  (S.gear || []).forEach(conv);
+  const all = [...(S.advs || []), ...(S.cands || [])];
+  all.forEach(a => a && a.eq && conv(a.eq.off));
+  (S.parties || []).forEach(q => { if (q.exp && q.exp.gbag) q.exp.gbag.forEach(conv); });
+  ((S.shop && S.shop.slots) || []).forEach(sl => { if (sl && typeof sl.item === 'string' && sl.item.startsWith('g:shield:')) { const t = +sl.item.split(':')[2]; sl.item = `g:${kind(t)}:${t}`; } });
+  (S.reqs || []).forEach(r => { if (r.gear && r.gear.startsWith('shield:')) { const t = +r.gear.split(':')[1]; r.gear = `${kind(t)}:${t}`; } });
+  let n = 0;
+  all.forEach(a => {
+    if (!a || !a.eq || a.eq.off || !CLASSES[a.cls] || !gearFits(a, { base: 'shield', t: 0 })) return;
+    const t = a.eq.weapon ? Math.min(a.eq.weapon.t, arrowTierOf(a.lv)) : arrowTierOf(a.lv);
+    a.eq.off = makeGear(shieldOf(a.cls), t, 0); if ((S.advs || []).includes(a)) n++;
+  });
+  S.v = 10;
+  if (n) log(`방패가 네 종류(원형·히터·카이트·탑)가 되었다. 방패가 없던 전사·마부 계열 ${n}명에게 방패를 나눠 주었다.`);
+}
+function notes39() { if (!S.flags.v39) { S.flags.v39 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '부장비 그림 · 방패 종류 · 균형', body: STORY.v39 }); } }
 function notes38() { if (!S.flags.v38) { S.flags.v38 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '부장비 · 화살', body: STORY.v38 }); } }
 function migrate8() {
   let moved = 0;
