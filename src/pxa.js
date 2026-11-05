@@ -1050,9 +1050,9 @@ NZzGzzN
 };
 /* 부장비를 그림에 (빌드 39): 끼운 부장비가 보인다. 그림은 뭉툭 칸(작업판 2×2) 단위로 적어 두 배로 키워 짝수 칸에 놓는다 → 반으로 구워도 그대로.
    숫자 글자 = 부장비 색(1~5) · 화살 깃(7·8) · 화살통(9·0). 방패: 단계 모양(원형 → 히터 → 카이트 → 탑) · 마법서: 허리춤 · 성표: 손 · 표창: 허리춤 · 등불: 손 · 화살통: 등(깃은 화살이 있을 때만) */
-const PX_OFF_OPT = { shield: 'A', tome: 'B', relic: 'A', shuriken: 'A' };   // 시안에서 고른 것 (A·B)
+const PX_OFF_OPT = { shield: 'A', tome: 'A', relic: 'B', shuriken: 'B' };   // 시안에서 고른 것: 마법서 떠 있음 · 성표 허리 · 표창 손 (빌드 39)
 const PX_OFFPAL = {
-  shield: [{ 1: '#5d3a1a', 2: '#b8823e', 3: '#8c632f', 4: '#c8ccd4', 5: '#e0b070' }, { 1: '#c1c9d4', 2: '#e84848', 3: '#b03737', 4: '#f0f9ff', 5: '#ffffff' },
+  shield: [{ 1: '#8a8e98', 2: '#b8823e', 3: '#8c632f', 4: '#c8ccd4', 5: '#e0b070' }, { 1: '#eef2f8', 2: '#a2aab8', 3: '#7e8696', 4: '#e84848', 5: '#ffffff' },
            { 1: '#c2a438', 2: '#4a8aff', 3: '#3869c2', 4: '#ffff5c', 5: '#9ac4ff' }, { 1: '#926915', 2: '#f0e8d0', 3: '#b8a684', 4: '#d89a1c', 5: '#ffffff' }],
   quiver: [{ 9: '#b87a48', 0: '#7a4a2a' }, { 9: '#8a6a3a', 0: '#5a4422' }, { 9: '#4a3a5a', 0: '#2e2238' }, { 9: '#2a4a7a', 0: '#1a2e50' }],
   arrows: [{ 7: '#ffffff', 8: '#d8d8d8' }, { 7: '#ffffff', 8: '#ffeeab' }, { 7: '#ffd0c8', 8: '#ff6a5a' }, { 7: '#ffffff', 8: '#9ad8ff' }],
@@ -1109,9 +1109,9 @@ const PX_OFFSHAPE = {
 .2.
 .1.`,
   relic2: `
-2.2
-.3.
-2.2
+222
+232
+222
 .1.`,
   relic3: `
 .3.
@@ -1157,18 +1157,21 @@ const PX_OFFSHAPE = {
 };
 // 놓는 곳 (뭉툭 칸 좌표, 앞모습 몸 블록 왼쪽 위 = (6, 17)) · under = 몸 뒤에 · float = 떠서 흔들린다
 const PX_OFFAT = {
-  front: { shield: { round: [3, 18], heater: [3, 18], kite: [3, 18], tower: [2, 17] }, tome: { A: [0, 15, 'float'], B: [3, 19] }, relic: { A: [4, 17], B: [5, 21] },
+  front: { shield: { round: [3, 18], heater: [3, 18], kite: [3, 18], tower: [2, 17] }, tome: { A: [0, 15, 'float'], B: [3, 19] }, relic: { A: [4, 17], B: [3, 20, 'hang'] },
            shuriken: { A: [5, 21], B: [3, 19] }, lantern: { A: [3, 20] } },
-  side:  { shield: { round: [2, 17], heater: [2, 17], kite: [2, 17], tower: [1, 16] }, tome: { A: [1, 14, 'float'], B: [4, 20, 'under'] }, relic: { A: [4, 18, 'under'], B: [9, 21] },
+  side:  { shield: { round: [2, 17], heater: [2, 17], kite: [2, 17], tower: [1, 16] }, tome: { A: [1, 14, 'float'], B: [4, 20, 'under'] }, relic: { A: [4, 18, 'under'], B: [10, 20, 'hang'] },
            shuriken: { A: [9, 21], B: [4, 19, 'under'] }, lantern: { A: [4, 20, 'under'] } }
 };
+// 방패 종류(빌드 39) → 그림 모양. 색은 단계 모습 (PX_OFFPAL.shield)
+const PX_SHIELD_SHAPE = { buckler: 'round', shield: 'heater', kite: 'kite', tower: 'tower' };
+const pxOffBase = b => (PX_SHIELD_SHAPE[b] ? 'shield' : b);
 const pxUp = rows => rows.flatMap(r => { const d = [...r].map(c => c + c).join(''); return [d, d]; });
 const pxOffRows = k => pxUp(pxRows(PX_OFFSHAPE[k]));
 // 그릴 부장비: { base, look, shape }
 function pxOffOf(a, L) {
-  const g = a.eq && a.eq.off; if (!g || !PX_OFFPAL[g.base] || g.base === 'quiver') return null;
-  const look = offLook(g.t), b = g.base;
-  const shape = b === 'shield' ? (PX_OFF_OPT.shield === 'B' && L && L.shield ? L.shield : ['round', 'heater', 'kite', 'tower'][look])
+  const g = a.eq && a.eq.off, b = g && pxOffBase(g.base); if (!g || !PX_OFFPAL[b] || b === 'quiver') return null;
+  const look = offLook(g.t);
+  const shape = b === 'shield' ? PX_SHIELD_SHAPE[g.base]
     : b === 'tome' ? 'tome' : b === 'relic' ? 'relic' + look : b === 'shuriken' ? (look >= 2 ? 'shuri2' : 'shuri') : b === 'lantern' ? 'lantern' : null;
   return shape ? { base: b, look, shape } : null;
 }
@@ -1192,6 +1195,7 @@ function pxOffPut(g, O, pose, fr, view) {
   const v = O.base === 'shield' ? T[O.shape] : T[PX_OFF_OPT[O.base] || 'A'] || T.A; if (!v) return;
   const [fx, fy0, how] = v, bob = (pose === 'idle' && fr % 2) || (pose === 'walk' && fr % 2 === 0);
   const fy = fy0 + (how === 'float' && fr % 2 ? 1 : 0), dy = bob && how !== 'float' ? 1 : 0;
+  if (how === 'hang') pxPut(g, ['11', '11'], fx * 2 + 2, fy * 2 - 2 + dy);   // 허리띠에 건 사슬
   (how === 'under' || (view === 'side' && O.base === 'shield') ? pxUnder : pxPut)(g, pxOffRows(O.shape), fx * 2, fy * 2 + dy);
   if (how === 'float') pxPut(g, ['33', '33'], fx * 2 + (fr % 2 ? 6 : 0), fy * 2 - 2);
 }
@@ -1199,7 +1203,7 @@ function pxOffPut(g, O, pose, fr, view) {
 function pxOffPal(a) {
   const p = {}, o = a.eq && a.eq.off, ar = a.eq && a.eq.ammo;
   Object.assign(p, PX_OFFPAL.quiver[o && o.base === 'quiver' ? offLook(o.t) : 0]);
-  if (o && PX_OFFPAL[o.base] && o.base !== 'quiver') Object.assign(p, PX_OFFPAL[o.base][offLook(o.t)]);
+  if (o && PX_OFFPAL[pxOffBase(o.base)] && o.base !== 'quiver') Object.assign(p, PX_OFFPAL[pxOffBase(o.base)][offLook(o.t)]);
   if (ar && ar.base === 'arrows') Object.assign(p, PX_OFFPAL.arrows[offLook(ar.t)]); else Object.assign(p, PX_OFFPAL.arrows[0]);
   return p;
 }
@@ -1471,7 +1475,7 @@ function pxAdvGrid(a, pose, fr, Lx) {
   // 팔 자세
   if (arm !== 'rest') { const A = PX_ARM[arm]; pxPut(g, pxTone(pxRows(A.g), L.body === 'plate' || L.body === 'chain' ? { C: 'M', c: 'N' } : L.body === 'bare' ? { C: 'S', c: 's' } : {}), BX + A.x, BY + A.y + sitDrop); }
   // 방패 · 활 · 두 번째 칼
-  if (L.shield && !sit && !(a.eq && a.eq.off && a.eq.off.base === 'shield')) { const Sd = PX_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), BX + Sd.x, BY + 5 + Sd.y); }
+  if (L.shield && !sit && !(a.eq && a.eq.off && PX_SHIELD_SHAPE[a.eq.off.base])) { const Sd = PX_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), BX + Sd.x, BY + 5 + Sd.y); }
   if (bow) { const B = PX_BOW[wk]; pxPut(g, pxRows(atk === 0 ? B.draw : B.g), BX + B.x, BY + B.y + sitDrop); }
   else if (wk === 'lute') { const W = pxRows(PX_WPN.lute), [ax, ay] = pxFind(W, '@'); pxPut(g, W, BX + 9 - ax, BY + 4 - ay + (atk === 1 ? 1 : 0) + sitDrop, 'K'); if (atk === 0) pxPut(g, ['SS', 'Ss'], BX + 10, BY + 3 + sitDrop); }
   else if (!sit) {

@@ -855,7 +855,7 @@ function pxsAdvGrid(a, pose, fr, Lx) {
   const armTone = L.body === 'plate' || L.body === 'chain' ? { C: 'M', c: 'N' } : L.body === 'bare' ? { C: 'S', c: 's' } : {};
   // 뒤: 망토·화살통·짐·방패·두 번째 칼
   for (const e of ex) { const E = PXS_EX[e]; if (E && E.under) pxPut(g, e === 'cape' ? pxTone(pxRows(E.g), PX_CAPE_KEYS) : pxRows(E.g), SX + E.x, SY + E.y + sd); }
-  if (L.shield && !sit && !(a.eq && a.eq.off && a.eq.off.base === 'shield')) { const Sd = PXS_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), SX + Sd.x, SY + 3 + Sd.y); }
+  if (L.shield && !sit && !(a.eq && a.eq.off && PX_SHIELD_SHAPE[a.eq.off.base])) { const Sd = PXS_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), SX + Sd.x, SY + 3 + Sd.y); }
   if (L.twin && !sit) { const D = pxRows(PX_WPN[wk === 'sword' || wk === 'great' ? 'sword' : 'dagger']), [bx, by] = pxFind(D, '@'); pxPut(g, D, SX + PXS_HAND.back[0] - bx, SY + PXS_HAND.back[1] - by, 'v'); }
   // 몸
   const body = pxRows(PXS_BODY[L.body] || PXS_BODY.tunic);

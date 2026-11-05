@@ -151,6 +151,17 @@
 - 부장비 그림은 시안 단계(`dot/offhand.py` → `offhand_sheet.png`, 7종 × 단계 4모습: 견습·숲지기 / 강철·폭풍 / 서리·사막왕 / 그 위). 고르기 전까지 게임은 임시 아이템 그림(GTYPES icon: crest·horn·book·amulet·blade·potion·feather).
 - 측정(`scratchpad/v38/ammosim.py`): 단계에 맞는 필드 원정 한 번(싸움 35~60번)에 화살 50~150발 → 강철 350발이면 긴 원정·화살 스킬 많이 쓰면 바닥난다. 시험: `v38/logic38.py`(칸·담는 수·소비·0발·표창·충전·사기·세트·전직·migrate9·화면), `v38/ui38.py`(실제 빌드). 전체 `scratchpad/run38.sh`.
 
+## 부장비 그림·방패 종류·균형·충전 값 (빌드 39)
+- 그림: pxa.js `PX_OFF_OPT`(고른 시안: 마법서 A 떠 있음 · 성표 B 허리 · 표창 B 손; 방패는 종류가 모양을 정한다) · `PX_OFFPAL`(부장비마다 단계 4모습 색; 숫자 글자 1~5 부장비, 7·8 화살 깃, 9·0 화살통) · `PX_OFFSHAPE`(뭉툭 칸 단위 그림 → `pxUp`으로 두 배, 짝수 칸에) · `PX_OFFAT`(앞/옆 놓는 곳, under·float·hang) · `PX_SHIELD_SHAPE`(buckler round · shield heater · kite · tower). `pxAdvGrid`/`pxsAdvGrid`는 `pxOffLook`으로 직업 그림의 화살통·방패를 빼고, 숨쉬기 뒤에 `pxQuiverPut`(등 뒤 pxUnder, 0발이면 깃 지움)·`pxOffPut`. 그림 열쇠에 `pxOffKey`, 팔레트에 `pxOffPal`을 더한다. 직업 방패(L.shield)는 더는 그리지 않는다 — 끼운 방패만.
+- 표창 효과: view.js `SHURI_FR`(0·22.5·45·67.5° 별, 테두리) · `SHURI_C`(단계 색) · `SHURI_TRAIL`(잔상, B안) — ev 'hit' sid 'shuri'.
+- 방패 종류: data-off.js `SHIELDS = ['buckler','shield','kite','tower']`(능력치 같음, shield 이름은 「히터 방패」). GTYPE_IDS(떨어뜨리는 표)에는 shield 하나만, 떨어질 때 `dropBase()`가 종류를 고른다(core·econ·under의 모든 장비 떨어뜨리기·의뢰). 대장간 목록은 `CRAFT_IDS`(방패 네 종류 + ELEM_ARROWS). `MASTERY.shield.w = SHIELDS`, `wn: '방패'`(mastCond 글). makeAdv: 방패를 쓸 수 있으면 `shieldOf(cls)` 방패(arrowTierOf(lv) 단계). SAVE_V 10 `migrate10`: 옛 'shield'를 단계 모습대로 종류로(S.gear·eq.off·후보·원정 gbag·진열대 칸 키·장비 의뢰), 방패 없는 전사·마부 계열에게 방패.
+- 균형(시뮬레이션 `scratchpad/v39/bal/bal.py` — A 숙련·부장비 없음 / B 숙련 / C 숙련+부장비, 90초×6번, 계산 유효 HP): SHURI_MUL 0.3, 표창 atk 0.8, 화살 atk 1.2, 화살통 atk 1.0, 방패 def 1.8·block 0.003, 방패술 fx 4/7/10%·2/4/6%p, 성표 matk 1.4.
+- 충전 값: `ammoPrice` = 장비 값 × 4.5(빌드 38의 3배), `ammoUnitPrice(g)` = 사는 값 ÷ 담는 수. `refillAmmo(a, free)`가 쓴 만큼 S.gold에서 빼고(모자라면 낼 수 있는 만큼만, `{n, cost, short}`), `refillParty(team, 이름)`이 한 줄 로그. arrive(판 뒤)·wipe에서 refillParty, 출발할 때(startExp·events·under)는 refillAmmo(보통 0). 측정 `scratchpad/v39/ammocost.py`: 원정 수입의 4~5%(궁수+도적 파티).
+- 표창이 0이면 `noAmmo(e, a, 'shuri')` → 「표창 없음!」(ev noammo k 'shuri'). 원정 카드 ammoBrief는 적으면 금색·0이면 빨강.
+- 속성 화살(불·얼음·번개): 만들어 두고 **꺼 둠** — data-off.js `ELEM_ON = false`(켜면 GTYPES·대장간·드롭 `elemArrowOf`·출발할 때 `pickArrows`), 그림은 `dot/elemarrows.py`, export_v39.py `EL_ON`. 2차 직업 전용 부장비는 시안(`dot/joboff.py`)만 — 보류.
+- 장비 그림: `src/data-gearicon.js`(officon 뒤) `GEARICON`(19종 × 4모습)을 `OFFICON`에 합친다 → `offIconURL`·`gearIconURL`·`offMini`(진열대 10×10)·`gearKeyIcon`이 모든 장비에 쓴다. 다시 뽑기: 시안 저장소 `dot/export_v39.py`(offhand.py·shields.py·gear.py; 확정 그림 final_snap_off).
+- 시험: `scratchpad/v39/logic39.py`(그림 728장·방패 그림·깃·표창 효과·방패 종류(처음 받기·떨어뜨리기 비율·방패술)·균형 수치·충전 값(쓴 만큼·모자람·공짜·파티 로그)·표창 없음·속성 화살 꺼짐·migrate10·그림), `v39/preview39.py`(전투·장비 탭·대장간·진열대 화면), `v39/spr/kinds.py`(방패 종류 판).
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

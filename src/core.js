@@ -47,6 +47,7 @@ function makeAdv(o = {}) {
   };
   growStats(a, lv - 1);
   if (needsArrows(a)) a.eq.ammo = makeGear('arrows', arrowTierOf(lv), 0);   // 화살을 쓰는 직업은 레벨에 맞는 화살을 들고 온다
+  if (gearFits(a, { base: 'shield', t: 0 })) a.eq.off = makeGear(shieldOf(a.cls), arrowTierOf(lv), 0);   // 전사·마부 계열은 방패를 들고 온다 (빌드 39)
   const d = derive(a);
   a.hp = d.maxHp; a.mp = d.maxMp;
   return a;
@@ -529,7 +530,7 @@ function treasureChest(p, e) {
   S.gold += gold; S.stats.earned += gold; e.chests = (e.chests || 0) + 1;
   const got = [g$(gold)];
   addTo(e.bag, 'gold_dust', 1); got.push('황금 가루');
-  if (rnd() < 0.35) { const g = makeGear(pickOne(GTYPE_IDS), Math.min(GTIERS.length - 1, raidTier(L)), Math.max(1, rollQuality(0.3))); e.gbag.push(g); got.push(`${QUALITY[g.q].name} 장비`); }
+  if (rnd() < 0.35) { const g = makeGear(dropBase(), Math.min(GTIERS.length - 1, raidTier(L)), Math.max(1, rollQuality(0.3))); e.gbag.push(g); got.push(`${QUALITY[g.q].name} 장비`); }
   if (rnd() < 0.3) { const b = randomBook(Math.max(1, L - 20), L + 5); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); } }
   ev(e, 'chest', {});
   log(`${p.name}이(가) 보물고 ${e.stage}층의 상자를 열었다: ${got.join(', ')}`, 'good');
@@ -775,9 +776,10 @@ function cast(e, a, d, id, team, dm, foes) {
   }
 }
 // 화살이 떨어졌다: 원정마다 한 번 알린다
-function noAmmo(e, a) {   // 기록은 원정마다 한 번, 전투 화면 말풍선은 8초마다
-  e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[a.id]) { e.noAmmo[a.id] = 1; log(`${a.name}의 화살이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
-  e.noAmmoT = e.noAmmoT || {}; const last = e.noAmmoT[a.id]; if (last == null || S.t - last >= 8) { e.noAmmoT[a.id] = S.t; ev(e, 'noammo', { s: a.id }); }
+function noAmmo(e, a, k) {   // 기록은 원정마다 한 번, 전투 화면 말풍선은 8초마다 · k 'shuri'면 표창
+  const key = a.id + (k || ''), nm = k === 'shuri' ? '표창' : '화살';
+  e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[key]) { e.noAmmo[key] = 1; log(`${a.name}의 ${nm}이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
+  e.noAmmoT = e.noAmmoT || {}; const last = e.noAmmoT[key]; if (last == null || S.t - last >= 8) { e.noAmmoT[key] = S.t; ev(e, 'noammo', k ? { s: a.id, k } : { s: a.id }); }
 }
 function basicAct(e, a, d, team, dm, foes) {
   const act0 = CLASSES[a.cls].act, act = act0 === 'melee' && shootsArrows(a) ? 'arrow' : act0, T = TR(a), st = e.sta && e.sta[a.id];   // 용기병이 활을 들면 사격
@@ -813,7 +815,8 @@ function basicAct(e, a, d, team, dm, foes) {
   }
   // 표창: 기본 공격마다 하나를 더 던진다 (남은 적 중 가장 약한 적, 직업 특성은 안 탄다)
   const sh = a.eq && a.eq.off;
-  if (isAmmo(sh) && sh.base === 'shuriken' && useAmmo(sh, a, 1)) { const live = foes.filter(x => x.hp > 0); if (live.length) { const tg = lowestFoe(live), c = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, tg, d.atk * buffMul(e, a.id, 'atk') * BASIC_MULT * SHURI_MUL, c, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: tg.uid, v, c, k: 'arrow', sid: 'shuri' }, hitTag())); } }
+  if (isAmmo(sh) && sh.base === 'shuriken' && !ammoLeft(sh, a)) noAmmo(e, a, 'shuri');
+  else if (isAmmo(sh) && sh.base === 'shuriken' && useAmmo(sh, a, 1)) { const live = foes.filter(x => x.hp > 0); if (live.length) { const tg = lowestFoe(live), c = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, tg, d.atk * buffMul(e, a.id, 'atk') * BASIC_MULT * SHURI_MUL, c, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: tg.uid, v, c, k: 'arrow', sid: 'shuri' }, hitTag())); } }
   // 레인저·용기병: 동물 동료가 함께 문다
   if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT, false, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: false, k: 'pet' }, hitTag())); }
 }
@@ -970,7 +973,7 @@ function kill(p, e, f) {
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
   const gt = F.treasure ? Math.min(GTIERS.length - 1, raidTier(e.lvo || 10)) : F.tier;   // 보물 던전은 파티 레벨에 맞는 단계
-  if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), gt, rollQuality(f.boss ? 0.25 : 0)));
+  if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(dropBase(), gt, rollQuality(f.boss ? 0.25 : 0)));
   { const ea = elemArrowOf(f.id); if (ea && rnd() < (f.boss || f.fb ? 0.3 : 0.012) * ap) lootGear(p, e, makeGear(ea, gt, 0)); }   // 속성 화살: 그 속성 몬스터한테서
   // 스킬북: 몬스터마다 정해진 책만 떨어뜨린다 (data-books.js). 감정 연구·전리품 운이 확률을 올린다
   for (const sk of monBooks(f.id)) if (ITEMS['book_' + sk] && rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, 'book_' + sk, 1);
@@ -1114,8 +1117,9 @@ function wipe(p) {
   teamOf(p).forEach(a => {
     injure(a, Math.max(2, a.inj ? a.inj.sev : 2));
     if (rnd() < 0.25 && a.inj.sev < 3) injure(a, a.inj.sev + 1);
-    a.down = false; a.status = 'idle'; a.hp = 1; a.trips++; refillAmmo(a);
+    a.down = false; a.status = 'idle'; a.hp = 1; a.trips++;
   });
+  refillParty(teamOf(p), p.name);   // 상단에서 화살·표창 충전 (쓴 만큼 돈)
   S.stats.wipes = (S.stats.wipes || 0) + 1;
   log(`${p.name}이(가) ${F.name}에서 전멸했다. 길드 구조대가 모두를 데려왔지만 가져오던 짐과 장비는 잃었다.`, 'bad');
   S.flags.firstInj = 1;
@@ -1135,7 +1139,8 @@ function arrive(p) {
   autoSellRun(p.name);
   const team = p.members.map(advById).filter(Boolean);
   const hurt = team.filter(a => a.down || a.inj);
-  team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; refillAmmo(a); clampVitals(a); });   // 상단에서 화살·표창 충전
+  team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; clampVitals(a); });
+  refillParty(team, p.name);   // 상단에서 화살·표창 충전 (쓴 만큼 돈, 판 뒤라 판 돈으로 낸다)
   team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 상단을 떠났다.'));
   const n = Object.values(got).reduce((s, q) => s + q, 0);
   if (e.area === 'arena') log(`${p.name}이(가) 투기장에서 돌아왔다.`);
@@ -1175,7 +1180,7 @@ function dungeonClear(p, e) {
     S.gold += gold; S.fame += fame; S.stats.earned += gold; S.stats.dungeons = (S.stats.dungeons || 0) + 1;
     team.forEach(a => { a.pf = (a.pf || 0) + 20; a.dungeons = (a.dungeons || 0) + 1; });
     // 보물 상자: 전설·영웅 장비와 장비 한 점, 스킬북 두 권, 주인의 혼 둘, 중급 룬 둘. 그리고 유물
-    e.gbag.push(makeGear(pickOne(GTYPE_IDS), F.tier, 4), makeGear(pickOne(GTYPE_IDS), F.tier, 3), makeGear(pickOne(GTYPE_IDS), F.tier, Math.max(1, rollQuality(0.4))));
+    e.gbag.push(makeGear(dropBase(), F.tier, 4), makeGear(dropBase(), F.tier, 3), makeGear(dropBase(), F.tier, Math.max(1, rollQuality(0.4))));
     const b1 = randomBook(F.lv, F.lv + 16), b2 = randomBook(F.lv, F.lv + 20);
     if (b1) addTo(e.bag, b1, 1); if (b2) addTo(e.bag, b2, 1);
     addTo(e.bag, 'soul_' + F.tier, 2);
@@ -1201,7 +1206,7 @@ function treasureClear(p, e) {
   team.forEach(a => { a.pf = (a.pf || 0) + 6; });
   const got = [g$(gold), '명성 +6'];
   addTo(e.bag, 'gold_dust', 3); got.push('황금 가루 3');
-  const g = makeGear(pickOne(GTYPE_IDS), Math.min(GTIERS.length - 1, raidTier(L)), rnd() < 0.3 ? 4 : 3); e.gbag.push(g); got.push(`${QUALITY[g.q].name} ${gearName(g)}`);
+  const g = makeGear(dropBase(), Math.min(GTIERS.length - 1, raidTier(L)), rnd() < 0.3 ? 4 : 3); e.gbag.push(g); got.push(`${QUALITY[g.q].name} ${gearName(g)}`);
   const b = randomBook(Math.max(1, L - 15), L + 10); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); }
   if (rnd() < 0.5) { addTo(e.bag, 'bloomstone', 1); got.push('개화석'); }
   if (rnd() < 0.1) { addTo(e.bag, 'wizstone', 1); got.push('마법사의 돌'); }

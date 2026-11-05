@@ -458,7 +458,7 @@ function advAct(aid, b) {
 function ammoBrief(a) {
   const out = [];
   if (needsArrows(a)) { const g = a.eq.ammo, n = g ? ammoLeft(g, a) : 0; out.push(`<span class="${n ? (n < ammoMax(g, a) * 0.2 ? 'gold-t' : '') : 'red-t'}">${g && GTYPES[g.base].el ? GTYPES[g.base].name : '화살'} ${fmt(n)}발</span>`); }
-  const sh = a.eq && a.eq.off; if (isAmmo(sh)) out.push(`표창 ${fmt(ammoLeft(sh, a))}개`);
+  const sh = a.eq && a.eq.off; if (isAmmo(sh)) { const n = ammoLeft(sh, a); out.push(`<span class="${n ? (n < ammoMax(sh, a) * 0.2 ? 'gold-t' : '') : 'red-t'}">표창 ${fmt(n)}개</span>`); }   // 빌드 39: 적으면 금색, 0이면 빨강
   return out.length ? ' · ' + out.join(' · ') : '';
 }
 function memberRow(a, btns) {
