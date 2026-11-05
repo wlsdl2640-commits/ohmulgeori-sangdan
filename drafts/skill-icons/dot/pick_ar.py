@@ -1,6 +1,8 @@
-"""화살 스킬 고른 것 (사용자 2026-11-05 23:57: 동그라미 친 번호로 확정). catalog MODS 맨 끝에 둔다."""
-import var_ar as V
-PICK = {'stormarrows': 1, 'beastshot': 4, 'arrowstorm': 2, 'divinearrow': 1, 'summit': 2, 'dragonpierce': 2, 'driveshot': 1, 'giantslayer': 2, 'piercing': 1}
+"""화살 스킬 고른 것 (사용자가 시트에 동그라미 친 번호로 확정). catalog MODS 맨 끝에 둔다.
+2026-11-05 23:57: pick_arrow_1·2 → 9개 / 2026-11-06 00:04: pick_arrow_redo_1 → 별똥별 화살 3, 거신 낙하 3 (= var_ar2 의 _7)"""
+import var_ar as V, var_ar2 as V2
+PICK = {'stormarrows': (V, 1), 'beastshot': (V, 4), 'arrowstorm': (V, 2), 'divinearrow': (V, 1), 'summit': (V, 2), 'dragonpierce': (V, 2), 'driveshot': (V, 1),
+        'giantslayer': (V, 2), 'piercing': (V, 1), 'starfall': (V2, 7), 'titanfall': (V2, 7)}
 NAMES = {'stormarrows': '폭풍 화살', 'beastshot': '짐승 사냥', 'arrowstorm': '화살 폭우', 'divinearrow': '신궁의 화살', 'summit': '정상 등반', 'dragonpierce': '용 관통',
-         'driveshot': '몰이 사격', 'giantslayer': '거대 사냥', 'piercing': '관통 사격'}
-ICONS = {k: (NAMES[k], 'dmg', getattr(V, f'{k}_{n}')) for k, n in PICK.items()}
+         'driveshot': '몰이 사격', 'giantslayer': '거대 사냥', 'piercing': '관통 사격', 'starfall': '별똥별 화살', 'titanfall': '거신 낙하'}
+ICONS = {k: (NAMES[k], 'dmg', getattr(m, f'{k}_{n}')) for k, (m, n) in PICK.items()}

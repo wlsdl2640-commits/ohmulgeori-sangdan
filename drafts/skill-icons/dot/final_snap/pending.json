@@ -1,10 +1,10 @@
 {
  "pending": [
-  "awk_archer",
-  "starfall",
-  "titanfall"
+  "awk_archer"
  ],
  "picked": {
+  "starfall": "var_ar2._7",
+  "titanfall": "var_ar2._7",
   "stormarrows": 1,
   "beastshot": 4,
   "arrowstorm": 2,
@@ -15,5 +15,5 @@
   "giantslayer": 2,
   "piercing": 1
  },
- "note": "X 친 3개만 남음. 나머지 304개 확정"
+ "note": "유성우만 남음. 나머지 306개 확정"
 }
