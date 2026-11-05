@@ -25,3 +25,12 @@ fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar
 - 화살 아닌 277개 확정: ../final_snap/*.png 가 확정본 (바꾸지 말 것. 바꿨는지 확인: 화살 아닌 것은 지금 그림과 픽셀이 같아야 한다)
 - 화살 3판 (arrows.py, 2판은 arrows_v2.py): 1칸 자루, 미늘 달린 가는 촉, 깃 5칸(작은 화살 3칸) + 흰 띠 + 끝이 젖혀짐, 오늬
 - 화살 스킬 30개 (arrows.py를 쓰는 29개 + 거신 낙하): 길이·자리 맞춘 것은 fix_ar.py, 비교 시트 arrows_v3_cmp.png
+
+# 4단계 (2026-11-05 23:36)
+사용자: (arrows_v3_cmp 에 체크 → data/arrows_v3_marked.png) "체크한 스킬들 각각 시안을 4개씩 새로 만들어봐 화살은 크기를 좀더 줄여서 넣고, 스킬 배경에 들어가는 짐승, 용, 철갑 등의 이미지를 스킬의 이름에 맞게 더 잘 그려서 보여줘 체크 안한 스킬들은 그대로 저장하고"
+- 체크 11개: stormarrows awk_archer beastshot arrowstorm divinearrow starfall summit dragonpierce driveshot giantslayer titanfall
+- 애매(관통 사격 오른쪽 아래 · 유성우 오른쪽 위 사이의 체크): 유성우로 봤고, 관통 사격(piercing)도 시안만 같이 만듦 — 고르지 않으면 지금 그림 그대로
+- 체크 안 한 화살 스킬 19개 + 화살 아닌 277개 = 확정 (../final_snap, pending.json 에 남은 것 적음)
+- 아주 작은 화살 arrows.arrow_xs / arx 추가 (기존 화살 함수는 그대로 → 확정본 픽셀 같음 확인)
+- 손그림 짐승·용·괴수: crit.py (멧돼지·수사슴·달리는 사슴·용 머리·나는 용·괴수·돌 거신·외눈 거인·산)
+- 시안: var_ar.py (<id>_1..4), 고르기 시트 pick_arrow_1.png · pick_arrow_2.png

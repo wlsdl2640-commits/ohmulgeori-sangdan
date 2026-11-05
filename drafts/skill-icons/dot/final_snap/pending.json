@@ -1,0 +1,19 @@
+{
+ "pending": [
+  "stormarrows",
+  "awk_archer",
+  "beastshot",
+  "arrowstorm",
+  "divinearrow",
+  "starfall",
+  "summit",
+  "dragonpierce",
+  "driveshot",
+  "giantslayer",
+  "titanfall"
+ ],
+ "maybe": [
+  "piercing"
+ ],
+ "note": "체크한 11개(+애매한 관통 사격)만 4개씩 시안. 나머지는 이 그림이 확정본"
+}
