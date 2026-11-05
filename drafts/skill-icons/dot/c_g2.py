@@ -92,9 +92,15 @@ def wyvernfall():
     return a, 0
 def dragonblood():
     a = A('blood', rays=10, k=0.35)
-    big = (['....1....', '....1....', '...111...', '..11112..', '.1111112.', '.1w11112.', '111111122', '111111122', '.1111122.', '..11222..'], {'1': ('#e8283a', 13), '2': ('#8a0a1a', 13)})
-    sp(a, big, 3, 4)
-    a.paint(['yy', 'kk', 'yy'], {'y': '#ffd040', 'k': '#1a0404'}, ox=7, oy=10)
+    rows_ = ['.111..111.', '1111111112', '1111111122', '1111111122', '.11111122.', '..111122..', '...1122...', '....22....']
+    cm = {}
+    for y, r in enumerate(rows_):
+        for x, ch in enumerate(r):
+            if ch == '.': continue
+            lx = (x + (1 if (y // 2) % 2 else 0)) % 2; ly = y % 2
+            cm[(x + 3, y + 6)] = 'S' if ly == 1 and lx == 0 else ('h' if ly == 0 and lx == 0 and y < 3 else ch)
+    sp(a, grid(cm), {'1': ('#d82a2a', 13), '2': ('#8a0a14', 13), 'S': ('#7a0a10', 13), 'h': ('#ff8a6a', 13)})
+    sp(a, ['yy', 'kk', 'yy'], 7, 8, {'y': ('#ffd040', 1), 'k': ('#1a0404', 1)}, fx=False)
     return a, 0
 def dragonfall():
     a = A('fire', cy=16, r=15)

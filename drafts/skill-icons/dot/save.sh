@@ -7,7 +7,8 @@ cd /home/claude/game
 rm -rf "$WT"; git worktree prune
 git worktree add -q "$WT" skill-icons-draft
 D="$WT/drafts/skill-icons/dot"; mkdir -p "$D"
-cp "$SP"/*.py "$SP"/PLAN.md "$SP"/save.sh "$D/"
+cp "$SP"/*.py "$SP"/PLAN.md "$SP"/README.md "$SP"/save.sh "$D/"; mkdir -p "$D/data"; cp "$SP"/data/skills.json "$SP"/data/getdesc.py "$D/data/"
+rm -f "$D"/sheet_*.png
 for f in "$SP"/*.png; do case "$(basename "$f")" in all15.png|dot_draft1.png|sheet_*.png) cp "$f" "$D/";; esac; done
 sed -i "s#sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / 'skicon'))\$#sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / 'skicon')); sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / 'chunky'))#" "$D/cell.py"
 cd "$WT"; git add drafts/skill-icons/dot

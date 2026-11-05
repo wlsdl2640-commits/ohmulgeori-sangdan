@@ -151,7 +151,7 @@ def assassinate():
     dagger_at(a, 7, 9, 'ur')
     return a, 0
 def poisonblade():
-    a = A('poison', cx=9, cy=7)
+    a = A('purple', cx=9, cy=7)
     sp(a, KRIS, 3, 3)
     for (x, y) in [(10, 8), (10, 9), (8, 11), (8, 12), (11, 12)]: a.set(x, y, '#9af060')
     return a, 0
