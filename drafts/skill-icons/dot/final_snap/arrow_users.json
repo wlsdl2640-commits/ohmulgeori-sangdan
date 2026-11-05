@@ -1,0 +1,89 @@
+{
+"aimed": [
+"arrows.arrow"
+],
+"double": [
+"arrows.arrow"
+],
+"poisonarrow": [
+"arrows.arrow"
+],
+"rain": [
+"arrows.arrow_s"
+],
+"piercing": [
+"arrows.arrow"
+],
+"tripleshot": [
+"arrows.arrow_s"
+],
+"stormarrows": [
+"arrows.arrow_s"
+],
+"el_arrow": [
+"arrows.arrow"
+],
+"awk_archer": [
+"arrows.arrow"
+],
+"awk2_archer": [
+"arrows.arrow"
+],
+"flasharrow": [
+"arrows.arrow"
+],
+"beastshot": [
+"arrows.arrow_s"
+],
+"arrowstorm": [
+"arrows.arrow_s"
+],
+"longshot": [
+"arrows.arrow_s"
+],
+"piercearrow": [
+"arrows.arrow"
+],
+"divinearrow": [
+"arrows.arrow"
+],
+"starfall": [
+"arrows.arrow_s"
+],
+"lastarrow": [
+"arrows.arrow"
+],
+"ambush": [
+"arrows.arrow_s"
+],
+"volley": [
+"arrows.arrow_s"
+],
+"summit": [
+"arrows.arrow_s"
+],
+"huntmark": [
+"arrows.arrow"
+],
+"volleytrap": [
+"arrows.arrow_s"
+],
+"dragonpierce": [
+"arrows.arrow"
+],
+"slayrain": [
+"arrows.arrow_s"
+],
+"dragonheart": [
+"arrows.arrow"
+],
+"trackshot": [
+"arrows.arrow"
+],
+"driveshot": [
+"arrows.arrow_s"
+],
+"giantslayer": [
+"arrows.arrow_s"
+]
+}
