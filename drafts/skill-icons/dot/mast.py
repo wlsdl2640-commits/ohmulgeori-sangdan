@@ -410,7 +410,7 @@ def magic_sheet(out, Z=3):
             x = LW + t * CW; sh.paste(im, (x, y), im); d.text((x + 52, y + 48 * Z + 4), TIER_NAME[t], font=f, fill=(200, 200, 200))
     sh.save(out)
 # ── 게임에 넣는 판 (B안): 단계 lit = 0(안 배움)·1 초급·2 중급·3 상급 ──
-MAGIC_PICK = None   # 마법 지식 시안 번호 (고르면 1~4). None이면 마법 지식은 아직 게임에 안 넣는다
+MAGIC_PICK = 1      # 마법 지식 = 1번 (보라 가죽 · 연보라 고리 · 금 마름모) — 2026-11-06 확정
 def magic_glyph():
     return MAGIC_V[MAGIC_PICK - 1][1] if MAGIC_PICK else None
 def mast_art(k, lit):
