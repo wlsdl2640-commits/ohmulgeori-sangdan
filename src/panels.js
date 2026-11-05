@@ -333,7 +333,7 @@ function mastIconURL(k, t) {
   const [c, x] = mkCanvas(10, 10); drawIcon(x, { icon: MASTERY[k].icon, c: MAST_COL[t] || MAST_COL[0] });
   return (ICON_URL[key] = c.toDataURL());
 }
-const mastPips = t => `<span class="mpips">${MAST_TIERS.map((_, i) => `<i class="${i < t ? 'on t' + (i + 1) : ''}"></i>`).join('')}</span>`;
+const mastPips = t => `<span class="mpips">${MAST_TIERS.map((_, i) => `<i class="${i < t ? 'on t' + t : ''}"></i>`).join('')}</span>`;   // 그림과 같이: 배운 점은 모두 지금 단계 색
 function mastRows(a, idle) {
   return MAST_IDS.filter(k => canMast(a, k)).map(k => {
     const M = MASTERY[k], t = mastTier(a, k), nx = MAST_TIERS[t], why = nx ? mastWhy(a, k) : '', on = mastOn(a, k);
