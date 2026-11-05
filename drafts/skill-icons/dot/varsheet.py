@@ -5,7 +5,7 @@ import catalog
 from PIL import Image, ImageDraw, ImageFont
 import importlib, cell
 D = pathlib.Path(__file__).parent
-mod = importlib.import_module(sys.argv[1]); outname = sys.argv[2]; ids = sys.argv[3].split(',')
+mod = importlib.import_module(sys.argv[1]); outname = sys.argv[2]; ids = sys.argv[3].split(','); OFF = int(sys.argv[4]) if len(sys.argv) > 4 else 0
 ic = catalog.collect(); SK = {s['id']: s for s in catalog.SK}
 f = ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', 15, index=2)
 fb = ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc', 17, index=2)
@@ -20,7 +20,7 @@ for pi in range(0, len(ids), PER):
         dr.text((12, y0 + 50), SK[sid]['name'], font=fb, fill=(240, 240, 240))
         dr.text((12, y0 + 76), SK[sid].get('desc', '')[:11], font=fs, fill=(160, 160, 170))
         dr.text((12, y0 + 94), SK[sid].get('desc', '')[11:22], font=fs, fill=(160, 160, 170))
-        cells = [('지금', ic[sid])] + [(str(k), mod.ICONS[f'{sid}_{k}']) for k in range(1, 5)]
+        cells = [('지금', ic[sid])] + [(str(k), mod.ICONS[f'{sid}_{k + OFF}']) for k in range(1, 5)]
         for j, (lab, (name, kind, fn)) in enumerate(cells):
             art, _ = fn(); im = cell.zoom(art.img(SK[sid].get('kind') and kind or kind), Z)
             x0 = LW + j * CW

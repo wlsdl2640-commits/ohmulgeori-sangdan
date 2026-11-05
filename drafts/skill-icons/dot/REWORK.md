@@ -34,3 +34,8 @@ fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar
 - 아주 작은 화살 arrows.arrow_xs / arx 추가 (기존 화살 함수는 그대로 → 확정본 픽셀 같음 확인)
 - 손그림 짐승·용·괴수: crit.py (멧돼지·수사슴·달리는 사슴·용 머리·나는 용·괴수·돌 거신·외눈 거인·산)
 - 시안: var_ar.py (<id>_1..4), 고르기 시트 pick_arrow_1.png · pick_arrow_2.png
+
+# 5단계 (2026-11-05 23:57)
+사용자: (pick_arrow_1·2 에 동그라미/X → data/pick_arrow_1_marked.png, pick_arrow_2_marked.png) "체크 한걸로 확정하고, x인 것들은 시안 다시 4개 뽑아서 보내줘."
+- 확정 (pick_ar.py): 폭풍 화살 1 · 짐승 사냥 4 · 화살 폭우 2 · 신궁의 화살 1 · 정상 등반 2 · 용 관통 2 · 몰이 사격 1 · 거대 사냥 2 · 관통 사격 1 → ../final_snap 에 반영 (304개 확정)
+- X: 유성우 · 별똥별 화살 · 거신 낙하 → var_ar2.py (<id>_5..8, 시트에는 1..4로 보임), pick_arrow_redo_1.png

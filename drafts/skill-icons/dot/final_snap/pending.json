@@ -1,19 +1,19 @@
 {
  "pending": [
-  "stormarrows",
   "awk_archer",
-  "beastshot",
-  "arrowstorm",
-  "divinearrow",
   "starfall",
-  "summit",
-  "dragonpierce",
-  "driveshot",
-  "giantslayer",
   "titanfall"
  ],
- "maybe": [
-  "piercing"
- ],
- "note": "체크한 11개(+애매한 관통 사격)만 4개씩 시안. 나머지는 이 그림이 확정본"
+ "picked": {
+  "stormarrows": 1,
+  "beastshot": 4,
+  "arrowstorm": 2,
+  "divinearrow": 1,
+  "summit": 2,
+  "dragonpierce": 2,
+  "driveshot": 1,
+  "giantslayer": 2,
+  "piercing": 1
+ },
+ "note": "X 친 3개만 남음. 나머지 304개 확정"
 }
