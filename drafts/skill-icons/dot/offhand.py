@@ -171,19 +171,34 @@ def arrow_line(cm, xt, yt, xb, yb, head, shaft, fl, nock='T'):
     cm[(x0, y0)] = head[0]; cm[(x1, y1)] = head[1]; cm[(x1 - 1, y1)] = head[0]; cm[(x1 + 1, y1)] = head[2]
     for (x, y) in pts[-3:-1]: cm[(x, y)] = fl[0]; cm[(x - 1, y)] = fl[0]; cm[(x + 1, y)] = fl[1]
     xb_, yb_ = pts[-1]; cm[(xb_, yb_)] = nock
-ARROW1 = ['.w.', 'wmM', 'mMM'] + ['.t.'] * 10 + ['ftF', 'ftF', 'fTF', 'f.F']
-def arrows(a, n, head, fl, band, glow_c=None):
-    """곧게 세운 화살 셋 (가운데가 한 칸 위) — 한 대씩 따로 테두리, 가운데를 띠로 묶음"""
-    if glow_c: glow(a, 7.5, 3.0, 5.0, glow_c)
-    pal = {'w': (head[0], 5), 'm': (head[1], 5), 'M': (head[2], 5), 't': ('#d8b880', 3), 'T': ('#7a4c22', 3), 'f': (fl[0], 1), 'F': (fl[1], 1), 'q': (band, 9), 'Q': (mix(band, '#000000', 0.35), 9)}
-    xs = {2: [(4, 1), (10, 1)], 3: [(2, 2), (12, 2), (7, 1)]}[n]
-    for (x, y) in xs: sp(a, ARROW1, x, y, pal)
-    x0, x1 = min(x for x, _ in xs), max(x for x, _ in xs) + 2
-    sp(a, ['q' * (x1 - x0 + 1), 'Q' * (x1 - x0 + 1)], x0, 10, pal)
-def arrows_1(a): arrows(a, 3, ('#c8ccd4', '#8a8e98', '#5a5e68'), ('#ffffff', '#c8c8d0'), '#d8c8a0')
-def arrows_2(a): arrows(a, 3, ('#ffffff', '#d0d8e4', '#8a94a8'), ('#d0d0d8', '#8a8a94'), '#8a5a2a')
-def arrows_3(a): arrows(a, 3, ('#fff4c0', '#ffd84a', '#c08a1c'), ('#ff6a5a', '#b02a22'), '#ffd84a')
-def arrows_4(a): arrows(a, 3, ('#ffffff', '#9aeeff', '#3a9ad4'), ('#ffffff', '#9ad8ff'), '#e8eef8')
+def arrows(a, n, head, fl, band, glow_c=None, ss=4, sparkle=None):
+    """사선으로 놓은 화살 한 대 (촉이 오른쪽 위): 큰 세모 촉 · 나무 자루 · 양쪽 깃 · 오늬"""
+    ux, uy = 0.7071, -0.7071; px_, py_ = 0.7071, 0.7071
+    tx, ty, L = 15.2, 2.6, 19.6
+    cm = {}
+    for y in range(H):
+        for x in range(W):
+            cnt = {}
+            for j_ in range(ss):
+                for i_ in range(ss):
+                    X, Y = x + (i_ + 0.5) / ss, y + (j_ + 0.5) / ss; dx, dy = X - tx, Y - ty
+                    s_ = L + (dx * ux + dy * uy); v = dx * px_ + dy * py_
+                    if s_ < 0 or s_ > L: continue
+                    if s_ >= L - 4.6 and abs(v) <= 2.5 * (L - s_) / 4.6: part = 'H' if v > 0.35 else 'w' if v < -0.35 else 'h'
+                    elif L - 5.4 <= s_ < L - 4.6 and abs(v) <= 0.9: part = 'q'
+                    elif 0.7 <= s_ <= 4.4 and 0.5 < abs(v) <= 1.55 - (s_ - 0.7) * 0.1: part = 'f' if v < 0 else 'F'
+                    elif s_ < 0.9 and abs(v) <= 0.7: part = 'T'
+                    elif abs(v) <= 0.72: part = 't'
+                    else: continue
+                    cnt[part] = cnt.get(part, 0) + 1
+            if sum(cnt.values()) >= 0.42 * ss * ss: cm[(x, y)] = max(cnt, key=cnt.get)
+    pal = {'w': (head[0], 5), 'h': (head[1], 5), 'H': (head[2], 5), 't': (band[0], 3), 'T': (band[1], 3), 'q': (band[2], 6), 'f': (fl[0], 1), 'F': (fl[1], 1)}
+    sp(a, grid(cm), pal)
+    for (x, y) in (sparkle or []): a.set(x, y, '#ffffff')
+def arrows_1(a): arrows(a, 1, ('#c8ccd4', '#8a8e98', '#5a5e68'), ('#ffffff', '#c8c8d0'), ('#c89a5a', '#7a4c22', '#8a8e98'))
+def arrows_2(a): arrows(a, 1, ('#ffffff', '#d0d8e4', '#8a94a8'), ('#d8d8e0', '#8a8a94'), ('#e0c08a', '#8a5a2a', '#d0d8e4'))
+def arrows_3(a): arrows(a, 1, ('#fff4c0', '#ffd84a', '#c08a1c'), ('#ff6a5a', '#b02a22'), ('#5a3a2a', '#2e1e14', '#ffd84a'))
+def arrows_4(a): arrows(a, 1, ('#ffffff', '#9aeeff', '#3a9ad4'), ('#ffffff', '#9ad8ff'), ('#e8eef8', '#8a94a8', '#9aeeff'), sparkle=[(11, 1), (15, 6), (13, 9)])
 # ───────── 표창 (도적 계열, 투척 단검 대신 · 소모형: 기본 공격마다 하나 더 던짐) ─────────
 def star_blade(a, n, R, Ri, rot, cols, hole=1.0, cx=7.5, cy=9.5, glow_c=None, tipc=None, pow_=3.0):
     if glow_c: glow(a, cx, cy, R + 1.5, glow_c)
