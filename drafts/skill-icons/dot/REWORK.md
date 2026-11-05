@@ -17,3 +17,5 @@ fix_a.py: berserk kn_charge fireball chain arcane iceprison awk2_mage sanctuary 
 fix_b.py: packmule dw_smash sprint focus haste tactics ar_cheer ar_finish bandage roar colosseum shieldbash lancecharge devotion divinity rampage frenzy bloodfeast
 fix_c.py: trap wolfcall instinct jump dragonscale gale skyfall dragonfall godseye horsecare gallop cargoshield stampede roadlord spotweak farsight (창은 spear.py 새로)
 fix_d.py: parrying swordrain dancemaster smokebomb goldrush grandheist windspirit earthward waterspirit spiritking deathplague wyrmbane houndpack wildsense giantslayer anatomy quaketrap titanfall transmute
+fix_e.py: cureall blackdeath frostblade arcaneguard starward swordsaint prayer grace miracle holyland archangel resurrect remedy epidemic holywater exorcism inquisition fr_song el_breath dw_grit weaken riposte ar_combo
+fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar colosseum devotion frenzy bloodfeast (A·B에서 손봤지만 전과 거의 같아 보여 새로)
