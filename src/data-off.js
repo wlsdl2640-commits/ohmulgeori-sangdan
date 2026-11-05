@@ -17,8 +17,8 @@ const OFF_IDS = ['shield', 'quiver', 'tome', 'relic', 'shuriken', 'lantern', 'ar
 GTYPE_IDS.push(...OFF_IDS);
 PCT_STATS.push('block', 'movePct');
 Object.assign(STAT_NAMES, { block: '방어 확률', movePct: '이동 속도' });
-// 단계마다 담는 수 (품질 +10%씩, 화살통 +25%). 강철 화살 = 1,000발
-const AMMO_CAP = { arrows: [300, 600, 1000, 1400, 1800, 2200, 2600, 3000, 3400, 3800, 4200, 4600, 5000, 5400, 5800, 6200], shuriken: [120, 240, 400, 560, 720, 880, 1040, 1200, 1360, 1520, 1680, 1840, 2000, 2160, 2320, 2480] };
+// 단계마다 담는 수 (품질 +10%씩, 화살통 +25%). 강철 화살 = 350발 — 레벨에 맞는 원정 한 번에 50~150발쯤 쓴다 (빌드 38에서 처음 1,000발 → 1/3로)
+const AMMO_CAP = { arrows: [100, 200, 350, 450, 600, 750, 850, 1000, 1150, 1250, 1400, 1550, 1650, 1800, 1950, 2050], shuriken: [120, 240, 400, 560, 720, 880, 1040, 1200, 1360, 1520, 1680, 1840, 2000, 2160, 2320, 2480] };
 const isAmmo = g => !!(g && GTYPES[g.base] && GTYPES[g.base].ammo);
 function ammoMax(g, a) {
   if (!isAmmo(g)) return 0;
@@ -29,9 +29,11 @@ function ammoMax(g, a) {
 const ammoLeft = (g, a) => (isAmmo(g) ? (g.n == null ? ammoMax(g, a) : Math.max(0, Math.min(g.n, ammoMax(g, a)))) : 0);
 const ammoUnit = g => (GTYPES[g.base] && GTYPES[g.base].unit) || '개';
 const ammoTag = (g, a) => (isAmmo(g) ? `${fmt(ammoLeft(g, a))}/${fmt(ammoMax(g, a))}${ammoUnit(g)}` : '');
-// 화살을 쓰는 직업: 기본 공격이 사격(act arrow)이고 궁수 계열 또는 정찰가 계열 (음유시인은 음표라서 아님)
-const needsArrows = a => !!a && CLASSES[a.cls].act === 'arrow' && (jobBase(a.cls) === 'archer' || chainOf(a.cls).includes('scout'));
-const hasAmmoSlot = a => needsArrows(a);   // 화살 칸은 활을 쏘는 직업만 (창을 드는 용기병은 없음)
+// 화살을 쓰는 직업 (화살 칸 · 화살 스킬이 화살을 쓴다): 궁수 계열(용기병 포함) · 정찰가 계열. 음유시인은 음표라서 아님
+const needsArrows = a => !!a && !!CLASSES[a.cls] && (jobBase(a.cls) === 'archer' || chainOf(a.cls).includes('scout'));
+// 기본 공격이 화살: 사격 직업은 늘, 창을 드는 용기병은 활을 들었을 때
+const shootsArrows = a => needsArrows(a) && (CLASSES[a.cls].act === 'arrow' || !!(a.eq && a.eq.weapon && a.eq.weapon.base === 'bow'));
+const hasAmmoSlot = a => needsArrows(a);
 // 한 번에 n개를 쓴다 (모자라면 false, 아무것도 안 씀)
 function useAmmo(g, a, n = 1) {
   const left = ammoLeft(g, a); if (left < n) return false;
@@ -49,6 +51,6 @@ const SHURI_MUL = 0.55;   // 표창 한 개 = 공격력 × 2.5(기본 공격) ×
 const ammoPrice = (base, t) => Math.round(gearValue({ base, t, q: 0 }) * 1.5 / 10) * 10;
 STORY.v38 = [
   '빌드 38: 부장비가 생겼다. 계열마다 왼손 장비 하나 — 전사·마부 계열 방패, 궁수 계열 화살통, 마법사 계열 마법서, 성직자 계열 성표, 도적 계열 표창, 짐꾼 계열 등불.',
-  '궁수 계열(활을 쏘는 정찰가·탐험가 포함)은 「화살」 칸이 하나 더 있다. 기본 공격마다 화살 1발, 화살 스킬은 쏘는 만큼 쓴다. 다 쓰면 0발이 되어 기본 공격과 화살 스킬을 못 쓰고, 상단에 돌아오면 다시 가득 찬다.',
+  '궁수 계열(용기병 포함)과 활을 쏘는 정찰가·탐험가는 「화살」 칸이 하나 더 있다(강철 화살 350발). 기본 공격마다 화살 1발, 화살 스킬은 쏘는 만큼 쓴다. 다 쓰면 0발이 되어 기본 공격과 화살 스킬을 못 쓰고, 상단에 돌아오면 다시 가득 찬다. 용기병은 활을 들면 화살을 쏜다.',
   '표창은 기본 공격마다 하나를 더 던진다. 부장비는 대장간에서 만들고, 몬스터한테서도 나온다. 화살과 표창은 대장간에서 돈으로 살 수도 있다. 방패술은 이제 방패를 들었을 때 켜진다.'
 ];

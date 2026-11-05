@@ -100,13 +100,14 @@ function basicSpec(a) {
   const base = magic ? d.matk * BASIC_MAGIC : d.atk * BASIC_MULT + (T.hybrid ? d.matk * T.hybrid * BASIC_MULT : 0);
   out.push(`${magic ? '마법 공격력' : '공격력'} ${skMul(magic ? BASIC_MAGIC : BASIC_MULT)}${T.hybrid ? ` + 마법 공격력 ${skMul(T.hybrid * BASIC_MULT)}` : ''}`);
   out.push(`한 방 약 <b>${skRange(base)}</b> (방어 0 기준)`);
-  out.push(`대상 ${CLASSES[a.cls].act === 'arrow' ? SK_TGT.low : SK_TGT.front}`);
+  out.push(`대상 ${CLASSES[a.cls].act === 'arrow' || shootsArrows(a) ? SK_TGT.low : SK_TGT.front}`);
   out.push(`치명타 ${skPct(d.crit)} (×${T.critMul || 1.75})`);
   const dbl = (T.double || 0) + d.double; if (dbl) out.push(`연타 ${skPct(dbl)}`);
   if (T.aoe) out.push(`다른 적에게도 ${skMul(T.aoe)}`);
   if (T.pet) out.push(`동물 동료가 ${skPct(0.5 + T.pet)}로 함께 문다 (공격력 ${skMul((0.35 + T.pet) * BASIC_MULT)})`);
   out.push(`재사용 ${BASIC_CD}초 ÷ 공격 속도 ${skMul(d.spd)} = <b>${skSec(cd)}</b>`);
-  if (needsArrows(a)) out.push(a.eq.ammo ? `화살 1발씩 · 남은 <b class="${ammoLeft(a.eq.ammo, a) ? '' : 'red-t'}">${ammoTag(a.eq.ammo, a)}</b> (0발이면 기본 공격·화살 스킬을 못 해요)` : '<span class="red-t">화살이 없어 기본 공격을 못 해요</span>');
+  if (needsArrows(a) && !shootsArrows(a)) out.push('활을 들면 기본 공격이 화살 사격이 된다 (화살 1발씩)');
+  if (shootsArrows(a)) out.push(a.eq.ammo ? `화살 1발씩 · 남은 <b class="${ammoLeft(a.eq.ammo, a) ? '' : 'red-t'}">${ammoTag(a.eq.ammo, a)}</b> (0발이면 기본 공격·화살 스킬을 못 해요)` : '<span class="red-t">화살이 없어 기본 공격을 못 해요</span>');
   const sh = a.eq && a.eq.off; if (isAmmo(sh) && sh.base === 'shuriken') out.push(`표창: 기본 공격마다 하나를 더 던짐 (공격력 ${skMul(BASIC_MULT * SHURI_MUL)}) · 남은 ${ammoTag(sh, a)}`);
   return out;
 }

@@ -776,7 +776,7 @@ function cast(e, a, d, id, team, dm, foes) {
 // 화살이 떨어졌다: 원정마다 한 번 알린다
 function noAmmo(e, a) { e.noAmmo = e.noAmmo || {}; if (e.noAmmo[a.id]) return; e.noAmmo[a.id] = 1; ev(e, 'noammo', { s: a.id }); log(`${a.name}의 화살이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
 function basicAct(e, a, d, team, dm, foes) {
-  const act = CLASSES[a.cls].act, T = TR(a), st = e.sta && e.sta[a.id];
+  const act0 = CLASSES[a.cls].act, act = act0 === 'melee' && shootsArrows(a) ? 'arrow' : act0, T = TR(a), st = e.sta && e.sta[a.id];   // 용기병이 활을 들면 사격
   if (st && (st.para || st.stun)) return;
   if (act === 'magic') {
     const f = foes[0], mk = d.matk * buffMul(e, a.id, 'matk') * BASIC_MAGIC, crit = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, f, mk, crit, true, a, 'none');
@@ -789,7 +789,7 @@ function basicAct(e, a, d, team, dm, foes) {
   }
   const f = act === 'arrow' ? lowestFoe(foes) : foes[0];
   const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
-  const bow = needsArrows(a);
+  const bow = shootsArrows(a);
   if (bow && ammoLeft(a.eq.ammo, a) <= 0) { noAmmo(e, a); return; }   // 화살이 없으면 기본 공격을 못 한다
   const swings = 1 + (rnd() < (T.double || 0) + (d.double || 0) ? 1 : 0);
   for (let i = 0; i < swings; i++) {
