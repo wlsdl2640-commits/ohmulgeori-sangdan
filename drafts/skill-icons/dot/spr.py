@@ -278,3 +278,68 @@ FANGS = (['..rrrrrrrr..',
           '.rwwwwwwwwr.',
           '..rrrrrrrr..'], {'r': ('#c01828', 13), 'k': ('#3a0408', 1), 'w': ('#fff8f0', 7)})
 BAT = (['k.....k', 'kk.k.kk', '.kkkkk.', '..k.k..'], {'k': ('#1a0a10', 1)})
+NOTE1 = (['..1..', '..11.', '..1.1', '..1..', '111..', '111..'], {})
+NOTE2 = (['..11111', '..1...1', '..1...1', '..1...1', '111.111', '111.111'], {})
+LUTE = (['.......tT.',
+         '......tT..',
+         '.....tT...',
+         '....tT....',
+         '..oooo....',
+         '.oooooo...',
+         'ooookooo..',
+         'oookkooO..',
+         'ooooooOO..',
+         '.ooooOO...',
+         '..OOOO....'], {'o': ('#e0904a', 3), 'O': ('#9a5a24', 3), 'k': ('#3a1a0a', 1), 't': ('#7a4c22', 3), 'T': ('#4a2a10', 3)})
+HARP = (['yy.......',
+         'yyy......',
+         'y.yy.....',
+         'y.w.yy...',
+         'y.w.w.yy.',
+         'y.w.w.w.Y',
+         'y.w.w.w.Y',
+         'y.w.w.w.Y',
+         'yyyyyyyyY'], {'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6), 'w': ('#ffffff', 1)})
+DRUM = (['w.......w', '.w.....w.', '..w...w..', 'eeeeeeeee', 'rEeeeeeEr', 'rrwrrrwrr', 'rwrwrwrwr', 'rrrrrrrRR', '.RRRRRRR.'], {'e': ('#f4ecd8', 7), 'E': ('#c8b898', 7), 'r': ('#d03a3a', 13), 'R': ('#8a1a1a', 13), 'w': ('#ffd84a', 6)})
+TRUMPET = (['..........yy', '.yYy.....yyy', 'yyyyyyyyyyyy', 'yyyyyyyyyyyY', '.......yyyyY', '........YYY.', '.........YY.'], {'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6)})
+CANDLE = (['...h...', '..hwh..', '..hyh..', '...y...', '..eee..', '..eeE..', '..eeE..', '..eeE..', '..eeE..', '.yyyYY.'], {'h': ('#ffc040', 1), 'w': ('#ffffff', 1), 'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6), 'e': ('#f4ecd8', 7), 'E': ('#c8b898', 7)})
+WOLF = (['...........F',
+         '..........FF',
+         '.........FFF',
+         '..F.....FFF.',
+         '..FF...FFFF.',
+         '..FFF.FFFF..',
+         '.FFFFFFFF...',
+         '.FFFFeFFF...',
+         'FFFFFFFF....',
+         'FFFFFFF.....',
+         'FFFfFF......',
+         'FFffF.......',
+         'Fff.........'], {'F': ('#9aa4b8', 5), 'f': ('#e0e8f4', 5), 'e': ('#1a1414', 1)})
+BOAR = (['..kk.....kk.',
+         '.kFFk...kFFk',
+         '.kFFFkkkFFFk',
+         'kFFFFFFFFFFk',
+         'kFeFFFFFFeFk',
+         'kFFFFFFFFFFk',
+         '.kFFffffFFk.',
+         'wkFfkffkfFkw',
+         'w.kFffffFk.w',
+         '...kkkkkk...'], {'F': ('#6a4a34', 3), 'f': ('#c89a7a', 2), 'k': ('#2a1a10', 1), 'e': ('#ff4a3a', 1), 'w': ('#fff8f0', 7)})
+BEARTRAP = (['m.m.m..m.m.m', 'mmmmm..mmmmm', 'mMMMMmmMMMMm', '.mMMMMMMMMm.', '..nnnnnnnn..', '...nnMMnn...', 'nnnnnnnnnnnn'], {})
+PAW = (['.11...11.', '1111.1111', '.11...11.', '11.....11', '111...111', '...111...', '..11111..', '.1111111.', '.1111111.', '..11111..'], {})
+SPEAR_DN = (['....yY....', '....tT....', '....tT....', '....tT....', '....tT....', '....tT....', '....tT....', '...yyYY...', '...mmMM...', '...wmMM...', '....mM....', '....wM....', '.....M....'], dict(GOLD))
+WYVERN = (['F..............F',
+           'Fp............pF',
+           '.Fpp...FF...ppF.',
+           '.Fppp.FFFF.pppF.',
+           '..FpppFFFFpppF..',
+           '...FppFFFFppF...',
+           '....FFFFFFFF....',
+           '......FFFF......',
+           '......FFFF......',
+           '.......FF.......',
+           '......FrrF......',
+           '.......FF.......'], {'F': ('#4a2a4a', 10), 'p': ('#b05a7a', 10), 'r': ('#ffd040', 1)})
+SCOPE_EYE = (['...kkkk...', '.kk1111kk.', 'k1111k111k', 'k111kkk11k', 'kkkkk2kkkk', 'k111kkk11k', 'k1111k111k', '.kk1111kk.', '...kkkk...'], {})
+TRI_EYE = (['......y......', '.....yyy.....', '....yy.yy....', '...yykkkyy...', '..yykwe1kyy..', '..yyk111kyy..', '.yyy.kkk.yyy.', 'yyyyyyyyyyyyy'], {'y': ('#ffd84a', 6), 'k': ('#1a1414', 1), 'e': ('#ffffff', 1), '1': ('#3a8ad0', 1), 'w': ('#ffffff', 1)})
