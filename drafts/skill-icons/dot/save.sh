@@ -12,6 +12,7 @@ rm -f "$D"/sheet_*.png "$D"/cmp_*.png "$D"/pick_*.png
 for f in "$SP"/*.png; do case "$(basename "$f")" in all15.png|dot_draft1.png|sheet_*.png|cmp_*.png|arrows_v3_*.png|pick_*.png|mast_*.png) cp "$f" "$D/";; esac; done
 sed -i "s#sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / 'skicon'))\$#sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / 'skicon')); sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / 'chunky'))#" "$D/cell.py"
 rm -rf "$D/final_snap"; mkdir -p "$D/final_snap"; cp "$SP"/../final_snap/* "$D/final_snap/"
+rm -rf "$D/final_snap_mast"; mkdir -p "$D/final_snap_mast"; cp "$SP"/../final_snap_mast/* "$D/final_snap_mast/" 2>/dev/null || true
 cd "$WT"; git add drafts/skill-icons/dot
 if ! git diff --cached --quiet; then
   git -c user.name="wlsdl2640" -c user.email="wlsdl2640@gmail.com" commit -q -m "$1

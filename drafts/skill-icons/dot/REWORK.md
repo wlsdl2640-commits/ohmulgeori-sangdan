@@ -57,3 +57,8 @@ fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar
 
 # 끝 (2026-11-06 00:13)
 사용자: "3번으로 가자" → 유성우 = var_ar5.awk_archer_19 (위를 겨눈 별자리 활 + 오로라). pick_ar.py 에 넣음. 307개 모두 확정 → 게임에 넣기 (빌드 37)
+
+# 숙련 패시브 아이콘 (빌드 37, 2026-11-06)
+- 첫 시안 `mast.py` → mast_sheet_1/2.png: A 메달 고리 · B 단계 점 · C 그림만 (셋 다 틀 색 동·은·금).
+- 고름: **전부 B안** (아래 단계 점 셋 + 틀 색). 마법 지식만 「덮인 책 + 표지에 새긴 마법진」으로 다시 → mast_magic_v2.png 시안 4개 (`MAGIC_V`, 고르면 `MAGIC_PICK`).
+- 게임: `export_mast.py` → src/data-masticon.js (숙련마다 단계 0~3 넷) + ../final_snap_mast/{id}_{단계}.png. 마법 지식은 고르기 전까지 빠져 있다(게임은 임시 아이템 그림).

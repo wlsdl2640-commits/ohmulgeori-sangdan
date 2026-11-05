@@ -308,3 +308,123 @@ def sheet(items, out, Z=3):
 if __name__ == '__main__':
     D = pathlib.Path(__file__).parent
     sheet(MAST[:6], D / 'mast_sheet_1.png'); sheet(MAST[6:], D / 'mast_sheet_2.png'); print('ok')
+# ── 마법 지식 다시 (빌드 37 둘째 판): 덮인 책 + 표지에 새긴 마법진 — 시안 4개 ──
+RING_A = ['..zzzz..',   # 고리 + 마름모 + 가운데
+          '.z.ww.z.',
+          'z.w..w.z',
+          'zw.ww.wz',
+          'zw.ww.wz',
+          'z.w..w.z',
+          '.z.ww.z.',
+          '..zzzz..']
+RING_B = ['..zzzz..',   # 고리 + 열십자
+          '.z.ww.z.',
+          'z..ww..z',
+          'zwwwwwwz',
+          'zwwwwwwz',
+          'z..ww..z',
+          '.z.ww.z.',
+          '..zzzz..']
+RING_C = ['..zzzz..',   # 고리 + 세모
+          '.z.ww.z.',
+          'z..ww..z',
+          'z.w..w.z',
+          'zw....wz',
+          'zwwwwwwz',
+          '.z....z.',
+          '..zzzz..']
+RING_D = ['..zzzz..',   # 겹고리
+          '.z....z.',
+          'z..ww..z',
+          'z.w..w.z',
+          'z.w..w.z',
+          'z..ww..z',
+          '.z....z.',
+          '..zzzz..']
+RING_F = ['..zzzz..',   # 고리 + 금 마름모 + 흰 가운데
+          '.z.xx.z.',
+          'z.x..x.z',
+          'zx.ww.xz',
+          'zx.ww.xz',
+          'z.x..x.z',
+          '.z.xx.z.',
+          '..zzzz..']
+RING_E = ['..zzzz..',   # 고리 + 해 모양 별
+          '.zw..wz.',
+          'z..ww..z',
+          'z.wwww.z',
+          'z.wwww.z',
+          'z..ww..z',
+          '.zw..wz.',
+          '..zzzz..']
+def closed_tome(a, dy, cov, cov2, spine, cor, cor2, ring=RING_A, rz='#c8a8ff', rw='#ffffff', glow_c=None, clasp=None, mat=10, halo=0.0, ribbon='#e83a3a', rx='#ffd84a'):
+    """덮인 책 (앞에서 조금 위로): 표지 10×10 + 왼쪽 책등 + 아래·오른쪽 책장 두께 + 뒤표지 끝 + 책갈피"""
+    y0 = 4 + dy; cm = {}
+    for y in range(10):
+        for x in range(10): cm[(3 + x, y0 + y)] = 'p' if (x + y) < 15 else 'P'
+    for y in range(11): cm[(2, y0 + y)] = 'S'
+    for (x, y) in [(2, 1), (2, 8)]: cm[(x, y0 + y)] = 'y'                   # 책등 금띠
+    for x in range(3, 13): cm[(x, y0 + 10)] = 'e' if x % 2 else 'E'          # 아래 책장
+    for y in range(1, 11): cm[(13, y0 + y)] = 'e' if y % 2 else 'E'          # 오른쪽 책장
+    for x in range(3, 14): cm[(x, y0 + 11)] = 'S'                            # 뒤표지 아래 끝
+    for y in range(2, 12): cm[(14, y0 + y)] = 'S'                            # 뒤표지 오른쪽 끝
+    for (x, y, c) in [(3, 0, 'y'), (4, 0, 'y'), (3, 1, 'y'), (11, 0, 'y'), (12, 0, 'Y'), (12, 1, 'Y'), (3, 9, 'y'), (3, 8, 'y'), (4, 9, 'Y'), (12, 9, 'Y'), (11, 9, 'Y'), (12, 8, 'Y')]: cm[(x, y0 + y)] = c
+    if clasp:   # 여밈 띠: 표지 오른쪽 가운데
+        for (x, y, c) in [(12, 4, 'q'), (13, 4, 'q'), (14, 4, 'q'), (12, 5, 'y'), (13, 5, 'Y'), (14, 5, 'q'), (12, 6, 'q'), (13, 6, 'q'), (14, 6, 'q')]: cm[(x, y0 + y)] = c
+    if ribbon:  # 책갈피: 아래로 늘어진 띠 (단계 점과 겹치지 않게 오른쪽)
+        for (x, y) in [(12, 11), (12, 12)]: cm[(x, y0 + y)] = 'r'
+    rc = set()
+    for j, r in enumerate(ring):
+        for i, ch in enumerate(r):
+            if ch != '.': cm[(4 + i, y0 + 1 + j)] = ch; rc.add((4 + i, y0 + 1 + j))
+    if halo:
+        for (x, y) in list(cm):   # 새긴 자리 둘레가 은은하게 빛난다
+            if cm[(x, y)] in 'pP' and any((x + dx, y + dy_) in rc for dx, dy_ in ((1, 0), (-1, 0), (0, 1), (0, -1))): cm[(x, y)] = 'g'
+    pal = {'p': (cov, mat), 'P': (cov2, mat), 'g': (mix(cov, rz, halo), mat), 'S': (spine, mat), 'y': (cor, 6), 'Y': (cor2, 6), 'e': ('#f4ecd8', 7), 'E': ('#c8b898', 7), 'z': (rz, 1), 'w': (rw, 1), 'x': (rx, 1), 'q': (clasp or '#000000', 9), 'r': (ribbon or '#000000', 13)}
+    if glow_c: glow(a, 7.5, 9.0 + dy, 6.5, glow_c)
+    sp(a, grid(cm), pal)
+def g_magic_1(a, dy=0):   # 보라 가죽 · 금 모서리 · 연보라 마법진(고리 + 마름모)
+    closed_tome(a, dy, '#7a4ad0', '#5a32a8', '#3a1e78', '#ffd84a', '#c08a1c', RING_F, '#e0ccff', '#ffffff', rx='#ffd84a')
+    for (x, y) in [(1, 3), (14, 1)]: a.set(x, y + dy, '#e0d0ff')
+def g_magic_2(a, dy=0):   # 남색 · 은 모서리 · 금으로 새긴 열십자 마법진
+    closed_tome(a, dy, '#2e52b8', '#1e3888', '#142460', '#e8eef8', '#8e96a4', RING_B, '#ffd84a', '#fff4c0', ribbon='#ffd84a')
+def g_magic_3(a, dy=0):   # 검붉은 가죽 · 금 여밈 · 하늘빛 해 모양 마법진
+    closed_tome(a, dy, '#a8283a', '#7a1828', '#4a0c18', '#ffd84a', '#c08a1c', RING_E, '#9aeeff', '#ffffff', clasp='#6a3a1a', mat=13, ribbon=None)
+    for (x, y) in [(1, 4), (14, 1)]: a.set(x, y + dy, '#c8f8ff')
+def g_magic_4(a, dy=0):   # 검보라 옛 책 · 금 모서리 · 금빛 겹고리 마법진 + 빛무리
+    closed_tome(a, dy, '#3a2a6a', '#261a4a', '#160e30', '#ffd84a', '#c08a1c', RING_D, '#ffe070', '#fff8d0', glow_c=['#3a2a7a', '#6a4ac0'], halo=0.25, ribbon='#7ad8c8')
+    for (x, y) in [(1, 3), (14, 1), (0, 11), (15, 9)]: a.set(x, y + dy, '#fff0a0')
+MAGIC_V = [('보라 가죽 · 연보라 고리 · 금 마름모', g_magic_1), ('남색 · 금으로 새긴 열십자', g_magic_2), ('검붉은 가죽 · 여밈 · 하늘빛 해 별', g_magic_3), ('검보라 옛 책 · 금빛 겹고리 · 빛무리', g_magic_4)]
+def magic_sheet(out, Z=3):
+    from PIL import Image, ImageDraw, ImageFont
+    f = ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', 15, index=2)
+    fb = ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc', 17, index=2)
+    CW, RH, LW = 48 * Z + 14, 48 * Z + 34, 300
+    sh = Image.new('RGB', (LW + CW * 3 + 20, RH * len(MAGIC_V) + 44), (21, 23, 28)); d = ImageDraw.Draw(sh)
+    d.text((10, 8), '마법 지식 다시 · 덮인 책 + 표지에 새긴 마법진 (B안: 단계 점 + 틀 색)', font=fb, fill=(242, 190, 60))
+    for r, (name, g) in enumerate(MAGIC_V):
+        y = 40 + r * RH
+        d.text((10, y + 52), f'{r + 1}. {name}', font=fb, fill=(240, 240, 240))
+        for t in range(3):
+            im = framed(style_b('arcane', g, t), t).resize((48 * Z, 48 * Z), Image.NEAREST)
+            x = LW + t * CW; sh.paste(im, (x, y), im); d.text((x + 52, y + 48 * Z + 4), TIER_NAME[t], font=f, fill=(200, 200, 200))
+    sh.save(out)
+# ── 게임에 넣는 판 (B안): 단계 lit = 0(안 배움)·1 초급·2 중급·3 상급 ──
+MAGIC_PICK = None   # 마법 지식 시안 번호 (고르면 1~4). None이면 마법 지식은 아직 게임에 안 넣는다
+def magic_glyph():
+    return MAGIC_V[MAGIC_PICK - 1][1] if MAGIC_PICK else None
+def mast_art(k, lit):
+    theme, g = {m[0]: (m[2], m[3]) for m in MAST}[k]
+    if k == 'magic': g = magic_glyph()
+    a = A(theme, cy=8.0, rays=12, k=0.3, hole=4)
+    g(a, -1)
+    l, d = TIER[lit - 1] if lit else ('#3a3440', '#241e28')
+    for i in range(3):   # 아래 가운데 단계 점 셋: 배운 만큼 쇠 색, 나머지는 빈 칸
+        x = 4 + i * 3
+        for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1)):
+            a.set(x + dx, 16 + dy, (l if (dx, dy) == (0, 0) else d) if i < lit else ('#3a3440' if (dx, dy) == (0, 0) else '#241e28'))
+    return a
+def mast_img(k, lit):
+    """게임과 같은 48px: 틀 색 0 기본 · 1 동 · 2 은 · 3 금"""
+    art = mast_art(k, lit)
+    return framed(art, lit - 1) if lit else art.img('buff')
