@@ -456,7 +456,7 @@ const QUALITY = [
   { name: '신화', m: 3.1,  c: '#ff6a5a' },
   { name: '신성', m: 4.0,  c: '#fff4b0' }
 ];
-const runeSlots = g => (g ? g.q || 0 : 0);
+const runeSlots = g => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? g.q || 0 : 0);   // 화살·표창은 룬 칸이 없다
 const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
 const PCT_STATS = ['crit', 'eva'];
 

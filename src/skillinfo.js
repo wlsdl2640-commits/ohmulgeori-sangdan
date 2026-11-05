@@ -83,6 +83,7 @@ function skillSpec(id, a) {
   if (s.slow) out.push(`${s.slow}초 느려짐 (적 공격 간격 ×1.6)`);
   // 비용과 재사용 대기시간
   out.push(s.cost.hp ? `HP ${skPct(s.cost.hp)}${d ? ` (${skN(d.maxHp * s.cost.hp)})` : ''} 소모` : `MP ${s.cost.mp} 소모`);
+  if (arrowSkill(s) && (!a || needsArrows(a))) out.push(`화살 ${s.tgt === 'all' ? `맞히는 적마다 ${s.kind === 'dmg' ? s.hits || 1 : 1}발 (여섯까지)` : `${arrowCost(s, 1)}발`} · 모자라면 못 씀`);
   if (s.cd) {
     const eff = a ? skillCdOf(a, d, id, null) : s.cd;
     out.push(`재사용 ${skSec(s.cd)}${a && Math.abs(eff - s.cd) >= 0.05 ? ` → <b>${skSec(eff)}</b>` : ''}`);
@@ -105,6 +106,8 @@ function basicSpec(a) {
   if (T.aoe) out.push(`다른 적에게도 ${skMul(T.aoe)}`);
   if (T.pet) out.push(`동물 동료가 ${skPct(0.5 + T.pet)}로 함께 문다 (공격력 ${skMul((0.35 + T.pet) * BASIC_MULT)})`);
   out.push(`재사용 ${BASIC_CD}초 ÷ 공격 속도 ${skMul(d.spd)} = <b>${skSec(cd)}</b>`);
+  if (needsArrows(a)) out.push(a.eq.ammo ? `화살 1발씩 · 남은 <b class="${ammoLeft(a.eq.ammo, a) ? '' : 'red-t'}">${ammoTag(a.eq.ammo, a)}</b> (0발이면 기본 공격·화살 스킬을 못 해요)` : '<span class="red-t">화살이 없어 기본 공격을 못 해요</span>');
+  const sh = a.eq && a.eq.off; if (isAmmo(sh) && sh.base === 'shuriken') out.push(`표창: 기본 공격마다 하나를 더 던짐 (공격력 ${skMul(BASIC_MULT * SHURI_MUL)}) · 남은 ${ammoTag(sh, a)}`);
   return out;
 }
 // 공격 속도·재사용 감소가 어디서 오는지 (능력치 탭)
@@ -135,7 +138,7 @@ function bookFromText(id) {
 
 /* ───────── 전투 통계 (DPS 미터) ───────── */
 // stats = e.stats(원정 중) 또는 p.last.stats(지난 원정), names = {id: 이름} (떠난 모험가용)
-const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', etc: '그 밖' };
+const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '표창', mast: '숙련', etc: '그 밖' };
 function bstatName(who, names) {
   if (String(who).charAt(0) === 'P') { const pt = petById(+String(who).slice(1)); return pt ? `펫 ${pt.name}` : '펫'; }
   const a = advById(+who); return a ? a.name : (names && names[who]) || '?';

@@ -70,7 +70,18 @@ function drawIcon(ctx, id, ox = 0, oy = 0) {
 const ICON_URL = {};
 const TIER_COLORS = ['#b0a898', '#7ab05a', '#b8c0c8', '#7ab8ff', '#c8ecff', '#f0c24a', '#7ab86a', '#e07a4a', '#c060e0'];
 const QCOL = ['#b0a898', '#7bd36a', '#6ab0ff', '#c07af0', '#f0b43c', '#ff6a5a', '#fff4b0'];
+// 부장비 그림 (data-officon.js가 있으면): 단계 묶음마다 모습 하나 — 견습·숲지기 / 강철·폭풍 / 서리·사막왕 / 그 위. 16×20칸을 1칸 = 1픽셀로 20×20에 (#ff00ff = 빈칸)
+const offLook = t => (t <= 1 ? 0 : t <= 3 ? 1 : t <= 5 ? 2 : 3);
+function offIconURL(base, t) {
+  if (typeof OFFICON === 'undefined' || !OFFICON[base]) return null;
+  const k = 'o:' + base + ':' + offLook(t); if (ICON_URL[k]) return ICON_URL[k];
+  const cells = skiCells(k); if (!cells) return null;
+  const [c, x] = mkCanvas(20, 20);
+  cells.forEach((col, i) => { if (col !== '#ff00ff') { x.fillStyle = col; x.fillRect(2 + (i % 16), Math.floor(i / 16), 1, 1); } });
+  return (ICON_URL[k] = c.toDataURL());
+}
 function gearIconURL(g) {
+  const off = offIconURL(g.base, g.t); if (off) return off;
   const key = 'g:' + g.base + ':' + g.t;
   if (ICON_URL[key]) return ICON_URL[key];
   const [c, x] = mkCanvas(10, 10);

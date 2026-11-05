@@ -19,7 +19,7 @@ const MASTERY = {
   plate:  { name: '갑옷 숙련', w: ['plate'],         icon: 'armor',  fx: [{ hpPct: 0.04 }, { hpPct: 0.07, defPct: 0.03 }, { hpPct: 0.1, defPct: 0.06 }], desc: '무거운 판금 갑옷을 몸처럼 입는다.' },
   magic:  { name: '마법 지식', job: ['mage', 'cleric'], icon: 'book', fx: [{ matkPct: 0.04 }, { matkPct: 0.08, mpPct: 0.08 }, { matkPct: 0.12, mpPct: 0.15, cdr: 0.03 }], desc: '마력을 다루는 이론. 마법 공격력이 오르면 치유량도 함께 오른다.' },
   holy:   { name: '신성학',    job: ['cleric'],      icon: 'heart',  fx: [{ healPow: 0.05 }, { healPow: 0.1 }, { healPow: 0.15 }], desc: '기도와 의술. 치유·재생·보호막이 더 세진다.' },
-  shield: { name: '방패술',    job: ['knight', 'coachman'], icon: 'crest', fx: [{ defPct: 0.05, block: 0.03 }, { defPct: 0.1, block: 0.05 }, { defPct: 0.15, block: 0.08 }], desc: '방패를 세워 받아 막는다. 기사·마부 계열.' },
+  shield: { name: '방패술',    w: ['shield'],        icon: 'crest', fx: [{ defPct: 0.05, block: 0.03 }, { defPct: 0.1, block: 0.05 }, { defPct: 0.15, block: 0.08 }], desc: '방패를 세워 받아 막고 버틴다.' },
   carry:  { name: '운반술',    job: ['porter'],      icon: 'bag',    fx: [{ carryPct: 0.1 }, { carryPct: 0.2 }, { carryPct: 0.3, movePct: 0.05 }], desc: '짐을 꾸리고 나르는 요령. 상급은 발걸음도 빨라진다.' }
 };
 const MAST_IDS = Object.keys(MASTERY);

@@ -533,7 +533,7 @@ const HEX_URL = {}, HEX_W = 48;
 // 스킬 그림 (data-skicon.js): 육각 안쪽 16×20칸, 한 칸 = 2×2픽셀. 칸 (0,0)은 틀의 (8,4) 픽셀
 // 숙련 그림 (data-masticon.js): id 'm:숙련:단계(0~3)'
 const SKI_A = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_', SKI_CELLS = {};
-const skiSrc = id => { if (id.startsWith('m:')) { const [, k, t] = id.split(':'); return typeof MASTICON !== 'undefined' && MASTICON[k] && MASTICON[k][+t]; } return typeof SKICON !== 'undefined' && SKICON[id]; };
+const skiSrc = id => { if (id.startsWith('m:') || id.startsWith('o:')) { const [w, k, t] = id.split(':'), T = w === 'm' ? (typeof MASTICON !== 'undefined' && MASTICON) : (typeof OFFICON !== 'undefined' && OFFICON); return T && T[k] && T[k][+t]; } return typeof SKICON !== 'undefined' && SKICON[id]; };   // 숙련 'm:숙련:단계' · 부장비 'o:종류:모습'
 function skiCells(id) {
   if (SKI_CELLS[id] !== undefined) return SKI_CELLS[id];
   const src = skiSrc(id); if (!src) return (SKI_CELLS[id] = null);

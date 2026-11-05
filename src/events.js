@@ -59,7 +59,7 @@ function startWave(pid, evId) {
   e.area = 'wave'; e.encs = []; e.wave = { id: ev0.id, from: ev0.from, n: ev0.n, cur: 0, lv: ev0.lv }; e.done = 0; e.gap = 1.5; e.pos = STAGE_LEN * 0.3;
   formParty(p);
   p.exp = e; ev0.party = p.id;
-  team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
+  team.forEach(a => { refillAmmo(a); a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.view = p.id;
   log(`${p.name}이(가) 하르겐 성문으로 나가 몬스터 웨이브를 막는다.`);
   changed();

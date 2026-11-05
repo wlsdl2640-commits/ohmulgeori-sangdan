@@ -121,7 +121,7 @@ const AWK_SKILLS = {
 Object.assign(SKILLS, AWK_SKILLS);
 Object.keys(AWK_SKILLS).forEach(id => SKILL_IDS.push(id));
 const awkSkillOf = a => 'awk_' + jobBase(a.cls);
-STAT_NAMES.block = '방어'; STAT_NAMES.counter = '반격'; STAT_NAMES.double = '연타'; STAT_NAMES.heal = '회복량'; STAT_NAMES.rheal = '받는 회복';
+STAT_NAMES.block = '방어 확률'; STAT_NAMES.counter = '반격'; STAT_NAMES.double = '연타'; STAT_NAMES.heal = '회복량'; STAT_NAMES.rheal = '받는 회복';
 
 /* ───────── 직업 특성 (2차·3차 전직 때 붙는다, 마법사의 돌로 바꿀 수 없다) · 마법사의 돌 ───────── */
 const JOB_TRAITS = {

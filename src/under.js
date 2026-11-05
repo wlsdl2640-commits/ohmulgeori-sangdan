@@ -115,7 +115,7 @@ function startArena(pid, oi) {
   e.area = 'arena'; e.encs = []; e.opp = oi; e.oppName = opp.name; e.oppTier = opp.tier; e.oppLv = opp.lv; e.done = 0;
   formParty(p);
   p.exp = e;
-  team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
+  team.forEach(a => { refillAmmo(a); a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.view = p.id;
   log(`${p.name}이(가) 지하 투기장에서 ${opp.name}에 도전한다. (입장료 ${fmt(fee)}G)`);
   changed();

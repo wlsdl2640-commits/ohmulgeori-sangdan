@@ -24,7 +24,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -275,7 +275,7 @@ function equip(aid, gid) {
   const slot = GTYPES[g.base].slot;
   S.gear.splice(i, 1);
   if (a.eq[slot]) S.gear.push(a.eq[slot]);
-  a.eq[slot] = g;
+  a.eq[slot] = g; if (isAmmo(g)) g.n = null;   // 상단에서 끼우면 가득
   clampVitals(a); changed();
   return '';
 }
@@ -306,6 +306,7 @@ function gearsAll() {   // 창고 + 끼고 있는 장비 (owner 표시)
 const gearAnyById = id => { const r = gearsAll().find(x => x.g.id === id); return r || null; };
 function plusWhy(g) {
   if (!g) return '장비를 고르세요';
+  if (isAmmo(g)) return '화살·표창은 강화할 수 없어요';
   if (!S.bld.smithy) return '대장간이 필요해요';
   if ((g.plus || 0) >= PLUS_MAX) return '최고 강화예요';
   const need = plusNeed(g), lack = Object.entries(need).find(([k, n]) => (S.inv[k] || 0) < n);
@@ -351,6 +352,22 @@ function enhance(id) {
   log(`${gearName(g)} +${(g.plus || 0) + 1} 강화 실패… 재료와 돈을 잃었다 (${Math.round(rate * 100)}%).`, 'bad');
   changed();
   return `실패… ${gearName(g)}은(는) 그대로예요.`;
+}
+// 대장간: 화살·표창은 재료 없이 돈으로도 산다 (대장간이 만들 수 있는 단계까지)
+function buyAmmoWhy(base, t) {
+  if (!GTYPES[base] || !GTYPES[base].ammo) return '화살·표창만 살 수 있어요';
+  if (!S.bld.smithy) return '대장간이 필요해요';
+  if (!GTIERS[t] || S.bld.smithy < GTIERS[t].smith) return `대장간 Lv${GTIERS[t] ? GTIERS[t].smith : '?'}부터`;
+  if (S.gold < ammoPrice(base, t)) return `${fmt(ammoPrice(base, t))}G가 필요해요`;
+  return '';
+}
+function buyAmmo(base, t) {
+  const why = buyAmmoWhy(base, t); if (why) return why + '.';
+  const fee = ammoPrice(base, t), g = makeGear(base, t, 0);
+  S.gold -= fee; S.stats.spent = (S.stats.spent || 0) + fee; S.gear.push(g);
+  log(`대장간에서 ${gearName(g)}(${fmt(ammoMax(g))}${ammoUnit(g)})을(를) ${fmt(fee)}G에 샀다.`, 'good');
+  changed();
+  return '';
 }
 function autoEquip(aid) {
   const a = advById(aid);
@@ -967,6 +984,7 @@ function promote(aid, cls) {
   a.skills = [C1.innate, ...a.skills.filter(id => id !== C1.innate)].slice(0, skillSlots(a));
   if (a.post && !isHealer(cls)) a.post = null;
   SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } });
+  if (needsArrows(a) && !a.eq.ammo) { a.eq.ammo = makeGear('arrows', arrowTierOf(a.lv), 0); log(`${a.name}이(가) 활을 쏘게 되어 화살을 받았다.`); }   // 정찰가처럼 새로 활을 쏘는 직업
   if (!a.eq.weapon) a.eq.weapon = makeGear(WEAPON_OF[cls], wasT, 0);   // 길드가 새 직업에 맞는 무기를 준다
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
   clampVitals(a);
@@ -1233,7 +1251,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 8;   // 지금 저장 판 (migrate8까지 옮긴 상태)
+const SAVE_V = 9;   // 지금 저장 판 (migrate9까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1250,7 +1268,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); notes38(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1281,6 +1299,8 @@ function loadFrom(v) {
     if (old < 8) { migrate8(); saveGame(); }
     notes36();
     notes37();
+    if (old < 9) { migrate9(); saveGame(); }
+    notes38();
     return true;
   } catch (_) { return false; }
 }
@@ -1313,6 +1333,20 @@ function migrate7() {
 }
 // 빌드 36: 날씨 특성은 타고난 특성과 따로, 모험가마다 하나(약함만). 특성 칸에 있던 체질(약함·강함)을 빼고,
 // 약한 체질이 있었으면 그것을, 없으면 무작위 하나를 a.wxt로 준다 (그만큼 특성 칸이 빈다)
+// 빌드 38: 부장비·화살 칸. 활을 쏘는 모험가(손님 포함)에게 무기 단계(없으면 레벨)에 맞는 화살을 준다 — 없으면 기본 공격을 못 하니까
+function migrate9() {
+  let n = 0;
+  const fix = a => {
+    if (!a || !a.eq) return;
+    if (a.eq.off === undefined) a.eq.off = null;
+    if (a.eq.ammo === undefined) a.eq.ammo = null;
+    if (needsArrows(a) && !a.eq.ammo) { a.eq.ammo = makeGear('arrows', a.eq.weapon ? Math.min(a.eq.weapon.t, arrowTierOf(a.lv)) : arrowTierOf(a.lv), 0); n++; }
+  };
+  S.advs.forEach(fix); (S.cands || []).forEach(fix);
+  S.v = 9;
+  if (n) log(`부장비 칸이 생겼다. 활을 쏘는 모험가 ${n}명에게 화살을 나눠 주었다.`);
+}
+function notes38() { if (!S.flags.v38) { S.flags.v38 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '부장비 · 화살', body: STORY.v38 }); } }
 function migrate8() {
   let moved = 0;
   const fix = a => {

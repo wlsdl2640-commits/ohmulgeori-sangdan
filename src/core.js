@@ -42,10 +42,11 @@ function makeAdv(o = {}) {
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
-    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, mast: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
+    eq: { weapon: null, off: null, ammo: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, mast: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
     salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
   };
   growStats(a, lv - 1);
+  if (needsArrows(a)) a.eq.ammo = makeGear('arrows', arrowTierOf(lv), 0);   // 화살을 쓰는 직업은 레벨에 맞는 화살을 들고 온다
   const d = derive(a);
   a.hp = d.maxHp; a.mp = d.maxMp;
   return a;
@@ -104,7 +105,7 @@ function awaken2(aid) {
 }
 function gearSum(a) {
   const s = {};
-  for (const [slot] of SLOTS) { const g = a.eq && a.eq[slot]; if (!g) continue; const gs = gearStats(g); for (const k in gs) s[k] = (s[k] || 0) + gs[k]; }
+  for (const [slot] of SLOTS) { const g = a.eq && a.eq[slot]; if (!g || (isAmmo(g) && ammoLeft(g, a) <= 0)) continue; const gs = gearStats(g); for (const k in gs) s[k] = (s[k] || 0) + gs[k]; }   // 다 쓴 화살·표창은 능력치 없음
   return s;
 }
 function passives(a) {
@@ -138,7 +139,7 @@ function deriveBase(a) {
     spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd
     cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 50%)
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
-    move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct')) * (wind ? 1.15 : 1),
+    move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct') + (G.movePct || 0)) * (wind ? 1.15 : 1),
     mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3,
     mExec: P.exec || 0, mStun: P.stun || 0, mBuff: P.buffDur || 0   // 숙련: 처형 피해 · 기본 공격 기절 · 강화 지속
   };
@@ -375,7 +376,7 @@ function startExp(p, fid) {
   p.exp.food = packFood(p);   // 도시락
   if (FIELDS[fid].trade) tradeSetup(p, p.exp);
   if (FIELDS[fid].treasure) { addTo(S.inv, 'tmap', -1); p.exp.lvo = Math.max(8, Math.min(MAX_LV2, Math.round(avgLvOf(p)))); p.exp.chests = 0; }
-  team.forEach(a => { a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
+  team.forEach(a => { refillAmmo(a); a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.stats.trips++;
   if (!FIELDS[fid].trade) log(`${p.name}이(가) ${FIELDS[fid].name}(으)로 출발했다.${p.exp.food ? ` 도시락 ${FOODS[p.exp.food].name}을(를) 챙겼다.` : ''}${FIELDS[fid].treasure ? ' 보물 지도 한 장을 썼다.' : wagonFly(p) ? ` ${rigName(p)}이(가) 하늘로 떠올랐다.` : ''}`);
   changed();
@@ -664,6 +665,7 @@ function pickSkill(a, d, team, dm, foes, e) {
     if (a.skoff && a.skoff[id]) continue;   // 자동 사용 끔
     if (s.cost.mp && a.mp < s.cost.mp) continue;
     if (s.cost.hp && a.hp < d.maxHp * (s.cost.hp + 0.35)) continue;
+    if (arrowSkill(s) && needsArrows(a) && ammoLeft(a.eq.ammo, a) < arrowCost(s, foes.length)) continue;   // 화살이 모자라면 화살 스킬을 못 쓴다
     let pr = 0;
     if (s.kind === 'heal' && s.tgt === 'self') {
       if (a.hp < d.maxHp * 0.5) pr = 10;
@@ -703,6 +705,7 @@ function cast(e, a, d, id, team, dm, foes) {
   const s = SKILLS[id];
   if (s.cost.mp) a.mp -= s.cost.mp;
   if (s.cost.hp) a.hp -= Math.round(d.maxHp * s.cost.hp);
+  if (arrowSkill(s) && needsArrows(a)) useAmmo(a.eq.ammo, a, arrowCost(s, foes.length));   // 화살 스킬: 쏘는 만큼
   e.scd[a.id][id] = skillCdOf(a, d, id, e);
   ev(e, 'skill', { s: a.id, id });
   // 숙련도: 쓸수록 위력이 조금씩 오른다 (단계가 오르면 알린다)
@@ -770,6 +773,8 @@ function cast(e, a, d, id, team, dm, foes) {
     if (x) { x.down = false; x.hp = Math.max(1, Math.round(derive(x).maxHp * s.pct * M)); x.inj = null; e.rev = e.rev || {}; e.rev[a.id] = 1; if (e.flee && !downedOf(e, team).length) e.flee = 0; ev(e, 'revive', { s: a.id, d: x.id }); log(`${a.name}이(가) 쓰러진 ${x.name}을(를) 일으켜 세웠다!`, 'good'); }
   }
 }
+// 화살이 떨어졌다: 원정마다 한 번 알린다
+function noAmmo(e, a) { e.noAmmo = e.noAmmo || {}; if (e.noAmmo[a.id]) return; e.noAmmo[a.id] = 1; ev(e, 'noammo', { s: a.id }); log(`${a.name}의 화살이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
 function basicAct(e, a, d, team, dm, foes) {
   const act = CLASSES[a.cls].act, T = TR(a), st = e.sta && e.sta[a.id];
   if (st && (st.para || st.stun)) return;
@@ -784,9 +789,12 @@ function basicAct(e, a, d, team, dm, foes) {
   }
   const f = act === 'arrow' ? lowestFoe(foes) : foes[0];
   const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
+  const bow = needsArrows(a);
+  if (bow && ammoLeft(a.eq.ammo, a) <= 0) { noAmmo(e, a); return; }   // 화살이 없으면 기본 공격을 못 한다
   const swings = 1 + (rnd() < (T.double || 0) + (d.double || 0) ? 1 : 0);
   for (let i = 0; i < swings; i++) {
     if (f.hp <= 0) break;
+    if (bow && !useAmmo(a.eq.ammo, a, 1)) { noAmmo(e, a); break; }   // 한 발씩
     if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }
     const crit = rnd() < d.crit + buffAdd(e, a.id, 'crit');
     const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1);   // 5초에 한 번, 그만큼 세게 (숙련 처형)
@@ -797,6 +805,9 @@ function basicAct(e, a, d, team, dm, foes) {
     leech(e, a, d, v, false);
     comboUp(e, a);   // 연계 중첩 (지속딜)
   }
+  // 표창: 기본 공격마다 하나를 더 던진다 (남은 적 중 가장 약한 적)
+  const sh = a.eq && a.eq.off;
+  if (isAmmo(sh) && sh.base === 'shuriken' && useAmmo(sh, a, 1)) { const live = foes.filter(x => x.hp > 0); if (live.length) { const tg = lowestFoe(live), c = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, tg, d.atk * buffMul(e, a.id, 'atk') * BASIC_MULT * SHURI_MUL, c, false, a, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: tg.uid, v, c, k: 'arrow', sid: 'shuri' }, hitTag())); } }
   // 레인저·용기병: 동물 동료가 함께 문다
   if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT, false, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: false, k: 'pet' }, hitTag())); }
 }
@@ -1096,7 +1107,7 @@ function wipe(p) {
   teamOf(p).forEach(a => {
     injure(a, Math.max(2, a.inj ? a.inj.sev : 2));
     if (rnd() < 0.25 && a.inj.sev < 3) injure(a, a.inj.sev + 1);
-    a.down = false; a.status = 'idle'; a.hp = 1; a.trips++;
+    a.down = false; a.status = 'idle'; a.hp = 1; a.trips++; refillAmmo(a);
   });
   S.stats.wipes = (S.stats.wipes || 0) + 1;
   log(`${p.name}이(가) ${F.name}에서 전멸했다. 길드 구조대가 모두를 데려왔지만 가져오던 짐과 장비는 잃었다.`, 'bad');
@@ -1117,7 +1128,7 @@ function arrive(p) {
   autoSellRun(p.name);
   const team = p.members.map(advById).filter(Boolean);
   const hurt = team.filter(a => a.down || a.inj);
-  team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; clampVitals(a); });
+  team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; refillAmmo(a); clampVitals(a); });   // 상단에서 화살·표창 충전
   team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 상단을 떠났다.'));
   const n = Object.values(got).reduce((s, q) => s + q, 0);
   if (e.area === 'arena') log(`${p.name}이(가) 투기장에서 돌아왔다.`);

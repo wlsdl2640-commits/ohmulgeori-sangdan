@@ -158,7 +158,7 @@ function smithyBox() {
   const B = q >= 3 ? BOSS_RECIPE[q] : null;
   const rows = GTYPE_IDS.map(b => {
     const g = { base: b, t, q }, ok = canSmith(b, t, q);
-    return `<div class="li">${gImg(g, 'ico q-b q' + q)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${clsList(GTYPES[b].cls)} · Lv${GTIERS[t].lv}+</span></span><span class="sub">${statLine(gearStats(g))}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}"${ok ? '' : ' disabled'}>제작</button></div>`;
+    return `<div class="li">${gImg(g, 'ico q-b q' + q)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${clsList(GTYPES[b].cls)} · Lv${GTIERS[t].lv}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" title="${esc(buyAmmoWhy(b, t))}"${buyAmmoWhy(b, t) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t))}G</button>` : ''}</div></div>`;
   }).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. 룬 칸 ${q}개.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">일반 제작은 만들 때마다 일반·고급·희귀 품질이 정해져요. 대장간을 넓힐수록 좋은 품질이 잘 나와요.</div>';
@@ -254,7 +254,7 @@ PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
 PANELS.b = w => bldCard(w.b, true);
 
 /* 모험가 */
-function eqIcons(a) { return SLOTS.map(([s, n]) => (a.eq[s] ? gImg(a.eq[s], 'ico q-b q' + a.eq[s].q) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
+function eqIcons(a) { return SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => (a.eq[s] ? gImg(a.eq[s], 'ico q-b q' + a.eq[s].q) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
 function advState(a, p) {
   if (a.status === 'away') return `<span class="warn">${esc(p ? p.name : '')} 원정 중</span>`;
   if (a.inj) return `<span class="red-t">${INJ[a.inj.sev].name} · ${S.bld.temple ? '신전에서' : '여관 방에서'} 치료 중</span>`;
@@ -349,12 +349,12 @@ function advDetail(a) {
   const derived = [['HP', `${Math.ceil(a.hp)}/${d.maxHp}`], ['MP', `${Math.ceil(a.mp)}/${d.maxMp}`], ['피로', `${Math.round(a.fat || 0)}/100`], ['숙면 피로', `${Math.round(a.sleep || 0)}/100`], ['공격', d.atk.toFixed(1)], ['마법', d.matk.toFixed(1)], ['방어', d.def.toFixed(1)], ['회피', Math.round(d.eva * 1000) / 10 + '%'], ['치명', Math.round(d.crit * 1000) / 10 + '%'], ['방어 확률', Math.round(d.block * 100) + '%'], ['반격', Math.round(d.counter * 100) + '%'], ['연타', Math.round(((TR(a).double || 0) + d.double) * 100) + '%'], ['공격 속도', '×' + d.spd.toFixed(2)], ['기본 공격', basicCd(a, d, null).toFixed(1) + '초마다'], ['스킬 재사용', '-' + Math.round(d.cdr * 100) + '%'], ['이동속도', d.move.toFixed(1)], ['짐', d.carry]]
     .map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('');
   const spdB = speedBreakdown(a);
-  const slots = SLOTS.map(([s, n]) => {
+  const slots = SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => {
     const g = a.eq[s];
     const pool = S.gear.filter(x => GTYPES[x.base].slot === s && gearFits(a, x) && (!g || gearScore(x) >= gearScore(g))).sort((x, y) => gearScore(y) - gearScore(x)).slice(0, 4);
-    return `<div class="li col"><div class="row">${g ? gImg(g, 'ico q-b q' + g.q) : '<span class="ico empty"></span>'}<div class="grow stack"><span>${n} · ${g ? gearName(g) + ' ' + qTag(g) : '<span class="muted">비어 있음</span>'}</span>${g ? `<span class="sub">${statLine(gearStats(g))}</span>` : ''}</div>${g && idle ? `<button type="button" class="btn sm" data-mact="uneq" data-s="${s}">빼기</button>` : ''}</div>
+    return `<div class="li col"><div class="row">${g ? gImg(g, 'ico q-b q' + g.q) : '<span class="ico empty"></span>'}<div class="grow stack"><span>${n} · ${g ? gearName(g) + ' ' + qTag(g) : `<span class="${s === 'ammo' && needsArrows(a) ? 'red-t' : 'muted'}">비어 있음${s === 'ammo' && needsArrows(a) ? ' · 화살이 없으면 기본 공격을 못 해요' : ''}</span>`}</span>${g ? `<span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · <b class="${ammoLeft(g, a) ? '' : 'red-t'}">${ammoTag(g, a)}</b>` : ''}</span>` : ''}</div>${g && idle ? `<button type="button" class="btn sm" data-mact="uneq" data-s="${s}">빼기</button>` : ''}</div>
       ${g && runeSlots(g) ? `<div class="row sub"><span class="grow">룬 ${(g.runes || []).length}/${runeSlots(g)}${runeDots(g)}</span>${idle ? `<button type="button" class="btn sm" data-mact="rune" data-g="${g.id}">룬 끼우기</button>` : ''}</div>` : ''}
-      ${idle ? pool.map(x => `<div class="row sub swap">${gImg(x)}<span class="grow">${gearName(x)} ${qTag(x)} · ${statLine(gearStats(x))}</span><button type="button" class="btn sm" data-mact="eq" data-g="${x.id}">끼우기</button></div>`).join('') : ''}</div>`;
+      ${idle ? pool.map(x => `<div class="row sub swap">${gImg(x)}<span class="grow">${gearName(x)} ${qTag(x)} · ${statLine(gearStats(x))}${isAmmo(x) ? ` · ${fmt(ammoMax(x, a))}${ammoUnit(x)}` : ''}</span><button type="button" class="btn sm" data-mact="eq" data-g="${x.id}">끼우기</button></div>`).join('') : ''}</div>`;
   }).join('');
   const basicRow = `<div class="li basic"><div class="grow stack"><span>기본 공격 <span class="muted">· ${basicIsMagic(a) ? '마법' : CLASSES[a.cls].act === 'arrow' ? '사격' : '근접'} · 스킬과 상관없이 따로 나가요</span></span><span class="sub"><span class="sk-spec">${basicSpec(a).join(' · ')}</span></span></div></div>`;
   const learned = basicRow + a.skills.map(id => { const s = SKILLS[id], lv = skLv(a, id), why = skillUpWhy(a, id), off = a.skoff && a.skoff[id], pri = a.skpri && a.skpri[id];
@@ -454,9 +454,16 @@ function advAct(aid, b) {
 
 /* 원정 */
 // 모험가 한 줄 (초상·이름·직업·HP)
+// 원정 카드: 화살·표창 남은 수 (궁수는 0이면 빨갛게)
+function ammoBrief(a) {
+  const out = [];
+  if (needsArrows(a)) { const g = a.eq.ammo, n = g ? ammoLeft(g, a) : 0; out.push(`<span class="${n ? (n < ammoMax(g, a) * 0.2 ? 'gold-t' : '') : 'red-t'}">화살 ${fmt(n)}발</span>`); }
+  const sh = a.eq && a.eq.off; if (isAmmo(sh)) out.push(`표창 ${fmt(ammoLeft(sh, a))}개`);
+  return out.length ? ' · ' + out.join(' · ') : '';
+}
 function memberRow(a, btns) {
   const d = derive(a), why = cantGo(a) ? (a.inj ? INJ[a.inj.sev].name : a.post ? '신전 근무' : (a.sleep || 0) >= SLEEP.block ? '자는 중' : '') : '';
-  return `<div class="li mrow"><img class="por" src="${portrait(a)}" alt=""><div class="grow stack"><span>${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}</span>${why ? ` <span class="red-t">${why}</span>` : ''}</span><span class="sub">HP ${pct(a.hp, d.maxHp)}% · MP ${pct(a.mp, d.maxMp)}%${(a.fat || 0) > 0 ? ` · 피로 ${Math.round(a.fat)}` : ''}</span></div><div class="btns">${btns}</div></div>`;
+  return `<div class="li mrow"><img class="por" src="${portrait(a)}" alt=""><div class="grow stack"><span>${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}</span>${why ? ` <span class="red-t">${why}</span>` : ''}</span><span class="sub">HP ${pct(a.hp, d.maxHp)}% · MP ${pct(a.mp, d.maxMp)}%${(a.fat || 0) > 0 ? ` · 피로 ${Math.round(a.fat)}` : ''}${ammoBrief(a)}</span></div><div class="btns">${btns}</div></div>`;
 }
 // 어느 파티에도 없는 모험가: 파티에 넣는 단추가 파티마다 하나씩
 function freeList(forP) {
@@ -618,7 +625,7 @@ PANELS.inv = () => {
     cells = gear.map(g => cell('g' + g.id, gImg(g, 'ico lg q-b q' + g.q), null, sel === 'g' + g.id));
     const g = gear.find(x => 'g' + x.id === sel) || gear[0];
     if (g) { if (sel !== 'g' + g.id) cells[0] = cell('g' + g.id, gImg(g, 'ico lg q-b q' + g.q), null, true);
-      detail = `<div class="card hl idet"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}</span><span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w} · 모험가 창에서 끼워요</span></div></div>
+      detail = `<div class="card hl idet"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음 (기본 공격마다 하나, 상단에서 다시 채움)` : ''}</span><span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w} · ${GTYPES[g.base].slot === 'off' ? '부장비 · ' : GTYPES[g.base].slot === 'ammo' ? '화살 칸 · ' : ''}모험가 창에서 끼워요</span></div></div>
         ${(g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 마탑에서 재감정 (${fmt(REAPPRAISE.fee(g.t))}G${ITEMS['crest_' + g.t] ? ` + ${ITEMS['crest_' + g.t].name} ${REAPPRAISE.crest}` : ''})${reappraiseWhy(g) ? ` · <span class="red-t">${reappraiseWhy(g)}</span>` : ''}</span></div>` : ''}
         <div class="btns">${S.bld.smithy ? `<button type="button" class="btn sm gold" data-act="enhopen" data-id="${g.id}">강화${g.plus ? ' +' + g.plus : ''}</button>` : ''}${(g.q || 0) >= 2 ? `<button type="button" class="btn sm" data-act="reapp" data-id="${g.id}"${reappraiseWhy(g) ? ' disabled' : ''}>재감정</button>` : ''}${runeSlots(g) ? `<button type="button" class="btn sm" data-act="runewin" data-g="${g.id}">룬 새기기</button>` : ''}<button type="button" class="btn sm" data-act="sellgear" data-id="${g.id}">팔기 ${fmt(Math.round(gearValue(g) * GEAR_SELL))}G</button></div></div>`; }
     else detail = '<div class="card"><div class="sub">보관 중인 장비가 없어요. 대장간에서 만들거나 원정에서 주워 와요.</div></div>';
@@ -761,6 +768,7 @@ const ACT = {
   enhopen: d => { UI.smithTab = 'enh'; UI.enhG = +d.id; openWin('b', { b: 'smithy', tab: 'enh' }); },
   reapp: d => { const r = gearAnyById(+d.id); if (!r) return; const g = r.g; confirmBox('옵션 재감정', `「${gearName(g)}」의 보너스 옵션(${statLine(g.bonus || {}) || '없음'})을 다시 뽑을까요? ${fmt(REAPPRAISE.fee(g.t))}G${ITEMS['crest_' + g.t] ? `와 ${ITEMS['crest_' + g.t].name} ${REAPPRAISE.crest}개` : ''}가 들고, 더 나빠질 수도 있어요.`, '재감정', () => { say(reappraise(+d.id)); renderPanel(true); saveGame(); }, false); },
   smith: d => { const r = smith(d.b, +d.t, +d.q || 0); if (typeof r === 'string') say(r); else say(`${QUALITY[r.q].name} ${gearName(r)} 완성`); },
+  buyammo: d => { const r = buyAmmo(d.b, +d.t); say(r || `${GTIERS[+d.t].name} ${GTYPES[d.b].name}을(를) 샀어요`); },
   smithQ: d => { UI.smithQ = +d.q; },
   kingsell: d => say(kingSell(d.it)),
   raidopen: d => openWin('raid', { r: d.id }),
@@ -842,7 +850,7 @@ function pickForSlot(i) {
   $('m-body').onclick = e => { const b = e.target.closest('[data-slotpick]'); if (!b) return; setSlot(i, b.dataset.slotpick, 1); $('m-body').onclick = null; closeModal(); renderPanel(true); };
 }
 
-const ACT_SFX = { sell: 'coin', sellgear: 'coin', buy: 'buy', bmbuy: 'buy', arbuy: 'buy', kingbuy: 'buy', merbuy: 'buy', kingsell: 'coin', craft: 'pot', smith: 'forge', enhance: 'forge', build: 'forge', hatch: 'buff', feed: 'pot', go: 'open', wavego: 'warn', retire: 'win', train: 'buff', learn: 'buff', promo: 'win', awaken: 'win', stone: 'buff', fulfill: 'coin', dest: 'ui', desttab: 'ui', invtab: 'ui', dextab: 'ui' };
+const ACT_SFX = { sell: 'coin', sellgear: 'coin', buy: 'buy', bmbuy: 'buy', arbuy: 'buy', kingbuy: 'buy', merbuy: 'buy', kingsell: 'coin', craft: 'pot', smith: 'forge', buyammo: 'buy', enhance: 'forge', build: 'forge', hatch: 'buff', feed: 'pot', go: 'open', wavego: 'warn', retire: 'win', train: 'buff', learn: 'buff', promo: 'win', awaken: 'win', stone: 'buff', fulfill: 'coin', dest: 'ui', desttab: 'ui', invtab: 'ui', dextab: 'ui' };
 function bindUI() {
   $('panel-in').addEventListener('click', e => {
     const b = e.target.closest('[data-act],[data-mact]');
