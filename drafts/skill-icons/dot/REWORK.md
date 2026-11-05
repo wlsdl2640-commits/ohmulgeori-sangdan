@@ -16,3 +16,4 @@ aimed double poisonarrow rain piercing tripleshot stormarrows el_arrow awk_arche
 fix_a.py: berserk kn_charge fireball chain arcane iceprison awk2_mage sanctuary greatheal cure awk_cleric awk2_cleric holyhammer quickstep parasting awk2_rogue voltstab
 fix_b.py: packmule dw_smash sprint focus haste tactics ar_cheer ar_finish bandage roar colosseum shieldbash lancecharge devotion divinity rampage frenzy bloodfeast
 fix_c.py: trap wolfcall instinct jump dragonscale gale skyfall dragonfall godseye horsecare gallop cargoshield stampede roadlord spotweak farsight (창은 spear.py 새로)
+fix_d.py: parrying swordrain dancemaster smokebomb goldrush grandheist windspirit earthward waterspirit spiritking deathplague wyrmbane houndpack wildsense giantslayer anatomy quaketrap titanfall transmute
