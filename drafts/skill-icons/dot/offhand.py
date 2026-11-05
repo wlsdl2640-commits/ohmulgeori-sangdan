@@ -161,12 +161,59 @@ def lantern(a, metal, metal2, dark, glass, flame, flame2, core='#ffffff', glow_c
 def lantern_1(a): lantern(a, '#c4c8d0', '#7a7e88', '#4a4e58', '#e8d8a0', '#ff9a3a', '#ffd060')
 def lantern_2(a): lantern(a, '#ffd84a', '#c08a1c', '#7a5614', '#f4e0a0', '#ff8a2a', '#ffd060')
 def lantern_3(a): lantern(a, '#5a6070', '#3a3e48', '#22242c', '#a8e0f0', '#5ac8ff', '#c8f8ff')
-def lantern_4(a): lantern(a, '#ffe070', '#c8962c', '#7e5814', '#fff4c8', '#ffd84a', '#fff8d0', glow_c=['#5a4a1a', '#a88a3a'], star=True)
+def lantern_4(a): lantern(a, '#ffe070', '#c8962c', '#7e5814', '#fff4c8', '#ffd84a', '#fff8d0', star=True)
+# ───────── 화살 (궁수 계열 둘째 칸, 소모형: 기본 공격마다 1발) ─────────
+def arrow_line(cm, xt, yt, xb, yb, head, shaft, fl, nock='T'):
+    n = max(abs(xb - xt), abs(yb - yt)); pts = []
+    for i in range(n + 1): pts.append((round(xt + (xb - xt) * i / n), round(yt + (yb - yt) * i / n)))
+    for (x, y) in pts[2:-3]: cm[(x, y)] = shaft
+    x0, y0 = pts[0]; x1, y1 = pts[1]
+    cm[(x0, y0)] = head[0]; cm[(x1, y1)] = head[1]; cm[(x1 - 1, y1)] = head[0]; cm[(x1 + 1, y1)] = head[2]
+    for (x, y) in pts[-3:-1]: cm[(x, y)] = fl[0]; cm[(x - 1, y)] = fl[0]; cm[(x + 1, y)] = fl[1]
+    xb_, yb_ = pts[-1]; cm[(xb_, yb_)] = nock
+ARROW1 = ['.w.', 'wmM', 'mMM'] + ['.t.'] * 10 + ['ftF', 'ftF', 'fTF', 'f.F']
+def arrows(a, n, head, fl, band, glow_c=None):
+    """곧게 세운 화살 셋 (가운데가 한 칸 위) — 한 대씩 따로 테두리, 가운데를 띠로 묶음"""
+    if glow_c: glow(a, 7.5, 3.0, 5.0, glow_c)
+    pal = {'w': (head[0], 5), 'm': (head[1], 5), 'M': (head[2], 5), 't': ('#d8b880', 3), 'T': ('#7a4c22', 3), 'f': (fl[0], 1), 'F': (fl[1], 1), 'q': (band, 9), 'Q': (mix(band, '#000000', 0.35), 9)}
+    xs = {2: [(4, 1), (10, 1)], 3: [(2, 2), (12, 2), (7, 1)]}[n]
+    for (x, y) in xs: sp(a, ARROW1, x, y, pal)
+    x0, x1 = min(x for x, _ in xs), max(x for x, _ in xs) + 2
+    sp(a, ['q' * (x1 - x0 + 1), 'Q' * (x1 - x0 + 1)], x0, 10, pal)
+def arrows_1(a): arrows(a, 3, ('#c8ccd4', '#8a8e98', '#5a5e68'), ('#ffffff', '#c8c8d0'), '#d8c8a0')
+def arrows_2(a): arrows(a, 3, ('#ffffff', '#d0d8e4', '#8a94a8'), ('#d0d0d8', '#8a8a94'), '#8a5a2a')
+def arrows_3(a): arrows(a, 3, ('#fff4c0', '#ffd84a', '#c08a1c'), ('#ff6a5a', '#b02a22'), '#ffd84a')
+def arrows_4(a): arrows(a, 3, ('#ffffff', '#9aeeff', '#3a9ad4'), ('#ffffff', '#9ad8ff'), '#e8eef8')
+# ───────── 표창 (도적 계열, 투척 단검 대신 · 소모형: 기본 공격마다 하나 더 던짐) ─────────
+def star_blade(a, n, R, Ri, rot, cols, hole=1.0, cx=7.5, cy=9.5, glow_c=None, tipc=None, pow_=3.0):
+    if glow_c: glow(a, cx, cy, R + 1.5, glow_c)
+    cm = {}
+    for y in range(H):
+        for x in range(W):
+            dx, dy = x + 0.5 - cx, y + 0.5 - cy; d = math.hypot(dx, dy)
+            if d < hole: continue
+            th = math.atan2(dy, dx) - math.radians(rot)
+            r = Ri + (R - Ri) * ((math.cos(n * th) + 1) / 2) ** pow_
+            if d <= r:
+                if tipc and d > R - 2.0: cm[(x, y)] = 'c'
+                else: cm[(x, y)] = 'm' if dx + dy < -0.5 else 'M' if dx + dy > 0.5 else 'w'
+    for y in range(H):
+        for x in range(W):
+            if (x, y) not in cm and math.hypot(x + 0.5 - cx, y + 0.5 - cy) < hole + 0.9 and math.hypot(x + 0.5 - cx, y + 0.5 - cy) >= hole: cm[(x, y)] = 'n'
+    pal = {'w': (cols[0], 5), 'm': (cols[1], 5), 'M': (cols[2], 5), 'n': (mix(cols[2], '#000000', 0.4), 5), 'c': (tipc or '#ffffff', 1)}
+    sp(a, grid(cm), pal)
+def shuri_1(a): star_blade(a, 4, 7.2, 2.6, -90, ('#c8ccd4', '#a0a6b0', '#6a707c'), hole=1.1, pow_=1.4)
+def shuri_2(a):
+    star_blade(a, 4, 7.4, 2.4, -45, ('#ffffff', '#d0d8e4', '#8a94a8'), hole=1.1, pow_=1.6)
+    sp(a, ['rr', 'rR', '.R'], 13, 14, {'r': ('#e84848', 13), 'R': ('#9a2020', 13)})
+def shuri_3(a): star_blade(a, 6, 7.0, 3.0, -90, ('#8a8a98', '#5a5a68', '#34343e'), hole=1.2, tipc='#7af04a', pow_=1.5)
+def shuri_4(a): star_blade(a, 8, 7.2, 3.6, -90, ('#f0e4ff', '#b48cff', '#6a40c0'), hole=1.4, pow_=1.3)
 OFF = [('shield', '방패', '전사·마부 계열', [shield_round, shield_heater, shield_kite, shield_gold], ['나무 원형', '강철 히터', '기사 연 방패', '황금 성방패']),
-       ('quiver', '화살통', '궁수·정찰가 계열', [quiver_1, quiver_2, quiver_3, quiver_4], ['가죽 통', '사슴가죽 · 녹색 깃', '검은 통 · 금 테 · 붉은 깃', '푸른 통 · 빛 화살']),
+       ('quiver', '화살통', '궁수 계열 첫째 칸', [quiver_1, quiver_2, quiver_3, quiver_4], ['가죽 통', '사슴가죽 · 녹색 깃', '검은 통 · 금 테 · 붉은 깃', '푸른 통 · 빛 화살']),
+       ('arrows', '화살', '궁수 계열 둘째 칸 · 소모형', [arrows_1, arrows_2, arrows_3, arrows_4], ['나무 화살', '강철 화살', '금촉 · 붉은 깃', '빛나는 마법 화살']),
        ('tome', '마법서', '마법사 계열', [tome_1, tome_2, tome_3, tome_4], ['남색 · 금 열십자', '보라 · 연보라 고리', '검붉은 · 여밈 · 해 별', '검보라 · 금빛 겹고리']),
        ('relic', '성표', '성직자 계열', [holy_celtic, holy_ankh, holy_sun, holy_relic], ['나무 고리 십자', '은 앙크 · 파란 보석', '금 해 원반 · 붉은 보석', '빛 두른 금 십자']),
-       ('knives', '투척 단검', '도적 계열', [knives_1, knives_2, knives_3, knives_4], ['쇠 단검 셋', '은 날 · 붉은 띠', '검은 날 · 독', '보랏빛 그림자 날']),
+       ('shuriken', '표창', '도적 계열 · 소모형', [shuri_1, shuri_2, shuri_3, shuri_4], ['쇠 네 날', '강철 네 날 · 붉은 끈', '검은 여섯 날 · 독', '보랏빛 여덟 날']),
        ('lantern', '등불', '짐꾼 계열', [lantern_1, lantern_2, lantern_3, lantern_4], ['양철 등불', '놋쇠 등불', '쇠 등불 · 푸른 불', '별빛 등불'])]
 TIER_RANGE = ['견습·숲지기', '강철·폭풍', '서리·사막왕', '그 위 단계']
 def render(fn, z):
