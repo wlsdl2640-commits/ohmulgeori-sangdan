@@ -275,3 +275,13 @@ def ring_cells(cx, cy, rx, ry, w=0.55):
             d = math.hypot((x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry)
             if abs(d - 1) * min(rx, ry) <= w: out.append((x, y))
     return out
+def slash_line(a, x0, y0, x1, y1, w=1.4, core='#ffffff', edge='#ff5a5a'):
+    """가운데가 굵고 양끝이 가는 곧은 베기 자국"""
+    L = math.hypot(x1 - x0, y1 - y0); ux, uy = (x1 - x0) / L, (y1 - y0) / L
+    for y in range(H):
+        for x in range(W):
+            px, py = x + 0.5 - x0, y + 0.5 - y0; u = px * ux + py * uy; v = abs(-px * uy + py * ux)
+            if 0 <= u <= L:
+                t = u / L; r = w * math.sin(math.pi * t) ** 0.7
+                if v <= r * 0.45: a.set(x, y, core)
+                elif v <= r: a.set(x, y, edge)
