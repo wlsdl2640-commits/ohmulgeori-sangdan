@@ -19,3 +19,9 @@ fix_c.py: trap wolfcall instinct jump dragonscale gale skyfall dragonfall godsey
 fix_d.py: parrying swordrain dancemaster smokebomb goldrush grandheist windspirit earthward waterspirit spiritking deathplague wyrmbane houndpack wildsense giantslayer anatomy quaketrap titanfall transmute
 fix_e.py: cureall blackdeath frostblade arcaneguard starward swordsaint prayer grace miracle holyland archangel resurrect remedy epidemic holywater exorcism inquisition fr_song el_breath dw_grit weaken riposte ar_combo
 fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar colosseum devotion frenzy bloodfeast cure awk_cleric awk2_cleric parasting haste (A·B에서 손봤지만 전과 거의 같아 보여 새로)
+
+# 3단계 (2026-11-05 23:08)
+사용자: "화살 스킬을 제외한 모든 스킬들은 확정짓고, 화살 스킬의 화살을 더 얇고 가늘게 만들고, 화살깃을 좀더 길게 뽑아봐."
+- 화살 아닌 277개 확정: ../final_snap/*.png 가 확정본 (바꾸지 말 것. 바꿨는지 확인: 화살 아닌 것은 지금 그림과 픽셀이 같아야 한다)
+- 화살 3판 (arrows.py, 2판은 arrows_v2.py): 1칸 자루, 미늘 달린 가는 촉, 깃 5칸(작은 화살 3칸) + 흰 띠 + 끝이 젖혀짐, 오늬
+- 화살 스킬 30개 (arrows.py를 쓰는 29개 + 거신 낙하): 길이·자리 맞춘 것은 fix_ar.py, 비교 시트 arrows_v3_cmp.png

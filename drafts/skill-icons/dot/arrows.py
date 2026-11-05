@@ -1,79 +1,79 @@
-"""새 화살 (사용자: "화살이 너무 이상하게 생겼어").
-뾰족한 쇠 화살촉(밝은 쪽 · 어두운 쪽) + 곧은 자루(대각선은 2칸 굵기) + 흰 끝 붉은 깃털.
+"""화살 (3판). 사용자: "화살을 더 얇고 가늘게, 화살깃을 더 길게" (2판은 arrows_v2.py).
+가는 촉(미늘 달린 3칸 폭) · 1칸 자루 · 긴 깃(5칸, 흰 띠, 끝이 젖혀짐) · 오늬.
 arrow(방향, 촉끝 x, 촉끝 y, 자루 길이) → {(x,y): 글자}. 방향: r l u d ur ul dr dl"""
 AP = {'w': ('#ffffff', 5), 'm': ('#d4dcea', 5), 'M': ('#7a849a', 5), 't': ('#e8b878', 3), 'T': ('#9a6a34', 3),
       'r': ('#ff5a4a', 13), 'R': ('#a82a22', 13), 'f': ('#fff4ec', 7)}
-# 오른쪽 위 45° (촉끝 기준 상대 위치)
-_H45 = [(-1, 0, 'm'), (0, 0, 'w'), (-2, 1, 'm'), (-1, 1, 'w'), (0, 1, 'M'), (-4, 2, 'm'), (-3, 2, 'm'), (-2, 2, 'm'), (-1, 2, 'M'), (0, 2, 'M'),
-        (-4, 3, 'm'), (-3, 3, 't'), (-2, 3, 'T'), (-1, 3, 'M'), (-5, 4, 't'), (-4, 4, 'T'), (-3, 4, 'M'), (-2, 4, 'M'), (-6, 5, 't'), (-5, 5, 'T'), (-3, 5, 'M')]
-_T45 = [(-1, -1, 'r'), (-1, 0, 'r'), (-2, 1, 'f'), (-1, 1, 'R'), (0, 1, 'T'), (-1, 2, 'r'), (0, 2, 'R'), (0, 3, 'r'), (1, 3, 'f')]
-def _ur(L):
-    out = list(_H45); K = 5 + L
-    for k in range(6, K + 1): out += [(-k - 1, k, 't'), (-k, k, 'T')]
-    bx, by = -(K + 1), K
-    out += [(bx + dx, by + dy, c) for dx, dy, c in _T45]
+def _cell_ur(s, o):
+    # o와 2s의 홀짝이 같아야 칸이 된다
+    x2, y2 = o - 2 * s, o + 2 * s
+    if abs(x2 - round(x2)) > 1e-6 or round(x2) % 2: return None
+    return (int(round(x2)) // 2, int(round(y2)) // 2)
+def _ur(L, F, barbs, small):
+    out = {}
+    def put(s, o, c):
+        q = _cell_ur(s, o)
+        if q is not None: out.setdefault(q, c)
+    # 촉
+    put(0, 0, 'w'); put(0.5, -1, 'm'); put(0.5, 1, 'M')
+    hl = 1 if small else 2
+    for s2 in range(2, 2 * hl + 1):
+        s = s2 / 2
+        if s2 % 2 == 0: put(s, 0, 'm')
+        else: put(s, -1, 'm'); put(s, 1, 'M')
+    if barbs: put(hl, -2, 'm'); put(hl, 2, 'M')
+    # 자루
+    s0 = hl + (0 if small else 0)
+    for k in range(1, L + 1): put(s0 + k, 0, 't')
+    # 깃: 자루 끝 쪽 F칸, 양옆 줄 (o=±1), 끝 2칸은 바깥 줄(o=±2)까지 젖힘
+    sf = s0 + L
+    for k in range(1, F + 1):
+        s = sf + k
+        put(s, 0, 't')
+        put(s - 0.5, -1, 'f' if k == 2 else 'r'); put(s - 0.5, 1, 'f' if k == 2 else 'R')
+        if k == F: put(s, -2, 'r'); put(s, 2, 'R')
+    put(sf + F + 1, 0, 'T')
     return out
-# 오른쪽 (가로)
-_HR = [(-3, -2, 'm'), (-3, -1, 'm'), (-2, -1, 'm'), (-4, 0, 'm'), (-3, 0, 'm'), (-2, 0, 'm'), (-1, 0, 'M'), (0, 0, 'w'), (-3, 1, 'M'), (-2, 1, 'M'), (-3, 2, 'M')]
-_TR = [(-4, -2, 'f'), (-3, -2, 'r'), (-2, -2, 'r'), (-3, -1, 'f'), (-2, -1, 'r'), (-1, -1, 'r'), (-2, 0, 'R'), (-1, 0, 'R'),
-       (-3, 1, 'f'), (-2, 1, 'r'), (-1, 1, 'r'), (-4, 2, 'f'), (-3, 2, 'r'), (-2, 2, 'r')]
-def _r(L):
-    out = list(_HR)
-    for i in range(L): out.append((-5 - i, 0, 't'))
-    sx = -4 - L
-    out += [(sx + dx, dy, c) for dx, dy, c in _TR]
+def _r(L, F, small):
+    out = {}
+    # 촉 (높이 3)
+    head = [(0, 0, 'w'), (-1, 0, 'm'), (-2, 0, 'm'), (-2, -1, 'm'), (-2, 1, 'M')]
+    if not small: head += [(-3, -1, 'm'), (-3, 1, 'M'), (-3, 0, 'M')]
+    for x, y, c in head: out[(x, y)] = c
+    hx = -3 if small else -4
+    for i in range(L): out[(hx - i, 0)] = 't'
+    sx = hx - L
+    for i in range(F):
+        x = sx - i; out[(x, 0)] = 't'
+        out[(x, -1)] = 'f' if i == 1 else 'r'; out[(x, 1)] = 'f' if i == 1 else 'R'
+        if i == F - 1: out[(x, -2)] = 'r'; out[(x, 2)] = 'R'
+    out[(sx - F, 0)] = 'T'
     return out
-SW = {'m': 'M', 'M': 'm', 't': 'T', 'T': 't'}
-def arrow(d, tx, ty, L=6):
-    if d in ('r', 'l', 'u', 'd'):
-        base = _r(L)
-        if d == 'r': pts = base
-        elif d == 'l': pts = [(-dx, dy, c) for dx, dy, c in base]
-        elif d == 'd': pts = [(-dy, dx, SW.get(c, c) if c in 'mM' else c) for dx, dy, c in base]
-        else: pts = [(dy, -dx, c) for dx, dy, c in base]
+SW = {'m': 'M', 'M': 'm', 'r': 'R', 'R': 'r'}
+def _place(base, d, tx, ty, diag):
+    if not diag:
+        if d == 'r': pts = [(x, y, c) for (x, y), c in base.items()]
+        elif d == 'l': pts = [(-x, y, c) for (x, y), c in base.items()]
+        elif d == 'd': pts = [(-y, x, SW.get(c, c)) for (x, y), c in base.items()]
+        else: pts = [(y, -x, c) for (x, y), c in base.items()]
     else:
-        base = _ur(L)
-        if d == 'ur': pts = base
-        elif d == 'ul': pts = [(-dx, dy, c) for dx, dy, c in base]
-        elif d == 'dl': pts = [(-dx, -dy, SW.get(c, c)) for dx, dy, c in base]
-        else: pts = [(dx, -dy, SW.get(c, c)) for dx, dy, c in base]
-    return {(tx + dx, ty + dy): c for dx, dy, c in pts}
+        if d == 'ur': pts = [(x, y, c) for (x, y), c in base.items()]
+        elif d == 'ul': pts = [(-x, y, c) for (x, y), c in base.items()]
+        elif d == 'dl': pts = [(-x, -y, SW.get(c, c)) for (x, y), c in base.items()]
+        else: pts = [(x, -y, SW.get(c, c)) for (x, y), c in base.items()]
+    return {(tx + x, ty + y): c for x, y, c in pts}
+def arrow(d, tx, ty, L=6, F=5, barbs=True):
+    diag = d not in ('r', 'l', 'u', 'd')
+    base = _ur(L, F, barbs, False) if diag else _r(L, F, False)
+    return _place(base, d, tx, ty, diag)
+def arrow_s(d, tx, ty, L=3, F=3):
+    diag = d not in ('r', 'l', 'u', 'd')
+    base = _ur(L, F, True, True) if diag else _r(L, F, True)
+    return _place(base, d, tx, ty, diag)
 def recol(cm, m): return {k: m.get(v, v) for k, v in cm.items()}
 # 자주 쓰는 색 바꾸기
 GREEN_HEAD = {'w': 'g', 'm': 'g', 'M': 'G'}
 GOLD_ALL = {'w': 'h', 'm': 'y', 'M': 'Y', 't': 'y', 'T': 'Y', 'r': 'h', 'R': 'y', 'f': 'w'}
 GOLDP = {'h': ('#fff6c8', 6), 'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6), 'w': ('#ffffff', 7)}
-# 작은 화살 (여러 발 그릴 때)
-_H45S = [(-1, 0, 'm'), (0, 0, 'w'), (-2, 1, 'm'), (-1, 1, 'w'), (0, 1, 'M'), (-3, 2, 't'), (-2, 2, 'T'), (-1, 2, 'M'), (0, 2, 'M')]
-_T45S = [(-1, 0, 'r'), (-1, 1, 'f'), (0, 1, 'R'), (1, 2, 'f'), (0, 2, 'r')]
-def _urs(L):
-    out = list(_H45S); K = 2 + L
-    for k in range(3, K + 1): out += [(-k - 1, k, 't'), (-k, k, 'T')]
-    bx, by = -(K + 1), K
-    out += [(bx + dx, by + dy, c) for dx, dy, c in _T45S]
-    return out
-_HRS = [(0, 0, 'w'), (-1, 0, 'm'), (-1, -1, 'm'), (-1, 1, 'M'), (-2, 0, 'M')]
-_TRS = [(-1, -1, 'r'), (-2, -1, 'f'), (-1, 1, 'r'), (-2, 1, 'f'), (-1, 0, 'R')]
-def _rs(L):
-    out = list(_HRS)
-    for i in range(L): out.append((-3 - i, 0, 't'))
-    sx = -2 - L
-    out += [(sx + dx, dy, c) for dx, dy, c in _TRS]
-    return out
-def arrow_s(d, tx, ty, L=3):
-    if d in ('r', 'l', 'u', 'd'):
-        base = _rs(L)
-        if d == 'r': pts = base
-        elif d == 'l': pts = [(-dx, dy, c) for dx, dy, c in base]
-        elif d == 'd': pts = [(-dy, dx, SW.get(c, c) if c in 'mM' else c) for dx, dy, c in base]
-        else: pts = [(dy, -dx, c) for dx, dy, c in base]
-    else:
-        base = _urs(L)
-        if d == 'ur': pts = base
-        elif d == 'ul': pts = [(-dx, dy, c) for dx, dy, c in base]
-        elif d == 'dl': pts = [(-dx, -dy, SW.get(c, c)) for dx, dy, c in base]
-        else: pts = [(dx, -dy, SW.get(c, c)) for dx, dy, c in base]
-    return {(tx + dx, ty + dy): c for dx, dy, c in pts}
 def ar(a, d, tx, ty, L=4, m=None, pal=None, glow_c=None, small=False):
     """화살 놓기 (테두리 + B4 손질)"""
     from lib import sp, grid
