@@ -376,7 +376,7 @@ function autoEquip(aid) {
   for (const [slot] of SLOTS) {
     const sc = g => gearScore(g) + mastGearBonus(a, g);   // 숙련한 무기·갑옷을 조금 더 쳐준다
     if (slot === 'ammo' && !needsArrows(a)) continue;   // 화살 칸은 활을 쏘는 직업만
-    const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g)).sort((x, y) => sc(y) - sc(x))[0];
+    const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g) && !GTYPES[g.base].el).sort((x, y) => sc(y) - sc(x))[0];   // 속성 화살은 출발할 때 고른다
     if (best && sc(best) > (a.eq[slot] ? sc(a.eq[slot]) : -1)) { equip(aid, best.id); n++; }
   }
   return n ? '' : '더 좋은 장비가 없어요.';

@@ -108,6 +108,7 @@ function basicSpec(a) {
   out.push(`재사용 ${BASIC_CD}초 ÷ 공격 속도 ${skMul(d.spd)} = <b>${skSec(cd)}</b>`);
   if (needsArrows(a) && !shootsArrows(a)) out.push('활을 들면 기본 공격이 화살 사격이 된다 (화살 1발씩)');
   if (shootsArrows(a)) out.push(a.eq.ammo ? `화살 1발씩 · 남은 <b class="${ammoLeft(a.eq.ammo, a) ? '' : 'red-t'}">${ammoTag(a.eq.ammo, a)}</b> (0발이면 기본 공격·화살 스킬을 못 해요)` : '<span class="red-t">화살이 없어 기본 공격을 못 해요</span>');
+  if (shootsArrows(a) && arrowEl(a)) { const G = GTYPES[a.eq.ammo.base], St = G.sta && STATUS[G.sta.k]; out.push(`${G.name}: 기본 공격과 속성 없는 화살 스킬이 ${elTag(G.el)} 속성${St ? ` · 맞힐 때 ${Math.round(G.sta.p * 100)}%로 ${St.name} ${G.sta.d}초` : ''}`); }
   const sh = a.eq && a.eq.off; if (isAmmo(sh) && sh.base === 'shuriken') out.push(`표창: 기본 공격마다 하나를 더 던짐 (공격력 ${skMul(BASIC_MULT * SHURI_MUL)}) · 남은 ${ammoTag(sh, a)}`);
   return out;
 }

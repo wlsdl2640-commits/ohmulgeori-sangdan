@@ -500,6 +500,17 @@ function stretcherHi(g, a, t, moving) {
 }
 
 /* ───────── 사건 → 효과와 전투 기록 ───────── */
+// 표창: 네 장으로 돌며 날아간다 (빌드 39). 0°·22.5°·45°·67.5° 별 + 검은 테두리. 색 = 표창 단계 모습
+const SHURI_C = [['#b9bfcb', '#636873'], ['#f0f9ff', '#ff5959'], ['#7af04a', '#30303a'], ['#b48cff', '#633cb3']];
+const SHURI_TRAIL = true;   // 시안 B: 잔상
+const SHURI_FR = [0, 22.5, 45, 67.5].map(th => {
+  const pts = new Map(); pts.set('0,0', 1);
+  for (let k = 0; k < 4; k++) { const a = (th + 90 * k) * Math.PI / 180; for (const r of [1, 2.2]) pts.set(Math.round(r * Math.cos(a)) + ',' + Math.round(-r * Math.sin(a)), 0); }
+  const star = [...pts].map(([q, c]) => { const [x, y] = q.split(',').map(Number); return [x, y, c]; }), out = new Map();
+  for (const [x, y] of star) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const q = (x + dx) + ',' + (y + dy); if (!pts.has(q)) out.set(q, [x + dx, y + dy]); }
+  return { star, out: [...out.values()] };
+});
+const shuriLook = id => { const a = typeof advById === 'function' ? advById(id) : null, g = a && a.eq && a.eq.off; return g && g.base === 'shuriken' ? offLook(g.t) : 0; };
 const PROJ = { arrow: 0.18, magic: 0.24, fire: 0.26, ice: 0.22, bolt: 0.06, holy: 0.1, wind: 0.24, dark: 0.26, jump: 0.2, spell: 0.2, note: 0.24, pet: 0 };
 const SKILL_CLS = { heal: 'heal', buff: 'buff', taunt: 'buff', mdmg: 'magic', dot: 'dot', shield: 'buff', regen: 'heal', revive: 'heal' };
 const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0', spd: '#ffe08a', matk: '#c89aff', block: '#9aa0a8', counter: '#f0c070', rheal: '#8af08a', shield: '#8ad8ff', regen: '#8af08a', crit: '#ffd060', cdr: '#c0a0ff', guard: '#9ab0c8' };
@@ -541,7 +552,8 @@ function events(e, pos, t, team, p) {
       if (x.k === 'jump') V.jump['a' + x.s] = t;
       const delay = PROJ[x.k] || 0, [c1, c2] = HIT_C[x.k] || HIT_C.melee;
       const P = { x0: am[0], y0: am[1], x1: fm[0], y1: fm[1], t0: t, d: delay };
-      if (x.k === 'arrow') V.fx.push(Object.assign({ k: 'arrow', c: x.dot ? '#7ad83c' : c1 }, P));
+      if (x.sid === 'shuri') V.fx.push(Object.assign({ k: 'shuri', c: SHURI_C[shuriLook(x.s)] }, P));
+      else if (x.k === 'arrow') V.fx.push(Object.assign({ k: 'arrow', c: x.dot ? '#7ad83c' : x.el && ELEMS[x.el] ? ELEMS[x.el].c : c1 }, P));   // 속성 화살은 그 색
       else if (x.k === 'magic' || x.k === 'spell' || x.k === 'note') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, ring: 1, size: 2 }, P));
       else if (x.k === 'fire') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, trail: 1, size: 3 }, P));
       else if (x.k === 'dark') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, ring: 1, size: 3 }, P));
@@ -622,7 +634,7 @@ function events(e, pos, t, team, p) {
       if (q) V.ghosts.push({ id: x.id, adv: x.adv || null, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });
     } else if (x.type === 'loot' || x.type === 'gear') {
       const gh = V.ghosts[V.ghosts.length - 1], q = gh ? [gh.x, gh.y] : [160, 180];
-      V.fx.push({ k: 'icon', id: x.type === 'gear' ? { icon: GTYPES[x.base].icon, c: TIER_COLORS[x.t] } : x.id, x: q[0] + (x.type === 'gear' ? 6 : 0), y: q[1] - 10, t0: t + 0.3, d: x.type === 'gear' ? 1.4 : 0.9 });
+      V.fx.push({ k: 'icon', id: x.type === 'gear' ? gearKeyIcon('g:' + x.base + ':' + x.t) : x.id, x: q[0] + (x.type === 'gear' ? 6 : 0), y: q[1] - 10, t0: t + 0.3, d: x.type === 'gear' ? 1.4 : 0.9 });
     } else if (x.type === 'down') {
       const aq = at('a' + x.d);
       if (aq) { V.fall['a' + x.d] = t; V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 12, s: 'DOWN', c: '#ff6a5a', t0: t, d: 1.4 }); V.fx.push({ k: 'burst', x: aq[0], y: aq[1] - 10, t0: t, d: 0.4, c: '#ff6a5a', c2: '#ffffff', big: 1 }); }
@@ -664,6 +676,12 @@ function fx(g, t) {
     const L = f.x1 != null ? Math.hypot(f.x1 - f.x0, f.y1 - f.y0) || 1 : 1, ux = f.x1 != null ? (f.x1 - f.x0) / L : 1, uy = f.x1 != null ? (f.y1 - f.y0) / L : 0;
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * (f.k === 'arrow' ? 10 : 4) : 0;
     if (f.k === 'num') { if (f.big) { drawNum(g, f.x - 0.5, Math.round(f.y - k * 12) - 0.5, f.s, f.c); drawNum(g, f.x + 0.5, Math.round(f.y - k * 12), f.s, f.c); } drawNum(g, f.x, Math.round(f.y - k * 12), f.s, f.c); }
+    else if (f.k === 'shuri') {
+      const fr = Math.floor(t * 24) % 4, at = kk => [Math.round(f.x0 + (f.x1 - f.x0) * kk), Math.round(f.y0 + (f.y1 - f.y0) * kk - Math.sin(kk * Math.PI) * 4)];
+      const draw = (q, F, al, line) => { const [cx, cy] = q; g.save(); g.globalAlpha = al; if (line) for (const [x, y] of F.out) R(g, cx + x, cy + y, 1, 1, '#1a1414'); for (const [x, y, c] of F.star) R(g, cx + x, cy + y, 1, 1, c ? f.c[1] : f.c[0]); g.restore(); };
+      if (SHURI_TRAIL) for (const [j, al] of [[2, 0.28], [1, 0.5]]) if (k - j * 0.06 > 0) draw(at(k - j * 0.06), SHURI_FR[(fr + 4 - j) % 4], al, false);
+      draw(at(k), SHURI_FR[fr], 1, true);
+    }
     else if (f.k === 'arrow') {
       for (let i = 0; i < 7; i++) P(px - ux * i, py - uy * i + (i > 4 ? 0.5 : 0), 1, 1, i < 5 ? f.c : 'rgba(255,255,255,0.4)');
       P(px + ux * 1.5, py + uy * 1.5, 1, 1, '#ffffff');

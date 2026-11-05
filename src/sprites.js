@@ -81,7 +81,7 @@ function offMini(base, t) {
   return (OFF_MINI[k] = out);
 }
 // 진열대에 놓인 장비 키('g:종류:단계')의 아이콘
-const gearKeyIcon = key => { const [, b, t] = key.split(':'); return { icon: GTYPES[b].icon, c: TIER_COLORS[+t], off: OFF_IDS.includes(b) ? b : null, t: +t }; };
+const gearKeyIcon = key => { const [, b, t] = key.split(':'); return { icon: GTYPES[b].icon, c: TIER_COLORS[+t], off: typeof OFFICON !== 'undefined' && OFFICON[b] ? b : null, t: +t }; };
 function drawIcon(ctx, id, ox = 0, oy = 0) {
   if (id && typeof id === 'object' && id.off) { const m = offMini(id.off, id.t); if (m) { m.forEach((r, y) => r.forEach((c, x) => { if (c) R(ctx, ox + x, oy + y, 1, 1, c); })); return; } }
   const it = typeof id === 'object' ? id : ITEMS[id]; if (!it) return;

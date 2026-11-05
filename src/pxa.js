@@ -1048,6 +1048,171 @@ NZzGzzN
 .NNNNN.
 ` }
 };
+/* 부장비를 그림에 (빌드 39): 끼운 부장비가 보인다. 그림은 뭉툭 칸(작업판 2×2) 단위로 적어 두 배로 키워 짝수 칸에 놓는다 → 반으로 구워도 그대로.
+   숫자 글자 = 부장비 색(1~5) · 화살 깃(7·8) · 화살통(9·0). 방패: 단계 모양(원형 → 히터 → 카이트 → 탑) · 마법서: 허리춤 · 성표: 손 · 표창: 허리춤 · 등불: 손 · 화살통: 등(깃은 화살이 있을 때만) */
+const PX_OFF_OPT = { shield: 'A', tome: 'B', relic: 'A', shuriken: 'A' };   // 시안에서 고른 것 (A·B)
+const PX_OFFPAL = {
+  shield: [{ 1: '#5d3a1a', 2: '#b8823e', 3: '#8c632f', 4: '#c8ccd4', 5: '#e0b070' }, { 1: '#c1c9d4', 2: '#e84848', 3: '#b03737', 4: '#f0f9ff', 5: '#ffffff' },
+           { 1: '#c2a438', 2: '#4a8aff', 3: '#3869c2', 4: '#ffff5c', 5: '#9ac4ff' }, { 1: '#926915', 2: '#f0e8d0', 3: '#b8a684', 4: '#d89a1c', 5: '#ffffff' }],
+  quiver: [{ 9: '#b87a48', 0: '#7a4a2a' }, { 9: '#8a6a3a', 0: '#5a4422' }, { 9: '#4a3a5a', 0: '#2e2238' }, { 9: '#2a4a7a', 0: '#1a2e50' }],
+  arrows: [{ 7: '#ffffff', 8: '#d8d8d8' }, { 7: '#ffffff', 8: '#ffeeab' }, { 7: '#ffd0c8', 8: '#ff6a5a' }, { 7: '#ffffff', 8: '#9ad8ff' }],
+  tome: [{ 1: '#0f1b49', 2: '#2e52b8', 3: '#ffd84a', 4: '#fff4c0' }, { 1: '#2c175b', 2: '#7a4ad0', 3: '#e0ccff', 4: '#fff4c0' },
+         { 1: '#380912', 2: '#a8283a', 3: '#9aeeff', 4: '#ffffff' }, { 1: '#110b24', 2: '#6b586c', 3: '#ffe070', 4: '#fff8d0' }],
+  relic: [{ 1: '#5d3a1a', 2: '#c89a5a', 3: '#f8bf70', 4: '#8a5a2a' }, { 1: '#626977', 2: '#abb8d0', 3: '#f0f9ff', 4: '#808a9c' },
+          { 1: '#926915', 2: '#eeab23', 3: '#ffff5c', 4: '#b03737' }, { 1: '#926915', 2: '#e8c860', 3: '#fff4b0', 4: '#75a4c2' }],
+  shuriken: [{ 1: '#b9bfcb', 2: '#636873' }, { 1: '#f0f9ff', 2: '#ff5959' }, { 1: '#7af04a', 2: '#30303a' }, { 1: '#b48cff', 2: '#633cb3' }],
+  lantern: [{ 1: '#5c616d', 2: '#979ca9', 3: '#f2bc72', 4: '#fff0c0' }, { 1: '#976b19', 2: '#eeab23', 3: '#f9b96b', 4: '#fff4c0' },
+            { 1: '#2a2d37', 2: '#80aab6', 3: '#85d5f7', 4: '#e8f8ff' }, { 1: '#9c6d19', 2: '#f8ba37', 3: '#ffe78f', 4: '#ffffff' }]
+};
+const PX_OFFSHAPE = {
+  round: `
+.111.
+12251
+12431
+13331
+.111.`,
+  heater: `
+11111
+12531
+12431
+12431
+.131.
+..1..`,
+  kite: `
+11111
+12431
+14441
+12431
+.131.
+..1..`,
+  tower: `
+111111
+125431
+144441
+122431
+122431
+123431
+.1111.`,
+  tome: `
+1222
+1232
+1222
+1444`,
+  relic0: `
+.2.
+232
+.2.
+.1.`,
+  relic1: `
+.3.
+323
+.2.
+.1.`,
+  relic2: `
+2.2
+.3.
+2.2
+.1.`,
+  relic3: `
+.3.
+343
+.2.
+.1.`,
+  shuri: `
+.1.
+121
+.1.`,
+  shuri2: `
+1.1
+.2.
+1.1`,
+  lantern: `
+.1.
+121
+343
+343
+.1.`,
+  quiverF: `
+.87.
+8778
+.99.
+.90.
+.90.
+.90.
+.90.`,
+  quiverS: `
+87..
+788.
+.99.
+.909
+..90
+..90
+..90`,
+  strap: `
+....0
+...0.
+..0..
+.0...
+0....`
+};
+// 놓는 곳 (뭉툭 칸 좌표, 앞모습 몸 블록 왼쪽 위 = (6, 17)) · under = 몸 뒤에 · float = 떠서 흔들린다
+const PX_OFFAT = {
+  front: { shield: { round: [3, 18], heater: [3, 18], kite: [3, 18], tower: [2, 17] }, tome: { A: [0, 15, 'float'], B: [3, 19] }, relic: { A: [4, 17], B: [5, 21] },
+           shuriken: { A: [5, 21], B: [3, 19] }, lantern: { A: [3, 20] } },
+  side:  { shield: { round: [2, 17], heater: [2, 17], kite: [2, 17], tower: [1, 16] }, tome: { A: [1, 14, 'float'], B: [4, 20, 'under'] }, relic: { A: [4, 18, 'under'], B: [9, 21] },
+           shuriken: { A: [9, 21], B: [4, 19, 'under'] }, lantern: { A: [4, 20, 'under'] } }
+};
+const pxUp = rows => rows.flatMap(r => { const d = [...r].map(c => c + c).join(''); return [d, d]; });
+const pxOffRows = k => pxUp(pxRows(PX_OFFSHAPE[k]));
+// 그릴 부장비: { base, look, shape }
+function pxOffOf(a, L) {
+  const g = a.eq && a.eq.off; if (!g || !PX_OFFPAL[g.base] || g.base === 'quiver') return null;
+  const look = offLook(g.t), b = g.base;
+  const shape = b === 'shield' ? (PX_OFF_OPT.shield === 'B' && L && L.shield ? L.shield : ['round', 'heater', 'kite', 'tower'][look])
+    : b === 'tome' ? 'tome' : b === 'relic' ? 'relic' + look : b === 'shuriken' ? (look >= 2 ? 'shuri2' : 'shuri') : b === 'lantern' ? 'lantern' : null;
+  return shape ? { base: b, look, shape } : null;
+}
+// 화살통 (등): 직업 그림에 화살통이 있거나 화살통을 끼웠으면. 화살이 남았을 때만 깃이 보인다
+function pxQuiverOf(a, L) {
+  const q = a.eq && a.eq.off && a.eq.off.base === 'quiver' ? a.eq.off : null;
+  if (!q && !((L && L.ex) || []).includes('quiver')) return null;
+  const ar = a.eq && a.eq.ammo, full = !needsArrows(a) || (!!ar && ammoLeft(ar, a) > 0);
+  return { look: q ? offLook(q.t) : 0, full };
+}
+function pxQuiverPut(g, Q, view, dy) {
+  let rows = pxRows(PX_OFFSHAPE[view === 'side' ? 'quiverS' : 'quiverF']);
+  if (!Q.full) rows = rows.map(r => r.replace(/[78]/g, '.'));
+  const [fx, fy] = view === 'side' ? [2, 11] : [12, 10];
+  pxUnder(g, pxUp(rows), fx * 2, fy * 2 + dy);
+  if (view === 'front') pxPut(g, pxUp(pxRows(PX_OFFSHAPE.strap)), 16, 34 + dy);
+}
+// 손·허리의 부장비 (숨쉬기 뒤에 그린다 → 몸과 같이 한 칸 내린다)
+function pxOffPut(g, O, pose, fr, view) {
+  const T = PX_OFFAT[view][O.base]; if (!T || pose === 'sit') return;
+  const v = O.base === 'shield' ? T[O.shape] : T[PX_OFF_OPT[O.base] || 'A'] || T.A; if (!v) return;
+  const [fx, fy0, how] = v, bob = (pose === 'idle' && fr % 2) || (pose === 'walk' && fr % 2 === 0);
+  const fy = fy0 + (how === 'float' && fr % 2 ? 1 : 0), dy = bob && how !== 'float' ? 1 : 0;
+  (how === 'under' || (view === 'side' && O.base === 'shield') ? pxUnder : pxPut)(g, pxOffRows(O.shape), fx * 2, fy * 2 + dy);
+  if (how === 'float') pxPut(g, ['33', '33'], fx * 2 + (fr % 2 ? 6 : 0), fy * 2 - 2);
+}
+// 부장비 색 (그림 팔레트에 덧붙인다) · 그림 열쇠
+function pxOffPal(a) {
+  const p = {}, o = a.eq && a.eq.off, ar = a.eq && a.eq.ammo;
+  Object.assign(p, PX_OFFPAL.quiver[o && o.base === 'quiver' ? offLook(o.t) : 0]);
+  if (o && PX_OFFPAL[o.base] && o.base !== 'quiver') Object.assign(p, PX_OFFPAL[o.base][offLook(o.t)]);
+  if (ar && ar.base === 'arrows') Object.assign(p, PX_OFFPAL.arrows[offLook(ar.t)]); else Object.assign(p, PX_OFFPAL.arrows[0]);
+  return p;
+}
+function pxOffKey(a) {
+  const o = a.eq && a.eq.off, ar = a.eq && a.eq.ammo;
+  return (o ? o.base + offLook(o.t) : '-') + (ar ? 'a' + offLook(ar.t) + (needsArrows(a) && ammoLeft(ar, a) <= 0 ? '0' : '') : needsArrows(a) ? 'a0' : '');
+}
+// 직업 그림에서 부장비가 대신하는 것을 뺀다 (화살통·방패)
+function pxOffLook(a, L0) {
+  const Q = pxQuiverOf(a, L0);
+  if (!Q && !L0.shield) return [L0, Q];
+  return [Object.assign({}, L0, { ex: Q ? (L0.ex || []).filter(e => e !== 'quiver') : L0.ex, shield: null }), Q];   // 직업 방패는 그리지 않는다: 끼운 방패만 보인다
+}
 // 덧붙이는 것 (몸 블록 좌표). under = 몸 뒤에
 const PX_EX = {
   pauldron: { x: -1, y: -1, g: `
@@ -1277,7 +1442,7 @@ function pxTone(rows, map) { return rows.map(r => [...r].map(c => map[c] || c).j
 
 /* 모험가 한 장 만들기. pose: idle · walk · atk · sit · sleep */
 function pxAdvGrid(a, pose, fr, Lx) {
-  const cls = PXL[a.cls] ? a.cls : PXL[jobBase(a.cls)] ? jobBase(a.cls) : 'warrior', L = Lx || PXL[cls];
+  const cls = PXL[a.cls] ? a.cls : PXL[jobBase(a.cls)] ? jobBase(a.cls) : 'warrior', L0 = Lx || PXL[cls], [L, Q] = pxOffLook(a, L0);
   const look = a.look || {}, ex = L.ex || [];
   const g = pxGrid(PXW, PXH);
   const robe = L.body === 'robe', coat = L.body === 'coat';
@@ -1306,7 +1471,7 @@ function pxAdvGrid(a, pose, fr, Lx) {
   // 팔 자세
   if (arm !== 'rest') { const A = PX_ARM[arm]; pxPut(g, pxTone(pxRows(A.g), L.body === 'plate' || L.body === 'chain' ? { C: 'M', c: 'N' } : L.body === 'bare' ? { C: 'S', c: 's' } : {}), BX + A.x, BY + A.y + sitDrop); }
   // 방패 · 활 · 두 번째 칼
-  if (L.shield && !sit) { const Sd = PX_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), BX + Sd.x, BY + 5 + Sd.y); }
+  if (L.shield && !sit && !(a.eq && a.eq.off && a.eq.off.base === 'shield')) { const Sd = PX_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), BX + Sd.x, BY + 5 + Sd.y); }
   if (bow) { const B = PX_BOW[wk]; pxPut(g, pxRows(atk === 0 ? B.draw : B.g), BX + B.x, BY + B.y + sitDrop); }
   else if (wk === 'lute') { const W = pxRows(PX_WPN.lute), [ax, ay] = pxFind(W, '@'); pxPut(g, W, BX + 9 - ax, BY + 4 - ay + (atk === 1 ? 1 : 0) + sitDrop, 'K'); if (atk === 0) pxPut(g, ['SS', 'Ss'], BX + 10, BY + 3 + sitDrop); }
   else if (!sit) {
@@ -1318,6 +1483,9 @@ function pxAdvGrid(a, pose, fr, Lx) {
   // 숨쉬기·걷기: 위쪽을 한 칸 내린다
   const bob = (pose === 'idle' && fr % 2) || (pose === 'walk' && fr % 2 === 0);
   if (bob) for (let y = BY + 8 + sitDrop; y > 0; y--) g[y] = g[y - 1].slice(), y === 1 && (g[0] = new Array(PXW).fill('.'));
+  // 부장비 (빌드 39)
+  if (Q) pxQuiverPut(g, Q, 'front', (sit ? 6 : 0) + (bob ? 2 : 0));
+  const O = pxOffOf(a, L0); if (O) pxOffPut(g, O, pose, fr, 'front');
   return g;
 }
 // 자는 모습: 침낭 + 옆으로 누운 머리
@@ -1349,9 +1517,9 @@ const PXK_POSE = { idle: 2, walk: 4, atk: 2, sit: 1, sleep: 1 };
 function advLook(a) { return PXL[a.cls] || PXL[jobBase(a.cls)] || PXL.warrior; }
 function pxAdvSprite(a, pose, fr, Lx) {
   const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || advLook(a);
-  const key = 'PA|' + (Lx ? JSON.stringify(Lx).length + (Lx.c1 || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
+  const key = 'PA|' + (Lx ? JSON.stringify(Lx).length + (Lx.c1 || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pxOffKey(a) + '|' + pose + fr;
   const hit = PXC.get(key + '|' + (FLASH || ''));
   if (hit) return hit;
   const g = pose === 'sleep' ? pxSleepGrid(a, L) : pxAdvGrid(a, pose, fr, L);
-  return pxBake(key, g, pxPal(L, look), BX + 8, BY + 13 + (pose === 'sleep' ? -2 : 0));
+  return pxBake(key, g, Object.assign(pxPal(L, look), pxOffPal(a)), BX + 8, BY + 13 + (pose === 'sleep' ? -2 : 0));
 }

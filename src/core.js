@@ -371,6 +371,7 @@ function startExp(p, fid) {
   const sup = {};
   if (p.autoBuy) for (const [k, q] of Object.entries(p.sup)) { const short = q - (S.inv[k] || 0); if (short > 0 && ITEMS[k] && ITEMS[k].buy) { const cost = buyPrice(k) * short; if (S.gold >= cost) { S.gold -= cost; S.stats.spent = (S.stats.spent || 0) + cost; addTo(S.inv, k, short); log(`${p.name} 출발 전에 ${ITEMS[k].name} ${short}개를 ${g$(cost)}에 사 두었다.`); } } }
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
+  team.forEach(a => { const b = pickArrows(a, fid); if (b) log(`${a.name}이(가) ${FIELDS[fid].name}에 맞춰 ${GTYPES[b].name}을(를) 챙겼다.`); });   // 속성 화살 고르기 (빌드 39)
   formParty(p);
   p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
   p.exp.food = packFood(p);   // 도시락
@@ -801,9 +802,11 @@ function basicAct(e, a, d, team, dm, foes) {
     if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }
     const crit = rnd() < d.crit + buffAdd(e, a.id, 'crit');
     const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1);   // 5초에 한 번, 그만큼 세게 (숙련 처형)
-    const v = hitFoe(e, f, atk, crit, false, a, 'none');
-    ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 }, hitTag()));
+    const bel = bow ? arrowEl(a) || 'none' : 'none';   // 속성 화살 (빌드 39)
+    const v = hitFoe(e, f, atk, crit, false, a, bel);
+    ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 }, bel !== 'none' ? { el: bel } : {}, hitTag()));
     if (!v) continue;
+    if (bow) { const AS = arrowSta(a); if (AS && f.hp > 0 && rnd() < AS.p) inflictFoe(e, f, AS, d.atk * buffMul(e, a.id, 'atk'), a.id, 'arrow'); }
     if (d.mStun && f.hp > 0 && rnd() < d.mStun) inflictFoe(e, f, { k: 'stun', d: 1.2 }, atk, a.id, 'mast');   // 숙련 (상급 둔기술)
     leech(e, a, d, v, false);
     comboUp(e, a);   // 연계 중첩 (지속딜)
@@ -968,6 +971,7 @@ function kill(p, e, f) {
   const inD = e.area === 'dungeon';
   const gt = F.treasure ? Math.min(GTIERS.length - 1, raidTier(e.lvo || 10)) : F.tier;   // 보물 던전은 파티 레벨에 맞는 단계
   if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(pickOne(GTYPE_IDS), gt, rollQuality(f.boss ? 0.25 : 0)));
+  { const ea = elemArrowOf(f.id); if (ea && rnd() < (f.boss || f.fb ? 0.3 : 0.012) * ap) lootGear(p, e, makeGear(ea, gt, 0)); }   // 속성 화살: 그 속성 몬스터한테서
   // 스킬북: 몬스터마다 정해진 책만 떨어뜨린다 (data-books.js). 감정 연구·전리품 운이 확률을 올린다
   for (const sk of monBooks(f.id)) if (ITEMS['book_' + sk] && rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, 'book_' + sk, 1);
   bossParts(p, e, f, inD);

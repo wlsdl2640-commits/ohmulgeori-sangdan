@@ -845,7 +845,7 @@ x..........
 };
 // 먼 손에 든 두 번째 칼 (몸 뒤에 작게 보인다)
 function pxsAdvGrid(a, pose, fr, Lx) {
-  const cls = PXL[a.cls] ? a.cls : PXL[jobBase(a.cls)] ? jobBase(a.cls) : 'warrior', L = Lx || PXL[cls];
+  const cls = PXL[a.cls] ? a.cls : PXL[jobBase(a.cls)] ? jobBase(a.cls) : 'warrior', L0 = Lx || PXL[cls], [L, Q] = pxOffLook(a, L0);
   const ex = L.ex || [], g = pxGrid(PXW, PXH);
   const robe = L.body === 'robe', coat = L.body === 'coat';
   const wpn = a.eq && a.eq.weapon, base = wpn ? wpn.base : (typeof WEAPON_OF !== 'undefined' && WEAPON_OF[a.cls]) || 'sword';
@@ -855,7 +855,7 @@ function pxsAdvGrid(a, pose, fr, Lx) {
   const armTone = L.body === 'plate' || L.body === 'chain' ? { C: 'M', c: 'N' } : L.body === 'bare' ? { C: 'S', c: 's' } : {};
   // 뒤: 망토·화살통·짐·방패·두 번째 칼
   for (const e of ex) { const E = PXS_EX[e]; if (E && E.under) pxPut(g, e === 'cape' ? pxTone(pxRows(E.g), PX_CAPE_KEYS) : pxRows(E.g), SX + E.x, SY + E.y + sd); }
-  if (L.shield && !sit) { const Sd = PXS_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), SX + Sd.x, SY + 3 + Sd.y); }
+  if (L.shield && !sit && !(a.eq && a.eq.off && a.eq.off.base === 'shield')) { const Sd = PXS_SHIELD[L.shield]; pxPut(g, pxRows(Sd.g), SX + Sd.x, SY + 3 + Sd.y); }
   if (L.twin && !sit) { const D = pxRows(PX_WPN[wk === 'sword' || wk === 'great' ? 'sword' : 'dagger']), [bx, by] = pxFind(D, '@'); pxPut(g, D, SX + PXS_HAND.back[0] - bx, SY + PXS_HAND.back[1] - by, 'v'); }
   // 몸
   const body = pxRows(PXS_BODY[L.body] || PXS_BODY.tunic);
@@ -883,6 +883,9 @@ function pxsAdvGrid(a, pose, fr, Lx) {
   if (ex.includes('pauldron') && arm === 'rest') pxPut(g, pxRows(PXS_EX.pauldron.g), SX + PXS_EX.pauldron.x, SY + PXS_EX.pauldron.y + sd);
   const bob = (pose === 'idle' && fr % 2) || (pose === 'walk' && fr % 2 === 0);
   if (bob) for (let y = SY + 8 + sd; y > 0; y--) g[y] = g[y - 1].slice(), y === 1 && (g[0] = new Array(PXW).fill('.'));
+  // 부장비 (빌드 39)
+  if (Q) pxQuiverPut(g, Q, 'side', (sit ? 6 : 0) + (bob ? 2 : 0));
+  const O = pxOffOf(a, L0); if (O) pxOffPut(g, O, pose, fr, 'side');
   return g;
 }
 // 쓰러짐: 등을 땅에 대고 누운 모습 (발이 오른쪽)
@@ -902,9 +905,9 @@ function pxsDownGrid(a, L) {
 }
 function pxsAdvSprite(a, pose, fr, Lx) {
   const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || advLook(a);
-  const key = 'PS|' + (Lx ? (Lx.c1 || '') + (Lx.head || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pose + fr;
+  const key = 'PS|' + (Lx ? (Lx.c1 || '') + (Lx.head || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pxOffKey(a) + '|' + pose + fr;
   const hit = PXC.get(key + '|' + (FLASH || ''));
   if (hit) return hit;
   const g = pose === 'sleep' ? pxSleepGrid(a, L) : pose === 'down' ? pxsDownGrid(a, L) : pxsAdvGrid(a, pose, fr, L);
-  return pxBake(key, g, pxPal(L, look), SX + 6, SY + 13);
+  return pxBake(key, g, Object.assign(pxPal(L, look), pxOffPal(a)), SX + 6, SY + 13);
 }
