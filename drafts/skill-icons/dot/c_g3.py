@@ -209,7 +209,8 @@ def soulreap():
 def darkness():
     a = A('purple', rays=12, k=0.4)
     glow(a, 7.5, 9.5, 5.6, ['#8434b4', '#b464dc'])
-    sp(a, CROWN_D, 3, 7, {'p': ('#2a1a3a', 10), 'P': ('#140a1e', 10), 'q': ('#e0c0ff', 1), 'r': ('#ff4a8a', 1)})
+    HCROWN = ['e..........e', 'ee...p....ee', '.ee..pp..ee.', '..eep.pp.e..', '..pppppppp..', '..pppqqppp..', '..ppqwqqpp..', '..pppqqppP..', '..PPPPPPPP..']
+    sp(a, HCROWN, 2, 6, {'e': ('#f0e0c0', 7), 'p': ('#2a1a3a', 10), 'P': ('#140a1e', 10), 'q': ('#c070ff', 1), 'w': ('#ffffff', 1)})
     for (x, y) in [(3, 4), (12, 4), (7, 2)]: plus(a, x, y, '#e0c0ff', '#8a5ac0')
     return a, 0
 def eclipse():
