@@ -1,7 +1,5 @@
 {
- "pending": [
-  "awk_archer"
- ],
+ "pending": [],
  "picked": {
   "starfall": "var_ar2._7",
   "titanfall": "var_ar2._7",
@@ -13,7 +11,8 @@
   "dragonpierce": 2,
   "driveshot": 1,
   "giantslayer": 2,
-  "piercing": 1
+  "piercing": 1,
+  "awk_archer": "var_ar5._19"
  },
- "note": "유성우만 남음. 나머지 306개 확정"
+ "note": "307개 모두 확정 (2026-11-06 00:13)"
 }

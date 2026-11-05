@@ -54,3 +54,6 @@ fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar
 사용자: "1번 시안을 4개 더 만들어봐." (넷째 판 1번 = var_ar4.awk_archer_13)
 - var_ar5.py (awk_archer_17..20, 시트에는 1~4): 1 위로 쏜 금 화살 + 별빛 꼬리 / 2 금 화살 셋 부채꼴 / 3 위를 겨눈 별자리 활 / 4 1번 + 뒤로 떨어지는 작은 별똥별
 - 시트 pick_arrow_redo4_1.png (첫 칸 = 앞 1번)
+
+# 끝 (2026-11-06 00:13)
+사용자: "3번으로 가자" → 유성우 = var_ar5.awk_archer_19 (위를 겨눈 별자리 활 + 오로라). pick_ar.py 에 넣음. 307개 모두 확정 → 게임에 넣기 (빌드 37)
