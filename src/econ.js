@@ -24,7 +24,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -357,8 +357,9 @@ function autoEquip(aid) {
   if (!a || a.status !== 'idle') return '대기 중인 모험가만 장비를 바꿀 수 있어요.';
   let n = 0;
   for (const [slot] of SLOTS) {
-    const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g)).sort((x, y) => gearScore(y) - gearScore(x))[0];
-    if (best && gearScore(best) > gearScore(a.eq[slot])) { equip(aid, best.id); n++; }
+    const sc = g => gearScore(g) + mastGearBonus(a, g);   // 숙련한 무기·갑옷을 조금 더 쳐준다
+    const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g)).sort((x, y) => sc(y) - sc(x))[0];
+    if (best && sc(best) > (a.eq[slot] ? sc(a.eq[slot]) : -1)) { equip(aid, best.id); n++; }
   }
   return n ? '' : '더 좋은 장비가 없어요.';
 }
@@ -506,6 +507,30 @@ function forgetSkill(aid, sid) {
   a.skills = a.skills.filter(x => x !== sid);
   if (a.sl) delete a.sl[sid]; if (a.skoff) delete a.skoff[sid]; if (a.skpri) delete a.skpri[sid];
   clampVitals(a); changed();
+}
+/* ───────── 숙련 (초급 → 중급 → 상급): 훈련소에서 한 단계씩, 스킬 칸과 따로 ───────── */
+function mastWhy(a, k) {
+  const M = MASTERY[k]; if (!a || !M) return '없는 숙련이에요';
+  if (!canMast(a, k)) return `${CLASSES[a.cls].name} 계열은 배울 수 없어요`;
+  const t = mastTier(a, k); if (t >= MAST_MAX) return `${MAST_TIERS[MAST_MAX - 1].name}까지 다 배웠어요`;
+  const T = MAST_TIERS[t];
+  if (!S.bld.training) return '훈련소가 필요해요';
+  if (a.lv < T.lv) return `${T.name}은 Lv${T.lv}부터`;
+  if (jobTier(a.cls) < T.job) return `${T.name}은 ${T.job}차 전직 뒤에`;
+  if (a.status !== 'idle') return '상단에 있을 때만';
+  if (S.gold < T.fee) return `${fmt(T.fee)}G가 필요해요`;
+  return '';
+}
+function learnMast(aid, k) {
+  const a = advById(aid); if (!a) return '';
+  const why = mastWhy(a, k); if (why) return why + '.';
+  const t = mastTier(a, k) + 1, T = MAST_TIERS[t - 1];
+  S.gold -= T.fee; S.stats.spent = (S.stats.spent || 0) + T.fee;
+  a.mast = a.mast || {}; a.mast[k] = t;
+  clampVitals(a);
+  log(`${a.name}이(가) 훈련소에서 「${mastName(k, t)}」을(를) 익혔다. (${mastFxText(MASTERY[k].fx[t - 1])}${MASTERY[k].w ? ' · ' + mastCond(k) : ''})`, 'good');
+  changed();
+  return '';
 }
 const trainedTotal = a => Object.values(a.tr).reduce((s, v) => s + v, 0);
 const trainCap = a => a.lv * 2;
@@ -1225,7 +1250,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1255,6 +1280,7 @@ function loadFrom(v) {
     notes34();
     if (old < 8) { migrate8(); saveGame(); }
     notes36();
+    notes37();
     return true;
   } catch (_) { return false; }
 }
@@ -1301,6 +1327,7 @@ function migrate8() {
   S.v = 8;
   if (moved) log(`날씨 특성이 따로 생겼다. 모험가 ${moved}명의 체질을 특성 칸에서 날씨 특성으로 옮겼다.`);
 }
+function notes37() { if (!S.flags.v37) { S.flags.v37 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '숙련 · 새 스킬 그림', body: STORY.v37 }); } }
 function notes36() { if (!S.flags.v36) { S.flags.v36 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 특성', body: STORY.v36 }); } }
 function notes34() { if (!S.flags.v34) { S.flags.v34 = 1; S.bld.salvage = S.bld.salvage || 0; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '던전 수거소', body: STORY.v34 }); } }
 function notes31() { if (!S.flags.v31) { S.flags.v31 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 · 요리 · 교역 · 2차 각성', body: STORY.v31 }); } }

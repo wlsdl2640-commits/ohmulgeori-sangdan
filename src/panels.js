@@ -310,7 +310,8 @@ const ADV_GUIDE = () => `
     <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·레인저·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>
     <div>2차·3차 직업은 역할이 갈려요. 전사: 기사=탱커(도발·엄호·받는 피해 감소) · 검투사=지속딜(연계) · 광전사=한방딜(분노·처형) · 마검사=브루저(마법 검+보호막). 마법사: 네크로맨서=지속딜(저주·역병) · 마도사=한방딜(긴 쿨 큰 한 방·처형) · 정령술사=혼합(광역+치유·방어). 궁수: 레인저=지속딜(연사·늑대) · 저격수=한방딜(선공·관통·처형) · 괴물사냥꾼=혼합(표식·보스). 도적: 쌍검사=지속딜 · 암살자=한방딜 · 보물 사냥꾼=혼합(금화·연막·대박). 성직자: 사제=치유·보호막·부활(3차) · 역병의사=재생+지속 딜 · 퇴마사=전투 사제(때리면 파티가 회복). 짐꾼: 음유시인=공격 버퍼 · 마부=방어 버퍼(보호막·엄호) · 정찰가=디버퍼(표식·약점 간파).</div>
     <div>장치: 연계 — 기본 공격을 맞힐 때마다 피해가 쌓이고(5중첩) 빗나가거나 기절하면 끊겨요. 처형 — HP 30% 아래 적에게 더 큰 피해. 표식 — 걸린 적이 받는 피해 +20%. 보호막 — 피해를 대신 받는 임시 HP(HP 막대 위 하늘색). 엄호 — 동료가 노려지면 탱커가 대신 맞아요. 재생 — 초당 회복이 이어져요.</div>${jobTreeList()}
-    <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이고, 2차 각성하면 ${MAX_LV2}까지 올라가요.</div></div></details>`;
+    <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이고, 2차 각성하면 ${MAX_LV2}까지 올라가요.</div>
+    <div>숙련은 스킬 칸과 따로 훈련소에서 배워요: ${MAST_IDS.map(k => MASTERY[k].name).join('·')}. ${MAST_TIERS.map(T => `${T.name} Lv${T.lv}${T.job > 1 ? '·' + T.job + '차 전직' : ''}`).join(' → ')}. 무기술(검술·궁술 …)은 그 무기를 들었을 때만 켜져요.</div></div></details>`;
 PANELS.adv = () => {
   const cur = advCatCur(), free = Math.max(0, beds() - living().length);
   const head = `<div class="sec"><b>소속 모험가</b><span>${living().length}/${beds()}명${cur === 'guest' ? '' : ' · 눌러서 자세히'}</span></div>${advCatBar(cur)}`;
@@ -325,6 +326,22 @@ PANELS.adv = () => {
   ${ADV_GUIDE()}`;
 };
 
+/* 숙련 (초급·중급·상급) 줄: 스킬 창 */
+const MAST_COL = ['#6a6458', '#c8884a', '#c8d0d8', '#f0c24a'];   // 안 배움 · 초급(동) · 중급(은) · 상급(금)
+function mastIconURL(k, t) {
+  const key = 'm:' + k + ':' + t; if (ICON_URL[key]) return ICON_URL[key];
+  const [c, x] = mkCanvas(10, 10); drawIcon(x, { icon: MASTERY[k].icon, c: MAST_COL[t] || MAST_COL[0] });
+  return (ICON_URL[key] = c.toDataURL());
+}
+const mastPips = t => `<span class="mpips">${MAST_TIERS.map((_, i) => `<i class="${i < t ? 'on t' + (i + 1) : ''}"></i>`).join('')}</span>`;
+function mastRows(a, idle) {
+  return MAST_IDS.filter(k => canMast(a, k)).map(k => {
+    const M = MASTERY[k], t = mastTier(a, k), nx = MAST_TIERS[t], why = nx ? mastWhy(a, k) : '', on = mastOn(a, k);
+    const cond = M.w ? `${mastCond(k)}${t ? (on ? ' · <span class="ok-t">켜짐</span>' : ' · <span class="red-t">꺼짐</span>') : ''}` : '늘 켜짐';
+    const now = t ? `지금 ${mastFxText(M.fx[t - 1])}` : '아직 배우지 않았어요';
+    return `<div class="li col${t && !on ? ' dim' : ''}"><div class="row">${mastIco(k, t)}<div class="grow stack"><span>${mastName(k, t)} ${mastPips(t)}</span><span class="sub gold-t">${cond}</span><span class="sub">${M.desc}</span><span class="sub">${now}${nx ? ` <span class="muted">→ ${nx.name}: ${mastFxText(M.fx[t])}</span>` : ''}</span>${why ? `<span class="sub muted">다음 단계: ${esc(why)}</span>` : ''}</div>${nx ? `<button type="button" class="btn sm gold" data-mact="mast" data-k="${k}" title="${esc(why)}"${why ? ' disabled' : ''}>${nx.name} ${fmt(nx.fee)}G</button>` : `<span class="tag gold-t">${MAST_TIERS[MAST_MAX - 1].name}</span>`}</div></div>`;
+  }).join('');
+}
 /* 모험가 상세 창 */
 function advDetail(a) {
   const d = derive(a), G = gearSum(a), idle = a.status === 'idle', canTr = S.bld.training && idle && trainedTotal(a) < trainCap(a);
@@ -343,12 +360,12 @@ function advDetail(a) {
   const learned = basicRow + a.skills.map(id => { const s = SKILLS[id], lv = skLv(a, id), why = skillUpWhy(a, id), off = a.skoff && a.skoff[id], pri = a.skpri && a.skpri[id];
     const up = lv < SK_LV_MAX ? `<button type="button" class="btn sm gold" data-mact="skup" data-s="${id}" title="${esc(why)}"${why ? ' disabled' : ''}>Lv${lv + 1} · ${skillNeedsBook(id) ? '책 1 + ' : ''}${fmt(skillUpCost(id, lv + 1))}G</button>` : '<span class="tag gold-t">최고</span>';
     const tog = s.passive ? '' : `<button type="button" class="btn sm${off ? ' on' : ''}" data-mact="skoff" data-s="${id}">${off ? '자동 끔' : '자동 켬'}</button><button type="button" class="btn sm${pri ? ' on' : ''}" data-mact="skpri" data-s="${id}"${off ? ' disabled' : ''}>${pri ? '★ 우선' : '우선'}</button>`;
-    return `<div class="li col${off ? ' dim' : ''}"><div class="row"><div class="grow stack"><span>${s.name} <span class="tag${lv > 1 ? ' gold-t' : ''}">Lv${lv}</span> <span class="muted">· ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}${off ? ' · <span class="red-t">자동 사용 끔</span>' : pri ? ' · <span class="gold-t">우선 사용</span>' : ''}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id, a)}</span>${why && lv < SK_LV_MAX ? `<span class="sub muted">다음 단계: ${esc(why)}</span>` : ''}</div></div><div class="btns">${up}${tog}${id !== CLASSES[a.cls].innate && idle ? `<button type="button" class="btn sm" data-mact="forget" data-s="${id}">잊기</button>` : ''}</div></div>`; }).join('');
+    return `<div class="li col${off ? ' dim' : ''}"><div class="row">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="tag${lv > 1 ? ' gold-t' : ''}">Lv${lv}</span> <span class="muted">· ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}${off ? ' · <span class="red-t">자동 사용 끔</span>' : pri ? ' · <span class="gold-t">우선 사용</span>' : ''}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id, a)}</span>${why && lv < SK_LV_MAX ? `<span class="sub muted">다음 단계: ${esc(why)}</span>` : ''}</div></div><div class="btns">${up}${tog}${id !== CLASSES[a.cls].innate && idle ? `<button type="button" class="btn sm" data-mact="forget" data-s="${id}">잊기</button>` : ''}</div></div>`; }).join('');
   const books = Object.keys(S.inv).filter(k => ITEMS[k].book && S.inv[k] > 0 && !a.skills.includes(ITEMS[k].book) && canLearn(a, ITEMS[k].book));
-  const room = a.skills.length < skillSlots(a), chain = chainOf(a.cls);
-  const learnable = books.map(k => { const id = ITEMS[k].book, s = SKILLS[id]; return `<div class="li">${iconImg(k)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${S.bld.training && idle && room && S.gold >= s.lv * 30 ? '' : ' disabled'}>배우기 ${s.lv * 30}G</button></div>`; }).join('');
+  const room = a.skills.length < skillSlots(a), chain = chainOf(a.cls), mastList = mastRows(a, idle);
+  const learnable = books.map(k => { const id = ITEMS[k].book, s = SKILLS[id]; return `<div class="li">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv} · ${iconImg(k, 'pi')} 스킬북</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${S.bld.training && idle && room && S.gold >= s.lv * 30 ? '' : ' disabled'}>배우기 ${s.lv * 30}G</button></div>`; }).join('');
   const owns = SKILL_IDS.filter(id => SKILLS[id].own && chain.some(c => SKILLS[id].cls.includes(c)) && !a.skills.includes(id)).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv);
-  const ownRows = owns.map(id => { const s = SKILLS[id], ok = a.lv >= s.lv; return `<div class="li"><div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv}${s.cls.includes(a.cls) ? '' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : '').join('')}`}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${ok && S.bld.training && idle && room && S.gold >= ownFee(s) ? '' : ' disabled'}>${ok ? `배우기 ${ownFee(s)}G` : `Lv${s.lv}부터`}</button></div>`; }).join('');
+  const ownRows = owns.map(id => { const s = SKILLS[id], ok = a.lv >= s.lv; return `<div class="li">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv}${s.cls.includes(a.cls) ? '' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : '').join('')}`}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${ok && S.bld.training && idle && room && S.gold >= ownFee(s) ? '' : ' disabled'}>${ok ? `배우기 ${ownFee(s)}G` : `Lv${s.lv}부터`}</button></div>`; }).join('');
   const table = SKILL_IDS.filter(id => chain.some(c => SKILLS[id].cls.includes(c)) || SKILLS[id].cls.includes('all')).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv)
     .map(id => { const s = SKILLS[id], has = a.skills.includes(id); return `<div class="${has ? 'ok-t' : a.lv >= s.lv ? '' : 'muted'}">Lv${s.lv} ${s.name} · ${costStr(s)} · ${has ? '배움' : id === CLASSES[a.cls].innate ? '기본' : s.own ? '고유 · 책 없이 배움' : '스킬북 필요'}${s.cls.includes('all') ? ' · 공용' : ''}<div class="sub muted">${skillSpec(id).join(' · ')}${!has && !s.own && !s.awk && id !== CLASSES[a.cls].innate ? ` · ${bookFromText(id)}` : ''}</div></div>`; }).join('');
   const L = LICENSE[a.rank || 0], Ln = licNext(a);
@@ -387,6 +404,7 @@ function advDetail(a) {
     <div class="sec" style="margin-top:0"><b>스킬</b><span>${a.skills.length}/${skillSlots(a)}칸${SKILL_SLOT_LV.find(l => a.lv < l) ? ` · Lv${SKILL_SLOT_LV.find(l => a.lv < l)}에 한 칸 더` : ''}</span></div>
     <div class="sub muted">스킬은 저마다의 재사용 대기시간이 돌면 바로 나가고, 기본 공격은 그와 상관없이 ${BASIC_CD}초 ÷ 공격 속도마다 한 번 나가요. 피해는 방어 0인 적 기준이고 실제로는 적의 방어력만큼 줄어요. 스킬 레벨은 Lv${SK_LV_MAX}까지, 단계마다 위력 +${Math.round(SK_LV_POW * 100)}%·재사용 -${Math.round(SK_LV_CD * 100)}% (책이 있는 스킬은 같은 책 한 권 더). 「자동 끔」은 그 스킬을 쓰지 않고, 「우선」은 먼저 써요.</div>
     <div class="list">${learned}</div>
+    ${mastList ? `<div class="sec"><b>숙련</b><span>스킬 칸과 따로 · ${S.bld.training ? '훈련소에서 한 단계씩' : '훈련소가 필요해요'}</span></div><div class="sub muted">${MAST_TIERS.map(T => `${T.name} Lv${T.lv}${T.job > 1 ? '·' + T.job + '차 전직' : ''}·${fmt(T.fee)}G`).join(' → ')}. 무기술은 그 무기를 들었을 때만 켜지고, 지식·방패·운반 숙련은 늘 켜져 있어요. 「가장 좋은 장비 끼우기」는 숙련한 무기를 조금 더 쳐줘요.</div><div class="list">${mastList}</div>` : ''}
     ${ownRows ? `<div class="sec"><b>${CLASSES[a.cls].name} 계열 고유 스킬</b><span>${S.bld.training ? '스킬북 없이 훈련소에서' : '훈련소가 필요해요'}</span></div><div class="list">${ownRows}</div>` : ''}
     ${learnable ? `<div class="sec"><b>배울 수 있는 스킬북</b><span>${S.bld.training ? '훈련소에서 배워요' : '훈련소가 필요해요'}</span></div><div class="list">${learnable}</div>` : ''}
     <details class="card"><summary>${CLASSES[a.cls].name}이(가) 배울 수 있는 스킬 전체</summary><div class="log">${table}</div></details>${notes}`;
@@ -418,6 +436,7 @@ function advAct(aid, b) {
   if (k === 'learn') m = learnSkill(aid, b.dataset.s);
   if (k === 'forget') forgetSkill(aid, b.dataset.s);
   if (k === 'skup') m = skillUp(aid, b.dataset.s);
+  if (k === 'mast') m = learnMast(aid, b.dataset.k);
   if (k === 'skoff') m = skillToggle(aid, b.dataset.s, 'off');
   if (k === 'skpri') m = skillToggle(aid, b.dataset.s, 'pri');
   if (k === 'lic') m = licenseUp(aid);

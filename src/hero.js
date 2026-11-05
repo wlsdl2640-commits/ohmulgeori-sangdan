@@ -530,9 +530,25 @@ function skillGlyph(s) {
 }
 const HEX_TINT = { dmg: '#4a2a22', mdmg: '#2e2246', heal: '#1e3a24', buff: '#1e2a44', dot: '#243a1e', taunt: '#4a2e18', none: '#241e1a' };
 const HEX_URL = {}, HEX_W = 48;
-// 육각 칸 한 장: 글리프·종류·숙련 완료 표시
-function hexURL(glyph, kind, max) {
-  const key = (glyph || '-') + '|' + (kind || '') + '|' + (max ? 1 : 0);
+// 스킬 그림 (data-skicon.js): 육각 안쪽 16×20칸, 한 칸 = 2×2픽셀. 칸 (0,0)은 틀의 (8,4) 픽셀
+// 숙련 그림 (data-masticon.js): id 'm:숙련:단계(0~3)'
+const SKI_A = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_', SKI_CELLS = {};
+const skiSrc = id => { if (id.startsWith('m:')) { const [, k, t] = id.split(':'); return typeof MASTICON !== 'undefined' && MASTICON[k] && MASTICON[k][+t]; } return typeof SKICON !== 'undefined' && SKICON[id]; };
+function skiCells(id) {
+  if (SKI_CELLS[id] !== undefined) return SKI_CELLS[id];
+  const src = skiSrc(id); if (!src) return (SKI_CELLS[id] = null);
+  const [p, q] = src.split('|'), pal = [];
+  for (let i = 0; i < p.length; i += 6) pal.push('#' + p.slice(i, i + 6));
+  const w = pal.length > 64 ? 2 : 1, out = [];
+  for (let i = 0; i < 320; i++) { let k = 0; for (let j = 0; j < w; j++) k = k * 64 + SKI_A.indexOf(q[i * w + j]); out.push(pal[k] || '#ff00ff'); }
+  return (SKI_CELLS[id] = out);
+}
+// 틀 색: 0 기본(스킬) · 1 동(초급) · 2 은(중급) · 3 금(상급) — [바깥 위, 바깥 아래·안 위, 안 아래]
+const HEX_FR = [['#c8a870', '#8a6a3c', '#5a4428'], ['#d89a64', '#9a5e34', '#64381c'], ['#e4e8f0', '#9aa2ae', '#5e6672'], ['#ffe07a', '#c8962c', '#7e5814']];
+// 육각 칸 한 장: 글리프(또는 스킬 그림)·종류·숙련 완료 표시·틀 색
+function hexURL(glyph, kind, max, sid, fr = 0) {
+  const art = sid ? skiCells(sid) : null, F = HEX_FR[fr] || HEX_FR[0], on = !!(glyph || art);
+  const key = (art ? '@' + sid : glyph || '-') + '|' + (kind || '') + '|' + (max ? 1 : 0) + '|' + fr;
   if (HEX_URL[key]) return HEX_URL[key];
   const W = HEX_W, [c, x] = mkCanvas(W, W), cx = W / 2, cy = W / 2, r = 22;
   const span = y => { // 뾰족한 꼭짓점이 위로 간 육각형의 가로 폭
@@ -545,11 +561,15 @@ function hexURL(glyph, kind, max) {
     const s = span(y); if (!s) continue;
     const t = span(y - 2), b = span(y + 2);
     const edge = !t || !b, l = Math.max(s[0] + 2, t ? t[0] + 1 : s[0] + 2, b ? b[0] + 1 : s[0] + 2), rr = Math.min(s[1] - 2, t ? t[1] - 1 : s[1] - 2, b ? b[1] - 1 : s[1] - 2);
-    line(y, s[0] + 1, s[1] - 1, glyph ? (y < cy ? '#c8a870' : '#8a6a3c') : '#4a4038');
-    if (!edge && l < rr) line(y, l, rr, glyph ? (y < cy ? '#8a6a3c' : '#5a4428') : '#2a2420');
-    if (!edge && l + 1 < rr - 1) line(y, l + 1, rr - 1, glyph ? HEX_TINT[kind] || HEX_TINT.none : '#141010');
+    line(y, s[0] + 1, s[1] - 1, on ? (y < cy ? F[0] : F[1]) : '#4a4038');
+    if (!edge && l < rr) line(y, l, rr, on ? (y < cy ? F[1] : F[2]) : '#2a2420');
+    if (!edge && l + 1 < rr - 1) {
+      const tint = on ? HEX_TINT[kind] || HEX_TINT.none : '#141010';
+      if (!art) line(y, l + 1, rr - 1, tint);
+      else for (let px = l + 1; px < rr - 1; px++) { const ax = (px >> 1) - 4, ay = (y >> 1) - 2; x.fillStyle = ax >= 0 && ax < 16 && ay >= 0 && ay < 20 ? art[ay * 16 + ax] : tint; x.fillRect(px, y, 1, 1); }
+    }
   }
-  if (glyph && GLYPH[glyph]) {
+  if (!art && glyph && GLYPH[glyph]) {
     const rows = frRows(GLYPH[glyph]), gx = cx - 8, gy = cy - 8;
     rows.forEach((row, yy) => { for (let i = 0; i < row.length; i++) if (row[i] !== '.' && row[i] !== ' ') { x.fillStyle = GL_PAL[row[i]] || '#ff00ff'; x.fillRect(gx + i, gy + yy, 1, 1); } });
   }
@@ -559,6 +579,11 @@ function hexURL(glyph, kind, max) {
   }
   return (HEX_URL[key] = c.toDataURL());
 }
+// 스킬 창 목록에 붙이는 스킬 그림 (48px 육각)
+const skIco = (id, cls = 'skico') => { const s = SKILLS[id]; return s ? `<img class="${cls}" src="${hexURL(skillGlyph(s), s.kind, false, id)}" alt="">` : ''; };
+// 숙련 그림 (단계 t: 0 안 배움 · 1~3): 틀 색이 동·은·금. 그림이 아직 없으면 임시 아이템 그림
+const mastHexURL = (k, t) => (typeof MASTICON !== 'undefined' && MASTICON[k] ? hexURL(null, 'buff', false, `m:${k}:${t}`, t) : null);
+const mastIco = (k, t) => { const u = mastHexURL(k, t); return u ? `<img class="skico${t ? '' : ' off'}" src="${u}" alt="">` : `<img class="ico lg" src="${mastIconURL(k, t)}" alt="">`; };
 
 /* ───────── 무대 그리기 ───────── */
 const HERO = { raf: 0, W: 132, H: 148, Z: 3, swing: 0 };
@@ -619,7 +644,7 @@ function heroPanel(a) {
   const slots = skillSlots(a), hexes = [];
   for (let k = 0; k < slots; k++) {
     const id = a.skills[k], s = id && SKILLS[id];
-    if (s) { const lv = smLv(a, id); hexes.push(`<div class="hex${lv >= SM_MAX ? ' max' : ''}" title="${esc(s.name)} · 숙련 ${lv}/${SM_MAX}"><img src="${hexURL(skillGlyph(s), s.kind, lv >= SM_MAX)}" alt=""><span class="hx-n">${lv}/${SM_MAX}</span></div>`); }
+    if (s) { const lv = smLv(a, id); hexes.push(`<div class="hex${lv >= SM_MAX ? ' max' : ''}" title="${esc(s.name)} · 숙련 ${lv}/${SM_MAX}"><img src="${hexURL(skillGlyph(s), s.kind, lv >= SM_MAX, id)}" alt=""><span class="hx-n">${lv}/${SM_MAX}</span></div>`); }
     else hexes.push(`<div class="hex empty" title="빈 스킬 칸"><img src="${hexURL(null)}" alt=""></div>`);
   }
   const p = partyOf(a.id), mates = p ? p.members.map(advById).filter(Boolean) : S.advs.slice(0, 10);
@@ -636,7 +661,7 @@ function heroPanel(a) {
         <div class="hero-side"><div class="hero-por"><img src="${heroBust(a)}" alt=""></div><div class="hero-sk">${hexes.join('')}</div></div>
       </div>
       <div class="hero-party">${thumbs}</div>
-      <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait${TRAITS[id].job ? ' job' : ''}${TRAITS[id].neg ? ' neg' : ''}" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}</div>
+      <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait${TRAITS[id].job ? ' job' : ''}${TRAITS[id].neg ? ' neg' : ''}" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}${MAST_IDS.filter(k => mastTier(a, k)).map(k => `<span class="trait mast${mastOn(a, k) ? '' : ' off'}" title="${esc(mastFxText(MASTERY[k].fx[mastTier(a, k) - 1]) + ' · ' + mastCond(k))}"><b>${mastName(k, mastTier(a, k))}</b></span>`).join('')}</div>
     </div>
 `;
 }

@@ -42,7 +42,7 @@ function makeAdv(o = {}) {
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
-    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
+    eq: { weapon: null, armor: null, acc: null, bag: null }, skills: [C.innate], sm: {}, mast: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
     salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
   };
   growStats(a, lv - 1);
@@ -110,6 +110,7 @@ function gearSum(a) {
 function passives(a) {
   const p = {};
   for (const id of a.skills || []) { const P = SKILLS[id] && SKILLS[id].passive; if (P) { const L = skLvMul(a, id); for (const k in P) p[k] = (p[k] || 0) + P[k] * L; } }   // 스킬 레벨만큼 커진다
+  const MF = mastFx(a); for (const k in MF) p[k] = (p[k] || 0) + MF[k];   // 숙련 (초급·중급·상급)
   return p;
 }
 // 원정 중이면 날씨·도시락 효과가 얹힌다 (weather.js expMods)
@@ -127,18 +128,19 @@ function deriveBase(a) {
     matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0) + X('matkPct')) * war * lic,
     def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08 + X('defPct')) * (earth ? 1.1 : 1) * lic,
     maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct') + relic('hp'))),   // 유물: 세계수의 씨앗·별의 여왕의 왕관
-    maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct'))),
+    maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct') + (P.mpPct || 0))),
     eva: Math.min(0.6, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva')),
     crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0) + X('crit')),
     block: Math.min(0.6, (G.block || 0) + (P.block || 0) + X('block')),
     counter: Math.min(0.7, (G.counter || 0) + (P.counter || 0) + X('counter')),
     double: Math.min(0.6, (G.double || 0) + (P.double || 0) + X('double')),
-    healPow: 1 + X('healPow'), rheal: X('rheal'), hpRegen: X('hpRegen'), mpFlat: X('mpFlat'),
+    healPow: 1 + X('healPow') + (P.healPow || 0), rheal: X('rheal'), hpRegen: X('hpRegen'), mpFlat: X('mpFlat'),
     spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd
     cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 50%)
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
     move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct')) * (wind ? 1.15 : 1),
-    mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3
+    mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3,
+    mExec: P.exec || 0, mStun: P.stun || 0, mBuff: P.buffDur || 0   // 숙련: 처형 피해 · 기본 공격 기절 · 강화 지속
   };
 }
 function clampVitals(a) { const d = derive(a); a.hp = Math.min(a.hp, d.maxHp); a.mp = Math.min(a.mp == null ? d.maxMp : a.mp, d.maxMp); }
@@ -715,6 +717,7 @@ function cast(e, a, d, id, team, dm, foes) {
       let atk = (magic ? d.matk * buffMul(e, a.id, 'matk') : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M;
       if (s.boss && f.boss) atk *= s.boss;
       if (s.exec && f.hp <= f.maxHp * EXEC_HP) atk *= s.exec;   // 스킬 자체의 처형 보너스
+      if (d.mExec && f.hp <= f.maxHp * EXEC_HP) atk *= 1 + d.mExec;   // 숙련 (상급 도끼술)
       if (s.gamble) { const jack = rnd() < s.gamble.p; if (jack) { atk *= s.gamble.mult; ev(e, 'jackpot', { s: a.id }); } }   // 대박: 확률로 몇 배
       const crit = s.crit === 1 || rnd() < d.crit + (s.crit || 0) + buffAdd(e, a.id, 'crit');
       const v = hitFoe(e, f, atk, crit, magic, a, skillEl(s, f, a), s);
@@ -745,8 +748,9 @@ function cast(e, a, d, id, team, dm, foes) {
   } else if (s.kind === 'buff') {
     const to = s.tgt === 'party' ? 'party' : a.id;
     e.buffs = e.buffs.filter(b => b.sid !== id && b.sid !== id + '#h');
-    e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * L : 0, add: (s.add || 0) * L, t: s.dur });   // 스킬 레벨만큼 세진다
-    if (s.haste) e.buffs.push({ sid: id + '#h', to, stat: 'spd', mult: 1 + (s.haste - 1) * L, add: 0, t: s.dur });   // 공격 속도도 함께 올리는 강화
+    const dur = s.dur * (1 + (d.mBuff || 0));   // 숙련 (연주법): 강화가 더 오래 간다
+    e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * L : 0, add: (s.add || 0) * L, t: dur });   // 스킬 레벨만큼 세진다
+    if (s.haste) e.buffs.push({ sid: id + '#h', to, stat: 'spd', mult: 1 + (s.haste - 1) * L, add: 0, t: dur });   // 공격 속도도 함께 올리는 강화
     ev(e, 'buff', { s: a.id, id, party: to === 'party' });
   } else if (s.kind === 'taunt') {
     e.taunt = { aid: a.id, t: s.dur };
@@ -785,10 +789,11 @@ function basicAct(e, a, d, team, dm, foes) {
     if (f.hp <= 0) break;
     if (rnd() < f.eva) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }
     const crit = rnd() < d.crit + buffAdd(e, a.id, 'crit');
-    const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT;   // 5초에 한 번, 그만큼 세게
+    const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1);   // 5초에 한 번, 그만큼 세게 (숙련 처형)
     const v = hitFoe(e, f, atk, crit, false, a, 'none');
     ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 }, hitTag()));
     if (!v) continue;
+    if (d.mStun && f.hp > 0 && rnd() < d.mStun) inflictFoe(e, f, { k: 'stun', d: 1.2 }, atk, a.id, 'mast');   // 숙련 (상급 둔기술)
     leech(e, a, d, v, false);
     comboUp(e, a);   // 연계 중첩 (지속딜)
   }

@@ -6,7 +6,9 @@ const SK_TGT = { front: '앞의 적', low: '가장 약한 적', all: '모든 적
 const SK_KIND = { dmg: '물리 피해', mdmg: '마법 피해', heal: '치유', buff: '강화', dot: '지속 피해', taunt: '도발', cure: '해제', shield: '보호막', regen: '재생', revive: '부활' };
 const SK_BUFF = { atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '공격 속도', heal: '회복량', crit: '치명타', guard: '받는 피해 감소', cdr: '스킬 재사용 감소' };
 // 지속 효과 이름과 표기 방식: pct(배율 %) · pp(%p 더함) · neg(줄임) · x(배)
-const SK_PASS = { atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['공격 속도', 'pct'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'] };
+const SK_PASS = { atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['공격 속도', 'pct'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'], healPow: ['치유량', 'pct'], exec: ['약해진 적(HP 30% 아래) 피해', 'pct'], stun: ['기본 공격 기절', 'pp'], buffDur: ['강화 스킬 지속 시간', 'pct'] };
+// 숙련 효과 한 줄: 공격력 +8% · 치명타 +1%p
+const mastFxText = f => Object.entries(f).map(([k, v]) => { const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct']; return `${P[0]} ${P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`; }).join(' · ');
 const skPct = v => `${Math.round(v * 1000) / 10}%`;
 const skSec = v => `${Math.round(v * 10) / 10}초`;
 const skN = v => fmt(Math.round(v));
@@ -107,13 +109,15 @@ function basicSpec(a) {
 }
 // 공격 속도·재사용 감소가 어디서 오는지 (능력치 탭)
 function speedBreakdown(a) {
-  const C = CLASSES[a.cls], d = derive(a), G = gearSum(a), P = passives(a), T = d.T;
-  const parts = [`직업 ${skMul(C.spd)}`, `민첩 +${skPct(T.agi * 0.004)}`];
-  if (P.spdPct) parts.push(`지속 스킬 +${skPct(P.spdPct)}`);
+  const C = CLASSES[a.cls], d = derive(a), G = gearSum(a), P = passives(a), T = d.T, MF = mastFx(a);
+  const parts = [`직업 ${skMul(C.spd)}`, `민첩 +${skPct(T.agi * 0.004)}`], pS = (P.spdPct || 0) - (MF.spdPct || 0), pC = (P.cdr || 0) - (MF.cdr || 0);
+  if (pS > 1e-9) parts.push(`지속 스킬 +${skPct(pS)}`);
+  if (MF.spdPct) parts.push(`숙련 +${skPct(MF.spdPct)}`);
   if (traitSum(a, 'spdPct')) parts.push(`특성 +${skPct(traitSum(a, 'spdPct'))}`);
   if (G.spdPct) parts.push(`룬 +${skPct(G.spdPct)}`);
   const cd = [];
-  if (P.cdr) cd.push(`지속 스킬 ${skPct(P.cdr)}`);
+  if (pC > 1e-9) cd.push(`지속 스킬 ${skPct(pC)}`);
+  if (MF.cdr) cd.push(`숙련 ${skPct(MF.cdr)}`);
   if (traitSum(a, 'cdr')) cd.push(`특성 ${skPct(traitSum(a, 'cdr'))}`);
   if (G.cdr) cd.push(`룬 ${skPct(G.cdr)}`);
   return { spd: parts.join(' · '), cdr: cd.length ? cd.join(' · ') + (d.cdr >= CDR_MAX ? ' (상한 50%)' : '') : '없음 (지속 스킬 「전술」·특성 「전술가」·시간의 룬으로 늘어요)' };
