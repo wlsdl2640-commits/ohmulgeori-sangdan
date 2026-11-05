@@ -611,6 +611,8 @@ function events(e, pos, t, team, p) {
       const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '엄호!', 'buff');
     } else if (x.type === 'combo') {    // 연계: 중첩 수
       const aq = at('a' + x.s); if (aq && (x.c === 3 || x.c === COMBO_MAX)) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, x.c === COMBO_MAX ? '연계 MAX' : `연계 ${x.c}`, '');
+    } else if (x.type === 'noammo') {   // 화살이 떨어진 궁수
+      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '화살 없음!', 'noammo');
     } else if (x.type === 'jackpot') {  // 대박
       const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '대박!', 'buff');
     } else if (x.type === 'revive') {   // 부활: 금빛 테

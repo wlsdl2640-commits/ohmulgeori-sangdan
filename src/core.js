@@ -774,7 +774,10 @@ function cast(e, a, d, id, team, dm, foes) {
   }
 }
 // 화살이 떨어졌다: 원정마다 한 번 알린다
-function noAmmo(e, a) { e.noAmmo = e.noAmmo || {}; if (e.noAmmo[a.id]) return; e.noAmmo[a.id] = 1; ev(e, 'noammo', { s: a.id }); log(`${a.name}의 화살이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
+function noAmmo(e, a) {   // 기록은 원정마다 한 번, 전투 화면 말풍선은 8초마다
+  e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[a.id]) { e.noAmmo[a.id] = 1; log(`${a.name}의 화살이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
+  e.noAmmoT = e.noAmmoT || {}; const last = e.noAmmoT[a.id]; if (last == null || S.t - last >= 8) { e.noAmmoT[a.id] = S.t; ev(e, 'noammo', { s: a.id }); }
+}
 function basicAct(e, a, d, team, dm, foes) {
   const act0 = CLASSES[a.cls].act, act = act0 === 'melee' && shootsArrows(a) ? 'arrow' : act0, T = TR(a), st = e.sta && e.sta[a.id];   // 용기병이 활을 들면 사격
   if (st && (st.para || st.stun)) return;

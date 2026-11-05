@@ -486,7 +486,7 @@ function shopScene(it, t) {
       blitAt(g, spr, x, y);
       if (s) {
         const [cx, cy] = scr(tx + 0.5, ty + 0.5, 9);
-        if (has) drawIcon(g, isGearKey(s.item) ? { icon: GTYPES[s.item.split(':')[1]].icon, c: TIER_COLORS[+s.item.split(':')[2]] } : s.item, Math.round(cx) - 5, Math.round(cy) - 9);
+        if (has) drawIcon(g, isGearKey(s.item) ? gearKeyIcon(s.item) : s.item, Math.round(cx) - 5, Math.round(cy) - 9);
         R(g, Math.round(cx) + 5, Math.round(cy) - 3, 3, 2, ['#7bd36a', '#f0b43c', '#e0503f'][s.tier || 0]);
         if (!has) R(g, Math.round(cx) - 3, Math.round(cy) - 2, 6, 1, '#7a6a5a');
       }
@@ -576,7 +576,7 @@ function custPath(i) {
 function spawnCust(i, buy) {
   if (HQ.cust.length >= 9 || !STAND_POS[i]) return;
   const s = S.shop.slots[i];
-  const show = s ? (isGearKey(s.item) ? { icon: GTYPES[s.item.split(':')[1]].icon, c: TIER_COLORS[+s.item.split(':')[2]] } : s.item) : null;
+  const show = s ? (isGearKey(s.item) ? gearKeyIcon(s.item) : s.item) : null;
   HQ.cust.push({ p: villager(Math.floor(Math.random() * 60) + 1), x: DOOR[0], y: DOOR[1], path: custPath(i), state: 'in', wait: 0, wt: 0, alpha: 0, dir: 'f', flip: 0, pose: 'walk', buy, show, stand: i });
 }
 function stepCust(dt, t) {
