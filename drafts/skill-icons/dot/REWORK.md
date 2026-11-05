@@ -49,3 +49,8 @@ fix_f.py: berserk kn_charge arcane awk2_mage quickstep sprint focus tactics roar
 사용자: "4번의 배경에 별똥별 화살 속 이미지를 결합해서 시안 4개 제작"
 - 배경 = 유성우 셋째 판 4번(오로라 + 눈 덮인 숲, 오로라는 반투명으로 손봄), 그림 = 별똥별 화살(별자리 활 + 금 화살) 쪽
 - var_ar4.py (awk_archer_13..16, 시트에는 1~4): 1 별자리 활 → 금 화살 / 2 별자리 활이 쏜 화살이 숲으로 쏟아짐 / 3 큰 금빛 별똥별 화살 / 4 별 촉 화살 셋. pick_arrow_redo3_1.png
+
+# 8단계 (2026-11-06 00:11)
+사용자: "1번 시안을 4개 더 만들어봐." (넷째 판 1번 = var_ar4.awk_archer_13)
+- var_ar5.py (awk_archer_17..20, 시트에는 1~4): 1 위로 쏜 금 화살 + 별빛 꼬리 / 2 금 화살 셋 부채꼴 / 3 위를 겨눈 별자리 활 / 4 1번 + 뒤로 떨어지는 작은 별똥별
+- 시트 pick_arrow_redo4_1.png (첫 칸 = 앞 1번)
