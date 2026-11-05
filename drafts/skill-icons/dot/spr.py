@@ -1,0 +1,190 @@
+"""손그림 상징 모음. 각각 (줄들, 팔레트). 글자 1·2·3은 속성 색으로 바꿔 쓰는 자리.
+기본 글자(b4.FIX): k 검정 · w 흰 · m/M/n 쇠 · y/Y 금 · t/T 나무 · l/L 가죽 · e/E 뼈 · f/F/d 회색 · r/R 빨강 · g/G 초록 · b/B 파랑 · c 하늘 · p/P 보라 · o 주황 · s/S 살갗 · h 연노랑 · u/U 분홍 · a/A 얼음"""
+GOLD = {'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6)}
+DAGGER_UR = (['........w',
+              '.......wM',
+              '......wM.',
+              '.....wM..',
+              '...ywM...',
+              '....y....',
+              '...l.y...',
+              '..L......',
+              '.y.......'], dict(GOLD))
+SKULL = (['..eeee..',
+          '.eeeeeE.',
+          'eeeeeeeE',
+          'ekkeekkE',
+          'ekkeekkE',
+          '.eeekeE.',
+          '..eEeE..',
+          '..eEeE..'], {})
+HEART = (['.11..11.', '11111111', '1w111112', '.111122.', '..1122..', '...22...'], {'1': ('#ee3448', 13), '2': ('#a8182c', 13)})
+CROSS = (['..11..', '..11..', '111111', '111112', '..12..', '..22..'], {})
+DROP = (['..1..', '..1..', '.111.', '11112', '1w112', '11122', '.122.'], {})
+SNOW = (['...w...', '.w.w.w.', '..wcw..', 'wwcccww', '..wcw..', '.w.w.w.', '...w...'], {'c': ('#bfefff', 1)})
+POTION = (['..lll..',
+           '..ccc..',
+           '.cc1cc.',
+           'c11111c',
+           'c1w111c',
+           'c111112',
+           'c111122',
+           '.c1222.',
+           '..ccc..'], {'c': ('#d8f4ff', 12), 'l': ('#b87a48', 9)})
+BOOT = (['hhhh....',
+         'llll....',
+         'llll....',
+         'lllL....',
+         'llllll..',
+         'lllllll.',
+         'lllllllL',
+         'LLLLLLLL'], {'h': ('#f4e0b0', 7), 'l': ('#c07a3a', 9), 'L': ('#6a3a1a', 9)})
+WING_L = (['......w',
+           '....wwf',
+           '..wwwff',
+           '.wwwfff',
+           'wwwfff.',
+           '.wfff..',
+           '..ff...'], {'f': ('#c8d4f0', 5)})
+SHRINE = (['....y....',
+           '...yyy...',
+           '..yyyyY..',
+           '.yyyyyYY.',
+           'eeeeeeeeE',
+           '.e.e.e.E.',
+           '.e.e.e.E.',
+           '.e.e.e.E.',
+           'eeeeeeeEE'], dict(GOLD))
+HAMMER = (['.mmmmmmM.',
+           'wmmmmmmMM',
+           'mmmmmmmMn',
+           '.MMMMMMn.',
+           '....tT...',
+           '....tT...',
+           '....tT...',
+           '....lL...',
+           '....lL...',
+           '....yY...'], dict(GOLD))
+SPROUT = (['.......gg',
+           '.gg...gGG',
+           'gGGg..gG.',
+           '.gGGgGG..',
+           '....gG...',
+           '....gG...',
+           '...tttT..'], {'g': ('#7ae05a', 8), 'G': ('#2e9a3e', 8)})
+BOMB = (['.......',
+         '....tt.',
+         '..nnt..',
+         '.nddnn.',
+         'nddddnn',
+         'ndwddnn',
+         'nddddnn',
+         '.nnnnn.'], {'n': ('#4a4a58', 11), 'd': ('#2a2a34', 11)})
+EYE = (['..kkkkk..',
+        '.kwwwwwk.',
+        'kwww12wwk',
+        'kww1322wk',
+        'kww2332wk',
+        '.kww22wk.',
+        '..kkkkk..'], {})
+MOON_C = (['..111.', '.11...', '11....', '11....', '11....', '.11...', '..111.'], {})
+SUN = (['..1..1..', '...11...', '1.1111.1', '.111111.', '.111111.', '1.1111.1', '...11...', '..1..1..'], {})
+BACKPACK = (['...tTtTt...',
+             '..tTtTtTt..',
+             '..TTTTTTT..',
+             '.lllllllll.',
+             '.lLLLLLLLl.',
+             '.ll.yYy.lL.',
+             '.lllllllll.',
+             '.lllllllll.',
+             '.llfllllfL.',
+             '.lLLLLLLLL.',
+             '.lL.lllLLL.',
+             '.lLLLLLLLL.',
+             '..LLLLLLL..'], {'t': ('#e0c08a', 3), 'T': ('#a07a4a', 3), 'l': ('#a8642e', 9), 'L': ('#6a3a1a', 9), 'f': ('#5a3010', 9), 'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6)})
+CRATE = (['tttttT', 'tTttTT', 'ttTTtT', 'tTttTT', 'TTTTTT'], {'t': ('#d09a5a', 3), 'T': ('#8a5a2a', 3)})
+SACK = (['..l..', '.lyl.', 'lllll', 'llllL', 'lllLL', '.LLL.'], {'l': ('#d8b880', 9), 'L': ('#9a7a48', 9), 'y': ('#8a5a2a', 9)})
+POT = (['.ooo.', 'ooooO', 'oOOOO', 'ooooO', '.OOO.'], {'o': ('#d0703a', 14), 'O': ('#8a3a1a', 14)})
+COIN = (['.yy.', 'yhyY', 'yyYY', '.YY.'], {'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6), 'h': ('#fff6c8', 1)})
+MULE = (['F......F..',
+         'FF....FF..',
+         '.FF..FF...',
+         '..FFFF....',
+         '..FFFFF...',
+         '.FFkFFFF..',
+         '.FFFFFFFF.',
+         '..FFFFFFFF',
+         '...FFFffff',
+         '....Fffkff',
+         '.....fffff',
+         '......fff.'], {'F': ('#8a6a50', 3), 'f': ('#c8b098', 3), 'k': ('#1a1414', 1)})
+WAGON = (['...eeeeeeee...',
+          '..eeeeeeeeee..',
+          '.eeeeeeeeeeee.',
+          '.eEeeEeeEeeEe.',
+          '.tttttttttttt.',
+          '.TTTTTTTTTTTT.',
+          '..dd......dd..',
+          '.dffd....dffd.',
+          '..dd......dd..'], {'e': ('#f4ecd8', 7), 'E': ('#c8b898', 7), 't': ('#c08a4a', 3), 'T': ('#7a4c22', 3), 'd': ('#4a3020', 3), 'f': ('#c08a4a', 3)})
+ARMFLEX = (['........mmm.',
+            '.......mwmmM',
+            '.......mmmMM',
+            '.......mmMMM',
+            '........mMM.',
+            '........mMM.',
+            '...mmm..mMM.',
+            '..mwmmm.mMMn',
+            '.mmmmmmmmMMn',
+            'mmmmmmmmmMMn',
+            'mmmmmmmmMMn.',
+            'MMMMMMMMnn..'], {})
+RUNNER = (['.....ww.',
+           '.....ww.',
+           '...wwww.',
+           '..ww.www',
+           '..w.wwf.',
+           '....ww..',
+           '...www..',
+           '..ww.ww.',
+           '.ww...ww',
+           'ww......'], {'w': ('#ffffff', 7), 'f': ('#c8d0e0', 7)})
+MEDITATE = (['....kkkk....',
+             '....ssss....',
+             '....SssS....',
+             '.....ss.....',
+             '...bbbbbb...',
+             '..bbbbbbbb..',
+             '.bb.bbbb.bb.',
+             '.s..bbbb..s.',
+             'bbbbbbbbbbbb',
+             'BBBBBBBBBBBB'], {'s': ('#f4c494', 2), 'S': ('#c88a5a', 2), 'b': ('#5a8ad8', 12), 'B': ('#2e4e94', 12), 'k': ('#3a2a1a', 1)})
+HOURGLASS = (['yyyyyyy', '.c111c.', '.c111c.', '..c1c..', '...c...', '..c.c..', '.c.1.c.', '.c111c.', 'yyyyyyy'], {'y': ('#ffd84a', 6), 'c': ('#d8f4ff', 12), '1': ('#ffe0a0', 7)})
+KNIGHT = (['....ww...',
+           '...wwwww.',
+           '..wwkwwww',
+           '..wwwwwww',
+           '.wwww..ww',
+           'wwwww....',
+           '.wwwww...',
+           '..wwwww..',
+           '..wwwww..',
+           '.fffffff.',
+           'fffffffff'], {'w': ('#f4f0e8', 7), 'f': ('#b8b0a0', 7)})
+METRONOME = (['....y....', '....T....', '...tTt...', '..ttyTt..', '..ttyTt..', '.tttyTTt.', '.ttyttTt.', 'tttyTTTTt', 'TTTTTTTTT'], {'t': ('#c08a4a', 3), 'T': ('#7a4c22', 3), 'y': ('#ffd84a', 6)})
+FIRSTAID = (['...ll...', '..l..l..', 'wwwwwwww', 'wwwrrwwf', 'wwrrrrwf', 'wwwrrwwf', 'wwwwwwff', 'ffffffff'], {'w': ('#ffffff', 7), 'f': ('#c0c8d4', 7), 'r': ('#e83a3a', 13), 'l': ('#8a94a8', 5)})
+BANDAGE = (['..eeee....', '.eeEEee...', 'eeEkkEee..', 'eEk..kEe..', 'eEk..kEeee', 'eeEkkEeeee', '.eeEEee...', '..eeee....'], {'e': ('#f8f4ec', 7), 'E': ('#c8c0b0', 7), 'k': ('#8a7a6a', 7)})
+HAND_UP = (['.s.s.s..', '.s.s.s.s', '.s.s.s.s', 'sssssss.', 'sssssss.', '.sssss..', '..sss...', '..SSS...'], {'s': ('#f4c494', 2), 'S': ('#c88a5a', 2)})
+DWHAMMER = (['mmmmmmmmmmM', 'mwmmmmmmmMM', 'mmyymmyymMM', 'mmmmmmmmmMn', '.MMMMMMMMn.', '....tT.....', '....tT.....', '....tT.....', '....yY.....', '....tT.....'], {'y': ('#ffd84a', 6)})
+TORSO = (['....mmmm....',
+          '.mmmmmmmmmm.',
+          'mwmmmMMmmmMM',
+          'mmmmmMMmmmMM',
+          'mmmmmMMmmmMn',
+          '.mMMMMMMMMn.',
+          '..mmmMMmmn..',
+          '..mMMMMMMn..',
+          '..mmmMMmmn..',
+          '..mMMMMMMn..',
+          '...mmMMmn...',
+          '...MMMMnn...'], {})
