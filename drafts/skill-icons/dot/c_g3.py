@@ -6,6 +6,7 @@ from lib import *
 from spr import *
 from c_archer import arrow_u, arrow_dl, arrow_l, arrow_ul
 from c_rogue import dagger_at
+from arrows import ar, arrow, arrow_s, recol, AP, GOLD_ALL, GOLDP
 def A(theme, **k): return bg(Art(), theme, **k)
 WSL = ('#ffffff', '#fff0a0', '#ffb040', '#f07a20')
 # 마부
@@ -84,10 +85,10 @@ def grandcaravan():
     return a, 0
 # 정찰병
 def ambush():
-    a = A('green', cx=12, cy=6, cuts=[0.0, 0.25, 0.45, 0.65, 0.85])
-    sp(a, (grid(target(12.5, 5.5, 2.2, '123')), TGT))
-    sp(a, grid(arrow_ur(11, 7, L=5)))
-    cm = cloud([(3, 14, 3.0), (6.5, 15.5, 2.6), (2, 17, 2.2), (8.5, 17.5, 2.2)], 'g', 'G')
+    a = A('green', cx=12, cy=5, cuts=[0.0, 0.25, 0.45, 0.65, 0.85])
+    sp(a, (grid(target(12.5, 4.5, 2.4, '123')), TGT))
+    ar(a, 'ur', 11, 6, 2, small=True)
+    cm = cloud([(3, 14, 3.0), (6.5, 15.5, 2.6), (2, 17, 2.2), (8.5, 17.5, 2.2), (4.5, 11.5, 2.0)], 'g', 'G')
     for (x, y), c in list(cm.items()):
         if (x * 3 + y * 2) % 7 == 0: cm[(x, y)] = 'h'
     sp(a, grid(cm), {'g': ('#4ab04a', 8), 'G': ('#2a7a34', 8), 'h': ('#8ae07a', 8)})
@@ -115,11 +116,9 @@ def spotweak():
     a.paint(['r..r', '.rr.', '.rr.', 'r..r'], {'r': '#e83a3a'}, ox=5, oy=6)
     return a, 0
 def volley():
-    a = A('sky', cx=4, cy=14, r=14)
-    for (tx, ty, L) in [(14, 6, 4), (12, 3, 4), (14, 11, 4)]: sp(a, grid(arrow_ur(tx, ty, L=L)))
-    for (tx, ty) in [(8, 4), (14, 15)]: sp(a, grid(arrow_ur(tx, ty, L=3)))
+    a = A('sky', cx=4, cy=15, r=15, rays=10, rot=0.2, k=0.25)
+    for (tx, ty) in [(8, 3), (13, 4), (11, 8), (15, 9), (14, 14)]: ar(a, 'ur', tx, ty, 2, small=True)
     return a, 0
-# 개척자
 def farsight():
     a = A('teal', cx=12, cy=4)
     sp(a, SPYGLASS, 2, 5)
@@ -136,15 +135,14 @@ def drumbeat():
     sp(a, ['t...', '.t..', '..tT'], 1, 4, {'t': ('#e8d0a0', 3), 'T': ('#a87a4a', 3)}); sp(a, ['...t', '..t.', 'Tt..'], 11, 4, {'t': ('#e8d0a0', 3), 'T': ('#a87a4a', 3)})
     return a, 0
 def summit():
-    a = A('sky', cy=4, r=15)
+    a = A('sky', cy=3, r=15)
     for y in range(20):
         for x in range(16):
             u = abs(x + 0.5 - 7.5)
-            if y >= 6 + u * 1.3: a.set(x, y, '#f4f8ff' if y < 8 + u * 1.3 and y < 10 else '#6a7a8a' if x < 8 else '#4a5a6a')
-    sp(a, ['.rrr', '.rr.', '.r..', 't...', 't...'], 7, 1, {'r': ('#e83a3a', 13), 't': ('#7a4c22', 3)})
-    for (x, ty) in [(3, 14), (12, 15)]: sp(a, grid(arrow_dn(x, ty, L=3)))
+            if y >= 7 + u * 1.25: a.set(x, y, '#f4f8ff' if y < 9 + u * 1.25 and y < 11 else '#6a7a8a' if x < 8 else '#4a5a6a')
+    sp(a, ['.rrr', '.rr.', '.r..', 't...', 't...'], 7, 2, {'r': ('#e83a3a', 13), 't': ('#7a4c22', 3)})
+    ar(a, 'dl', 4, 12, 1, small=True); ar(a, 'dr', 11, 12, 1, small=True)
     return a, 0
-# 암살자
 def assassinate():
     a = A('shadow', cuts=[0.0, 0.25, 0.45, 0.65, 0.85])
     sp(a, HOOD, 2, 3)

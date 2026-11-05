@@ -6,13 +6,14 @@ from lib import *
 from spr import *
 from c_archer import arrow_u, arrow_dl, arrow_l, arrow_ul
 from c_g2 import crosshair
+from arrows import ar, arrow, arrow_s, recol, AP, GOLD_ALL, GOLDP
 def A(theme, **k): return bg(Art(), theme, **k)
 WSL = ('#ffffff', '#fff0a0', '#ffb040', '#f07a20')
 MARK = ['...r...', '..rRr..', '.rR.Rr.', 'rR.r.Rr', '.rR.Rr.', '..rRr..', '...r...']
 def huntmark():
     a = A('green', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
     sp(a, MARK, 7, 2, {'r': ('#ff4a3a', 13), 'R': ('#a01a1a', 13)})
-    sp(a, grid(arrow_ur(9, 6, L=6)))
+    ar(a, 'ur', 10, 5, 2)
     return a, 0
 def trapnet():
     a = A('teal', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
@@ -36,17 +37,17 @@ def skinning():
 def volleytrap():
     a = A('green', cy=4, r=16)
     sp(a, BEARTRAP, 2, 12)
-    for (x, ty) in [(3, 10), (8, 8), (13, 10)]: sp(a, grid(arrow_dn(x, ty, L=3)))
+    for (x, ty) in [(3, 10), (8, 8), (13, 10)]: ar(a, 'd', x, ty, 3, small=True)
     return a, 0
 def dragonpierce():
     a = A('fire', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
     cm = {}
     for y in range(3, 17):
-        for x in range(4, 12):
+        for x in range(4, 11):
             lx = (x + (2 if ((y - 3) // 3) % 2 else 0)) % 4; ly = (y - 3) % 3
             cm[(x, y)] = 'G' if ly == 2 else ('h' if ly == 0 and lx == 1 else 'g')
     sp(a, grid(cm), {'g': ('#c04a2a', 8), 'G': ('#6a1a0a', 8), 'h': ('#ff9a6a', 8)})
-    sp(a, grid(arrow_r(15, 10, L=11)))
+    ar(a, 'r', 15, 10, 5)
     burst(a, 8, 10, big=False)
     return a, 0
 def wyrmbane():
@@ -57,19 +58,23 @@ def slayrain():
     a = A('dawn', cy=17, r=16)
     import spr as S
     sp(a, S.WYVERN, 0, 8)
-    for (x, ty) in [(3, 7), (8, 5), (12, 8)]: sp(a, grid(arrow_dn(x, ty, L=3)))
+    for (x, ty) in [(3, 8), (8, 6), (12, 9)]: ar(a, 'd', x, ty, 3, small=True)
     return a, 0
 def dragonheart():
     a = A('evil', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
     big = (['.111..111.', '1w11111112', '1111111122', '1111111122', '.11111122.', '..111122..', '...1122...', '....22....'], HEART[1])
+    cm = arrow('ur', 14, 2, 7)
+    sp(a, grid({k: v for k, v in cm.items() if k[0] + k[1] > 15}), AP)
     sp(a, big, 3, 6)
-    sp(a, grid(arrow_ur(14, 3, L=11)))
+    sp(a, grid({k: v for k, v in cm.items() if k[0] + k[1] <= 11}), AP)
     return a, 0
 def trackshot():
-    a = A('earth', cy=6, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
-    for (x, y) in [(2, 15), (5, 12), (3, 9)]: sp(a, ['1.1', '.1.', '111'], x, y, {'1': ('#3a2210', 1)})
-    sp(a, grid(arrow_ur(14, 3, L=5)))
-    for i in range(5): a.set(6 + i, 11 - i, '#ffe8c0' if i % 2 else '#c8a070')
+    a = A('green', cy=6, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    for y in range(20):
+        for x in range(16):
+            if abs((x - 7.5) + (y - 9.5) * 0.9) < 3.2 and x + y > 9: a.set(x, y, '#b88a50' if (x + y) % 5 else '#a07a44')
+    for (x, y) in [(1, 15), (4, 13), (6, 10)]: a.paint(['1.1', '.1.', '111'], {'1': '#4a2a10'}, ox=x, oy=y)
+    ar(a, 'ur', 14, 2, 1)
     return a, 0
 def snaretrap():
     a = A('green', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
@@ -89,10 +94,10 @@ def wildsense():
     return a, 0
 def driveshot():
     a = A('green', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
-    for k, (r, c) in enumerate([(6.0, '#ffffff'), (4.2, '#c8ffc0')]):
-        for i in range(14):
-            t = i / 13; ang = math.radians(200 + t * 120); a.set(int(7.5 + math.cos(ang) * r), int(13 + math.sin(ang) * r), c)
-    sp(a, grid(arrow_ur(13, 6, L=3))); sp(a, grid(arrow_ur(11, 9, L=2)))
+    for k, (r, c) in enumerate([(6.4, '#ffffff'), (4.4, '#c8ffc0')]):
+        for i in range(16):
+            t = i / 15; ang = math.radians(190 + t * 110); a.set(int(8 + math.cos(ang) * r), int(14 + math.sin(ang) * r), c)
+    ar(a, 'r', 13, 8, 2, small=True); ar(a, 'r', 11, 11, 2, small=True)
     return a, 0
 def giantslayer():
     a = A('dawn', cy=17, r=16)

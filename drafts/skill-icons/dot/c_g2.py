@@ -5,6 +5,7 @@ from cell import Art, mix
 from lib import *
 from spr import *
 from c_archer import arrow_u, arrow_dl, arrow_l, arrow_ul
+from arrows import ar, arrow, arrow_s, recol, AP, GOLD_ALL, GOLDP
 def A(theme, **k): return bg(Art(), theme, **k)
 WSL = ('#ffffff', '#fff0a0', '#ffb040', '#f07a20')
 def note(a, x, y, two=False, c='#ffffff', out=True):
@@ -13,10 +14,11 @@ def note(a, x, y, two=False, c='#ffffff', out=True):
     else: a.paint(s[0], {'1': c}, ox=x, oy=y)
 # 레인저
 def beastshot():
-    a = A('green', cx=11, cy=7)
-    sp(a, BOAR, 4, 2)
-    sp(a, grid(arrow_ur(8, 12, L=5)))
-    sp(a, grid(arrow_ur(12, 13, L=5)))
+    a = A('green', cx=11, cy=9, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    sp(a, BOAR2, 4, 5)
+    for (tx, y) in [(4, 4), (3, 14)]:
+        line(a, 0, y, 1, y, '#d8ffd8')
+        ar(a, 'r', tx, y, 1, small=True)
     return a, 0
 def trap():
     a = A('earth', cy=13)
@@ -44,12 +46,12 @@ def instinct():
     return a, 0
 def arrowstorm():
     a = A('storm', cy=4)
-    sp(a, grid(cloud([(4, 2.5, 2.6), (8, 1.8, 3.0), (12, 2.6, 2.5)], 'f', 'F')), {'f': ('#5a6a7a', 11), 'F': ('#34404c', 11)})
-    for (x, y) in [(2, 8), (5, 11), (9, 9), (12, 12), (4, 16), (11, 16), (7, 14), (14, 9)]:
-        for k in range(3): a.set(x - k, y - k * 2, mix('#ffffff', '#4a9cb4', k / 3))
-    for (tx, ty) in [(4, 13), (8, 16), (12, 14)]: sp(a, grid(arrow_dn(tx, ty, L=3)))
+    sp(a, grid(cloud([(3, 2.2, 2.6), (7.5, 1.4, 3.0), (12, 2.4, 2.6)], 'f', 'F')), {'f': ('#4a5a6e', 11), 'F': ('#2a3442', 11)})
+    paint_cm(a, bolt([(9, 4), (8, 6), (10, 7)], w=0), {'w': '#fff060'})
+    for (x, y) in [(1, 8), (6, 6), (14, 9), (4, 15), (12, 17)]:
+        for k in range(3): a.set(x + k, y - k, mix('#ffffff', '#4a9cb4', k / 3))
+    for (tx, ty) in [(3, 12), (8, 15), (13, 12), (6, 18), (11, 9)]: ar(a, 'dl', tx, ty, 2, small=True)
     return a, 0
-# 용기사
 def spear_dn(x0=0, y0=0): return SPEAR_DN
 def jump():
     a = A('sky', cy=15)
@@ -131,21 +133,22 @@ def steadyaim():
     ring(a, 7.5, 9.5, 6.2, [(0, 360)], '#5a6a6e', w=0.6)
     return a, 0
 def longshot():
-    a = A('sky', cx=12, cy=4)
-    sp(a, (grid(target(12.5, 4.5, 1.8, '123')), TGT))
-    for i in range(0, 9): a.set(1 + i, 17 - i, '#ffffff' if i % 2 else '#9ad4ff')
-    sp(a, grid(arrow_ur(10, 7, L=3)))
+    a = A('sky', cx=12, cy=4, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    sp(a, (grid(target(12.5, 4.0, 2.2, '123')), TGT))
+    for i in range(0, 12, 2):
+        t = i / 11; a.set(int(1 + t * 8), int(18 - t * 10 - math.sin(t * math.pi) * 3), '#ffffff')
+    ar(a, 'ur', 11, 6, 2, small=True)
     return a, 0
 def piercearrow():
     a = A('steelb', cx=9, cy=9)
     cm = {}
     for y in range(4, 16):
         for x in range(6, 10): cm[(x, y)] = 'm' if x < 8 else 'M'
+    for p_ in [(6, 5), (9, 5), (6, 14), (9, 14)]: cm[p_] = 'w'
     sp(a, grid(cm))
-    for (x, y) in [(7, 8), (8, 9), (7, 10), (8, 8)]: a.set(x, y, '#1a1414')
-    dot(a, [(6, 7), (9, 11), (6, 11), (9, 7)], '#3a3a44')
-    sp(a, grid(arrow_r(14, 9, L=10)))
-    burst(a, 8, 9, big=False)
+    for (x, y) in [(7, 8), (8, 8), (7, 10), (8, 10), (6, 7), (9, 11), (6, 11), (9, 7)]: a.set(x, y, '#2a2a34')
+    ar(a, 'r', 15, 9, 5)
+    for (x, y) in [(5, 6), (10, 12), (5, 12), (10, 6)]: a.set(x, y, '#ffffff')
     return a, 0
 def deadeye():
     a = A('blood', rays=10, k=0.3)
@@ -154,16 +157,18 @@ def deadeye():
     return a, 0
 # 신궁
 def divinearrow():
-    a = A('holy', rays=12, k=0.3)
-    cm = recolor(arrow_ur(12, 4, L=7), {'t': 'y', 'm': 'h', 'M': 'Y'})
-    sp(a, grid(cm), {'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6), 'h': ('#fff4c0', 6)}, glow_c='#fff0a0')
-    sp(a, (['..w', '.wf', 'wff'], WING_L[1]), 1, 10); sp(a, (['w..', 'fw.', 'ffw'], WING_L[1]), 4, 14)
+    a = A('royal', rays=12, k=0.3)
+    for k in range(5): a.set(1 + k, 17 - k, ['#8a8cf4', '#c0c4ff', '#fff4c0', '#ffe890', '#ffffff'][k])
+    ar(a, 'ur', 13, 3, 3, GOLD_ALL, GOLDP)
+    sp(a, (['..w', '.wf', 'wff'], WING_L[1]), 1, 10); sp(a, (['w..', 'fw.', 'ffw'], WING_L[1]), 5, 14)
+    for (x, y) in [(14, 8), (8, 2)]: plus(a, x, y)
     return a, 0
 def starfall():
     a = A('purple', cy=4)
-    for (x, y) in [(3, 11), (8, 15), (12, 9), (6, 6)]:
-        for k in range(1, 5): a.set(x, y - k, mix('#fff4c0', '#5e1e8e', k / 5))
-        sp(a, grid(poly_cells(star_poly(x + 0.5, y + 0.5, 2.2, 0.9, 5), 'y')), {'y': ('#fff4a0', 6)})
+    for (tx, ty) in [(3, 13), (8, 17), (12, 10)]:
+        tail(a, tx + 3.0, ty - 3.0, tx + 8.0, ty - 8.0, 1.2, 0.3, ['#ffffff', '#fff0a0', '#e0b0ff', '#a060e0'])
+        ar(a, 'dl', tx, ty, 1, GOLD_ALL, GOLDP, small=True)
+    for (x, y) in [(2, 3), (7, 2), (14, 15), (1, 9)]: plus(a, x, y, '#ffffff', '#fff0a0')
     return a, 0
 def godseye():
     a = A('gold', rays=14, k=0.35)
@@ -174,15 +179,10 @@ def lastarrow():
     for y in range(20):
         for x in range(16):
             u = abs(x + 0.5 - 7.5)
-            if u < 2.6: a.set(x, y, '#fff4c0' if u < 1.4 else '#ffd870')
-    cm = {}
-    for y in range(1, 13): cm[(7, y)] = 'y'; cm[(8, y)] = 'Y'
-    for (x, y) in [(5, 13), (6, 13), (7, 13), (8, 13), (9, 13), (10, 13), (6, 14), (7, 14), (8, 14), (9, 14), (7, 15), (8, 15), (7, 16), (8, 16)]: cm[(x, y)] = 'w' if x < 8 else 'h'
-    for (x, y) in [(5, 1), (6, 2), (10, 1), (9, 2), (5, 2), (10, 2)]: cm[(x, y)] = 'r'
-    sp(a, grid(cm), {'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6), 'w': ('#ffffff', 5), 'h': ('#e0e8f4', 5), 'r': ('#ffffff', 7)})
-    burst(a, 8, 17, big=False)
+            if u < 2.8: a.set(x, y, '#fff4c0' if u < 1.4 else '#ffd870')
+    ar(a, 'd', 7, 16, 7, GOLD_ALL, GOLDP)
+    burst(a, 7, 17, big=False)
     return a, 0
-# 음유시인
 def ballad():
     a = A('rose', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
     sp(a, LUTE, 2, 5)
@@ -253,6 +253,15 @@ def grandfinale():
             for k in (1, 2): a.set(round(cx + math.cos(math.radians(ang)) * k * 1.3), round(cy + math.sin(math.radians(ang)) * k * 1.3), c if k == 2 else '#ffffff')
     sp(a, (['..1111111', '..1.....1', '..1.....1', '..1.....1', '..1.....1', '111...111', '111...111'], {}), 3, 6, {'1': ('#ffd84a', 6)})
     return a, 0
+BOAR2 = (['......FF.FF.',
+          '.....FFFFFFF',
+          '...FFFFFFFFF',
+          '..FFFeFFFFFF',
+          '.FFFFFFFFFFF',
+          'ffffFFFFFFFF',
+          'fkffFFFFFFF.',
+          'ffffwFFFFF..',
+          '...ww.......'], {'F': ('#6a4630', 3), 'f': ('#d89a8a', 2), 'k': ('#3a1a10', 1), 'e': ('#ff4a3a', 1), 'w': ('#fff8f0', 7)})
 ICONS = {'beastshot': ('짐승 사냥', 'dmg', beastshot), 'trap': ('덫 놓기', 'dot', trap), 'wolfcall': ('늑대 부르기', 'dmg', wolfcall), 'camouflage': ('위장', 'buff', camouflage), 'instinct': ('사냥꾼의 감', 'none', instinct), 'arrowstorm': ('화살 폭우', 'dmg', arrowstorm),
          'jump': ('도약 찌르기', 'dmg', jump), 'dragonscale': ('용의 비늘', 'none', dragonscale), 'gale': ('창 돌풍', 'dmg', gale), 'skyfall': ('하늘 낙하', 'dmg', skyfall), 'wyvernfall': ('와이번 강하', 'dmg', wyvernfall), 'dragonblood': ('용의 피', 'none', dragonblood), 'dragonfall': ('용의 낙하', 'dmg', dragonfall),
          'headshot': ('헤드샷', 'dmg', headshot), 'steadyaim': ('정조준', 'buff', steadyaim), 'longshot': ('원거리 사격', 'dmg', longshot), 'piercearrow': ('철갑 화살', 'dmg', piercearrow), 'deadeye': ('데드아이', 'none', deadeye),
