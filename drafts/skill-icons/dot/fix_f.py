@@ -1,4 +1,4 @@
-"""2단계 고치기 F: 앞서 손봤지만 전과 거의 같아 보이던 13개를 새로 (광폭화·기사단 돌격·비전 숙련·별의 종언·잰걸음·질주·집중·전술·관중의 함성·콜로세움·헌신·광란·피의 만찬)"""
+"""2단계 고치기 F: 앞서 손봤지만 전과 거의 같아 보이던 19개를 새로 (광폭화·기사단 돌격·비전 숙련·별의 종언·잰걸음·질주·집중·전술·관중의 함성·콜로세움·헌신·광란·피의 만찬·해독·신의 기적·천상의 기적·마비 침·신속)"""
 import math
 import cell
 from cell import Art, mix, W, H, dsword, dsword_ur, sword
@@ -75,14 +75,6 @@ def sprint():
     sp(a, WBOOT, 3, 7)
     sp(a, ['hhhh'], 5, 6, {'h': ('#fff8d0', 6)})
     return a, 0
-# ── 집중: 안쪽을 가리키는 네 화살촉에 둘러싸인 눈 ──
-def focus():
-    a = A('teal', cuts=[0.0, 0.25, 0.48, 0.7, 0.9])
-    for (x, y) in ring_cells(7.5, 10.0, 6.4, 6.4, 0.45): a.set(x, y, '#5ac8c4')
-    sp(a, EYE, 3, 6, {'k': ('#1a1414', 1), 'w': ('#ffffff', 7), '1': ('#9af0e0', 12), '2': ('#2a9a8a', 12), '3': ('#0a2a2a', 1)})
-    for rows_, (x, y) in [(['www', '.w.'], (6, 1)), (['.w.', 'www'], (6, 17)), (['w.', 'ww', 'w.'], (0, 9)), (['.w', 'ww', '.w'], (14, 9))]:
-        a.paint(rows_, {'w': '#ffffff'}, ox=x, oy=y)
-    return a, 0
 # ── 전술: 작전 지도 위 화살표 + 기사 말 ──
 def tactics():
     a = A('royal', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
@@ -144,6 +136,80 @@ def bloodfeast():
         for i in range(n): a.set(x, y0 + i, '#e8283a')
         a.set(x, y0 + n, '#ff6a6a')
     return a, 0
+
+# ── 덧붙임: 한 번 더 손봐도 전과 비슷하던 6개 ──
+def focus():
+    a = A('amber', rays=20, k=0.55, hole=4.5)
+    for ang in range(0, 360, 30):
+        r0, r1 = 5.6, 9.5
+        x0, y0 = 7.5 + math.cos(math.radians(ang)) * r0, 9.5 + math.sin(math.radians(ang)) * r0
+        x1, y1 = 7.5 + math.cos(math.radians(ang)) * r1, 9.5 + math.sin(math.radians(ang)) * r1
+        line(a, int(x1), int(y1), int(x0), int(y0), '#ffe080', '#ffffff')
+    EY = (['...kkkkk...', '.kkwwwwwkk.', 'kwwwwkkwwwk', 'kwwwk1kkwwk', 'kwwwkkkkwwk', '.kkwwwwwkk.', '...kkkkk...'], {'k': ('#2a1206', 1), 'w': ('#fff8ec', 7), '1': ('#ffffff', 1)})
+    EY = (['...kkkkk...', '.kkwwwwwkk.', 'kwwwoookwwk', 'kwwoo1okkwk', 'kwwookkokwk', '.kkwwoowkk.', '...kkkkk...'], {'k': ('#2a1206', 1), 'w': ('#fff8ec', 7), 'o': ('#e07a20', 14), '1': ('#ffffff', 1)})
+    sp(a, EY, 2, 6)
+    return a, 0
+def cure():
+    a = A('teal', rays=12, k=0.35, hole=4)
+    STAFF = {}
+    for y in range(2, 19): STAFF[(7, y)] = 't'; STAFF[(8, y)] = 'T'
+    STAFF[(7, 1)] = 'y'; STAFF[(8, 1)] = 'Y'
+    sp(a, grid(STAFF), dict(GOLD, t=('#d8a060', 3), T=('#8a5a2a', 3)))
+    SN = {}
+    for i in range(60):
+        t = i / 59; y = 16.5 - t * 12.0; x = 7.5 + math.sin(t * math.pi * 3.0) * 3.2
+        for dx in (-0.5, 0.5):
+            SN[(int(x + dx), int(y))] = 'g' if math.cos(t * math.pi * 3.0) > 0 else 'G'
+    for (x, y) in [(10, 3), (11, 3), (10, 4), (11, 4), (12, 4)]: SN[(x, y)] = 'g'
+    SN[(11, 3)] = 'k'
+    sp(a, grid(SN), {'g': ('#6ae05a', 8), 'G': ('#2e8a2a', 8), 'k': ('#1a1414', 1)})
+    a.set(13, 5, '#e83a3a')
+    for (x, y) in [(2, 3), (13, 15), (2, 15)]: plus(a, x, y, '#ffffff', '#c8fff0')
+    return a, 0
+def awk_cleric():
+    a = A('holy', cy=10, rays=16, k=0.45, hole=3)
+    WL = (['......ww', '....wwwf', '..wwwwff', 'wwwwwfff', '.wwwfff.', 'wwwfff..', '.wff....', '..f.....'], {'w': ('#ffffff', 7), 'f': ('#c8d0e0', 7)})
+    sp(a, WL, 0, 6); sp(a, (flip(WL[0]), WL[1]), 8, 6)
+    for (x, y) in ring_cells(7.5, 3.4, 3.0, 1.1, 0.45): a.set(x, y, '#ffe060')
+    sp(a, grid(cross_cm(7.5, 11.0, 3.4, 2.6, 'g', 'G')), {'g': ('#7aff6a', 8), 'G': ('#2e9a2a', 8)})
+    for (x, y) in [(2, 16), (13, 16), (7, 18)]: plus(a, x, y, '#ffffff', '#c8ffc0')
+    return a, 0
+def awk2_cleric():
+    a = A('sky', cy=9, r=14, rays=14, k=0.35, hole=3)
+    GATE = (['....yyyyyy....', '..yyhhhhhhyy..', '.yhhhhhhhhhhy.', 'yhhhhhhhhhhhhy', 'yhhhhhhhhhhhhy', 'yhhhhhhhhhhhhy', 'yhhhhhhhhhhhhy', 'yhhhhhhhhhhhhy', 'yhhhhhhhhhhhhy', 'yhhhhhhhhhhhhy', 'yhhhhhhhhhhhhy', 'yyyyyyyyyyyyyy'],
+            dict(GOLD, h=('#ffffff', 1)))
+    DOOR = (['yy', 'Yy', 'YY', 'Yy', 'YY', 'Yy', 'YY', 'YY'], GOLD)
+    sp(a, GATE, 1, 3)
+    sp(a, DOOR, 0, 6); sp(a, (flip(DOOR[0]), GOLD), 14, 6)
+    for (x, y) in [(7, 5), (7, 6), (6, 7), (8, 7), (7, 8)]: a.set(x, y, '#ffe060')
+    for y in range(15, 20):
+        for x in range(16):
+            if (x + 0.5 - 7.5) ** 2 / 64 + (y - 20) ** 2 / 25 <= 1: a.set(x, y, '#ffffff' if y < 17 else '#d8e4f4')
+    for (x, y) in [(0, 2), (15, 3), (7, 1)]: plus(a, x, y, '#ffffff', '#fff0a0')
+    return a, 0
+def parasting():
+    a = A('purple', cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    paint_cm(a, bolt([(12, 2), (10, 5), (13, 7), (11, 10)], w=1), {'w': '#ffffff', 'y': '#fff060'})
+    paint_cm(a, bolt([(4, 11), (2, 14), (5, 15), (3, 18)], w=1), {'w': '#ffffff', 'y': '#fff060'})
+    DART = ['..........yy', '.........yYy', '........mYY.', '.......mM...', '......mM....', '.....mM.....', '....mM......', '...mM.......', '..mM........', '.wM.........', 'w...........']
+    sp(a, DART, 2, 3, dict(GOLD, m=('#d4dcea', 5), M=('#7a849a', 5), w=('#ffffff', 5)))
+    burst(a, 3, 14, big=False, cols=('#ffffff', '#fff8a0', '#ffe040'))
+    return a, 0
+def haste():
+    a = A('sky', rays=12, k=0.35, hole=4)
+    speed(a, [(0, 7, 2, 7), (0, 11, 1, 11), (0, 15, 2, 15)], '#ffffff')
+    W_ = {}
+    for (x, y) in ellipse(8.5, 11.0, 5.4, 5.4, 'x'):
+        d = math.hypot(x + 0.5 - 8.5, y + 0.5 - 11.0)
+        W_[(x, y)] = ('y' if x + y < 19 else 'Y') if d > 4.4 else 'e'
+    for (x, y) in [(8, 3), (9, 3), (8, 4), (9, 4)]: W_[(x, y)] = 'y'
+    for (x, y) in [(7, 2), (8, 2), (9, 2), (10, 2)]: W_[(x, y)] = 'Y'
+    for (x, y) in [(13, 5), (14, 6)]: W_[(x, y)] = 'Y'
+    sp(a, grid(W_), dict(GOLD, e=('#fff8ec', 7)))
+    paint_cm(a, bolt([(10, 7), (8, 10), (10, 11), (7, 15)], w=0), {'w': '#ffc020'})
+    for (x, y) in [(8, 7), (8, 14), (5, 11), (12, 11)]: a.set(x, y, '#5a4a3a')
+    return a, 0
 ICONS = {'berserk': ('광폭화', 'buff', berserk), 'kn_charge': ('기사단 돌격', 'dmg', kn_charge), 'arcane': ('비전 숙련', 'none', arcane), 'awk2_mage': ('별의 종언', 'mdmg', awk2_mage),
          'quickstep': ('잰걸음', 'none', quickstep), 'sprint': ('질주', 'none', sprint), 'focus': ('집중', 'none', focus), 'tactics': ('전술', 'none', tactics),
-         'roar': ('관중의 함성', 'buff', roar), 'colosseum': ('콜로세움', 'dmg', colosseum), 'devotion': ('헌신', 'none', devotion), 'frenzy': ('광란', 'none', frenzy), 'bloodfeast': ('피의 만찬', 'dmg', bloodfeast)}
+         'roar': ('관중의 함성', 'buff', roar), 'colosseum': ('콜로세움', 'dmg', colosseum), 'devotion': ('헌신', 'none', devotion), 'frenzy': ('광란', 'none', frenzy), 'bloodfeast': ('피의 만찬', 'dmg', bloodfeast),
+         'cure': ('해독', 'cure', cure), 'awk_cleric': ('신의 기적', 'heal', awk_cleric), 'awk2_cleric': ('천상의 기적', 'heal', awk2_cleric), 'parasting': ('마비 침', 'dmg', parasting), 'haste': ('신속', 'none', haste)}
