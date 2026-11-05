@@ -5,8 +5,9 @@
 python3 export_v39.py"""
 import sys, json, pathlib
 D = pathlib.Path(__file__).parent; sys.path.insert(0, str(D))
-import offhand, elemarrows, gear, cell
+import offhand, elemarrows, gear, cell, shields
 from export_off import enc, snap, SNAP
+EL_ON = False       # 속성 화살: 빌드 39에서는 빼 둔다 (게임 data-off.js ELEM_ON과 같이 켠다)
 EL_STYLE = 'B'      # 속성 화살 그림: A 촉 효과 / B 빛 테두리 (시안에서 고르면 바꾼다)
 GEAR_GLOW = True    # 장비 '그 위' 단계 금빛 테두리
 SRC = pathlib.Path('/home/claude/game/src')
@@ -17,12 +18,18 @@ for k, name, who, fns, labels in offhand.OFF:
     vals = []
     for i in range(4): a = run(fns[i]); vals.append(enc(a)); snap(a).save(SNAP / f'{k}_{i}.png')
     rows.append((k, vals))
-for el, base in (('fire', 'firearrows'), ('ice', 'icearrows'), ('thunder', 'boltarrows')):
+# 방패 종류 (빌드 39): shields.py 원형·히터·카이트·탑 × 단계 색 — offhand.py의 방패(단계마다 모양)를 바꾼다
+rows = [r for r in rows if r[0] != 'shield']
+for k, nm, fn in shields.KINDS:
+    vals = []
+    for i in range(4): a = run(lambda a, i=i, fn=fn: fn(a, i)); vals.append(enc(a)); snap(a).save(SNAP / f'{k}_{i}.png')
+    rows.insert([r[0] for r in rows].index('quiver') if 'quiver' in [r[0] for r in rows] else 0, (k, vals))
+for el, base in ((('fire', 'firearrows'), ('ice', 'icearrows'), ('thunder', 'boltarrows')) if EL_ON else ()):
     vals = []
     for i in range(4): a = run(lambda a, i=i: elemarrows.elem_arrow(a, el, i, EL_STYLE)); vals.append(enc(a)); snap(a).save(SNAP / f'{base}_{i}.png')
     rows.append((base, vals))
 js = ['/* 부장비 그림 (빌드 38~): 종류마다 [견습·숲지기, 강철·폭풍, 서리·사막왕, 그 위] 넷, 16×20칸 — 칸 색 꼴은 data-skicon.js와 같고 #ff00ff는 빈칸.',
-      '   만든 곳: drafts/skill-icons/dot/export_v39.py (offhand.py · elemarrows.py) — 손으로 고치지 않는다 */', 'const OFFICON = {']
+      '   만든 곳: drafts/skill-icons/dot/export_v39.py (offhand.py · shields.py · elemarrows.py) — 손으로 고치지 않는다 */', 'const OFFICON = {']
 js += [f'  {k}: {json.dumps(v)},' for k, v in rows]; js[-1] = js[-1].rstrip(','); js += ['};', '']
 (SRC / 'data-officon.js').write_text('\n'.join(js), encoding='utf-8')
 if not GEAR_GLOW: gear.GLOW[:] = [None] * 4
