@@ -4,7 +4,7 @@
    강화·치유·도발: 방패 세우기·칼 치켜들기·칼 세우기(치유)·칼끝 겨누기(도발)·흘려 받기·되치기·모래 뿌리기 동작(pxs.js PXS_MOT_OF)
               + 모으기 → 모양(방벽·막·고리·불꽃·빛) → 퍼짐(파티 스킬이면 동료마다 작은 모양).
    칸은 모두 2×2 논리 픽셀(뭉툭 칸)에 맞춘다. 그리는 곳: 모험가 몸 쪽(모으기·자취)은 view.js motFx(몸 좌표, 그림 칸에 맞춤),
-   적·파티 쪽은 fx()의 V.fx 'skh'(맞히기)·'skw'(초승달)·'skq'(땅 금)·'skc'(강화)·'shk'(흔들림). 도끼를 든 광전사 계열은 동작 없이 효과만. */
+   적·파티 쪽은 fx()의 V.fx 'skh'(맞히기)·'skw'(초승달)·'skq'(땅 금)·'skc'(강화)·'shk'(흔들림). 다른 직업은 skfx2.js (빌드 42). */
 const SK_PAL = {
   power: ['#ffffff', '#ffe066', '#ff9a2e', '#c0501e'],
   holy:  ['#ffffff', '#fff2a8', '#ffd24a', '#d89a1c'],
@@ -62,11 +62,11 @@ const SKFX = {
   starblade:    { mot: 'down', hold: 0.2, pal: 'star', charge: 'glow', trail: 2, hit: 'cross', after: 'motes' },
   dimension:    { mot: 'side', hold: 0.3, pal: 'arcane', charge: 'aura', trail: 3, hit: 'wave', big: 1, shake: 3 },
   swordsaint:   { mot: 'down', hold: 0.4, pal: 'bolt', charge: 'aura', trail: 3, hit: 'star', big: 2, after: 'ring', keep: 1, shake: 4 },
-  // 광전사 · 피의 군주 (도끼: 동작 없이 효과만)
-  bloodstrike:  { pal: 'blood', hit: 'star', big: 1, after: 'drain', shake: 2 },
-  whirl:        { pal: 'blood', hit: 'star' },
-  bloodfeast:   { pal: 'blood', hit: 'star', big: 2, after: 'drain', shake: 3 },
-  ragnarok:     { pal: 'blood', hit: 'quake', big: 2, after: 'ring', shake: 5 },
+  // 광전사 · 피의 군주 (빌드 42부터 도끼 동작: 내려찍기·횡베기)
+  bloodstrike:  { mot: 'smash', hold: 0.18, pal: 'blood', charge: 'glow', trail: 2, hit: 'star', big: 1, after: 'drain', shake: 2 },
+  whirl:        { mot: 'side', hold: 0.14, pal: 'blood', charge: 'glow', trail: 3, hit: 'wave' },
+  bloodfeast:   { mot: 'smash', hold: 0.22, pal: 'blood', charge: 'glow', trail: 2, hit: 'star', big: 2, after: 'drain', shake: 3 },
+  ragnarok:     { mot: 'smash', hold: 0.45, pal: 'blood', charge: 'aura', trail: 3, hit: 'quake', big: 2, after: 'ring', shake: 5 },
   // 강화 · 치유 · 도발 (공격이 아닌 스킬)
   ironwall:     { mot: 'guard', hold: 0.1, pal: 'guard', cast: 'barrier' },
   fortress:     { mot: 'guard', hold: 0.15, pal: 'steel', cast: 'barrier', big: 1 },
@@ -83,15 +83,15 @@ const SKFX = {
   rally:        { mot: 'raise', hold: 0.18, pal: 'steel', cast: 'shout', party: 1 },
   berserk:      { mot: 'raise', hold: 0.25, pal: 'blood', cast: 'rage' },
   manaburst:    { mot: 'raise', hold: 0.25, pal: 'arcane', cast: 'rage' },
-  rampage:      { pal: 'blood', cast: 'rage' },
-  bloodmoon:    { pal: 'blood', cast: 'rage', big: 1 },
+  rampage:      { mot: 'raise', hold: 0.25, pal: 'blood', cast: 'rage' },
+  bloodmoon:    { mot: 'raise', hold: 0.3, pal: 'blood', cast: 'rage', big: 1 },
   taunt:        { mot: 'taunt', pal: 'taunt', cast: 'taunt' },
   provoke:      { mot: 'taunt', pal: 'taunt', cast: 'taunt', big: 1 },
   guard:        { mot: 'taunt', pal: 'holy', cast: 'taunt' },
   firstaid:     { mot: 'salute', pal: 'heal', cast: 'heal' },
   secondwind:   { mot: 'salute', hold: 0.15, pal: 'heal', cast: 'heal', big: 1 },
   layhands:     { mot: 'salute', hold: 0.15, pal: 'holy', cast: 'heal' },
-  bloodthirst:  { pal: 'blood', cast: 'heal' },
+  bloodthirst:  { mot: 'salute', pal: 'blood', cast: 'heal' },
   bandage:      { mot: 'salute', pal: 'heal', cast: 'cure', party: 1 },
   ar_cheer:     { mot: 'raise', hold: 0.15, pal: 'gold', cast: 'cheer', party: 1 },
   parry:        { mot: 'parry', pal: 'wind', cast: 'wind' },
@@ -106,6 +106,16 @@ function skQ(g, x, y, c, a) { if (a != null && a <= 0.02) return; if (a != null 
 function skL(g, x, y, c, a) { if (a != null && a <= 0.02) return; if (a != null && a < 1) g.globalAlpha = a; R(g, Math.round((x + 19) / 2) * 2 - 19, Math.round((y + 47) / 2) * 2 - 47, 2, 2, c); if (a != null && a < 1) g.globalAlpha = 1; }
 const skCell = (X, Y) => [2 * X - 19, 2 * Y - 47];
 function skBladeCells(mo, great) { const F = pxsMotFr(mo.mk, mo.f); return pxsMSword(F, great).map(([x, y]) => [Math.round(x) + F.dx, Math.round(y)]); }
+// 무기 칸 (빌드 42): all 무기 전부 · glow 빛낼 칸(칼날·무기 머리·화살) · tip 끝 — 몸 좌표 뭉툭 칸, 몸이 나간 칸까지
+function skWpnCells(a, mo) {
+  const F = pxsMotFr(mo.mk, mo.f), wk = a ? pxsWk(a) : 'sword', fam = PXS_FAMW[wk] || 'sword', W = pxsMWpn(F, wk).cells.map(([x, y, ch]) => [Math.round(x) + F.dx, Math.round(y), ch]), A = pxsMAxis(F, wk);
+  let glow, tip;
+  if (fam === 'sword') { glow = W.slice(wk === 'great' ? 3 : 2); tip = W[W.length - 1]; }
+  else if (fam === 'bow') { glow = F.ar ? W.filter(c => c[2] === 'v' || c[2] === 'x' || c[2] === 'R') : W.filter(c => c[2] === 'O' || c[2] === 'G'); tip = [Math.round(A.o[0] + F.dx + A.fwd[0] * 2.2), Math.round(A.o[1] + A.fwd[1] * 2.2)]; }
+  else if (fam === 'lute' && F.la != null) { glow = W.filter(c => c[2] !== 'v'); const lp = F.lp || [1, 3]; tip = [PXS_SH[0] + F.lean + lp[0] + F.dx, PXS_SH[1] + F.cr + lp[1]]; }
+  else { glow = W.filter(c => c[2] !== 'v' && c[2] !== 'G' || fam === 'staff' && wk === 'crozier'); tip = [Math.round(A.o[0] + F.dx + A.u[0] * (A.L1 - 0.6)), Math.round(A.o[1] + A.u[1] * (A.L1 - 0.6))]; }
+  return { all: W, glow: glow.length ? glow : W, tip };
+}
 function skShieldCells(a, mo) {
   const F = pxsMotFr(mo.mk, mo.f), shape = pxsMotShield(a); if (!shape || !F.sh || !F.sh[2]) return [];
   const rows = pxRows(PX_OFFSHAPE[shape]), out = [], x0 = F.sh[0] + F.lean + F.dx, y0 = F.sh[1] + F.cr;
@@ -121,14 +131,14 @@ function skAdvFx(g, a, mo, sk, t) {
   const P = SK_PAL[sk.pal], fl = Math.floor(t * 25) % 2, k = Math.max(0, Math.min(1, mo.e / Math.max(0.01, mo.hit)));
   if (sk.charge && mo.f >= 1 && mo.f <= 4 && (mo.first || sk.charge === 'glow')) {
     if (sk.charge === 'glow' || sk.charge === 'gather' || sk.charge === 'aura') {   // 칼날에 스킬 색 빛 + 둘레
-      const bl = skBladeCells(mo, false), kk = mo.f >= 2 ? 1 : 0.4;
-      for (const [x, y] of skRing(bl)) { const [X, Y] = skCell(x, y); skL(g, X, Y, P[fl ? 1 : 2], 0.35 + 0.5 * kk); }
-      for (const [x, y] of bl.slice(2)) { const [X, Y] = skCell(x, y); skL(g, X, Y, P[0]); }
+      const W = skWpnCells(a, mo), kk = mo.f >= 2 ? 1 : 0.4;
+      for (const [x, y] of skRing(W.all)) { const [X, Y] = skCell(x, y); skL(g, X, Y, P[fl ? 1 : 2], 0.35 + 0.5 * kk); }
+      for (const [x, y] of W.glow) { const [X, Y] = skCell(x, y); skL(g, X, Y, P[0]); }
     }
     if (sk.charge === 'shield') { for (const [x, y] of skRing(skShieldCells(a, mo))) { const [X, Y] = skCell(x, y); skL(g, X, Y, P[fl ? 1 : 2], 0.9); } }
   }
   if (mo.first && mo.f <= 2) {
-    const bl = skBladeCells(mo, false), tip = bl[bl.length - 1], [tx, ty] = skCell(tip[0], tip[1]);
+    const tip = skWpnCells(a, mo).tip, [tx, ty] = skCell(tip[0], tip[1]);
     if (sk.charge === 'gather' || sk.charge === 'aura') for (let i = 0; i < 8; i++) { const an = i * 0.785 + 0.3, r = 22 * (1 - k) + 2; skL(g, tx + Math.cos(an) * r, ty + Math.sin(an) * r * 0.8, P[i % 2 ? 1 : 2]); }
     if (sk.charge === 'aura') {   // 온몸 기운: 발밑 고리 + 위로 오르는 불티
       const rr = 8 + 6 * k; for (let i = 0; i < 14; i++) { const an = i / 14 * Math.PI * 2; skL(g, Math.cos(an) * rr, -1 + Math.sin(an) * rr * 0.28, P[i % 2 ? 2 : 3], 0.8); }
@@ -141,7 +151,7 @@ function skAdvFx(g, a, mo, sk, t) {
     }
   }
   // ② 자취: 동작 자취를 스킬 색으로 + 바깥 한두 칸 (몸 뒤 자취의 둘레는 그림을 덮지 않는다)
-  if (!sk.trail) return mo.mk === 'raise' || mo.mk === 'guard';
+  if (!sk.trail) return mo.mk === 'raise' || mo.mk === 'guard' || mo.mk === 'sraise' || mo.mk === 'praise' || mo.mk === 'braise' || mo.mk === 'lraise';
   const s = pxsAdvSprite(a, 'm:' + mo.mk, mo.f), F = s.mfx; if (!F) return true;
   const dx = pxsMotFr(mo.mk, mo.f).dx, occ = F.occ || [], hid = (x, y) => occ[y] && occ[y][x - dx] && occ[y][x - dx] !== '.';
   const cells = [], all = F.back.concat(F.front), own = new Set(all.map(([x, y]) => x + ',' + y)), front = new Set(F.front.map(([x, y]) => x + ',' + y));
@@ -178,12 +188,14 @@ function skDraw(g, f, t) {
     for (let x = f.x0; f.dir > 0 ? x < Math.min(x1, f.xe) : x > Math.max(x1, f.xe); x += 2 * f.dir) { const j = Math.round(Math.sin(x * 0.55) * 1.2 + Math.sin(x * 0.21) * 1.5); skQ(g, x, f.gy - 1 + j * 2, P[3], al); if (Math.round(x) % 6 === 0) skQ(g, x, f.gy - 3 + j * 2, P[1], 0.8 * al); }
     return;
   }
-  if (f.k === 'skh') return skHitDraw(g, f, sk, P, e);
+  if (f.k === 'skp') return skProjDraw(g, f, sk, P, e);   // 빌드 42
+  if (f.k === 'skh') return skHitDraw(g, f, sk, P, e - (f.pre || 0));
   if (f.k === 'skc') return skCastDraw(g, f, sk, P, e, t);
 }
 function skHitDraw(g, f, sk, P, e) {
   const big = f.big != null ? f.big : sk.big || 0, cx = f.x, cy = f.y, fx = f.x, fy = f.fy;
-  if (e >= 0) switch (sk.hit) {
+  if (SK_HIT2[sk.hit]) SK_HIT2[sk.hit](g, f, P, e, big);   // 빌드 42
+  else if (e >= 0) switch (sk.hit) {
     case 'star': case 'wave': skStar(g, cx, cy, e, P, big); break;
     case 'stun': skStar(g, cx, cy, e, P, 0); if (e > 0.12 && e < 1.2) for (let i = 0; i < 3; i++) { const an = e * 7 + i * 2.09, sx = fx + Math.cos(an) * 8, sy = fy - f.h - 4 + Math.sin(an) * 2; skQ(g, sx, sy, '#ffe066'); for (const [ox, oy] of [[-2, 0], [2, 0], [0, -2], [0, 2]]) skQ(g, sx + ox, sy + oy, '#fff6c0'); } break;
     case 'cross': if (e < 0.05) skStar(g, cx, cy, e, P, 1); else if (e < 0.4) { const u = (e - 0.05) / 0.35, h = 14 + 10 * Math.min(1, u * 2), w = 9 + 4 * Math.min(1, u * 2), al = u < 0.6 ? 1 : (1 - u) / 0.4;
@@ -210,6 +222,7 @@ function skHitDraw(g, f, sk, P, e) {
     case 'embers': if (e < 1.0) { const u = u0 / 0.85; for (let i = 0; i < 8; i++) { const x = fx + (skH(i, 9) - 0.5) * 22 + Math.sin(e * 6 + i) * 3, y = fy - 4 - skH(i, 10) * 10 - u * 30; skQ(g, x, y, P[1 + (i % 3)], 1 - u); } } break;
     case 'shards': if (e < 0.9) { const u = u0 / 0.75; for (let i = 0; i < 7; i++) { const x = fx + (skH(i, 11) - 0.5) * 24, y = cy - 6 + u0 * (30 + skH(i, 12) * 40) + 60 * u0 * u0; if (y < fy + 2) { skQ(g, x, y, P[i % 2 ? 1 : 2], 1 - u * 0.5); if (i % 3 === 0) skQ(g, x, y - 2, P[0], 1 - u * 0.5); } } } break;
     case 'drain': if (e < 0.8) { const u = u0 / 0.65; for (let i = 0; i < 6; i++) { const w = Math.min(1, u * (1 + skH(i, 13))), x = fx + (f.ax - fx) * w, y = cy - Math.sin(w * Math.PI) * (10 + skH(i, 14) * 10); skQ(g, x, y, P[1 + (i % 3)], 1 - w * 0.6); } } break;
+    default: if (SK_AFTER2[sk.after]) SK_AFTER2[sk.after](g, f, P, e, u0);
   }
 }
 /* 강화·치유·도발: 시전자 자리(f.x, f.y 발밑 · f.z 배율)에 모양, 파티 스킬이면 동료(f.tg)마다 작은 모양. 단계: 모으기(0~0.12) → 모양(셋째 장 붙잡는 동안) → 퍼짐 */
@@ -221,6 +234,7 @@ function skCastDraw(g, f, sk, P, e, t) {
   const hex = (x, y, zz, rx, ry, al, c) => { for (let i = 0; i < 6; i++) { const a0 = i / 6 * Math.PI * 2 + Math.PI / 6, a1 = (i + 1) / 6 * Math.PI * 2 + Math.PI / 6; for (let k = 0; k <= 6; k++) skQ(g, x + Math.cos(a0) * rx + (Math.cos(a1) - Math.cos(a0)) * rx * k / 6, y + Math.sin(a0) * ry + (Math.sin(a1) - Math.sin(a0)) * ry * k / 6, c, al); } };
   const dome = (x, y, zz, r, al) => { const ry = r * 2.1, n = Math.max(16, Math.round(Math.PI * ry / 1.6)); for (let i = 0; i <= n; i++) { const an = Math.PI + i / n * Math.PI; skQ(g, x + Math.cos(an) * r, y - 1 + Math.sin(an) * ry, (i >> 1) % 2 ? P[1] : P[2], al); } for (let i = 0; i < 6; i++) { const an = Math.PI * (1.1 + i * 0.09); skQ(g, x + Math.cos(an) * (r - 4), y - 1 + Math.sin(an) * (ry - 5), P[0], al * 0.85); } for (let i = -3; i <= 3; i++) skQ(g, x + i * r / 4, y - 1, P[2], al * 0.6); };
   const rings = (x, y, n, rmax, al) => { for (let k = 0; k < n; k++) { const ee = e - 0.08 - k * 0.12; if (ee < 0 || ee > 0.45) continue; const u = ee / 0.45, r = 6 + u * rmax, m = Math.max(16, Math.round(Math.PI * 2 * r / 2)); for (let i = 0; i < m; i++) { const an = i / m * Math.PI * 2; skQ(g, x + Math.cos(an) * r, y + Math.sin(an) * r * 0.75, P[k === 0 ? 2 : 3], (1 - u) * al); if (k === 0 && u < 0.5) skQ(g, x + Math.cos(an) * (r - 2), y + Math.sin(an) * (r - 2) * 0.75, P[1], (1 - u * 2) * al); } } };
+  if (SK_CAST2[sk.cast]) return SK_CAST2[sk.cast](g, f, sk, P, e, t, z, cy, hy, fade, mates);   // 빌드 42
   switch (sk.cast) {
     case 'barrier': {   // 육각 방벽: 커졌다가 두 번 깜박이고 흩어진다 · 동료에게 작은 방벽
       if (e > 0.1 && e < peak + 0.6) { const u = Math.min(1, (e - 0.1) / 0.12), rx = (11 + 4 * u + 2 * (sk.big || 0)) * z / 1.25, ry = (15 + 5 * u + 2 * (sk.big || 0)) * z / 1.25; hex(f.x + 2 * f.dir, cy - 2, z, rx, ry, fade * 0.9, fl ? P[1] : P[2]); if (e < peak) for (let i = 0; i < 5; i++) { const an = i * 1.26 + t * 6; R(g, Math.round(f.x + Math.cos(an) * (rx - 4)), Math.round(cy + Math.sin(an) * (ry - 6)), 1, 1, P[0]); } }
