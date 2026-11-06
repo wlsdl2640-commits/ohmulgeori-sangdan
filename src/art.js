@@ -37,6 +37,7 @@ function advPoseOf(t, o) {
   if (o.sleep) return ['sleep', 0];
   if (o.down) return ['down', 0];
   if (o.sit) return ['sit', 0];
+  if (o.mot) return ['m:' + o.mot.mk, o.mot.f];   // 공격 동작 여러 장 (빌드 40, 옆모습 칼)
   if (o.atk) return ['atk', o.atkF != null ? o.atkF : 1];
   if (o.walk) return ['walk', Math.floor(t * 8 + (o.ph || 0) * 2) % 4];
   return ['idle', Math.floor(t * 1.6 + (o.ph || 0)) % 2];

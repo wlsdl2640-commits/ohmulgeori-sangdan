@@ -6,7 +6,7 @@ const PH = 21 * ZP;                                       // 파티원 키 (논�
 const zq = z => Math.max(0.25, Math.round(z * 4) / 4);   // 배율은 1/4 단위 (구운 그림을 다시 쓰게)
 const eW = f => monW(f.id, f.sc) * ZE, eH = f => monH(f.id, f.sc) * ZE;
 const V = { cvs: null, ctx: null, off: null, g: null, wc: null, w: null, lc: null, l: null, bcv: null, bctx: null, bopen: false,
-  mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, lunge: {}, atk: {}, jump: {}, fall: {}, last: {}, shake: 0, giant: false,
+  mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, motLast: {}, jump: {}, fall: {}, last: {}, shake: 0, giant: false,
   log: [], logN: 0, logP: 0, fname: {} };
 
 function initView(canvas) {
@@ -78,7 +78,7 @@ function drawFrame(now, vt) {
   const key = (p ? p.id : 0) + ':' + (e ? 'x' : 'h');
   // 화면을 바꿨거나 오래 멈췄다 돌아오면 밀린 효과는 건너뛴다
   if (key !== V.mode || now - V.lastF > 1000) {
-    if (key !== V.mode) { V.fx = []; V.ghosts = []; V.flash = {}; V.lunge = {}; V.atk = {}; V.jump = {}; V.fall = {}; clearCallouts(); }
+    if (key !== V.mode) { V.fx = []; V.ghosts = []; V.flash = {}; V.flash0 = {}; V.lunge = {}; V.atk = {}; V.mot = {}; V.jump = {}; V.fall = {}; clearCallouts(); }
     if (p && V.logP !== p.id) { V.log = []; V.logP = p.id; V.logN = 0; }
     V.mode = key; V.lastN = e ? e.evN : 0;
   }
@@ -348,7 +348,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       g.save(); g.translate(x + lg, y);
       shadowAt(g, 0, 0, Math.min(46, eW(f) * 0.45 * z / ZE));
       g.scale(-dir, 1);
-      FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
+      FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t && (V.flash0['f' + f.uid] || 0) <= t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
       if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 모험가 옆모습
       else { drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
       FLASH = null; g.restore();
@@ -391,14 +391,16 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     }
     const at = V.atk['a' + a.id], lunging = at && t - at < 0.26, atkF = lunging ? (t - at < 0.08 ? 0 : 1) : 0;
     const melee = CLASSES[a.cls].act === 'melee';
-    const jt = V.jump['a' + a.id], jy = jt && t - jt < 0.4 ? -Math.round(Math.sin((t - jt) / 0.4 * Math.PI) * 14) : 0;
-    const dx = ((lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy;
+    const jt = V.jump['a' + a.id], jy = jt && t >= jt && t - jt < 0.4 ? -Math.round(Math.sin((t - jt) / 0.4 * Math.PI) * 14) : 0;
+    const mo = !a.down && !falling ? motNow(a, t) : null, mF = mo && pxsMotFr(mo.mk, mo.f);   // 공격 동작 (빌드 40)
+    const dx = ((mo ? mF.dx * 2 * z : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy;
+    if (mo) post.push(g => motFx(g, a, mo, x0 + (jy ? 10 : 0) * dir, y, z, dir));
     draws.push({ y: y0, f: g => {
       shadowAt(g, x0 + dx, y0, (jy ? 7 : SHADOW_R) * z / ZS);
       g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
       if (falling) { const k = Math.min(1, (t - ft) / 0.3); g.rotate(-k * k * Math.PI / 2); }
       FLASH = (V.flash['a' + a.id] || 0) > t ? '#ffffff' : null;
-      drawAdv(g, a, t, { walk: walking && !falling, ph: i * 0.5, atk: lunging, atkF, z, side: 1 });
+      drawAdv(g, a, t, { walk: walking && !falling, ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1 });
       FLASH = null; g.restore();
     } });
     if (ORBIT[a.cls]) post.push(g => { const [c1, c2] = ORBIT[a.cls]; for (let k = 0; k < 2; k++) { const ang = t * 3 + k * Math.PI; R(g, Math.round((x0 + Math.cos(ang) * 12) * 2) / 2, Math.round((y - PH * 0.55 + Math.sin(ang) * 4) * 2) / 2, 1.5, 1.5, k ? c2 : c1); } });
@@ -515,6 +517,63 @@ const PROJ = { arrow: 0.18, magic: 0.24, fire: 0.26, ice: 0.22, bolt: 0.06, holy
 const SKILL_CLS = { heal: 'heal', buff: 'buff', taunt: 'buff', mdmg: 'magic', dot: 'dot', shield: 'buff', regen: 'heal', revive: 'heal' };
 const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0', spd: '#ffe08a', matk: '#c89aff', block: '#9aa0a8', counter: '#f0c070', rheal: '#8af08a', shield: '#8ad8ff', regen: '#8af08a', crit: '#ffd060', cdr: '#c0a0ff', guard: '#9ab0c8' };
 const HIT_C = { melee: ['#ffffff', '#fff2a0'], jump: ['#fff2a0', '#ffffff'], pet: ['#f0c070', '#ffffff'], arrow: ['#e8e2d0', '#ffffff'], magic: ['#b48aff', '#ffffff'], spell: ['#8ab8ff', '#ffffff'], fire: ['#ff7a2a', '#ffe08a'], ice: ['#8ad8ff', '#ffffff'], bolt: ['#fff8a0', '#ffffff'], holy: ['#fff0b0', '#ffffff'], wind: ['#7ae0a0', '#c8ffd8'], dark: ['#7a3ad0', '#d8a8ff'], note: ['#f0d870', '#ffffff'] };
+/* 공격 동작 (빌드 40): 칼을 든 모험가는 여러 장 동작(pxs.js PXS_MOT). 기본 공격은 무작위 자세, 스킬은 스킬에 맞는 자세(MOT_SKILL).
+   여러 번 치는 스킬은 동작을 잇는다: 앞 동작의 맞히는 장을 MOT_HOLD만큼 보이고 다음 동작은 셋째 장(MOT_CHAIN0)부터.
+   적 쪽 효과·숫자·소리·번쩍임은 맞히는 장에 맞춰 늦춘다(motOn이 남은 시간을 돌려준다). 막으면 방패 막기, 치유·강화는 칼 치켜들기/방패 세우기 */
+const MOT_BASIC = ['down', 'up', 'side', 'thrust'];
+const MOT_SKILL = {
+  bash: 'down', sweep: 'side', earthsplit: 'down', titanblow: 'down', kn_charge: 'thrust', dw_smash: 'down', shockwave: 'down', awk_warrior: 'down', awk2_warrior: 'down',
+  ar_combo: ['down', 'up', 'side'], ar_finish: 'thrust',
+  arena: ['down', 'up'], execute: ['down', 'up', 'down'], spinslash: 'side', glory: ['down', 'up', 'side'], finale: ['side', 'up', 'down', 'thrust'], colosseum: 'side',
+  shieldbash: 'bash', lancecharge: 'thrust', holystrike: 'down', judgment: 'raise', divinity: 'raise',
+  twinslash: ['down', 'up'], crossslash: 'down', blitz: ['thrust', 'side', 'up', 'down', 'thrust'], twinstorm: ['side', 'side'],
+  bladewaltz: ['side', 'up', 'down'], swordrain: ['down', 'down'], thousandcut: ['down', 'up', 'side', 'thrust'],
+  flameblade: 'down', frostblade: 'side', thunderblade: 'up', spellsword: 'thrust', starblade: 'down', dimension: 'side', swordsaint: 'down'
+};
+const MOT_HOLD = 0.08, MOT_CHAIN0 = 2, MOT_PAL = [['#ffffff', '#fff2a0', '#a8a090'], ['#fffbe0', '#ffd84a', '#c8a060']];   // 효과 색: 보통 · 치명타
+const motToHit = f0 => PXS_MOT_T.slice(f0, PXS_MOT_HIT).reduce((s, v) => s + v, 0);
+function motPick(a, sid, i) {
+  const m = sid && MOT_SKILL[sid];
+  if (m) { const mk = Array.isArray(m) ? m[i % m.length] : m; return mk === 'bash' && !pxsMotShield(a) ? 'thrust' : mk; }
+  const pool = pxsMotShield(a) ? MOT_BASIC.concat('bash') : MOT_BASIC, last = V.motLast[a.id];   // 같은 자세가 잇달아 나오지 않게
+  const pick = pool.filter(k => k !== last), mk = pick[Math.floor(Math.random() * pick.length)];
+  V.motLast[a.id] = mk; return mk;
+}
+// 사건 하나(hit·fmiss)에 동작을 붙이고 맞히는 때까지 남은 초를 돌려준다 (동작이 없으면 0)
+function motOn(a, x, t) {
+  if (!a || a.down || !pxsMotOK(a) || x.sid === 'shuri' || x.k === 'pet' || x.dot) return 0;
+  const key = 'a' + a.id, sid = x.sid || (x.ctr ? 'ctr' : '');
+  let m = V.mot[key];
+  if (!m || m.t !== t || m.sid !== sid) m = V.mot[key] = { t, sid, n: {}, q: [{ mk: motPick(a, x.sid, 0), t0: t, f0: 0, c: x.c }] };
+  const n = (m.n[x.d] = (m.n[x.d] || 0) + 1) - 1;
+  while (m.q.length <= n) { const q = m.q[m.q.length - 1]; m.q.push({ mk: motPick(a, x.sid, m.q.length), t0: q.t0 + motToHit(q.f0) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c }); }
+  if (x.c) m.q[n].c = 1;
+  return m.q[n].t0 + motToHit(m.q[n].f0) - t;
+}
+// 공격이 아닌 동작 (막기·치켜들기·방패 세우기): 칼을 든 모험가만, 다른 동작 중이 아닐 때(휘두르던 칼을 끊지 않는다), 막기는 방패가 있을 때
+function motCast(a, mk, t, blk) {
+  if (!a || a.down || !pxsMotOK(a) || motNow(a, t + 0.1)) return;
+  if (blk && !pxsMotShield(a)) return;
+  if (mk === 'guard' && !pxsMotShield(a)) mk = 'raise';
+  V.mot['a' + a.id] = { t, sid: '#' + mk, n: {}, q: [{ mk, t0: t, f0: 0 }] };
+}
+function motNow(a, t) {
+  const m = V.mot['a' + a.id]; if (!m) return null;
+  let q = null; for (const s of m.q) if (t >= s.t0) q = s;
+  if (!q) return null;
+  let e = t - q.t0;
+  for (let f = q.f0; f < PXS_MOT_T.length; f++) { if (e < PXS_MOT_T[f]) return { mk: q.mk, f, c: q.c }; e -= PXS_MOT_T[f]; }
+  if (q === m.q[m.q.length - 1]) delete V.mot['a' + a.id];
+  return null;
+}
+// 칼끝 자취·찌르기 번쩍임·방패 충격·막기 불꽃: 그림과 같은 칸(뭉툭 칸 = 2×2 논리 픽셀), 어둠 위에
+function motFx(g, a, mo, x0, y, z, dir) {
+  const s = pxsAdvSprite(a, 'm:' + mo.mk, mo.f), F = s.mfx; if (!F) return;
+  const pal = MOT_PAL[mo.c ? 1 : 0];
+  g.save(); g.translate(x0, y); g.scale(dir * z, z);
+  for (const L of [F.back, F.front]) for (const [X, Y, ci] of L) R(g, 2 * X - 19, 2 * Y - 47, 2, 2, pal[ci]);
+  g.restore();
+}
 function events(e, pos, t, team, p) {
   const at = k => (pos[k] != null ? pos[k] : V.last[k]);
   const jx = () => { V.nj = ((V.nj || 0) + 1) % 5; return (V.nj - 2) * 5; }, jy = () => (V.nj % 2) * -5;   // 숫자가 겹치지 않게 조금씩 비킨다
@@ -524,9 +583,12 @@ function events(e, pos, t, team, p) {
   const ftop = uid => { const f = foe(uid), q = at('f' + uid); return q ? [q[0], q[1] - (f ? Math.min(90, monH(f.id, f.sc) * fz(f, q[1])) : 16) - 4] : null; };
   const amid = id => { const q = at('a' + id); return q ? [q[0] + 4 * (V.dir || 1), q[1] - 12 * zAt(q[1])] : null; };
   const atop = id => { const q = at('a' + id); return q ? [q[0], q[1] - 21 * zAt(q[1]) - 6] : null; };
+  const advOf = id => team.find(a => a.id === id);
+  const sfxAt = (k, d) => (d > 0.02 ? setTimeout(() => sfx(k), d * 1000) : sfx(k));
   for (const x of e.ev) {
     if (x.n <= V.lastN) continue;
-    if (x.type === 'hit') { if (!x.dot && x.v) sfx(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k]); }
+    const md = x.type === 'hit' || x.type === 'fmiss' ? motOn(advOf(x.s), x, t) : 0;   // 칼 동작: 맞히는 장까지 남은 시간
+    if (x.type === 'hit') { if (!x.dot && x.v) sfxAt(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k], md); }
     else if (x.type === 'hurt' && !x.dot) sfx('hurt');
     else if (x.type === 'heal' || x.type === 'pot' || x.type === 'fheal') sfx(x.type === 'pot' ? 'pot' : 'heal');
     else if (x.type === 'buff' || x.type === 'revive' || (x.type === 'shield' && x.on)) sfx('buff');
@@ -534,7 +596,7 @@ function events(e, pos, t, team, p) {
     else if (x.type === 'lvl' || x.type === 'petlvl') sfx('lvl');
     else if (x.type === 'down') sfx('down');
     else if (x.type === 'loot' || x.type === 'gear') sfx('loot');
-    else if (x.type === 'miss' || x.type === 'fmiss') sfx('miss');
+    else if (x.type === 'miss' || x.type === 'fmiss') sfxAt('miss', md);
     else if (x.type === 'mastery') sfx('mast');
     else if (x.type === 'spawn' && x.boss) sfx('boss');
     else if (x.type === 'arena') sfx(x.win ? 'win' : 'lose');
@@ -548,10 +610,10 @@ function events(e, pos, t, team, p) {
       if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') { const cc = x.k === 'curse' ? '#c89aff' : x.k === 'burn' ? '#ff8a2a' : x.k === 'bleed' ? '#ff4a4a' : '#9ae86a'; V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: cc, t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: fm[0], y: fm[1], t0: t, d: 0.5, c: cc }); continue; }
       const am = amid(x.s);
       if (!am) continue;
-      V.atk['a' + x.s] = t;
-      if (x.k === 'jump') V.jump['a' + x.s] = t;
-      const delay = PROJ[x.k] || 0, [c1, c2] = HIT_C[x.k] || HIT_C.melee;
-      const P = { x0: am[0], y0: am[1], x1: fm[0], y1: fm[1], t0: t, d: delay };
+      if (!md) V.atk['a' + x.s] = t;   // 칼 동작이 없으면 예전 두 장 공격
+      if (x.k === 'jump') V.jump['a' + x.s] = t + Math.max(0, md - 0.2);   // 동작이 있으면 내려치는 때에 맞춰 뛴다
+      const t1 = t + md, delay = PROJ[x.k] || 0, [c1, c2] = HIT_C[x.k] || HIT_C.melee;
+      const P = { x0: am[0], y0: am[1], x1: fm[0], y1: fm[1], t0: t1, d: delay };
       if (x.sid === 'shuri') V.fx.push(Object.assign({ k: 'shuri', c: SHURI_C[shuriLook(x.s)] }, P));
       else if (x.k === 'arrow') V.fx.push(Object.assign({ k: 'arrow', c: x.dot ? '#7ad83c' : x.el && ELEMS[x.el] ? ELEMS[x.el].c : c1 }, P));   // 속성 화살은 그 색
       else if (x.k === 'magic' || x.k === 'spell' || x.k === 'note') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, ring: 1, size: 2 }, P));
@@ -559,20 +621,20 @@ function events(e, pos, t, team, p) {
       else if (x.k === 'dark') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, ring: 1, size: 3 }, P));
       else if (x.k === 'ice') V.fx.push(Object.assign({ k: 'shard', c: c1, c2 }, P));
       else if (x.k === 'wind') V.fx.push(Object.assign({ k: 'gust', c: c1, c2 }, P));
-      else if (x.k === 'bolt') V.fx.push({ k: 'bolt', x: fm[0], y: fm[1] + 8, t0: t, d: 0.22 });
-      else if (x.k === 'holy') V.fx.push({ k: 'pillar', x: fm[0], y: fm[1] + 10, t0: t, d: 0.45, c: c1, c2 });
-      if (x.k === 'melee' || x.k === 'jump' || x.k === 'pet') V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: V.dir || 1 });
-      V.fx.push({ k: 'burst', x: fm[0], y: fm[1], t0: t + delay, d: x.c ? 0.4 : 0.28, c: c1, c2, big: x.c });
-      V.flash['f' + x.d] = t + delay + 0.09;
-      if (x.dot) V.fx.push({ k: 'spark', x: fm[0], y: fm[1], t0: t + delay, d: 0.5, c: '#7ad83c' });
-      else if (x.imm) V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: '면역', c: '#a9b0bd', t0: t + delay, d: 0.8 });
-      else V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: x.c ? '#f7e04a' : x.wk ? '#ffa04a' : x.res ? '#9ab4d0' : '#ffffff', t0: t + delay, d: x.c ? 0.9 : 0.7, big: x.c || x.wk });
-      if (x.wk && !x.c) V.fx.push({ k: 'num', x: ft[0], y: ft[1] - 8, s: '약점', c: '#ffa04a', t0: t + delay, d: 0.7 });
-      if (x.c) V.fx.push({ k: 'num', x: ft[0], y: ft[1] - 8, s: 'CRITICAL', c: '#ffb43c', t0: t + delay, d: 0.8 });
+      else if (x.k === 'bolt') V.fx.push({ k: 'bolt', x: fm[0], y: fm[1] + 8, t0: t1, d: 0.22 });
+      else if (x.k === 'holy') V.fx.push({ k: 'pillar', x: fm[0], y: fm[1] + 10, t0: t1, d: 0.45, c: c1, c2 });
+      if (x.k === 'melee' || x.k === 'jump' || x.k === 'pet') V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: V.dir || 1 });
+      V.fx.push({ k: 'burst', x: fm[0], y: fm[1], t0: t1 + delay, d: x.c ? 0.4 : 0.28, c: c1, c2, big: x.c });
+      V.flash['f' + x.d] = t1 + delay + 0.09; V.flash0['f' + x.d] = t1 + delay;
+      if (x.dot) V.fx.push({ k: 'spark', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.5, c: '#7ad83c' });
+      else if (x.imm) V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: '면역', c: '#a9b0bd', t0: t1 + delay, d: 0.8 });
+      else V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: x.c ? '#f7e04a' : x.wk ? '#ffa04a' : x.res ? '#9ab4d0' : '#ffffff', t0: t1 + delay, d: x.c ? 0.9 : 0.7, big: x.c || x.wk });
+      if (x.wk && !x.c) V.fx.push({ k: 'num', x: ft[0], y: ft[1] - 8, s: '약점', c: '#ffa04a', t0: t1 + delay, d: 0.7 });
+      if (x.c) V.fx.push({ k: 'num', x: ft[0], y: ft[1] - 8, s: 'CRITICAL', c: '#ffb43c', t0: t1 + delay, d: 0.8 });
     } else if (x.type === 'fmiss') {
       const ft = ftop(x.d);
-      V.atk['a' + x.s] = t;
-      if (ft) V.fx.push({ k: 'num', x: ft[0] + 2, y: ft[1] - 4, s: 'MISS', c: '#a9b0bd', t0: t, d: 0.6 });
+      if (!md) V.atk['a' + x.s] = t;
+      if (ft) V.fx.push({ k: 'num', x: ft[0] + 2, y: ft[1] - 4, s: 'MISS', c: '#a9b0bd', t0: t + md, d: 0.6 });
     } else if (x.type === 'hurt' && x.dot) {
       const aq = at('a' + x.d);
       if (aq) { V.fx.push({ k: 'num', x: aq[0] + jx(), y: aq[1] - 21 * zAt(aq[1]) - 6, s: String(x.v), c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a', t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: aq[0], y: aq[1] - 10, t0: t, d: 0.5, c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a' }); }
@@ -586,7 +648,7 @@ function events(e, pos, t, team, p) {
       const am = amid(x.d), aq = at('a' + x.d);
       if (!am) continue;
       V.lunge['f' + x.s] = t + 0.14;
-      if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - 21 * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: t, d: 0.6 }); }
+      if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - 21 * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: t, d: 0.6 }); motCast(advOf(x.d), 'block', t - 0.1, 1); }
       V.flash['a' + x.d] = t + 0.1;
       const fm = fmid(x.s);
       if (fm && x.k === 'magic') V.fx.push({ k: 'orb', x0: fm[0], y0: fm[1], x1: am[0], y1: am[1], t0: t - 0.12, d: 0.14, c: '#d86aff', c2: '#ffffff', size: 2 });
@@ -611,7 +673,9 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'skill') {
       const aq = at('a' + x.s), s = SKILLS[x.id];
       if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
-      if (s && (s.kind === 'mdmg' || s.kind === 'heal')) V.atk['a' + x.s] = t;
+      const ma = advOf(x.s), mot = ma && pxsMotOK(ma);
+      if (s && mot && !['dmg', 'mdmg', 'dot'].includes(s.kind)) motCast(ma, (s.kind === 'buff' && ['def', 'block', 'guard'].includes(s.stat)) || s.kind === 'shield' ? 'guard' : 'raise', t);
+      else if (s && !mot && (s.kind === 'mdmg' || s.kind === 'heal')) V.atk['a' + x.s] = t;
     } else if (x.type === 'buff') {
       const s = SKILLS[x.id], col = x.pet ? BUFF_C[x.pet === 'song' ? 'atk' : 'def'] : s && s.kind === 'taunt' ? '#ff5a4a' : BUFF_C[s && s.stat] || '#e8e2d0';
       if (x.pet) { const pq = at('a' + x.s); if (pq) callout(pq[0], pq[1] - 18, PET_ACT_NAME[x.pet] + '!', 'buff'); }
