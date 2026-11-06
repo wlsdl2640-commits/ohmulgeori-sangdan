@@ -35,7 +35,7 @@ const DEXI = {};
 function monIconURL(id, dark) {
   const key = id + (dark ? '|d' : '');
   if (DEXI[key]) return DEXI[key];
-  const s = pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', 0), W = 56, H = 44, [c, x] = mkCanvas(W, H);
+  const s = PXU[id] ? pxuSprite(id, 'idle', 0) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', 0), W = 56, H = 44, [c, x] = mkCanvas(W, H);   // 새 그림(언데드·평원 …)이 있으면 그것으로
   const fit = Math.min((W - 4) / s.w, (H - 4) / s.h), z = fit >= 1 ? Math.floor(fit) : fit;
   x.imageSmoothingEnabled = false;
   x.translate(W / 2, H - 2); x.scale(z, z); x.drawImage(s.cv, -s.w / 2, -s.h);

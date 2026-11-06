@@ -280,7 +280,7 @@ WwWwMxMMMMn.....
 const PXU_MX = 12, PXU_MY = 14;
 const pxuRows = d => d._rows || (d._rows = pxRows(d.g));
 // 서 있을 때: 숨쉬기 두 장 (떠다니는 것은 위아래)
-const pxuIdleF = (d, f) => pxsMF(Object.assign({ cr: d.float ? 0 : f % 2, bob: d.float ? (f % 2 ? -1 : 0) : 0 }, d.idle || { h: [1, 3], a: 70 }));
+const pxuIdleF = (d, f) => pxsMF(Object.assign({ cr: d.float || d.still ? 0 : f % 2, bob: d.float ? (f % 2 ? -1 : 0) : 0 }, d.idle || { h: [1, 3], a: 70 }));   // still: 숨쉬기 대신 g2 (짐승)
 function pxuGrid(id, mk, f) {
   const d = PXU[id], F0 = mk === 'idle' ? null : pxsMotFr(mk, f), bk = F0 && F0.body && d.gm && d.gm[F0.body] ? F0.body : null;
   const rows = bk ? ((d._gm || (d._gm = {}))[bk] || (d._gm[bk] = pxRows(d.gm[bk]))) : mk === 'idle' && f % 2 && d.g2 ? (d._rows2 || (d._rows2 = pxRows(d.g2))) : pxuRows(d);
@@ -296,6 +296,8 @@ function pxuGrid(id, mk, f) {
     const hip = d.hip != null ? d.hip : H0 - 4, lean = F.lean || 0, cr = F.cr || 0, bob = Math.round((F.bob || 0) * ms);
     const gx = bk && d.gmx ? d.gmx[bk] || 0 : 0;
     rows.forEach((r, y) => [...r].forEach((ch, x) => { if (ch === '.') return; const up = y < hip || d.float; const X = MX + x - gx + (up ? lean : 0), Y = MY + y + (up ? cr + bob : 0); if (Y >= 0 && Y < H && X >= 0 && X < W) c[Y][X] = ch; }));
+    const pk = F0 && F0.body && !bk && d.gp && d.gp[F0.body];   // 조각 그림: 벌린 입 같은 것 (바탕 칸 좌표 · '.' 그대로 · '_' 지움)
+    if (pk) (pk._rows || (pk._rows = pk.g.split('\n').filter(r => r.length))).forEach((r, j) => [...r].forEach((ch, x) => { if (ch === '.') return; const y = (pk.y || 0) + j, up = y < hip || d.float; const X = MX + x + (up ? lean : 0), Y = MY + y + (up ? cr + bob : 0); if (Y >= 0 && Y < H && X >= 0 && X < W) c[Y][X] = ch === '_' ? '.' : ch; }));
     // 앞 팔과 무기: 모험가 동작 그리기를 이 몬스터 어깨에 맞춰 빌린다
     PXS_SH[0] = MX + d.sh[0]; PXS_SH[1] = MY + d.sh[1] + bob;
     const fxw = d.noArm ? d.fxw || 'dagger' : PXU_FXW[d.wpn || 'none'] || d.wpn || 'none', A = pxsMAxis(F, fxw);   // 쏘는 자리: 무기 끝 (활은 활 앞)
@@ -317,7 +319,7 @@ function pxuGrid(id, mk, f) {
     if (W1.hand2) pxsMSet(c, W1.hand2[0], W1.hand2[1], d.hand || 'S');
     if (mk !== 'idle') fx = pxsMotFx(mk, f, c, null, PXU_FXW[wk] || wk);
   } catch (er) { if (er !== 0) throw er; } finally { PXS_SH[0] = sh0[0]; PXS_SH[1] = sh0[1]; PXS_G.gy = G0.gy; PXS_G.ms = G0.ms; }
-  c.anchor = [MX + d.ax, MY + H0 - 1]; c.mfx = fx; c.dx = F.dx || 0; c.tip = tip;
+  c.anchor = [MX + d.ax, MY + H0 - 1]; c.mfx = fx; c.dx = F.dx || 0; c.jy = F.jy || 0; c.tip = tip;
   return c;
 }
 // 몬스터 무기 (모험가 무기에 없는 것) · 효과 축은 비슷한 모험가 무기로
@@ -348,6 +350,8 @@ function pxuClaw(F, d) {
   for (const s of [-0.8, 0, 0.8]) { out.push([hx + dx * 1 + px * s, hy + dy * 1 + py * s, 'z']); out.push([hx + dx * 2 + px * s * 1.3, hy + dy * 2 + py * s * 1.3, 'x']); }
   return out;
 }
+// 다친 모습: PXU[id].low = { hp: 비율, id: 그림 } — HP가 그 아래면 그 그림으로 (빌드 44: 들쥐왕 망토가 찢어진다)
+const pxuLow = f => { const L = f && PXU[f.id] && PXU[f.id].low; return L && f.maxHp && f.hp <= f.maxHp * L.hp ? L.id : f.id; };
 function pxuSprite(id, mk, f) {
   const key = 'PU|' + id + '|' + mk + '|' + f, k = pxKeyOf(key), hit = PXC.get(k);
   if (hit) return hit;
@@ -355,7 +359,7 @@ function pxuSprite(id, mk, f) {
   const pal = Object.assign({ C: body.b, c: dark ? dark.b : body.s, d: dark ? dark.s : body.d, Q: body.l, K: '#2a1e2a', k: '#2a1e2a', w: '#ffffff', e: '#ff4a3a', v: '#6a4428', S: m.skin || '#e0ac7e', s: m.skin ? pxRamp(m.skin).s : '#b08058', M: '#a8a8b4', N: '#7a7a88', n: '#4e4e5a', x: '#e8e8f0', G: '#d8a838', g: '#a07a28', O: '#b8864e' }, d.pal || {});
   const s = pxBake(key, pxUp(c.map(r => r.join(''))), pal, c.anchor[0] * 2 + 1, c.anchor[1] * 2 + 1);
   if (c.mfx !== undefined) s.mfx = c.mfx;
-  s.dx = c.dx; s.fo = [c.anchor[0] * 2 + 1, c.anchor[1] * 2 + 1]; s.tip = c.tip;   // 효과 칸 (X, Y) → 닻에서 (2X − fo[0], 2Y − fo[1])
+  s.dx = c.dx; s.jy = c.jy; s.fo = [c.anchor[0] * 2 + 1, c.anchor[1] * 2 + 1]; s.tip = c.tip;   // 효과 칸 (X, Y) → 닻에서 (2X − fo[0], 2Y − fo[1])
   return s;
 }
 

@@ -97,7 +97,7 @@ Object.assign(ACT, {
 
 /* ───────── 눈에 보이는 마차: 원정 화면에서 파티 뒤를 따라오고, 상단 앞에는 세워 둔다 ───────── */
 // X: 마차 몸통 가운데, gy: 땅. 앞(dir 쪽)에 말·펫이 서서 끈다. 비행 마차는 떠서 날고 그림자만 땅에 진다.
-function rigAnimalId(p) { const h = horseOf(p); if (!h) return null; if (h.petId) { const pet = petById(h.petId); return pet ? PETS[pet.kind].mon : null; } return 'horse_' + h.id; }
+function rigAnimalId(p) { const h = horseOf(p); if (!h) return null; if (h.petId) { const pet = petById(h.petId); return pet ? petLook(pet) : null; } return 'horse_' + h.id; }
 function drawRig(g, X, gy, t, p, moving, dir) {
   const W = wagonOwned(p); if (!W) return;
   const k = p.wagon, fly = W.fly && wagonFly(p), bob = fly ? Math.round(Math.sin(t * 2.2) * 2) - 12 : moving ? (Math.floor(t * 8) % 2 ? -1 : 0) : 0;

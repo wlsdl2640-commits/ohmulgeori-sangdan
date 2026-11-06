@@ -193,6 +193,14 @@
 - 고친 것: fx()가 'skp'(빌드 42 스킬 투사체)를 skDraw로 보내지 않아 그려지지 않던 것.
 - 시안 도구: `scratchpad/und/usheet.py`(동작 판, 효과 칸 겹침) · `idle.py`(서 있기) · `v43/d/real43.js`(실제 drawFrame 길: 필드 배경·어둠·HP 막대 그대로) · `render43.py`(묶음 GIF·장 띠) · `lineup.py`(예전/새 그림 전투 크기 비교). 시험 `scratchpad/v43/logic43.py`(언데드 전부 그림·갈래 · 그림 506장 · 크기 · 갈래 고르기 · 때 · 광역기 넷 · 늦추기 · 보호막·빗나감 · 그리기 · skp), 전체 `scratchpad/run43.sh`. logic41의 표 검사는 'u:' 줄을 뺀다.
 
+## 평원 새 그림 · 짐승 동작 · 들쥐왕 · 새 펫 (빌드 44)
+- 그림(src/pxplains.js, build.py에서 pxund 뒤): 평원 6종 PXU(rat·slime·rabbit·wolf·goblin·ratking). 짐승은 `noArm`(팔 없음): 동작 장의 `body`가 통째 몸 `gm`(뛰기·웅크림 모양) 또는 조각 그림 `gp`(`{y, g}` — '.' 그대로 · '_' 지움, 벌린 입 같은 것)을 고르고, `cr` 웅크림 · `dx` 나감 · `jy` 뜀(뭉툭 칸, 위 −; view.js가 그림자를 땅에 두고 몸만 띄운다). `still: 1`이면 숨쉬기 대신 g2(꼬리·귀). 짐승 동작 `PXU_MOT` qbite·qgnaw·qpounce·qmaul·qcharge·qdive·sbounce·sslam·jstab·rbite·rcall.
+- 들쥐왕(사용자 결정): 쥐 수인 · 몸통 6칸·머리 10칸으로 덩치를 줄임 · **B 길고 좁은 망토, HP 30% 아래는 C 누더기 망토** · **밀 이삭 홀**(`PXU_WPN.wheat`, `PXU_FXW.wheat = 'staff'`) · 서 있을 때 홀을 가슴 앞에 비스듬히(세워 들면 이삭이 얼굴을 가린다). 다친 모습: `PXU[id].low = {hp, id}` → pxund.js `pxuLow(f)`(f.hp ≤ maxHp×hp면 그 그림 id), view.js 적 그리기가 `did`로 그리고 `V.lowSt[uid]`가 바뀌는 순간 `u:low:tear`(slashes + petals, 천 조각) 한 번 — 처음부터 다친 채로 보면 효과 없음. 그림만 쓰는 id(ratking_t·pet_rat·prat·pslime)는 `pxuLook`로 드랍 없는 MONS 이름표(plan 'pet')를 만든다(도감 드랍표가 세지 않게).
+- 동작마다 효과: `PXU_ACT[id].fx`에 갈래(atk·mag·skl) 말고 **동작 이름**도 넣을 수 있다(fmot.js가 `u:id:mk`로 등록, `fmotKey/fmotSk(id, cat, mk)`가 동작 것을 먼저). 들쥐왕 atk = 금빛 별(coin), rbite = 이빨 자국(`SK_HIT2.bite`), skl = 쥐 떼(`urat`, FMOT_AOE_V.rats).
+- 펫: data-pet.js `PETS.rat`(들쥐 새끼 → 들쥐 대장, bite · home herb 0.06, 평원 알) · `adult`(다 자란 그림: slime → pslime 왕관 슬라임, rat → prat) · `petLook(pet)`(새끼 pet_종류 / 다 자람 adult || mon) — view·iso·panels·trade가 쓴다. 다 자란 그림은 MONS scale 1.5(monSc 1.5배).
+- 도감 그림(dex.js monIconURL)은 PXU가 있으면 pxuSprite(id, 'idle', 0) — 빌드 43 언데드도 이제 새 그림으로 나온다.
+- 시안 도구: `scratchpad/v44/d/real44.js`(실제 전투 길) · `render44.py`(묶음 GIF·장 띠, 묶음 plains/rk) · `lineup.py` · `rkdraft.py`(망토·무기 시안판) · `rkgif.py` · `rkfinal.py`(확정안: HP가 떨어지는 장면 `drop`) · `petdraft.js`. 시험 `scratchpad/v44/logic44.py`(그림 164장·짐승 동작·크기·사건·들쥐왕(찢어진 망토·동작마다 효과·실제 그리기 길에서 효과 한 번)·펫(그림·알·드랍 없음·1.5배·도감 그림·부화)·그리기), 전체 `scratchpad/run44.sh`.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).
