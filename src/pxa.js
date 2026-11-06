@@ -1093,6 +1093,14 @@ const PX_OFFSHAPE = {
 122431
 123431
 .1111.`,
+  cross: `
+.111.
+12431
+14441
+12431
+12431
+12331
+.111.`,
   tome: `
 1222
 1232
@@ -1157,13 +1165,13 @@ const PX_OFFSHAPE = {
 };
 // 놓는 곳 (뭉툭 칸 좌표, 앞모습 몸 블록 왼쪽 위 = (6, 17)) · under = 몸 뒤에 · float = 떠서 흔들린다
 const PX_OFFAT = {
-  front: { shield: { round: [3, 18], heater: [3, 18], kite: [3, 18], tower: [2, 17] }, tome: { A: [0, 15, 'float'], B: [3, 19] }, relic: { A: [4, 17], B: [3, 20, 'hang'] },
+  front: { shield: { round: [3, 18], heater: [3, 18], kite: [3, 18], tower: [2, 17], cross: [3, 17] }, tome: { A: [0, 15, 'float'], B: [3, 19] }, relic: { A: [4, 17], B: [3, 20, 'hang'] },
            shuriken: { A: [5, 21], B: [3, 19] }, lantern: { A: [3, 20] } },
-  side:  { shield: { round: [2, 17], heater: [2, 17], kite: [2, 17], tower: [1, 16] }, tome: { A: [1, 14, 'float'], B: [4, 20, 'under'] }, relic: { A: [4, 18, 'under'], B: [10, 20, 'hang'] },
+  side:  { shield: { round: [2, 17], heater: [2, 17], kite: [2, 17], tower: [1, 16], cross: [1, 16] }, tome: { A: [1, 14, 'float'], B: [4, 20, 'under'] }, relic: { A: [4, 18, 'under'], B: [10, 20, 'hang'] },
            shuriken: { A: [9, 21], B: [4, 19, 'under'] }, lantern: { A: [4, 20, 'under'] } }
 };
-// 방패 종류(빌드 39) → 그림 모양. 색은 단계 모습 (PX_OFFPAL.shield)
-const PX_SHIELD_SHAPE = { buckler: 'round', shield: 'heater', kite: 'kite', tower: 'tower' };
+// 방패 종류(빌드 39, 십자 빌드 40) → 그림 모양. 색은 단계 모습 (PX_OFFPAL.shield)
+const PX_SHIELD_SHAPE = { buckler: 'round', shield: 'heater', kite: 'kite', tower: 'tower', cross: 'cross' };
 const pxOffBase = b => (PX_SHIELD_SHAPE[b] ? 'shield' : b);
 const pxUp = rows => rows.flatMap(r => { const d = [...r].map(c => c + c).join(''); return [d, d]; });
 const pxOffRows = k => pxUp(pxRows(PX_OFFSHAPE[k]));
@@ -1522,7 +1530,7 @@ function advLook(a) { return PXL[a.cls] || PXL[jobBase(a.cls)] || PXL.warrior; }
 function pxAdvSprite(a, pose, fr, Lx) {
   const look = a.look || {}, w = a.eq && a.eq.weapon, cls = PXL[a.cls] ? a.cls : 'warrior', L = Lx || advLook(a);
   const key = 'PA|' + (Lx ? JSON.stringify(Lx).length + (Lx.c1 || '') : '') + a.cls + '|' + (look.hair || '') + (look.skin || '') + '|' + ((a.id || 0) % 3) + '|' + (w ? w.base : '-') + '|' + pxOffKey(a) + '|' + pose + fr;
-  const hit = PXC.get(key + '|' + (FLASH || ''));
+  const hit = PXC.get(key + '|' + (FLASH || '') + (PX_FX ? '|fx' : '') + (PX_CHUNK ? '|c' : ''));
   if (hit) return hit;
   const g = pose === 'sleep' ? pxSleepGrid(a, L) : pxAdvGrid(a, pose, fr, L);
   return pxBake(key, g, Object.assign(pxPal(L, look), pxOffPal(a)), BX + 8, BY + 13 + (pose === 'sleep' ? -2 : 0));

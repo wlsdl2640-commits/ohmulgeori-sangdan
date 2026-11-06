@@ -15,15 +15,17 @@ Object.assign(GTYPES, {
   // 방패 종류 (빌드 39): 능력치는 히터 방패와 같고 모양·이름만 다르다. 그림 색은 단계 모습
   buckler:  { name: '원형 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },     w: 2, icon: 'crest',   mat: [2, 2, 0] },
   kite:     { name: '카이트 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },   w: 3, icon: 'crest',   mat: [3, 1, 0] },
-  tower:    { name: '탑 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },       w: 4, icon: 'crest',   mat: [4, 1, 0] }
+  tower:    { name: '탑 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },       w: 4, icon: 'crest',   mat: [4, 1, 0] },
+  // 빌드 40: 빌드 38 성기사 방패 모양 (모서리 둥근 네모 + 큰 십자) — 성기사가 처음 든다
+  cross:    { name: '십자 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },     w: 3, icon: 'crest',   mat: [3, 1, 0] }
 });
-const SHIELDS = ['buckler', 'shield', 'kite', 'tower'];
+const SHIELDS = ['buckler', 'shield', 'kite', 'tower', 'cross'];
 const isShield = g => !!g && SHIELDS.includes(g.base);
-const OFF_IDS = ['shield', 'buckler', 'kite', 'tower', 'quiver', 'tome', 'relic', 'shuriken', 'lantern', 'arrows'];
+const OFF_IDS = ['shield', 'buckler', 'kite', 'tower', 'cross', 'quiver', 'tome', 'relic', 'shuriken', 'lantern', 'arrows'];
 GTYPE_IDS.push(...OFF_IDS.filter(b => !SHIELDS.includes(b) || b === 'shield'));   // 떨어뜨리는 표에는 방패 하나만 (나올 때 종류를 고른다 → dropBase)
 const dropBase = () => { const b = pickOne(GTYPE_IDS); return b === 'shield' ? pickOne(SHIELDS) : b; };
-// 처음 받는 방패 종류: 직업 그림의 방패 모양 (검투사 원형 · 기사 카이트 · 성기사 탑), 나머지는 히터. 마부 계열은 가벼운 원형
-const SHIELD_OF = { gladiator: 'buckler', champion: 'buckler', knight: 'kite', paladin: 'tower', coachman: 'buckler', caravanmaster: 'buckler' };
+// 처음 받는 방패 종류: 직업 그림의 방패 모양 (검투사 원형 · 기사 카이트 · 성기사 십자(빌드 40, 전에는 탑)), 나머지는 히터. 마부 계열은 가벼운 원형
+const SHIELD_OF = { gladiator: 'buckler', champion: 'buckler', knight: 'kite', paladin: 'cross', coachman: 'buckler', caravanmaster: 'buckler' };
 const shieldOf = c => SHIELD_OF[c] || 'shield';
 MASTERY.shield.w = SHIELDS.slice(); MASTERY.shield.wn = '방패';
 /* 속성 화살 (빌드 39): 「화살」 칸에 끼운다. 기본 공격과 속성이 따로 없는 화살 스킬이 그 화살의 속성이 되고, 맞힐 때 낮은 확률로 상태이상.
@@ -114,6 +116,11 @@ function pickArrows(a, fid) {
   equip(a.id, best.id);
   return best.base;
 }
+STORY.v40 = [
+  '빌드 40: 칼을 든 모험가의 공격이 여러 장 동작이 되었다 — 내려베기·올려베기·횡베기·찌르기를 그때그때 바꿔 가며 휘두르고, 방패를 들었으면 방패로 밀기도 한다. 칼끝이 지나간 자리에 자취가 남는다.',
+  '스킬은 스킬에 맞는 동작으로 나간다(강타 내려베기, 휩쓸기 횡베기, 방패 치기 방패 밀기, 돌격 찌르기 …). 여러 번 베는 스킬은 동작을 이어서 휘두르고, 칼이 닿는 때에 맞춰 숫자가 뜬다. 적의 공격을 방패로 막으면 방패를 내밀어 막는다.',
+  '방패가 한 종류 더 — 십자 방패(빌드 38 성기사 방패 모양: 모서리가 둥근 네모에 큰 십자). 성기사가 처음 드는 방패가 되었다. 능력치는 다른 방패와 같다.'
+];
 STORY.v39 = [
   '빌드 39: 부장비가 모험가 그림에 보인다 — 방패, 등의 화살통(화살이 떨어지면 깃이 안 보인다), 떠다니는 마법서, 허리에 건 성표, 손에 쥔 표창, 등불. 표창은 빙글빙글 돌며 날아간다.',
   '방패가 네 종류가 되었다 — 원형·히터·카이트·탑 방패(능력치는 같고 모양만 다르다, 색은 단계 모습). 전사·마부 계열은 이제 방패를 들고 오고, 방패가 없던 모험가에게도 하나씩 나눠 주었다.',
