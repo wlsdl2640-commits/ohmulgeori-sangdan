@@ -233,6 +233,16 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 사라크 사막 새 그림 · 모습 여럿 · 모래 해일 (빌드 50)
+- 그림(src/pxdesert.js, build.py에서 pxsnow 뒤): 모든 몬스터가 모습 여럿(사용자 결정 — 시안판에서 여러 개를 고르면 만날 때마다 그중 하나). 모습마다 장(g·g2·gm)을 통째로 따로 둔 PXU 항목 + 기본 모습이 아닌 것은 `pxuLook`(드랍 없는 이름표) + `PXU_SKIN`·`PXU_SKIN_NAME`. PXU_ACT는 기본 id에만.
+  - scorpion 넷(A 사막 전갈 기본 · B 황제 · C 모래 · D 왕릉) — noArm · gm bite 집게 · swell/spit 꼬리 치켜들기/내리꽂기(wspit을 투사체 없이) · 꼬리 마디가 끝으로 작아진다.
+  - antlion 셋(A 기본 · B 붉은 톱니 턱 · C 창백한 점박이) — 모래 둔덕(ball 명암 SSsT) 위로 몸 · 큰 턱(JL 길이) · wspit = 모래 튀기기(fx wspit 동작 효과, orb).
+  - bandit 둘(**B 붉은 두건이 기본** — 사용자가 A를 빼고 B·C만 골랐다 · C 검은 망토/청동 가면). B는 새 무기 `PXU_WPN.scim`(굽은 칼, 효과 축 sword). C 망토는 처음에 모래빛 두건+빛나는 노란 눈이었는데 유명 작품 캐릭터가 떠올라 남빛 망토·청동 가면으로 바꿨다.
+  - sandworm 둘(**B 꽃잎 입이 기본** · C 갑각+꽃잎 입 — 사용자: 「B가 기본형태, C에 B입모양 넣어서」) · greatworm 둘(**A 가시 등 + 꽃잎 입이 기본** · B 꽃잎 입 매끈한 등 — 사용자: 「B입에 A가시등 섞어서」, ms 1.5 · 1.45배 격자). 꽃잎 입: 다물면 세 판이 모인 뾰족한 끝(이음매 d), 벌리면(lunge·slam) 꽃잎 셋(바깥은 몸 색, 안쪽 R/r · 이빨 w) + 가운데 목구멍.
+- 광역기 `sand`(fmot.js fmotAoe → V.fx `usand`: 모래 벽이 땅을 따라 파티 뒤 24px까지 · FMOT_AOE_V.sand 190 · FMOT_NAME.greatworm '모래 해일'). STORY.v50 · notes50 · flags.v50.
+- 시안 도구: `scratchpad/v50/g`(px48.py 복사 · scorpion.py · antlion.py · bandit.py · worm.py → `../t/*.json` → `emit50.py`) · 시안판 `v50/t/sheet50.py`(변형 여럿 한 장: 이름·설명·가까이·전투 화면, `show2`로 동작 한 장 더) · `v50/d/render50.py` · `lineup.py`.
+- 시험 `scratchpad/v50/logic50.py`, 전체 `scratchpad/run50.sh`.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).
