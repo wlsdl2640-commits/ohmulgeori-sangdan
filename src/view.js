@@ -6,7 +6,7 @@ const PH = 21 * ZP;                                       // 파티원 키 (논�
 const zq = z => Math.max(0.25, Math.round(z * 4) / 4);   // 배율은 1/4 단위 (구운 그림을 다시 쓰게)
 const eW = f => monW(f.id, f.sc) * ZE, eH = f => monH(f.id, f.sc) * ZE;
 const V = { cvs: null, ctx: null, off: null, g: null, wc: null, w: null, lc: null, l: null, bcv: null, bctx: null, bopen: false,
-  mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, motLast: {}, jump: {}, fall: {}, last: {}, shake: 0, giant: false,
+  mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, motLast: {}, skSeen: {}, jump: {}, fall: {}, last: {}, shake: 0, giant: false,
   log: [], logN: 0, logP: 0, fname: {} };
 
 function initView(canvas) {
@@ -393,10 +393,12 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const melee = CLASSES[a.cls].act === 'melee';
     const jt = V.jump['a' + a.id], jy = jt && t >= jt && t - jt < 0.4 ? -Math.round(Math.sin((t - jt) / 0.4 * Math.PI) * 14) : 0;
     const mo = !a.down && !falling ? motNow(a, t) : null, mF = mo && pxsMotFr(mo.mk, mo.f);   // 공격 동작 (빌드 40)
-    const dx = ((mo ? mF.dx * 2 * z : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy;
-    if (mo) post.push(g => motFx(g, a, mo, x0 + (jy ? 10 : 0) * dir, y, z, dir));
+    const msk = mo && mo.sk && SKFX[mo.sk], dashK = msk && msk.dash && mo.f >= 3 && mo.f <= 6 ? 1.8 : 1;   // 스킬 효과 (빌드 41): 돌진은 더 멀리
+    const dx = ((mo ? mF.dx * 2 * z * dashK : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy;
+    if (mo) post.push(g => motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t));
     draws.push({ y: y0, f: g => {
       shadowAt(g, x0 + dx, y0, (jy ? 7 : SHADOW_R) * z / ZS);
+      if (msk) skGhosts(g, a, mo, msk, x0 + dx, y, z, dir, t);
       g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
       if (falling) { const k = Math.min(1, (t - ft) / 0.3); g.rotate(-k * k * Math.PI / 2); }
       FLASH = (V.flash['a' + a.id] || 0) > t ? '#ffffff' : null;
@@ -517,6 +519,12 @@ const PROJ = { arrow: 0.18, magic: 0.24, fire: 0.26, ice: 0.22, bolt: 0.06, holy
 const SKILL_CLS = { heal: 'heal', buff: 'buff', taunt: 'buff', mdmg: 'magic', dot: 'dot', shield: 'buff', regen: 'heal', revive: 'heal' };
 const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0', spd: '#ffe08a', matk: '#c89aff', block: '#9aa0a8', counter: '#f0c070', rheal: '#8af08a', shield: '#8ad8ff', regen: '#8af08a', crit: '#ffd060', cdr: '#c0a0ff', guard: '#9ab0c8' };
 const HIT_C = { melee: ['#ffffff', '#fff2a0'], jump: ['#fff2a0', '#ffffff'], pet: ['#f0c070', '#ffffff'], arrow: ['#e8e2d0', '#ffffff'], magic: ['#b48aff', '#ffffff'], spell: ['#8ab8ff', '#ffffff'], fire: ['#ff7a2a', '#ffe08a'], ice: ['#8ad8ff', '#ffffff'], bolt: ['#fff8a0', '#ffffff'], holy: ['#fff0b0', '#ffffff'], wind: ['#7ae0a0', '#c8ffd8'], dark: ['#7a3ad0', '#d8a8ff'], note: ['#f0d870', '#ffffff'] };
+// 스킬 효과 (빌드 41): 돌진 잔상 · 온몸 기운 (그림을 스킬 색으로 겹쳐 그린다)
+function skGhosts(g, a, mo, sk, x, y, z, dir, t) {
+  const P = SK_PAL[sk.pal], one = (ox, oy, al) => { g.save(); g.globalAlpha = al; g.translate(x + ox, y + oy); g.scale(dir, 1); FLASH = P[2]; drawAdv(g, a, t, { side: 1, z, mot: mo }); FLASH = null; g.restore(); };
+  if (sk.dash && mo.f >= 4 && mo.f <= 6) for (let k = 1; k <= 3; k++) one(-k * 9 * dir, 0, 0.5 - k * 0.12);
+  if (sk.charge === 'aura' && mo.first && mo.f >= 1 && mo.f <= 3 && Math.floor(t * 20) % 2) for (const [ox, oy] of [[-2, 0], [2, 0], [0, -2], [0, 2]]) one(ox, oy, 0.55);
+}
 /* 공격 동작 (빌드 40): 칼을 든 모험가는 여러 장 동작(pxs.js PXS_MOT). 기본 공격은 무작위 자세, 스킬은 스킬에 맞는 자세(MOT_SKILL).
    여러 번 치는 스킬은 동작을 잇는다: 앞 동작의 맞히는 장을 MOT_HOLD만큼 보이고 다음 동작은 셋째 장(MOT_CHAIN0)부터.
    적 쪽 효과·숫자·소리·번쩍임은 맞히는 장에 맞춰 늦춘다(motOn이 남은 시간을 돌려준다). 막으면 방패 막기, 치유·강화는 칼 치켜들기/방패 세우기 */
@@ -531,9 +539,10 @@ const MOT_SKILL = {
   flameblade: 'down', frostblade: 'side', thunderblade: 'up', spellsword: 'thrust', starblade: 'down', dimension: 'side', swordsaint: 'down'
 };
 const MOT_HOLD = 0.08, MOT_CHAIN0 = 2, MOT_PAL = [['#ffffff', '#fff2a0', '#a8a090'], ['#fffbe0', '#ffd84a', '#c8a060']];   // 효과 색: 보통 · 치명타
-const motToHit = f0 => PXS_MOT_T.slice(f0, PXS_MOT_HIT).reduce((s, v) => s + v, 0);
+const motToHit = q => (q.T || PXS_MOT_T).slice(q.f0 || 0, PXS_MOT_HIT).reduce((s, v) => s + v, 0);
+const motT = hold => PXS_MOT_T.map((v, f) => v + (f === 2 ? hold || 0 : 0));   // 스킬: 셋째 장(모으기)을 hold초 더 붙잡는다
 function motPick(a, sid, i) {
-  const m = sid && MOT_SKILL[sid];
+  const m = sid && ((SKFX[sid] && SKFX[sid].mot) || MOT_SKILL[sid]);
   if (m) { const mk = Array.isArray(m) ? m[i % m.length] : m; return mk === 'bash' && !pxsMotShield(a) ? 'thrust' : mk; }
   const pool = pxsMotShield(a) ? MOT_BASIC.concat('bash') : MOT_BASIC, last = V.motLast[a.id];   // 같은 자세가 잇달아 나오지 않게
   const pick = pool.filter(k => k !== last), mk = pick[Math.floor(Math.random() * pick.length)];
@@ -544,34 +553,38 @@ function motOn(a, x, t) {
   if (!a || a.down || !pxsMotOK(a) || x.sid === 'shuri' || x.k === 'pet' || x.dot) return 0;
   const key = 'a' + a.id, sid = x.sid || (x.ctr ? 'ctr' : '');
   let m = V.mot[key];
-  if (!m || m.t !== t || m.sid !== sid) m = V.mot[key] = { t, sid, n: {}, q: [{ mk: motPick(a, x.sid, 0), t0: t, f0: 0, c: x.c }] };
+  const sk = x.sid && SKFX[x.sid] && SKFX[x.sid].mot ? x.sid : null;
+  if (!m || m.t !== t || m.sid !== sid) m = V.mot[key] = { t, sid, n: {}, q: [{ mk: motPick(a, x.sid, 0), t0: t, f0: 0, c: x.c, sk, T: motT(sk && SKFX[sk].hold) }] };
   const n = (m.n[x.d] = (m.n[x.d] || 0) + 1) - 1;
-  while (m.q.length <= n) { const q = m.q[m.q.length - 1]; m.q.push({ mk: motPick(a, x.sid, m.q.length), t0: q.t0 + motToHit(q.f0) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c }); }
+  while (m.q.length <= n) { const q = m.q[m.q.length - 1]; m.q.push({ mk: motPick(a, x.sid, m.q.length), t0: q.t0 + motToHit(q) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c, sk, T: PXS_MOT_T }); }
   if (x.c) m.q[n].c = 1;
-  return m.q[n].t0 + motToHit(m.q[n].f0) - t;
+  m.lastN = n + 1;
+  return m.q[n].t0 + motToHit(m.q[n]) - t;
 }
 // 공격이 아닌 동작 (막기·치켜들기·방패 세우기): 칼을 든 모험가만, 다른 동작 중이 아닐 때(휘두르던 칼을 끊지 않는다), 막기는 방패가 있을 때
-function motCast(a, mk, t, blk) {
+function motCast(a, mk, t, blk, sk) {
   if (!a || a.down || !pxsMotOK(a) || motNow(a, t + 0.1)) return;
   if (blk && !pxsMotShield(a)) return;
   if (mk === 'guard' && !pxsMotShield(a)) mk = 'raise';
-  V.mot['a' + a.id] = { t, sid: '#' + mk, n: {}, q: [{ mk, t0: t, f0: 0 }] };
+  V.mot['a' + a.id] = { t, sid: '#' + mk, n: {}, q: [{ mk, t0: t, f0: 0, sk: sk || null, T: motT(sk && SKFX[sk] && SKFX[sk].hold) }] };
 }
 function motNow(a, t) {
   const m = V.mot['a' + a.id]; if (!m) return null;
   let q = null; for (const s of m.q) if (t >= s.t0) q = s;
   if (!q) return null;
-  let e = t - q.t0;
-  for (let f = q.f0; f < PXS_MOT_T.length; f++) { if (e < PXS_MOT_T[f]) return { mk: q.mk, f, c: q.c }; e -= PXS_MOT_T[f]; }
+  let e = t - q.t0; const T = q.T || PXS_MOT_T, q0 = m.q[0];
+  for (let f = q.f0; f < T.length; f++) { if (e < T[f]) return { mk: q.mk, f, c: q.c, sk: q.sk, e: t - q0.t0, hit: motToHit(q0), first: q === q0 }; e -= T[f]; }
   if (q === m.q[m.q.length - 1]) delete V.mot['a' + a.id];
   return null;
 }
 // 칼끝 자취·찌르기 번쩍임·방패 충격·막기 불꽃: 그림과 같은 칸(뭉툭 칸 = 2×2 논리 픽셀), 어둠 위에
-function motFx(g, a, mo, x0, y, z, dir) {
-  const s = pxsAdvSprite(a, 'm:' + mo.mk, mo.f), F = s.mfx; if (!F) return;
-  const pal = MOT_PAL[mo.c ? 1 : 0];
+function motFx(g, a, mo, x0, y, z, dir, t) {
+  const sk = mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast ? SKFX[mo.sk] : null;
   g.save(); g.translate(x0, y); g.scale(dir * z, z);
-  for (const L of [F.back, F.front]) for (const [X, Y, ci] of L) R(g, 2 * X - 19, 2 * Y - 47, 2, 2, pal[ci]);
+  if (!(sk && skAdvFx(g, a, mo, sk, t || 0))) {
+    const s = pxsAdvSprite(a, 'm:' + mo.mk, mo.f), F = s.mfx, pal = MOT_PAL[mo.c ? 1 : 0];
+    if (F) for (const L of [F.back, F.front]) for (const [X, Y, ci] of L) R(g, 2 * X - 19, 2 * Y - 47, 2, 2, pal[ci]);
+  }
   g.restore();
 }
 function events(e, pos, t, team, p) {
@@ -588,7 +601,7 @@ function events(e, pos, t, team, p) {
   for (const x of e.ev) {
     if (x.n <= V.lastN) continue;
     const md = x.type === 'hit' || x.type === 'fmiss' ? motOn(advOf(x.s), x, t) : 0;   // 칼 동작: 맞히는 장까지 남은 시간
-    if (x.type === 'hit') { if (!x.dot && x.v) sfxAt(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k], md); }
+    if (x.type === 'hit') { /* 소리는 맞는 때에 (아래 hit) */ }
     else if (x.type === 'hurt' && !x.dot) sfx('hurt');
     else if (x.type === 'heal' || x.type === 'pot' || x.type === 'fheal') sfx(x.type === 'pot' ? 'pot' : 'heal');
     else if (x.type === 'buff' || x.type === 'revive' || (x.type === 'shield' && x.on)) sfx('buff');
@@ -606,15 +619,32 @@ function events(e, pos, t, team, p) {
     logEvent(x, e, p);
     if (x.type === 'hit') {
       const fm = fmid(x.d), ft = ftop(x.d);
-      if (!fm) continue;
+      if (!fm) { if (!x.dot && x.v) sfx(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k]); continue; }
       if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') { const cc = x.k === 'curse' ? '#c89aff' : x.k === 'burn' ? '#ff8a2a' : x.k === 'bleed' ? '#ff4a4a' : '#9ae86a'; V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: cc, t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: fm[0], y: fm[1], t0: t, d: 0.5, c: cc }); continue; }
       const am = amid(x.s);
-      if (!am) continue;
+      if (!am) { if (!x.dot && x.v) sfxAt(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k], md); continue; }
       if (!md) V.atk['a' + x.s] = t;   // 칼 동작이 없으면 예전 두 장 공격
       if (x.k === 'jump') V.jump['a' + x.s] = t + Math.max(0, md - 0.2);   // 동작이 있으면 내려치는 때에 맞춰 뛴다
-      const t1 = t + md, delay = PROJ[x.k] || 0, [c1, c2] = HIT_C[x.k] || HIT_C.melee;
+      // 스킬 효과 (빌드 41): 초승달·땅 금은 적마다 늦게 닿는다
+      const sk = !x.dot && x.sid ? SKFX[x.sid] : null, dirv = V.dir || 1;
+      let tw = 0, x0w = 0;
+      if (sk && (sk.hit === 'wave' || sk.hit === 'quake')) { x0w = am[0] + (sk.hit === 'wave' ? 26 : 30) * dirv; tw = Math.abs(fm[0] - x0w) / (sk.hit === 'wave' ? SK_WAVE : SK_QUAKE); }
+      const t1 = t + md + tw, delay = PROJ[x.k] || 0, [c1, c2] = HIT_C[x.k] || HIT_C.melee;
+      if (!x.dot && x.v) sfxAt(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k], t1 + delay - t);
+      if (sk) {
+        const act = V.mot['a' + x.s], nth = act && act.sid === x.sid && act.lastN ? act.lastN : 1, last = nth >= ((SKILLS[x.sid] && SKILLS[x.sid].hits) || 1), fq = at('f' + x.d);
+        V.fx.push({ k: 'skh', id: x.sid, x: fm[0], y: fm[1], fy: fq ? fq[1] : fm[1] + 10, h: fq ? Math.max(8, fq[1] - ft[1] - 4) : 20, t0: t1 + delay, d: 1.3, big: sk.lastBig ? (last ? sk.lastBig : 0) : sk.big || 0, last, dir: dirv, ax: am[0] });
+        const once = V.skSeen[x.s] && V.skSeen[x.s].key === x.sid + ':' + t ? V.skSeen[x.s] : (V.skSeen[x.s] = { key: x.sid + ':' + t });
+        if ((sk.hit === 'wave' || sk.hit === 'quake') && !once.w) {   // 한 번 쓸 때 한 번: 초승달 · 땅 금 (가장 먼 적까지)
+          once.w = 1; const xs = e.foes.map(f => at('f' + f.uid)).filter(Boolean).map(q => q[0]), xe = xs.length ? (dirv > 0 ? Math.max(...xs) : Math.min(...xs)) + 10 * dirv : fm[0];
+          if (sk.hit === 'wave') V.fx.push({ k: 'skw', id: x.sid, x0: x0w, y: fm[1], dir: dirv, t0: t + md, d: Math.abs(xe - x0w) / SK_WAVE + 0.3 });
+          else V.fx.push({ k: 'skq', id: x.sid, x0: x0w, xe, gy: fq ? fq[1] : fm[1] + 10, dir: dirv, t0: t + md, d: Math.abs(xe - x0w) / SK_QUAKE + 1.2 });
+        }
+        if (sk.shake && last && !once.s) { once.s = 1; V.fx.push({ k: 'shk', id: x.sid, n: sk.shake, t0: t1 + delay, d: 0.1 }); }
+      }
       const P = { x0: am[0], y0: am[1], x1: fm[0], y1: fm[1], t0: t1, d: delay };
-      if (x.sid === 'shuri') V.fx.push(Object.assign({ k: 'shuri', c: SHURI_C[shuriLook(x.s)] }, P));
+      if (sk && !sk.keep) { /* 스킬 효과가 투사체·베기·터짐을 대신한다 */ }
+      else if (x.sid === 'shuri') V.fx.push(Object.assign({ k: 'shuri', c: SHURI_C[shuriLook(x.s)] }, P));
       else if (x.k === 'arrow') V.fx.push(Object.assign({ k: 'arrow', c: x.dot ? '#7ad83c' : x.el && ELEMS[x.el] ? ELEMS[x.el].c : c1 }, P));   // 속성 화살은 그 색
       else if (x.k === 'magic' || x.k === 'spell' || x.k === 'note') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, ring: 1, size: 2 }, P));
       else if (x.k === 'fire') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, trail: 1, size: 3 }, P));
@@ -623,8 +653,8 @@ function events(e, pos, t, team, p) {
       else if (x.k === 'wind') V.fx.push(Object.assign({ k: 'gust', c: c1, c2 }, P));
       else if (x.k === 'bolt') V.fx.push({ k: 'bolt', x: fm[0], y: fm[1] + 8, t0: t1, d: 0.22 });
       else if (x.k === 'holy') V.fx.push({ k: 'pillar', x: fm[0], y: fm[1] + 10, t0: t1, d: 0.45, c: c1, c2 });
-      if (x.k === 'melee' || x.k === 'jump' || x.k === 'pet') V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: V.dir || 1 });
-      V.fx.push({ k: 'burst', x: fm[0], y: fm[1], t0: t1 + delay, d: x.c ? 0.4 : 0.28, c: c1, c2, big: x.c });
+      if (!sk && (x.k === 'melee' || x.k === 'jump' || x.k === 'pet')) V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: V.dir || 1 });
+      if (!sk) V.fx.push({ k: 'burst', x: fm[0], y: fm[1], t0: t1 + delay, d: x.c ? 0.4 : 0.28, c: c1, c2, big: x.c });
       V.flash['f' + x.d] = t1 + delay + 0.09; V.flash0['f' + x.d] = t1 + delay;
       if (x.dot) V.fx.push({ k: 'spark', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.5, c: '#7ad83c' });
       else if (x.imm) V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: '면역', c: '#a9b0bd', t0: t1 + delay, d: 0.8 });
@@ -671,11 +701,11 @@ function events(e, pos, t, team, p) {
       V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 6, s: '+' + x.v, c: blue ? '#7ab8ff' : '#7bd36a', t0: t, d: 0.8 });
       V.fx.push({ k: 'heal', x: aq[0], y: aq[1], t0: t, d: 0.7, c: x.type === 'pot' ? '#ff7a8a' : blue ? '#8ac8ff' : '#8af08a' });
     } else if (x.type === 'skill') {
-      const aq = at('a' + x.s), s = SKILLS[x.id];
-      if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
-      const ma = advOf(x.s), mot = ma && pxsMotOK(ma);
-      if (s && mot && !['dmg', 'mdmg', 'dot'].includes(s.kind)) motCast(ma, (s.kind === 'buff' && ['def', 'block', 'guard'].includes(s.stat)) || s.kind === 'shield' ? 'guard' : 'raise', t);
+      const aq = at('a' + x.s), s = SKILLS[x.id], sk = SKFX[x.id], ma = advOf(x.s), mot = ma && pxsMotOK(ma), cast = s && !['dmg', 'mdmg', 'dot'].includes(s.kind);
+      if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); if (!sk || (!sk.cast && !mot)) V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
+      if (cast && mot) motCast(ma, sk && sk.mot ? sk.mot : (s.kind === 'buff' && ['def', 'block', 'guard'].includes(s.stat)) || s.kind === 'shield' ? 'guard' : 'raise', t, 0, sk ? x.id : null);
       else if (s && !mot && (s.kind === 'mdmg' || s.kind === 'heal')) V.atk['a' + x.s] = t;
+      if (cast && sk && sk.cast && aq) V.fx.push({ k: 'skc', id: x.id, x: aq[0], y: aq[1], z: zAt(aq[1]), dir: V.dir || 1, t0: t, d: 1.6, tg: sk.party ? team.filter(m => !m.down && m.id !== x.s).map(m => at('a' + m.id)).filter(Boolean).map(q => [q[0], q[1], zAt(q[1])]) : [] });
     } else if (x.type === 'buff') {
       const s = SKILLS[x.id], col = x.pet ? BUFF_C[x.pet === 'song' ? 'atk' : 'def'] : s && s.kind === 'taunt' ? '#ff5a4a' : BUFF_C[s && s.stat] || '#e8e2d0';
       if (x.pet) { const pq = at('a' + x.s); if (pq) callout(pq[0], pq[1] - 18, PET_ACT_NAME[x.pet] + '!', 'buff'); }
@@ -737,6 +767,7 @@ function fx(g, t) {
   for (const f of V.fx) {
     const k = (t - f.t0) / f.d;
     if (k < 0) continue;
+    if (f.k === 'skh' || f.k === 'skw' || f.k === 'skq' || f.k === 'skc' || f.k === 'shk') { skDraw(g, f, t); continue; }   // 스킬 효과 (빌드 41)
     const L = f.x1 != null ? Math.hypot(f.x1 - f.x0, f.y1 - f.y0) || 1 : 1, ux = f.x1 != null ? (f.x1 - f.x0) / L : 1, uy = f.x1 != null ? (f.y1 - f.y0) / L : 0;
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * (f.k === 'arrow' ? 10 : 4) : 0;
     if (f.k === 'num') { if (f.big) { drawNum(g, f.x - 0.5, Math.round(f.y - k * 12) - 0.5, f.s, f.c); drawNum(g, f.x + 0.5, Math.round(f.y - k * 12), f.s, f.c); } drawNum(g, f.x, Math.round(f.y - k * 12), f.s, f.c); }
