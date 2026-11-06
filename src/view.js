@@ -348,7 +348,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const jy = fmo ? fmotJy(f, fmo, z) : 0;   // 짐승이 뛰어오른 높이 (빌드 44): 그림자는 땅에
     const did = fmotOK(f) ? pxuLow(f) : f.id, lw0 = (V.lowSt || (V.lowSt = {}))[f.uid];   // 다친 모습 (빌드 44: 들쥐왕은 HP 30% 아래에서 망토가 찢어진다)
     V.lowSt[f.uid] = did;
-    if (lw0 !== undefined && lw0 !== did && did !== f.id) V.fx.push({ k: 'skh', id: 'u:low:tear', x: x + 9 * z * dir, y: y - 13 * z, fy: y, h: 21 * z, t0: t, pre: 0, d: 1.2, big: 1, last: 1, dir: -dir, ax: x });
+    if (lw0 !== undefined && lw0 !== did && PXU[f.id] && PXU[f.id].low && did === PXU[f.id].low.id) V.fx.push({ k: 'skh', id: 'u:low:tear', x: x + 9 * z * dir, y: y - 13 * z, fy: y, h: 21 * z, t0: t, pre: 0, d: 1.2, big: 1, last: 1, dir: -dir, ax: x });
     if (fmo) post.push(g => fmotFx(g, f, fmo, x, y + jy, z, dir));
     draws.push({ y, f: g => {
       g.save(); g.translate(x + lg, y);
@@ -845,7 +845,7 @@ function fx(g, t) {
     const k = (t - f.t0) / f.d;
     if (k < 0) continue;
     if (f.k === 'skh' || f.k === 'skw' || f.k === 'skq' || f.k === 'skc' || f.k === 'shk' || f.k === 'skp') { skDraw(g, f, t); continue; }   // 스킬 효과 (빌드 41) · 투사체 (빌드 43에서 바로잡음)
-    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 47 번개 폭풍)
+    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm' || f.k === 'ublizz') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 48 번개 폭풍 · 49 눈보라)
     const L = f.x1 != null ? Math.hypot(f.x1 - f.x0, f.y1 - f.y0) || 1 : 1, AH = f.arc != null ? f.arc : f.k === 'arrow' ? 10 : 4;   // 포물선 높이 (사선으로 쏜 화살은 높이)
     let ux = f.x1 != null ? (f.x1 - f.x0) / L : 1, uy = f.x1 != null ? (f.y1 - f.y0) / L : 0;
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * AH : 0;

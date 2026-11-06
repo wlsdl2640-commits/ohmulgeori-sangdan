@@ -14,9 +14,10 @@ Object.assign(SK_PAL, {
   smoke:  ['#f0f0f0', '#c8c8c8', '#9a9aa0', '#5a5a64'],
   light:  ['#ffffff', '#fffbe0', '#fff0a0', '#e8c860'],
   evil:   ['#ffd8e8', '#ff7aa8', '#c03a6a', '#5a1030'],
-  coin:   ['#ffffff', '#fff0a0', '#f2c444', '#a8742a']
+  coin:   ['#ffffff', '#fff0a0', '#f2c444', '#a8742a'],
+  snow:   ['#ffffff', '#eef6ff', '#c4d6ee', '#8aa4c8']   // 눈 (빌드 49)
 });
-const SK_PROJ_T = { arrow: 0.18, orb: 0.26, shard: 0.22, note: 0.26, flask: 0.32, dart: 0.14, junk: 0.34, beam: 0.08 };   // 날아가는 초
+const SK_PROJ_T = { arrow: 0.18, orb: 0.26, shard: 0.22, note: 0.26, flask: 0.32, dart: 0.14, junk: 0.34, beam: 0.08, snow: 0.34 };   // 날아가는 초
 const SK_PRE = { rain: 0.24, meteor: 0.32, bolt: 0.07, mark: 0.2, slashes: 0.05, claw: 0.06 };   // 맞기 전에 하늘에서 내려오는 초
 
 // 스킬 자료 → 효과 표 한 줄
@@ -172,6 +173,9 @@ function skProjDraw(g, f, sk, P, e) {
     case 'note': { const wy = Math.sin(e * 30) * 3; skQ(g, x, y + wy, P[0]); skQ(g, x + 2, y + wy, P[1]); skQ(g, x + 2, y + wy - 2, P[1]); skQ(g, x + 2, y + wy - 4, P[1]); skQ(g, x + 4, y + wy - 4, P[2]); for (let i = 1; i < 4; i++) skQ(g, x - ux * i * 4, y - uy * i * 4 + Math.sin(e * 30 - i) * 3, P[2], 1 - i / 4); break; }
     case 'flask': { const sp = Math.floor(e * 20) % 2; skQ(g, x, y, P[1]); skQ(g, x, y - 2, sp ? '#e8e8f0' : P[0]); skQ(g, x + (sp ? 2 : -2), y, P[2]); for (let i = 1; i < 4; i++) skQ(g, x - ux * i * 3, y - uy * i * 3, P[2], 0.6 - i * 0.15); break; }
     case 'junk': { const sp = Math.floor(e * 16) % 4; for (const [ox, oy] of [[0, 0], [2, 0], [0, 2], [2, 2]]) skQ(g, x + ox, y + oy, '#a8743e'); skQ(g, x + (sp % 2) * 2, y + (sp >> 1) * 2, '#d8b878'); break; }
+    case 'snow': { const b = f.big ? 1 : 0, r = 1 + b;   // 눈덩이 (빌드 49): 둥근 흰 덩이 · 아래쪽 그늘 · 떨어지는 눈가루
+      for (let yy = -r; yy <= r; yy++) for (let xx = -r; xx <= r; xx++) if (xx * xx + yy * yy <= r * r + 0.5) skQ(g, x + xx * 2, y + yy * 2, yy > 0 || xx > 0 ? (yy + xx > r ? '#a8bcd8' : '#dce8f6') : '#ffffff');
+      for (let i = 1; i < 5; i++) skQ(g, x - ux * i * 4 + Math.sin(e * 30 + i * 2) * 2, y - uy * i * 4 + i, i % 2 ? '#ffffff' : '#dce8f6', 1 - i / 5); break; }
     case 'beam': { const al = k < 0.5 ? 1 : 1 - (k - 0.5) * 2, n = Math.ceil(Math.hypot(f.x1 - f.x0, f.y1 - f.y0) / 2); for (let i = 0; i <= n; i++) { const q = i / n, bx = f.x0 + (f.x1 - f.x0) * q, by = f.y0 + (f.y1 - f.y0) * q; skQ(g, bx, by, P[0], al); if (k < 0.6) { skQ(g, bx, by - 2, P[1], al * 0.8); skQ(g, bx, by + 2, P[2], al * 0.6); } } break; }
   }
 }
