@@ -1,4 +1,4 @@
-"""오물거리 상단 빌드: 소스를 한 파일로 묶고, 설치형 웹앱(PWA) 패키지를 만든다."""
+"""판타지세계 상단 키우기 빌드: 소스를 한 파일로 묶고, 설치형 웹앱(PWA) 패키지를 만든다."""
 import base64, io, json, os, pathlib, shutil, zipfile
 from fontTools import subset
 from fontTools.ttLib import TTFont
@@ -7,7 +7,7 @@ from PIL import Image
 ROOT = pathlib.Path(__file__).parent
 SRC, FONTS, DIST = ROOT / 'src', ROOT / 'fonts', ROOT / 'dist'
 JS = ['data.js', 'data-rpg.js', 'data-mast.js', 'data-off.js', 'data-officon.js', 'data-gearicon.js', 'data-biz.js', 'data-gear.js', 'data-world.js', 'data-skin.js', 'data-under.js', 'data-trait.js', 'data-demon.js', 'data-herb.js', 'data-pet.js', 'data-books.js', 'data-sky.js', 'data-star.js', 'data-elem.js', 'data-life.js', 'data-salv.js', 'sprites.js', 'pxa.js', 'pxs.js', 'pxmon.js', 'pxmon2.js', 'pxpet.js', 'pxmon3.js', 'pxmon4.js', 'pxraid.js', 'pxund.js', 'pxplains.js', 'pxforest.js', 'pxmountain.js', 'art.js', 'bg.js', 'arena.js', 'scene.js', 'woods.js', 'front.js', 'demon.js', 'sky.js', 'sky2.js', 'pxhq.js', 'people.js', 'audio.js', 'core.js', 'econ.js', 'pet.js', 'iso.js', 'ui.js', 'view.js', 'skfx.js', 'skfx2.js', 'fmot.js', 'skillinfo.js', 'panels.js', 'data-skicon.js', 'data-masticon.js', 'hero.js', 'under.js', 'map.js', 'events.js', 'world30.js', 'weather.js', 'kitchen.js', 'trade.js', 'qol.js', 'salvage.js', 'dex.js', 'hall.js', 'achv.js', 'main.js']
-NAME = '오물거리 상단'
+NAME = '판타지세계 상단 키우기'
 VERSION = '0.7.0'
 
 css = (SRC / 'style.css').read_text(encoding='utf-8')
@@ -84,39 +84,15 @@ head = f'''<!doctype html>
 (WEB / 'index.html').write_text(head + body + '</body>\n</html>\n', encoding='utf-8')
 
 # 아이콘: 금화 주머니 도트
-ICON = [
-    '................',
-    '......kkkkk.....',
-    '.....kbbbbbk....',
-    '......kyyyk.....',
-    '.....kbbbbbk....',
-    '....kbbbbbbbk...',
-    '...kbbbbbbbbbk..',
-    '..kbbbkkkkbbbbk.',
-    '..kbbkyyyykbbbk.',
-    '..kbkyyllyykbbk.',
-    '..kbkyylyyykbbk.',
-    '..kbkyyyyyykbbk.',
-    '..kbbkyyyykbbbk.',
-    '...kbbkkkkbbbk..',
-    '....kkkkkkkkk...',
-    '................',
-]
-PAL = {'k': (26, 20, 16), 'b': (138, 90, 50), 'y': (240, 180, 60), 'l': (255, 242, 192)}
-BG = (19, 22, 30)
-def make_icon(size, art):
-    img = Image.new('RGB', (size, size), BG)
-    cell = art // 16
-    off = (size - cell * 16) // 2
-    for y, row in enumerate(ICON):
-        for x, ch in enumerate(row):
-            if ch in PAL:
-                img.paste(PAL[ch], (off + x * cell, off + y * cell, off + (x + 1) * cell, off + (y + 1) * cell))
-    return img
-make_icon(192, 128).save(WEB / 'icons' / 'icon-192.png')
-make_icon(512, 336).save(WEB / 'icons' / 'icon-512.png')
-make_icon(512, 288).save(WEB / 'icons' / 'maskable-512.png')
-make_icon(180, 112).save(WEB / 'icons' / 'apple-touch-icon.png')
+# 아이콘 (빌드 47): 밤의 상단 앞 · 모험가 다섯 · 왕국 마차 · 건물 위 게임 제목 — tools/appart.py
+import sys as _sys
+_sys.path.insert(0, str(ROOT / 'tools'))
+import appart
+_art = appart.art_square(NAME)
+appart.fit(_art, 192).save(WEB / 'icons' / 'icon-192.png')
+appart.fit(_art, 512).save(WEB / 'icons' / 'icon-512.png')
+appart.adaptive_fg(appart.art_square(NAME, y0=46), 512, 0.8).save(WEB / 'icons' / 'maskable-512.png')   # 가려지는 가장자리를 빼고 가운데 80%에 · 제목은 조금 아래
+appart.fit(_art, 180).save(WEB / 'icons' / 'apple-touch-icon.png')
 
 manifest = {
     'name': NAME, 'short_name': NAME, 'lang': 'ko', 'version': VERSION,
