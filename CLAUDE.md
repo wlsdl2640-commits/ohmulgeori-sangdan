@@ -201,6 +201,11 @@
 - 도감 그림(dex.js monIconURL)은 PXU가 있으면 pxuSprite(id, 'idle', 0) — 빌드 43 언데드도 이제 새 그림으로 나온다.
 - 시안 도구: `scratchpad/v44/d/real44.js`(실제 전투 길) · `render44.py`(묶음 GIF·장 띠, 묶음 plains/rk) · `lineup.py` · `rkdraft.py`(망토·무기 시안판) · `rkgif.py` · `rkfinal.py`(확정안: HP가 떨어지는 장면 `drop`) · `petdraft.js`. 시험 `scratchpad/v44/logic44.py`(그림 164장·짐승 동작·크기·사건·들쥐왕(찢어진 망토·동작마다 효과·실제 그리기 길에서 효과 한 번)·펫(그림·알·드랍 없음·1.5배·도감 그림·부화)·그리기), 전체 `scratchpad/run44.sh`.
 
+## 원시림 새 그림 (빌드 45)
+- 그림(src/pxforest.js, build.py에서 pxplains 뒤): myconid(갓 부풀리기 gm.puff) · spider(몸을 먼저 그리고 다리를 몸 뒤 빈 칸에 — 시안 생성기 `scratchpad/v45/t/spider_final.py`, gm bite·rear·leap) · sapling(사용자가 고른 D: 이끼·붉은 버섯 · g2 덩굴 흔들림) · shaman(평원 고블린 얼굴, `PXU_WPN.shskull` 뿔 달린 해골 지팡이) · elder(사용자가 고른 B: 늘어진 이끼 고목, ms 1.5, 큰 가지에 이끼). 트렌트 시안 생성기 `scratchpad/v45/tr/treant.py`·`elder.py`(덩굴 wrap · 이끼 moss · 늘어진 hang · 꽃 · 버섯 · 빛나는 곰팡이), 시안판 `sheet.py`.
+- 투사체를 쏘는 몬스터 동작: `PXU_CAST`(mspore·sspit, pxund.js wspit)를 fmot.js `FMOT_CAST`에 합친다. 광역기 `roots`(skq 땅 금 + `SK_HIT2.roots` 솟는 뿌리, FMOT_AOE_V.roots, FMOT_NAME.elder '뿌리 솟기').
+- 시험 `scratchpad/v45/logic45.py`(그림·동작 8장·모습 바뀜·크기·사건(마법 구슬·독침·포자·뿌리 솟기)·그리기), 변형 시험판 `scratchpad/v45/t/var.py`(실제 전투 화면 + 가까이), 전체 `scratchpad/run45.sh`. logic40·logic43의 「예전 그림 몬스터」 비교는 아직 안 바꾼 작은 근접 몬스터를 골라 쓴다(필드를 바꿀 때마다 깨지지 않게).
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

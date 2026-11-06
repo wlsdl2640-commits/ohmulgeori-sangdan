@@ -2,9 +2,9 @@
    PXU 그림이 있는 몬스터(언데드)는 사건마다 동작을 하고, 모험가 쪽 효과·숫자·소리·번쩍임은 맞는 때(동작의 맞히는 장 + 투사체가 나는 시간)에 낸다.
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
-const FMOT_CAST = { spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, wspit: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 };   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
-const FMOT_NAME = { ratking: '쥐 떼', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
+const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_NAME = { ratking: '쥐 떼', elder: '뿌리 솟기', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
   const q = PXU_ACT[id].fx[cat];
@@ -84,7 +84,7 @@ function fmotAoe(e, x, t, fd, team, at) {
   else if (k === 'rats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'urat', id, x0: cx - 8 * dir + (j - 1) * 5, y0: fq[1] - 1 - j * 3, x1: q[0] + (j - 1) * 6, y1: q[1] - 1 - j * 2, t0: T1 + j * 0.07, d: Math.abs(q[0] - cx) / FMOT_AOE_V.rats, s: i * 3 + j }); });
   else if (k === 'nova') V.fx.push({ k: 'unova', id, x: cx, y: fq[1] - 2, t0: T1, d: 0.9, r1: Math.max(60, ...tg.map(q => Math.abs(q[0] - cx) + 16)) });
   else if (k === 'spin') { V.fx.push({ k: 'uspin', id, x: cx, y: cy + 4, r: H * 0.5 + 6, t0: T1 - 0.12, d: 0.42 }); const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 10 : cx - 120; V.fx.push({ k: 'skw', id, x0: cx - 18 * dir, y: cy + 6, dir: -dir, t0: T1, d: Math.abs(cx - 18 * dir - xe) / SK_WAVE + 0.3 }); }
-  else if (k === 'slam') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
+  else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
   if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1, d: 0.1 });
 }
 // 박쥐 · 파동 · 회전 그리기 (fx()가 부른다)
@@ -136,6 +136,11 @@ STORY.v44 = [
   '새 펫: 들쥐 새끼(평원에서 알이 나온다) — 재빠르게 물고, 상단에 두면 약초를 물어 온다. 다 자라면 붉은 목도리를 두른 들쥐 대장. 슬라임 펫은 다 자라면 왕관 슬라임이 된다.',
   '도감의 몬스터 그림도 새 그림으로 바뀌었다.'
 ];
+STORY.v45 = [
+  '빌드 45: 원시림과 썩은 뿌리 동굴의 몬스터를 새로 그렸다 — 독버섯 괴물, 거대 거미, 트렌트 묘목, 고블린 주술사, 그리고 우두머리 늙은 트렌트.',
+  '독버섯 괴물은 갓으로 들이받고 갓을 부풀려 독 포자를 내뿜는다. 거대 거미는 덮쳐 물고, 뛰어올라 물고, 앞다리를 들어 독침을 뱉는다. 트렌트 묘목은 이끼와 붉은 버섯이 돋은 몸으로 가지를 휘두르고, 고블린 주술사는 뿔 달린 해골 지팡이로 마법 구슬을 쏘고 저주를 모은다.',
+  '늙은 트렌트는 회녹색 이끼가 길게 늘어진 고목이다. 이끼 낀 큰 가지로 내려치고, 파티 발밑에서 뿌리를 솟구치게 한다(뿌리 솟기).'
+];
 // 물기 (빌드 44): 위아래 이빨 줄이 맞물리고 작은 터짐
 Object.assign(SK_HIT2, {
   bite(g, f, P, e, big) {
@@ -144,5 +149,16 @@ Object.assign(SK_HIT2, {
     for (let i = 0; i < n; i++) { const x = f.x + (i - (n - 1) / 2) * 4; skQ(g, x, y0 - 2, P[1], al); skQ(g, x, y0, P[0], al); skQ(g, x, y1 + 2, P[1], al); skQ(g, x, y1, P[0], al); }
     for (const s of [-1, 1]) { skQ(g, f.x + s * (n * 2 + 2), f.y - 2, P[2], al * 0.8); skQ(g, f.x + s * (n * 2 + 2), f.y + 2, P[2], al * 0.8); }
     if (k >= 1 && e < 0.2) skStar(g, f.x, f.y, e - 0.08, P, big ? 1 : 0);
+  }
+});
+// 뿌리 솟기 (빌드 45): 발밑에서 뿌리 셋이 솟았다가 들어간다 · 흙 튐
+Object.assign(SK_HIT2, {
+  roots(g, f, P, e, big) {
+    if (e < 0 || e > 0.9) return;
+    const up = e < 0.12 ? e / 0.12 : e < 0.5 ? 1 : Math.max(0, 1 - (e - 0.5) / 0.4), n = 3 + big, gy = f.fy;
+    for (let i = 0; i < n; i++) { const x = f.x + (i - (n - 1) / 2) * 6 + (i % 2 ? 1 : -1), H = (10 + 6 * ((i * 7) % 3) + 4 * big) * up;
+      for (let h = 0; h < H; h += 2) { const bend = Math.sin(h * 0.25 + i) * 1.5; skQ(g, x + bend, gy - h, h > H - 3 ? P[1] : '#6a4a2c'); if (h < H - 4) skQ(g, x + bend + 2, gy - h, '#3e2a18', 0.9); }
+      if (H > 6) skQ(g, x + Math.sin(H * 0.25 + i) * 1.5 - 2, gy - H + 4, P[2]); }
+    if (e < 0.3) for (let i = 0; i < 8; i++) { const a = Math.PI + i / 7 * Math.PI, r = 4 + e * 60; skQ(g, f.x + Math.cos(a) * r, gy - 2 + Math.sin(a) * r * 0.5, i % 2 ? '#8a6a44' : '#5a4428', 1 - e / 0.3); }
   }
 });
