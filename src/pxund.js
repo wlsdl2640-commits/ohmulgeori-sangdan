@@ -633,6 +633,7 @@ Object.assign(PXS_MOT_TT, {
   wdash: [0.05, 0.06, 0.09, 0.035, 0.05, 0.07, 0.06, 0.06],
   dcape: [0.05, 0.07, 0.09, 0.1, 0.07, 0.12, 0.08, 0.07]
 });
+const PXU_CAST = { wspit: 1 };   // 투사체를 쏘는 몬스터 동작 (fmot.js가 FMOT_CAST에 합친다)
 const pxuAct = id => PXU_ACT[id] || null;
 // 갈래에서 동작 하나 (앞과 같은 것은 되도록 피한다 · 활 쏘기는 이어도 된다)
 function pxuPick(id, cat, last) {
