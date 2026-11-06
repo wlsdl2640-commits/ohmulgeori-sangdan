@@ -909,6 +909,8 @@ function pxsDownGrid(a, L) {
    한 장: h 손(어깨에서) · a 칼 방향(도: 0 앞 · -90 위 · 90 아래 · 180 뒤) · k 칼 길이(앞뒤로 누우면 짧다) · th 횡베기 칼끝 타원 각도(h·a·k를 대신, 90 = 카메라 쪽)
           lean 위 몸 기울기 · cr 웅크림 · legs 다리 · dx 몸이 나간 칸 · wu 칼이 몸 뒤 · sh 방패 [x, y, 몸 앞(1)] · fx 효과(arc 칼끝 자취 · streak 찌르기 · bash 충격 · block 불꽃) */
 const PXS_MW = 28, PXS_SH = [11, 17], PXS_HZ = { rh: [3, 1], rt: [8, 2.5] };
+// 몬스터가 동작 그리기를 빌릴 때 잠깐 바꾸는 값 (빌드 43): gy 땅 줄 · ms 동작 크기 (큰 몬스터는 손·칼 길이·내딛기를 키운다)
+const PXS_G = { gy: 23, ms: 1 };
 const PXS_MLEGS = { lunge: ['..UUUUu..', '.Uu...Uu.', 'BB....BBb'] };   // 내딛기 (x 6부터 · y 21~23)
 const PXS_MOT = {
   down: [   // 내려베기
@@ -1271,8 +1273,18 @@ function pxsHz(F) {
 }
 const pxsMF = F => pxsHz(Object.assign({ k: 1, lean: 0, cr: 0, dx: 0, legs: null }, F));
 function pxsMotFr(mk, f) {
-  const o = PXS_MOT_OF[mk] || PXS_MOTW[mk];
-  return pxsMF((o || PXS_MOT[mk] || PXS_MOT.down)[Math.max(0, Math.min(7, f))]);
+  const o = PXS_MOT_OF[mk] || PXS_MOTW[mk] || (typeof PXU_MOT !== 'undefined' && PXU_MOT[mk]);
+  const F = pxsMF((o || PXS_MOT[mk] || PXS_MOT.down)[Math.max(0, Math.min(7, f))]);
+  return PXS_G.ms !== 1 ? pxsMScale(F, PXS_G.ms) : F;
+}
+// 큰 몬스터: 손 자리·칼 길이·자루·내딛기·숙임을 s배로
+function pxsMScale(F, s) {
+  const r = v => Math.round((v || 0) * s), o = Object.assign({}, F, { h: [F.h[0] * s, F.h[1] * s], k: (F.k != null ? F.k : 1) * s, lean: r(F.lean), cr: r(F.cr), dx: (F.dx || 0) * s });
+  if (F.h2) o.h2 = [F.h2[0] * s, F.h2[1] * s];
+  if (F.g != null) o.g = F.g * s;
+  if (F.jy) o.jy = F.jy * s;
+  if (F.pull) o.pull = F.pull * s;
+  return o;
 }
 const pxsMShoulder = F => [PXS_SH[0] + F.lean, PXS_SH[1] + F.cr];
 const pxsMHand = F => { const s = pxsMShoulder(F); return [s[0] + F.h[0], s[1] + F.h[1]]; };
@@ -1330,9 +1342,9 @@ function pxsMWpn(F, wk) {
 function pxsMAxis(P, wk) {
   const fam = PXS_FAMW[wk] || 'sword', hx = PXS_SH[0] + P.lean + P.h[0], hy = PXS_SH[1] + P.cr + P.h[1], [dx, dy] = pxsDir(P.a || 0), k = Math.max(0.5, P.k);
   if (fam === 'bow') { const Lh = wk === 'long' ? 5 : 4; return { o: [hx, hy], u: [-dy, dx], L0: Lh - 1.4, L1: Lh, b: null, fwd: [dx, dy] }; }
-  const L = fam === 'sword' ? 1 + Math.max(1, (wk === 'great' ? 5 : 4) * P.k) : fam === 'dagger' ? 1 + Math.max(1, 2 * P.k) : fam === 'heavy' ? ({ axe: 4.5, gaxe: 5.5, mace: 5.5, club: 5, hammer: 5 }[wk] || 5) * k
-    : (PXS_POLE_LF[wk] || 4) + 2.5;
-  return { o: [hx, hy], u: [dx, dy], L0: Math.max(1.5, L - (fam === 'heavy' || fam === 'pole' || fam === 'staff' ? 1.8 : 1.6)), L1: L, b: fam === 'pole' || fam === 'staff' ? -(P.g != null ? P.g : 2) : null, fwd: [dx, dy] };
+  const ms = PXS_G.ms, L = fam === 'sword' ? 1 + Math.max(1, (wk === 'great' ? 5 : 4) * P.k) : fam === 'dagger' ? 1 + Math.max(1, 2 * P.k) : fam === 'heavy' ? ({ axe: 4.5, gaxe: 5.5, mace: 5.5, club: 5, hammer: 5 }[wk] || 5) * k
+    : ((PXS_POLE_LF[wk] || 4) + 2.5) * ms;
+  return { o: [hx, hy], u: [dx, dy], L0: Math.max(1.5, L - (fam === 'heavy' || fam === 'pole' || fam === 'staff' ? 1.8 : 1.6) * ms), L1: L, b: fam === 'pole' || fam === 'staff' ? -(P.g != null ? P.g : 2) : null, fwd: [dx, dy] };
 }
 function pxsMArm(F) {
   const [sx, sy] = pxsMShoulder(F), [hx, hy] = pxsMHand(F), n = Math.max(Math.abs(hx - sx), Math.abs(hy - sy)), out = [];
@@ -1405,12 +1417,12 @@ function pxsMLerp(A, B, s) {
   return { h: [L(A.h[0], B.h[0]), L(A.h[1], B.h[1])], a: L(A.a, B.a), k: L(A.k, B.k), lean: L(A.lean, B.lean), cr: L(A.cr, B.cr), dx: L(A.dx, B.dx) };
 }
 // 땅 먼지 (뭉툭 칸 21~23줄): 무기 끝 앞뒤로
-function pxsMDust(put, x, r) { for (let j = 1; j <= r + 1; j++) { put(x + j, 23, j > r ? 2 : 1); put(x - j, 23, 2); } put(x + 1, 22, 2); if (r > 1) { put(x - 1, 22, 2); put(x + 2, 21, 2); } }
+function pxsMDust(put, x, r) { const G = PXS_G.gy; for (let j = 1; j <= r + 1; j++) { put(x + j, G, j > r ? 2 : 1); put(x - j, G, 2); } put(x + 1, G - 1, 2); if (r > 1) { put(x - 1, G - 1, 2); put(x + 2, G - 2, 2); } }
 function pxsMotFx(mk, f, c, sh, wk) {
   wk = wk === true ? 'great' : wk || 'sword';
   const F = pxsMotFr(mk, f), fx = F.fx, back = [], front = [], fam = PXS_FAMW[wk] || 'sword';
   if (!fx) return null;
-  const put = (x, y, ci) => { if (Math.round(y) <= 23) front.push([Math.round(x), Math.round(y), ci]); };
+  const put = (x, y, ci) => { if (Math.round(y) <= PXS_G.gy) front.push([Math.round(x), Math.round(y), ci]); };
   const A = pxsMAxis(F, wk), tip = [A.o[0] + F.dx + A.u[0] * A.L1, A.o[1] + A.u[1] * A.L1];
   if (fx.k === 'arc' && f >= 1) {   // 무기 끝이 지나간 자리: 앞 장 → 이 장 (long이면 그 앞 장부터 · both면 자루 끝도)
     const cov = new Map();
@@ -1420,7 +1432,7 @@ function pxsMotFx(mk, f, c, sh, wk) {
         const fr = P.th != null && Math.sin(P.th * Math.PI / 180) > 0.15, wd = (X.L1 - X.L0) * (w > 0.75 ? 1 : 0.5);
         const band = (t0, t1) => { for (let t = t0; t <= t1 + 1e-6; t += 0.2) {
           const x = Math.round(o0 + X.u[0] * t), y = Math.round(X.o[1] + X.u[1] * t), k = x + ',' + y;
-          if (y > 23) continue;
+          if (y > PXS_G.gy) continue;
           const o = cov.get(k); if (!o || o.w < w) cov.set(k, { w, fr });
         } };
         band(Math.max(fam === 'sword' ? 2 : 1.5, X.L1 - wd), X.L1 + 0.3);

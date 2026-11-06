@@ -51,21 +51,24 @@ function drawAdv(ctx, a, t, o = {}) {
 function drawAdvHi(ctx, a, t, o = {}) { drawAdv(ctx, a, t, o); }
 
 /* ───────── 몬스터 (손 도트: pxmon.js) ───────── */
-const monSc = (m, sc) => sc || Math.max(1, Math.round(m.scale || 1));
+// 크기 배율: 언데드(빌드 43)는 그림 자체가 크다 — 큰 우두머리는 늘 1배, 보통 언데드가 우두머리로 나오면 1.5배(예전 2배) · 2배(예전 3배)
+const monSc = (m, sc, id) => { const k = sc || Math.max(1, Math.round(m.scale || 1)); if (!(id && typeof PXU !== 'undefined' && PXU[id])) return k; return PXU[id].ms ? 1 : k <= 1 ? 1 : 1 + (k - 1) * 0.5; };
 const MON_DIM = {};
 function monBase(id) {
   if (MON_DIM[id]) return MON_DIM[id];
   if (typeof PXG_DIM !== 'undefined' && PXG_DIM[id]) return (MON_DIM[id] = PXG_DIM[id]);
+  if (typeof PXU !== 'undefined' && PXU[id]) { const rows = pxuRows(PXU[id]); return (MON_DIM[id] = [Math.max(...rows.map(r => r.length)) * 2, rows.length * 2]); }
   const M = PXM[id];
   if (!M) return (MON_DIM[id] = [12, 12]);
   const rows = pxRows(M.g);
   return (MON_DIM[id] = [Math.max(...rows.map(r => r.length)), rows.length]);
 }
-const monH = (id, sc) => monBase(id)[1] * monSc(MONS[id], sc);
-const monW = (id, sc) => monBase(id)[0] * monSc(MONS[id], sc);
+const monH = (id, sc) => monBase(id)[1] * monSc(MONS[id], sc, id);
+const monW = (id, sc) => monBase(id)[0] * monSc(MONS[id], sc, id);
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], sc = monSc(m, o.sc) * (o.z || 1), tt = t + (o.ph || 0);
-  const fr = Math.floor(tt * (m.giant ? 3 : 5)) % 2, s = pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);
+  const m = MONS[id], sc = monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0);
+  const fr = Math.floor(tt * (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5)) % 2;
+  const s = PXU[id] ? pxuSprite(id, o.mot ? o.mot.mk : 'idle', o.mot ? o.mot.f : fr) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);   // 언데드: 동작 장 (빌드 43)
   if (sc === 1) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(sc, sc); pxBlit(ctx, s); ctx.restore();
 }
