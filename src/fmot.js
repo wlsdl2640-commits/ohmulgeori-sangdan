@@ -3,8 +3,8 @@
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
-const FMOT_NAME = { ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_NAME = { stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
   const q = PXU_ACT[id].fx[cat];
@@ -84,6 +84,7 @@ function fmotAoe(e, x, t, fd, team, at) {
   else if (k === 'rats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'urat', id, x0: cx - 8 * dir + (j - 1) * 5, y0: fq[1] - 1 - j * 3, x1: q[0] + (j - 1) * 6, y1: q[1] - 1 - j * 2, t0: T1 + j * 0.07, d: Math.abs(q[0] - cx) / FMOT_AOE_V.rats, s: i * 3 + j }); });
   else if (k === 'nova') V.fx.push({ k: 'unova', id, x: cx, y: fq[1] - 2, t0: T1, d: 0.9, r1: Math.max(60, ...tg.map(q => Math.abs(q[0] - cx) + 16)) });
   else if (k === 'spin') { V.fx.push({ k: 'uspin', id, x: cx, y: cy + 4, r: H * 0.5 + 6, t0: T1 - 0.12, d: 0.42 }); const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 10 : cx - 120; V.fx.push({ k: 'skw', id, x0: cx - 18 * dir, y: cy + 6, dir: -dir, t0: T1, d: Math.abs(cx - 18 * dir - xe) / SK_WAVE + 0.3 }); }
+  else if (k === 'storm') V.fx.push({ k: 'ustorm', id, t0: T1 - 0.35, d: 1.3, tg: tg.map(q => [q[0], q[1] - 100]) });
   else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
   if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1, d: 0.1 });
 }
@@ -107,6 +108,11 @@ function fmotDraw(g, f, t) {
     const at = (i, j) => [x + (L ? 6 - i : i - 3) * 2, y + (j - 3) * 2];
     A.forEach((row, j) => [...row].forEach((ch, i) => { if (ch === '.') return; for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) { const ii = i + ox, jj = j + oy; if (!(A[jj] && A[jj][ii] && A[jj][ii] !== '.')) { const [qx, qy] = at(ii, jj); skQ(g, qx, qy, '#1a1010'); } } }));
     A.forEach((row, j) => [...row].forEach((ch, i) => { if (ch !== '.') { const [qx, qy] = at(i, j); skQ(g, qx, qy, C[ch]); } }));
+    return;
+  }
+  if (f.k === 'ustorm') {   // 번개 폭풍: 파티 머리 위에 먹구름(뭉툭 칸 덩이) · 번쩍일 때 밝아진다
+    const k = e / f.d, al = k < 0.2 ? k / 0.2 : k > 0.75 ? Math.max(0, 1 - (k - 0.75) / 0.25) : 1, fl = Math.floor(e * 14) % 5 === 0 && k > 0.25 && k < 0.7;
+    f.tg.forEach(([x, y], i) => { for (let j = 0; j < 9; j++) { const ox = (skH(i * 9 + j, 21) - 0.5) * 30, oy = (skH(i * 9 + j, 22) - 0.5) * 8 - (1 - Math.min(1, k * 3)) * 10; skQ(g, x + ox, y + oy, fl ? '#c8d8f0' : j % 3 ? '#2a3448' : '#3e4a64', al * 0.9); skQ(g, x + ox + 2, y + oy, fl ? '#e8f0ff' : '#34405a', al * 0.8); } });
     return;
   }
   if (f.k === 'unova') {   // 땅을 따라 퍼지는 고리 두 겹 + 떠오르는 알갱이
