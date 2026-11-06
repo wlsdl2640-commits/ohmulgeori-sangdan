@@ -141,6 +141,10 @@ tT....QccKKKd......t
 ........cd
 .
 .......b
+.
+.
+.
+.
 `, g2: `
 ........Q
 ........wc
@@ -157,6 +161,10 @@ tT....QccKKKd......t
 ........cd
 .
 .......b
+.
+.
+.
+.
 `, gm: { swell: `
 ........w
 ........wc
@@ -173,6 +181,10 @@ cc....cCCced....d
 ........cd
 .
 .......b
+.
+.
+.
+.
 `, spit: `
 ........w
 ........wc
@@ -189,6 +201,10 @@ cc....cCCced....d
 ........cd
 .
 .......b
+.
+.
+.
+.
 ` }, sh: [14, 6], hip: 0, ax: 9, float: 1, noArm: 1, wpn: 'none' },
   yeti: {   // 예티: 흰 털이 덥수룩한 큰 덩치 · 솟은 등 · 앞으로 내민 머리 · 푸른 회색 얼굴 · 붉은 눈 · 송곳니 · 긴 팔과 푸른 주먹 (앞팔은 몸짓)
     pal: { F: '#dfe7f1', f: '#a9b9d0', Q: '#ffffff', C: '#e6ecf4', c: '#b4c2d6', d: '#8090ae', K: '#1a1e2e', S: '#8aa2c8', s: '#5c7299', e: '#ff4a3a', w: '#ffffff', R: '#c8404a', n: '#3a4666' },
@@ -232,7 +248,7 @@ SS.cQQQc..cQQQc
 ss..QCCc...QCCc
 ....cccc...cccc
 ...sSSSSs.sSSSSs
-` }, sh: [13, 11], hip: 14, ax: 10, ms: 1.25, arm: ['F', 'f'], hand: 'S', wpn: 'rfist', wmap: { Q: 'S', C: 'S', c: 's' }, idle: { h: [3, 5], a: 80 } },
+` }, sh: [13, 11], hip: 14, ax: 10, ms: 1.25, arm: ['F', 'f'], hand: 'S', wpn: 'rfist', wmap: { Q: 'S', C: 'S', c: 's' }, idle: { h: [3, 4], a: 80 } },
   snowmaiden: {   // 설녀: 허리 아래까지 내려온 검은 긴 머리 · 창백한 얼굴 · 얼음빛 눈 · 흰 기모노와 푸른 오비 · 뒤로 늘어진 긴 소매 · 아래는 끌리는 옷자락 (떠 있다)
     pal: { S: '#f2f6fd', s: '#c4cde4', e: '#3aa8f0', K: '#141a2a', C: '#f4f8ff', c: '#c6d4ec', d: '#8ea4cc', Q: '#ffffff', v: '#9aaed2', w: '#c6d4ec', B: '#5e92d8', b: '#3a64a8', f: '#9ad0f6', R: '#7a86d0', h: '#20263c', H: '#46557e', q: '#323c5a' },
     g: `
@@ -257,6 +273,9 @@ ss..QCCc...QCCc
 .....cCCCc
 ...cCCc
 ..cc
+.
+.
+.
 `, g2: `
 ......hhhh
 ....hhHHHhh
@@ -278,6 +297,9 @@ ss..QCCc...QCCc
 c......cCCCc
 .cccccCCCc
 .....c
+.
+.
+.
 `, gm: { swell: `
 ......hhhh
 ....hhHHHhh
@@ -300,6 +322,9 @@ c......cCCCc
 .....cCCCc
 ...cCCc
 ..cc
+.
+.
+.
 ` }, sh: [12, 9], hip: 0, ax: 9, float: 1, arm: ['v', 'w'], hand: 'S', wpn: 'none', idle: { h: [1, 3], a: 70 } },
   icequeen: {   // 설녀 여왕(우두머리): 얼음 왕관 · 머리 뒤 얼음 깃 · 남빛 긴 머리 · 흰 드레스(주름 · 얼음 무늬 · 푸른 띠) · 뒤로 끌리는 망토 · 얼음 홀
     pal: { S: '#eef3fc', s: '#c0cae4', e: '#5ad8ff', K: '#141a2a', C: '#eef5ff', c: '#b8cae6', d: '#7e96c4', Q: '#ffffff', w: '#ffffff', h: '#2c3c78', H: '#5a74c0', q: '#3a4c8c', f: '#9ad0f6', F: '#c4eaff', B: '#4a7ad0', b: '#2e4e98', R: '#5a6ad0', v: '#9aaed2', n: '#c8d4ec', x: '#ffffff' },
@@ -390,3 +415,7 @@ Object.assign(PXU_ACT, {
   snowmaiden: { mag: ['spush', 'sjab'], atk: ['spush'], skl: ['scharge'], tk: 1.0, fx: { mag: { pal: 'ice', hit: 'shatter', p: 'shard' }, atk: { pal: 'ice', hit: 'shatter', p: 'shard' }, skl: { pal: 'ice', hit: 'vortex', p: 'orb', big: 1, after: 'motes' } } },
   icequeen: { mag: ['spush', 'spushup'], skl: ['scharge'], tk: 1.2, fx: { mag: { pal: 'ice', hit: 'shatter', p: 'shard', big: 1 }, skl: { pal: 'ice', hit: 'shatter', big: 2, after: 'motes', aoe: 'blizzard', shake: 3 } } }
 });
+// 설녀는 만날 때마다 두 모습 중 하나 (빌드 49, 사용자 결정 「둘 다 넣어서 두 종류로」): 검은 머리 · 은빛 머리 — 틀·동작은 같고 머리색만 다르다
+pxuSkinOf('snowmaiden', 'snowmaiden_b', PXU.snowmaiden.g, PXU.snowmaiden.sh, PXU.snowmaiden.hip, { h: '#a8bce0', H: '#e0ecfc', q: '#8a9ec8' });
+Object.assign(PXU_SKIN, { snowmaiden: ['snowmaiden', 'snowmaiden_b'] });
+Object.assign(PXU_SKIN_NAME, { snowmaiden: ['검은 머리 설녀', '은빛 머리 설녀'] });

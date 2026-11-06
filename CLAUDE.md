@@ -224,6 +224,14 @@
 - 시안 도구: `scratchpad/v47/g`(wing.py·wyv.py·wyv2.py·harpy.py·storm.py·emit47.py) · `v47/w`(wings.py 날개·뿔 시안 · apply.py 적용 · sheet.py 시안판) · `v47/d`(real47.js · render47.py 묶음 valley · lineup.py) · `v47/t/var.py` · 펫 확인 `v47/p`(pets47.py · petbattle.py).
 - 시험 `scratchpad/v47/logic47.py`(그림·동작·크기·사건(물기·덮치기·내리꽂기·깃털·바람 숨결·번개 폭풍)·먹구름 그리기·실제 그리기 길·펫 방향과 크기·마차 자리·그리기), 전체 `scratchpad/run48.sh`.
 
+## 만년설산 새 그림 · 설녀 모습 둘 · 눈덩이 · 눈보라 (빌드 49)
+- 그림(src/pxsnow.js, build.py에서 pxvalley 뒤): snowman(두 덩이 · 양동이 모자 M/N(쇠 질감) · noArm · gm swell 눈덩이 치켜들기/spit 던지기/squash·stretch 박치기) · icesprite(마름모 결정 · float · 발 밑 빈 4줄로 떠 있음 · gm swell/spit) · yeti(털 F/f 팔 — 몸 털 C/c와 재질이 달라 팔 둘레에 선이 생긴다 · `wpn: 'rfist'` + `wmap`로 푸른 주먹 · ms 1.25) · snowmaiden(머리 h/H/q · 기모노는 **무늬 없는 몸 글자 C/c/d/Q** — W(천)는 PX_FX tex가 세 칸마다 점을 찍어 지저분해진다 · float · 발 밑 빈 3줄 · 앞팔 v/w) · icequeen(lstaff + wmap 얼음 홀 · ms 1.5 · still + g2 망토 · gm swell 왕관·깃이 빛남).
+- **설녀 모습 둘**(사용자 결정 「둘 다 넣어서 두 종류로」): `pxuSkinOf('snowmaiden', 'snowmaiden_b', …)` 머리색만 은빛으로, `PXU_SKIN.snowmaiden`·`PXU_SKIN_NAME`(검은 머리 설녀 · 은빛 머리 설녀) — 빌드 46 골렘·거인과 같은 길(uid로 고름 · 도감 skinRow · 쓰러질 때도 그 모습).
+- 효과: skfx2.js `SK_PAL.snow` · 투사체 `snow`(눈덩이, `SK_PROJ_T.snow` 0.34 — fmot.js fmotHitFx가 snow면 포물선 arc 16) · 광역기 `blizzard`(fmot.js fmotAoe → V.fx `ublizz`: 여왕 앞에서 파티 뒤 40px까지 눈송이 46개가 물결치며 휘몰아치고 흰 안개 띠 · FMOT_AOE_V.blizzard 300 · FMOT_NAME.icequeen '눈보라', view.js fx()가 fmotDraw로 보낸다). STORY.v49 · notes49 · flags.v49.
+- **아직 안 바꾼 것**: 만년설산에 함께 나오는 `alpgoat`(고산지대 산양, data-sky.js가 FIELDS.snow.mons에 push — 산양 펫의 다 자란 모습·드워프 강철 마차를 끄는 짐승이기도 하다). 시안을 보여 주고 고른 뒤 바꿀 것. logic48 cover 시험은 이것만 빠져 있음을 확인한다.
+- 시안 도구: `scratchpad/v48/g/px48.py`(공 명암 ball · line · over · `frames()` — 여러 장의 맨 위 빈 줄을 같이 자르고 pad_bottom으로 떠 있게) · snowman.py · icesprite.py · yeti.py · maiden.py(A·B) · queen.py → `../t/*.json` → `emit48.py`(→ game48/src/pxsnow.js) · 시험판 `v48/t/new48.py`(PXU 정의 JSON을 바로 실제 전투 화면 + 가까이로) · `v48/d/render48.py`(묶음 snow) · `lineup.py`.
+- 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).
