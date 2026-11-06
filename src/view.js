@@ -680,25 +680,28 @@ function events(e, pos, t, team, p) {
       if (!md) V.atk['a' + x.s] = t;   // 칼 동작이 없으면 예전 두 장 공격
       const mq = md && V.mot['a' + x.s] ? V.mot['a' + x.s].lastQ : null;   // 이 사건의 동작 칸 (빌드 42: 쏘는 자리 · 도약)
       if (x.k === 'jump' && !(mq && pxsMotFr(mq.mk, 3).jy)) V.jump['a' + x.s] = t + Math.max(0, md - 0.2);   // 동작이 뛰지 않으면 예전처럼 뛴다
-      // 스킬 효과 (빌드 41): 초승달·땅 금은 적마다 늦게 닿는다
-      const sk = !x.dot && x.sid ? SKFX[x.sid] : null, dirv = V.dir || 1;
+      // 스킬 효과 (빌드 41): 초승달·땅 금은 적마다 늦게 닿는다 · (빌드 42) 지속 피해 스킬은 skill 사건이 건 동작의 스킬
+      const am0 = V.mot['a' + x.s], sid = x.sid || (x.dot && mq && am0 && am0.dot ? am0.sid : null), sk = sid ? SKFX[sid] : null, dirv = V.dir || 1;
+      const aq0 = at('a' + x.s), src = mq && aq0 && (PROJ[x.k] || (sk && sk.proj)) ? motTip(advOf(x.s), mq.mk, aq0, zAt(aq0[1])) : am;   // 화살·마법은 무기 끝에서
       let tw = 0, x0w = 0;
       if (sk && (sk.hit === 'wave' || sk.hit === 'quake')) { x0w = am[0] + (sk.hit === 'wave' ? 26 : 30) * dirv; tw = Math.abs(fm[0] - x0w) / (sk.hit === 'wave' ? SK_WAVE : SK_QUAKE); }
-      const mel = mq && PXS_MOT_MELEE[mq.mk], t1 = t + md + tw, delay = mel ? 0 : (PROJ[x.k] || 0) * (mq && mq.mk === 'bdiag' ? 1.6 : 1), [c1, c2] = HIT_C[mel ? 'melee' : x.k] || HIT_C.melee;   // 사선 화살은 더 오래 난다 · 활·류트로 치면 바로
+      const mel = mq && PXS_MOT_MELEE[mq.mk], arcK = mq && mq.mk === 'bdiag' ? 1.6 : 1, pre = (sk && SK_PRE[sk.hit]) || 0;
+      const t1 = t + md + tw, delay = mel ? 0 : Math.max(pre, ((sk && sk.proj ? SK_PROJ_T[sk.proj] : PROJ[x.k]) || 0) * arcK), [c1, c2] = HIT_C[mel ? 'melee' : x.k] || HIT_C.melee;   // 사선 화살은 더 오래 난다 · 활·류트로 치면 바로
       if (!x.dot && x.v) sfxAt(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k], t1 + delay - t);
       if (sk) {
-        const act = V.mot['a' + x.s], nth = act && act.sid === x.sid && act.lastN ? act.lastN : 1, last = nth >= ((SKILLS[x.sid] && SKILLS[x.sid].hits) || 1), fq = at('f' + x.d);
-        V.fx.push({ k: 'skh', id: x.sid, x: fm[0], y: fm[1], fy: fq ? fq[1] : fm[1] + 10, h: fq ? Math.max(8, fq[1] - ft[1] - 4) : 20, t0: t1 + delay, d: 1.3, big: sk.lastBig ? (last ? sk.lastBig : 0) : sk.big || 0, last, dir: dirv, ax: am[0] });
-        const once = V.skSeen[x.s] && V.skSeen[x.s].key === x.sid + ':' + t ? V.skSeen[x.s] : (V.skSeen[x.s] = { key: x.sid + ':' + t });
+        const act = V.mot['a' + x.s], nth = act && act.sid === sid && act.lastN ? act.lastN : 1, last = nth >= ((SKILLS[sid] && SKILLS[sid].hits) || 1), fq = at('f' + x.d);
+        V.fx.push({ k: 'skh', id: sid, x: fm[0], y: fm[1], fy: fq ? fq[1] : fm[1] + 10, h: fq ? Math.max(8, fq[1] - ft[1] - 4) : 20, t0: t1 + delay - pre, pre, d: 1.3 + pre, big: sk.lastBig ? (last ? sk.lastBig : 0) : sk.big || 0, last, dir: dirv, ax: am[0] });
+        if (sk.proj && !mel) V.fx.push({ k: 'skp', id: sid, style: sk.proj, x0: src[0], y0: src[1], x1: fm[0], y1: fm[1], t0: t1, d: delay, arc: arcK > 1 ? 34 : sk.proj === 'flask' || sk.proj === 'junk' ? 16 : 0, dir: dirv, big: sk.big || 0 });
+        const once = V.skSeen[x.s] && V.skSeen[x.s].key === sid + ':' + t ? V.skSeen[x.s] : (V.skSeen[x.s] = { key: sid + ':' + t });
+        if (sk.hit === 'rain' && !once.r) { once.r = 1; for (let j = 0; j < 3; j++) V.fx.push({ k: 'skp', id: sid, style: 'arrow', x0: src[0], y0: src[1], x1: src[0] + (24 + j * 10) * dirv, y1: src[1] - 140, t0: t1 + j * 0.035, d: 0.2, dir: dirv }); }   // 화살비: 하늘로 쏘아 올린다
         if ((sk.hit === 'wave' || sk.hit === 'quake') && !once.w) {   // 한 번 쓸 때 한 번: 초승달 · 땅 금 (가장 먼 적까지)
           once.w = 1; const xs = e.foes.map(f => at('f' + f.uid)).filter(Boolean).map(q => q[0]), xe = xs.length ? (dirv > 0 ? Math.max(...xs) : Math.min(...xs)) + 10 * dirv : fm[0];
           if (sk.hit === 'wave') V.fx.push({ k: 'skw', id: x.sid, x0: x0w, y: fm[1], dir: dirv, t0: t + md, d: Math.abs(xe - x0w) / SK_WAVE + 0.3 });
           else V.fx.push({ k: 'skq', id: x.sid, x0: x0w, xe, gy: fq ? fq[1] : fm[1] + 10, dir: dirv, t0: t + md, d: Math.abs(xe - x0w) / SK_QUAKE + 1.2 });
         }
-        if (sk.shake && last && !once.s) { once.s = 1; V.fx.push({ k: 'shk', id: x.sid, n: sk.shake, t0: t1 + delay, d: 0.1 }); }
+        if (sk.shake && last && !once.s) { once.s = 1; V.fx.push({ k: 'shk', id: sid, n: sk.shake, t0: t1 + delay, d: 0.1 }); }
       }
-      const aq0 = at('a' + x.s), src = mq && aq0 && delay ? motTip(advOf(x.s), mq.mk, aq0, zAt(aq0[1])) : am;   // 화살·마법은 무기 끝에서
-      const P = { x0: src[0], y0: src[1], x1: fm[0], y1: fm[1], t0: t1, d: delay, arc: mq && mq.mk === 'bdiag' ? 34 : undefined };
+      const P = { x0: src[0], y0: src[1], x1: fm[0], y1: fm[1], t0: t1, d: delay, arc: arcK > 1 ? 34 : undefined };
       if (mq && PXS_MOT_SUB[mq.mk] && !x.dot) {   // 난도질: 베는 장마다 적에게 작은 불꽃
         const T = mq.T || pxsMotT(mq.mk); let tt = mq.t0;
         for (let f = mq.f0 || 0; f < T.length; f++) { if (PXS_MOT_SUB[mq.mk].includes(f) && f !== pxsMotHit(mq.mk)) V.fx.push({ k: 'burst', x: fm[0] + (f % 2 ? 4 : -3), y: fm[1] + (f % 3) * 3 - 3, t0: tt + T[f] * 0.5, d: 0.16, c: c1, c2 }); tt += T[f]; }

@@ -1038,9 +1038,9 @@ const PXS_MOTW = {
     { h: [1, 0], a: 5, g: 3 },
     { h: [-1, -1], a: 10, g: 3, lean: -1 },
     { h: [-2, -1], a: 15, g: 3, lean: -1 },
-    { h: [2, 1], a: 28, g: 3, cr: 1, legs: 'lunge', dx: 2 },
-    { h: [4, 2], a: 32, g: 3, lean: 1, cr: 1, legs: 'lunge', dx: 4, fx: { k: 'streak' } },
-    { h: [4, 2], a: 34, g: 3, lean: 1, cr: 1, legs: 'lunge', dx: 5, fx: { k: 'streak', star: 1 } },
+    { h: [2, 1], a: 22, g: 3, cr: 1, legs: 'lunge', dx: 2 },
+    { h: [4, 1], a: 24, g: 3, lean: 1, cr: 1, legs: 'lunge', dx: 4, fx: { k: 'streak' } },
+    { h: [4, 1], a: 26, g: 3, lean: 1, cr: 1, legs: 'lunge', dx: 5, fx: { k: 'streak', star: 1 } },
     { h: [2, 1], a: 20, g: 3, legs: 'lunge', dx: 3 },
     { h: [1, 0], a: 5, g: 3, dx: 1 }
   ],
