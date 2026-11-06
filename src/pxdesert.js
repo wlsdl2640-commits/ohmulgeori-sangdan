@@ -1,6 +1,13 @@
+// 굽은 칼 (사막 도적 B): 손에서 칼끝까지 위로 휘는 날 · 금빛 코등이 (효과 축은 칼)
+PXU_WPN.scim = (F, d) => { const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a || 0), px = -dy, py = dx, out = [];
+  const at = (t, s, ch) => out.push([hx + dx * t + px * s, hy + dy * t + py * s, ch]);
+  at(0.7, -1, 'G'); at(0.7, 1, 'G'); at(-0.7, 0, 'g');
+  for (let t = 1.2; t <= 5.6; t += 0.5) { const s = -0.07 * t * t; at(t, s, t > 5.1 ? 'x' : 'M'); if (t > 1.6 && t < 5) at(t, s - 0.9, t > 3.5 ? 'N' : 'M'); }
+  return out; };
+PXU_FXW.scim = 'sword';
 /* ───────── 사라크 사막 · 모래에 묻힌 왕릉 몬스터 (빌드 50 시안): 스콜피온 · 개미지옥 · 사막 도적 · 샌드웜 · 거대 샌드웜 ───────── */
 Object.assign(PXU, {
-  scorpion: {   // 스콜피온: 낮게 엎드린 마디 몸 · 등 위로 휘어 오르는 마디 꼬리와 노란 독침 · 앞으로 내민 큰 집게 둘 · 다리 넷 (집게로 집고 · 꼬리로 찌른다)
+  scorpion: {   // 스콜피온 A 사막 전갈(기본 · 펫이 다 자란 모습): 주황빛 마디 몸 · 등 위로 휘어 오르는 마디 꼬리와 노란 독침 · 큰 집게 둘 · 다리 넷
     pal: { Q: '#e8a060', C: '#c0702e', c: '#8a4a1e', d: '#5e2e12', K: '#1e120c', e: '#1e120c', Y: '#f2c844', y: '#a87a1a', w: '#ffffff' },
     g: `
 .
@@ -92,8 +99,287 @@ Object.assign(PXU, {
 ......c.d.ddcddddd
 ......c..d..c..d
 .....c..d..c..d
-` }, sh: [22, 7], hip: 99, ax: 11, still: 1, noArm: 1, wpn: 'none' },
-  antlion: {   // 개미지옥: 모래 둔덕에 몸을 반쯤 묻은 개미귀신 — 털 난 둥근 몸 · 작은 머리 · 낫처럼 휜 큰 턱 둘 · 노란 눈 (모래를 튀겨 던진다)
+` }, sh: [22, 7], hip: 99, ax: 11, still: 1, noArm: 1, wpn: 'none', desc: '주황빛 마디 몸 · 노란 독침 (지금)' },
+  scorpion_b: {   // 스콜피온 B 황제 전갈: 윤기 나는 검푸른 몸 · 큰 집게 · 붉은 독침
+    pal: { Q: '#7a80b8', C: '#40466a', c: '#262a44', d: '#15172a', K: '#1e120c', e: '#ff4a3a', Y: '#ff5a4a', y: '#a82a24', w: '#ffffff' },
+    g: `
+.
+.
+......QC
+....QCCcQC
+....cd...d
+..QCc.....YY
+..ccd.....yY
+..QCc.......K
+..Ccd........K........QC
+...dQc...............QQCcK
+...CCd........C......CCcd
+...ddQCcQccCQcCQcCew.dddd
+....QCCcCQcCQcCQcCcCcQQC
+....ccdcccccccccccdc.CCcd
+......c.d.ddcddddd.......K
+......c..d..c..d
+.....c..d..c..d
+`, g2: `
+.
+.
+......QC
+....QCCcQC
+....cd...d
+..QCc.....YY
+..ccd.....yY
+..QCc.......K
+..Ccd........K
+...dQc................QQCc
+...CCd........C......CQCCcd
+...ddQCcQccCQcCQcCew.CCQCdK
+....QCCcCQcCQcCQcCcCccQCCcK
+....ccdcccccccccccdc..dddd
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+`, gm: { bite: `
+.
+.
+......QC
+....QCCcQC
+....cd...d
+..QCc.....YY
+..ccd.....yY
+..QCc.......K
+..Ccd........K
+...dQc................QQCc
+...CCd........C......CQCCcd
+...ddQCcQccCQcCQcCew.CCQCdK
+....QCCcCQcCQcCQcCcCccQCCcK
+....ccdcccccccccccdc..dddd
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+`, swell: `
+......C
+...QCCc
+..Qcd...YY
+.QCd....yYK
+..d
+.QC
+.Cd
+.QQc
+.CCd..................QC
+..dQC................QQCcK
+..CCcd........C......CCcd
+...ddQCcQccCQcCQcCew.dddd
+....QCCcCQcCQcCQcCcCcQQC
+....ccdcccccccccccdc.CCcd
+......c.d.ddcddddd.......K
+......c..d..c..d
+.....c..d..c..d
+`, spit: `
+.
+.
+.
+.
+..........Qc
+.......Qc.Cd.Qc
+.....C.cd.d..cd.Qd
+....QCd.........d
+....ccd............YY
+...QQc.............yY.QQCc
+...CCc........C......CQCCcd
+....ddCcQccCQcCQcCew.CCQCdK
+....QCCcCQcCQcCQcCcCccQCCcK
+....ccdcccccccccccdc..dddd
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+` }, sh: [22, 7], hip: 99, ax: 11, still: 1, noArm: 1, wpn: 'none', desc: '윤기 나는 검푸른 몸 · 큰 집게 · 붉은 독침' },
+  scorpion_c: {   // 스콜피온 C 모래 전갈: 모래빛 몸에 짙은 줄무늬 · 가는 집게와 꼬리
+    pal: { Q: '#fff0c0', C: '#e8cc88', c: '#b89a58', d: '#6a5430', K: '#1e120c', e: '#1e120c', Y: '#f4a030', y: '#a86418', w: '#ffffff' },
+    g: `
+.
+.
+.......C
+....QCCdQC
+....cd...d
+...Qd.....YY
+...cd.....yY
+..QC........K
+..Ccd........K
+....Q.................QC.K
+...CCd........C......CCcd
+....dQdcQdcCdcCdcCew.C
+....QCdcCdcCdcCdcCcCccQC
+....ccdccdccdccdccdc..cd
+......c.d.ddcddddd.......K
+......c..d..c..d
+.....c..d..c..d
+`, g2: `
+.
+.
+.......C
+....QCCdQC
+....cd...d
+...Qd.....YY
+...cd.....yY
+..QC........K
+..Ccd........K
+....Q
+...CCd........C.......QQCd
+....dQdcQdcCdcCdcCew.C.cd.K
+....QCdcCdcCdcCdcCcCccCCCdK
+....ccdccdccdccdccdc
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+`, gm: { bite: `
+.
+.
+.......C
+....QCCdQC
+....cd...d
+...Qd.....YY
+...cd.....yY
+..QC........K
+..Ccd........K
+....Q
+...CCd........C.......QQCd
+....dQdcQdcCdcCdcCew.C.cd.K
+....QCdcCdcCdcCdcCcCccCCCdK
+....ccdccdccdccdccdc
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+`, swell: `
+......c
+...QCcd
+....d...YY
+..Cd....yYK
+..d
+.QC
+.cd
+..Q
+.CCd
+..dQC.................QC.K
+...Cc.........C......CCcd
+...ddQdcQdcCdcCdcCew.C
+....QCdcCdcCdcCdcCcCccQC
+....ccdccdccdccdccdc..cd
+......c.d.ddcddddd.......K
+......c..d..c..d
+.....c..d..c..d
+`, spit: `
+.
+.
+.
+.
+.
+.......Qc.Cd.Qc
+.......cd....d..Q
+....QCd.........d
+....cd.............YY
+....Q..............yY
+...CCd........C......KQQCd
+....dQdcQdcCdcCdcCew.CKcd.K
+....QCdcCdcCdcCdcCcCccCCCdK
+....ccdccdccdccdccdc
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+` }, sh: [22, 7], hip: 99, ax: 11, still: 1, noArm: 1, wpn: 'none', desc: '모래빛 몸에 짙은 줄무늬 · 가는 집게와 꼬리' },
+  scorpion_d: {   // 스콜피온 D 왕릉 전갈: 금빛 갑각 · 등에 청록 보석 · 청록 독침
+    pal: { Q: '#fff0a0', C: '#d8a838', c: '#9a7424', d: '#5e4416', K: '#1e120c', e: '#40e0d0', Y: '#40e0d0', y: '#20a090', w: '#ffffff', X: '#40e0d0', x: '#c8fff8' },
+    g: `
+.
+.
+......QC
+....QCCcQC
+....cd...d
+..QCc.....YY
+..ccd.....yY
+..QCc.......K
+..Ccd........K
+...dQc...............QQCcK
+...CCd........C......CCcd
+...ddQCcXxcXxcXxcXew.Cdd
+....QCCcCQcCQcCQcCcCcQQC
+....ccdcccccccccccdc.cccd
+......c.d.ddcddddd.......K
+......c..d..c..d
+.....c..d..c..d
+`, g2: `
+.
+.
+......QC
+....QCCcQC
+....cd...d
+..QCc.....YY
+..ccd.....yY
+..QCc.......K
+..Ccd........K
+...dQc.................QC
+...CCd........C.......QQCc
+...ddQCcXxcXxcXxcXew.CccddK
+....QCCcCQcCQcCQcCcCccQCCdK
+....ccdcccccccccccdc...dd
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+`, gm: { bite: `
+.
+.
+......QC
+....QCCcQC
+....cd...d
+..QCc.....YY
+..ccd.....yY
+..QCc.......K
+..Ccd........K
+...dQc.................QC
+...CCd........C.......QQCc
+...ddQCcXxcXxcXxcXew.CccddK
+....QCCcCQcCQcCQcCcCccQCCdK
+....ccdcccccccccccdc...dd
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+`, swell: `
+......C
+...QCCc
+..Qcd...YY
+.QCd....yYK
+..d
+.QC
+.Cd
+.QQc
+.CCd
+..dQC................QQCcK
+..CCcd........C......CCcd
+...ddQCcXxcXxcXxcXew.Cdd
+....QCCcCQcCQcCQcCcCcQQC
+....ccdcccccccccccdc.cccd
+......c.d.ddcddddd.......K
+......c..d..c..d
+.....c..d..c..d
+`, spit: `
+.
+.
+.
+.
+..........Qc
+.......Qc.Cd.Qc
+.....C.cd.d..cd.Qd
+....QCd.........d
+....ccd............YY
+...QQc.............yY..QC
+...CCc........C......KQQCc
+....ddCcXxcXxcXxcXew.CccddK
+....QCCcCQcCQcCQcCcCccQCCdK
+....ccdcccccccccccdc...dd
+......c.d.ddcddddd
+......c..d..c..d
+.....c..d..c..d
+` }, sh: [22, 7], hip: 99, ax: 11, still: 1, noArm: 1, wpn: 'none', desc: '금빛 갑각 · 등에 청록 보석 · 청록 독침' },
+  antlion: {   // 개미지옥 A 개미귀신(기본): 모래 둔덕에 몸을 반쯤 묻고 · 털 난 둥근 몸 · 낫처럼 휜 큰 턱 둘 · 노란 눈 (모래를 튀겨 던진다)
     pal: { Q: '#b49472', C: '#8a7050', c: '#5e4c34', d: '#3c3020', K: '#1e160e', e: '#f0d050', J: '#d8b070', j: '#8a6434', S: '#e6c890', s: '#c09a62', T: '#9a7848', w: '#ffffff' },
     g: `
 .........d..d
@@ -155,57 +441,230 @@ SSSSSSSSSSSSSSSSSSssTsT
 ..SSSSSSSSSSSSSSSSSss
 .SSsSSSSSSSSSSSSSSsssT
 SSSSSSSSSSSSSSSSSSssTsT
-` }, sh: [22, 0], hip: 99, ax: 10, still: 1, noArm: 1, wpn: 'none' },
-  bandit: {   // 사막 도적: 터번과 얼굴 가리개(눈만 보인다) · 뒤로 날리는 터번 끝 · 모래색 웃옷 · 붉은 허리띠 · 헐렁한 바지 · 단검
-    pal: { H: '#eadcb8', h: '#b8a47a', S: '#c68a5e', s: '#94603c', e: '#1a120c', K: '#1e140e', V: '#8a3a2a', v: '#5a2218', C: '#d8b878', c: '#a8884e', R: '#c83a32', r: '#8a2420', P: '#7a6a58', p: '#544838', M: '#c8ccd4', N: '#8a8e98', x: '#f0f2f6', G: '#d8a838', g: '#9a7424', w: '#ffffff' },
+` }, sh: [22, 0], hip: 99, ax: 10, still: 1, noArm: 1, wpn: 'none', desc: '모래 둔덕에 몸을 반쯤 묻고 큰 턱을 벌린다 (지금)' },
+  antlion_b: {   // 개미지옥 B 붉은 개미귀신: 붉은 몸 · 길게 휜 톱니 턱 · 붉은 눈
+    pal: { Q: '#c88a6a', C: '#9a5a3e', c: '#6a3826', d: '#42221a', K: '#1e160e', e: '#ff6a3a', J: '#e8c880', j: '#9a6a30', S: '#e6c890', s: '#c09a62', T: '#9a7848', w: '#ffffff' },
     g: `
-......HHHH
-.....HHHHHH
-....hHHHHHHH
-..hhhHHSSSSH
-.hh.hHSSeSSe
-hh..hHhVVVVVV
-h....hhVVVVV
-......CCCCCc
-.....CCCCCCcc
-.....cCCCCCCc
-......RRRRRr
-......CCCCCc
+.........d..d
+......d.......d.....JJJ
+......QQQQQCCc.QQC.Jjw.JJ
+.....dQQQQCCCcQQeKJw...w.K
+....QQQQQCCCccCCcdd
+....CQcCcCcccccdddJw...w.K
+....CCCCCCcccddd...Jjw.JJ
+.....csssssssssSS...JJJ
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, g2: `
+.........d..d
+......d.......d
+......QQQQQCCc.QQC
+.....dQQQQCCCcQQeKJJJJJJ
+....QQQQQCCCccCCcddjjj..JK
+....CQcCcCcccccdddJJJJJJJK
+....CCCCCCcccddd
+.....csssssssssSS
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, gm: { bite: `
+.........d..d
+......d.......d
+......QQQQQCCc..QQC
+.....dQQQQCCCcdQQeKJJJJJJ
+....QQQQQCCCccdCCcddjjj..J
+....CQcCcCcccccddddJJJJJJJ
+....CCCCCCcccddd
+.....csssssssssSS
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, swell: `
+.........d..d......JJJ
+......d.......QQC.Jjw.JJ
+......QQQQQCCQQeKJw...w.K
+.....dQQQQCCCCCcdd
+....QQQQQCCCccdddJw...w.K
+....CQcCcCcccccd..Jjw.JJ
+....CCCCCCcccddd...JJJ
+.....csssssssssSS
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, spit: `
+.........d..d
+......d.......d......JJJ
+......QQQQQCCc..QQC.Jjw.JJ
+.....dQQQQCCCcdQQeKJw...w
+....QQQQQCCCccdCCcdd
+....CQcCcCcccccddddJw...w
+....CCCCCCcccddd....Jjw.JJ
+.....csssssssssSS....JJJ
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+` }, sh: [22, 0], hip: 99, ax: 10, still: 1, noArm: 1, wpn: 'none', desc: '붉은 몸 · 길게 휜 톱니 턱 · 붉은 눈' },
+  antlion_c: {   // 개미지옥 C 창백한 개미귀신: 잿빛 애벌레 몸에 짙은 점 · 등에 긴 털 · 굵고 짧은 턱
+    pal: { Q: '#e8e0d0', C: '#bcb09a', c: '#8a7e68', d: '#4e4434', K: '#1e160e', e: '#2a2018', J: '#f0dca8', j: '#a8885a', S: '#e6c890', s: '#c09a62', T: '#9a7848', w: '#ffffff' },
+    g: `
+.........d..d
+......d..d..d.d
+......d..d..d.d.....jj
+.....dd.......d....jJJ
+.....dQQQQQCCc.QQCjJjjK
+.....dQQQQdCCcQQeKJj
+....QQQdQCCCcdCCcdd
+....CQcCcCcccccdddJj
+....CCCCdCcdcddd..jJjjK
+.....csssssssssSS..jJJ
+..SSSSSSSSSSSSSSSSSssj
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, g2: `
+.........d..d
+......d..d..d.d
+......d..d..d.d
+.....dd.......d
+.....dQQQQQCCc.QQCjjj
+.....dQQQQdCCcQQeKJJJj
+....QQQdQCCCcdCCcddjjJK
+....CQcCcCcccccdddJJJJK
+....CCCCdCcdcddd..jjjj
+.....csssssssssSS
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, gm: { bite: `
+.........d..d
+......d..d..d.d
+......d..d..d.d
+.....dd.......d
+.....dQQQQQCCc..QQCjjj
+.....dQQQQdCCcdQQeKJJJj
+....QQQdQCCCcddCCcddjjJK
+....CQcCcCcccccddddJJJJK
+....CCCCdCcdcddd...jjjj
+.....csssssssssSS
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, swell: `
+.........d..d
+......d..d..d.d....jj
+......d..d..d.d...jJJ
+.....dd.......QQCjJjjK
+.....dQQQQQCCQQeKJj
+.....dQQQQdCCCCcdd
+....QQQdQCCCcddddJj
+....CQcCcCcccccd.jJjjK
+....CCCCdCcdcddd..jJJ
+.....csssssssssSS..jj
+..SSSSSSSSSSSSSSSSSss
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+`, spit: `
+.........d..d
+......d..d..d.d
+......d..d..d.d......jj
+.....dd.......d.....jJJ
+.....dQQQQQCCc..QQCjJjjK
+.....dQQQQdCCcdQQeKJj
+....QQQdQCCCcddCCcdd
+....CQcCcCcccccddddJj
+....CCCCdCcdcddd...jJjjK
+.....csssssssssSS...jJJ
+..SSSSSSSSSSSSSSSSSssjj
+.SSsSSSSSSSSSSSSSSsssT
+SSSSSSSSSSSSSSSSSSssTsT
+` }, sh: [22, 2], hip: 99, ax: 10, still: 1, noArm: 1, wpn: 'none', desc: '잿빛 애벌레 몸에 짙은 점 · 등에 긴 털 · 굵고 짧은 턱' },
+  bandit: {   // 사막 도적 B 붉은 두건(기본): 붉은 두건 · 검은 가리개 · 짙은 조끼와 금 허리띠 · 굽은 칼
+    pal: { H: '#eadcb8', h: '#b8a47a', S: '#c68a5e', s: '#94603c', e: '#1a120c', K: '#1e140e', V: '#24202a', v: '#141218', C: '#d8b878', c: '#a8884e', R: '#c8323a', r: '#86202a', P: '#7a6a58', p: '#544838', M: '#c8ccd4', N: '#8a8e98', x: '#f0f2f6', G: '#e0b040', g: '#9a7424', w: '#ffffff', D: '#4a3a46', d: '#2e2430' },
+    g: `
+......RRRR
+.....RRRRRR
+....rRRRRRRR
+..rrrRRSSSSR
+.rr.rRSSeSSe
+rr..rRrVVVVVV
+r....rrVVVVV
+......DDCCDd
+.....DDCCCDdd
+.....dDCCCDDd
+......GGGGGg
+......DDDDDd
 ......PPp.PP
 .....PPPp.PPP
 .....PPp..PPp
 ....sKK..sKK
 `, g2: `
-......HHHH
-.....HHHHHH
-....hHHHHHHH
-...hhHHSSSSH
-..hh.HSSeSSe
-.hh.hHhVVVVVV
-hh...hhVVVVV
-......CCCCCc
-.....CCCCCCcc
-.....cCCCCCCc
-......RRRRRr
-......CCCCCc
+......RRRR
+.....RRRRRR
+..rrrRRRRRRR
+.rr.rRRSSSSR
+rr..rRSSeSSe
+r...rRrVVVVVV
+.....rrVVVVV
+......DDCCDd
+.....DDCCCDdd
+.....dDCCCDDd
+......GGGGGg
+......DDDDDd
 ......PPp.PP
 .....PPPp.PPP
 .....PPp..PPp
 ....sKK..sKK
-`, sh: [10, 8], hip: 11, ax: 8, arm: ['C', 'c'], hand: 'S', wpn: 'dagger', idle: { h: [2, 2], a: 30 } },
-  sandworm: {   // 샌드웜: 모래 둔덕에서 솟아 활처럼 휜 마디 몸 · 앞을 향한 둥근 입과 이빨 고리
-    pal: { Q: '#e8c896', C: '#c09a6a', c: '#8a6a42', d: '#5e4628', K: '#1e140c', R: '#8a2a2a', w: '#f8f0dc', S: '#e6c890', s: '#c09a62', T: '#9a7848', A: '#6a5230', a: '#4a3820' },
+`, sh: [10, 8], hip: 11, ax: 8, arm: ['D', 'd'], hand: 'S', wpn: 'scim', idle: { h: [2, 2], a: 30 }, desc: '붉은 두건 · 검은 가리개 · 짙은 조끼와 금 허리띠 · 굽은 칼' },
+  bandit_c: {   // 사막 도적 C 검은 망토: 남빛 두건 망토 · 두건 속 청동 가면 · 붉은 허리띠 · 단검
+    pal: { H: '#3e4066', h: '#26283e', S: '#c68a5e', s: '#94603c', e: '#1a120c', K: '#1e140e', V: '#8a3a2a', v: '#5a2218', C: '#d8b878', c: '#a8884e', R: '#a8302e', r: '#8a2420', P: '#7a6a58', p: '#544838', M: '#c8ccd4', N: '#8a8e98', x: '#f0f2f6', G: '#d8a838', g: '#9a7424', w: '#ffffff', n: '#c8944e', Y: '#24140c' },
+    g: `
+.......HHH
+.....HHHHHH
+....HHHHHHHH
+...hHHnnnnH
+...hHnYnnYn
+..hhHnnnnnn
+..hhHHnnnnH
+..hhHHHHHHHH
+..hhHHHHHHHHh
+..hhhHHHHHHHh
+..hhhRRRRRRRh
+...hhHHHHHHh
+...hhhHHHHHh
+....hhhHHHhh
+....hhhHHHhh
+....sKK..sKK
+`, g2: `
+.......HHH
+.....HHHHHH
+...hHHHHHHHH
+...hHHnnnnH
+..hhHnYnnYn
+..hhHnnnnnn
+....HHnnnnH
+..hhHHHHHHHH
+..hhHHHHHHHHh
+..hhhHHHHHHHh
+..hhhRRRRRRRh
+...hhHHHHHHh
+...hhhHHHHHh
+....hhhHHHhh
+....hhhHHHhh
+....sKK..sKK
+`, sh: [10, 8], hip: 11, ax: 8, arm: ['H', 'h'], hand: 'h', wpn: 'dagger', idle: { h: [2, 2], a: 30 }, desc: '남빛 두건 망토 · 두건 속 청동 가면 · 붉은 허리띠 · 단검' },
+  sandworm: {   // 샌드웜 B 꽃잎 입(기본): 모래 둔덕에서 솟아 활처럼 휜 마디 몸 · 다물면 세 갈래 판이 모인 뾰족한 끝, 벌리면 꽃잎 셋이 활짝(안쪽은 붉고 이빨 줄)
+    pal: { Q: '#f0d8a8', C: '#d0ac78', c: '#9a7648', d: '#6a4e2e', K: '#1e140c', R: '#8a2a2a', r: '#5a1a1a', w: '#f8f0dc', S: '#e6c890', s: '#c09a62', T: '#9a7848', A: '#6a5230', a: '#4a3820', X: '#ff9a3a', x: '#ffe0a0', o: '#c8601a' },
     g: `
 .
 .
 .
 ...............QC.QC
-............CQQQQQQCCc
-..........QQQQQCQQQCKw
-..........QQCCCCQQCCwwd
-........QQCCCccCCCCcKKw
-.......QQQcccddcccccwR
-.......QCCCdcd...ddddw
+............CQQQQQQCCQ
+..........QQQQQCQQQCCQQ
+..........QQCCCCQQCCCCCdd
+........QQCCCccCCCCcCcccdd
+.......QQQcccddcccccCc.d
+.......QCCCdcd...ddddC
 ......QCCccddc
 .....QQQccdd
 .....QQCCccc
@@ -224,11 +683,11 @@ SSSSSSSsssTTTT
 .sssssTTTTTTT
 `, g2: `
 .............QQCC
-...........QQQQCKw
-..........QQQQCCww
-........QQQCCCCCKKd
-.......QQCCCCCccwRw
-......CQCCcccccddw
+...........QQQQCCQQ
+..........QQQQCCCCCd
+........QQQCCCCCCCCCdd
+.......QQCCCCCccCccd
+......CQCCcccccddC
 ......QCCccccdddd
 .....QQccddd
 .....QQCCcc
@@ -257,17 +716,17 @@ SSSSSSSsssTTTT
 .
 .
 .
-.
-...............QC.QCcQCC
-............QCQQCQQQQQCCc
-..........QQQQQCCQCQQQCKwd
-.........QQQCCCCcCcQQCCwKw
-.......QQQCCCcccdccCCCcKKd
-.......QQCcccddcd.cccccKKw
-......QCCCcdcdd.....dddww
-.....QQCCccdc
-....QQQCccdd
-....CCCCccc
+...........................c
+...............QC.QCcQCC..cw
+............QCQQCQQQQQCCCCcR
+..........QQQQQCCQCQQQCCKCwR
+.........QQQCCCCcCcQQCCKrKCc
+.......QQQCCCcccdccCCCKrrKRwc
+.......QQCcccddcd.ccccCKKRRr
+......QCCCcdcdd.....dddCRRRR
+.....QQCCccdc...........CCwR
+....QQQCccdd.............Ccw
+....CCCCccc...............ccr
 ....CCCcdd.d
 ...QQcccdd
 ...QQCCdcd
@@ -289,27 +748,27 @@ SSSSSSSsssTTTT
 .
 .
 .
-..............QC
-..........QQCQQCQQCQQCC
-.......QQQQCQQCQQQQQQCRc
-......QQQCCCCcCCcCQQCCKww
-.....QQCCCcccccccCCCCRwKd
-....QQCCCcdcddcdcdCCcRKK
-....QCCcccdc......cccdKKw
-...QCCCcdc.........dddww
-...Qccccddd
-...CCCddcd
-SSSSSSSSSSSSsTT
+..............QC..........c
+..........QQCQQCQQCQQCC.ccw
+.......QQQQCQQCQQQQQQCCCCRR
+......QQQCCCCcCCcCQQCCCCCwR
+.....QQCCCcccccccCCCCKrrKc
+....QQCCCcdcddcdcdCCcKrrKcwc
+....QCCcccdc......cccCKKRRr
+...QCCCcdc.........dddCRRRR
+...Qccccddd............CCwR
+...CCCddcd..............Ccw
+SSSSSSSSSSSSsTT..........cr
 SSSSSSSSSSssTTT
 SSSSSSSsssTTTT
 .sssssTTTTTTT
 `, swell: `
 .............QQCC
-...........QQQQCKw
-..........QQQQCCww
-........QQQCCCCCKKd
-.......QQCCCCCccwRw
-......CQCCcccccddw
+...........QQQQCCQQ
+..........QQQQCCCCCd
+........QQQCCCCCCCCCdd
+.......QQCCCCCccCccd
+......CQCCcccccddC
 ......QCCccccdddd
 .....QQccddd
 .....QQCCcc
@@ -338,17 +797,17 @@ SSSSSSSsssTTTT
 .
 .
 .
-.
-...............QC.QCcQCC
-............QCQQCQQQQQCCc
-..........QQQQQCCQCQQQCKwd
-.........QQQCCCCcCcQQCCwKw
-.......QQQCCCcccdccCCCcKKd
-.......QQCcccddcd.cccccKKw
-......QCCCcdcdd.....dddww
-.....QQCCccdc
-....QQQCccdd
-....CCCCccc
+...........................c
+...............QC.QCcQCC..cw
+............QCQQCQQQQQCCCCcR
+..........QQQQQCCQCQQQCCKCwR
+.........QQQCCCCcCcQQCCKrKCc
+.......QQQCCCcccdccCCCKrrKRwc
+.......QQCcccddcd.ccccCKKRRr
+......QCCCcdcdd.....dddCRRRR
+.....QQCCccdc...........CCwR
+....QQQCccdd.............Ccw
+....CCCCccc...............ccr
 ....CCCcdd.d
 ...QQcccdd
 ...QQCCdcd
@@ -357,9 +816,174 @@ SSSSSSSSSSSSsTT
 SSSSSSSSSSssTTT
 SSSSSSSsssTTTT
 .sssssTTTTTTT
-` }, sh: [24, 11], hip: 99, ax: 10, still: 1, noArm: 1, wpn: 'none' },
-  greatworm: {   // 거대 샌드웜(우두머리): 더 크고 짙은 마디 몸 · 등 껍질 판과 가시 · 입 둘레 가시 · 두 겹 이빨
-    pal: { Q: '#d8b47a', C: '#a8844e', c: '#6a5230', d: '#4a3820', K: '#1e140c', R: '#a02a2a', w: '#fffaf0', S: '#e6c890', s: '#c09a62', T: '#9a7848', A: '#5a3e22', a: '#3a2814' },
+` }, sh: [24, 11], hip: 99, ax: 10, still: 1, noArm: 1, wpn: 'none', show2: ['qbite', 4], desc: '기본 모습 · 밝은 모래빛' },
+  sandworm_c: {   // 샌드웜 C 갑각 웜 + 꽃잎 입: 검붉은 갑각 마디 · 붉은 배
+    pal: { Q: '#8a6a5a', C: '#5a4038', c: '#3a2824', d: '#24181a', K: '#1e140c', R: '#c84a3a', r: '#8a2a24', w: '#f8f0dc', S: '#e6c890', s: '#c09a62', T: '#9a7848', A: '#1a1214', a: '#4a3820', X: '#ff9a3a', x: '#ffe0a0', o: '#c8601a' },
+    g: `
+.
+.
+.
+...............QC.QC
+............CQAQQQQCCQ
+..........QAQQACQQQCCQQ
+..........QACCCCQQCCCCCdd
+........AQCCCccCCCCcCcccdd
+.......QAQcccddRccccCc.d
+.......QCCCdcd.r.ddddC
+......QCCccdRc
+.....QAQccddr
+.....QACCccc
+.....CCCcdd
+.....AccddR
+....QQdccdr
+...CQACCccd
+...CCCCcdd
+....cccddR
+...QQdcccr
+...QQCCcd
+...CCCccd
+SSSSSSSSSSSSsTT
+SSSSSSSSSSssTTT
+SSSSSSSsssTTTT
+.sssssTTTTTTT
+`, g2: `
+.............QQCC
+...........QQQQCCQQ
+..........AQQQCCCCCd
+........AQACCCCCCCCCdd
+.......QQCCCCCccCccd
+......CQACcccccddC
+......QCCcccRdddd
+.....QAccddr
+.....QACCcc
+.....CCCcdd
+.....cccddR
+....QAdcccr
+...CQACCcd
+...CCCCcdd
+....AccddR
+...QQdcccr
+...QACCcc
+...CCCccd
+...ccccddR
+...Qddccrd
+...QQCCcd
+...CCCccd
+SSSSSSSSSSSSsTT
+SSSSSSSSSSssTTT
+SSSSSSSsssTTTT
+.sssssTTTTTTT
+`, gm: { bite: `
+.
+.
+.
+.
+.
+.
+.
+...........................c
+...............QC.QCcQCC..cw
+............QCAQCQAQQQCCCCcR
+..........QAQQACCQAQQQCCKCwR
+.........QQACCCCcCcQQCCKrKCc
+.......QAQCCCcccdcRCCCKrrKRwc
+.......QACcccddRd.rcccCKKRRr
+......QCCCcdcddr....dddCRRRR
+.....QACCccdR...........CCwR
+....QQACccddr............Ccw
+....CCCCccc...............ccr
+....CCCcddRd
+...QQcccddr
+...QQCCdcd
+...CCCccd
+SSSSSSSSSSSSsTT
+SSSSSSSSSSssTTT
+SSSSSSSsssTTTT
+.sssssTTTTTTT
+`, charge: `
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+..............QC..........c
+..........AQCAQCAQCQQCC.ccw
+.......AQQACQACQAQQQQCCCCRR
+......QAQCCCCcCCcCQQCCCCCwR
+.....AQCCCccccRccCCCCKrrKc
+....QACCCcdcRdrdcrCCcKrrKcwc
+....QCCcccdr......cccCKKRRr
+...QCCCcdcR........dddCRRRR
+...Qccccdrd............CCwR
+...CCCddcd..............Ccw
+SSSSSSSSSSSSsTT..........cr
+SSSSSSSSSSssTTT
+SSSSSSSsssTTTT
+.sssssTTTTTTT
+`, swell: `
+.............QQCC
+...........QQQQCCQQ
+..........AQQQCCCCCd
+........AQACCCCCCCCCdd
+.......QQCCCCCccCccd
+......CQACcccccddC
+......QCCcccRdddd
+.....QAccddr
+.....QACCcc
+.....CCCcdd
+.....cccddR
+....QAdcccr
+...CQACCcd
+...CCCCcdd
+....AccddR
+...QQdcccr
+...QACCcc
+...CCCccd
+...ccccddR
+...Qddccrd
+...QQCCcd
+...CCCccd
+SSSSSSSSSSSSsTT
+SSSSSSSSSSssTTT
+SSSSSSSsssTTTT
+.sssssTTTTTTT
+`, spit: `
+.
+.
+.
+.
+.
+.
+.
+...........................c
+...............QC.QCcQCC..cw
+............QCAQCQAQQQCCCCcR
+..........QAQQACCQAQQQCCKCwR
+.........QQACCCCcCcQQCCKrKCc
+.......QAQCCCcccdcRCCCKrrKRwc
+.......QACcccddRd.rcccCKKRRr
+......QCCCcdcddr....dddCRRRR
+.....QACCccdR...........CCwR
+....QQACccddr............Ccw
+....CCCCccc...............ccr
+....CCCcddRd
+...QQcccddr
+...QQCCdcd
+...CCCccd
+SSSSSSSSSSSSsTT
+SSSSSSSSSSssTTT
+SSSSSSSsssTTTT
+.sssssTTTTTTT
+` }, sh: [24, 11], hip: 99, ax: 10, still: 1, noArm: 1, wpn: 'none', show2: ['qbite', 4], desc: '검붉은 갑각 · 붉은 배' },
+  greatworm: {   // 거대 샌드웜(우두머리) A 가시 등 + 꽃잎 입(기본): 더 크고 짙은 마디 몸 · 등 껍질 판과 가시
+    pal: { Q: '#d8b47a', C: '#a8844e', c: '#6a5230', d: '#4a3820', K: '#1e140c', R: '#a02a2a', r: '#5a1a1a', w: '#fffaf0', S: '#e6c890', s: '#c09a62', T: '#9a7848', A: '#5a3e22', a: '#3a2814', X: '#ff9a3a', x: '#ffe0a0', o: '#c8601a' },
     g: `
 .
 .
@@ -367,15 +991,15 @@ SSSSSSSsssTTTT
 .
 .....................A
 .............a......QaQCQQQQCC
-..............A..CCQQQQQQQQQAAA.A
-...............aQQCQAQQQQQQCCwwd
-..............QAQACQQCQQQQCARwwdA
-..............QAQCCCCCQQQCCCRwww
-.......a...QQQCCCCCcccCCCCCCwwwd
-.........AQQQQCCCcccccCCCCccRwww
-..........aAACccccdddcdccccadwwda
-.........CQQCCCdcdddd..dcdddadw.a
-.........CCACCccdcc......ddddaa
+..............A..CCQQQQQQQQQCCQ
+...............aQQCQAQQQQQQCCCQQ
+..............QAQACQQCQQQQCCCCQQdQ
+..............QAQCCCCCQQQCCCCCCCCddd
+.......a...QQQCCCCCcccCCCCCCCCccccdd
+.........AQQQQCCCcccccCCCCccCCcccdd
+..........aAACccccdddcdcccccdCccd
+.........CQQCCCdcdddd..dcdddddC
+.........CCACCccdcc......dddd
 ........QQCCcccdddd
 .......QQQcccdddd
 ...a.A.QQACddccd
@@ -398,16 +1022,16 @@ SSSSSSSSSSSSSSSsssTTT
 SSSSSSSSSSSSSsssTTTTT
 SSSSSSSSSSssssTTTTTTT
 `, g2: `
-.............a.....QQQCA.A
-..............A..QQQQQARR.A
-..............aQQQQQQACKww.A
-.............QQAQQQQQCRwww
-............QQQACQQCCCRwKwd
-.......a..QQQCCCCCCCCCRwww
-........AaQQACCCCCCCCacwwd.a
-.........QAQCcccccccccdRww
-.........CACCCddcdccddadd.a
-........QCCCCccdcc.dddda.a
+.............a.....QQQCC
+..............A..QQQQQCCQQ
+..............aQQQQQQCCCQQQ
+.............QQAQQQQQCCCQQddd
+............QQQACQQCCCCCCCCCCdd
+.......a..QQQCCCCCCCCCCCccccdd
+........AaQQACCCCCCCCccCccdd
+.........QAQCcccccccccdCcw
+.........CACCCddcdccddddd
+........QCCCCccdcc.ddddd
 .......QQQccccddd
 ...a..QQAQddccdd
 .....AaAQCCCccc
@@ -445,22 +1069,22 @@ SSSSSSSSSSssssTTTTTTT
 .
 .
 ....................a......a
-...........................A
-.....................A
-..............a......aQCCQQaCQQQCCAA
-...............A...QQAQAQQAQQQQQCCcd
-...............QaQQQQACCQQQQQQQQARwRA
-..............QQAQAQQCCCQCCQQQQACKKwdA
-........a.....QQAQCCCCCCCcCQQQCCRwwww
-.........A.QQQQQCCCCcccccccCCCCCRwKKd
-..........aAAQCCCCcdccdddcdCCCCcRwwwd
-.........QQQQCcCcccddcdddc.ccccccKwww
-.........CQACCCcccdddc......cccadwKw.a
-........QCCCCCccdcdd..d......dddddww
-...a..QQQQCCcccdddc.............a...a
-....A.QQAQccccddd.d...............aa
-......aAQCCddccd
-......CACCCccdc
+...........................A...........cw
+.....................A...............ccr
+..............a......aQCCQQaCQQQCC..cccw
+...............A...QQAQAQQAQQQQQCCcCCcRR
+...............QaQQQQACCQQQQQQQQCCCCCwRR
+..............QQAQAQQCCCQCCQQQQCCKKKCRR
+........a.....QQAQCCCCCCCcCQQQCCKKrKKCc
+.........A.QQQQQCCCCcccccccCCCCCKrrrKCccc
+..........aAAQCCCCcdccdddcdCCCCcKrrrKRwrw
+.........QQQQCcCcccddcdddc.cccccCKKKKRRr
+.........CQACCCcccdddc......cccdCCCRRRRR
+........QCCCCCccdcdd..d......dddddCRCCRR
+...a..QQQQCCcccdddc...............CCCwRR
+....A.QQAQccccddd.d.................CcRr
+......aAQCCddccd.....................ccw
+......CACCCccdc.......................ccw
 ......CCCCccdddd
 ....QQcccccddd
 ....QQQddccddd
@@ -490,35 +1114,35 @@ SSSSSSSSSSssssTTTTTTT
 ..............a.....a......a
 .....................A
 ..............A...........A
-...............aQC.QQaCc.Ca
-.......a.....QQAQAQQAQAQQQAQQQCCC
-........A.QQQQQAQQQQQCQQQAQQQQCCAA
-.........aAQAQQQCCQCCCQQQQQQQQARwRdA
-........QQQQCCCCCCCcCcCcCQQQQCCRKwd
-.......QQQACCCCcccCcccCcCQQQCCAwwww.A
-..a...QQCCCCCccccdccddcccCCCCCcKwKR
-....AaAQACCCccdcdddcdddcdCCCCccwKKw
-.....QQQCccccdddc..d......ccccdKwww
-....QCCACCdddcd.d.........dcddawww..a
-....QCCCCccddcd.............ddddw.w
-...CQQccccccdd................a....a
-...CCCCdddddcc..................aa
-...CCCCCccddd
-SSSSSSSSSSSSSSSSsssTT
-SSSSSSSSSSSSSSSsssTTT
+...............aQC.QQaCc.Ca.........ccw
+.......a.....QQAQAQQAQAQQQAQQQCCC..ccwr
+........A.QQQQQAQQQQQCQQQAQQQQCCCcCcRR
+.........aAQAQQQCCQCCCQQQQQQQQCCCCCCwR
+........QQQQCCCCCCCcCcCcCQQQQCCCKKCRRR
+.......QQQACCCCcccCcccCcCQQQCCCKKKKCCR
+..a...QQCCCCCccccdccddcccCCCCCKKrrKCccc
+....AaAQACCCccdcdddcdddcdCCCCcKKrrKRwrw
+.....QQQCccccdddc..d......ccccdKKKKRRrr
+....QCCACCdddcd.d.........dcddCCKKRRRR
+....QCCCCccddcd.............dddCCRRRRR
+...CQQccccccdd..................CCCCwR
+...CCCCdddddcc....................CcRR
+...CCCCCccddd......................ccwr
+SSSSSSSSSSSSSSSSsssTT................cw
+SSSSSSSSSSSSSSSsssTTT................c
 SSSSSSSSSSSSSsssTTTTT
 SSSSSSSSSSssssTTTTTTT
 `, swell: `
-.............a.....QQQCA.A
-..............A..QQQQQARR.A
-..............aQQQQQQACKww.A
-.............QQAQQQQQCRwww
-............QQQACQQCCCRwKwd
-.......a..QQQCCCCCCCCCRwww
-........AaQQACCCCCCCCacwwd.a
-.........QAQCcccccccccdRww
-.........CACCCddcdccddadd.a
-........QCCCCccdcc.dddda.a
+.............a.....QQQCC
+..............A..QQQQQCCQQ
+..............aQQQQQQCCCQQQ
+.............QQAQQQQQCCCQQddd
+............QQQACQQCCCCCCCCCCdd
+.......a..QQQCCCCCCCCCCCccccdd
+........AaQQACCCCCCCCccCccdd
+.........QAQCcccccccccdCcw
+.........CACCCddcdccddddd
+........QCCCCccdcc.ddddd
 .......QQQccccddd
 ...a..QQAQddccdd
 .....AaAQCCCccc
@@ -556,22 +1180,22 @@ SSSSSSSSSSssssTTTTTTT
 .
 .
 ....................a......a
-...........................A
-.....................A
-..............a......aQCCQQaCQQQCCAA
-...............A...QQAQAQQAQQQQQCCcd
-...............QaQQQQACCQQQQQQQQARwRA
-..............QQAQAQQCCCQCCQQQQACKKwdA
-........a.....QQAQCCCCCCCcCQQQCCRwwww
-.........A.QQQQQCCCCcccccccCCCCCRwKKd
-..........aAAQCCCCcdccdddcdCCCCcRwwwd
-.........QQQQCcCcccddcdddc.ccccccKwww
-.........CQACCCcccdddc......cccadwKw.a
-........QCCCCCccdcdd..d......dddddww
-...a..QQQQCCcccdddc.............a...a
-....A.QQAQccccddd.d...............aa
-......aAQCCddccd
-......CACCCccdc
+...........................A...........cw
+.....................A...............ccr
+..............a......aQCCQQaCQQQCC..cccw
+...............A...QQAQAQQAQQQQQCCcCCcRR
+...............QaQQQQACCQQQQQQQQCCCCCwRR
+..............QQAQAQQCCCQCCQQQQCCKKKCRR
+........a.....QQAQCCCCCCCcCQQQCCKKrKKCc
+.........A.QQQQQCCCCcccccccCCCCCKrrrKCccc
+..........aAAQCCCCcdccdddcdCCCCcKrrrKRwrw
+.........QQQQCcCcccddcdddc.cccccCKKKKRRr
+.........CQACCCcccdddc......cccdCCCRRRRR
+........QCCCCCccdcdd..d......dddddCRCCRR
+...a..QQQQCCcccdddc...............CCCwRR
+....A.QQAQccccddd.d.................CcRr
+......aAQCCddccd.....................ccw
+......CACCCccdc.......................ccw
 ......CCCCccdddd
 ....QQcccccddd
 ....QQQddccddd
@@ -582,7 +1206,232 @@ SSSSSSSSSSSSSSSSsssTT
 SSSSSSSSSSSSSSSsssTTT
 SSSSSSSSSSSSSsssTTTTT
 SSSSSSSSSSssssTTTTTTT
-` }, sh: [34, 15], hip: 99, ax: 14, still: 1, noArm: 1, wpn: 'none', ms: 1.5, mx: 20, my: 20 }
+` }, sh: [34, 15], hip: 99, ax: 14, still: 1, noArm: 1, wpn: 'none', ms: 1.5, mx: 20, my: 20, show2: ['qbite', 4], desc: '기본 모습' },
+  greatworm_b: {   // 거대 샌드웜 B 꽃잎 입: 매끈한 등
+    pal: { Q: '#e8c890', C: '#b8925a', c: '#7a5a34', d: '#4a3820', K: '#1e140c', R: '#a02a2a', r: '#5a1a1a', w: '#fffaf0', S: '#e6c890', s: '#c09a62', T: '#9a7848', A: '#5a3e22', a: '#3a2814', X: '#ff9a3a', x: '#ffe0a0', o: '#c8601a' },
+    g: `
+.
+.
+.
+.
+.
+....................QQQCQQQQCC
+.................CCQQQQQQQQQCCQ
+...............QQQCQQQQQQQQCCCQQ
+..............QQQQCQQCQQQQCCCCQQdQ
+..............QQQCCCCCQQQCCCCCCCCddd
+...........QQQCCCCCcccCCCCCCCCccccdd
+..........QQQQCCCcccccCCCCccCCcccdd
+..........QQQCccccdddcdcccccdCccd
+.........CQQCCCdcdddd..dcdddddC
+.........CCCCCccdcc......dddd
+........QQCCcccdddd
+.......QQQcccdddd
+.......QQQCddccd
+......CQQCCCccdcd
+......CCCCCccdd
+.......CCcccddd
+......Qccccddd
+.....QQQddccc
+.....QQQCCCcccd
+....CQQCCCccdd
+....CCCCCccddd
+.....CCcccddd
+....Qccccdddd
+....QQQddccccc
+...CQQQCCCccd
+...CCCCCCccdd
+...CCCCCccddd
+SSSSSSSSSSSSSSSSsssTT
+SSSSSSSSSSSSSSSsssTTT
+SSSSSSSSSSSSSsssTTTTT
+SSSSSSSSSSssssTTTTTTT
+`, g2: `
+...................QQQCC
+.................QQQQQCCQQ
+..............QQQQQQQCCCQQQ
+.............QQQQQQQQCCCQQddd
+............QQQQCQQCCCCCCCCCCdd
+..........QQQCCCCCCCCCCCccccdd
+.........QQQQCCCCCCCCccCccdd
+.........QQQCcccccccccdCcw
+.........CCCCCddcdccddddd
+........QCCCCccdcc.ddddd
+.......QQQccccddd
+......QQQQddccdd
+......QQQCCCccc
+......CCCCCccddd
+......cCCCccddd
+......Qccccddd
+.....QQQddccc
+.....QQQQCCcccd
+.....QQCCCccdd
+.....CCCCccddd
+.....CCCccddd
+.....dcccdddd
+....QQQddccccd
+....QQQQCCCcd
+....QQCCCCccd
+....CCCCCccdd
+....cCCcccddd
+....Qcccdddd
+....QQddccccc
+...CQQQCCCccd
+...CCCCCCccdd
+...CCCCCccddd
+SSSSSSSSSSSSSSSSsssTT
+SSSSSSSSSSSSSSSsssTTT
+SSSSSSSSSSSSSsssTTTTT
+SSSSSSSSSSssssTTTTTTT
+`, gm: { bite: `
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.......................................cw
+.....................................ccr
+.....................QQCCQQQCQQQCC..cccw
+...................QQQQCQQQQQQQQCCcCCcRR
+...............QQQQQQQCCQQQQQQQQCCCCCwRR
+..............QQQQCQQCCCQCCQQQQCCKKKCRR
+..............QQQQCCCCCCCcCQQQCCKKrKKCc
+...........QQQQQCCCCcccccccCCCCCKrrrKCccc
+..........QQQQCCCCcdccdddcdCCCCcKrrrKRwrw
+.........QQQQCcCcccddcdddc.cccccCKKKKRRr
+.........CQQCCCcccdddc......cccdCCCRRRRR
+........QCCCCCccdcdd..d......dddddCRCCRR
+......QQQQCCcccdddc...............CCCwRR
+......QQQQccccddd.d.................CcRr
+......QQQCCddccd.....................ccw
+......CCCCCccdc.......................ccw
+......CCCCccdddd
+....QQcccccddd
+....QQQddccddd
+...CQQQCCddccc
+...CCCCCCccdd
+...CCCCCccddd
+SSSSSSSSSSSSSSSSsssTT
+SSSSSSSSSSSSSSSsssTTT
+SSSSSSSSSSSSSsssTTTTT
+SSSSSSSSSSssssTTTTTTT
+`, charge: `
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+...............QQC.QQQCc.C..........ccw
+.............QQQQCQQQQCQQQCQQQCCC..ccwr
+..........QQQQQQQQQQQCQQQQQQQQCCCcCcRR
+.........QQQQQQQCCQCCCQQQQQQQQCCCCCCwR
+........QQQQCCCCCCCcCcCcCQQQQCCCKKCRRR
+.......QQQQCCCCcccCcccCcCQQQCCCKKKKCCR
+......QQCCCCCccccdccddcccCCCCCKKrrKCccc
+.....QQQCCCCccdcdddcdddcdCCCCcKKrrKRwrw
+.....QQQCccccdddc..d......ccccdKKKKRRrr
+....QCCCCCdddcd.d.........dcddCCKKRRRR
+....QCCCCccddcd.............dddCCRRRRR
+...CQQccccccdd..................CCCCwR
+...CCCCdddddcc....................CcRR
+...CCCCCccddd......................ccwr
+SSSSSSSSSSSSSSSSsssTT................cw
+SSSSSSSSSSSSSSSsssTTT................c
+SSSSSSSSSSSSSsssTTTTT
+SSSSSSSSSSssssTTTTTTT
+`, swell: `
+...................QQQCC
+.................QQQQQCCQQ
+..............QQQQQQQCCCQQQ
+.............QQQQQQQQCCCQQddd
+............QQQQCQQCCCCCCCCCCdd
+..........QQQCCCCCCCCCCCccccdd
+.........QQQQCCCCCCCCccCccdd
+.........QQQCcccccccccdCcw
+.........CCCCCddcdccddddd
+........QCCCCccdcc.ddddd
+.......QQQccccddd
+......QQQQddccdd
+......QQQCCCccc
+......CCCCCccddd
+......cCCCccddd
+......Qccccddd
+.....QQQddccc
+.....QQQQCCcccd
+.....QQCCCccdd
+.....CCCCccddd
+.....CCCccddd
+.....dcccdddd
+....QQQddccccd
+....QQQQCCCcd
+....QQCCCCccd
+....CCCCCccdd
+....cCCcccddd
+....Qcccdddd
+....QQddccccc
+...CQQQCCCccd
+...CCCCCCccdd
+...CCCCCccddd
+SSSSSSSSSSSSSSSSsssTT
+SSSSSSSSSSSSSSSsssTTT
+SSSSSSSSSSSSSsssTTTTT
+SSSSSSSSSSssssTTTTTTT
+`, spit: `
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.......................................cw
+.....................................ccr
+.....................QQCCQQQCQQQCC..cccw
+...................QQQQCQQQQQQQQCCcCCcRR
+...............QQQQQQQCCQQQQQQQQCCCCCwRR
+..............QQQQCQQCCCQCCQQQQCCKKKCRR
+..............QQQQCCCCCCCcCQQQCCKKrKKCc
+...........QQQQQCCCCcccccccCCCCCKrrrKCccc
+..........QQQQCCCCcdccdddcdCCCCcKrrrKRwrw
+.........QQQQCcCcccddcdddc.cccccCKKKKRRr
+.........CQQCCCcccdddc......cccdCCCRRRRR
+........QCCCCCccdcdd..d......dddddCRCCRR
+......QQQQCCcccdddc...............CCCwRR
+......QQQQccccddd.d.................CcRr
+......QQQCCddccd.....................ccw
+......CCCCCccdc.......................ccw
+......CCCCccdddd
+....QQcccccddd
+....QQQddccddd
+...CQQQCCddccc
+...CCCCCCccdd
+...CCCCCccddd
+SSSSSSSSSSSSSSSSsssTT
+SSSSSSSSSSSSSSSsssTTT
+SSSSSSSSSSSSSsssTTTTT
+SSSSSSSSSSssssTTTTTTT
+` }, sh: [34, 15], hip: 99, ax: 14, still: 1, noArm: 1, wpn: 'none', ms: 1.5, mx: 20, my: 20, show2: ['qbite', 4], desc: '매끈한 등' }
 });
 Object.assign(PXU_ACT, {
   scorpion: { atk: ['qbite'], skl: ['wspit'], fx: { atk: { pal: 'earth', hit: 'bite' }, skl: { pal: 'poison', hit: 'poison', big: 1, after: 'bubbles' } } },
@@ -591,3 +1440,11 @@ Object.assign(PXU_ACT, {
   sandworm: { atk: ['qbite'], skl: ['qgnaw'], tk: 1.2, fx: { atk: { pal: 'sand', hit: 'bite', big: 0 }, skl: { pal: 'sand', hit: 'burst', big: 1, after: 'dust' } } },
   greatworm: { atk: ['qbite'], skl: ['qcharge'], tk: 1.3, fx: { atk: { pal: 'sand', hit: 'bite', big: 1 }, skl: { pal: 'sand', hit: 'burst', big: 2, after: 'dust', aoe: 'sand', shake: 4 } } }
 });
+// 만날 때마다 모습 하나 (빌드 50, 사용자 결정): 모습마다 장을 통째로 따로 두고, 기본 모습이 아닌 것은 드랍 없는 이름표 (pxuLook)
+pxuLook('scorpion_b', 'scorpion', MONS.scorpion.name); pxuLook('scorpion_c', 'scorpion', MONS.scorpion.name); pxuLook('scorpion_d', 'scorpion', MONS.scorpion.name);
+pxuLook('antlion_b', 'antlion', MONS.antlion.name); pxuLook('antlion_c', 'antlion', MONS.antlion.name);
+pxuLook('bandit_c', 'bandit', MONS.bandit.name);
+pxuLook('sandworm_c', 'sandworm', MONS.sandworm.name);
+pxuLook('greatworm_b', 'greatworm', MONS.greatworm.name);
+Object.assign(PXU_SKIN, { scorpion: ['scorpion', 'scorpion_b', 'scorpion_c', 'scorpion_d'], antlion: ['antlion', 'antlion_b', 'antlion_c'], bandit: ['bandit', 'bandit_c'], sandworm: ['sandworm', 'sandworm_c'], greatworm: ['greatworm', 'greatworm_b'] });
+Object.assign(PXU_SKIN_NAME, { scorpion: ['사막 전갈', '황제 전갈', '모래 전갈', '왕릉 전갈'], antlion: ['개미귀신', '붉은 개미귀신', '창백한 개미귀신'], bandit: ['붉은 두건', '검은 망토'], sandworm: ['모래빛 샌드웜', '갑각 샌드웜'], greatworm: ['가시 등', '매끈한 등'] });
