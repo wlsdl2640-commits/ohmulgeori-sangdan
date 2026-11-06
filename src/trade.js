@@ -108,7 +108,10 @@ function drawRig(g, X, gy, t, p, moving, dir) {
   const wheel = (cx, cy, r) => { disc(g, cx, cy, r, IR); disc(g, cx, cy, r - 1, '#6a5038'); disc(g, cx, cy, Math.max(1, r - 2), '#2a2028'); const a0 = moving ? -t * 9 : 0.4; for (let i = 0; i < 3; i++) { const a = a0 + i * Math.PI / 3; for (let s = -(r - 1); s <= r - 1; s++) R(g, Math.round(cx + Math.cos(a) * s), Math.round(cy + Math.sin(a) * s), 1, 1, '#c8a060'); } };
   // 끄는 짐승 (손수레는 없다)
   const an = rigAnimalId(p);
-  if (an && W.horse) { g.save(); g.translate(28, bob * (fly ? 1 : 0)); drawMon(g, an, t, { ph: 0.4, z: 1 }); g.restore(); R(g, 12, -9 + (fly ? bob : 0), 12, 1, WDd); }
+  if (an && W.horse) {   // 큰 짐승(새 그림 그리폰·와이번)은 너비 44 안으로 줄이고, 몸 뒤 끝이 마차 앞에 오게 앞으로 세운다 (빌드 48)
+    const zr = monFit(an, 44), bk = monBack(an) * zr, bx = Math.max(28, 15 + bk);
+    g.save(); g.translate(Math.round(bx), bob * (fly ? 1 : 0)); drawMon(g, an, t, { ph: 0.4, z: zr }); g.restore(); R(g, 12, -9 + (fly ? bob : 0), Math.max(12, Math.round(bx - bk) - 10), 1, WDd);
+  }
   const y = bob;
   if (k === 'cart') {
     R(g, -14, y - 12, 22, 6, WD); R(g, -14, y - 12, 22, 1, WDl); R(g, -14, y - 7, 22, 1, WDd);

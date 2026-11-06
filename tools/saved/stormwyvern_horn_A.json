@@ -1,0 +1,75 @@
+{
+ "note": "폭풍 와이번 뿔 시안 A「뒤로 휜 두 뿔」(머리 뒤에서 휘어 오르는 흰 뿔 둘). 빌드 48에서 사용자가 B(번개 뿔)를 고르며 「A뿔은 다음에 또 쓰자」고 해서 보관한다. g·gm(swell·spit·bite)은 src/pxvalley.js의 PXU.stormwyvern과 같은 틀(43칸 × 28줄)이고 뿔만 다르다 — 그대로 바꿔 끼우면 A 뿔 폭풍 와이번이 된다. 다른 몬스터에 쓸 때는 horn의 칸(x, y, 글자)을 그 머리 위치에 맞춰 옮긴다. 글자 Z(밝은 뿔 #eef4ff)·z(어두운 뿔 #8aa0c0).",
+ "horn": [
+  [
+   34,
+   10,
+   "Z"
+  ],
+  [
+   33,
+   9,
+   "Z"
+  ],
+  [
+   32,
+   8,
+   "Z"
+  ],
+  [
+   31,
+   7,
+   "Z"
+  ],
+  [
+   31,
+   6,
+   "z"
+  ],
+  [
+   32,
+   5,
+   "z"
+  ],
+  [
+   35,
+   10,
+   "z"
+  ],
+  [
+   36,
+   9,
+   "Z"
+  ],
+  [
+   35,
+   8,
+   "Z"
+  ],
+  [
+   35,
+   7,
+   "Z"
+  ],
+  [
+   35,
+   6,
+   "z"
+  ],
+  [
+   36,
+   5,
+   "z"
+  ]
+ ],
+ "pal": {
+  "Z": "#eef4ff",
+  "z": "#8aa0c0"
+ },
+ "g": "\n....................z......................\n....................z......................\n...................nzn.....................\n.............Z...nnOoOnn...................\n.............Z..nOOOoOOOn..................\n............cZcnOOOoOoOOOn......z...z......\n..........ccPpPccOOoOoOOOn.....z...z.......\n.........cPPPpPPPcoOOOooOOn....Z...Z.......\n........cPPPpPpPPPcOOOOOoOOnn...Z..Z.......\n........cPPPpPBPPPcOOOOOOoOOO....Z..Z......\n.......cBPppPPPBpPPcOOOOOOoOO.....ZzCCc....\n.....ccPPBPPPPBPPpPPccOOOOoOO...cCCCCCCc...\n....cPPPBPPPPPPBPPpPPPcO.oOOO...CCCEEKCC...\n...cPPPpPBPPPPPPBPPpPPc...o...ccCCCCCCCCK..\n...cPPPpPPPPPPPPPPPpPPc.......ccCCCCCCCCK..\n..cPpPP.PPPPPPPPP.pPPPc.....cCCCCcwwwww....\n..cp.....PPPPPP....pcc...ccCCCCCc..........\n.................BQQQBQQcCCCCCcc...........\n..............QQQCBCCCBCQCCCCc.............\n..............QQQBCCCBCCQCCCCc.............\n.B.....cc...BQCCCCCCCCCCCCCCc..............\nB..ccCCCCQQQCBCCCCSSSSSSCCCc...............\n.BBCCcc..cCCCCCCCSSSSSSSCcc................\nccCc.....cCCCCCccSSSSSCCc..................\nccCc.....cCCCCCccSSSSSCCc..................\nccc.......ccCC.....cCCCc...................\n..........ccCc.....cCCc....................\n.........KKKc.....KKcc.....................\n",
+ "gm": {
+  "swell": "\n....................z......................\n....................z......................\n...................nzn.....................\n.............Z...nnOoOnn...................\n.............Z..nOOOoOOOn......z...z.......\n............cZcnOOOoOoOOOn....z...z........\n..........ccPpPccOOoOoOOOn....Z...Z........\n.........cPPPpPPPcoOOOooOOn....Z..Z........\n........cPPPpPpPPPcOOOOOoOOnn...Z..Z.......\n........cPPPpPBPPPcOOOOOOoOOO....ZzCCc.....\n.......cBPppPPPBpPPcOOOOOOoOO..cCCCCCCc....\n.....ccPPBPPPPBPPpPPccOOOOoOO..CCCEEKCC....\n....cPPPBPPPPPPBPPpPPPcO.oOOOccCCCCCCCCK...\n...cPPPpPBPPPPPPBPPpPPc...o..ccCCCCCCCCK...\n...cPPPpPPPPPPPPPPPpPPc.....CCCCcwwwww.....\n..cPpPP.PPPPPPPPP.pPPPc.....c..............\n..cp.....PPPPPP....pcc...ccCCCCCc..........\n.................BQQQBQQcCCCCCcc...........\n..............QQQCBCCCBCQCCCCc.............\n..............QQQBCCCBCCQCCCCc.............\n.B.....cc...BQCCCCCCCCCCCCCCc..............\nB..ccCCCCQQQCBCCCCSSSSSSCCCc...............\n.BBCCcc..cCCCCCCCSSSSSSSCcc................\nccCc.....cCCCCCccSSSSSCCc..................\nccCc.....cCCCCCccSSSSSCCc..................\nccc.......ccCC.....cCCCc...................\n..........ccCc.....cCCc....................\n.........KKKc.....KKcc.....................\n",
+  "spit": "\n....................z......................\n....................z......................\n...................nzn.....................\n.............Z...nnOoOnn...................\n.............Z..nOOOoOOOn..................\n............cZcnOOOoOoOOOn.................\n..........ccPpPccOOoOoOOOn........z...z....\n.........cPPPpPPPcoOOOooOOn......z...z.....\n........cPPPpPpPPPcOOOOOoOOnn....Z...Z.....\n........cPPPpPBPPPcOOOOOOoOOO.....Z..Z.....\n.......cBPppPPPBpPPcOOOOOOoOO......Z..Z....\n.....ccPPBPPPPBPPpPPccOOOOoOO.......ZzCCc..\n....cPPPBPPPPPPBPPpPPPcO.oOOO.....cCCCCCCc.\n...cPPPpPBPPPPPPBPPpPPc...o.......CCCEEKCC.\n...cPPPpPPPPPPPPPPPpPPc.........ccCCCCCCCCK\n..cPpPP.PPPPPPPPP.pPPPc.....c...ccCCCCCCCCK\n..cp.....PPPPPP....pcc...ccCCCC.....RRRRR..\n.................BQQQBQQcCCCCCcCCCCcwwwww..\n..............QQQCBCCCBCQCCCCc.c...........\n..............QQQBCCCBCCQCCCCc.............\n.B.....cc...BQCCCCCCCCCCCCCCc..............\nB..ccCCCCQQQCBCCCCSSSSSSCCCc...............\n.BBCCcc..cCCCCCCCSSSSSSSCcc................\nccCc.....cCCCCCccSSSSSCCc..................\nccCc.....cCCCCCccSSSSSCCc..................\nccc.......ccCC.....cCCCc...................\n..........ccCc.....cCCc....................\n.........KKKc.....KKcc.....................\n",
+  "bite": "\n....................z......................\n....................z......................\n...................nzn.....................\n.............Z...nnOoOnn...................\n.............Z..nOOOoOOOn..................\n............cZcnOOOoOoOOOn......z...z......\n..........ccPpPccOOoOoOOOn.....z...z.......\n.........cPPPpPPPcoOOOooOOn....Z...Z.......\n........cPPPpPpPPPcOOOOOoOOnn...Z..Z.......\n........cPPPpPBPPPcOOOOOOoOOO....Z..Z......\n.......cBPppPPPBpPPcOOOOOOoOO.....ZzCCc....\n.....ccPPBPPPPBPPpPPccOOOOoOO...cCCCCCCc...\n....cPPPBPPPPPPBPPpPPPcO.oOOO...CCCEEKCC...\n...cPPPpPBPPPPPPBPPpPPc...o...ccCCCCCCCCK..\n...cPPPpPPPPPPPPPPPpPPc.......ccCCCCCCCCK..\n..cPpPP.PPPPPPPPP.pPPPc.....c.....RRRRR....\n..cp.....PPPPPP....pcc...ccCCCCCCcwwwww....\n.................BQQQBQQcCCCCCcc...........\n..............QQQCBCCCBCQCCCCc.............\n..............QQQBCCCBCCQCCCCc.............\n.B.....cc...BQCCCCCCCCCCCCCCc..............\nB..ccCCCCQQQCBCCCCSSSSSSCCCc...............\n.BBCCcc..cCCCCCCCSSSSSSSCcc................\nccCc.....cCCCCCccSSSSSCCc..................\nccCc.....cCCCCCccSSSSSCCc..................\nccc.......ccCC.....cCCCc...................\n..........ccCc.....cCCc....................\n.........KKKc.....KKcc.....................\n"
+ }
+}

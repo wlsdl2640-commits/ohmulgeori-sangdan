@@ -3,8 +3,8 @@
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
-const FMOT_NAME = { ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_NAME = { stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
   const q = PXU_ACT[id].fx[cat];
@@ -84,6 +84,7 @@ function fmotAoe(e, x, t, fd, team, at) {
   else if (k === 'rats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'urat', id, x0: cx - 8 * dir + (j - 1) * 5, y0: fq[1] - 1 - j * 3, x1: q[0] + (j - 1) * 6, y1: q[1] - 1 - j * 2, t0: T1 + j * 0.07, d: Math.abs(q[0] - cx) / FMOT_AOE_V.rats, s: i * 3 + j }); });
   else if (k === 'nova') V.fx.push({ k: 'unova', id, x: cx, y: fq[1] - 2, t0: T1, d: 0.9, r1: Math.max(60, ...tg.map(q => Math.abs(q[0] - cx) + 16)) });
   else if (k === 'spin') { V.fx.push({ k: 'uspin', id, x: cx, y: cy + 4, r: H * 0.5 + 6, t0: T1 - 0.12, d: 0.42 }); const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 10 : cx - 120; V.fx.push({ k: 'skw', id, x0: cx - 18 * dir, y: cy + 6, dir: -dir, t0: T1, d: Math.abs(cx - 18 * dir - xe) / SK_WAVE + 0.3 }); }
+  else if (k === 'storm') V.fx.push({ k: 'ustorm', id, t0: T1 - 0.35, d: 1.3, tg: tg.map(q => [q[0], q[1] - 100]) });
   else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
   if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1, d: 0.1 });
 }
@@ -107,6 +108,11 @@ function fmotDraw(g, f, t) {
     const at = (i, j) => [x + (L ? 6 - i : i - 3) * 2, y + (j - 3) * 2];
     A.forEach((row, j) => [...row].forEach((ch, i) => { if (ch === '.') return; for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) { const ii = i + ox, jj = j + oy; if (!(A[jj] && A[jj][ii] && A[jj][ii] !== '.')) { const [qx, qy] = at(ii, jj); skQ(g, qx, qy, '#1a1010'); } } }));
     A.forEach((row, j) => [...row].forEach((ch, i) => { if (ch !== '.') { const [qx, qy] = at(i, j); skQ(g, qx, qy, C[ch]); } }));
+    return;
+  }
+  if (f.k === 'ustorm') {   // 번개 폭풍: 파티 머리 위에 먹구름(뭉툭 칸 덩이) · 번쩍일 때 밝아진다
+    const k = e / f.d, al = k < 0.2 ? k / 0.2 : k > 0.75 ? Math.max(0, 1 - (k - 0.75) / 0.25) : 1, fl = Math.floor(e * 14) % 5 === 0 && k > 0.25 && k < 0.7;
+    f.tg.forEach(([x, y], i) => { for (let j = 0; j < 9; j++) { const ox = (skH(i * 9 + j, 21) - 0.5) * 30, oy = (skH(i * 9 + j, 22) - 0.5) * 8 - (1 - Math.min(1, k * 3)) * 10; skQ(g, x + ox, y + oy, fl ? '#c8d8f0' : j % 3 ? '#2a3448' : '#3e4a64', al * 0.9); skQ(g, x + ox + 2, y + oy, fl ? '#e8f0ff' : '#34405a', al * 0.8); } });
     return;
   }
   if (f.k === 'unova') {   // 땅을 따라 퍼지는 고리 두 겹 + 떠오르는 알갱이
@@ -146,6 +152,14 @@ STORY.v46 = [
   '바위 도마뱀은 등에 바위 비늘판이 솟은 네발 도마뱀으로, 물고 머리를 숙여 돌진한다. 동굴 박쥐는 떠서 날갯짓하다가 내리꽂으며 물고 피를 빤다. 코볼트 광부는 노란 안전모에 등불을 단 개 얼굴의 광부로, 곡괭이를 내려찍고 땅을 찍어 흔든다.',
   '스톤 골렘과 바위거인은 만날 때마다 네 모습 중 하나로 나온다 — 골렘은 갈라진 바위 · 이끼 낀 고대 골렘 · 광맥과 수정 · 드워프가 만든 골렘, 바위거인은 자수정 거인 · 원석의 심장 · 산 거인 · 봉인의 수호자. 도감에서 네 모습을 모두 볼 수 있다.',
   '골렘 조각 펫은 다 자라면 어깨에 수정이 돋은 「수정 골렘」 모습이 된다.'
+];
+STORY.v48 = [
+  '빌드 48: 바람계곡과 와이번 둥지의 몬스터를 새로 그렸다 — 바람 늑대, 하피, 그리폰, 와이번, 그리고 우두머리 폭풍 와이번.',
+  '바람 늑대는 흰 갈기에 푸른 바람 무늬가 흐르는 늑대로, 물고 덮치고 덮쳐 물어뜯는다. 하피는 길게 뻗은 매 날개로 떠서 날갯짓하다가 내리꽂으며 발톱을 세우고, 날개를 쳐 깃털을 날려 상처를 낸다(출혈).',
+  '그리폰은 독수리 머리에 사자 몸, 층진 깃털 날개를 가졌다. 부리로 쪼고 덮치며, 높이 솟았다가 내리꽂는다. 와이번은 커다란 막 날개를 단 초록 비룡으로, 물고 머리를 숙여 들이받고 바람 숨결을 뿜는다.',
+  '폭풍 와이번은 번개 모양 뿔이 솟은 짙푸른 비룡이다. 물고 들이받다가, 뒤로 젖혀 숨을 모아 하늘로 포효하면 파티 머리 위에 먹구름이 끼고 번개가 내리친다(번개 폭풍).',
+  '그리폰·하피·와이번 펫도 다 자라면 새 그림이 된다. 큰 펫은 알맞게 줄여 그리고, 그리폰·와이번이 비행 마차를 끌 때는 마차 앞에 선다.',
+  '고친 것: 전투에서 펫이 뒤(파티 반대쪽)를 보고 있던 것 — 이제 적 쪽을 본다.'
 ];
 // 물기 (빌드 44): 위아래 이빨 줄이 맞물리고 작은 터짐
 Object.assign(SK_HIT2, {

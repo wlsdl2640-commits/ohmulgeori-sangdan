@@ -215,6 +215,15 @@
 - 시안 도구: 돌 덩이 이름표 그림 → 3톤 격자 `scratchpad/v46/g/stone.py`(shade · over) · `golem4.py`·`giant4.py`(모습 넷) · `emit46.py`(빈 줄 자르기 → pxmountain.js) · `sheet4.py`(넷을 한 장에: 가까이 4배 + 전투 화면) · `v46/d/render46.py`(묶음 mountain · golems · giants — 모습은 `('golem', 'golem_c')`처럼, real46.js `r.skin`이 uid를 고른다) · `v46/t/var.py`(변형 시험판).
 - 시험 `scratchpad/v46/logic46.py`, 전체 `scratchpad/run46.sh`.
 
+## 바람계곡 새 그림 · 번개 폭풍 · 펫 방향 (빌드 48)
+- 그림(src/pxvalley.js, build.py에서 pxmountain 뒤): windwolf(늑대 틀 · 흰 갈기 W/V · 푸른 무늬 B/b · gp.bite · gm.leap) · harpy(사용자가 고른 **C 길게 뻗은 매 날개**, 26칸 너비 · float · g2/gm 날갯짓·부풀림·뱉기) · griffon(**A 층진 깃털 날개** — 뛰는 몸 gm.leap도 같은 날개, 팔레트 G/D) · wyvern(손으로 그린 막 날개 · gp.bite · gm swell/spit) · stormwyvern(**B 번개 뿔**: 글자 B/L — 눈 색 E는 그대로 두려고 빛나는 칸은 L, ms 1.5 · still이라 서 있을 때는 가만히).
+- **보관한 그림 — 폭풍 와이번 뿔 A「뒤로 휜 두 뿔」**(사용자: 「A뿔은 다음에 또 쓰자」): `tools/saved/stormwyvern_horn_A.json`(g·gm이 PXU.stormwyvern과 같은 틀 43×28이라 그대로 바꿔 끼울 수 있다 · `horn` = 뿔 칸 (x, y, 글자) · 팔레트 Z/z) · `tools/saved/stormwyvern_horn_A.png`(시안 모습). 다른 용·비룡·우두머리에 쓸 때 꺼내 쓸 것.
+- 동작: 짐승 동작(qbite·qpounce·qmaul·qcharge·qdive)과 bswoop·wspit(투사체 shard·orb)를 빌리고, 폭풍 와이번만 `PXU_MOT.wroar`(뒤로 젖혀 숨을 모았다가 하늘로 포효, PXS_MOT_TT.wroar). 광역기 `storm`(fmot.js fmotAoe → V.fx `ustorm` 먹구름을 파티 머리 위 100픽셀에 맞는 때 0.35초 전부터 · 맞히기는 `SK_HIT2.bolt` 벼락 · FMOT_AOE_V.storm 700 · FMOT_NAME '번개 폭풍'), view.js fx()가 'ustorm'을 fmotDraw로 보낸다.
+- 펫(view.js·trade.js·iso.js): **전투에서 펫이 뒤를 보던 것을 고침**(빌드 19부터 `g.scale(-dir)` → `g.scale(dir)`, 적 쪽을 보고 튀어나간다). 새 그림 몬스터가 펫이 되면 커서 art.js `monFit(id, w)`(너비 w 안으로 줄이는 배율)로 — 전투 다 자란 펫 0.72 × monFit(44), 마구간 0.5 × monFit(30), 사육장 0.55 × monFit(30). 마차 짐승: drawRig이 monFit(44)로 줄이고 `monBack(id)`(닻에서 그림 뒤 끝까지)만큼 앞으로 세운다(말은 예전 자리 28 그대로), 끈도 그만큼 늘인다.
+- 몬스터 스킬의 `shake`는 광역기(fmotAoe)에서만 흔든다 — 한 사람에게 맞히는 스킬(그리폰 솟았다 내리꽂기 같은 것)은 빌드 43부터 그대로 안 흔든다(자주 흔들리면 피곤해서 그대로 둠).
+- 시안 도구: `scratchpad/v47/g`(wing.py·wyv.py·wyv2.py·harpy.py·storm.py·emit47.py) · `v47/w`(wings.py 날개·뿔 시안 · apply.py 적용 · sheet.py 시안판) · `v47/d`(real47.js · render47.py 묶음 valley · lineup.py) · `v47/t/var.py` · 펫 확인 `v47/p`(pets47.py · petbattle.py).
+- 시험 `scratchpad/v47/logic47.py`(그림·동작·크기·사건(물기·덮치기·내리꽂기·깃털·바람 숨결·번개 폭풍)·먹구름 그리기·실제 그리기 길·펫 방향과 크기·마차 자리·그리기), 전체 `scratchpad/run48.sh`.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

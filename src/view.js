@@ -374,14 +374,14 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     });
   });
 
-  // 펫: 파티 뒤에서 따라다니며 cd마다 앞으로 튀어나온다
+  // 펫: 파티 뒤에서 따라다니며 cd마다 앞으로 튀어나온다 (빌드 48: 파티와 같은 쪽을 본다 — 예전에는 뒤를 보고 있었다 · 큰 펫은 너비 44 안으로)
   if (pet) {
-    const [px, py] = pos['aP' + pet.id], pz = zAt(py) * (pet.stage ? 0.72 : 1.1), pat = V.atk['aP' + pet.id], plunge = pat && t - pat < 0.3;
+    const [px, py] = pos['aP' + pet.id], pz = zAt(py) * (pet.stage ? 0.72 * monFit(petLook(pet), 44) : 1.1), pat = V.atk['aP' + pet.id], plunge = pat && t - pat < 0.3;
     const hop = walking ? Math.abs(Math.sin(t * 7)) * 2 : plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 4 : Math.abs(Math.sin(t * 2.5)) * 0.6;
     const pdx = (plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 14 : 0) * dir;
     draws.push({ y: py - 1, f: g => {
       shadowAt(g, px + pdx, py, 5 * pz);
-      g.save(); g.translate(px + pdx, py - hop); g.scale(-dir, 1);
+      g.save(); g.translate(px + pdx, py - hop); g.scale(dir, 1);
       drawMon(g, petLook(pet), t, { ph: 0.7, z: pz });
       g.restore();
     } });
@@ -845,7 +845,7 @@ function fx(g, t) {
     const k = (t - f.t0) / f.d;
     if (k < 0) continue;
     if (f.k === 'skh' || f.k === 'skw' || f.k === 'skq' || f.k === 'skc' || f.k === 'shk' || f.k === 'skp') { skDraw(g, f, t); continue; }   // 스킬 효과 (빌드 41) · 투사체 (빌드 43에서 바로잡음)
-    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44)
+    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 47 번개 폭풍)
     const L = f.x1 != null ? Math.hypot(f.x1 - f.x0, f.y1 - f.y0) || 1 : 1, AH = f.arc != null ? f.arc : f.k === 'arrow' ? 10 : 4;   // 포물선 높이 (사선으로 쏜 화살은 높이)
     let ux = f.x1 != null ? (f.x1 - f.x0) / L : 1, uy = f.x1 != null ? (f.y1 - f.y0) / L : 0;
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * AH : 0;

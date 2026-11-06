@@ -65,6 +65,16 @@ function monBase(id) {
 }
 const monH = (id, sc) => monBase(id)[1] * monSc(MONS[id], sc, id);
 const monW = (id, sc) => monBase(id)[0] * monSc(MONS[id], sc, id);
+// 펫·마차 짐승 (빌드 48): 새 그림 몬스터(와이번 66칸 너비 같은 것)가 펫이 되면 너무 커서, 너비를 w 픽셀 안으로 줄이는 배율
+const monFit = (id, w) => Math.min(1, w / monW(id));
+const MON_BACK = {};
+function monBack(id) {   // 닻(발 가운데)에서 그림 뒤 끝까지 (z 1 픽셀) — 마차를 끄는 짐승을 마차 앞에 세운다
+  if (MON_BACK[id] != null) return MON_BACK[id];
+  const s = PXU[id] ? pxuSprite(id, 'idle', 0) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', 0);
+  let lx = 0;
+  try { const d = s.cv.getContext('2d').getImageData(0, 0, s.w, s.h).data; lx = s.w; for (let x = 0; x < s.w && lx === s.w; x++) for (let y = 0; y < s.h; y++) if (d[(y * s.w + x) * 4 + 3]) { lx = x; break; } } catch (_) { lx = 0; }
+  return (MON_BACK[id] = Math.max(0, s.ax - lx) * monSc(MONS[id], 0, id));
+}
 function drawMon(ctx, id, t, o = {}) {
   const m = MONS[id], sc = monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0);
   const fr = Math.floor(tt * (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5)) % 2;
