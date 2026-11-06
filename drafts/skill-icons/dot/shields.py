@@ -62,13 +62,27 @@ def tower_(a, look):   # 탑 방패: 키 큰 네모 + 띠 두 줄 + 가운데 �
     for (x, y) in [(4, 3), (11, 3), (4, 16), (11, 16)]: cm[(x, y)] = '8'
     _wings(cm, look, 2)
     _finish(a, cm, look)
-KINDS = [('buckler', '원형 방패', round_), ('shield', '히터 방패', heater_), ('kite', '카이트 방패', kite_), ('tower', '탑 방패', tower_)]
+def cross_(a, look):   # 십자 방패 (빌드 40, 빌드 38 성기사 방패 모양): 모서리 둥근 네모 + 큰 십자(가로대가 위쪽) + 가운데 보석
+    cm = {}; x0, x1, y0, y1 = 3, 12, 2, 17
+    cut = {(x0, y0), (x1, y0), (x0, y1), (x1, y1), (x0 + 1, y1), (x1 - 1, y1), (x0, y1 - 1), (x1, y1 - 1)}
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            if (x, y) in cut: continue
+            edge = x in (x0, x1) or y in (y0, y1) or (y == y1 - 1 and x in (x0 + 1, x1 - 1))
+            cm[(x, y)] = ('1' if x < 8 else '2') if edge else ('3' if x < 7 else '4')
+    for y in range(y0 + 1, y1 - 1): cm[(7, y)] = '5'; cm[(8, y)] = '6'
+    for x in range(x0 + 1, x1): cm[(x, 7)] = '5' if x < 8 else '6'; cm[(x, 8)] = '6'
+    if look >= 2: cm[(7, 7)] = '7'; cm[(8, 7)] = '7'; cm[(7, 8)] = '7'; cm[(8, 8)] = '2'
+    for (x, y) in [(4, 3), (11, 3)]: cm[(x, y)] = '8'
+    _wings(cm, look, 3)
+    _finish(a, cm, look)
+KINDS = [('buckler', '원형 방패', round_), ('shield', '히터 방패', heater_), ('kite', '카이트 방패', kite_), ('tower', '탑 방패', tower_), ('cross', '십자 방패', cross_)]
 def sheet(out):
     from PIL import Image, ImageDraw, ImageFont
     f = ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', 14, index=2)
     fb = ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc', 17, index=2)
     Z = 6; CW, RH, LW = W * Z + 66, H * Z + 22, 130
-    sh = Image.new('RGB', (LW + CW * 4 + 10, RH * 4 + 90), (21, 23, 28)); d = ImageDraw.Draw(sh)
+    sh = Image.new('RGB', (LW + CW * 4 + 10, RH * len(KINDS) + 90), (21, 23, 28)); d = ImageDraw.Draw(sh)
     d.text((10, 10), '방패 종류 시안 · 왼쪽 → 오른쪽 단계 색 (견습·숲지기 / 강철·폭풍 / 서리·사막왕 / 그 위) · 작은 그림 = 목록 크기', font=fb, fill=(242, 190, 60))
     for c, t in enumerate(O.TIER_RANGE): d.text((LW + c * CW + 20, 52), t, font=f, fill=(200, 200, 200))
     for r, (k, nm, fn) in enumerate(KINDS):
