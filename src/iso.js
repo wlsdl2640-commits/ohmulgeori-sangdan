@@ -455,7 +455,7 @@ function stableScene(it, t) {
   for (const p of S.parties) if (p.horse && p.horse.startsWith('p:')) { const pet = petById(+p.horse.slice(2)); if (pet) list.push({ id: petLook(pet) }); }
   list.slice(0, STABLE_SPOT.length).forEach((h, i) => {
     const [bx, by] = STABLE_SPOT[i], tx = bx + Math.sin(t * 0.3 + i * 2) * 0.15, [x, y] = scr(tx, by), bob = Math.abs(Math.sin(t * 1.2 + i)) * 0.6;
-    it(tx + by, x, y, g => { g.save(); g.translate(Math.round(x), Math.round(y - bob)); g.scale(0.5, 0.5); drawMon(g, h.id, t, { ph: i }); g.restore(); }, { x: x - 9, y: y - 16, w: 18, h: 18, win: 'b:stable' });
+    it(tx + by, x, y, g => { g.save(); g.translate(Math.round(x), Math.round(y - bob)); g.scale(0.5, 0.5); drawMon(g, h.id, t, { ph: i, z: monFit(h.id, 30) }); g.restore(); }, { x: x - 9, y: y - 16, w: 18, h: 18, win: 'b:stable' });
   });
 }
 function staffAt(it, p, tx, ty, pose, t, dir, flip, rate = 1.2) {
@@ -543,7 +543,7 @@ function penScene(it, t) {
   home.forEach((pet, i) => {
     const [bx, by] = PEN_SPOT[i], tx = bx + Math.sin(t * 0.6 + i * 2) * 0.6, ty = by + Math.cos(t * 0.45 + i) * 0.4, [x, y] = scr(tx, ty);
     const hop = Math.abs(Math.sin(t * 4 + i)) * 1.5;
-    it(tx + ty, x, y, g => { g.save(); g.translate(Math.round(x), Math.round(y - hop)); g.scale(0.55, 0.55); drawMon(g, petLook(pet), t, { ph: i }); g.restore(); }, { x: x - 8, y: y - 14, w: 16, h: 16, win: 'b:pen' });
+    it(tx + ty, x, y, g => { g.save(); g.translate(Math.round(x), Math.round(y - hop)); g.scale(0.55, 0.55); drawMon(g, petLook(pet), t, { ph: i, z: monFit(petLook(pet), 30) }); g.restore(); }, { x: x - 8, y: y - 14, w: 16, h: 16, win: 'b:pen' });
   });
   const inc = (S.pen && S.pen.inc) || [];
   inc.forEach((x, i) => { const [sx, sy] = scr(1 + i * 1.2, 1.2), E = ITEMS['egg_' + x.kind]; it(1 + i * 1.2 + 1.2, sx, sy, g => { R(g, Math.round(sx) - 4, Math.round(sy) - 6, 9, 4, '#c8a860'); R(g, Math.round(sx) - 3, Math.round(sy) - 9, 7, 7, E.c); R(g, Math.round(sx) - 2, Math.round(sy) - 10, 5, 2, E.c); R(g, Math.round(sx) - 2, Math.round(sy) - 8, 2, 2, shade(E.c, 0.35)); }, { x: sx - 6, y: sy - 12, w: 12, h: 12, win: 'b:pen' }); });
