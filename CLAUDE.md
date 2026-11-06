@@ -233,6 +233,13 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 지하수로 새 그림 · 하수 범람 (빌드 52)
+- 그림(src/pxsewer.js, build.py에서 pxalley 뒤): 모두 세 모습(사용자 「다」). sewerrat 셋(**평원 들쥐 격자를 pxplains.js에서 그대로 읽어 세 마리를 합성** — 사용자: 「예전 평원 쥐 모습 가져와서 3마리」; 물 때는 맨 앞 쥐만 gp.bite) · sludge 셋(px48 ball 명암 · gm squash/stretch) · sewercroc 셋(사용자: 넷째 꼴에서 「슬림하게 디테일 다듬기」 — 앞서 보인 떼 지은 쥐·납작 악어는 「너무 이상해」로 버림) · ratman 셋 · sewertroll 셋(ms 1.5, `wpn: 'pipe'` 하수관 몽둥이, 세 꼴이 다름: 긴 코·뚱뚱·외눈).
+- 펫: `PXU.psewerrat`(들쥐 틀 하나 + 하수도 색) = `PETS.sewerrat.adult`(쥐 두목, pxuLook 1.5배) — 떼 그림을 펫으로 쓰지 않으려고.
+- 광역기 `flood`(fmot.js fmotAoe → V.fx `uflood`: 검푸른 폐수 벽이 바닥을 따라 파티 뒤 28px까지 · 거품·물방울 · FMOT_AOE_V.flood 210 · FMOT_NAME.sewertroll '하수 범람', view.js fx() 경로). STORY.v52 · notes52 · flags.v52.
+- 시안 도구: `scratchpad/v52/g`(beasts.py 슬라임 · beasts5.py 쥐떼·악어(1~4는 버린 시안) · humanoids.py 쥐인간 · troll2.py 트롤 → `../t/*.json` → `final52.json` → `emit52.py`, 무기는 `../t/extra52.js`) · `v52/t/sheet50.py`(COLS 환경변수로 줄 바꿈) · `v52/d/render52.py`.
+- 시험 `scratchpad/v52/logic52.py`, 전체 `scratchpad/run52.sh`.
+
 ## 7번가 뒷골목 새 그림 · 길드 간부 · 그림자 칼날 비 (빌드 51)
 - 그림(src/pxalley.js, build.py에서 pxdesert 뒤): 모두 모습 여럿(사용자 「다 ㄱㄱ」) — PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME. assassin 셋(A 그림자 두건 기본 · B 흰 가면 · C 꽁지머리) · poisoner 셋(A 역병 의사 기본 · B 녹색 두건 · C 늙은 약초꾼, `wpn: 'flask'` 독 병 — 팔 방향과 상관없이 늘 똑바로 선 병, mag 투사체 `flask`) · enforcer 셋(A 덩치 기본 · B 쇠가면(사용자: 「가면 수정 · 피 묻어 있기」 → 눈 틈·입 창살·못·피) · C 붉은 머리띠, ms 1.25, `wpn: 'nclub'` 못 박힌 몽둥이에 피) · officer 둘(새 몬스터 「길드 간부」: 까마귀 가면 기본 · 흰 머리 노검객 — 두목 시안 B·C를 0.8배로 줄인 것, ms 1.25) · blackhood(두목, ms 1.5, `wpn: 'kris'` 물결 단검). 사용자 결정: 「두목 1, 간부 2명」.
 - 몸통 명암은 생성기의 `shade()`(px48 ball을 몸통 글자에만). 두목 망토는 격자 왼쪽(화면에서 뒤)에.

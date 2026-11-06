@@ -3,8 +3,8 @@
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
-const FMOT_NAME = { blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_NAME = { sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
   const q = PXU_ACT[id].fx[cat];
@@ -86,6 +86,7 @@ function fmotAoe(e, x, t, fd, team, at) {
   else if (k === 'spin') { V.fx.push({ k: 'uspin', id, x: cx, y: cy + 4, r: H * 0.5 + 6, t0: T1 - 0.12, d: 0.42 }); const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 10 : cx - 120; V.fx.push({ k: 'skw', id, x0: cx - 18 * dir, y: cy + 6, dir: -dir, t0: T1, d: Math.abs(cx - 18 * dir - xe) / SK_WAVE + 0.3 }); }
   else if (k === 'storm') V.fx.push({ k: 'ustorm', id, t0: T1 - 0.35, d: 1.3, tg: tg.map(q => [q[0], q[1] - 100]) });
   else if (k === 'sand') { const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 24 : cx - 160; V.fx.push({ k: 'usand', id, x0: cx - 20 * dir, x1: xe, gy: fq[1], t0: T1, d: Math.abs(cx - 20 * dir - xe) / FMOT_AOE_V.sand + 0.5 }); }   // 모래 해일 (빌드 50): 몸을 내리꽂으면 모래 물결이 땅을 따라 파티 쪽으로 밀려온다
+  else if (k === 'flood') { const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 28 : cx - 160; V.fx.push({ k: 'uflood', id, x0: cx - 16 * dir, x1: xe, gy: fq[1], t0: T1, d: Math.abs(cx - 16 * dir - xe) / FMOT_AOE_V.flood + 0.6 }); }   // 하수 범람 (빌드 52): 땅을 내리찍으면 검푸른 폐수가 바닥을 따라 파티 쪽으로 밀려오고 거품이 터진다
   else if (k === 'blades') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) { const dxs = (j - 1) * 7; V.fx.push({ k: 'ublade', id, x0: cx - 4 * dir + (j - 1) * 3, y0: cy - 16 - j * 3, x1: q[0] + dxs, y1: q[1] - 6 * zAt(q[1]), t0: T1 + j * 0.05 + i * 0.03, d: 0.3 + Math.abs(q[0] - cx) / FMOT_AOE_V.blades, s: i * 3 + j }); } });   // 그림자 칼날 비 (빌드 51): 치켜든 단검에서 그림자 단검 셋씩 솟아 포물선으로 파티에게 꽂힌다
   else if (k === 'blizzard') { const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 40 : cx - 160; V.fx.push({ k: 'ublizz', id, x0: cx - 10 * dir, x1: xe, y: fq[1], t0: T1 - 0.15, d: 1.5, tg }); }   // 눈보라 (빌드 49): 여왕 앞에서 파티 쪽으로 눈이 휘몰아친다
   else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
@@ -111,6 +112,14 @@ function fmotDraw(g, f, t) {
     const at = (i, j) => [x + (L ? 6 - i : i - 3) * 2, y + (j - 3) * 2];
     A.forEach((row, j) => [...row].forEach((ch, i) => { if (ch === '.') return; for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) { const ii = i + ox, jj = j + oy; if (!(A[jj] && A[jj][ii] && A[jj][ii] !== '.')) { const [qx, qy] = at(ii, jj); skQ(g, qx, qy, '#1a1010'); } } }));
     A.forEach((row, j) => [...row].forEach((ch, i) => { if (ch !== '.') { const [qx, qy] = at(i, j); skQ(g, qx, qy, C[ch]); } }));
+    return;
+  }
+  if (f.k === 'uflood') {   // 폐수 물결: 앞머리가 높고 뒤로 낮아지는 검푸른 물 벽 · 거품과 물방울 · 지나간 자리에 번들거림
+    if (e > f.d) return;
+    const x = f.x0 - Math.min(f.x0 - f.x1, e * FMOT_AOE_V.flood), al = e > f.d - 0.4 ? Math.max(0, (f.d - e) / 0.4) : 1, C = ['#9ab878', '#5a7a52', '#36503a', '#1e3026'];
+    for (let i = 0; i < 28; i++) { const xx = x + i * 2, h = Math.max(0, 16 - i * 0.6) * (0.8 + 0.2 * Math.sin(e * 16 + i * 0.7)); for (let yy = 0; yy < h; yy += 2) skQ(g, xx, f.gy - yy, C[Math.min(3, Math.floor(yy / 5) + (i > 6 ? 1 : 0))], al); }
+    for (let i = 0; i < 12; i++) { const q = (e * 2.4 + skH(i, 61)) % 1; skQ(g, x - 2 + skH(i, 62) * 12, f.gy - 14 - q * 14, i % 3 ? '#c8e0a0' : '#ffffff', al * (1 - q)); }
+    for (let i = 0; i < 14; i++) { const xx = x + 56 + skH(i, 63) * Math.max(0, f.x0 - x - 56), q = skH(i, 64), bl = Math.floor(e * 6 + i) % 3 === 0; skQ(g, xx, f.gy - 2 - q * 6, bl ? '#a8c890' : '#4a6a48', al * 0.4 * (1 - q)); }
     return;
   }
   if (f.k === 'ublade') {   // 그림자 단검: 위로 솟았다가 포물선으로 내려꽂힌다 · 검은 날 · 붉은 잔상 · 꽂히면 붉은 튐
@@ -195,6 +204,12 @@ STORY.v49 = [
   '설녀는 긴 머리에 흰 기모노를 입고 끌리는 옷자락으로 떠다닌다. 손끝에서 얼음 숨결을 날리고 냉기를 모은다. 만날 때마다 검은 머리 · 은빛 머리 두 모습 중 하나로 나온다(도감에서 둘 다 볼 수 있다).',
   '설녀 여왕은 얼음 왕관과 얼음 깃, 남빛 긴 머리에 흰 드레스를 입고 얼음 홀을 든다. 홀로 얼음 창을 쏘고, 홀을 치켜들면 파티 쪽으로 눈보라가 휘몰아친다(눈보라).',
   '고산지대 산양도 새로 그렸다 — 만날 때마다 아이벡스(뒤로 휜 마디 뿔) · 흰 산양(짧은 검은 뿔) · 큰뿔 산양(말린 굵은 뿔) 세 모습 중 하나. 머리를 숙여 들이받고, 뛰어올라 들이받는다. 산양 펫은 다 자라면 아이벡스 모습이 되어 강철 마차를 끈다.'
+];
+STORY.v52 = [
+  '빌드 52: 지하수로와 지하수로 깊은 곳의 몬스터를 새로 그렸다 — 하수도 쥐떼, 오물 슬라임, 하수도 악어, 쥐인간 도둑, 그리고 우두머리 하수도 트롤.',
+  '만날 때마다 여러 모습 중 하나로 나온다: 쥐떼는 잿빛 · 검은 · 갈색 쥐 세 마리, 오물 슬라임은 녹갈색 · 검은 폐수 · 독 거품, 악어는 이끼 · 검은 · 늙은 백악어, 쥐인간은 갈색 · 회색 · 검은 두목, 트롤은 긴 코 이끼 · 뚱뚱한 폐수 · 외눈 뼈 트롤. 도감에서 모두 볼 수 있다.',
+  '쥐떼는 떼로 물고 덮친다. 오물 슬라임은 튀어 올라 박치기하고 짓누른다(중독). 악어는 긴 턱으로 물고 돌진하며 물어뜯는다(출혈). 쥐인간 도둑은 단검으로 찌르고 뛰어올라 찌른다(마비).',
+  '하수도 트롤은 하수관 몽둥이를 휘두르고, 땅을 내리찍으면 폐수가 바닥을 따라 파티 쪽으로 밀려온다(하수 범람).'
 ];
 STORY.v51 = [
   '빌드 51: 7번가 뒷골목 · 암살자 길드 은신처의 몬스터를 새로 그렸다 — 암살자, 독살자, 길드 행동대원, 새로 생긴 길드 간부, 그리고 두목 길드장 검은 두건.',
