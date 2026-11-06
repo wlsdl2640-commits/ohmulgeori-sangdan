@@ -469,6 +469,9 @@ html, body { overflow-x: hidden; }
 .li.dim { opacity: .55; }
 .li.dim .ico { filter: brightness(0) saturate(0) opacity(.5); }
 .dexi { flex: none; width: 56px; height: 44px; background: #0e1118; border: 2px solid #000; image-rendering: pixelated; }
+.dexskin { gap: 6px; flex-wrap: wrap; margin: 4px 0 6px; align-items: flex-start; }
+.dexskin .stack { justify-items: center; width: 64px; text-align: center; gap: 2px; }
+.dexskin .sub { font-size: 10px; line-height: 1.2; }
 .dexm summary .row { align-items: center; }
 .dexm summary .stack > span:first-child { color: var(--ink); font-size: 14px; }
 .dexm .stats { margin-top: 6px; }

@@ -89,7 +89,12 @@ function monCard(id) {
   const rr = dexRare(id), rareRow = m.boss || m.giant || m.fb ? '' : rr ? `<div class="sub gold-t">★ 희귀종 ${rr}마리 기록: 이 종에게 주는 피해 +${Math.round(RARE.dmg * 100)}% · 전리품 +${Math.round(RARE.drop * 100)}%</div>` : `<div class="sub muted">희귀종(반짝이는 개체, 1/${Math.round(1 / RARE.p)})을 잡으면 이 종에게 피해 +${Math.round(RARE.dmg * 100)}%·전리품 +${Math.round(RARE.drop * 100)}%</div>`;
   return `<details class="card dexm"><summary><span class="row"><img class="dexi" src="${monIconURL(id)}" alt=""><span class="grow stack"><span>${m.name} ${tags}${rr ? ' <span class="tag gold-t">★희귀</span>' : ''}</span><span class="sub">${where.map(w => esc(w.where)).join(' · ') || '?'} · 잡음 <b class="num">${k}</b> · 기록 ${lvl}/4</span></span></span></summary>
     <div class="sub">${monTypes(id).map(t => `<span class="tyt">${MTYPES[t] ? MTYPES[t].name : t}</span>`).join('')} 속성 ${monEls(id).length ? monEls(id).map(elTag).join('·') : '<span class="muted">없음</span>'}${monElNote(id) ? ` <span class="muted">· ${monElNote(id)}</span>` : ''}</div>
-    ${stats}${drops}${sta}${rareRow}</details>`;
+    ${skinRow(id)}${stats}${drops}${sta}${rareRow}</details>`;
+}
+// 모습 여럿 (빌드 46: 골렘·바위거인은 만날 때마다 넷 중 하나)
+function skinRow(id) {
+  const L = typeof PXU_SKIN !== 'undefined' && PXU_SKIN[id]; if (!L) return '';
+  return `<div class="sub">모습 ${L.length}가지 <span class="muted">· 만날 때마다 다르다</span></div><div class="row dexskin">${L.map((s, i) => `<span class="stack"><img class="dexi" src="${monIconURL(s)}" alt=""><span class="sub">${esc((PXU_SKIN_NAME[id] || [])[i] || '')}</span></span>`).join('')}</div>`;
 }
 
 /* ───────── 직업 ───────── */
