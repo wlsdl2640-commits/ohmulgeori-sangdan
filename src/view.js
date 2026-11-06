@@ -802,7 +802,7 @@ function events(e, pos, t, team, p) {
       const aq = at('a' + x.d); if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 1.0, c: '#ffe08a' }); callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '부활!', 'buff'); }
     } else if (x.type === 'kill') {
       const q = at('f' + x.d);
-      if (q) V.ghosts.push({ id: x.id, adv: x.adv || null, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });
+      if (q) V.ghosts.push({ id: pxuDead(x.id, x.d), adv: x.adv || null, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });   // 쓰러질 때도 그 적의 모습 그대로 (빌드 46: 모습 넷 · 찢어진 망토)
     } else if (x.type === 'loot' || x.type === 'gear') {
       const gh = V.ghosts[V.ghosts.length - 1], q = gh ? [gh.x, gh.y] : [160, 180];
       V.fx.push({ k: 'icon', id: x.type === 'gear' ? gearKeyIcon('g:' + x.base + ':' + x.t) : x.id, x: q[0] + (x.type === 'gear' ? 6 : 0), y: q[1] - 10, t0: t + 0.3, d: x.type === 'gear' ? 1.4 : 0.9 });
