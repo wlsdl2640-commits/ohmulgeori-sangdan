@@ -406,16 +406,177 @@ QFQ.hhhhhhhhSSRs
 .cccdCCCcCfQfCcCCCc
 ccccdfCCCCCfCCCCCCCf
 cccd.ffffffffffffff
-` }, sh: [14, 12], hip: 0, ax: 11, ms: 1.5, mx: 20, my: 22, still: 1, arm: ['v', 'd'], hand: 'S', wpn: 'lstaff', wmap: { v: 'n', G: 'f', g: 'b', X: 'Q', x: 'w' }, idle: { h: [3, 3], a: -80, g: 3 } }
+` }, sh: [14, 12], hip: 0, ax: 11, ms: 1.5, mx: 20, my: 22, still: 1, arm: ['v', 'd'], hand: 'S', wpn: 'lstaff', wmap: { v: 'n', G: 'f', g: 'b', X: 'Q', x: 'w' }, idle: { h: [3, 3], a: -80, g: 3 } },
+  alpgoat: {   // 고산지대 산양 A 아이벡스(기본 모습 · 펫이 다 자란 모습): 뒤로 크게 휘어 오르는 마디 뿔 · 크림색 털 · 흰 수염
+    pal: { Q: '#fbf4e6', C: '#e2d4ba', c: '#b49e7e', d: '#7e6a52', K: '#2a2420', e: '#2a1e1a', n: '#4a3a30', w: '#ffffff', H: '#a08c68', h: '#5e4e38' },
+    g: `
+...........hHh
+..........H...H
+.........h....Hh
+.............ccHHCd
+.............QCCHQQc
+............QQccdCCdn
+.Q...QQQQQCCCCCcd
+.QcQQQQQQCCCCCcdd.ww
+..QQQQQCCCCCccdd..ww
+..CCCCCCCCcccddd...w
+..cCCCCccccddddd
+....cccddddddd
+....cdQcddd.cdQc
+....cdCc....cdCc
+....cdCc....cdCc
+....KKKK....KKKK
+`, g2: `
+...........hHh
+..........H...H
+.........h....Hh
+..............QHHCd
+.............ccCHQQc
+............QQccdCCdn
+..Q..QQQQQCCCCCcd
+.QcQQQQQQCCCCCcdd.ww
+..QQQQQCCCCCccdd..ww
+..CCCCCCCCcccddd...w
+..cCCCCccccddddd
+....cccddddddd
+....cdQcddd.cdQc
+....cdCc....cdCc
+....cdCc....cdCc
+....KKKK....KKKK
+`, gm: { charge: `
+.
+.
+.
+.
+.
+.....................HhH
+.Q...QQQQQCCCQQCc...hH
+.QcQQQQQQCCCCQQccQCHH
+..QQQQQCCCCCcCCCCCeH
+..CCCCCCCCccccccccCCc
+..cCCCCccccddddd...dd.n
+....cccddddddd......ww
+....cdQcddd.cdQc....ww
+....cdCc....cdCc.....w
+....cdCc....cdCc
+....KKKK....KKKK
+` }, sh: [20, 5], hip: 6, ax: 9, still: 1, noArm: 1, wpn: 'none' },
+  alpgoat_b: {   // 고산지대 산양 B 흰 산양: 짧은 검은 뿔 · 덥수룩한 흰 털 · 긴 수염
+    pal: { Q: '#ffffff', C: '#f2f0ea', c: '#c6c8cc', d: '#8e94a0', K: '#26242a', e: '#2a1e1a', n: '#3a3438', w: '#ffffff', H: '#2e2c30', h: '#1a181c' },
+    g: `
+...............H
+...............H
+.............ccQHCd
+.............QCCeQQc
+.........QQ.QQccdCCdn
+.Q...QQQQQCCCCCcd
+.QcQQQQQQCCCCCcdd.ww
+..QQQQQCCCCCccdd..ww
+..CCCCCCCCcccddd..ww
+..cCCCCccccddddd...w
+....cccddddddd
+...cccQcdcdcccQc
+....cdCc....cdCc
+....cdCc....cdCc
+....KKKK....KKKK
+`, g2: `
+...............H
+...............H
+..............QQHCd
+.............ccCeQQc
+.........QQ.QQccdCCdn
+..Q..QQQQQCCCCCcd
+.QcQQQQQQCCCCCcdd.ww
+..QQQQQCCCCCccdd..ww
+..CCCCCCCCcccddd..ww
+..cCCCCccccddddd...w
+....cccddddddd
+...cccQcdcdcccQc
+....cdCc....cdCc
+....cdCc....cdCc
+....KKKK....KKKK
+`, gm: { charge: `
+.
+.
+.
+.
+.........QQ
+.Q...QQQQQCCCQQCc...HH
+.QcQQQQQQCCCCQQccQCH
+..QQQQQCCCCCcCCCCCeQ
+..CCCCCCCCccccccccCCc
+..cCCCCccccddddd...dd.n
+....cccddddddd......ww
+...cccQcdcdcccQc....ww
+....cdCc....cdCc....ww
+....cdCc....cdCc.....w
+....KKKK....KKKK
+` }, sh: [20, 4], hip: 5, ax: 9, still: 1, noArm: 1, wpn: 'none' },
+  alpgoat_c: {   // 고산지대 산양 C 큰뿔: 귀 옆으로 동그랗게 말린 굵은 뿔 · 황갈색 털
+    pal: { Q: '#f6ead2', C: '#d2b88e', c: '#a28460', d: '#6e5840', K: '#2a2420', e: '#2a1e1a', n: '#4a3a30', w: '#fffaf0', H: '#ece2c8', h: '#8e7a58' },
+    g: `
+.............HHHH
+............HHHH
+...........HHHcQCCd
+...........HHQCHeQQc
+...........hHHHHhCCdn
+.Q...QQQQQCCHhHHH
+.QcQQQQQQCCCCCcdd.ww
+..QQQQQCCCCCccdd..ww
+..CCCCCCCCcccddd...w
+..cCCCCccccddddd
+....cccddddddd
+....cdQcddd.cdQc
+....cdCc....cdCc
+....cdCc....cdCc
+....KKKK....KKKK
+`, g2: `
+.............HHHH
+............HHHH
+...........HHHQQCCd
+...........HHccHeQQc
+...........hHHHHhCCdn
+..Q..QQQQQCCHhHHH
+.QcQQQQQQCCCCCcdd.ww
+..QQQQQCCCCCccdd..ww
+..CCCCCCCCcccddd...w
+..cCCCCccccddddd
+....cccddddddd
+....cdQcddd.cdQc
+....cdCc....cdCc
+....cdCc....cdCc
+....KKKK....KKKK
+`, gm: { charge: `
+.
+.
+.
+.
+.................hHHH
+.Q...QQQQQCCCQQCHhHH
+.QcQQQQQQCCCCQQHHHCc
+..QQQQQCCCCCcCCHHCeQ
+..CCCCCCCCccccchHHCHh
+..cCCCCccccdddddHHHHH.n
+....cccddddddd...hH.ww
+....cdQcddd.cdQc....ww
+....cdCc....cdCc.....w
+....cdCc....cdCc
+....KKKK....KKKK
+` }, sh: [20, 4], hip: 5, ax: 9, still: 1, noArm: 1, wpn: 'none' }
 });
 Object.assign(PXU_ACT, {
   snowman: { atk: ['wspit', 'sbounce'], skl: ['wspit'], fx: { atk: { pal: 'snow', hit: 'burst', p: 'snow' }, sbounce: { pal: 'snow', hit: 'burst' }, skl: { pal: 'ice', hit: 'shatter', p: 'snow', big: 1, after: 'motes' } } },
   icesprite: { mag: ['wspit'], atk: ['wspit'], skl: ['wspit'], fx: { atk: { pal: 'ice', hit: 'shatter', p: 'shard' }, mag: { pal: 'ice', hit: 'shatter', p: 'shard' }, skl: { pal: 'ice', hit: 'shatter', p: 'orb', big: 1, after: 'motes' } } },
   yeti: { atk: ['down', 'side'], skl: ['smash'], tk: 1.15, fx: { atk: { pal: 'ice', hit: 'star', big: 1 }, skl: { pal: 'ice', hit: 'quake', big: 2, after: 'dust' } } },
   snowmaiden: { mag: ['spush', 'sjab'], atk: ['spush'], skl: ['scharge'], tk: 1.0, fx: { mag: { pal: 'ice', hit: 'shatter', p: 'shard' }, atk: { pal: 'ice', hit: 'shatter', p: 'shard' }, skl: { pal: 'ice', hit: 'vortex', p: 'orb', big: 1, after: 'motes' } } },
-  icequeen: { mag: ['spush', 'spushup'], skl: ['scharge'], tk: 1.2, fx: { mag: { pal: 'ice', hit: 'shatter', p: 'shard', big: 1 }, skl: { pal: 'ice', hit: 'shatter', big: 2, after: 'motes', aoe: 'blizzard', shake: 3 } } }
+  icequeen: { mag: ['spush', 'spushup'], skl: ['scharge'], tk: 1.2, fx: { mag: { pal: 'ice', hit: 'shatter', p: 'shard', big: 1 }, skl: { pal: 'ice', hit: 'shatter', big: 2, after: 'motes', aoe: 'blizzard', shake: 3 } } },
+  alpgoat: { atk: ['qcharge'], skl: ['qdive'], fx: { atk: { pal: 'earth', hit: 'star' }, skl: { pal: 'earth', hit: 'star', big: 1, after: 'dust' } } }
 });
 // 설녀는 만날 때마다 두 모습 중 하나 (빌드 49, 사용자 결정 「둘 다 넣어서 두 종류로」): 검은 머리 · 은빛 머리 — 틀·동작은 같고 머리색만 다르다
 pxuSkinOf('snowmaiden', 'snowmaiden_b', PXU.snowmaiden.g, PXU.snowmaiden.sh, PXU.snowmaiden.hip, { h: '#a8bce0', H: '#e0ecfc', q: '#8a9ec8' });
 Object.assign(PXU_SKIN, { snowmaiden: ['snowmaiden', 'snowmaiden_b'] });
 Object.assign(PXU_SKIN_NAME, { snowmaiden: ['검은 머리 설녀', '은빛 머리 설녀'] });
+// 고산지대 산양은 만날 때마다 세 모습 중 하나 (빌드 49, 사용자 결정 「전부」): 아이벡스 · 흰 산양 · 큰뿔 — 뿔이 동작 장마다 달라 장을 통째로 따로 둔다 (펫·강철 마차는 기본 모습 A)
+pxuLook('alpgoat_b', 'alpgoat', MONS.alpgoat.name); pxuLook('alpgoat_c', 'alpgoat', MONS.alpgoat.name);
+Object.assign(PXU_SKIN, { alpgoat: ['alpgoat', 'alpgoat_b', 'alpgoat_c'] });
+Object.assign(PXU_SKIN_NAME, { alpgoat: ['아이벡스', '흰 산양', '큰뿔 산양'] });

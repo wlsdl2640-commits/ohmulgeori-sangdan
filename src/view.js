@@ -348,7 +348,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const jy = fmo ? fmotJy(f, fmo, z) : 0;   // 짐승이 뛰어오른 높이 (빌드 44): 그림자는 땅에
     const did = fmotOK(f) ? pxuLow(f) : f.id, lw0 = (V.lowSt || (V.lowSt = {}))[f.uid];   // 다친 모습 (빌드 44: 들쥐왕은 HP 30% 아래에서 망토가 찢어진다)
     V.lowSt[f.uid] = did;
-    if (lw0 !== undefined && lw0 !== did && did !== f.id) V.fx.push({ k: 'skh', id: 'u:low:tear', x: x + 9 * z * dir, y: y - 13 * z, fy: y, h: 21 * z, t0: t, pre: 0, d: 1.2, big: 1, last: 1, dir: -dir, ax: x });
+    if (lw0 !== undefined && lw0 !== did && PXU[f.id] && PXU[f.id].low && did === PXU[f.id].low.id) V.fx.push({ k: 'skh', id: 'u:low:tear', x: x + 9 * z * dir, y: y - 13 * z, fy: y, h: 21 * z, t0: t, pre: 0, d: 1.2, big: 1, last: 1, dir: -dir, ax: x });
     if (fmo) post.push(g => fmotFx(g, f, fmo, x, y + jy, z, dir));
     draws.push({ y, f: g => {
       g.save(); g.translate(x + lg, y);
