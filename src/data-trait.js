@@ -77,6 +77,7 @@ Object.assign(MONS.behemoth,    { sta: { k: 'stun', p: 0.2, d: 2 } });
 Object.assign(MONS.bandit,      { sta: { k: 'bleed', p: 0.3, d: 8, m: 0.25 } });
 Object.assign(MONS.assassin,    { sta: { k: 'bleed', p: 0.4, d: 8, m: 0.3 } });
 Object.assign(MONS.blackhood,   { sta: { k: 'bleed', p: 0.5, d: 10, m: 0.35 } });
+Object.assign(MONS.officer,     { sta: { k: 'bleed', p: 0.4, d: 8, m: 0.3 } });
 Object.assign(MONS.sewercroc,   { sta: { k: 'bleed', p: 0.3, d: 8, m: 0.3 } });
 Object.assign(MONS.ratman,      { sta: { k: 'para', p: 0.2, d: 2 } });
 Object.assign(MONS.shaman,      { sta: { k: 'weak', p: 0.3, d: 8 } });

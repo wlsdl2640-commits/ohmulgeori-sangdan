@@ -233,6 +233,14 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 7번가 뒷골목 새 그림 · 길드 간부 · 그림자 칼날 비 (빌드 51)
+- 그림(src/pxalley.js, build.py에서 pxdesert 뒤): 모두 모습 여럿(사용자 「다 ㄱㄱ」) — PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME. assassin 셋(A 그림자 두건 기본 · B 흰 가면 · C 꽁지머리) · poisoner 셋(A 역병 의사 기본 · B 녹색 두건 · C 늙은 약초꾼, `wpn: 'flask'` 독 병 — 팔 방향과 상관없이 늘 똑바로 선 병, mag 투사체 `flask`) · enforcer 셋(A 덩치 기본 · B 쇠가면(사용자: 「가면 수정 · 피 묻어 있기」 → 눈 틈·입 창살·못·피) · C 붉은 머리띠, ms 1.25, `wpn: 'nclub'` 못 박힌 몽둥이에 피) · officer 둘(새 몬스터 「길드 간부」: 까마귀 가면 기본 · 흰 머리 노검객 — 두목 시안 B·C를 0.8배로 줄인 것, ms 1.25) · blackhood(두목, ms 1.5, `wpn: 'kris'` 물결 단검). 사용자 결정: 「두목 1, 간부 2명」.
+- 몸통 명암은 생성기의 `shade()`(px48 ball을 몸통 글자에만). 두목 망토는 격자 왼쪽(화면에서 뒤)에.
+- **던전 호위 `F.dungeon.guards`**(data.js alley: `['officer', 'officer']`): core.js rollFoes의 dboss가 guards가 있으면 그 id들을 lv+2로 뽑고, 없으면 예전처럼 졸개 하나. 간부는 dungeon.mons에도 들어 있어 은신처 안에서도 나온다(data-elem human, data-trait bleed, data-books riposte, drops assassin_mark·guild_ledger 5%).
+- 두목 동작 `PXU_MOT.bcape`(망토 젖히고 단검 치켜들기, 맞히는 장 4) → 광역기 `blades`(fmot.js fmotAoe → V.fx `ublade` 사람마다 셋: 솟았다가 포물선으로 꽂힘 · 꽂히면 붉은 튐 · FMOT_AOE_V.blades 260 · FMOT_NAME.blackhood '그림자 칼날 비', view.js fx() 경로). STORY.v51 · notes51 · flags.v51.
+- 시안 도구: `scratchpad/v51/g`(px48.py · assassin.py · poisoner.py · enforcer.py · blackhood.py → `../t/*.json` → `emit51.py`, 무기는 `../t/extra51.js`를 emit이 앞에 붙인다) · 시안판 `v51/t/sheet50.py` · `v51/d/render51.py`(묶음 alley · alleyskins) · `bossfight.py`(두목 방 rollFoes 장면) · `bgshot.py`.
+- 시험 `scratchpad/v51/logic51.py`, 전체 `scratchpad/run51.sh`.
+
 ## 사라크 사막 새 그림 · 모습 여럿 · 모래 해일 (빌드 50)
 - 그림(src/pxdesert.js, build.py에서 pxsnow 뒤): 모든 몬스터가 모습 여럿(사용자 결정 — 시안판에서 여러 개를 고르면 만날 때마다 그중 하나). 모습마다 장(g·g2·gm)을 통째로 따로 둔 PXU 항목 + 기본 모습이 아닌 것은 `pxuLook`(드랍 없는 이름표) + `PXU_SKIN`·`PXU_SKIN_NAME`. PXU_ACT는 기본 id에만.
   - scorpion 넷(A 사막 전갈 기본 · B 황제 · C 모래 · D 왕릉) — noArm · gm bite 집게 · swell/spit 꼬리 치켜들기/내리꽂기(wspit을 투사체 없이) · 꼬리 마디가 끝으로 작아진다.

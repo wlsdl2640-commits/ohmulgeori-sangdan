@@ -127,6 +127,7 @@ const MONS = {
   assassin:{ name: '암살자',       plan: 'biped', skin: '#c68a5e', cloth: '#22222c', gear: 'dagger', hood: 1, mh: 1.0, ma: 1.2, md: 0.6, spd: 1.25, eva: 0.15, drops: [['assassin_mark', 0.5]] },
   poisoner:{ name: '독살자',       plan: 'biped', skin: '#e0ac7e', cloth: '#3a4a2a', gear: 'flask', hood: 1, mh: 0.9, ma: 1.2, md: 0.5, spd: 1.0, magic: 1, drops: [['poison_vial', 0.55]] },
   enforcer:{ name: '길드 행동대원', plan: 'biped', skin: '#9a6644', cloth: '#3a2a2a', gear: 'club', mh: 1.6, ma: 1.2, md: 1.2, spd: 0.9, drops: [['assassin_mark', 0.4]] },
+  officer: { name: '길드 간부', plan: 'biped', skin: '#c68a5e', cloth: '#1c1a24', gear: 'dagger', hood: 1, scale: 1.5, mh: 2.6, ma: 1.5, md: 1.1, spd: 1.15, eva: 0.12, min: 3, drops: [['assassin_mark', 0.8], ['guild_ledger', 0.05]] },   // 빌드 51: 두목 옆의 간부 둘 (까마귀 가면 · 흰 머리 노검객)
   blackhood: { name: '길드장 검은 두건', plan: 'biped', skin: '#c68a5e', cloth: '#14141a', gear: 'dagger', hood: 1, scale: 2, boss: 1, mh: 6, ma: 1.8, md: 1.5, spd: 1.1, eva: 0.15, aoe: 1, drops: [['guild_ledger', 1], ['assassin_mark', 1, 3]] }
 };
 
@@ -178,7 +179,7 @@ const FIELDS = {
     no: 7, name: '7번가 뒷골목', lv: 14, bg: 'alley', tier: 3, raid: 1,
     desc: '암살자 길드의 은신처로 이어지는 골목. 다섯 겹의 함정과 길드원이 지키고 있다.',
     mons: [],
-    dungeon: { name: '암살자 길드 은신처', bg: 'alley', mons: ['assassin', 'poisoner', 'enforcer'], boss: 'blackhood' },
+    dungeon: { name: '암살자 길드 은신처', bg: 'alley', mons: ['assassin', 'poisoner', 'enforcer', 'officer'], boss: 'blackhood', guards: ['officer', 'officer'] },
     next: null
   }
 };

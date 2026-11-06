@@ -301,7 +301,7 @@ function rollFoes(e, idx, extra = 0) {
   const lv = e.area === 'dungeon' ? (F.treasure ? Math.max(1, (e.lvo || 10) + e.stage - 3) : F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);   // 보물 던전: 파티 평균 -2 ~ 0
   const pool = A.mons.filter(id => e.area === 'dungeon' || minStage(MONS[id]) <= e.stage);
   const out = [];
-  if (dboss) { out.push(foeFrom(A.boss, F.treasure ? (e.lvo || 10) + 2 : F.raid ? F.lv + 14 : dungeonBossLv(F))); out.push(foeFrom(pickOne(pool), lv)); }
+  if (dboss) { out.push(foeFrom(A.boss, F.treasure ? (e.lvo || 10) + 2 : F.raid ? F.lv + 14 : dungeonBossLv(F))); if (A.guards) A.guards.forEach(id => out.push(foeFrom(id, lv + 2))); else out.push(foeFrom(pickOne(pool), lv)); }   // guards (빌드 51): 주인 곁을 지키는 정해진 호위 (암살자 길드 두목 + 간부 둘)
   else if (fboss) { out.push(fieldBoss(F, e.stage, lv)); for (let i = 0; i < (e.stage >= 30 ? 2 : 1); i++) out.push(foeFrom(pickOne(pool), lv)); }
   else {
     const nest = e.area === 'field' && e.mode === 'advance' ? nestAt(e.field) : null;

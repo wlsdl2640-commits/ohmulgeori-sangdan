@@ -35,7 +35,7 @@ const MON_TAG = {
   harpy: 'monster|wind', windwolf: 'beast|wind', griffon: 'beast|wind', wyvern: 'dragon|wind', stormwyvern: 'dragon kaiju|storm',
   snowman: 'elemental|ice', icesprite: 'elemental|ice', yeti: 'beast kaiju|ice', snowmaiden: 'monster|ice', icequeen: 'monster|ice',
   scorpion: 'monster|', antlion: 'monster|earth', bandit: 'human|', sandworm: 'kaiju|earth', greatworm: 'kaiju|earth',
-  assassin: 'human|', poisoner: 'human|', enforcer: 'human|', blackhood: 'human|',
+  assassin: 'human|', poisoner: 'human|', enforcer: 'human|', officer: 'human|', blackhood: 'human|',
   kingslime: 'monster kaiju|water', kaishar: 'human|', raidgriffon: 'beast kaiju|storm', tempest: 'dragon kaiju|storm', behemoth: 'kaiju beast|earth',
   sewerrat: 'beast|', sludge: 'monster|', sewercroc: 'beast|water', ratman: 'monster|', sewertroll: 'monster kaiju|',
   frogman: 'monster|water', leech: 'monster|water', kelpie: 'monster beast|water', siren: 'monster|water', swampthing: 'plant monster|water',

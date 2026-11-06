@@ -34,7 +34,7 @@ const BOOK_MONS = {
   chant:      ['bat', 'lizard'],
   haste:      ['bat', 'enforcer', 'windwolf'],
   berserk:    ['kobold', 'enforcer', 'golem'],
-  riposte:    ['assassin', 'enforcer'],
+  riposte:    ['assassin', 'enforcer', 'officer'],
   toughness:  ['golem', 'lizard', 'sewercroc'],
   resolve:    ['enforcer', 'giant', 'blackhood'],
   iceprison:  ['golem', 'giant', 'snowman'],
