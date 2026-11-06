@@ -89,7 +89,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: 오물거리 상단 ${{ env.APP_VER }}
+          name: 판타지세계 상단 키우기 ${{ env.APP_VER }}
           make_latest: true
           files: ohmulgeori-sangdan.apk
           body: |

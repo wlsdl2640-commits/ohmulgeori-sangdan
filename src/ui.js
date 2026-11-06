@@ -265,7 +265,7 @@ async function openExport() {
     <textarea class="code" id="code-out" readonly rows="5">${code}</textarea>
     <div class="btns"><button type="button" class="btn sm gold" id="code-copy">복사하기</button>${canShare() ? '<button type="button" class="btn sm" id="code-share">공유하기</button>' : ''}${isApp() ? '' : '<button type="button" class="btn sm" id="code-file">파일로 저장</button>'}</div>`;
   $('code-copy').onclick = async () => { say((await copyText($('code-out'))) ? '저장 코드를 복사했어요' : '코드를 길게 눌러 전체 선택한 뒤 복사해 주세요'); };
-  if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '오물거리 상단 저장 코드', text: code }); } catch (_) {} };
+  if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '판타지세계 상단 키우기 저장 코드', text: code }); } catch (_) {} };
   // 설치한 앱의 WebView는 내려받기를 못 해서 파일 단추를 숨긴다 (복사·백업 슬롯을 쓴다)
   if ($('code-file')) $('code-file').onclick = async () => {
     const name = `ohmulgeori-save-${new Date().toISOString().slice(0, 10)}.txt`;
