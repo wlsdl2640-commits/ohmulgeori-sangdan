@@ -280,8 +280,8 @@ CCkCCCkCcc
 `, sh: [8, 4], hip: 99, ax: 5, still: 1, noArm: 1, wpn: 'none' }
 });
 // 그림만 쓰는 MONS 이름표 (드랍·종류 없음 — 도감·드랍표가 세지 않는다)
-const pxuLook = (id, from, name) => { const m = MONS[from]; MONS[id] = { name, plan: 'pet', body: m.body, dark: m.dark, skin: m.skin, mh: 0, ma: 0, md: 0, spd: 1, drops: [] }; };
-pxuLook('pet_rat', 'rat', '들쥐 새끼'); pxuLook('prat', 'rat', '들쥐 대장'); pxuLook('pslime', 'slime', '왕관 슬라임'); pxuLook('ratking_t', 'ratking', MONS.ratking.name);
+const pxuLook = (id, from, name, sc) => { const m = MONS[from]; MONS[id] = { name, plan: 'pet', body: m.body, dark: m.dark, skin: m.skin, mh: 0, ma: 0, md: 0, spd: 1, drops: [], scale: sc || 1 }; };
+pxuLook('pet_rat', 'rat', '들쥐 새끼'); pxuLook('prat', 'rat', '들쥐 대장', 1.5); pxuLook('pslime', 'slime', '왕관 슬라임', 1.5); pxuLook('ratking_t', 'ratking', MONS.ratking.name);   // 다 자란 펫은 1.5배
 // 들쥐왕의 밀 이삭 홀: 금빛 자루 끝에 낟알이 엇갈린 이삭 · 까끄라기 (사용자가 고른 2번)
 PXU_WPN.wheat = (F, d) => { const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a || 0), px = -dy, py = dx, out = [], k = (d && d.ms) || 1, g = F.g != null ? F.g : 1, L = 3.4 * k;
   const at = (t, s, ch) => out.push([hx + 0.5 + dx * t + px * s, hy + 0.5 + dy * t + py * s, ch]);

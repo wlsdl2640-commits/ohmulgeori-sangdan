@@ -382,7 +382,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     draws.push({ y: py - 1, f: g => {
       shadowAt(g, px + pdx, py, 5 * pz);
       g.save(); g.translate(px + pdx, py - hop); g.scale(-dir, 1);
-      drawMon(g, pet.stage ? PETS[pet.kind].mon : 'pet_' + pet.kind, t, { ph: 0.7, z: pz });
+      drawMon(g, petLook(pet), t, { ph: 0.7, z: pz });
       g.restore();
     } });
   }

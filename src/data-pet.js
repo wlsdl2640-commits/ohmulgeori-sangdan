@@ -1,9 +1,10 @@
 /* ───────── 펫: 알 → 사육장에서 부화 → 파티마다 한 마리 동행 ─────────
    act: 전투에서 cd초마다 하는 일 (bite 물기 · heal 치료 · song 공격 버프 · guard 방어 버프 · web 거미줄 · frost/ember/splash 마법 · sting 독침 · drain 흡혈)
    home: 상단에 두면 주는 효과 [키, 값] (rest 숙면·회복 · traffic 손님 · herb 약초 · exp 경험치 · luck 전리품 · move 이동 · craft 조제 덤)
-   Lv30에 진화(stage 1): 힘 ×1.8, 어른 몬스터 모습. 호감도 100이면 특성 하나. */
+   Lv30에 진화(stage 1): 힘 ×1.8, 어른 몬스터 모습(adult가 있으면 그 그림 — 빌드 44: 왕관 슬라임 · 들쥐 대장은 예전 도트). 호감도 100이면 특성 하나. */
 const PETS = {
-  slime:     { name: '슬라임 새끼',     mon: 'slime',     field: 'plains',   act: 'heal',   pow: 1.0, cd: 4, likes: ['slime_jelly', 'herb'],           home: ['rest', 0.06],    evo: '왕관 슬라임',   c: '#5fbf5a', desc: '다친 동료를 몸으로 감싸 치료한다.' },
+  slime:     { name: '슬라임 새끼',     mon: 'slime',     field: 'plains',   act: 'heal',   pow: 1.0, cd: 4, likes: ['slime_jelly', 'herb'],           home: ['rest', 0.06],    evo: '왕관 슬라임',   c: '#5fbf5a', desc: '다친 동료를 몸으로 감싸 치료한다.', adult: 'pslime' },
+  rat:       { name: '들쥐 새끼',       mon: 'rat',       field: 'plains',   act: 'bite',   pow: 0.85, cd: 3, likes: ['rat_tail', 'herb'],             home: ['herb', 0.06],    evo: '들쥐 대장',     c: '#a08070', adult: 'prat', desc: '재빠르게 앞의 적을 문다. 상단에 두면 들판에서 약초를 물어 온다.' },
   wolf:      { name: '새끼 늑대',       mon: 'wolf',      field: 'plains',   act: 'bite',   pow: 1.0, cd: 3, likes: ['rat_tail', 'wolf_fang'],          home: ['traffic', 0.04], evo: '은빛 늑대',     c: '#8f877d', sta: { k: 'bleed', p: 0.2, d: 6, m: 0.2 }, desc: '앞의 적을 물어뜯는다. 물면 피를 흘리게 한다.' },
   spider:    { name: '아기 거미',       mon: 'spider',    field: 'forest',   act: 'web',    pow: 0.6, cd: 5, likes: ['spore', 'spider_silk'],           home: ['herb', 0.1],     evo: '여왕 거미',     c: '#3a3440', sta: { k: 'poison', p: 0.4, d: 8, m: 0.2 }, desc: '거미줄로 적을 느리게 하고 독을 바른다.' },
   golem:     { name: '골렘 조각',       mon: 'golem',     field: 'mountain', act: 'guard',  pow: 1.0, cd: 9, likes: ['iron_ore', 'golem_core'],         home: ['rest', 0.04],    evo: '수정 골렘',     c: '#77727c', desc: '돌벽을 세워 파티의 방어력을 올린다.' },
@@ -38,6 +39,8 @@ BUILD_ORDER.splice(BUILD_ORDER.indexOf('inn') + 1, 0, 'pen');
 const penCap = () => 2 + (S.bld.pen || 0) * 2;
 const petById = id => (S && S.pets ? S.pets.find(x => x.id === id) : null);
 const petOfParty = p => (p && p.pet ? petById(p.pet) : null);
+// 펫 그림: 새끼는 pet_종류, 다 자라면 adult 그림(없으면 그 몬스터)
+const petLook = pet => (pet.stage ? PETS[pet.kind].adult || PETS[pet.kind].mon : 'pet_' + pet.kind);
 // 마차에 맨 펫(마구간): 파티 p.horse = 'p:펫id'. 맨 펫은 싸우지도, 상단에 힘을 주지도 않는다
 const petHitched = id => !!(S && S.parties.some(p => p.horse === 'p:' + id));
 const petsAtHome = () => (S && S.pets ? S.pets.filter(x => !S.parties.some(p => p.pet === x.id) && !petHitched(x.id)) : []);
