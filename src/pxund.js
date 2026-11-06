@@ -350,6 +350,8 @@ function pxuClaw(F, d) {
   for (const s of [-0.8, 0, 0.8]) { out.push([hx + dx * 1 + px * s, hy + dy * 1 + py * s, 'z']); out.push([hx + dx * 2 + px * s * 1.3, hy + dy * 2 + py * s * 1.3, 'x']); }
   return out;
 }
+// 다친 모습: PXU[id].low = { hp: 비율, id: 그림 } — HP가 그 아래면 그 그림으로 (빌드 44: 들쥐왕 망토가 찢어진다)
+const pxuLow = f => { const L = f && PXU[f.id] && PXU[f.id].low; return L && f.maxHp && f.hp <= f.maxHp * L.hp ? L.id : f.id; };
 function pxuSprite(id, mk, f) {
   const key = 'PU|' + id + '|' + mk + '|' + f, k = pxKeyOf(key), hit = PXC.get(k);
   if (hit) return hit;

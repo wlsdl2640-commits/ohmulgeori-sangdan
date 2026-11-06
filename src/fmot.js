@@ -6,12 +6,14 @@ const FMOT_CAST = { spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, wspit:
 const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
 const FMOT_NAME = { ratking: '쥐 떼', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
-for (const id in PXU_ACT) for (const cat of ['atk', 'mag', 'skl']) {
-  const q = PXU_ACT[id].fx && PXU_ACT[id].fx[cat];
+for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
+  const q = PXU_ACT[id].fx[cat];
   if (q) SKFX['u:' + id + ':' + cat] = Object.assign({ pal: 'shadow', hit: 'star' }, q, q.p ? { proj: q.p } : {});
 }
+SKFX['u:low:tear'] = { pal: 'blood', hit: 'slashes', after: 'petals' };   // 망토가 찢어질 때: 천 조각이 흩날린다 (빌드 44)
 const fmotOK = f => !!(f && !f.giant && !f.adv && PXU[f.id]);
-const fmotSk = (id, cat) => SKFX['u:' + id + ':' + cat] || null;
+const fmotKey = (id, cat, mk) => 'u:' + id + ':' + (mk && SKFX['u:' + id + ':' + mk] ? mk : cat);
+const fmotSk = (id, cat, mk) => SKFX[fmotKey(id, cat, mk)] || null;
 // 사건 하나 → 동작 시작 · 맞는 때까지 남은 초 (PXU 몬스터가 아니면 0) · nx = 바로 뒤 사건 (상태이상을 거는 한 방인지 본다)
 function fmotOn(e, x, t, nx, at) {
   const f = e.foes && e.foes.find(o => o.uid === x.s);
@@ -24,7 +26,7 @@ function fmotOn(e, x, t, nx, at) {
   if (m0 && m0.t0 === t && m0.d === x.d && (x.type === 'shield' || m0.from === 'shield')) return m0.hit + m0.fl;   // 보호막이 받은 한 방과 그 뒤 맞기: 같은 동작
   const sta = nx && nx.type === 'sta' && nx.side === 'a' && nx.d === x.d;
   const cat = x.type === 'aoe' ? 'skl' : A.skl && !MONS[f.id].aoe && !f.aoe && (x.c || sta) ? 'skl' : x.k === 'magic' && A.mag ? 'mag' : A.atk ? 'atk' : 'mag';
-  const mk = pxuPick(f.id, cat, m0 && m0.mk), T = pxuMotT(f.id, mk), hf = pxsMotHit(mk), sk = fmotSk(f.id, cat);
+  const mk = pxuPick(f.id, cat, m0 && m0.mk), T = pxuMotT(f.id, mk), hf = pxsMotHit(mk), sk = fmotSk(f.id, cat, mk);
   let hit = 0; for (let i = 0; i < hf; i++) hit += T[i];
   const fl = sk && sk.proj && FMOT_CAST[mk] && x.type !== 'aoe' ? SK_PROJ_T[sk.proj] || 0.2 : 0;
   V.fmot[key] = { mk, cat, t0: t, T, hit, fl, c: x.c, d: x.d, from: x.type };
@@ -48,7 +50,7 @@ const fmotJy = (f, mo, z) => (mo ? Math.round((pxuSprite(f.id, mo.mk, mo.f).jy |
 function fmotFx(g, f, mo, x, y, z, dir) {
   const s = pxuSprite(f.id, mo.mk, mo.f), F = s.mfx;
   if (!F) return;
-  const sk = fmotSk(f.id, mo.cat), P = sk ? SK_PAL[sk.pal] : MOT_PAL[0], pal = mo.c ? MOT_PAL[1] : [P[0], P[1], P[2]];
+  const sk = fmotSk(f.id, mo.cat, mo.mk), P = sk ? SK_PAL[sk.pal] : MOT_PAL[0], pal = mo.c ? MOT_PAL[1] : [P[0], P[1], P[2]];
   g.save(); g.translate(x, y); g.scale(-dir * z, z);
   for (const L of [F.back, F.front]) for (const [X, Y, ci] of L) R(g, 2 * X - s.fo[0], 2 * Y - s.fo[1], 2, 2, pal[ci]);
   g.restore();
@@ -62,7 +64,7 @@ function fmotTip(f, m, q, z, dir) {
 function fmotHitFx(e, x, t, fd, am, aq, at) {
   const f = e.foes.find(o => o.uid === x.s), m = f && V.fmot['f' + f.uid];
   if (!m) return;
-  const dir = V.dir || 1, fq = at('f' + f.uid), cat = m.aoe && m.aoe.t === t ? 'skl' : m.cat, sk = fmotSk(f.id, cat), id = 'u:' + f.id + ':' + cat, T1 = t + fd;
+  const dir = V.dir || 1, fq = at('f' + f.uid), cat = m.aoe && m.aoe.t === t ? 'skl' : m.cat, sk = fmotSk(f.id, cat, m.mk), id = fmotKey(f.id, cat, m.mk), T1 = t + fd;
   if (!sk) return;
   if (m.fl && fq) {
     const src = fmotTip(f, m, fq, zAt(fq[1]), dir);

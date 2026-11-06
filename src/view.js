@@ -346,6 +346,9 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const [x, y] = pos['f' + f.uid], z = f.giant ? giantZ(f) : zAt(y), fmo = fmotOK(f) ? fmotNow(f, t) : null;   // 언데드 동작 (빌드 43)
     const lg = fmo ? -fmotDx(f, fmo, z) * dir : (V.lunge['f' + f.uid] || 0) > t ? -5 * dir : 0;
     const jy = fmo ? fmotJy(f, fmo, z) : 0;   // 짐승이 뛰어오른 높이 (빌드 44): 그림자는 땅에
+    const did = fmotOK(f) ? pxuLow(f) : f.id, lw0 = (V.lowSt || (V.lowSt = {}))[f.uid];   // 다친 모습 (빌드 44: 들쥐왕은 HP 30% 아래에서 망토가 찢어진다)
+    V.lowSt[f.uid] = did;
+    if (lw0 !== undefined && lw0 !== did && did !== f.id) V.fx.push({ k: 'skh', id: 'u:low:tear', x: x + 9 * z * dir, y: y - 13 * z, fy: y, h: 21 * z, t0: t, pre: 0, d: 1.2, big: 1, last: 1, dir: -dir, ax: x });
     if (fmo) post.push(g => fmotFx(g, f, fmo, x, y + jy, z, dir));
     draws.push({ y, f: g => {
       g.save(); g.translate(x + lg, y);
@@ -354,7 +357,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       g.scale(-dir, 1);
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t && (V.flash0['f' + f.uid] || 0) <= t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
       if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 모험가 옆모습
-      else { drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, f.id, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
+      else { drawMon(g, did, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, did, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
       FLASH = null; g.restore();
     } });
     if (f.rare) post.push(g => { const h = eH(f) * z / ZE; for (let k = 0; k < 4; k++) { const ph = t * 1.6 + k * 1.57, sx = x + Math.cos(ph) * (10 + k * 3), sy = y - h * (0.3 + 0.6 * ((Math.sin(ph * 0.7 + k) + 1) / 2)), on = Math.sin(t * 5 + k * 2) > 0; if (on) { R(g, Math.round(sx), Math.round(sy) - 1, 1, 3, '#fff6c0'); R(g, Math.round(sx) - 1, Math.round(sy), 3, 1, '#ffd040'); } } });
