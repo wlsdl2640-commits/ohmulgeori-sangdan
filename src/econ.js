@@ -24,7 +24,7 @@ function blankState(company) {
     bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -1270,7 +1270,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); notes38(); notes39(); notes40(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); notes38(); notes39(); notes40(); notes41(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1306,6 +1306,7 @@ function loadFrom(v) {
     if (old < 10) { migrate10(); saveGame(); }
     notes39();
     notes40();
+    notes41();
     return true;
   } catch (_) { return false; }
 }
@@ -1370,6 +1371,7 @@ function migrate10() {
   S.v = 10;
   if (n) log(`방패가 네 종류(원형·히터·카이트·탑)가 되었다. 방패가 없던 전사·마부 계열 ${n}명에게 방패를 나눠 주었다.`);
 }
+function notes41() { if (!S.flags.v41) { S.flags.v41 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬 효과 · 강화 스킬 동작', body: STORY.v41 }); } }
 function notes40() { if (!S.flags.v40) { S.flags.v40 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '공격 동작 · 십자 방패', body: STORY.v40 }); } }
 function notes39() { if (!S.flags.v39) { S.flags.v39 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '부장비 그림 · 방패 종류 · 균형', body: STORY.v39 }); } }
 function notes38() { if (!S.flags.v38) { S.flags.v38 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '부장비 · 화살', body: STORY.v38 }); } }

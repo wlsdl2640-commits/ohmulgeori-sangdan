@@ -972,8 +972,18 @@ const PXS_MOT = {
     { h: [0, 1], a: 30, sh: [3, 17, 0] }
   ]
 };
-// 다른 동작의 장을 빌린다 (효과 없이): raise 칼 치켜들기(마법·치유·강화) · guard 방패 세우기(방어 강화)
-const PXS_MOT_OF = { raise: ['down', [0, 1, 1, 1, 1, 1, 1, 0]], guard: ['block', [0, 1, 2, 2, 2, 2, 6, 7]] };
+// 다른 동작의 장을 빌리거나 새로 짠 동작 (효과 없이, 빌드 40~41): raise 칼 치켜들기(강화·함성) · guard 방패 세우기(방어 강화·보호막)
+//   salute 칼을 얼굴 앞에 세우기(치유) · taunt 칼끝으로 겨누기(도발) · parry 칼을 비스듬히 세워 흘려 받기 · ready 칼을 당겨 웅크린 되치기 자세 · toss 아래에서 위로 뿌리기(모래)
+const pxsBorrow = (src, list) => list.map(i => (typeof i === 'number' ? Object.assign({}, PXS_MOT[src][i], { fx: null }) : i));
+const PXS_MOT_OF = {
+  raise: pxsBorrow('down', [0, 1, 1, 1, 1, 1, 1, 0]),
+  guard: pxsBorrow('block', [0, 1, 2, 2, 2, 2, 6, 7]),
+  salute: pxsBorrow('down', [0, { h: [2, -3], a: -90 }, { h: [2, -3], a: -90 }, { h: [2, -4], a: -90 }, { h: [2, -4], a: -90 }, { h: [2, -3], a: -90 }, { h: [1, -1], a: -60 }, { h: [1, 0], a: -15 }]),
+  taunt: [{ h: [1, -2], a: -70 }, { h: [3, -2], a: -30, lean: 1 }, { h: [3, -3], a: -42, lean: 1 }, { h: [3, -2], a: -26, lean: 1 }, { h: [3, -3], a: -42, lean: 1 }, { h: [3, -2], a: -30, lean: 1 }, { h: [2, -1], a: -18 }, { h: [1, 0], a: -5 }],
+  parry: [{ h: [1, 0], a: -20 }, { h: [2, -1], a: -55, lean: -1 }, { h: [2, -2], a: -62, lean: -1 }, { h: [2, -2], a: -62, lean: -1 }, { h: [2, -1], a: -50, lean: -1 }, { h: [2, -2], a: -62, lean: -1 }, { h: [1, 0], a: -25 }, { h: [1, 0], a: -5 }],
+  ready: pxsBorrow('thrust', [0, 1, 2, 2, 2, 2, 1, 0]),
+  toss: pxsBorrow('up', [0, 1, 2, 3, 4, 5, 6, 7])
+};
 const PXS_MOT_T = [0.045, 0.045, 0.06, 0.04, 0.08, 0.06, 0.055, 0.055];   // 장마다 초 · 다섯째 장(4)이 맞히는 장
 const PXS_MOT_HIT = 4;
 // 동작을 쓰는 모험가: 칼 모양 무기 (장검·대검, 그림이 따로 없는 글라디우스·삼지창)
@@ -991,8 +1001,7 @@ function pxsHz(F) {
 const pxsMF = F => pxsHz(Object.assign({ k: 1, lean: 0, cr: 0, dx: 0, legs: null }, F));
 function pxsMotFr(mk, f) {
   const o = PXS_MOT_OF[mk];
-  if (o) { const F = pxsMF(PXS_MOT[o[0]][o[1][f]]); return Object.assign({}, F, { fx: null }); }
-  return pxsMF((PXS_MOT[mk] || PXS_MOT.down)[f]);
+  return pxsMF((o || PXS_MOT[mk] || PXS_MOT.down)[Math.max(0, Math.min(7, f))]);
 }
 const pxsMShoulder = F => [PXS_SH[0] + F.lean, PXS_SH[1] + F.cr];
 const pxsMHand = F => { const s = pxsMShoulder(F); return [s[0] + F.h[0], s[1] + F.h[1]]; };
@@ -1113,7 +1122,7 @@ function pxsMotFx(mk, f, c, sh, great) {
       [[2, -2], [2, 2], [1, -3], [3, 0], [1, 3]].forEach(([x0, y0], j) => { if (j < 2 + r) put(X + x0 * r, Y + Math.round(y0 * (r > 1 ? 1.4 : 1)), r > 1 ? 1 : 0); });
     }
   }
-  return back.length || front.length ? { back, front } : null;
+  return back.length || front.length ? { back, front, occ: c.map(r => r.join('')) } : null;
 }
 // 그림 열쇠: pxBake와 같은 꼴 (미리 찾아서 격자를 다시 만들지 않는다)
 const pxKeyOf = key => key + '|' + (FLASH || '') + (PX_FX ? '|fx' : '') + (PX_CHUNK ? '|c' : '');
