@@ -206,6 +206,12 @@
 - 투사체를 쏘는 몬스터 동작: `PXU_CAST`(mspore·sspit, pxund.js wspit)를 fmot.js `FMOT_CAST`에 합친다. 광역기 `roots`(skq 땅 금 + `SK_HIT2.roots` 솟는 뿌리, FMOT_AOE_V.roots, FMOT_NAME.elder '뿌리 솟기').
 - 시험 `scratchpad/v45/logic45.py`(그림·동작 8장·모습 바뀜·크기·사건(마법 구슬·독침·포자·뿌리 솟기)·그리기), 변형 시험판 `scratchpad/v45/t/var.py`(실제 전투 화면 + 가까이), 전체 `scratchpad/run45.sh`. logic40·logic43의 「예전 그림 몬스터」 비교는 아직 안 바꾼 작은 근접 몬스터를 골라 쓴다(필드를 바꿀 때마다 깨지지 않게).
 
+## 검은바위산 새 그림 · 모습 넷 (빌드 46)
+- 그림(src/pxmountain.js, build.py에서 pxforest 뒤): lizard(noArm · gm bite/charge) · bat(앞모습 · float · 아래 빈 다섯 줄로 떠 있음 · 몬스터 동작 `bswoop`) · kobold(`PXU_WPN.pick` 곡괭이, 서 있을 때 앞으로 치켜듦 — 늘어뜨리면 머리가 땅 밑으로 간다) · golem(22칸 너비 · `ms 1.25`로 앞팔 두 칸 굵기·큰 돌주먹) · giant(등 혹 · 앞으로 내민 머리 · ms 1.5). `PXU_WPN.rfist`(돌주먹, `PXU_FXW.rfist = 'dagger'`).
+- **모습 여럿**(사용자 결정 「전부」): pxund.js `PXU_SKIN[id] = [그림 id …]`·`PXU_SKIN_NAME`·`pxuSkin(f)`(uid 해시로 고름 — 같은 적은 늘 같은 모습) · `pxuLow(f)`는 다친 모습이 없으면 pxuSkin · `pxuDead(id, uid)`(view.js 쓰러지는 그림 V.ghosts — 찢어진 망토도 이걸로). 골렘 golem(갈라진 바위)·golem_b(이끼)·golem_c(광맥과 수정)·golem_d(드워프), 거인 giant(자수정)·giant_b(원석의 심장)·giant_c(산 거인)·giant_d(봉인의 수호자) — `pxuSkinOf(base, id, g, sh, hip, pal)`가 몸 틀을 빌리고 그림·색·sh·hip만 바꾼다(맨 위 빈 줄을 잘라서 sh·hip이 모습마다 다르다), 이름표는 pxuLook. 도감 `skinRow(id)`(CSS `.dexskin`). `PETS.golem.adult = 'golem_c'`(진화 이름 「수정 골렘」).
+- 시안 도구: 돌 덩이 이름표 그림 → 3톤 격자 `scratchpad/v46/g/stone.py`(shade · over) · `golem4.py`·`giant4.py`(모습 넷) · `emit46.py`(빈 줄 자르기 → pxmountain.js) · `sheet4.py`(넷을 한 장에: 가까이 4배 + 전투 화면) · `v46/d/render46.py`(묶음 mountain · golems · giants — 모습은 `('golem', 'golem_c')`처럼, real46.js `r.skin`이 uid를 고른다) · `v46/t/var.py`(변형 시험판).
+- 시험 `scratchpad/v46/logic46.py`, 전체 `scratchpad/run46.sh`.
+
 ## 빌드·배포
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).

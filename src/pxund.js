@@ -353,7 +353,7 @@ function pxuClaw(F, d) {
 // 다친 모습: PXU[id].low = { hp: 비율, id: 그림 } — HP가 그 아래면 그 그림으로 (빌드 44: 들쥐왕 망토가 찢어진다)
 // 모습 여럿 (빌드 46): PXU_SKIN[id] = [그림 id …] — 적마다 uid로 하나를 고른다(같은 적은 늘 같은 모습). 이름은 PXU_SKIN_NAME (도감)
 const PXU_SKIN = {}, PXU_SKIN_NAME = {};
-const pxuSkin = f => { const L = f && PXU_SKIN[f.id]; return L ? L[(Math.imul((f.uid | 0) + 7, 0x9e3779b1) >>> 0) % L.length] : f && f.id; };
+const pxuSkin = f => { const L = f && PXU_SKIN[f.id]; return L ? L[Math.floor((Math.imul((f.uid | 0) + 7, 0x9e3779b1) >>> 0) / 4294967296 * L.length)] : f && f.id; };   // 피보나치 해시의 윗자리
 const pxuDead = (id, uid) => PXU[id] && PXU[id].low ? PXU[id].low.id : pxuSkin({ id, uid });   // 쓰러지는 그림 (HP 0 = 다친 모습)
 const pxuLow = f => { const L = f && PXU[f.id] && PXU[f.id].low; return L && f.maxHp && f.hp <= f.maxHp * L.hp ? L.id : pxuSkin(f); };
 function pxuSprite(id, mk, f) {
