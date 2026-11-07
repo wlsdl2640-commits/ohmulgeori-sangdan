@@ -233,6 +233,23 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 용암 화산 새 그림 · 화산탄 비 · 불기둥 (빌드 57)
+- 그림(src/pxvolcano.js, build.py에서 pxcastle 뒤): 필드 몬스터 여섯 + 우두머리 마그마 드래곤 + 화구 두목 화염 군주가 옛 그림(pxmon*.js PXM)이던 것을 모두 PXU로. 안개 묘지(grave)는 몬스터 여덟이 모두 빌드 43 언데드라 그대로.
+  - 모습 여럿(빌드 50~55와 같은 길: PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만): magmaslime 둘(시안 C 불꽃 머리 기본 · D 끓는 슬라임 `_b`) · firebat 둘(A 불꽃 날개 기본 · B 숯 박쥐) · redhare 넷(A 불꽃 갈기 준마 기본 · B 갑옷 군마 · C 불꽃 말 · D 화산암 말) · magmadragon 셋(A 용암 갑룡 기본 · B 불꽃 날개 화룡 `_b` · **D 흑요석 가시 용이 `_c`**). 모습 하나: salamander(시안 B 용암 도롱뇽) · lavagolem(A) · efreet(B 불길 그림자) · firelord(B 용암 망토 군주).
+  - 짐승(still · noArm): salamander · redhare 넷 · magmadragon A/D — g2로 꼬리 · 갈기 · 불꽃, gm bite/charge/leap/swell/spit. 떠 있음(float): firebat 둘(pad 4) · efreet(pad 2) · magmadragon_b(pad 4) · firelord(pad 3 — ms 1.5라 숨쉬기 bob이 커서 pad 1이면 바닥에 닿았다). 슬라임은 gm squash/stretch(sbounce · sslam). 용암 골렘은 사람꼴(ms 1.25 · `wpn: 'rfist'` · g2 없음).
+  - 무기(pxvolcano.js 맨 앞): `fpalm` 손 위 불덩이(이프리트, FXW dagger, 팔 R/r · 손 O) · `forb` 불꽃 손 위 큰 불 구슬(화염 군주, FXW dagger, 손 O). 시안판에만 쓴 무기(fspear · fscim · fscept · fstaff · fgsword)는 `scratchpad/v57/t/extra57.js`.
+  - 큰 둘은 `ms: 1.5`(monSc 1 — MONS.scale 3·2는 옛 그림용): 마그마 드래곤 48~54칸 너비(폭풍 와이번 43 · 키메라 47과 비슷), 화염 군주 28×43.
+  - 유명 캐릭터를 피하려고 보내기 전에 고친 시안: 샐러맨더 D(주황 몸 · 크림 배 · 꼬리 끝 불꽃 → 검은 몸 노란 얼룩), 이프리트 D(램프 · 팔짱 · 금 팔찌 · 상투 → 봉인 단지 · 숫양 뿔), 화염 군주 C(등 뒤 해 고리 → 몸 둘레 불구슬), 가슴에 십자 꼴이 생기지 않게(근육 선 · 판 사이 빛은 V자).
+- 동작: 마그마 드래곤 atk qbite/qcharge · skl **wroar**(빌드 48 폭풍 와이번 동작 그대로 — body swell 배가 달아오름 · spit 하늘로 포효) → 광역기 meteor. 화염 군주 mag spush/sjab/spushup · skl scharge → 광역기 pillar. 적토마 qcharge/qbite · skl qdive, 이프리트 spush/sjab · skl scharge(투사체 orb), 샐러맨더 qbite/qcharge · skl wspit(orb), 골렘 side/down · skl smash, 슬라임 sbounce · skl sslam, 불박쥐 bswoop.
+- 광역기 둘(fmot.js fmotAoe → V.fx, view.js fx()가 fmotDraw로 보낸다):
+  - `meteor` 화산탄 비(FMOT_AOE_V 110 · FMOT_NAME.magmadragon): wroar 맞히는 장에 fmotTip(입)에서 사람마다 `umeteor` 셋 — 포물선 높이 h 84~, `fl` 나는 초(첫째 = 거리 ÷ 110 = 맞는 때, 둘은 0.11초씩 늦게 옆에) · `d` = fl + 0.95(떨어진 뒤 불꽃 · 튀는 용암 방울 · 노랑 → 주황 → 빨강 → 검붉게 식는 웅덩이 · 연기). 흔들기는 T1 + 0.55(떨어질 때).
+  - `pillar` 불기둥(FMOT_AOE_V 520 · FMOT_NAME.firelord): 사람마다 `upillar` — pre 0.32초 발밑 빛 고리가 커지다가 맞는 때에 높이 56·z 불기둥(흰 노랑 가운데 · 주황 · 빨강 가장자리 · 꼭대기 불꽃 혀)이 0.08초에 솟아 0.5초 일렁이고 위로 흩어진다 · 불씨 · 그을린 자리. d 1.3.
+  - 필드 우두머리 셋째 · 넷째(적토마 · 이프리트, k ≥ 3)는 fieldBoss의 aoe로 'nova'(새 광역기 그림 없음, 빌드 56과 같음).
+  - STORY.v57(fmot.js) · notes57(econ.js) · flags.v57.
+- 적토마는 펫(PETS.redhare mon) · 마차 말(HORSES.redhare pet)이라 다 자란 펫 · 마차 그림이 기본 모습(불꽃 갈기 준마). monFit 44 → 0.76, monBack 27. 아기는 pxpet.js `pet_redhare` 그대로.
+- 시안 도구 `scratchpad/v57`: 결정은 `DECISIONS.md`. 손 그림 `g/`(cv.py · blunt.py · shp.py, slime1 · fbat1 · sala1 · golem1 · golem2(A + 화산 등) · horse1 · efreet1 · dragon1 · flord1.py) → `t/*.json` → `g/assemble57.py [골렘 더할 시안]` → `t/final57.json` → `g/emit57.py <출력 pxvolcano.js>`. 광역기 시안 `t/aoe57.js`(fmotAoe · fmotDraw · fx를 감싸는 판) + `d/aoe57.py`(실제 전투 길 GIF). 확인: `t/look.py` · `t/sheet57.py` · `t/scene_cmp.py`(시안을 있는 몬스터와 같은 전투 화면에) · `t/board.py` · `t/peek.py`. 미리보기 `scratchpad/v57p/preview57.py`(모습 · 동작 · 광역기 · 적토마 펫 · 마차).
+- 시험 `scratchpad/v57/logic57.py`(모습 수 · 이름표 드랍 없음 · 떠 있는 높이 · 서 있기 둘째 장 · 사람꼴 g2 없음 · 가로 틈 · 무기 · 물기/돌진/포효 몸 · 크기 · 적토마 펫과 마차 · 필드 우두머리 차례와 광역기 · 모습 고르기 · 사건 · 화산탄/불기둥이 맞는 때에 떨어지고 솟는지 · 실제 그리기 길 · 그리기 · 이야기). 골렘 모습 수는 `NGOLEM`. 전체 시험은 `scratchpad/run57.sh`.
+
 ## 백작의 성 새 그림 (빌드 56)
 - 그림(src/pxcastle.js, build.py에서 pxbarren 뒤): 필드 몬스터 중 옛 그림(pxmon2.js)이던 넷만 — vbat · gargoyle · evileye · succubus. 구울 · 흡혈 기사 · 드라큘라 · 스켈레톤 셋 · 리치 킹은 빌드 43 pxund.js 그대로(빌드 55 실험체 골렘처럼). 넷 다 모습 하나(PXU_SKIN 없음) · `float`(발 밑 빈 줄 — 가고일은 성벽 조각째 4줄 띄움) · g2(날갯짓, 가고일은 눈이 빛남). float는 서 있기 둘째 장에 cr을 쓰지 않으므로 사람꼴(서큐버스)도 g2를 써도 가로 틈이 생기지 않는다.
   - vbat: 시안 1 옆모습 · noArm · `gm.bite`(아래턱이 벌어짐) · bswoop. gargoyle: 시안 1 성벽 조각 위 · noArm · gm swell/spit · wspit 투사체 shard. evileye: 시안 1 박쥐 날개 눈알 · noArm · gm swell/spit(홍채가 환해짐) · mag wspit 투사체 beam. succubus: 시안 2의 1번 + 옷 1-E · `arm: ['C', 'G']`(검은 장갑) · `hand: 'G'` · `wpn: 'hearto'`(PXU_WPN, 손 위에 뜬 하트, FXW dagger) · mag spush/sjab · skl scharge · 투사체 orb.
