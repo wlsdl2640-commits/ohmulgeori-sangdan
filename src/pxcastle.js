@@ -1,0 +1,420 @@
+/* ───────── 백작의 성 필드 몬스터 (빌드 56 시안): 흡혈 박쥐 · 가고일 · 이블아이 · 서큐버스 ─────────
+   그림체는 빌드 55와 같은 「뭉툭」(큰 면 한 색 · 윗가장자리 빛 · 아래 그늘 · 부위마다 다른 글자로 PX_FX가 선을 긋는다). 넷 다 떠 있다(float · 발 밑 빈 줄).
+   구울 · 흡혈 기사 · 드라큘라 · 스켈레톤 · 리치 킹은 빌드 43 언데드 새 그림(pxund.js) 그대로. */
+// 백작의 성 몬스터 무기 (빌드 56): 서큐버스 손 위의 분홍 하트
+// 분홍 하트 (서큐버스): 손바닥 위에 뜬 분홍 하트 빛
+PXU_WPN.hearto = (F, d) => { const [hx, hy] = pxsMHand(F), out = [];
+  const at = (x, y, ch) => out.push([hx + x, hy + y, ch]);
+  for (const [x, y, ch] of [[0, -2, 'X'], [1, -2, 'X'], [-1, -3, 'X'], [2, -3, 'X'], [-1, -4, 'R'], [2, -4, 'R'], [0, -3, 'w'], [1, -3, 'X'], [0, -1, 'r'], [1, -1, 'X']]) at(x, y, ch);
+  return out; };
+PXU_FXW.hearto = 'dagger';
+Object.assign(PXU, {
+  vbat: {   // 흡혈 박쥐 1 옆모습(사용자 「흡혈박쥐 1번」): 옆에서 본 박쥐 · 높이 쳐든 핏빛 날개막(앞 가장자리 뼈 · 끝 사이 오목) · 뒤쪽 검붉은 먼 날개 · 뾰족 귀 · 붉은 눈 · 흰 송곳니 · 날갯짓 g/g2 · 물 때 아래턱이 벌어진다(gm.bite)
+    pal: { C: '#5a3e4a', Q: '#7e5a68', c: '#3a2430', A: '#5a3e4a', a: '#3a2430', P: '#a02a40', q: '#62162a', R: '#5a1424', r: '#3e0c18', F: '#2e1820', f: '#2e1820', S: '#e07080', e: '#ff3a30', w: '#ffffff', m: '#1a0a10', K: '#160a10' },
+    g: `
+..............FK
+...........FFFPF
+........FFFPPPPF
+.....FFFPPPPPPPF.RK
+..FFFPPPPPPPPPPFRRR..A
+...qPPPPPPPPPPPFRRR..AA
+....qPqqPPPPPPPFRRRa.AS
+....qq..qPqqPPPFRRRa.AS
+........qq..qPPFrrraaASA
+............qqPFQQQAAAAAA
+............QQqFCCCAAAAeeA
+...........cCCQQCCCAAAAAAAA
+............cCCCCCCcAAAAAm
+.............cccccc.....wmw
+.............KK..K
+.
+.
+.
+.
+.
+.
+.
+.
+`, g2: `
+.
+.
+.
+.
+.....................A
+.....................AA
+...................a.AS
+...................a.AS
+...................aaASA
+.............QQQQQQAAAAAA
+............QcccCCCAAAAeeA
+...........ccPPFCCCAAAAAAAA
+........qP..PPPFCCCcAAAAAm
+....qP..PPPPPPPFccc.....wmw
+...qqPPPPPPPPPPFRKR
+..FFFqqqqPPPPPPFrRr
+.....FFFFqqqqPPF.rK
+.........FFFFqqF
+.............FFK
+.
+.
+.
+.
+`, gm: { bite: `
+..............FK
+...........FFFPF
+........FFFPPPPF
+.....FFFPPPPPPPF.RK
+..FFFPPPPPPPPPPFRRR..A
+...qPPPPPPPPPPPFRRR..AA
+....qPqqPPPPPPPFRRRa.AS
+....qq..qPqqPPPFRRRa.AS
+........qq..qPPFrrraaASA
+............qqPFQQQAAAAAA
+............QQqFCCCAAAAeeA
+...........cCCQQCCCAAAAAAAA
+............cCCCCCCcAAAAwmwA
+.............cccccc....AmmmA
+.............KK..K......AwA
+.
+.
+.
+.
+.
+.
+.
+.
+` }, sh: [24, 11], hip: 99, ax: 16, float: 1, noArm: 1, wpn: 'none' },
+  gargoyle: {   // 가고일 1 성벽 조각 위 가고일(사용자 「가고일 1번」): 부서진 톱니 담 조각에 웅크려 앉은 채 떠 있다 · 접은 날개 · 뒤로 휜 뿔 · 큰 머리와 엄니 · 담 끝을 움켜쥔 발톱 · 담 뒤로 늘어진 꼬리 · 담의 이끼와 떨어지는 돌 부스러기 · 서 있을 때 눈이 깜빡 빛난다(g2) · 입을 벌려 돌 조각을 뱉는다(gm swell/spit)
+    pal: { C: '#7c7c88', Q: '#a2a2ae', c: '#545460', A: '#6c6c78', a: '#4a4a54', U: '#c8bca2', u: '#8e846e', e: '#ff9a20', E: '#ffe080', m: '#1a1418', w: '#f4f0e4', K: '#2a2830', J: '#7e7266', j: '#564c44', G: '#6a8a3a', g: '#4a6a2a' },
+    g: `
+....K...K.......u
+.......Aa.......uuu
+.....Aaaaa..UUUU..u
+....AaaaAa.UU.UUU.uu
+...aaaAAAa.u....QU.Q
+....aAAAAAau....CQQccc
+....AAAAAAa.....CCCaaaaa
+....AAAAAAa...QQCCCQQeQQQ
+....AAAAAAa.QQCCCCCCCQCCC
+....AAAAAAa.CCCCCCCCccccc
+....aAAAAAAQCCCCCCCcmwmwm
+.....AAAAAaCCCCCCCC...w.w
+.....aAAAa.CCCCCCCC
+......AAaQQCCCCCCCC
+......aaQCCCCCCCccCQ
+........CCCCCCCc..CC
+........CCCCCCC...CC
+..JJJJJ.CCCCCCCQQQCC
+..JJJJJQcccccCCccccc
+..JjjJJc.....ccKKKKKK
+..jGGJjJJJJJjGJJJJjJGj
+..gjjjjjjjjjjjjjjjjjjg
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jJJJJjjjJJJJjjJJJJjj
+...jJJj...jJjj..jJjj
+....jj.....j.....j
+........j
+...............j
+.
+.
+.
+.
+`, g2: `
+....K...K.......u
+.......Aa.......uuu
+.....Aaaaa..UUUU..u
+....AaaaAa.UU.UUU.uu
+...aaaAAAa.u....QU.Q
+....aAAAAAau....CQQccc
+....AAAAAAa.....CCCaaaaa
+....AAAAAAa...QQCCCQQEQQQ
+....AAAAAAa.QQCCCCCCCQCCC
+....AAAAAAa.CCCCCCCCccccc
+....aAAAAAAQCCCCCCCcmwmwm
+.....AAAAAaCCCCCCCC...w.w
+.....aAAAa.CCCCCCCC
+......AAaQQCCCCCCCC
+......aaQCCCCCCCccCQ
+........CCCCCCCc..CC
+........CCCCCCC...CC
+..JJJJJ.CCCCCCCQQQCC
+..JJJJJQcccccCCccccc
+..JjjJJc.....ccKKKKKK
+..jGGJjJJJJJjGJJJJjJGj
+..gjjjjjjjjjjjjjjjjjjg
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jJJJJjjjJJJJjjJJJJjj
+...jJJj...jJjj..jJjj
+....jj.....j.....j
+........j
+...............j
+.
+.
+.
+.
+`, gm: { spit: `
+....K...K.......u
+.......Aa.......uuu
+.....Aaaaa..UUUU..u
+....AaaaAa.UU.UUU.uu
+...aaaAAAa.u....QU.Q
+....aAAAAAau....CQQccc
+....AAAAAAa.....CCCaaaaa
+....AAAAAAa...QQCCCQQeQQQ
+....AAAAAAa.QQCCCCCCCcccc
+....AAAAAAa.CCCCCCCCCmwmwm
+....aAAAAAAQCCCCCCCccmmmmm
+.....AAAAAaCCCCCCCC..mwmwm
+.....aAAAa.CCCCCCCC..cccc
+......AAaQQCCCCCCCC
+......aaQCCCCCCCccCQ
+........CCCCCCCc..CC
+........CCCCCCC...CC
+..JJJJJ.CCCCCCCQQQCC
+..JJJJJQcccccCCccccc
+..JjjJJc.....ccKKKKKK
+..jGGJjJJJJJjGJJJJjJGj
+..gjjjjjjjjjjjjjjjjjjg
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jJJJJjjjJJJJjjJJJJjj
+...jJJj...jJjj..jJjj
+....jj.....j.....j
+........j
+...............j
+.
+.
+.
+.
+`, swell: `
+....K...K.......u
+.......Aa.......uuu
+.....Aaaaa..UUUU..u
+....AaaaAa.UU.UUU.uu
+...aaaAAAa.u....QU.Q
+....aAAAAAau....CQQccc
+....AAAAAAa.....CCCaaaaa
+....AAAAAAa...QQCCCQQEQQQ
+....AAAAAAa.QQCCCCCCCQCCC
+....AAAAAAa.CCCCCCCCccccc
+....aAAAAAAQCCCCCCCcmwmwm
+.....AAAAAaCCCCCCCC...w.w
+.....aAAAa.CCCCCCCC
+......AAaQQCCCCCCCC
+......aaQCCCCCCCccCQ
+........CCCCCCCc..CC
+........CCCCCCC...CC
+..JJJJJ.CCCCCCCQQQCC
+..JJJJJQcccccCCccccc
+..JjjJJc.....ccKKKKKK
+..jGGJjJJJJJjGJJJJjJGj
+..gjjjjjjjjjjjjjjjjjjg
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jjjjjjjjjjjjjjjjjjjj
+..jJJJJjjjJJJJjjJJJJjj
+...jJJj...jJjj..jJjj
+....jj.....j.....j
+........j
+...............j
+.
+.
+.
+.
+` }, sh: [21, 9], ax: 12, hip: 99, float: 1, noArm: 1, wpn: 'none' },
+  evileye: {   // 이블아이 1 박쥐 날개 눈알(사용자 「이블아이 1번」): 핏발 선 큰 눈알 · 붉은 홍채와 세로 동공 · 양옆 작은 박쥐 날개 · 늘어진 시신경 꼬리 · 날갯짓 g/g2 · 홍채가 환해지며 빛줄기를 쏜다(gm swell/spit)
+    pal: { U: '#f2e8e2', u: '#c6b0ac', R: '#d02a44', r: '#a01c30', X: '#ff8aa0', K: '#140a10', w: '#ffffff', P: '#5a2a4a', q: '#361830', F: '#2a1424', S: '#c25a6a', s: '#86344a', v: '#d0404e' },
+    g: `
+.....Fq.................qF
+..qFFqPF...............FPqFF
+..FPqqPPF...UUUUUu....FPPqq.F
+...PqPPPPF.UUUUUUUu..FPPPPq
+...qqPPPPqUUUUUUuuuuFPPPPPq
+..qqqPPPPUuuUUUuRKRuuPPPPqqq
+..q..PPPPuvvuUuRwKRRuPPPP...q
+.....qqqqUUuvUuRRKRRRqqqq
+.........UUUUUuRRKRRR
+.........UUUuuuRRKRRu
+.........uUuvvUuRKRUu
+..........uvUUUUUUUu
+...........uUUUUUUu
+............uuuuuu
+............Ss
+...........Ss
+...........Ss
+...........Ss
+............Ss
+............Ss
+............Ss
+............s
+...........s
+...........s
+.
+.
+.
+.
+`, g2: `
+.
+.
+............UUUUUu
+...........UUUUUUUu
+..........UUUUUUuuuu
+.........UuuUUUuRKRuu
+.........uvvuUuRwKRRu
+........qUUuvUuRRKRRRF
+....qqFFFUUUUUuRRKRRRPFFFq
+...qFqPPPUUUuuuRRKRRuPPPPqF
+..FFqPPPPuUuvvUuRKRUuPPPPPqFF
+..FPqPPPqquvUUUUUUUuqqPPPPqqF
+...PqPPq...uUUUUUUu...qPPPq
+...qqqP.....uuuuuu.....Pqqq
+...q..q.....Ss.........q...q
+............Ss
+............Ss
+............Ss
+...........Ss
+...........s
+...........s
+...........s
+............s
+............s
+.
+.
+.
+.
+`, gm: { swell: `
+.....Fq.................qF
+..qFFqPF...............FPqFF
+..FPqqPPF...UUUUUu....FPPqq.F
+...PqPPPPF.UUUUUUUu..FPPPPq
+...qqPPPPqUUUUUUuuuuFPPPPPq
+..qqqPPPPUuuUUUuRKRuuPPPPqqq
+..q..PPPPuvvuUuRwKRRuPPPP...q
+.....qqqqUUuvUuRRKRRRqqqq
+.........UUUUUuRRKRRR
+.........UUUuuuRRKRRu
+.........uUuvvUuRKRUu
+..........uvUUUUUUUu
+...........uUUUUUUu
+............uuuuuu
+............Ss
+...........Ss
+...........Ss
+...........Ss
+............Ss
+............Ss
+............Ss
+............s
+...........s
+...........s
+.
+.
+.
+.
+`, spit: `
+.....Fq.................qF
+..qFFqPF...............FPqFF
+..FPqqPPF...UUUUUu....FPPqq.F
+...PqPPPPF.UUUUUUUu..FPPPPq
+...qqPPPPqUUUUUUuuuuFPPPPPq
+..qqqPPPPUuuUUUuXKXuuPPPPqqq
+..q..PPPPuvvuUuXwKXXuPPPP...q
+.....qqqqUUuvUuXXKXXXqqqq
+.........UUUUUuXXKXXX
+.........UUUuuuXXKXXu
+.........uUuvvUuXKXUu
+..........uvUUUUUUUu
+...........uUUUUUUu
+............uuuuuu
+............Ss
+...........Ss
+...........Ss
+...........Ss
+............Ss
+............Ss
+............Ss
+............s
+...........s
+...........s
+.
+.
+.
+.
+` }, sh: [21, 8], hip: 99, ax: 15, float: 1, noArm: 1, wpn: 'none' },
+  succubus: {   // 서큐버스 1-E 검은 레이스 겹 드레스(사용자: 시안 1을 모두 빼고 시안 2의 1번 → 「1번에 옷 디테일을 업그레이드」 → 「E로 가자」): 허리까지 오는 보랏빛 머리 · 작게 말린 검은 뿔 · 양쪽으로 활짝 편 자홍 박쥐 날개(g/g2 날갯짓) · 자홍 긴 드레스 · 어깨를 덮는 검은 레이스 볼레로 · 치마 아래를 덮은 검은 레이스 · 검은 초커와 분홍 보석 · 검은 장갑 · 하트 끝 꼬리 · 손 위에 분홍 하트(hearto)
+    pal: { S: '#f4dcd8', s: '#d0b0ac', e: '#e0206a', w: '#c0306a', H: '#6a3a9a', h: '#44226a', L: '#9a6ac8', Z: '#2a1a2e', z: '#140c18', C: '#c0347e', Q: '#e86aa8', c: '#7a1a52', P: '#8e2a6e', q: '#5a1446', F: '#3a0e2c', K: '#f0e6f0', T: '#5a1a44', X: '#ff9ad0', R: '#ff4aa0', r: '#c02a7a', A: '#5a1444', a: '#3a0c2c', B: '#ffc4e0', b: '#e894bc', U: '#fff2f8', Y: '#f2c84a', G: '#2a1a2e', g: '#5a3a5e' },
+    g: `
+..............Z....Z
+..............zZ..Zz
+........FK....HHHHHH....qK
+.....qFFqqF..HHHhhhhH..qFqqFF
+...FFFPqqqPF.HHhSSSShHqFPqqqPFF
+....PPPqPqPP.HHSSeSeSHFPPqPqPP
+....qPqqPqPPPHHSSSSSSHPPPqPqqq
+.....PqPPqPPPHHHSSwSHHPPPqPPq
+....PqqPPqPPPhhhhSSShhPPPqPPqq
+....qqPPPqPPPqGGGGGGGPPPPqPPPq
+.....qqPPqPPPHGGGRGGGPPPPqPqq
+.......qqqPqqHGCGCGCGqqPPqq
+........qqq..HCCCCCCC..qqP
+........q....HCCCCCCC....q
+.............HCCCCCCc
+.............HCCCCCCH
+.............hCCCCCCh
+............TTCCCCCC
+..........TT.QCCCCCCQ
+........TT...CGCGCGCG
+.......TT....GGgGGgGG
+......T.....GGgGGgGGgG
+......T.....GgGGgGGgG
+......T.......G.G.G.G
+.....R.R
+.....RRR
+......R
+.
+.
+.
+`, g2: `
+..............Z....Z
+..............zZ..Zz
+..............HHHHHH
+.............HHHhhhhH
+.............HHhSSSShH
+.......FFKF..HHSSeSeSH.qFKF
+......FFqqPF.HHSSSSSSHFFPqqF
+....FFPqqqPPPHHHSSwSHHPPPqqqPF
+....PPqqPqPPPhhhhSSShhPPPqPqqP
+....PPqqPqPPPqGGGGGGGPPPPqPqqP
+....PqqPPqPPPHGGGRGGGPPPPqPPqq
+....PqqPPqPPPHGCGCGCGPPPPqPPqq
+....qqqPPqPqqHCCCCCCCqqPPqPqqq
+.......qqqq..HCCCCCCC..qqqq
+........q....HCCCCCCc....q
+.............HCCCCCCH
+.............hCCCCCCh
+............TTCCCCCC
+..........TT.QCCCCCCQ
+........TT...CGCGCGCG
+.......TT....GGgGGgGG
+......T.....GGgGGgGGgG
+......T.....GgGGgGGgG
+......T.......G.G.G.G
+.....R.R
+.....RRR
+......R
+.
+.
+.
+`, sh: [19, 10], hip: 15, ax: 17, float: 1, arm: ['C', 'G'], hand: 'G', wpn: 'hearto', idle: { h: [3, 5], a: 0 } }
+});
+Object.assign(PXU_ACT, {
+  vbat: { atk: ['bswoop'], skl: ['bswoop'], tk: 0.9, fx: { atk: { pal: 'blood', hit: 'bite' }, skl: { pal: 'blood', hit: 'bite', big: 1, after: 'drain' } } },
+  gargoyle: { atk: ['wspit'], skl: ['wspit'], tk: 1.1, fx: { atk: { pal: 'earth', hit: 'shatter', p: 'shard' }, skl: { pal: 'earth', hit: 'shatter', p: 'shard', big: 1, after: 'dust' } } },
+  evileye: { mag: ['wspit'], atk: ['wspit'], skl: ['wspit'], tk: 1.0, fx: { mag: { pal: 'evil', hit: 'flash', p: 'beam' }, atk: { pal: 'evil', hit: 'flash', p: 'beam' }, skl: { pal: 'evil', hit: 'flash', p: 'beam', big: 1, after: 'sparks' } } },
+  succubus: { mag: ['spush', 'sjab'], atk: ['spush'], skl: ['scharge'], tk: 1.0, fx: { mag: { pal: 'evil', hit: 'flash', p: 'orb' }, atk: { pal: 'evil', hit: 'flash', p: 'orb' }, skl: { pal: 'evil', hit: 'mark', p: 'orb', big: 1, after: 'petals' } } }
+});

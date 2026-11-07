@@ -233,6 +233,15 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 백작의 성 새 그림 (빌드 56)
+- 그림(src/pxcastle.js, build.py에서 pxbarren 뒤): 필드 몬스터 중 옛 그림(pxmon2.js)이던 넷만 — vbat · gargoyle · evileye · succubus. 구울 · 흡혈 기사 · 드라큘라 · 스켈레톤 셋 · 리치 킹은 빌드 43 pxund.js 그대로(빌드 55 실험체 골렘처럼). 넷 다 모습 하나(PXU_SKIN 없음) · `float`(발 밑 빈 줄 — 가고일은 성벽 조각째 4줄 띄움) · g2(날갯짓, 가고일은 눈이 빛남). float는 서 있기 둘째 장에 cr을 쓰지 않으므로 사람꼴(서큐버스)도 g2를 써도 가로 틈이 생기지 않는다.
+  - vbat: 시안 1 옆모습 · noArm · `gm.bite`(아래턱이 벌어짐) · bswoop. gargoyle: 시안 1 성벽 조각 위 · noArm · gm swell/spit · wspit 투사체 shard. evileye: 시안 1 박쥐 날개 눈알 · noArm · gm swell/spit(홍채가 환해짐) · mag wspit 투사체 beam. succubus: 시안 2의 1번 + 옷 1-E · `arm: ['C', 'G']`(검은 장갑) · `hand: 'G'` · `wpn: 'hearto'`(PXU_WPN, 손 위에 뜬 하트, FXW dagger) · mag spush/sjab · skl scharge · 투사체 orb.
+  - 서큐버스 시안 1(고딕 귀부인 · 가면 무도회 · 몽마 · 박쥐 날개 망토 · 나방 날개)은 사용자가 모두 뺐다 — 날개가 몸 뒤에 숨어 서큐버스답지 않았다. 시안 2는 큰 박쥐 날개를 **양쪽으로 활짝**(`bwings`, 몸 뒤 빈 칸에만) · 뿔 · 하트 끝 꼬리가 다 보이게. 그다음 「1번에 옷 디테일을 업그레이드」 → 코르셋 · 3단 프릴 · 하트 무늬 · 금장 · 검은 레이스 중 「E로 가자」.
+  - 필드 우두머리 셋째부터(k ≥ 3)는 core.js fieldBoss가 `f.aoe = true`를 주므로 이블아이 · 서큐버스(k 3·4)도 광역기를 쓴다 — PXU_ACT fx.skl에 aoe가 없으면 fmotOn이 'nova'(unova 파동)로 둔다. 새 광역기 그림은 넣지 않았다.
+  - STORY.v56(fmot.js) · notes56(econ.js) · flags.v56.
+- 시안 도구 `scratchpad/v56`: 결정은 `DECISIONS.md`. 손 그림 `g/`(cv.py 칸 판 · wing · scallop · frames · thin · rbox · hem, blunt.py, vbat1.py · garg1.py · eye1.py · succ1.py(뺌) · succ2.py · succ3.py(옷 1-A~E)) → `t/*.json` → `g/assemble56.py` → `t/final56.json` → `g/emit56.py <출력 pxcastle.js>`. 무기 `t/extra56.js`(시안판에만 쓴 shalberd · fan · rose · moonstaff · hscepter · lantern · gtrident · pfire · hmirror · porb도 여기). 확인: `t/look.py`(서 있기 두 장 + show 장 가까이) · `t/gridtxt.py`(게임 pxuGrid 격자 글자) · `t/sheet56.py`(설명 줄 바꿈 · COLS) · `t/board.py` · `t/gifmon.py` · `t/peek.py`. 미리보기 `scratchpad/v56p/preview56.py`.
+- 시험 `scratchpad/v56/logic56.py`(PXU · 갈래 · 그림 56장 · 떠 있는 높이 · 서 있기 둘째 장 · 가로 틈 · 무기 · 장갑 팔 · 물기/뱉기 몸 · 하트 · 도감 그림 · 크기 · 아기 박쥐 펫 · 필드 우두머리 차례와 광역기 · 사건(물기 · 돌 조각 · 빛줄기 · 하트 구슬 · nova) · 실제 그리기 길 · 그리기 · 이야기). 전체 시험은 `scratchpad/run56.sh`.
+
 ## 메마른 땅 · 키메라 연구소 새 그림 · 대지 가르기 · 불길 숨결 (빌드 55)
 - 그림(src/pxbarren.js, build.py에서 pxswamp 뒤): 그림체는 사용자가 고른 이끼 등 트롤과 같은 **뭉툭** — 손으로 그린 격자에 `blunt()`(큰 면 한 색 · 윗가장자리 한 줄 빛 Q · 아래 두 줄과 뒤 가장자리 그늘 c · 줄무늬 없음), 머리 A/a · 몸 C/c/Q · 배 S/s처럼 재질이 다른 글자를 나란히 두어 PX_FX가 선을 긋게 한다. 사용자는 이 단계에서 「뭉툭 디자인으로」 · 「같은 모습에 타입만 바꾸지 말고 생김새를 여러 개로」를 거듭 말했다 — 시안은 몸꼴이 서로 다르게.
   - imp 둘(두건 임프 B 말린 뿔 기본 · C 긴 뿔, `wpn: 'gstaff'` + 팔레트 O/o/x로 불씨 지팡이) · hellhound 둘(3 썩은 하이에나 기본 · 4 가시 늑대) · troll 하나(이끼 등 트롤, ms 1.25, `wpn: 'meatbone'`) · ogre 넷(기본 · 두 머리 `bnclub` · 짐승 해골 `boneclub` · 백정 `cleaver`, ms 1.25) · cerberus 하나(1-A 푸른 가시 등, ms 1.5) · ogreking 셋(왕관 · 두 머리 `bnclub` · 해골 `baxe`, ms 1.5) · chimera 하나(1-E, ms 1.5). 모습 여럿은 빌드 50~53과 같은 길(PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만 — 헬하운드 둘은 불(화상)로 맞췄다).
