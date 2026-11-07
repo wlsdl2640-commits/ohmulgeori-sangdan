@@ -3,8 +3,8 @@
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
-const FMOT_NAME = { anaconda: '휘감아 조이기', swampwitch: '독 늪', sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420, rocks: 240, breath: 260 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_NAME = { ogreking: '대지 가르기', chimera: '불길 숨결', anaconda: '휘감아 조이기', swampwitch: '독 늪', sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
   const q = PXU_ACT[id].fx[cat];
@@ -91,6 +91,15 @@ function fmotAoe(e, x, t, fd, team, at) {
   else if (k === 'flood') { const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 28 : cx - 160; V.fx.push({ k: 'uflood', id, x0: cx - 16 * dir, x1: xe, gy: fq[1], t0: T1, d: Math.abs(cx - 16 * dir - xe) / FMOT_AOE_V.flood + 0.6 }); }   // 하수 범람 (빌드 52): 땅을 내리찍으면 검푸른 폐수가 바닥을 따라 파티 쪽으로 밀려오고 거품이 터진다
   else if (k === 'blades') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) { const dxs = (j - 1) * 7; V.fx.push({ k: 'ublade', id, x0: cx - 4 * dir + (j - 1) * 3, y0: cy - 16 - j * 3, x1: q[0] + dxs, y1: q[1] - 6 * zAt(q[1]), t0: T1 + j * 0.05 + i * 0.03, d: 0.3 + Math.abs(q[0] - cx) / FMOT_AOE_V.blades, s: i * 3 + j }); } });   // 그림자 칼날 비 (빌드 51): 치켜든 단검에서 그림자 단검 셋씩 솟아 포물선으로 파티에게 꽂힌다
   else if (k === 'blizzard') { const xe = tg.length ? Math.min(...tg.map(q => q[0])) - 40 : cx - 160; V.fx.push({ k: 'ublizz', id, x0: cx - 10 * dir, x1: xe, y: fq[1], t0: T1 - 0.15, d: 1.5, tg }); }   // 눈보라 (빌드 49): 여왕 앞에서 파티 쪽으로 눈이 휘몰아친다
+  else if (k === 'rocks') {   // 대지 가르기 (빌드 55): 몽둥이로 땅을 내리찍으면 땅 금이 파티 쪽으로 달리고, 금이 닿는 사람마다 발밑에서 바위 가시가 솟았다 부서진다
+    const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir;
+    V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 });
+    tg.forEach((q, i) => V.fx.push({ k: 'urock', id, x: q[0], y: q[1], z: zAt(q[1]), t0: T1 + Math.abs(q[0] - cx) / FMOT_AOE_V.rocks - 0.05, d: 0.95, s: i }));
+  }
+  else if (k === 'breath') {   // 불길 숨결 (빌드 55): 숨을 모았다가 벌린 입에서 불길이 부채꼴로 뿜어져 파티를 휩쓴다
+    const src = fmotTip(f, m, fq, z, dir), xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 18 : Math.max(...tg.map(q => q[0])) + 18) : cx - 150 * dir;
+    V.fx.push({ k: 'ufire', id, x0: src[0], y0: src[1], x1: xe, gy: fq[1], t0: T1 - 0.04, d: 1.05 });
+  }
   else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
   if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1, d: 0.1 });
 }
@@ -125,6 +134,30 @@ function fmotDraw(g, f, t) {
       skQ(g, f.x + ex, f.y + ey, c, al * (front ? 1 : 0.55)); if (front) skQ(g, f.x + ex, f.y + ey + 2, j % 3 ? '#e8e098' : '#b0a868', al);
     }
     if (e > 0.28) for (let i = 0; i < 4; i++) { const q = ((e - 0.28) * 1.8 + skH(f.s * 4 + i, 71)) % 1; skQ(g, f.x + (skH(f.s * 4 + i, 72) - 0.5) * r * 2, f.y - r * 0.6 - q * 12, i % 2 ? '#8af060' : '#c8f0a0', al * (1 - q)); }
+    return;
+  }
+  if (f.k === 'urock') {   // 바위 가시: 발밑에서 뾰족한 바위 셋이 솟고(0.14초) 버티다가 부서져 조각이 튀고 흙먼지가 오른다
+    if (e > f.d) return;
+    const up = Math.min(1, e / 0.14), br = e > 0.45 ? (e - 0.45) / (f.d - 0.45) : 0, al = 1 - br * br, C = ['#e2cca0', '#b8986a', '#7e6444', '#54402a'];
+    [[-8, 10, 3], [0, 17, 4], [7, 12, 3]].forEach(([ox, h0, w]) => {
+      const h = h0 * f.z * up * (1 - br * 0.7), bx = f.x + ox * f.z;
+      for (let yy = 0; yy < h; yy += 2) { const ww = Math.max(0, Math.round(w * (1 - yy / Math.max(1, h)) * f.z)); for (let xx = -ww; xx <= ww; xx += 2) skQ(g, bx + xx, f.y - yy, yy + 2 >= h ? C[0] : xx < 0 ? C[1] : xx > 0 ? C[3] : C[2], al); }
+    });
+    if (br > 0) for (let i = 0; i < 9; i++) { const a = skH(f.s * 9 + i, 91) * Math.PI, r = 3 + br * 18; skQ(g, f.x + Math.cos(a) * r * (i % 2 ? 1 : -1), f.y - 8 - Math.sin(a) * r * 0.7 + br * br * 16, C[1 + i % 3], 1 - br); }
+    for (let i = 0; i < 7; i++) { const q = (e * 1.5 + skH(f.s * 7 + i, 92)) % 1; skQ(g, f.x + (skH(f.s * 7 + i, 93) - 0.5) * 26, f.y - 1 - q * 12, '#c8b48c', 0.4 * (1 - q) * al); }
+    return;
+  }
+  if (f.k === 'ufire') {   // 불길: 입에서 파티 쪽으로 불 알갱이가 부채꼴로 흘러간다 — 입 가까이 흰 노랑 · 노랑 · 주황 · 빨강, 끝은 검붉은 연기 · 다 뿜은 뒤 꼬리가 따라간다
+    if (e > f.d + 0.35) return;
+    const L = Math.abs(f.x0 - f.x1) || 1, tt = L / FMOT_AOE_V.breath, head = e / tt, tail = (e - (f.d - 0.3)) / tt, al = e > f.d ? Math.max(0, 1 - (e - f.d) / 0.35) : 1;
+    for (let i = 0; i < 72; i++) {
+      const sp = 0.85 + skH(i, 102) * 0.3, u = (e * sp / tt + skH(i, 101)) % 1;
+      if (u > head || u < tail) continue;
+      const x = f.x0 + (f.x1 - f.x0) * u, y = f.y0 + (f.gy - 9 - f.y0) * u * 0.8 + (skH(i, 103) - 0.5) * (3 + u * 28) + Math.sin(e * 18 + i) * 2 * u;
+      const c = u < 0.16 ? '#fff6c0' : u < 0.38 ? '#ffd040' : u < 0.62 ? '#ff8a2a' : u < 0.84 ? '#e0402a' : '#5a3436', a2 = al * (u < 0.84 ? 1 : 1 - (u - 0.84) / 0.16);
+      skQ(g, x, y, c, a2); if (u > 0.3) skQ(g, x + (f.x1 < f.x0 ? 2 : -2), y, c, a2 * 0.9); if (u > 0.55 && i % 2) skQ(g, x, y - 2, c, a2 * 0.8);
+    }
+    if (e < f.d - 0.25) for (let i = 0; i < 5; i++) skQ(g, f.x0 + (skH(i, 104) - 0.5) * 6, f.y0 + (skH(i, 105) - 0.5) * 6, i % 2 ? '#fff6c0' : '#ffd040', 0.8);
     return;
   }
   if (f.k === 'umiasma') {   // 독 늪: 파티 발밑에 검보라·초록 늪이 가운데부터 번지고, 거품이 솟아 터지고, 해골 모양 연기가 오른다
@@ -226,6 +259,12 @@ STORY.v49 = [
   '설녀는 긴 머리에 흰 기모노를 입고 끌리는 옷자락으로 떠다닌다. 손끝에서 얼음 숨결을 날리고 냉기를 모은다. 만날 때마다 검은 머리 · 은빛 머리 두 모습 중 하나로 나온다(도감에서 둘 다 볼 수 있다).',
   '설녀 여왕은 얼음 왕관과 얼음 깃, 남빛 긴 머리에 흰 드레스를 입고 얼음 홀을 든다. 홀로 얼음 창을 쏘고, 홀을 치켜들면 파티 쪽으로 눈보라가 휘몰아친다(눈보라).',
   '고산지대 산양도 새로 그렸다 — 만날 때마다 아이벡스(뒤로 휜 마디 뿔) · 흰 산양(짧은 검은 뿔) · 큰뿔 산양(말린 굵은 뿔) 세 모습 중 하나. 머리를 숙여 들이받고, 뛰어올라 들이받는다. 산양 펫은 다 자라면 아이벡스 모습이 되어 강철 마차를 끈다.'
+];
+STORY.v55 = [
+  '빌드 55: 메마른 땅과 키메라 연구소의 몬스터를 새로 그렸다 — 임프, 헬하운드, 트롤, 오거, 열 번째 우두머리 케르베로스와 오거 대왕, 그리고 연구소의 두목 키메라.',
+  '만날 때마다 여러 모습 중 하나로 나온다: 임프는 말린 뿔 · 긴 뿔 두건 임프, 헬하운드는 썩은 하이에나 · 가시 늑대, 오거는 오거 · 두 머리 오거 · 짐승 해골 오거 · 백정 오거, 오거 대왕은 왕관 쓴 대왕 · 두 머리 대왕 · 해골 대왕. 도감에서 모두 볼 수 있다.',
+  '트롤은 산처럼 굽은 등에 이끼와 서리꽃이 핀 이끼 등 트롤이 되어 고기 뼈 몽둥이를 휘두른다. 임프는 불씨가 타는 지팡이로 불덩이를 쏜다.',
+  '오거 대왕이 몽둥이로 땅을 내리찍으면 땅 금이 달려와 발밑에서 바위 가시가 솟는다(대지 가르기). 키메라는 사자 · 염소 · 뱀이 한 몸이다 — 서 있는 동안 등의 염소가 앞을 봤다 뒤를 봤다 하고, 숨을 모았다가 파티에게 불길을 뿜는다(불길 숨결).'
 ];
 STORY.v53 = [
   '빌드 53: 눅눅한 늪지대와 가라앉은 마녀의 오두막의 몬스터를 새로 그렸다 — 프로그, 늪 거머리, 켈피, 세이렌, 늪지 괴물, 우두머리 두꺼비 왕, 새 우두머리 늪지 아나콘다, 그리고 늪지의 마녀.',

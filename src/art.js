@@ -77,7 +77,7 @@ function monBack(id) {   // 닻(발 가운데)에서 그림 뒤 끝까지 (z 1 �
 }
 function drawMon(ctx, id, t, o = {}) {
   const m = MONS[id], sc = monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0);
-  const fr = Math.floor(tt * (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5)) % 2;
+  const fr = Math.floor(tt * (PXU[id] && PXU[id].ifr || (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5))) % 2;   // ifr: 서 있기 두 장을 바꾸는 빠르기 (빌드 55 키메라 — 염소가 2초마다 앞·뒤를 본다)
   const s = PXU[id] ? pxuSprite(id, o.mot ? o.mot.mk : 'idle', o.mot ? o.mot.f : fr) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);   // 언데드: 동작 장 (빌드 43)
   if (sc === 1) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(sc, sc); pxBlit(ctx, s); ctx.restore();

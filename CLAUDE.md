@@ -233,6 +233,21 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 메마른 땅 · 키메라 연구소 새 그림 · 대지 가르기 · 불길 숨결 (빌드 55)
+- 그림(src/pxbarren.js, build.py에서 pxswamp 뒤): 그림체는 사용자가 고른 이끼 등 트롤과 같은 **뭉툭** — 손으로 그린 격자에 `blunt()`(큰 면 한 색 · 윗가장자리 한 줄 빛 Q · 아래 두 줄과 뒤 가장자리 그늘 c · 줄무늬 없음), 머리 A/a · 몸 C/c/Q · 배 S/s처럼 재질이 다른 글자를 나란히 두어 PX_FX가 선을 긋게 한다. 사용자는 이 단계에서 「뭉툭 디자인으로」 · 「같은 모습에 타입만 바꾸지 말고 생김새를 여러 개로」를 거듭 말했다 — 시안은 몸꼴이 서로 다르게.
+  - imp 둘(두건 임프 B 말린 뿔 기본 · C 긴 뿔, `wpn: 'gstaff'` + 팔레트 O/o/x로 불씨 지팡이) · hellhound 둘(3 썩은 하이에나 기본 · 4 가시 늑대) · troll 하나(이끼 등 트롤, ms 1.25, `wpn: 'meatbone'`) · ogre 넷(기본 · 두 머리 `bnclub` · 짐승 해골 `boneclub` · 백정 `cleaver`, ms 1.25) · cerberus 하나(1-A 푸른 가시 등, ms 1.5) · ogreking 셋(왕관 · 두 머리 `bnclub` · 해골 `baxe`, ms 1.5) · chimera 하나(1-E, ms 1.5). 모습 여럿은 빌드 50~53과 같은 길(PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만 — 헬하운드 둘은 불(화상)로 맞췄다).
+  - 무기(pxbarren.js 맨 앞): `bclub` 큰 몽둥이 · `bnclub` 못 박힌 큰 몽둥이 · `cleaver` 고기 칼 · `baxe` 반달 큰 도끼 · `meatbone` 고기 뼈 · `boneclub` 큰 뼈(모두 `PXU_FXW` 'great'). 시안판에만 쓴 무기(fireorb · boulder · bhammer · itrident · crysclub · chainball · stonehammer)는 `scratchpad/v55/t/extra55.js`에 있다.
+  - **사람꼴(트롤 · 오거 · 대왕)은 g2를 넣지 않는다**: 엔진이 홀수 서 있기 장에서 hip 위를 한 줄 내리는데(cr), 시안 도구 lift()로 만든 g2(위를 한 줄 올림)를 같이 쓰면 그 장에 가로 틈 줄이 생긴다. logic55가 서 있기 두 장의 빈 줄(가로 틈)을 센다.
+  - 짐승(`still`)은 g2로 꼬리 · 혀를 움직인다. 케르베로스 · 가시 늑대는 시안 g2가 g와 같아서 assemble55의 `wag()`로 꼬리 끝만 한 칸 옮겼다.
+  - **키메라 염소가 앞·뒤를 본다**(사용자: 「염소가 앞을 봤다, 뒤를 봤다 하게」): g = 염소가 앞을 봄, g2 = 뒤(뱀 쪽)를 보고 뱀이 혀를 날름. art.js drawMon의 서 있기 장 빠르기를 `PXU[id].ifr`로 바꿀 수 있게 했다(기본은 거인 3 · 떠 있음 2.5 · 그 밖 5 — 5면 0.2초마다 바뀌어 고개가 떨린다). 키메라 `ifr: 0.5` = 2초마다.
+  - 임프는 펫(PETS.imp mon 'imp')이라 다 자란 펫 그림도 이 그림이다(monFit 44/30 안).
+- 광역기 둘(fmot.js fmotAoe → V.fx, view.js fx()가 fmotDraw로 보낸다):
+  - `rocks`(오거 대왕 smash): skq 땅 금 + 사람마다 `urock`(바위 가시 셋이 0.14초에 솟고 0.45초부터 부서져 조각 · 흙먼지). FMOT_AOE_V.rocks 240(= SK_QUAKE — 금이 닿는 때에 솟는다), FMOT_NAME.ogreking '대지 가르기'.
+  - `breath`(키메라 새 동작 `PXU_MOT.cbreath`: 웅크려 숨을 모으고(gather) 입을 벌려(body 'bite') 내민 채 뿜는다 · PXS_MOT_TT.cbreath): `ufire` 한 판 — fmotTip(입)에서 파티 뒤 18px까지 불 알갱이 72개가 부채꼴로 흐른다(입 가까이 흰 노랑 → 노랑 → 주황 → 빨강 → 검붉은 연기, 앞머리 = 지난 초 × 빠르기, 다 뿜은 뒤 꼬리가 따라간다). FMOT_AOE_V.breath 260, FMOT_NAME.chimera '불길 숨결'.
+  - STORY.v55(fmot.js) · notes55(econ.js) · flags.v55.
+- 시안 도구 `scratchpad/v55`: 결정은 `DECISIONS.md`. 손 그림 `g/`(blunt.py · hood4.py 임프 · hound7.py · cerb4.py · troll6.py · ogre3.py(오거 일곱 시안 + basic) · oking3.py · chim3.py · chim4.py(1-A~E + lookback 확정)) → `t/*.json` → `g/assemble55.py`(게임 id로 이름 바꾸기 · 트롤 g2 빼기 · wag) → `t/final55.json` → `g/emit55.py <출력 pxbarren.js>`. 확인: `t/peek.py`(시안을 확정 몬스터 옆에 · `mk:f`로 동작 한 장) · `t/sheet55.py`(COLS · show2) · `t/gifmon.py`(가까이 GIF) · `t/board.py`(게임 안 그림) · `d/aoe55.py`(실제 전투 길로 광역기 띠 · GIF).
+- 시험 `scratchpad/v55/logic55.py`(모습 수 · 가로 틈 · g2 없음 · 무기 · 키메라 ifr(drawMon이 고르는 장) · 크기 · 임프 펫 · 사건(불덩이 · 물기 · 내리찍기 · 대지 가르기 · 불길 숨결) · 광역기 그리기 · 실제 그리기 길 · 이야기). 전체 시험은 `scratchpad/run55.sh`.
+
 ## 늪 거머리 모습 둘 (빌드 54)
 - 사용자 「A랑 C만 넣자」: `PXU_SKIN.leech = ['leech', 'leech_c']`(검붉은 · 창백한 물거머리). B `leech_b`(검은 줄무늬) 그림을 지웠고 **id는 바꾸지 않았다**. 모습은 적 uid 해시(pxuSkin)로 고르고 저장하지 않으므로 지워도 세이브가 깨지지 않는다.
 - 만드는 길은 빌드 53과 같다(`scratchpad/v53/g/assemble53.py` → `emit53.py <출력 pxswamp.js>`). 시험은 `scratchpad/v54/logic54.py`(logic53에 거머리 둘 확인을 더한 것).
