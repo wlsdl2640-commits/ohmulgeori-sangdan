@@ -235,7 +235,7 @@
 
 ## 용암 화산 새 그림 · 화산탄 비 · 불기둥 (빌드 57)
 - 그림(src/pxvolcano.js, build.py에서 pxcastle 뒤): 필드 몬스터 여섯 + 우두머리 마그마 드래곤 + 화구 두목 화염 군주가 옛 그림(pxmon*.js PXM)이던 것을 모두 PXU로. 안개 묘지(grave)는 몬스터 여덟이 모두 빌드 43 언데드라 그대로.
-  - 모습 여럿(빌드 50~55와 같은 길: PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만): magmaslime 둘(시안 C 불꽃 머리 기본 · D 끓는 슬라임 `_b`) · firebat 둘(A 불꽃 날개 기본 · B 숯 박쥐) · redhare 넷(A 불꽃 갈기 준마 기본 · B 갑옷 군마 · C 불꽃 말 · D 화산암 말) · magmadragon 셋(A 용암 갑룡 기본 · B 불꽃 날개 화룡 `_b` · **D 흑요석 가시 용이 `_c`**). 모습 하나: salamander(시안 B 용암 도롱뇽) · lavagolem(A) · efreet(B 불길 그림자) · firelord(B 용암 망토 군주).
+  - 모습 여럿(빌드 50~55와 같은 길: PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만): magmaslime 둘(시안 C 불꽃 머리 기본 · D 끓는 슬라임 `_b`) · firebat 둘(A 불꽃 날개 기본 · B 숯 박쥐) · redhare 넷(A 불꽃 갈기 준마 기본 · B 갑옷 군마 · C 불꽃 말 · D 화산암 말) · magmadragon 셋(A 용암 갑룡 기본 · B 불꽃 날개 화룡 `_b` · **D 흑요석 가시 용이 `_c`**). lavagolem 둘(A 흘러내리는 용암 골렘 기본 · `_b` = golem2.py의 E-1: A 몸 등에 B의 검은 바위 화산을 합치고, 사용자 「화산을 더 앞으로 땡겨오고 위로 좀더 높이」로 3칸 앞 · 꼭대기 3칸 위 — `volcano_golem(dx=3, up=3)`, 사람꼴이라 g2 없음). 모습 하나: salamander(시안 B 용암 도롱뇽) · efreet(B 불길 그림자) · firelord(B 용암 망토 군주).
   - 짐승(still · noArm): salamander · redhare 넷 · magmadragon A/D — g2로 꼬리 · 갈기 · 불꽃, gm bite/charge/leap/swell/spit. 떠 있음(float): firebat 둘(pad 4) · efreet(pad 2) · magmadragon_b(pad 4) · firelord(pad 3 — ms 1.5라 숨쉬기 bob이 커서 pad 1이면 바닥에 닿았다). 슬라임은 gm squash/stretch(sbounce · sslam). 용암 골렘은 사람꼴(ms 1.25 · `wpn: 'rfist'` · g2 없음).
   - 무기(pxvolcano.js 맨 앞): `fpalm` 손 위 불덩이(이프리트, FXW dagger, 팔 R/r · 손 O) · `forb` 불꽃 손 위 큰 불 구슬(화염 군주, FXW dagger, 손 O). 시안판에만 쓴 무기(fspear · fscim · fscept · fstaff · fgsword)는 `scratchpad/v57/t/extra57.js`.
   - 큰 둘은 `ms: 1.5`(monSc 1 — MONS.scale 3·2는 옛 그림용): 마그마 드래곤 48~54칸 너비(폭풍 와이번 43 · 키메라 47과 비슷), 화염 군주 28×43.
@@ -248,7 +248,7 @@
   - STORY.v57(fmot.js) · notes57(econ.js) · flags.v57.
 - 적토마는 펫(PETS.redhare mon) · 마차 말(HORSES.redhare pet)이라 다 자란 펫 · 마차 그림이 기본 모습(불꽃 갈기 준마). monFit 44 → 0.76, monBack 27. 아기는 pxpet.js `pet_redhare` 그대로.
 - 시안 도구 `scratchpad/v57`: 결정은 `DECISIONS.md`. 손 그림 `g/`(cv.py · blunt.py · shp.py, slime1 · fbat1 · sala1 · golem1 · golem2(A + 화산 등) · horse1 · efreet1 · dragon1 · flord1.py) → `t/*.json` → `g/assemble57.py [골렘 더할 시안]` → `t/final57.json` → `g/emit57.py <출력 pxvolcano.js>`. 광역기 시안 `t/aoe57.js`(fmotAoe · fmotDraw · fx를 감싸는 판) + `d/aoe57.py`(실제 전투 길 GIF). 확인: `t/look.py` · `t/sheet57.py` · `t/scene_cmp.py`(시안을 있는 몬스터와 같은 전투 화면에) · `t/board.py` · `t/peek.py`. 미리보기 `scratchpad/v57p/preview57.py`(모습 · 동작 · 광역기 · 적토마 펫 · 마차).
-- 시험 `scratchpad/v57/logic57.py`(모습 수 · 이름표 드랍 없음 · 떠 있는 높이 · 서 있기 둘째 장 · 사람꼴 g2 없음 · 가로 틈 · 무기 · 물기/돌진/포효 몸 · 크기 · 적토마 펫과 마차 · 필드 우두머리 차례와 광역기 · 모습 고르기 · 사건 · 화산탄/불기둥이 맞는 때에 떨어지고 솟는지 · 실제 그리기 길 · 그리기 · 이야기). 골렘 모습 수는 `NGOLEM`. 전체 시험은 `scratchpad/run57.sh`.
+- 시험 `scratchpad/v57/logic57.py`(모습 수 · 이름표 드랍 없음 · 떠 있는 높이 · 서 있기 둘째 장 · 사람꼴 g2 없음 · 가로 틈 · 무기 · 물기/돌진/포효 몸 · 크기 · 적토마 펫과 마차 · 필드 우두머리 차례와 광역기 · 모습 고르기 · 사건 · 화산탄/불기둥이 맞는 때에 떨어지고 솟는지 · 실제 그리기 길 · 그리기 · 이야기). 골렘 모습 수는 `NGOLEM`(기본 2). 전체 시험은 `scratchpad/run57.sh`.
 
 ## 백작의 성 새 그림 (빌드 56)
 - 그림(src/pxcastle.js, build.py에서 pxbarren 뒤): 필드 몬스터 중 옛 그림(pxmon2.js)이던 넷만 — vbat · gargoyle · evileye · succubus. 구울 · 흡혈 기사 · 드라큘라 · 스켈레톤 셋 · 리치 킹은 빌드 43 pxund.js 그대로(빌드 55 실험체 골렘처럼). 넷 다 모습 하나(PXU_SKIN 없음) · `float`(발 밑 빈 줄 — 가고일은 성벽 조각째 4줄 띄움) · g2(날갯짓, 가고일은 눈이 빛남). float는 서 있기 둘째 장에 cr을 쓰지 않으므로 사람꼴(서큐버스)도 g2를 써도 가로 틈이 생기지 않는다.
