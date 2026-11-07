@@ -971,33 +971,85 @@ cCCCAFFFFFFFFFFFFfcCCCCCc
 ....vVvvvvvvvvvvvvvvvVCCCCCCCCc
 .
 ` } }, sh: [28, 2], hip: 6, ax: 14, ms: 1.5, still: 1, noArm: 1, wpn: 'none', show2: ['qbite', 4] },
-  swampwitch: {   // 늪지의 마녀 — 마녀 1 늪의 마녀: 뒤로 꺾인 뾰족 모자 · 녹빛 얼굴 · 매부리코 · 회색 긴 머리 · 보랏빛 로브 · 옹이 지팡이와 초록 구슬
-    pal: { w: '#ffffff', K: '#1a1014', m: '#5a1a24', G: '#e8c040', g: '#8a6a20', v: '#6a4422', V: '#8a6030', O: '#8af060', o: '#3a9a28', x: '#f0ffe0', B: '#c8a050', h: '#2e1e44', J: '#b8b8c4', j: '#7a7a88', S: '#a8c890', s: '#78985e', C: '#5e3478', c: '#341c48', Q: '#7e54a0', k: '#140e18' },
+  swampwitch: {   // 늪지의 마녀 — 마녀 2 꼬부랑 노파: 등이 굽어 머리가 앞으로 · 등 혹을 덮은 숄 · 긴 매부리코 · 국자 지팡이에 기댄다
+    pal: { w: '#ffffff', K: '#1a1014', m: '#3a1a10', G: '#e8c040', g: '#8a6a20', v: '#6a4422', V: '#8a6030', O: '#8af060', o: '#3a9a28', x: '#f0ffe0', B: '#c8a050', h: '#2a2418', J: '#e0e0d8', S: '#b8c898', s: '#88986a', C: '#4a3a30', c: '#2a2018', P: '#6a4a7a', p: '#40284c', k: '#140e0a' },
     g: `
-..hh
-.hhhh
-.hhhhh
-..hhhhh
-...hhhhh
-....hhhhh
+..........hh
+.........hhhh
+........hhhhh
+........hhhhhh
+.........hhhhhh
+........hhhhhhhh
+........hhgGghhhh
+.....hhhhhhhhhhhhhhhh
+......hhhhhhhhhhhhhhh
+...PPP.....JSSSSSSs
+..PPPPPP..JJSSKSSKSs
+.PPPPPPPPJJJSSSSSSSSSs
+.PPPPPPPPPJJsSSSSSSsSS
+PPPPPPPPPPPJJsSmmSSs.s
+PPPPPPPPPPPPPPsSSSs
+pPPPPPPPPPPPPPPPP
+.pPPPPPPPPPPPPPPPp
+..CCCCCCCCCCCCCCCc
+..CCCCCCCCCCCCCCCc
+.cCCCCCCCCCCCCCCCCc
+.cCCCCCCCCCCCCCCCCc
+ccCCCCCCCCCCCCCCCCcc
+cCcCcCCcCCcCCcCCcCcc
+.....kkkk....kkkk
+`, g2: `
+.........hhhh
+........hhhhh
+........hhhhhh
+.........hhhhhh
+........hhhhhhhh
+........hhgGghhhh
+.....hhhhhhhhhhhhhhhh
+......hhhhhhhhhhhhhhh
+.
+...PPP.....JSSSSSSs
+..PPPPPP..JJSSKSSKSs
+.PPPPPPPPJJJSSSSSSSSSs
+.PPPPPPPPPJJsSSSSSSsSS
+PPPPPPPPPPPJJsSmmSSs.s
+PPPPPPPPPPPPPPsSSSs
+pPPPPPPPPPPPPPPPP
+.pPPPPPPPPPPPPPPPp
+..CCCCCCCCCCCCCCCc
+..CCCCCCCCCCCCCCCc
+.cCCCCCCCCCCCCCCCCc
+.cCCCCCCCCCCCCCCCCc
+ccCCCCCCCCCCCCCCCCcc
+cCcCcCCcCCcCCcCCcCcc
+.....kkkk....kkkk
+`, sh: [16, 16], hip: 18, ax: 10, ms: 1.5, arm: ['C', 'c'], hand: 'S', wpn: 'ladle', idle: { h: [3, 4], a: -75 } },
+  swampwitch_b: {   // 늪지의 마녀 — 마녀 4 까마귀 마녀: 모자 챙에 앉은 까마귀 · 검은 깃털 숄 · 창백한 얼굴과 붉은 눈 · 검은 로브
+    pal: { w: '#ffffff', K: '#f0c040', m: '#5a1a24', G: '#e8c040', g: '#8a6a20', v: '#6a4422', V: '#8a6030', O: '#28283a', o: '#141420', x: '#f0ffe0', B: '#c8a050', h: '#141418', J: '#5a5a66', S: '#dcdcd0', s: '#a8a8a0', X: '#ff3030', C: '#24242c', c: '#121216', A: '#30303a', a: '#18181e', k: '#0c0c10', N: '#c8ccd4', M: '#8a8e98' },
+    g: `
+..hh........OOO
+.hhhh......OOKOw
+.hhhhh.....OOOOOw
+..hhhhh.....OOOO
+...hhhhh....OoO
+....hhhhh..oo.o
 ....hhhhhh
 ....hhhhhhh
 ...hhhhhhhhh
-...hhgGghhhhh
+...hhNMNhhhhh
 hhhhhhhhhhhhhhhhhh
 .hhhhhhhhhhhhhhhhh
 ..JJJJSSSSSSSs
-..JJJSSSKSSSKSs
+..JJJSSSXSSSXSs
 .JJJJSSSSSSSSSSSs
 .JJJJsSSSSSSSSsSSs
 .JJJJJsSSmmmSSs.sS
-.JJJJJJsSSSSSs
-..JJJJJJsSSSs
-..JJJCCCCCCCCC
-..JJCCCCCCCCCCCc
-..JCCCCCCCCCCCCCc
+.AAAAAAsSSSSSs
+AAaAAaAAsSSSAAA
+.AaAAAaAAAAAAAAaA
+AAAaAAAAaAAAAAaAAA
+.AaCCCCCCCCCCCCAa
 ...CCCCCCCCCCCCCc
-...CCCBBBBBBBBBBc
 ...CCCCCCCCCCCCCc
 ..cCCCCCCCCCCCCCCc
 ..cCCCCCCCCCCCCCCc
@@ -1006,30 +1058,29 @@ hhhhhhhhhhhhhhhhhh
 ..c.cc.cCc.cc.c.cc
 .....kkkk...kkkk
 `, g2: `
-.hhhh
-.hhhhh
-..hhhhh
-...hhhhh
+..hh.......OOKOw
+.hhhh......OOOOOw
+.hhhhh......OOOO
+..hhhhh.....OoO
+...hhhhh...oo.o
 ....hhhhh
 ....hhhhhh
 ....hhhhhhh
 ...hhhhhhhhh
-...hhgGghhhhh
+...hhNMNhhhhh
 hhhhhhhhhhhhhhhhhh
 .hhhhhhhhhhhhhhhhh
-.
 ..JJJJSSSSSSSs
-..JJJSSSKSSSKSs
+..JJJSSSXSSSXSs
 .JJJJSSSSSSSSSSSs
 .JJJJsSSSSSSSSsSSs
 .JJJJJsSSmmmSSs.sS
-.JJJJJJsSSSSSs
-..JJJJJJsSSSs
-..JJJCCCCCCCCC
-..JJCCCCCCCCCCCc
-..JCCCCCCCCCCCCCc
+.AAAAAAsSSSSSs
+AAaAAaAAsSSSAAA
+.AaAAAaAAAAAAAAaA
+AAAaAAAAaAAAAAaAAA
+.AaCCCCCCCCCCCCAa
 ...CCCCCCCCCCCCCc
-...CCCBBBBBBBBBBc
 ...CCCCCCCCCCCCCc
 ..cCCCCCCCCCCCCCCc
 ..cCCCCCCCCCCCCCCc
@@ -1037,7 +1088,7 @@ hhhhhhhhhhhhhhhhhh
 .cCcCCcCCCCcCCCcCCc
 ..c.cc.cCc.cc.c.cc
 .....kkkk...kkkk
-`, sh: [15, 20], hip: 23, ax: 10, ms: 1.5, arm: ['C', 'c'], hand: 'S', wpn: 'gstaff', idle: { h: [3, 4], a: -75 } }
+`, sh: [15, 21], hip: 24, ax: 10, ms: 1.5, arm: ['C', 'c'], hand: 'S', wpn: 'gstaff', idle: { h: [3, 4], a: -75 } }
 });
 Object.assign(PXU_ACT, {
   frogman: { atk: ['qbite', 'qpounce'], skl: ['qdive'], tk: 1.0, fx: { atk: { pal: 'water', hit: 'star' }, skl: { pal: 'poison', hit: 'poison', big: 1, after: 'bubbles' } } },
@@ -1055,6 +1106,7 @@ pxuLook('leech_b', 'leech', MONS.leech.name); pxuLook('leech_c', 'leech', MONS.l
 pxuLook('siren_b', 'siren', MONS.siren.name); pxuLook('siren_c', 'siren', MONS.siren.name);
 pxuLook('swampthing_b', 'swampthing', MONS.swampthing.name); pxuLook('swampthing_c', 'swampthing', MONS.swampthing.name);
 pxuLook('toadking_b', 'toadking', MONS.toadking.name); pxuLook('toadking_c', 'toadking', MONS.toadking.name);
+pxuLook('swampwitch_b', 'swampwitch', MONS.swampwitch.name);
 pxuLook('kelpie_w', 'kelpie', MONS.kelpie.name);
-Object.assign(PXU_SKIN, { frogman: ['frogman', 'frogman_b', 'frogman_c', 'frogman_d'], leech: ['leech', 'leech_b', 'leech_c'], siren: ['siren', 'siren_b', 'siren_c'], swampthing: ['swampthing', 'swampthing_b', 'swampthing_c'], toadking: ['toadking', 'toadking_b', 'toadking_c'] });
-Object.assign(PXU_SKIN_NAME, { frogman: ['늪 개구리', '황소개구리', '독화살 개구리', '이끼 개구리'], leech: ['검붉은 거머리', '줄무늬 거머리', '창백한 물거머리'], siren: ['청록 세이렌', '검은 머리 늪 세이렌', '붉은 머리 세이렌'], swampthing: ['이끼 괴물', '진흙 괴물', '버섯 괴물'], toadking: ['황소개구리 왕', '정원을 진 두꺼비 왕', '독샘 두꺼비 왕'] });
+Object.assign(PXU_SKIN, { frogman: ['frogman', 'frogman_b', 'frogman_c', 'frogman_d'], leech: ['leech', 'leech_b', 'leech_c'], siren: ['siren', 'siren_b', 'siren_c'], swampthing: ['swampthing', 'swampthing_b', 'swampthing_c'], toadking: ['toadking', 'toadking_b', 'toadking_c'], swampwitch: ['swampwitch', 'swampwitch_b'] });
+Object.assign(PXU_SKIN_NAME, { frogman: ['늪 개구리', '황소개구리', '독화살 개구리', '이끼 개구리'], leech: ['검붉은 거머리', '줄무늬 거머리', '창백한 물거머리'], siren: ['청록 세이렌', '검은 머리 늪 세이렌', '붉은 머리 세이렌'], swampthing: ['이끼 괴물', '진흙 괴물', '버섯 괴물'], toadking: ['황소개구리 왕', '정원을 진 두꺼비 왕', '독샘 두꺼비 왕'], swampwitch: ['꼬부랑 노파', '까마귀 마녀'] });

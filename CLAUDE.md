@@ -238,8 +238,8 @@
   - frogman 넷(사용자 1·2·3·6: 늪 개구리 기본 · 황소개구리 · 독화살 · 이끼) — 개구리 대표 자세(앞발로 버티고 뒷다리를 접은 짐승형). 눈은 혹 위 금빛 홍채 + 검은 동공 + 반짝임. 노란 왕관처럼 보이지 않게 할 것.
   - leech 셋 · siren 셋(float) · swampthing 셋(ms 1.25, `wpn: 'wrap'`) · toadking 셋(사용자 1·4·5, ms 1.25).
   - kelpie 하나 + `kelpie_w`(물로 풀린 모습). `PXU.kelpie.hitLook = 'kelpie_w'`, `hitT: 0.45`. view.js 적 그리기에서 `V.flash0['f'+uid]`(맞은 때)부터 hitT초 동안 hitLook id로 drawMon한다. 다른 몬스터도 `hitLook`/`hitT`만 주면 같은 길을 쓴다. 켈피는 펫(PETS.kelpie)·마차 말(HORSES.kelpie)로도 쓰이니, 그림을 바꾸면 monFit/petLook을 같이 확인할 것. `gp.bite`로 물 때 주둥이가 벌어진다.
-  - anaconda(새 몬스터, ms 1.5, still · noArm): 사용자가 시안 4(그루터기 감기)를 골랐다. 「너무 커 → 높이 낮춰」 → 「겹은 2겹으로 하고, 얇게」 → 「목을 위로 길게 하고 꼬리 붙여서 앞쪽으로」를 거쳐 **4-사**(snake12.py `build(neck, gap)`: 띠 한 겹 = 윗빛 Q · 몸 C · 배 S 세 줄, 얇은 띠엔 점 얼룩 `spots()` · 목 여섯 줄이 살짝 휘며 위로 · 두 겹 사이 그루터기 한 줄 · 아래 겹 오른쪽 끝(앞)에서 이어진 꼬리가 땅을 따라 가늘어진다)로 했다. 머리 HEAD/HEADB 틀은 얼룩을 놓은 **뒤에** 얹는다(blotch가 머리에 얼룩을 찍지 않게). 둘째 장은 갈라진 혀다.
-  - swampwitch(ms 1.5, 던전 두목): 마녀 1(뒤로 꺾인 모자 + `wpn: 'gstaff'` 옹이 지팡이·초록 구슬). 새 무기 `PXU_WPN.ladle`·`gstaff`·`broom`(효과 축 PXU_FXW gstaff → staff).
+  - anaconda(새 몬스터, ms 1.5, still · noArm): 사용자가 시안 4(그루터기 감기)를 골랐다. 「너무 커 → 높이 낮춰」 → 「겹은 2겹으로 하고, 얇게」 → 「목을 위로 길게 하고 꼬리 붙여서 앞쪽으로」를 거쳐 **4-사**(사용자 「아나콘다 1 ㄱㄱ」 = 마지막 시안판 사·아·자의 첫째 · snake12.py `build(neck, gap)`: 띠 한 겹 = 윗빛 Q · 몸 C · 배 S 세 줄, 얇은 띠엔 점 얼룩 `spots()` · 목 여섯 줄이 살짝 휘며 위로 · 두 겹 사이 그루터기 한 줄 · 아래 겹 오른쪽 끝(앞)에서 이어진 꼬리가 땅을 따라 가늘어진다)로 했다. 머리 HEAD/HEADB 틀은 얼룩을 놓은 **뒤에** 얹는다(blotch가 머리에 얼룩을 찍지 않게). 둘째 장은 갈라진 혀다.
+  - swampwitch 둘(ms 1.5, 던전 두목, 사용자 「마녀 2, 4」): 기본 = 꼬부랑 노파(witch10의 swampwitch_b, `wpn: 'ladle'` 국자 지팡이) · `swampwitch_b` = 까마귀 마녀(witch10의 swampwitch_d, `wpn: 'gstaff'` 옹이 지팡이·초록 구슬). 새 무기 `PXU_WPN.ladle`·`gstaff`·`broom`(효과 축 PXU_FXW gstaff → staff).
 - **히드라 → 늪지 아나콘다**(사용자: 「히드라는 나중에 다른 곳에」): `MONS.anaconda`(data-demon.js, 히드라 수치 그대로 + 드랍 anaconda_skin·swamp_moss), FIELDS.swamp.bosses의 hydra 자리, BOOK_MONS.avalanche, MON_ELEM 'beast kaiju|water'. **MONS.hydra는 지우지 않았다**(어느 필드에도 없음 → 도감에도 안 나옴). 나중에 다른 필드에 넣으면 PXU 그림이 필요하다.
 - 광역기 두 개(fmot.js fmotAoe → V.fx, view.js fx()가 fmotDraw로 보낸다):
   - `coil`(아나콘다 qmaul): 모험가마다 `ucoil` 뱀 몸 고리. 크게 감겼다가 조이며 맥박치고 풀린다. 앞 반쪽은 밝고 배 색, 뒤 반쪽은 어둡다. FMOT_AOE_V.coil 900, FMOT_NAME.anaconda '휘감아 조이기'.
@@ -249,7 +249,7 @@
   - 손 그림: frog10.py · toad10.py · snake10.py(1~5) · snake11.py(4-다·라·바 — 두 겹 얇게) · snake12.py(4-사·아·자 — 긴 목 + 앞 꼬리) · witch10.py. 앞선 swamp1~8.py·frog9.py 시안은 대부분 버렸다(켈피 sw7, 거머리·세이렌 sw1, 늪지 괴물 sw2만 씀).
   - 이어 붙이기: `../t/*.json` → `assemble53.py [아나콘다 id] [마녀 id,…]` → `../t/final53.json` → `emit53.py`(→ game53/src/pxswamp.js). 무기는 `../t/extra53.js`.
   - 확인: `v53/t/peek.py`(시안을 확정 몬스터 옆에 같은 배율로. 게임 전역 SP와 겹치지 않게 `window.PEEK`) · `v53/t/sheet50.py` · `v53/d/render53.py`(묶음 swamp).
-- 시험 `scratchpad/v53/logic53.py`(모습 수 · 켈피 hitLook 실제 그리기 · 히드라→아나콘다 · 사건 · 고리·독 늪 그리기 · 실제 그리기 길 · 켈피 펫·마차 · 이야기). 마녀를 여럿 고르면 `NWITCH=n`. 전체 시험은 `scratchpad/run53.sh`.
+- 시험 `scratchpad/v53/logic53.py`(모습 수 · 켈피 hitLook 실제 그리기 · 히드라→아나콘다 · 사건 · 고리·독 늪 그리기 · 실제 그리기 길 · 켈피 펫·마차 · 이야기). 마녀 모습 수는 `NWITCH`(기본 2). 전체 시험은 `scratchpad/run53.sh`.
 
 ## 지하수로 새 그림 · 하수 범람 (빌드 52)
 - 그림(src/pxsewer.js, build.py에서 pxalley 뒤): 모두 세 모습(사용자 「다」). sewerrat 셋(**평원 들쥐 격자를 pxplains.js에서 그대로 읽어 세 마리를 합성** — 사용자: 「예전 평원 쥐 모습 가져와서 3마리」; 물 때는 맨 앞 쥐만 gp.bite) · sludge 셋(px48 ball 명암 · gm squash/stretch) · sewercroc 셋(사용자: 넷째 꼴에서 「슬림하게 디테일 다듬기」 — 앞서 보인 떼 지은 쥐·납작 악어는 「너무 이상해」로 버림) · ratman 셋 · sewertroll 셋(ms 1.5, `wpn: 'pipe'` 하수관 몽둥이, 세 꼴이 다름: 긴 코·뚱뚱·외눈).
