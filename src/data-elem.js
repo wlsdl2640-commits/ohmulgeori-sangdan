@@ -39,7 +39,7 @@ const MON_TAG = {
   kingslime: 'monster kaiju|water', kaishar: 'human|', raidgriffon: 'beast kaiju|storm', tempest: 'dragon kaiju|storm', behemoth: 'kaiju beast|earth',
   sewerrat: 'beast|', sludge: 'monster|', sewercroc: 'beast|water', ratman: 'monster|', sewertroll: 'monster kaiju|',
   frogman: 'monster|water', leech: 'monster|water', kelpie: 'monster beast|water', siren: 'monster|water', swampthing: 'plant monster|water',
-  toadking: 'beast kaiju|water', hydra: 'kaiju dragon|water', swampwitch: 'human|dark',
+  toadking: 'beast kaiju|water', hydra: 'kaiju dragon|water', anaconda: 'beast kaiju|water', swampwitch: 'human|dark',
   imp: 'demon|fire', hellhound: 'demon beast|fire', troll: 'monster kaiju|', ogre: 'monster kaiju|', flesh: 'construct undead|dark',
   cerberus: 'demon beast kaiju|blaze', ogreking: 'monster kaiju|', chimera: 'kaiju beast|fire',
   vbat: 'beast|dark', ghoul: 'undead|dark', gargoyle: 'construct|earth', evileye: 'demon|evil', succubus: 'demon|evil',
