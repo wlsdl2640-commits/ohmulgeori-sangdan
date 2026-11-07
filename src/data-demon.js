@@ -15,6 +15,7 @@ Object.assign(ITEMS, {
   swamp_moss:     { name: '늪지 괴물의 이끼',   v: 210,  w: 3, icon: 'blob',    c: '#4a7a3a' },
   toad_oil:       { name: '두꺼비 왕의 기름',   v: 900,  w: 2, icon: 'potion',  c: '#a8c84a' },
   hydra_fang:     { name: '히드라 송곳니',      v: 2400, w: 2, icon: 'fang',    c: '#5ab08a' },
+  anaconda_skin:  { name: '아나콘다 허물',      v: 2400, w: 2, icon: 'hide',    c: '#8ab058' },   // 빌드 53: 늪지대 50번째 우두머리가 히드라에서 늪지 아나콘다로
   witch_cauldron: { name: '마녀의 가마솥',      v: 7200, w: 5, icon: 'crown',   c: '#3a3a4a' },
   // 메마른 땅
   imp_horn:       { name: '임프 뿔',            v: 220,  w: 1, icon: 'horn',    c: '#c84a3a' },
@@ -50,6 +51,7 @@ Object.assign(MONS, {
   swampthing:{ name: '늪지 괴물',     plan: 'golem', body: '#4a6a3a', dark: '#2a4a24', mh: 2.4, ma: 1.4, md: 1.5, spd: 0.7, minS: 6, sta: { k: 'poison', p: 0.3, d: 8, m: 0.3 }, drops: [['swamp_moss', 0.5]] },
   toadking:  { name: '두꺼비 왕',     plan: 'blob',  body: '#8aa84a', dark: '#4a6a2a', fb: 1, scale: 2, mh: 1.8, ma: 1.2, md: 1.0, spd: 0.8, sta: { k: 'poison', p: 0.3, d: 8, m: 0.3 }, drops: [['toad_oil', 0.7], ['frog_leg', 1, 2]] },
   hydra:     { name: '히드라',        plan: 'worm',  body: '#3a8a6a', dark: '#1e5a44', fb: 5, scale: 3, mh: 2.8, ma: 1.6, md: 1.4, spd: 0.8, aoe: 1, sta: { k: 'poison', p: 0.35, d: 10, m: 0.35 }, drops: [['hydra_fang', 0.8], ['swamp_moss', 1, 2]] },
+  anaconda:  { name: '늪지 아나콘다', plan: 'worm',  body: '#5e8a3c', dark: '#2e4a1a', fb: 5, scale: 3, mh: 2.8, ma: 1.6, md: 1.4, spd: 0.8, aoe: 1, sta: { k: 'poison', p: 0.35, d: 10, m: 0.35 }, drops: [['anaconda_skin', 0.8], ['swamp_moss', 1, 2]] },   // 빌드 53: 히드라 대신 (사용자: 「히드라는 나중에 다른 곳에, 대신 늪지 아나콘다」) — 히드라 자료는 그대로 둔다
   swampwitch:{ name: '늪지의 마녀',   plan: 'ghost', body: '#3a2a4a', dark: '#1e1430', skin: '#a8c88a', boss: 1, scale: 2, mh: 5.5, ma: 1.9, md: 1.3, spd: 0.9, magic: 1, aoe: 1, sta: { k: 'poison', p: 0.4, d: 10, m: 0.35 }, drops: [['witch_cauldron', 1], ['swamp_moss', 1, 3]] },
   // 메마른 땅
   imp:       { name: '임프',          plan: 'biped', body: '#c84a3a', dark: '#7a2a22', mh: 0.8, ma: 1.2, md: 0.5, spd: 1.3, eva: 0.15, magic: 1, minS: 1, sta: { k: 'burn', p: 0.2, d: 8, m: 0.25 }, drops: [['imp_horn', 0.6]] },
@@ -80,7 +82,7 @@ Object.assign(FIELDS, {
     no: 9, name: '눅눅한 늪지대', lv: 54, bg: 'swamp', tier: 6, after: 'desert', demon: 1, unlock: '사라크 사막의 왕릉을 공략하면 열려요',
     desc: '마계의 문턱. 발이 푹푹 빠지는 늪에 켈피와 세이렌이 산다. 깊은 곳에는 마녀의 오두막이 가라앉아 있다.',
     mons: ['frogman', 'leech', 'kelpie', 'siren', 'swampthing'],
-    bosses: ['toadking', 'kelpie', 'siren', 'swampthing', 'hydra'],
+    bosses: ['toadking', 'kelpie', 'siren', 'swampthing', 'anaconda'],
     dungeon: { name: '가라앉은 마녀의 오두막', bg: 'hut', mons: ['frogman', 'leech', 'siren', 'swampthing'], boss: 'swampwitch' },
     next: 'barren'
   },

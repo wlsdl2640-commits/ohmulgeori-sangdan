@@ -61,7 +61,7 @@ const BOOK_MONS = {
   blizzard:   ['icequeen', 'siren', 'kelpie'],
   smite:      ['greatworm', 'swampwitch', 'siren'],
   rhythm:     ['frogman', 'leech', 'imp', 'greatworm'],
-  avalanche:  ['swampthing', 'hydra', 'sandworm'],
+  avalanche:  ['swampthing', 'anaconda', 'sandworm'],
   // 메마른 땅·백작의 성 (Lv75~)
   titanblow:  ['ogre', 'ogreking', 'troll', 'skelwar'],
   stormarrows:['hellhound', 'cerberus', 'gargoyle', 'skelarc'],

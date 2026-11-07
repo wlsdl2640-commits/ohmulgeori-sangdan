@@ -357,7 +357,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       g.scale(-dir, 1);
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t && (V.flash0['f' + f.uid] || 0) <= t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
       if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 모험가 옆모습
-      else { drawMon(g, did, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, did, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
+      else { const hl = PXU[did] && PXU[did].hitLook, h0 = V.flash0['f' + f.uid], dd = hl && h0 != null && t >= h0 && t < h0 + (PXU[did].hitT || 0.4) ? hl : did;   // 맞으면 잠깐 다른 모습 (빌드 53: 켈피는 물로 풀렸다 돌아온다)
+        drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
       FLASH = null; g.restore();
     } });
     if (f.rare) post.push(g => { const h = eH(f) * z / ZE; for (let k = 0; k < 4; k++) { const ph = t * 1.6 + k * 1.57, sx = x + Math.cos(ph) * (10 + k * 3), sy = y - h * (0.3 + 0.6 * ((Math.sin(ph * 0.7 + k) + 1) / 2)), on = Math.sin(t * 5 + k * 2) > 0; if (on) { R(g, Math.round(sx), Math.round(sy) - 1, 1, 3, '#fff6c0'); R(g, Math.round(sx) - 1, Math.round(sy), 3, 1, '#ffd040'); } } });
@@ -845,7 +846,7 @@ function fx(g, t) {
     const k = (t - f.t0) / f.d;
     if (k < 0) continue;
     if (f.k === 'skh' || f.k === 'skw' || f.k === 'skq' || f.k === 'skc' || f.k === 'shk' || f.k === 'skp') { skDraw(g, f, t); continue; }   // 스킬 효과 (빌드 41) · 투사체 (빌드 43에서 바로잡음)
-    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm' || f.k === 'ublizz' || f.k === 'usand' || f.k === 'ublade' || f.k === 'uflood') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 48 번개 폭풍 · 49 눈보라 · 50 모래 해일)
+    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm' || f.k === 'ublizz' || f.k === 'usand' || f.k === 'ublade' || f.k === 'uflood' || f.k === 'ucoil' || f.k === 'umiasma') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 48 번개 폭풍 · 49 눈보라 · 50 모래 해일)
     const L = f.x1 != null ? Math.hypot(f.x1 - f.x0, f.y1 - f.y0) || 1 : 1, AH = f.arc != null ? f.arc : f.k === 'arrow' ? 10 : 4;   // 포물선 높이 (사선으로 쏜 화살은 높이)
     let ux = f.x1 != null ? (f.x1 - f.x0) / L : 1, uy = f.x1 != null ? (f.y1 - f.y0) / L : 0;
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * AH : 0;
