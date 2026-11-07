@@ -910,48 +910,67 @@ cCCCAFFFFFFFFFFFFfcCCCCCc
 .cFFFFFFFFFFFFFFFfcoCCCc
 ..fffffffffffffffFFFFFFFFcccff
 ` } }, sh: [28, 6], hip: 9, ax: 15, ms: 1.25, still: 1, noArm: 1, wpn: 'none' },
-  anaconda: {   // 늪지 아나콘다(새 몬스터 · 히드라 자리, ms 1.5): 썩은 그루터기를 얇은 띠 두 겹으로 감고 머리를 내민 큰 뱀 — 사용자: 「4번인데 너무 커, 높이를 낮춰서」 → 「겹은 2겹으로 하고, 얇게」
+  anaconda: {   // 늪지 아나콘다(새 몬스터 · 히드라 자리, ms 1.5): 썩은 그루터기를 얇은 띠 두 겹으로 감고 긴 목을 세워 머리를 내민 큰 뱀 · 꼬리는 아래 겹 앞쪽에서 땅을 따라 — 사용자: 「4번인데 너무 커, 높이를 낮춰서」 → 「겹은 2겹으로 하고, 얇게」 → 「목을 위로 길게 하고 꼬리 붙여서 앞쪽으로」
     pal: { w: '#ffffff', e: '#141010', R: '#c83848', r: '#7a1e28', p: '#f08898', Y: '#e03850', Q: '#a0c070', C: '#5e8a3c', c: '#2e4a1a', d: '#24381a', A: '#6e8e48', F: '#46682a', f: '#2a3e18', S: '#e8e098', s: '#b0a868', K: '#f0c838', n: '#1e2e10', V: '#6a4a28', v: '#3e2a16' },
     g: `
-....................QQQQQc
-...................QCCKeCCcn
-..................QCCCCCCCCCs
-..........VVVVVVV.CCCcccccccc
-.........VvvvvvvVQCSSSSSSSs
-.........QQQQQQQQCSc
-........QCCdCCCdCCSc
-........VSSSSSSSSSSv
+......................QQQQQc
+.....................QCCKeCCcn
+....................QCCCCCCCCCs
+....................CCCcccccccc
+...................QCSSSSSSSs
+...................QCS
+..................QCS
+..................QCS
+..........VVVVVVV.QCS
+.........VvvvvvvV.QCS
+.........QQQQQQQQQQCS
+........QCCdCCCdCCCCS
+........cSSSSSSSSSSSc
+.........VvvvvvvvvV
 ......QQQQQQQQQQQQQQQQ
 .....QCCdCCCdCCCdCCCdCQ
-.....cSSSSSSSSSSSSSSSSc
-....vVvvvvvvvvvvvvvvvvVv
+.....cSSSSSSSSSSSSSSSSCQQQQQ
+....vVvvvvvvvvvvvvvvvVCCCCCCCCc
 `, g2: `
-....................QQQQQc
-...................QCCKeCCcn
-..................QCCCCCCCCCs..Y
-..........VVVVVVV.CCCccccccccYY
-.........VvvvvvvVQCSSSSSSSs....Y
-.........QQQQQQQQCSc
-........QCCdCCCdCCSc
-........VSSSSSSSSSSv
+......................QQQQQc
+.....................QCCKeCCcn
+....................QCCCCCCCCCs..Y
+....................CCCccccccccYY
+...................QCSSSSSSSs....Y
+...................QCS
+..................QCS
+..................QCS
+..........VVVVVVV.QCS
+.........VvvvvvvV.QCS
+.........QQQQQQQQQQCS
+........QCCdCCCdCCCCS
+........cSSSSSSSSSSSc
+.........VvvvvvvvvV
 ......QQQQQQQQQQQQQQQQ
 .....QCCdCCCdCCCdCCCdCQ
-.....cSSSSSSSSSSSSSSSSc
-....vVvvvvvvvvvvvvvvvvVv
+.....cSSSSSSSSSSSSSSSSCQQQQQ
+....vVvvvvvvvvvvvvvvvVCCCCCCCCc
 `, gp: { bite: { y: 0, g: `
-....................QQQQQcc
-...................QCCKeCCCwc
-..................QCCCCCCRRRr
-..........VVVVVVV.CCCcRRrpprc
-.........VvvvvvvVQCSSSSwwSs
-.........QQQQQQQQCSc
-........QCCdCCCdCCSc
-........VSSSSSSSSSSv
+......................QQQQQcc
+.....................QCCKeCCCwc
+....................QCCCCCCRRRr
+....................CCCcRRrppr
+...................QCSSSSwwSs
+...................QCS
+..................QCS
+..................QCS
+..........VVVVVVV.QCS
+.........VvvvvvvV.QCS
+.........QQQQQQQQQQCS
+........QCCdCCCdCCCCS
+........cSSSSSSSSSSSc
+.........VvvvvvvvvV
 ......QQQQQQQQQQQQQQQQ
 .....QCCdCCCdCCCdCCCdCQ
-.....cSSSSSSSSSSSSSSSSc
-....vVvvvvvvvvvvvvvvvvVv
-` } }, sh: [26, 2], hip: 6, ax: 14, ms: 1.5, still: 1, noArm: 1, wpn: 'none', show2: ['qbite', 4] },
+.....cSSSSSSSSSSSSSSSSCQQQQQ
+....vVvvvvvvvvvvvvvvvVCCCCCCCCc
+.
+` } }, sh: [28, 2], hip: 6, ax: 14, ms: 1.5, still: 1, noArm: 1, wpn: 'none', show2: ['qbite', 4] },
   swampwitch: {   // 늪지의 마녀 — 마녀 1 늪의 마녀: 뒤로 꺾인 뾰족 모자 · 녹빛 얼굴 · 매부리코 · 회색 긴 머리 · 보랏빛 로브 · 옹이 지팡이와 초록 구슬
     pal: { w: '#ffffff', K: '#1a1014', m: '#5a1a24', G: '#e8c040', g: '#8a6a20', v: '#6a4422', V: '#8a6030', O: '#8af060', o: '#3a9a28', x: '#f0ffe0', B: '#c8a050', h: '#2e1e44', J: '#b8b8c4', j: '#7a7a88', S: '#a8c890', s: '#78985e', C: '#5e3478', c: '#341c48', Q: '#7e54a0', k: '#140e18' },
     g: `
