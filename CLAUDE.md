@@ -233,10 +233,14 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 늪 거머리 모습 둘 (빌드 54)
+- 사용자 「A랑 C만 넣자」: `PXU_SKIN.leech = ['leech', 'leech_c']`(검붉은 · 창백한 물거머리). B `leech_b`(검은 줄무늬) 그림을 지웠고 **id는 바꾸지 않았다**. 모습은 적 uid 해시(pxuSkin)로 고르고 저장하지 않으므로 지워도 세이브가 깨지지 않는다.
+- 만드는 길은 빌드 53과 같다(`scratchpad/v53/g/assemble53.py` → `emit53.py <출력 pxswamp.js>`). 시험은 `scratchpad/v54/logic54.py`(logic53에 거머리 둘 확인을 더한 것).
+
 ## 늪지대 새 그림 · 켈피 맞을 때 모습 · 늪지 아나콘다 · 휘감아 조이기 · 독 늪 (빌드 53)
 - 그림(src/pxswamp.js, build.py에서 pxsewer 뒤): **전부 손으로 그린 격자**다. 사용자가 자동 명암(공 명암)을 「이상하다」고 해서 frog10 · toad10 · snake10/11 · witch10은 ball/shade를 쓰지 않았다. 재질이 다른 글자를 나란히 두면 PX_FX가 선을 그어 준다(예: 개구리 허벅지 F/A/f 따로, 배 S). 모습 여럿은 빌드 50~52와 같은 길(PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만).
   - frogman 넷(사용자 1·2·3·6: 늪 개구리 기본 · 황소개구리 · 독화살 · 이끼) — 개구리 대표 자세(앞발로 버티고 뒷다리를 접은 짐승형). 눈은 혹 위 금빛 홍채 + 검은 동공 + 반짝임. 노란 왕관처럼 보이지 않게 할 것.
-  - leech 셋 · siren 셋(float) · swampthing 셋(ms 1.25, `wpn: 'wrap'`) · toadking 셋(사용자 1·4·5, ms 1.25).
+  - leech 셋(빌드 54부터 둘: A · C) · siren 셋(float) · swampthing 셋(ms 1.25, `wpn: 'wrap'`) · toadking 셋(사용자 1·4·5, ms 1.25).
   - kelpie 하나 + `kelpie_w`(물로 풀린 모습). `PXU.kelpie.hitLook = 'kelpie_w'`, `hitT: 0.45`. view.js 적 그리기에서 `V.flash0['f'+uid]`(맞은 때)부터 hitT초 동안 hitLook id로 drawMon한다. 다른 몬스터도 `hitLook`/`hitT`만 주면 같은 길을 쓴다. 켈피는 펫(PETS.kelpie)·마차 말(HORSES.kelpie)로도 쓰이니, 그림을 바꾸면 monFit/petLook을 같이 확인할 것. `gp.bite`로 물 때 주둥이가 벌어진다.
   - anaconda(새 몬스터, ms 1.5, still · noArm): 사용자가 시안 4(그루터기 감기)를 골랐다. 「너무 커 → 높이 낮춰」 → 「겹은 2겹으로 하고, 얇게」 → 「목을 위로 길게 하고 꼬리 붙여서 앞쪽으로」를 거쳐 **4-사**(사용자 「아나콘다 1 ㄱㄱ」 = 마지막 시안판 사·아·자의 첫째 · snake12.py `build(neck, gap)`: 띠 한 겹 = 윗빛 Q · 몸 C · 배 S 세 줄, 얇은 띠엔 점 얼룩 `spots()` · 목 여섯 줄이 살짝 휘며 위로 · 두 겹 사이 그루터기 한 줄 · 아래 겹 오른쪽 끝(앞)에서 이어진 꼬리가 땅을 따라 가늘어진다)로 했다. 머리 HEAD/HEADB 틀은 얼룩을 놓은 **뒤에** 얹는다(blotch가 머리에 얼룩을 찍지 않게). 둘째 장은 갈라진 혀다.
   - swampwitch 둘(ms 1.5, 던전 두목, 사용자 「마녀 2, 4」): 기본 = 꼬부랑 노파(witch10의 swampwitch_b, `wpn: 'ladle'` 국자 지팡이) · `swampwitch_b` = 까마귀 마녀(witch10의 swampwitch_d, `wpn: 'gstaff'` 옹이 지팡이·초록 구슬). 새 무기 `PXU_WPN.ladle`·`gstaff`·`broom`(효과 축 PXU_FXW gstaff → staff).

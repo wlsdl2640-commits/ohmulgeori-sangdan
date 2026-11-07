@@ -259,57 +259,6 @@ cCAFFFFFFfcCCCCc
 .cCCCCCCCcccccc
 ..cccccc
 ` }, sh: [19, 2], hip: 6, ax: 9, still: 1, noArm: 1, wpn: 'none' },
-  leech_b: {   // 늪 거머리 B 검은 몸에 노란 줄무늬
-    pal: { M: '#c8ccd4', N: '#8a8e98', x: '#f4f6fa', w: '#ffffff', e: '#1a1210', Q: '#e0c040', C: '#2e2a30', c: '#181418', R: '#f080a0', r: '#a04060' },
-    g: `
-.................CCc
-................CCRRc
-...............CCRRRc
-..............CCCCRRc
-.............CCCQCCc
-...........QCCCQCCc
-........CCQCCCQCcc
-.....QCCCQCCCQccc
-..CCQCCCQCCCccc
-.cCQCCCQcccc
-..cccccc
-`, g2: `
-................CCRRc
-...............CCRRRc
-..............CCCCRRc
-..............CCQCCc
-.............C
-...........QCCCQCCc
-........CCQCCCQCcc
-.....QCCCQCCCQccc
-..CCQCCCQCCCccc
-.cCQCCCQcccc
-..cccccc
-`, gp: { bite: { y: 0, g: `
-.................CCc....
-................CCRRRc..
-...............CCRRRRRr.
-..............CCCCRRRRr.
-.............CCCCCCcrr..
-...........CCCCCCCc.....
-........CCCCCCCCcc......
-.....CCCCCCCCCccc.......
-..CCCCCCCCCCccc.........
-.cCCCCCCcccc............
-..cccccc................
-` } }, gm: { leap: `
-.
-.
-.
-.....................CCc
-.................CCCCRRc
-.............CCCCCCCRRRc
-.........CCCCCCCCCCCCc
-.....CCCCCCCCCCCCCc
-..CCCCCCCCCCCCCcc
-.cCCCCCCCcccccc
-..cccccc
-` }, sh: [19, 2], hip: 6, ax: 9, still: 1, noArm: 1, wpn: 'none' },
   leech_c: {   // 늪 거머리 C 창백한 물거머리 · 속이 비치는 피
     pal: { M: '#c8ccd4', N: '#8a8e98', x: '#f4f6fa', w: '#ffffff', e: '#1a1210', Q: '#f0f0f0', C: '#d8d0d0', c: '#a09898', R: '#e04050', r: '#902030' },
     g: `
@@ -1102,11 +1051,11 @@ Object.assign(PXU_ACT, {
 });
 // 만날 때마다 모습 하나 (빌드 53): 기본 모습이 아닌 것은 드랍 없는 이름표 (pxuLook) · 켈피가 맞았을 때 모습도 이름표만
 pxuLook('frogman_b', 'frogman', MONS.frogman.name); pxuLook('frogman_c', 'frogman', MONS.frogman.name); pxuLook('frogman_d', 'frogman', MONS.frogman.name);
-pxuLook('leech_b', 'leech', MONS.leech.name); pxuLook('leech_c', 'leech', MONS.leech.name);
+pxuLook('leech_c', 'leech', MONS.leech.name);
 pxuLook('siren_b', 'siren', MONS.siren.name); pxuLook('siren_c', 'siren', MONS.siren.name);
 pxuLook('swampthing_b', 'swampthing', MONS.swampthing.name); pxuLook('swampthing_c', 'swampthing', MONS.swampthing.name);
 pxuLook('toadking_b', 'toadking', MONS.toadking.name); pxuLook('toadking_c', 'toadking', MONS.toadking.name);
 pxuLook('swampwitch_b', 'swampwitch', MONS.swampwitch.name);
 pxuLook('kelpie_w', 'kelpie', MONS.kelpie.name);
-Object.assign(PXU_SKIN, { frogman: ['frogman', 'frogman_b', 'frogman_c', 'frogman_d'], leech: ['leech', 'leech_b', 'leech_c'], siren: ['siren', 'siren_b', 'siren_c'], swampthing: ['swampthing', 'swampthing_b', 'swampthing_c'], toadking: ['toadking', 'toadking_b', 'toadking_c'], swampwitch: ['swampwitch', 'swampwitch_b'] });
-Object.assign(PXU_SKIN_NAME, { frogman: ['늪 개구리', '황소개구리', '독화살 개구리', '이끼 개구리'], leech: ['검붉은 거머리', '줄무늬 거머리', '창백한 물거머리'], siren: ['청록 세이렌', '검은 머리 늪 세이렌', '붉은 머리 세이렌'], swampthing: ['이끼 괴물', '진흙 괴물', '버섯 괴물'], toadking: ['황소개구리 왕', '정원을 진 두꺼비 왕', '독샘 두꺼비 왕'], swampwitch: ['꼬부랑 노파', '까마귀 마녀'] });
+Object.assign(PXU_SKIN, { frogman: ['frogman', 'frogman_b', 'frogman_c', 'frogman_d'], leech: ['leech', 'leech_c'], siren: ['siren', 'siren_b', 'siren_c'], swampthing: ['swampthing', 'swampthing_b', 'swampthing_c'], toadking: ['toadking', 'toadking_b', 'toadking_c'], swampwitch: ['swampwitch', 'swampwitch_b'] });
+Object.assign(PXU_SKIN_NAME, { frogman: ['늪 개구리', '황소개구리', '독화살 개구리', '이끼 개구리'], leech: ['검붉은 거머리', '창백한 물거머리'], siren: ['청록 세이렌', '검은 머리 늪 세이렌', '붉은 머리 세이렌'], swampthing: ['이끼 괴물', '진흙 괴물', '버섯 괴물'], toadking: ['황소개구리 왕', '정원을 진 두꺼비 왕', '독샘 두꺼비 왕'], swampwitch: ['꼬부랑 노파', '까마귀 마녀'] });
