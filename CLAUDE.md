@@ -233,6 +233,23 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 구름섬 새 그림 · 회오리바람 · 깃털 폭풍 (빌드 59)
+- 그림(src/pxsky.js, build.py에서 pxroots 뒤): 구름섬 필드 몬스터 여섯 + 우두머리 하늘의 거인 + 구름 위 신전 두목 하늘의 황제가 옛 그림(pxmon3.js PXM)이던 것을 모두 PXU로. 사용자가 고른 모습(「A B구름양 Ab 만타 cd 번개꼬리매, 두리미 a말 D말 abd거인 ABd기사 A황제 B여황제 Abc거인」) — **고른 순서대로 기본 id · `_b` · `_c`**(예: 뇌조 시안 C → thunderbird, D → thunderbird_b). pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만.
+  - cloudsheep 둘(뭉게구름 · 비구름, still · noArm · g2 · gm charge/leap) · skyray 둘(하늘빛 만타 · 구름 자락, float pad 4 · gm bite/swell/spit) · thunderbird 둘(번개 꼬리 매 · 구름 날개 두루미, float · 두루미는 땅에서 24px 위) · pegasus 둘(흰 날개 말 · 접은 날개 갈색 — gm.leap에서만 날개를 편다, redhare horse() 틀).
+  - cloudgiant 셋(구름 몸 `rfist` · 기둥 `mcol` · 하늘 농부 `pfork`, ms 1.25) · skyknight 셋(날개 투구 창기사 `lance` · 구름 망토 검사 `sword` · 푸른 갑주 대검사 `great`, ms 1.2) — 사람꼴 g2 없음.
+  - skytitan 셋(섬을 진 거인 · 폭풍석 거인 · 하얀 성채 거인, 모두 `rfist`, ms 1.5 · 40×50 칸 안팎 · 88~98px) · skyemperor 둘(구름 왕좌 황제 `cstaff` — float + g2(구름 · 옷자락), hip 99 · 깃털 망토 여황제 `fstaff`, ms 1.5).
+  - 무기(pxsky.js 맨 앞): `mcol` 부러진 흰 돌기둥 · `pfork` 쇠스랑(둘 다 FXW great) · `cstaff` 구름 지팡이 · `fstaff` 깃털 지팡이(FXW staff — 머리 그림은 시안 도구 `head_js()`가 작은 글자 그림을 (t, s) 칸 목록으로 바꾼다). 시안판에만 쓴 halb · horn · wstaff · gscept는 `scratchpad/v59/t/extra59.js`.
+  - 피한 것: 머리 뒤 둥근 장식(후광) · 수염(번개를 쓰는 하늘 신) · 십자 꼴(이마 · 가슴 테 · 투구 줄 · 마름모 심장 → 동그란 심장) · 흰 머리 흰 옷 구름 옥좌(신 그림) · 흰 옷 흰 망토(신부 베일) · 파란 고깔 지붕(유명 동화 성) · 두건(KKK) · 매 머리 투구(호루스) · 노랗고 뾰족한 번개새.
+- 동작: 구름 양 · 페가수스 qcharge · skl qpounce, 하늘 가오리 bswoop · skl wspit(shard · 냉기), 뇌조 mag/skl wspit(orb · 마비) · atk bswoop, 구름 거인 side/down · skl smash(기절), 하늘 기사 thrust/side/down · skl pjump, 하늘의 거인 side/down · skl smash → 광역기 twister, 하늘의 황제 mag spush/sjab(orb) · skl scharge → 광역기 feathers.
+- 광역기 둘(fmot.js fmotAoe → V.fx, view.js fx()가 fmotDraw로 보낸다):
+  - `twister` 회오리바람(FMOT_AOE_V 150 · FMOT_NAME.skytitan): 파티 하나에 `utwist` 하나 — x0 = 거인 닻, x1 = 맨 뒤 사람 − 30·z, 빠르기 v로 땅을 따라 간다(사람마다 맞는 때 T1 + 거리 ÷ v에 그 사람 자리). `es` = 그림 앞 끝(pxuRows 줄 끝의 '.'을 뗀 길이 − ax) ÷ v, 다만 맨 앞 사람에게 닿기 0.12초 전에는 보이게 — 그 전(거인 몸 안)은 그리지 않는다. 그리기: 고리 18개(위로 갈수록 넓게, 뒤쪽 반 잿빛 → 앞쪽 반 흰빛 줄무늬, 점 간격 2.2px) · 기둥이 흔들림 · 0.2초에 자람 · 밑동 먼지 · 도는 잎과 돌 조각 · 지나간 뒤 0.45초에 사라짐. 흔들기는 내리칠 때(T1).
+  - `feathers` 깃털 폭풍(FMOT_AOE_V 300 · FMOT_NAME.skyemperor): fmotTip(지팡이 끝)에서 사람마다 `ufeath` — 깃털 열넷이 베지어 길 둘레를 소용돌이치며 `fl` = 거리 ÷ 300(= 맞는 때)에 닿아 0.32초 둘레를 휘돌고 흩날려 떨어진다 · 닿는 자리 빛 고리. d = fl + 1.2. 시안에서 지팡이 둘레에 깃털이 고리로 모이는 단계를 넣었더니 머리 위 금빛 고리(후광)처럼 보여서 뺐다. 흔들기는 처음 닿을 때(dmin).
+  - 필드 우두머리 셋째 · 넷째(뇌조 · 구름 거인, k ≥ 3)는 fieldBoss의 aoe로 'nova'.
+  - STORY.v59(fmot.js) · notes59(econ.js) · flags.v59.
+- 페가수스는 펫(PETS.pegasus mon) · 비행 마차 말(HORSES.pegasus pet · fly)이라 다 자란 펫 · 마차 그림이 기본 모습(흰 날개 말). monFit 44 → 0.76, monBack 27. 아기는 pxpet.js `pet_pegasus` 그대로.
+- 시안 도구 `scratchpad/v59`: 결정은 `DECISIONS.md`. 손 그림 `g/`(cv.py · blunt.py · shp.py · cloud.py `puffs()` 두 톤 구름, sheep1 · ray1 · bird1 · peg1 · giant1 · knight1 · titan1~5 · emperor1~5.py) → `t/*.json` → `g/assemble59.py` → `t/final59.json` → `g/emit59.py <출력 pxsky.js>`. 광역기 시안 `t/aoe59.js` + `d/aoe59.py`(실제 전투 길 GIF, `CROP` 환경변수) · `d/zoom59.py`(GIF 장 몇 개 크게). 확인: `t/look.py` · `t/sheet59.py`(COLS · area dungeon). 미리보기 `scratchpad/v59p/preview59.py`.
+- 시험 `scratchpad/v59/logic59.py`(모습 수 · 이름표 드랍 없음 · 떠 있는 높이 · 서 있기 둘째 장 · 사람꼴 g2 없음 · 가로 틈 · 무기 · 들이받기/덮치기/내리꽂기/뱉기 몸 · 접은 날개를 펴는지 · 크기 · 페가수스 펫과 비행 마차 · 필드 우두머리 차례와 광역기 · 모습 고르기 · 사건 · 회오리가 맞는 때에 그 사람 자리에 오는지(4px 안) · 맨 앞 사람보다 먼저 보이는지 · 깃털이 맞는 때에 닿는지 · 실제 그리기 길 · 그리기 · 이야기). 전체 시험은 `scratchpad/run59.sh`.
+
 ## 세계수 뿌리 새 그림 · 땅속 독니 · 가시 덩굴 채찍 (빌드 58)
 - 그림(src/pxroots.js, build.py에서 pxvolcano 뒤): 필드 몬스터 다섯 + 우두머리 세계수의 뱀 + 심장 두목 타락한 세계수의 심장이 옛 그림(pxmon3.js 등 PXM)이던 것을 모두 PXU로. 사용자 「전부 넣고 다음으로 ㄱㄱ」 — **일곱 모두 시안 네 모습 전부**(기본 id = 시안 A · `_b/_c/_d` = B/C/D, pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만).
   - rootspider(뿌리 다리 · 밤송이 · 이끼 등 · 가시 덤불 거미) · rootworm(뿌리 웜 · 굼벵이 · 버섯 웜 · 가시 덩굴 웜) — still · noArm, g2 다리 · 몸 물결, gm bite/leap/rear(거미) · bite(웜). spi1.py는 다리 표(NEAR · far_of) 매개 그림.

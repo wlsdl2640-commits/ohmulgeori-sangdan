@@ -3,8 +3,8 @@
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420, rocks: 240, breath: 260, meteor: 110, pillar: 520, fang: 700, lash: 260 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
-const FMOT_NAME = { worldserpent: '땅속 독니', corruptheart: '가시 덩굴 채찍', magmadragon: '화산탄 비', firelord: '불기둥', ogreking: '대지 가르기', chimera: '불길 숨결', anaconda: '휘감아 조이기', swampwitch: '독 늪', sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420, rocks: 240, breath: 260, meteor: 110, pillar: 520, fang: 700, lash: 260, twister: 150, feathers: 300 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_NAME = { skytitan: '회오리바람', skyemperor: '깃털 폭풍', worldserpent: '땅속 독니', corruptheart: '가시 덩굴 채찍', magmadragon: '화산탄 비', firelord: '불기둥', ogreking: '대지 가르기', chimera: '불길 숨결', anaconda: '휘감아 조이기', swampwitch: '독 늪', sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
   const q = PXU_ACT[id].fx[cat];
@@ -80,7 +80,7 @@ function fmotAoe(e, x, t, fd, team, at) {
   if (!fq || !sk) return;
   const H = monH(f.id, f.sc) * z, cx = fq[0], cy = fq[1] - H * 0.55, tg = team.filter(a => !a.down).map(a => at('a' + a.id)).filter(Boolean);
   if (FMOT_NAME[f.id]) callout(fq[0], fq[1] - H - 6, FMOT_NAME[f.id] + '!', 'boss');
-  let dmin = null;   // 땅속 독니 · 가시 덩굴 채찍: 가장 먼저 맞는 때까지 (흔들림)
+  let dmin = null;   // 땅속 독니 · 가시 덩굴 채찍 · 깃털 폭풍: 가장 먼저 맞는 때까지 (흔들림)
   if (k === 'bats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'ubat', id, x0: cx - 6 * dir + (j - 1) * 6, y0: cy - 10 + j * 6, x1: q[0] + (j - 1) * 4, y1: q[1] - 14 * zAt(q[1]) + (j - 1) * 5, t0: T1 + j * 0.06, d: Math.abs(q[0] - cx) / FMOT_AOE_V.bats, s: i * 3 + j }); });
   else if (k === 'rats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'urat', id, x0: cx - 8 * dir + (j - 1) * 5, y0: fq[1] - 1 - j * 3, x1: q[0] + (j - 1) * 6, y1: q[1] - 1 - j * 2, t0: T1 + j * 0.07, d: Math.abs(q[0] - cx) / FMOT_AOE_V.rats, s: i * 3 + j }); });
   else if (k === 'nova') V.fx.push({ k: 'unova', id, x: cx, y: fq[1] - 2, t0: T1, d: 0.9, r1: Math.max(60, ...tg.map(q => Math.abs(q[0] - cx) + 16)) });
@@ -117,8 +117,19 @@ function fmotAoe(e, x, t, fd, team, at) {
     const src = fmotTip(f, m, fq, z, dir);
     tg.forEach((q, i) => { const zq = zAt(q[1]), dt = Math.abs(q[0] - cx) / FMOT_AOE_V.lash; dmin = Math.min(dmin == null ? 9 : dmin, dt); V.fx.push({ k: 'ulash', id, x0: src[0], y0: src[1], x1: q[0], y1: q[1] - 12 * zq, t0: T1, fl: Math.max(0.05, dt), d: dt + 0.75, h: 34 + i * 9, z: zq, s: i }); });
   }
+  else if (k === 'twister') {   // 회오리바람 (빌드 59): 거인이 땅을 내리치면 거인 앞 끝에서 회오리가 일어 파티 쪽으로 땅을 따라 지나간다 — 사람마다 맞는 때 = T1 + 거리 ÷ 빠르기(그때 회오리가 그 사람 자리에 온다), 거인 몸 안을 지나는 동안(es)은 그리지 않는다
+    const xs = tg.map(q => q[0]), zq = tg.length ? zAt(tg.reduce((a, q) => a + q[1], 0) / tg.length) : z;
+    const x1 = (xs.length ? Math.min(...xs) : cx - 140) - 30 * zq, y1 = tg.length ? tg.reduce((a, q) => a + q[1], 0) / tg.length : fq[1];
+    const lid = pxuSkin(f) || f.id, P = PXU[lid], fr = P ? (Math.max(...pxuRows(P).map(r => r.replace(/\.+$/, '').length)) - P.ax) * 2 * z : 20 * z;   // 닻에서 그림 앞 끝까지
+    const v = FMOT_AOE_V.twister, d1 = xs.length ? Math.min(...xs.map(x => Math.abs(x - cx))) : 60, es = Math.max(0, Math.min(fr / v, d1 / v - 0.12));   // 앞 끝에서 일어나되 맨 앞 사람에게 닿기 0.12초 전에는 보이게
+    V.fx.push({ k: 'utwist', id, x0: cx, y0: fq[1], x1, y1, v, t0: T1, z: zq, es, d: Math.abs(cx - x1) / v + 0.45, s: 0 });
+  }
+  else if (k === 'feathers') {   // 깃털 폭풍 (빌드 59): 지팡이에 빛을 모았다가 쏘면 지팡이 끝에서 사람마다 금빛 · 흰 깃털 한 무리가 소용돌이치며 날아가 맞는 때(거리 ÷ 빠르기)에 둘레를 휘돈다
+    const src = fmotTip(f, m, fq, z, dir);
+    tg.forEach((q, i) => { const zq = zAt(q[1]), dt = Math.abs(q[0] - cx) / FMOT_AOE_V.feathers; dmin = Math.min(dmin == null ? 9 : dmin, dt); V.fx.push({ k: 'ufeath', id, x0: src[0], y0: src[1], x1: q[0], y1: q[1] - 14 * zq, t0: T1, fl: Math.max(0.06, dt), d: dt + 1.2, z: zq, s: i }); });
+  }
   else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
-  if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1 + (k === 'meteor' ? 0.55 : dmin != null ? dmin : 0), d: 0.1 });   // 화산탄 비는 떨어질 때 · 땅속 독니와 가시 덩굴 채찍은 처음 맞을 때 흔든다
+  if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1 + (k === 'meteor' ? 0.55 : dmin != null ? dmin : 0), d: 0.1 });   // 화산탄 비는 떨어질 때 · 땅속 독니 · 가시 덩굴 채찍 · 깃털 폭풍은 처음 맞을 때 흔든다 (회오리바람은 내리칠 때)
 }
 // 박쥐 · 파동 · 회전 그리기 (fx()가 부른다)
 function fmotDraw(g, f, t) {
@@ -214,6 +225,57 @@ function fmotDraw(g, f, t) {
     if (out > 0) for (let i = 0; i < 4; i++) { const p = out; skQ(g, f.x + (i - 1.5) * 4, f.y - Hm * 0.6 - p * 16 - i * 3, '#5a3a36', 0.5 * (1 - p)); }   // 연기
     const sc = Math.min(1, ee / 0.1), sal = ee > f.d - f.pre - 0.3 ? Math.max(0, (f.d - f.pre - ee) / 0.3) : 1;   // 그을린 자리
     for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; skQ(g, f.x + Math.cos(a) * 8 * z * sc, f.y + Math.sin(a) * 2.4 * z * sc, i % 3 ? '#3a1a14' : '#c8401a', 0.7 * sal); }
+    return;
+  }
+  if (f.k === 'utwist') {   // 회오리바람 (빌드 59): 위로 갈수록 넓어지는 고리를 쌓고 돌린다(뒤쪽 반은 잿빛, 앞쪽 반은 흰빛) · 기둥이 흔들린다 · 밑동 먼지 · 도는 잎과 돌 조각
+    const z = f.z || 1, tr = Math.abs(f.x0 - f.x1) / f.v, run = Math.max(0, Math.min(e, tr)), X = f.x0 + (f.x1 - f.x0) * run / tr, Y = f.y0 + (f.y1 - f.y0) * run / tr;
+    if (e < f.es) return;   // 거인 몸 안: 아직 안 보인다 (앞 끝에서 일어난다)
+    const grow = Math.min(1, (e - f.es) / 0.2), fade = e > tr ? Math.max(0, 1 - (e - tr) / 0.45) : 1;
+    const al = fade * (0.35 + 0.65 * grow), Ht = 58 * z * (0.25 + 0.75 * grow) * (0.55 + 0.45 * fade), NR = 18, wide = (0.5 + 0.5 * grow) * (0.65 + 0.35 * fade);
+    for (const front of [0, 1]) for (let i = 0; i < NR; i++) {
+      const u = i / (NR - 1), h = u * Ht, r = (3 + 17 * Math.pow(u, 1.35)) * z * wide, xc = X + Math.sin(e * 5 + u * 3.2) * 4 * z * u + u * u * 5 * z * Math.sin(e * 2.4);
+      const npt = Math.max(8, Math.round(Math.PI * 2 * r / 2.2));
+      for (let j = 0; j < npt; j++) {
+        const a = j / npt * Math.PI * 2 + e * 15 + i * 0.75, sn = Math.sin(a);
+        if ((sn > 0) !== !!front) continue;
+        const col = front ? (i % 3 === 0 ? '#c8d6ea' : (j + i) % 7 === 0 ? '#ffffff' : '#eef4fc') : (i % 2 ? '#8a9ab4' : '#a6b4ca');
+        skQ(g, xc + Math.cos(a) * r, Y - h + sn * r * 0.3, col, al * (front ? 1 : 0.85));
+      }
+    }
+    for (let i = 0; i < 12; i++) {   // 밑동 먼지
+      const a = skH(i, 71) * Math.PI * 2 + e * 9, r = (7 + 12 * skH(i, 72)) * z;
+      skQ(g, X + Math.cos(a) * r, Y - 1 + Math.sin(a) * 2.5 - skH(i, 73) * 5, i % 2 ? '#c8b48a' : '#e4d6b0', al * 0.85);
+    }
+    for (let i = 0; i < 8; i++) {   // 도는 잎 · 돌 조각
+      const u = 0.2 + 0.65 * skH(i, 74), a = e * (9 + 5 * skH(i, 75)) + i * 2.1, r = (6 + 17 * u) * z * wide, h = u * Ht, sn = Math.sin(a);
+      skQ(g, X + Math.cos(a) * r, Y - h + sn * r * 0.3, i % 3 === 0 ? '#6a7484' : i % 3 === 1 ? '#7ac04a' : '#9a7a4a', al * (sn > 0 ? 1 : 0.6));
+    }
+    return;
+  }
+  if (f.k === 'ufeath') {   // 깃털 폭풍 (빌드 59): 깃털 열넷이 소용돌이치며 날아가 → 맞는 때에 둘레를 휘돌고 → 흩날려 떨어진다 (금빛 · 흰빛, 깃대는 짙은 금)
+    const z = f.z || 1, N = 14;
+    for (let j = 0; j < N; j++) {
+      const lag = j * 0.022, ee = e - lag;
+      let x, y, ang;
+      if (ee < 0) continue;
+      if (ee <= f.fl) {
+        const u = ee / f.fl, mx = (f.x0 + f.x1) / 2, my = Math.min(f.y0, f.y1) - 22 - 14 * skH(j, 80 + f.s);
+        const bx = (1 - u) * (1 - u) * f.x0 + 2 * u * (1 - u) * mx + u * u * f.x1, by = (1 - u) * (1 - u) * f.y0 + 2 * u * (1 - u) * my + u * u * f.y1;
+        const sp = ((1 - u) * 10 + 4) * z, a = u * 10 + j * 0.45 + f.s;
+        x = bx + Math.cos(a) * sp; y = by + Math.sin(a) * sp * 0.6; ang = a + 1.57;
+      } else {
+        const w = ee - f.fl, a0 = j * (Math.PI * 2 / N);
+        if (w < 0.32) { const a = a0 + w * 16, r = (9 + 4 * Math.sin(w * 10)) * z; x = f.x1 + Math.cos(a) * r; y = f.y1 + Math.sin(a) * r * 0.5; ang = a + 1.57; }
+        else { const v = w - 0.32, a = a0 + 0.32 * 16, r = (11 + v * 14) * z; x = f.x1 + Math.cos(a) * r + Math.sin(v * 7 + j) * 3 * z; y = f.y1 + Math.sin(a) * r * 0.5 + v * 24 * z; ang = 1.57 + Math.sin(v * 7 + j) * 0.8; }
+      }
+      const al = e > f.d - 0.3 ? Math.max(0, (f.d - e) / 0.3) : 1, dx = Math.cos(ang) * 2, dy = Math.sin(ang) * 2;
+      const c1 = j % 3 === 0 ? '#ffffff' : '#ffe070', c2 = j % 3 === 0 ? '#b8c8e0' : '#b88a28';
+      skQ(g, x - dx, y - dy, c2, al); skQ(g, x, y, c1, al); skQ(g, x + dx, y + dy, c1, al * 0.75);
+    }
+    if (e >= f.fl && e < f.fl + 0.35) {   // 닿는 자리 빛 고리
+      const q = (e - f.fl) / 0.35;
+      for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2 + f.s, r = (4 + 14 * q) * z; skQ(g, f.x1 + Math.cos(a) * r, f.y1 + Math.sin(a) * r * 0.6, i % 2 ? '#fff6c0' : '#ffd040', 1 - q); }
+    }
     return;
   }
   if (f.k === 'ufang') {   // 땅속 독니 (빌드 58): 발밑 들썩임(금 · 튀는 흙) → 양쪽에서 위턱 · 아래턱이 활꼴로 솟아(안쪽에 이빨 · 끝에 큰 독니) 파티 머리 위에서 덥석 → 독 · 흙이 튀고 땅속으로
@@ -395,6 +457,12 @@ STORY.v49 = [
   '설녀는 긴 머리에 흰 기모노를 입고 끌리는 옷자락으로 떠다닌다. 손끝에서 얼음 숨결을 날리고 냉기를 모은다. 만날 때마다 검은 머리 · 은빛 머리 두 모습 중 하나로 나온다(도감에서 둘 다 볼 수 있다).',
   '설녀 여왕은 얼음 왕관과 얼음 깃, 남빛 긴 머리에 흰 드레스를 입고 얼음 홀을 든다. 홀로 얼음 창을 쏘고, 홀을 치켜들면 파티 쪽으로 눈보라가 휘몰아친다(눈보라).',
   '고산지대 산양도 새로 그렸다 — 만날 때마다 아이벡스(뒤로 휜 마디 뿔) · 흰 산양(짧은 검은 뿔) · 큰뿔 산양(말린 굵은 뿔) 세 모습 중 하나. 머리를 숙여 들이받고, 뛰어올라 들이받는다. 산양 펫은 다 자라면 아이벡스 모습이 되어 강철 마차를 끈다.'
+];
+STORY.v59 = [
+  '빌드 59: 구름섬과 구름 위 신전 몬스터를 새로 그렸다 — 구름 양, 하늘 가오리, 뇌조, 페가수스, 구름 거인, 하늘 기사, 쉰 번째 우두머리 하늘의 거인, 그리고 신전의 두목 하늘의 황제. 만날 때마다 여러 모습 중 하나로 나온다(도감에서 모두 볼 수 있다).',
+  '구름 양은 뭉게구름 양 · 비구름 양이 되어 들이받고 덮친다. 하늘 가오리는 하늘빛 만타 · 구름 자락 가오리가 되어 미끄러지듯 덮치고 얼음 조각을 뱉는다. 뇌조는 번개 꼬리 매 · 구름 날개 두루미가 되어 내리꽂고 번개 구슬을 날린다. 페가수스는 흰 날개 말 · 접은 날개 갈색 페가수스 — 페가수스 펫이 다 자라면, 그리고 비행 마차를 끌 때도 흰 날개 말 모습이 된다.',
+  '구름 거인은 구름 몸 거인 · 부러진 돌기둥을 든 기둥 거인 · 쇠스랑을 든 하늘 농부 거인, 하늘 기사는 날개 투구 창기사 · 구름 망토 검사 · 푸른 갑주 대검사가 되어 찌르고 베고 뛰어올라 내리찍는다.',
+  '하늘의 거인(섬을 진 거인 · 폭풍석 거인 · 하얀 성채 거인)이 땅을 내리치면 거인 앞에서 회오리가 일어 파티 쪽으로 땅을 따라 지나가며 한 사람씩 휩쓴다(회오리바람). 구름 위 신전의 하늘의 황제(구름 왕좌 황제 · 깃털 망토 여황제)는 지팡이로 빛을 쏘고, 빛을 모아 쏘면 금빛 깃털이 소용돌이치며 사람마다 날아가 휘감는다(깃털 폭풍).'
 ];
 STORY.v58 = [
   '빌드 58: 세계수 뿌리와 세계수의 심장 몬스터를 새로 그렸다 — 뿌리 거미, 뿌리 웜, 트렌트 수호자, 드라이어드, 이끼 골렘, 쉰 번째 우두머리 세계수의 뱀, 그리고 심장의 두목 타락한 세계수의 심장. 모두 네 모습씩이라 만날 때마다 그중 하나로 나온다(도감에서 모두 볼 수 있다).',
