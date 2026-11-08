@@ -383,30 +383,31 @@ YRaPPPOPPPPR.AOAaA.RPPPPPOPPaRY
 ....QCCCCC...CCCCCQ
 ....cccccc...cccccc
 `, sh: [17, 5], hip: 10, ax: 11, ms: 1.25, arm: ['C', 'c'], hand: 'C', wpn: 'rfist', idle: { h: [1, 3], a: 80 } },
-  lavagolem_b: {   // 용암 골렘 E 화산 등 용암 골렘(사용자 「A디자인에 화산 등 골렘 화산등 합쳐서」): A의 녹은 용암 몸 · 식어 굳은 검은 껍질 판 · 등에 진 검은 바위 화산(분화구 용암 · 비탈의 용암 줄기 · 연기 · 불씨) · 사용자 「E의 등의 화산을 더 앞으로 땡겨오고 위로 좀더 높이를 올려서 벨런스를 맞추자」 → 화산을 3칸 앞으로 · 꼭대기를 3칸 위로(E-1): 등 한가운데 위로 솟는다
+  lavagolem_b: {   // 용암 골렘 E 화산 등 용암 골렘(사용자 「A디자인에 화산 등 골렘 화산등 합쳐서」): A의 녹은 용암 몸 · 식어 굳은 검은 껍질 판 · 등에 진 검은 바위 화산(분화구 용암 · 비탈의 용암 줄기 · 연기 · 불씨) · 화산을 5칸 앞으로 · 꼭대기를 5칸 위로(E-2): 머리 바로 뒤에서 높이 솟는다
     pal: { C: '#ff7a2a', Q: '#ffb04a', c: '#c04a1a', A: '#3e2a26', a: '#261816', Y: '#ffe070', K: '#1a0a06', O: '#ff5a1a', U: '#9a9490', u: '#6a6462', e: '#ffd040', B: '#4e3a34', b: '#2e201c', R: '#e0401a' },
     g: `
-......UUU
-......UUU
 ........UUU
-........UUU
-.......Y.....Y
+..........UUU
+..........UUU
+.........Y.....Y
 .
-........OOOYYO
-.......BBOBBBb
-.......BBOBBBb
-.......BOOBBBb
-......BBOBBBBBbaAAAA
-......BBOBBBBBQCaaaaQ
-......BBOBBBBBCCCCCCC
-.....BBOBBBBBBCCCKCCK
-.....BBQQAAQQQCCCKCCK
-.....BQAAAACYCCCCCCCCQ
-....BBCaAAAACAAAAACCCC
-....BBCCAAaaCaAAAAACCC
-....BBCCaaCCCCAAAaaCCC
-...BBBCCCCCCCYaaaCCCCC
-...b..CCCCCCYCCCCCCCCC
+..........OOOYYO
+.........BBOBBBb
+.........BBOBBBb
+.........BOOBBBb
+........BBOBBBBBb
+........BBOBBBBBb
+........BBOBBBBaAAAA
+........BOBBBBQCaaaaQ
+.......BBOBBBBCCCCCCC
+.......BBBBBBBCCCKCCK
+.......QQAAQQQCCCKCCK
+......QAAAACYCCCCCCCCQ
+......CaAAAACAAAAACCCC
+......CCAAaaCaAAAAACCC
+......CCaaCCCCAAAaaCCC
+.....BCCCCCCCYaaaCCCCC
+......CCCCCCYCCCCCCCCC
 ......CCAAAACCYCCCAACC
 ......CCAAAaCCCaAAAACC
 ......CaaaaCCCCCaaaaCC
@@ -418,7 +419,7 @@ YRaPPPOPPPPR.AOAaA.RPPPPPOPPaRY
 .......CCCCC...CCCCC
 ......QCCCCC...CCCCCQ
 ......cccccc...cccccc
-`, sh: [19, 15], hip: 20, ax: 14, ms: 1.25, arm: ['C', 'c'], hand: 'C', wpn: 'rfist', idle: { h: [1, 3], a: 80 } },
+`, sh: [19, 16], hip: 21, ax: 14, ms: 1.25, arm: ['C', 'c'], hand: 'C', wpn: 'rfist', idle: { h: [1, 3], a: 80 } },
   redhare: {   // 적토마 A 불꽃 갈기 준마(사용자 「적토마는 전부」 — 펫 · 마차 말도 이 모습): 날씬하고 다리가 긴 붉은 말 · 목덜미와 꼬리에서 타오르는 불꽃 갈기 · 금빛 눈 · 돌진(gm charge) · 앞다리를 들어 내리찍기(gm leap)
     pal: { C: '#c83a28', Q: '#ee6a4a', c: '#8a2016', K: '#3a1a12', R: '#e8401a', O: '#ffa030', Y: '#ffe070', e: '#ffd040', k: '#2a0a06', w: '#ffffff' },
     g: `
