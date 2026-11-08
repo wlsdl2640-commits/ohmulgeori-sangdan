@@ -846,7 +846,7 @@ function fx(g, t) {
     const k = (t - f.t0) / f.d;
     if (k < 0) continue;
     if (f.k === 'skh' || f.k === 'skw' || f.k === 'skq' || f.k === 'skc' || f.k === 'shk' || f.k === 'skp') { skDraw(g, f, t); continue; }   // 스킬 효과 (빌드 41) · 투사체 (빌드 43에서 바로잡음)
-    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm' || f.k === 'ublizz' || f.k === 'usand' || f.k === 'ublade' || f.k === 'uflood' || f.k === 'ucoil' || f.k === 'umiasma' || f.k === 'urock' || f.k === 'ufire' || f.k === 'umeteor' || f.k === 'upillar') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 48 번개 폭풍 · 49 눈보라 · 50 모래 해일 · 57 화산탄 비 · 불기둥)
+    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm' || f.k === 'ublizz' || f.k === 'usand' || f.k === 'ublade' || f.k === 'uflood' || f.k === 'ucoil' || f.k === 'umiasma' || f.k === 'urock' || f.k === 'ufire' || f.k === 'umeteor' || f.k === 'upillar' || f.k === 'ufang' || f.k === 'ulash') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 48 번개 폭풍 · 49 눈보라 · 50 모래 해일 · 57 화산탄 비 · 불기둥 · 58 땅속 독니 · 가시 덩굴 채찍)
     const L = f.x1 != null ? Math.hypot(f.x1 - f.x0, f.y1 - f.y0) || 1 : 1, AH = f.arc != null ? f.arc : f.k === 'arrow' ? 10 : 4;   // 포물선 높이 (사선으로 쏜 화살은 높이)
     let ux = f.x1 != null ? (f.x1 - f.x0) / L : 1, uy = f.x1 != null ? (f.y1 - f.y0) / L : 0;
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * AH : 0;

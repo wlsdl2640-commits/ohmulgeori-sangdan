@@ -3,8 +3,8 @@
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420, rocks: 240, breath: 260, meteor: 110, pillar: 520 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
-const FMOT_NAME = { magmadragon: '화산탄 비', firelord: '불기둥', ogreking: '대지 가르기', chimera: '불길 숨결', anaconda: '휘감아 조이기', swampwitch: '독 늪', sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420, rocks: 240, breath: 260, meteor: 110, pillar: 520, fang: 700, lash: 260 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_NAME = { worldserpent: '땅속 독니', corruptheart: '가시 덩굴 채찍', magmadragon: '화산탄 비', firelord: '불기둥', ogreking: '대지 가르기', chimera: '불길 숨결', anaconda: '휘감아 조이기', swampwitch: '독 늪', sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
   const q = PXU_ACT[id].fx[cat];
@@ -80,6 +80,7 @@ function fmotAoe(e, x, t, fd, team, at) {
   if (!fq || !sk) return;
   const H = monH(f.id, f.sc) * z, cx = fq[0], cy = fq[1] - H * 0.55, tg = team.filter(a => !a.down).map(a => at('a' + a.id)).filter(Boolean);
   if (FMOT_NAME[f.id]) callout(fq[0], fq[1] - H - 6, FMOT_NAME[f.id] + '!', 'boss');
+  let dmin = null;   // 땅속 독니 · 가시 덩굴 채찍: 가장 먼저 맞는 때까지 (흔들림)
   if (k === 'bats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'ubat', id, x0: cx - 6 * dir + (j - 1) * 6, y0: cy - 10 + j * 6, x1: q[0] + (j - 1) * 4, y1: q[1] - 14 * zAt(q[1]) + (j - 1) * 5, t0: T1 + j * 0.06, d: Math.abs(q[0] - cx) / FMOT_AOE_V.bats, s: i * 3 + j }); });
   else if (k === 'rats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'urat', id, x0: cx - 8 * dir + (j - 1) * 5, y0: fq[1] - 1 - j * 3, x1: q[0] + (j - 1) * 6, y1: q[1] - 1 - j * 2, t0: T1 + j * 0.07, d: Math.abs(q[0] - cx) / FMOT_AOE_V.rats, s: i * 3 + j }); });
   else if (k === 'nova') V.fx.push({ k: 'unova', id, x: cx, y: fq[1] - 2, t0: T1, d: 0.9, r1: Math.max(60, ...tg.map(q => Math.abs(q[0] - cx) + 16)) });
@@ -106,8 +107,18 @@ function fmotAoe(e, x, t, fd, team, at) {
       for (let j = 0; j < 3; j++) V.fx.push({ k: 'umeteor', id, x0: src[0] + (j - 1) * 2, y0: src[1], x1: q[0] + [0, -10, 9][j] * zq, y1: q[1] - 1 + [0, 2, 1][j], t0: T1 + j * 0.11, fl: dt + j * 0.05, d: dt + j * 0.05 + 0.95, h: 84 + j * 12 + i * 5, s: i * 3 + j, z: zq }); });
   }
   else if (k === 'pillar') tg.forEach((q, i) => { const zq = zAt(q[1]), dt = Math.abs(q[0] - cx) / FMOT_AOE_V.pillar; V.fx.push({ k: 'upillar', id, x: q[0], y: q[1], z: zq, t0: T1 + dt - 0.32, pre: 0.32, d: 1.3, s: i }); });   // 불기둥 (빌드 57): 발밑이 0.32초 달아오르다 맞는 때에 불기둥이 솟는다 (가까운 사람부터)
+  else if (k === 'fang') {   // 땅속 독니 (빌드 58): 뱀이 고개를 젖혔다가 땅을 내리치면 파티 발밑이 0.35초 들썩이고, 맞는 때(T1)에 땅속에서 커다란 아가리가 솟아 파티를 통째로 문다 — 빠르기가 커서 모두 거의 한꺼번에 맞는다
+    const xs = tg.map(q => q[0]), zq = tg.length ? zAt(tg.reduce((a, q) => a + q[1], 0) / tg.length) : z;
+    const L = (xs.length ? Math.min(...xs) : cx - 120) - 22 * zq, R = (xs.length ? Math.max(...xs) : cx - 60) + 22 * zq, gy = (tg.length ? Math.max(...tg.map(q => q[1])) : fq[1]) + 1;
+    dmin = xs.length ? Math.min(...xs.map(x => Math.abs(x - cx))) / FMOT_AOE_V.fang : 0;
+    V.fx.push({ k: 'ufang', id, L, R, gy, z: zq, t0: T1 - 0.35, pre: 0.35, d: 1.45 });
+  }
+  else if (k === 'lash') {   // 가시 덩굴 채찍 (빌드 58): 심장이 부풀었다 뛰면 가시 덩굴이 사람마다 활꼴로 뻗어 맞는 때(거리 ÷ 빠르기)에 내리치고 거둬들인다
+    const src = fmotTip(f, m, fq, z, dir);
+    tg.forEach((q, i) => { const zq = zAt(q[1]), dt = Math.abs(q[0] - cx) / FMOT_AOE_V.lash; dmin = Math.min(dmin == null ? 9 : dmin, dt); V.fx.push({ k: 'ulash', id, x0: src[0], y0: src[1], x1: q[0], y1: q[1] - 12 * zq, t0: T1, fl: Math.max(0.05, dt), d: dt + 0.75, h: 34 + i * 9, z: zq, s: i }); });
+  }
   else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
-  if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1 + (k === 'meteor' ? 0.55 : 0), d: 0.1 });   // 화산탄 비는 떨어질 때 흔든다
+  if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1 + (k === 'meteor' ? 0.55 : dmin != null ? dmin : 0), d: 0.1 });   // 화산탄 비는 떨어질 때 · 땅속 독니와 가시 덩굴 채찍은 처음 맞을 때 흔든다
 }
 // 박쥐 · 파동 · 회전 그리기 (fx()가 부른다)
 function fmotDraw(g, f, t) {
@@ -203,6 +214,73 @@ function fmotDraw(g, f, t) {
     if (out > 0) for (let i = 0; i < 4; i++) { const p = out; skQ(g, f.x + (i - 1.5) * 4, f.y - Hm * 0.6 - p * 16 - i * 3, '#5a3a36', 0.5 * (1 - p)); }   // 연기
     const sc = Math.min(1, ee / 0.1), sal = ee > f.d - f.pre - 0.3 ? Math.max(0, (f.d - f.pre - ee) / 0.3) : 1;   // 그을린 자리
     for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; skQ(g, f.x + Math.cos(a) * 8 * z * sc, f.y + Math.sin(a) * 2.4 * z * sc, i % 3 ? '#3a1a14' : '#c8401a', 0.7 * sal); }
+    return;
+  }
+  if (f.k === 'ufang') {   // 땅속 독니 (빌드 58): 발밑 들썩임(금 · 튀는 흙) → 양쪽에서 위턱 · 아래턱이 활꼴로 솟아(안쪽에 이빨 · 끝에 큰 독니) 파티 머리 위에서 덥석 → 독 · 흙이 튀고 땅속으로
+    const z = f.z || 1, M = (f.L + f.R) / 2, Rj = (f.R - f.L) / 2, hk = 1.12;
+    if (e < f.pre) {
+      const k = e / f.pre;
+      for (let i = 0; i <= 18; i++) { const x = f.L + (f.R - f.L) * i / 18; skQ(g, x, f.gy + (i % 3 ? 1 : 0), i % 2 ? '#2a1c12' : '#4a3424', 0.25 + 0.65 * k); }
+      for (let i = 0; i < 10; i++) { const ph = (e * 6 + skH(i, 98)) % 1, x = f.L + 6 + (f.R - f.L - 12) * skH(i, 99); skQ(g, x, f.gy - 1 - Math.sin(ph * Math.PI) * 7 * k, i % 2 ? '#8a6a42' : '#5a3e28', k); }
+      return;
+    }
+    const ee = e - f.pre, D2 = f.d - f.pre; if (ee > D2) return;
+    const al = ee > D2 - 0.3 ? Math.max(0, (D2 - ee) / 0.3) : 1;
+    for (let i = 0; i <= 18; i++) { const x = f.L + (f.R - f.L) * i / 18; skQ(g, x, f.gy + 1, i % 3 ? '#140c08' : '#2a1c12', al); }   // 벌어진 땅
+    const ph = ee < 0.06 ? 180 - 70 * ee / 0.06 : ee < 0.1 ? 110 - 19 * (ee - 0.06) / 0.04 : ee < 0.42 ? 91 : 91 + 89 * Math.min(1, (ee - 0.42) / 0.26);   // 턱 끝 각도 (180 = 땅)
+    if (ph < 179) {
+      const band = [], teeth = [];
+      for (const sx of [1, -1]) {   // 1 왼턱 · -1 오른턱 (거울)
+        const n = 32;
+        for (let j = 0; j <= n; j++) {
+          const a = (180 + (ph - 180) * j / n) * Math.PI / 180, x = M + sx * Rj * Math.cos(a), y = f.gy - Rj * hk * Math.sin(a);
+          let ix = M - x, iy = f.gy - 6 * z - y; const IL = Math.hypot(ix, iy) || 1; ix /= IL; iy /= IL;   // 안쪽 (파티 쪽)
+          band.push([x - ix * 4, y - iy * 4, '#1a120a'], [x - ix * 2, y - iy * 2, '#7a6444'], [x, y, '#4a3a26'], [x + ix * 2, y + iy * 2, '#7a2434']);
+          if (j % 3 === 1 && j < n - 2) for (let t = 1; t <= 3; t++) teeth.push([x + ix * (2 + 2 * t), y + iy * (2 + 2 * t), t === 3 ? '#c8b89a' : '#f4ecd8']);
+          if (j === n) for (let t = 1; t <= 6; t++) teeth.push([x + ix * (1 + 2 * t), y + iy * (1 + 2 * t) + t * 1.0, t >= 5 ? '#8af060' : '#f4ecd8']);   // 끝의 큰 독니
+        }
+      }
+      for (const [x, y] of teeth) for (const [ox, oy] of [[-2, 0], [2, 0], [0, -2], [0, 2]]) skQ(g, x + ox, y + oy, '#1a120a');
+      for (const [x, y, c] of band) skQ(g, x, y, c);
+      for (const [x, y, c] of teeth) skQ(g, x, y, c);
+    }
+    if (ee < 0.5) for (let i = 0; i < 14; i++) {   // 턱이 솟는 자리에서 흙 튐
+      const q = ee / 0.5, bx = i % 2 ? f.L : f.R, a = Math.PI * (0.15 + 0.7 * skH(i, 96)), sp = (30 + 30 * skH(i, 97)) * z;
+      skQ(g, bx + Math.cos(a) * sp * q * (i % 4 < 2 ? 1 : -1), f.gy - 2 - Math.sin(a) * sp * q + 150 * q * q, i % 3 ? '#6a4a30' : '#a8845a', 1 - q);
+    }
+    if (ee > 0.1 && ee < 0.65) for (let i = 0; i < 12; i++) {   // 덥석 문 자리에서 독이 튄다
+      const q = (ee - 0.1) / 0.55, a = Math.PI * (0.1 + 0.8 * skH(i, 94)), sp = (26 + 26 * skH(i, 95)) * z;
+      skQ(g, M + Math.cos(a) * sp * q * (i % 2 ? 1 : -1), f.gy - Rj * hk + 4 - Math.sin(a) * sp * q + 110 * q * q, i % 3 ? '#6ac83a' : '#b8f06a', 1 - q);
+    }
+    return;
+  }
+  if (f.k === 'ulash') {   // 가시 덩굴 채찍 (빌드 58): 심장에서 활꼴로 뻗는 검보랏빛 덩굴(양쪽 번갈아 자홍 가시 · 빛나는 끝) → 내리친 자리 가시 고리 → 출렁이다 거둬들인다
+    const z = f.z || 1, gr = Math.min(1, e / f.fl), ee = e - f.fl;
+    let u1 = 1 - (1 - gr) * (1 - gr);
+    if (ee > 0.2) u1 = Math.max(0, 1 - (ee - 0.2) / 0.4);
+    if (u1 > 0) {
+      const mx = (f.x0 + f.x1) / 2, my = Math.min(f.y0, f.y1) - f.h;
+      const P = u => [(1 - u) * (1 - u) * f.x0 + 2 * u * (1 - u) * mx + u * u * f.x1, (1 - u) * (1 - u) * f.y0 + 2 * u * (1 - u) * my + u * u * f.y1];
+      const N = 44, wig = ee > 0 && ee < 0.3 ? Math.sin(ee * 46) * (1 - ee / 0.3) * 4 : 0;
+      let tx = f.x0, ty = f.y0;
+      for (let j = 0; j <= N; j++) {
+        const u = j / N * u1, [x, y] = P(u), [x2, y2] = P(Math.min(1, u + 0.01)), L = Math.hypot(x2 - x, y2 - y) || 1, nx = -(y2 - y) / L, ny = (x2 - x) / L;
+        const off = Math.sin(u * 13 + e * 16 + f.s) * 1.2 + wig * Math.sin(u * Math.PI), X = x + nx * off, Y = y + ny * off, tx2 = (x2 - x) / L, ty2 = (y2 - y) / L;
+        skQ(g, X + nx * 2, Y + ny * 2, '#2e102e'); skQ(g, X, Y, '#8a3a8a');
+        if (u < 0.7) skQ(g, X - nx * 2, Y - ny * 2, '#c070c0', 0.9);
+        if (j % 4 === 2) { const sd = Math.floor(j / 4) % 2 ? 1 : -1; skQ(g, X + nx * sd * 4 - tx2, Y + ny * sd * 4 - ty2, '#ff5ab0'); skQ(g, X + nx * sd * 6 - tx2 * 2.5, Y + ny * sd * 6 - ty2 * 2.5, '#ffa0d0', 0.9); }   // 가시 (양쪽 번갈아 · 뒤로 기운다)
+        tx = X; ty = Y;
+      }
+      skQ(g, tx, ty, '#ffd0ea'); skQ(g, tx - 2, ty, '#ff5ab0', 0.85); skQ(g, tx, ty - 2, '#ff5ab0', 0.6);   // 빛나는 끝
+    }
+    if (ee >= 0 && ee < 0.45) {   // 내리친 자리: 가시 고리가 터져 퍼진다
+      const q = ee / 0.45;
+      for (let i = 0; i < 10; i++) {
+        const a = i / 10 * Math.PI * 2 + f.s, r = (4 + 15 * q) * z;
+        skQ(g, f.x1 + Math.cos(a) * r, f.y1 + Math.sin(a) * r * 0.7, i % 2 ? '#ff5ab0' : '#c060e0', 1 - q);
+        skQ(g, f.x1 + Math.cos(a) * (r - 3), f.y1 + Math.sin(a) * (r - 3) * 0.7, '#5e2a5e', (1 - q) * 0.8);
+      }
+    }
     return;
   }
   if (f.k === 'ufire') {   // 불길: 입에서 파티 쪽으로 불 알갱이가 부채꼴로 흘러간다 — 입 가까이 흰 노랑 · 노랑 · 주황 · 빨강, 끝은 검붉은 연기 · 다 뿜은 뒤 꼬리가 따라간다
@@ -317,6 +395,12 @@ STORY.v49 = [
   '설녀는 긴 머리에 흰 기모노를 입고 끌리는 옷자락으로 떠다닌다. 손끝에서 얼음 숨결을 날리고 냉기를 모은다. 만날 때마다 검은 머리 · 은빛 머리 두 모습 중 하나로 나온다(도감에서 둘 다 볼 수 있다).',
   '설녀 여왕은 얼음 왕관과 얼음 깃, 남빛 긴 머리에 흰 드레스를 입고 얼음 홀을 든다. 홀로 얼음 창을 쏘고, 홀을 치켜들면 파티 쪽으로 눈보라가 휘몰아친다(눈보라).',
   '고산지대 산양도 새로 그렸다 — 만날 때마다 아이벡스(뒤로 휜 마디 뿔) · 흰 산양(짧은 검은 뿔) · 큰뿔 산양(말린 굵은 뿔) 세 모습 중 하나. 머리를 숙여 들이받고, 뛰어올라 들이받는다. 산양 펫은 다 자라면 아이벡스 모습이 되어 강철 마차를 끈다.'
+];
+STORY.v58 = [
+  '빌드 58: 세계수 뿌리와 세계수의 심장 몬스터를 새로 그렸다 — 뿌리 거미, 뿌리 웜, 트렌트 수호자, 드라이어드, 이끼 골렘, 쉰 번째 우두머리 세계수의 뱀, 그리고 심장의 두목 타락한 세계수의 심장. 모두 네 모습씩이라 만날 때마다 그중 하나로 나온다(도감에서 모두 볼 수 있다).',
+  '뿌리 거미는 뿌리 다리 · 밤송이 · 이끼 등 · 가시 덤불 거미, 뿌리 웜은 뿌리 웜 · 굼벵이 · 버섯 웜 · 가시 덩굴 웜. 물고 덤벼들며 독을 뱉는다. 트렌트 수호자는 방패 나무 기사 · 고목 수문장 · 꽃 피운 수호자 · 그루터기 거인, 이끼 골렘은 이끼 둔덕 · 뿌리 감긴 바위 · 묘목 등 · 덩굴 골렘이 되어 내리치고 땅을 울린다.',
+  '드라이어드는 목까지 덮는 긴 옷을 입고 늘 떠 있다 — 잎사귀 · 나무껍질 · 꽃봉오리 · 단풍 드라이어드가 손 위의 꽃 · 씨앗 · 꽃가루 · 단풍잎에서 자연의 힘을 날린다.',
+  '세계수의 뱀(나무껍질 비늘 뱀 · 이끼 덮인 고대 뱀 · 린드웜 · 땅을 넘나드는 뱀)이 고개를 젖혔다가 땅을 내리치면, 파티 발밑이 들썩이다 땅속에서 커다란 아가리가 솟아 파티를 통째로 문다(땅속 독니). 타락한 세계수의 심장(심장 고목 · 떠오른 심장 · 타락한 꽃 · 가시 고치)은 부풀었다 뛸 때마다 빛 구슬을 뱉고, 크게 뛰면 가시 덩굴이 사람마다 활꼴로 뻗어 내리친다(가시 덩굴 채찍).'
 ];
 STORY.v57 = [
   '빌드 57: 용암 화산과 불의 심장 화구의 몬스터를 새로 그렸다 — 마그마 슬라임, 불박쥐, 샐러맨더, 용암 골렘, 적토마, 이프리트, 쉰 번째 우두머리 마그마 드래곤, 그리고 화구의 두목 화염 군주 이프리트.',

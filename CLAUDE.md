@@ -233,6 +233,23 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 세계수 뿌리 새 그림 · 땅속 독니 · 가시 덩굴 채찍 (빌드 58)
+- 그림(src/pxroots.js, build.py에서 pxvolcano 뒤): 필드 몬스터 다섯 + 우두머리 세계수의 뱀 + 심장 두목 타락한 세계수의 심장이 옛 그림(pxmon3.js 등 PXM)이던 것을 모두 PXU로. 사용자 「전부 넣고 다음으로 ㄱㄱ」 — **일곱 모두 시안 네 모습 전부**(기본 id = 시안 A · `_b/_c/_d` = B/C/D, pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만).
+  - rootspider(뿌리 다리 · 밤송이 · 이끼 등 · 가시 덤불 거미) · rootworm(뿌리 웜 · 굼벵이 · 버섯 웜 · 가시 덩굴 웜) — still · noArm, g2 다리 · 몸 물결, gm bite/leap/rear(거미) · bite(웜). spi1.py는 다리 표(NEAR · far_of) 매개 그림.
+  - treantguard(방패 나무 기사 `wclub` · 고목 수문장 `branch`(pxforest) · 꽃 피운 수호자 `bstaff` · 그루터기 거인 `rfist`) · mossgolem(이끼 둔덕 · 뿌리 감긴 바위 · 묘목 등 · 덩굴 골렘, 모두 `rfist`) — 사람꼴 ms 1.25 · g2 없음. 이끼 골렘은 검은바위산 「이끼 낀 고대 골렘」(회색 돌 + 이끼)과 겹치지 않게, 묘목 등 골렘은 처음 꼴이 나무를 진 네발 짐승(토대부기 닮음 걱정)이라 서 있는 흙 골렘으로 다시.
+  - dryad(잎사귀 `fbloom` · 나무껍질 `fseed` · 꽃봉오리 `fpollen` · 단풍 `fmaple`) — float(pad 2) · g2 옷자락 · 머리칼, 목까지 덮는 긴 옷. 단풍은 처음 버드나무(늘어진 긴 머리 → 원귀)였다가 바꿨다.
+  - worldserpent(나무껍질 비늘 뱀 · 이끼 덮인 고대 뱀 · 린드웜 · 땅을 넘나드는 뱀) — still · ms 1.5 · **ax 29~30(머리 쪽)** · mx/my 20. 기준점이 몸 가운데(20)면 머리가 파티에 겹쳤다. gm bite/swell/spit — serp1.py `head()`가 윗머리 · 아래턱을 경첩으로 벌리고 `head_at()`이 목 끝에 머리를 붙인다. 늪지 아나콘다(그루터기 감기) · 샌드웜(한 줄기 활꼴)과 겹치지 않게, 린드웜 뿔은 사슴뿔(동양 용)처럼 보여 뒤로 휜 나무 뿔로.
+  - corruptheart(타락한 심장 고목 · 떠오른 심장(float pad 3) · 타락한 꽃 · 가시 고치) — still · ms 1.5 · gm swell/spit. heart1.py `heart()`: 오른쪽 큰 덩이 · 왼쪽 위 작은 덩이 · 위로 솟아 굽은 나무 관(C/Q/c) · 홈 · 빛 핏줄 P(glow 0~3 = idle0 · idle1 · swell · spit).
+  - 무기(pxroots.js 맨 앞): `wclub` 옹이 몽둥이(club) · `bstaff` 자작나무 지팡이(staff) · `fbloom` 꽃 지팡이 · `fseed` 씨앗 · `fpollen` 꽃가루 · `fmaple` 단풍잎(모두 dagger). 시안판에만 쓴 `flant`(반딧불 등불)는 `scratchpad/v58/t/extra58.js`.
+- 동작: 뿌리 거미 atk qbite/sleap · skl sspit(dart) · 독, 뿌리 웜 qbite · skl qgnaw, 트렌트 side/down · skl smash(quake · 기절), 이끼 골렘 down/side · skl smash, 드라이어드 mag spush/sjab · skl scharge(orb · 마비). 세계수의 뱀 atk qbite/qcharge · skl **wroar**(swell 고개 젖힘 · spit 땅을 향해 입) → 광역기 fang. 심장 mag · atk **wspit**(swell 부풂 · spit 빛 구슬 orb) · skl wroar → 광역기 lash.
+- 광역기 둘(fmot.js fmotAoe → V.fx, view.js fx()가 fmotDraw로 보낸다):
+  - `fang` 땅속 독니(FMOT_AOE_V 700 — 모두 거의 한꺼번에 맞는다 · FMOT_NAME.worldserpent): 파티 하나에 `ufang` 하나 — L/R = 파티 양끝 ± 22·z, gy = 맨 앞 발, t0 = T1 − 0.35(pre 0.35 들썩임: 금 · 튀는 흙), T1에 양쪽 턱이 활꼴(반지름 (R−L)/2 · 높이 ×1.12)로 솟아(0.06초에 180° → 110°) 0.1초에 덥석(91°) — 안쪽 이빨 · 끝 큰 독니(푸른 독) · 검은 테 → 0.42초부터 0.26초 동안 가라앉음 · 흙 튐 · 독 튐. d 1.45. 처음 시안(사람마다 독니 둘 + 땅속 흙더미)은 파티가 붙어 서 있어 겹치고 흐릿해서 아가리 하나로 바꿨다.
+  - `lash` 가시 덩굴 채찍(FMOT_AOE_V 260 · FMOT_NAME.corruptheart): fmotTip(심장)에서 사람마다 `ulash` — 2차 베지어 활꼴(꼭짓점 = 높은 쪽 − h, h 34 + 9i), `fl` = 거리 ÷ 260(= 맞는 때)에 끝이 닿아 가시 고리가 터지고 0.2초 출렁인 뒤 0.4초에 거둔다. 굵은 보랏빛 덩굴 · 양쪽 번갈아 자홍 가시 · 빛나는 끝. d = fl + 0.75.
+  - 흔들기: T1 + 가장 먼저 맞는 사람까지(`dmin`). 필드 우두머리 셋째 · 넷째(이끼 골렘 · 드라이어드, k ≥ 3)는 fieldBoss의 aoe로 'nova'.
+  - STORY.v58(fmot.js) · notes58(econ.js) · flags.v58.
+- 시안 도구 `scratchpad/v58`: 결정은 `DECISIONS.md`. 손 그림 `g/`(spi1 · worm1 · tree1 · dry1 · moss1 · serp1 · heart1.py) → `t/*.json` → `g/assemble58.py` → `t/final58.json` → `g/emit58.py <출력 pxroots.js>`. 광역기 시안 `t/aoe58.js` + `d/aoe58.py`(실제 전투 길 GIF, 자르기 y 40부터 — 뿌리 땅이 낮다) · `d/zoom58.py`(장 몇 개 크게) · `d/probe58.py`(보스 · 파티 자리). 확인: `t/look.py` · `t/sheet58.py`. 미리보기 `scratchpad/v58p/preview58.py` — RL_RUN은 처음 0 이상인 때에 사건을 쏘므로 `[-0.1, 0] + taus`로 0초에 쏘게 했다(빌드 57 미리보기는 장이 첫 때만큼 밀려 있었다). 광역기 장은 `at`(맞는 때 기준).
+- 시험 `scratchpad/v58/logic58.py`(모습 넷 · 이름표 드랍 없음 · 떠 있는 높이 · 서 있기 둘째 장 · 사람꼴 g2 없음 · 가로 틈 · 무기 · 물기/덤비기/뱉기/포효/뿜기 몸 · 심장 빛깔 · 크기 · 필드 우두머리 차례와 광역기 · 모습 고르기 · 사건 · 아가리가 맞는 때에 덥석 무는지 · 덩굴 끝이 맞는 때에 닿는지 · 실제 그리기 길 · 그리기 · 이야기). 전체 시험은 `scratchpad/run58.sh`.
+
 ## 용암 화산 새 그림 · 화산탄 비 · 불기둥 (빌드 57)
 - 그림(src/pxvolcano.js, build.py에서 pxcastle 뒤): 필드 몬스터 여섯 + 우두머리 마그마 드래곤 + 화구 두목 화염 군주가 옛 그림(pxmon*.js PXM)이던 것을 모두 PXU로. 안개 묘지(grave)는 몬스터 여덟이 모두 빌드 43 언데드라 그대로.
   - 모습 여럿(빌드 50~55와 같은 길: PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만): magmaslime 둘(시안 C 불꽃 머리 기본 · D 끓는 슬라임 `_b`) · firebat 둘(A 불꽃 날개 기본 · B 숯 박쥐) · redhare 넷(A 불꽃 갈기 준마 기본 · B 갑옷 군마 · C 불꽃 말 · D 화산암 말) · magmadragon 셋(A 용암 갑룡 기본 · B 불꽃 날개 화룡 `_b` · **D 흑요석 가시 용이 `_c`**). lavagolem 둘(A 흘러내리는 용암 골렘 기본 · `_b` = golem2.py의 E-2: A 몸 등에 B의 검은 바위 화산을 합치고, 사용자 「화산을 더 앞으로 땡겨오고 위로 좀더 높이」로 E-1(3칸) · E-2(5칸) 둘을 보여 「E 2」 — 5칸 앞 · 꼭대기 5칸 위 `volcano_golem(dx=5, up=5)`, 머리 바로 뒤에서 높이 솟는다, 사람꼴이라 g2 없음). 모습 하나: salamander(시안 B 용암 도롱뇽) · efreet(B 불길 그림자) · firelord(B 용암 망토 군주).
