@@ -233,6 +233,23 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 천둥 봉우리 새 그림 · 뇌전 숨결 · 번개 사슬 (빌드 60)
+- 그림(src/pxthunder.js, build.py에서 pxsky 뒤): 필드 몬스터 셋(먹구름 정령 · 번개매 · 폭풍 기사) + 우두머리 뇌룡 + 첨탑 두목 뇌제 아스트라가 옛 그림이던 것을 PXU로. 사용자 「구름 AD 새는ABC 뇌수는 다 별로. 골렘도 다별로 기사는 비바람 척후 창 기사. 뇌룡 Ab 뇌제 아스트라는 A」 — **고른 순서대로 기본 id · `_b` · `_c`**, 하나만 고른 기사 · 뇌제는 PXU_SKIN 없이 기본 id 하나. **뇌수(raiju) · 폭풍 골렘(stormgolem)은 고른 것이 없어 옛 그림 그대로**(다음에 새 시안).
+  - stormcloud 둘(뭉게 먹구름 · 꼬마 뇌운 셋, float pad 3 · still · gm bite/swell/spit) · thunderhawk 셋(먹빛 번개매 · 폭풍 수리 · 뇌제비, float pad 4 · still · gm bite/charge).
+  - tempestknight 하나(비바람 척후 창기사 `lance`, ms 1.2, g2 없음).
+  - thunderdragon 둘(흰 두 뿔 뇌룡 — still · g2 · gm bite/charge, ms 1.5 · monW 102 / 먹구름 날개 용 — float pad 4, still 없음). 뿔은 `tools/saved/stormwyvern_horn_A`(빌드 48 시안 A, 「다음에 또 쓰자」)를 head() 뿔 길로 다시 그렸다.
+  - stormking 하나(번개 관 뇌제 `sorb`, ms 1.5 · monH 88).
+  - 무기(pxthunder.js 맨 앞): `sorb` 폭풍 구슬 지팡이(FXW staff, head_js). 시안판에만 쓴 halb · sball · bglaive · kcrys는 `scratchpad/v60/t/extra60.js`.
+  - 피한 것: 머리 뒤 둥근 것 · 수염 · 두건 · 북 · 망치 · 날개 투구 · 붉은 망토 · 가슴 번개 무늬 · 십자(창살 가운데 띠 · 줄무늬 가로 토막) · 흰 머리 흰 눈 · 사슴뿔 · 일어선 몸 + 등 갈기(괴수 영화) · 흰 사기 애자 몸(타이어 인형) · 뾰족 면갑(새 머리 투구) · 자루 끝 먹구름(작게 보면 망치).
+- 동작: 먹구름 정령 mag/skl wspit(orb · 감전) · atk bswoop, 번개매 atk bswoop(claw) · skl qdive(bolt · sparks), 폭풍 기사 thrust/side/down · skl smash(bolt), 뇌룡 qbite/qcharge · skl cbreath(웅크림 → 입 벌림), 뇌제 mag spush/sjab(orb) · skl scharge. 광역기가 있는 뇌룡 · 뇌제는 스킬 갈래가 광역기뿐(상태이상 한 방은 공격 · 마법 갈래).
+- 광역기 둘(fmot.js fmotAoe → V.fx, view.js fx()가 fmotDraw로 보낸다):
+  - `zap` 뇌전 숨결(FMOT_AOE_V 600 · FMOT_NAME.thunderdragon): `uzap` 하나 — 입(fmotTip)에서 앞머리 xf = cx − sg·min(e, tr)·v(보스 닻에서 잰 거리라 사람마다 맞는 때 T1 + |x − cx| ÷ v에 그 사람 자리)까지 부채꼴 다섯 갈래 + 굵은 줄기(`zapBolt`, 0.05초마다 꼴이 바뀐다), 지나간 사람마다 줄기에서 갈래 + `zapBurst`. 끝 xe = 맨 뒤 사람 − 56·z(큰 보스는 파티가 입 바로 앞이라 파티 뒤로 길게). skl hit flash big 1 · shake 3.
+  - `chain` 번개 사슬(300 · FMOT_NAME.stormking): `uchain` 하나 — nodes = 가까운 사람부터 [x, 가슴 y, th = |x − cx| ÷ v, z], 마디마다 th − 0.08초에 앞 마디에서 뻗기 시작해 th에 닿는다(첫 마디는 지팡이 끝에서 곧게, 다음부터 머리 위 활꼴 네 토막) · 0.4초 깜빡 · 0.2초 사그라짐. skl hit flash.
+  - 흔들림은 둘 다 처음 맞을 때(dmin). 필드 우두머리 셋째 폭풍 골렘(옛 그림)은 옛 길, 넷째 폭풍 기사는 fieldBoss aoe로 'nova'.
+  - STORY.v60(fmot.js) · notes60(econ.js) · flags.v60.
+- 시안 도구 `scratchpad/v60`: 결정은 `DECISIONS.md`. 손 그림 `g/`(cloud2 · hawk2 · raiju1~3 · golem1~4 · knight1~2 · dragon1~2 · king1.py — 용은 v57 dragon1의 head() · wing()) → `t/*.json` → `g/assemble60.py` → `t/final60.json` → `g/emit60.py <출력 pxthunder.js>`. 광역기 시안 `t/aoe60.js` + `d/aoe60.py`(CROP — 뇌제는 [0, 22, 240, 192]) · `d/zoom60.py`. 확인 `t/look.py` · `t/sheet60.py`. 미리보기 `scratchpad/v60p/preview60.py`.
+- 시험 `scratchpad/v60/logic60.py`(모습 수 · 이름표 드랍 없음 · 옛 그림 둘(뇌수 · 골렘)이 그대로 그려지는지 · 떠 있는 높이 · 사람꼴 g2 없음 · 무기 · 덮치기/내리꽂기/뱉기/물기/숨결 몸 · 크기 · 우두머리 차례 · 사건 · 숨결 앞머리가 맞는 때에 그 사람 자리(offZ) · 사슬 마디가 맞는 때에 닿는지(offC) · 가까운 사람부터 · 흔들림 · 실제 그리기 길 · 그리기 · 이야기). 전체 `scratchpad/run60.sh`.
+
 ## 구름섬 새 그림 · 회오리바람 · 깃털 폭풍 (빌드 59)
 - 그림(src/pxsky.js, build.py에서 pxroots 뒤): 구름섬 필드 몬스터 여섯 + 우두머리 하늘의 거인 + 구름 위 신전 두목 하늘의 황제가 옛 그림(pxmon3.js PXM)이던 것을 모두 PXU로. 사용자가 고른 모습(「A B구름양 Ab 만타 cd 번개꼬리매, 두리미 a말 D말 abd거인 ABd기사 A황제 B여황제 Abc거인」) — **고른 순서대로 기본 id · `_b` · `_c`**(예: 뇌조 시안 C → thunderbird, D → thunderbird_b). pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만.
   - cloudsheep 둘(뭉게구름 · 비구름, still · noArm · g2 · gm charge/leap) · skyray 둘(하늘빛 만타 · 구름 자락, float pad 4 · gm bite/swell/spit) · thunderbird 둘(번개 꼬리 매 · 구름 날개 두루미, float · 두루미는 땅에서 24px 위) · pegasus 둘(흰 날개 말 · 접은 날개 갈색 — gm.leap에서만 날개를 편다, redhare horse() 틀).
