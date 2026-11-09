@@ -382,3 +382,12 @@
 - `python3 build.py` → `dist/play.html`(아티팩트), `dist/web/index.html`; APK는 GitHub Actions(빌드 번호 = run number, 태그 `build-N`). 릴리스 조회는 `gh api repos/.../releases/tags/build-N`, 자산은 `-H "Accept: application/octet-stream"`.
 - 시험: `scratchpad/v7/t/uitest7.py · fresh7.py · perf7.py`, 영웅 화면 `scratchpad/hero/herotest.py`, 원정 창 `scratchpad/front/exptest.py`, 도감 `scratchpad/front/dextest.py`, 마계·창고·전직 `scratchpad/demon/demontest.py`(UI)와 `scratchpad/demon/logic.py`(함수 직접 호출).
 - 커밋 끝에 그때 세션이 알려 주는 `Co-Authored-By:` 줄(모델 이름은 세션마다 다르다)과 `Claude-Session:` 줄.
+
+## PC 판 (윈도우 ZIP, 빌드 61부터 요청이 있을 때)
+- 사용자: 「최신버전 PC 버전으로 만들어서 ZIP로 해서 보내줘」 → 웹 판 `dist/web`을 일렉트론 창에 담은 설치 없는 윈도우 10·11 64비트 판. CI에는 아직 없다(요청이 있을 때 손으로 만들어 보낸다).
+- `BUILD_NO=N python3 build.py` 뒤 `python3 tools/pc_build.py` → `dist/pc/ohmulgeori-sangdan-pc-buildN.zip`(약 140MB, 풀면 325MB). 환경 변수 `PC_WEB`(웹 판 폴더) · `PC_OUT` · `PC_TOOLS`(@electron/packager 20.3.0이 깔린 폴더, 없으면 `build/pctools`에 npm으로 깐다) · `PC_ELECTRON`(기본 44.9.3).
+- 리눅스에서 바로 윈도우 exe를 만든다: packager가 resedit으로 아이콘(icon-512 → 9크기 ico) · 판 정보(0.7.N, 이름만 — 사람 이름 · 메일 없음)를 넣으므로 wine이 필요 없다. 크로미움 locales는 ko · en-US만 남긴다.
+- **packager가 이름을 filenamify로 거르며 한글을 풀어쓴 자모(NFD)로 바꾼다** → 윈도우 탐색기에서 「ㅍㅏㄴ…」으로 보이므로 pc_build.py가 exe · 폴더 · 압축 안 이름을 모두 NFC로 되돌린다.
+- `desktop/main.js`: 메뉴 없음 · 창 하나만(두 번째 실행은 있는 창을 앞으로) · 처음 창 560×980(작업 영역에 맞춰 줄임) · 창 자리 · 크기 · 최대화 · 배율을 `%APPDATA%\ohmulgeori-sangdan-pc\window.json`에(화면 밖이면 버린다) · Ctrl+휠 / Ctrl +·-·0 확대 · F11 전체 화면 · F5 · Ctrl+R 막음 · 바깥 주소는 기본 브라우저로 · 화면 쪽이 죽으면 한 번 다시 띄움. userData를 판과 상관없는 폴더로 박아 두어 새 판 폴더로 바꿔도 저장(localStorage, file:// 출처)이 이어진다.
+- 게임 쪽은 그대로: `isApp()`은 Capacitor만 보므로 PC 판은 웹 모드(업데이트 확인 단추 없음 · 서비스 워커는 https에서만). 압축 안 `실행 방법.txt`는 `desktop/실행 방법.txt`({VER} {N} {ELECTRON})에서, 갈무리 OFL은 맨 위에도 둔다.
+- 시험(같은 44.9.3 리눅스 일렉트론 · xvfb · Playwright `_electron`): `scratchpad/pctest/test.js`(첫 화면 → 새 상단 → 클립보드 · F5 → 닫고 다시 열어 저장 · 창 자리 이어짐, 싼 app.asar를 바로 띄워도 된다) · `test2.js`(배율 · 화면 밖 자리 · 두 번째 실행). Playwright의 keyboard.press는 before-input-event를 거치지 않으므로 배율 시험은 `webContents.sendInputEvent`로 한다. 크로미움도 file:// 배율을 스스로 기억한다.
