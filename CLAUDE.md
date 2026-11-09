@@ -233,8 +233,14 @@
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
 
+## 뇌수 · 폭풍 골렘 새 그림 (빌드 61)
+- 사용자 「짐승은 BD추가 골렘은 B만 추가」(둘째 시안 `scratchpad/v60/g/raiju8.py` · `golem7.py`, 판 `v60/t/s60_raiju2.png` · `s60_golem2.png`): `raiju` = B 번개 뿔 들소(기본) · `raiju_b` = D 번개 그리폰(pxuLook · PXU_SKIN), `stormgolem` = B 폭풍우 골렘(하나, PXU_SKIN 없음). 옛 그림(pxmon4.js PXM)은 PXU가 덮는다(art.js는 PXU[id]가 있으면 그것을 그린다).
+- 뇌수: 짐승(still · noArm · hip 99 · wpn none) · g2 · gm bite/charge/leap(beast4.py `body4` 틀), PXU_ACT atk qbite/qcharge · skl qpounce(bolt · sparks) · tk 0.95. 폭풍 골렘: 사람꼴 ms 1.25 · `rfist`(손 글자 C = 물빛 주먹) · g2 없음, atk side/down · skl smash(stun · shake 2). 필드 우두머리 차례 둘째(뇌수)는 광역기 없음, 셋째(골렘)는 fieldBoss aoe → nova.
+- 만드는 길: `scratchpad/v61/g/assemble61.py`(빌드 60 다섯 + 뇌수 · 골렘 → `v61/t/final61.json`) → `emit61.py <출력 pxthunder.js>`. STORY.v61(fmot.js) · notes61(econ.js) · flags.v61.
+- 시험 `scratchpad/v61/logic61.py`(logic60을 옛 그림 없이 일곱 모두 PXU로 — 모습 수 · 짐승 몸 · 골렘 nova 포함), 전체 `scratchpad/run61.sh`(logic60 대신 logic61).
+
 ## 천둥 봉우리 새 그림 · 뇌전 숨결 · 번개 사슬 (빌드 60)
-- 그림(src/pxthunder.js, build.py에서 pxsky 뒤): 필드 몬스터 셋(먹구름 정령 · 번개매 · 폭풍 기사) + 우두머리 뇌룡 + 첨탑 두목 뇌제 아스트라가 옛 그림이던 것을 PXU로. 사용자 「구름 AD 새는ABC 뇌수는 다 별로. 골렘도 다별로 기사는 비바람 척후 창 기사. 뇌룡 Ab 뇌제 아스트라는 A」 — **고른 순서대로 기본 id · `_b` · `_c`**, 하나만 고른 기사 · 뇌제는 PXU_SKIN 없이 기본 id 하나. **뇌수(raiju) · 폭풍 골렘(stormgolem)은 고른 것이 없어 옛 그림 그대로**(다음에 새 시안).
+- 그림(src/pxthunder.js, build.py에서 pxsky 뒤): 필드 몬스터 셋(먹구름 정령 · 번개매 · 폭풍 기사) + 우두머리 뇌룡 + 첨탑 두목 뇌제 아스트라가 옛 그림이던 것을 PXU로. 사용자 「구름 AD 새는ABC 뇌수는 다 별로. 골렘도 다별로 기사는 비바람 척후 창 기사. 뇌룡 Ab 뇌제 아스트라는 A」 — **고른 순서대로 기본 id · `_b` · `_c`**, 하나만 고른 기사 · 뇌제는 PXU_SKIN 없이 기본 id 하나. **뇌수(raiju) · 폭풍 골렘(stormgolem)은 고른 것이 없어 옛 그림 그대로**(빌드 61에서 둘째 시안으로 새 그림).
   - stormcloud 둘(뭉게 먹구름 · 꼬마 뇌운 셋, float pad 3 · still · gm bite/swell/spit) · thunderhawk 셋(먹빛 번개매 · 폭풍 수리 · 뇌제비, float pad 4 · still · gm bite/charge).
   - tempestknight 하나(비바람 척후 창기사 `lance`, ms 1.2, g2 없음).
   - thunderdragon 둘(흰 두 뿔 뇌룡 — still · g2 · gm bite/charge, ms 1.5 · monW 102 / 먹구름 날개 용 — float pad 4, still 없음). 뿔은 `tools/saved/stormwyvern_horn_A`(빌드 48 시안 A, 「다음에 또 쓰자」)를 head() 뿔 길로 다시 그렸다.

@@ -1,7 +1,7 @@
-/* ───────── 천둥 봉우리 · 뇌신의 첨탑 몬스터 (빌드 60 시안 · 사용자가 고른 모습): 먹구름 정령 · 번개매 · 폭풍 기사 · 우두머리 뇌룡 · 두목 뇌제 아스트라 ─────────
+/* ───────── 천둥 봉우리 · 뇌신의 첨탑 몬스터 (빌드 60 · 61 시안 · 사용자가 고른 모습): 먹구름 정령 · 번개매 · 뇌수 · 폭풍 골렘 · 폭풍 기사 · 우두머리 뇌룡 · 두목 뇌제 아스트라 ─────────
    그림체는 빌드 55~59와 같은 「뭉툭」(큰 면 한 색 · 윗가장자리 빛 · 아래 그늘 · 부위마다 다른 글자로 PX_FX가 선을 긋는다).
-   사람꼴(폭풍 기사 · 뇌제)은 g2 없이 엔진 숨쉬기(cr)로. 짐승(still)과 떠 있는 것(먹구름 정령 · 번개매 · 먹구름 날개 용)은 g2로 구름 · 날갯짓을.
-   뇌수 · 폭풍 골렘은 시안 넷을 다 물려 옛 그림 그대로. 광역기 뇌전 숨결(zap) · 번개 사슬(chain)은 fmot.js. */
+   사람꼴(폭풍 골렘 · 폭풍 기사 · 뇌제)은 g2 없이 엔진 숨쉬기(cr)로. 짐승(still: 뇌수 · 뇌룡)과 떠 있는 것(먹구름 정령 · 번개매 · 먹구름 날개 용)은 g2로 구름 · 날갯짓 · 꼬리를.
+   뇌수 · 폭풍 골렘은 빌드 60에 첫 시안 넷을 다 물리고 빌드 61에 둘째 시안에서 골랐다. 광역기 뇌전 숨결(zap) · 번개 사슬(chain)은 fmot.js. */
 // 천둥 봉우리 몬스터 무기 (빌드 60): 뇌제 아스트라 폭풍 구슬 지팡이
 // 폭풍 구슬 지팡이 (뇌제 A): 금 자루 끝 금 발톱이 쥔 먹빛 구슬 · 속에 노란 번개
 PXU_WPN.sorb = (F, d) => { const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a || 0), px = -dy, py = dx, out = [], k = (d && d.ms) || 1, L = 6.0 * k, o = L - 6.0;
@@ -933,18 +933,357 @@ cC..........QQQQCCCCCCCCCCCCCCCCCCCCC........cQwwkc
 ............YCCCYCCYCCYCCCY
 ............CCCCCCCCCCCCCCC
 ............GGGGGGGGGGGGGGGGG
-`, sh: [21, 13], hip: 22, ax: 19, ms: 1.5, mx: 20, my: 20, arm: ['C', 'c'], hand: 'S', wpn: 'sorb', idle: { h: [3, 4], a: -75 } }
+`, sh: [21, 13], hip: 22, ax: 19, ms: 1.5, mx: 20, my: 20, arm: ['C', 'c'], hand: 'S', wpn: 'sorb', idle: { h: [3, 4], a: -75 } },
+  raiju: {   // 시안 B 번개 뿔 들소 (사용자가 고른 것 중 첫째 = 기본 모습): 어깨가 산처럼 솟은 커다란 들소 · 어깨 · 머리 · 앞다리 위를 덮은 짙은 남빛 털뭉치(술 끝마다 튀는 불꽃) · 뒤는 짧은 잿빛 털 · 머리 양옆에서 위로 휜 짧고 굵은 흰 뿔(끝마다 번개) · 턱수염 · 노란 눈 · 검은 발굽
+    pal: { C: '#5a6890', Q: '#7e8cb6', c: '#3a4466', H: '#2c3352', q: '#4a5478', h: '#1a1e34', I: '#ece4d0', i: '#a89c80', k: '#0c0e18', Y: '#ffd84a', L: '#fff6b0', B: '#8ae8ff', E: '#ffe040', w: '#ffffff', R: '#7a1a2a' },
+    g: `
+.
+.
+........................B
+...................BYqqqqY
+.................qqHqHHHHHqq
+................qHHHHHHHHHHHBY......L
+...............qHHHHHHHHHHHHH.L....Y
+..............qBYHHHHHHHHHHHHqY.....Y
+..............hHHHHHHHHHHHHHHYY....Y
+...............HHHHHHHHHHHHHHY.....I
+...............HHHHHHHHHHHHHHi.....II
+..........QQQQQHHHHHHHHHHHHHiiQQ..II
+........QQQQQQQhHHHHHHHHHHHHHiiqIIII
+.......QQQCCCCCQhHHHHHHHHHHHHiiHIII
+......QQCCCCCCCCQhHHHHHHHHHHHHHHHHHq
+......cCCCCCCCCCCQHHHHHHHHHHHHHHHHhh
+.....ccCCCCCCCCCCChHHHHHHHHHHHHHHHkQ
+....hh.cCCCCCCCCccchHHHHHHHHHHHHHHCCQk
+.....h.cccCCCCcccccchhhhHHHHHHHHHHcccc
+........cccccccc........HhHHHhhhHHh
+.........hcccc..........hhHHH...HH
+.........hqqq............hHHH...hH
+........hqHHH............hHHH....h
+........hHHHh............hHHH
+........hkkk.............hkkkk
+........hkkk.............hkkkk
+..........h
+`, g2: `
+.
+.
+.........................B
+..................qqBYqqqqY
+..................HHHHHHHHq.........L
+................qqHHHHHHHHHqqBY....Y
+...............qHHHHHHHHHHHHHqY....Y
+..............qHBYHHHHHHHHHHHYq.....Y
+..............HHHHHHHHHHHHHHHHY....Y
+..............hHHHHHHHHHHHHHHY.....II
+...............HHHHHHHHHHHHHHiQ....II
+..........QQQQQHHHHHHHHHHHHHiiqqqIII
+........QQQQQQQhHHHHHHHHHHHHHiiHIIII
+.......QQQCCCCCQhHHHHHHHHHHHHHiHIIIq
+......QQCCCCCCCCQhHHHHHHHHHHHHHHHHhH
+......cCCCCCCCCCCQHHHHHHHHHHHHHHHHkh
+.....hcCCCCCCCCCCChHHHHHHHHHHHHHHHEQQ
+....hh.cCCCCCCCCccchHHHHHHHHHHHHHHCCCk
+.......cccCCCCcccccchhhhHHHHHHHHHHcccc
+........cccccccc........HhHHHhhhHHh
+.........hcccc..........hhHHH...HH
+.........hqqq............hHHH...hh
+........hqHHH............hHHH
+........hHHHh............hHHH
+........hkkk.............hkkkk
+........hkkk.............hkkkk
+..........h
+`, gm: { bite: `
+.
+.
+........................B
+...................B.qqq.Y
+..................qqYHHHqHq
+................qqHHHHHHHHHqB
+................HHHHHHHHHHHHHY
+...............BHHHHHHHHHHHHHHq.....L
+..............hHYHHHHHHHHHHHHHh.....Y
+...............HHHHHHHHHHHHHHHL....Y
+.............QQHHHHHHHHHHHHHHY......Y
+..........QQQQQhHHHHHHHHHHHHHHY....Y
+........QQQQQCCQHHHHHHHHHHHHHYQ....I
+......QQQQCCCCCChHHHHHHHHHHHiicQ..II
+......QQCCCCCCCCQhHHHHHHHHHHiiqqqIII
+.....ccCCCCCCCCCCQhHHHHHHHHHHiiHIIII
+.....hcCCCCCCCCCCCQHHHHHHHHHHHiHIHHq
+.....h.cCCCCCCCCccchHHHHHHHHHHHHHHhH
+.......cccCCCCcccccchhHHHHHHHHHHHEkh
+........cccccccc.....chhhHHHHHHHHEEQQ
+........hqcccc...........hHHHHHHHHCCCk
+........hHqq..............hHHHHHHHccc
+........hHHH..............hHHHhhHH.RR
+.......hhHHH..............hHHH..HH
+.......hqkkk..............kkkkk.hh
+.......hhkk................kkkk
+.............................h
+`, charge: `
+.
+.
+....................B.qq.B
+...................qYqHHqYq
+.................qqHHHHHHHHqqB
+................qHHHHHHHHHHHHY
+................BHHHHHHHHHHHHH
+...............qYHHHHHHHHHHHHHq.....L
+...............HHHHHHHHHHHHHHHL....Y
+...............HHHHHHHHHHHHHHHY.....Y
+............QQQhHHHHHHHHHHHHHYY...IY
+.........QQQQQQQHHHHHHHHHHHHHYQ....I
+......QQQQQQCCCChHHHHHHHHHHHiHQQ...I
+......cQQCCCCCCCQhHHHHHHHHHHiicc..II
+.....ccCCCCCCCCCCQhHHHHHHHHHiiiqIIII
+.....hhCCCCCCCCCCCQHHHHHHHHHHiiHIII
+.....h.cCCCCCCCCcCChHHHHHHHHHHHHHHHq
+.......ccCCCCCCccccchHHHHHHHHHHHHHhh
+.......hcccccccc.cccchhhHHhHHHHHHEkQ
+.......qqcccccc.........hHchHHHHHHCCQk
+......hHHqh..............h.hHHHHHHccc
+.....hhHHH..................hHHHHHh
+.....hqHHh..................hhHHHH
+....hhHHH....................hHHHH
+....hhHHh....................kkHHh
+....hhhh......................khh
+.
+`, leap: `
+..................B.qq.Y...........L
+.................qYqHHqqq..........Y
+...............qqHHHHHHHHqqB.L....YY
+..............qHHHHHHHHHHHHYY.....IY
+..............BHHHHHHHHHHHHHqY....II
+.............qYHHHHHHHHHHHHHiY.....I
+.............hHHHHHHHHHHHHHHi.....II
+..............HHHHHHHHHHHHHHiiqqIIII
+..............HHHHHHHHHHHHHHHiiIIII
+..............HHHHHHHHHHHHHHHiiHHHH
+.........QQQQQhHHHHHHHHHHHHHHHHHHHhq
+.......QQQQQQQQhHHHHHHHHHHHHHHHHHEkh
+.......QQCCCCCCQhHHHHHHHHHHHHHHHHHCQQ
+......QCCCCCCCCCQHHHHHHHHHHHHHHHHHCcck
+......QCCCCCCCCCChHHHHHHHHHHHHHHHHcRR
+......CcCCCCCCCCCQhHHHHHHHHHHHhHHHRRR
+......cccCCCCCCCccchhhhHHhHHHH.hHH
+.....cchccccccccccccc..Hh.hhHHq.hh
+.....h.hqccccccc.......h...hHHH
+.....hhqHqq................hhHHq
+.....hqHHHh.................hHHH
+....hhHHHh..................hhHHh
+...hhqHHh....................hhh
+...hhHHh
+....hhh
+.
+.
+` }, sh: [37, 18], hip: 99, ax: 19, still: 1, noArm: 1, wpn: 'none' },
+  raiju_b: {   // 시안 D 번개 그리폰: 짙은 남빛 사자 몸에 흰빛 독수리 머리 · 굽은 금빛 부리 · 뒤로 누운 머리 깃 · 어깨 위로 반쯤 들어 편 칼깃 날개 · 깃 끝마다 노란 번개 빛 · 꼬리 끝 번개 술 · 하늘빛 눈
+    pal: { C: '#3e4a70', Q: '#5e6c98', c: '#242c4a', F: '#a4b0d0', G: '#d4dcee', g: '#6e7aa0', S: '#f2f4fa', O: '#e8b040', o: '#a87820', Y: '#ffd84a', L: '#fff6b0', B: '#8ae8ff', k: '#0c0e18', w: '#ffffff', R: '#7a1a2a', E: '#8ae8ff', I: '#e8e4d8' },
+    g: `
+.
+.
+.
+.......................B
+......................F
+..................gF.gY.gg
+...................YFgYFgF.gg
+................F.gYFgFFgF.gg
+................YFggFgFFgFYgg
+................YFFgFFgFgFFgg
+.....L.......B...gFggFgFgFFgg
+....Y.........FF..gFgFgFgFFgg.S
+.....Y........gYFF.FFgFFgFggSSGSS
+....YY..........gFFgFFFFFFGSGGGkkOO
+....cY...........gFFgFggggggGGGEkoO
+.....Q............gFggFFFFgFgGGGg.o
+.....CQ.......QQQQQgFFFFFFFFFggg
+.....cC......QCCCCCCggFFFFFFFFc
+......CQ..QQQCCCCCCCCCgFFFFFFF
+......cCQQcCCCCCCCCCCCCFFFFFFg
+.......ccccCCCCCCCCCCCCgFFFFFg
+..........cCCCCCCCCCCCCgggggg
+..........ccCCccccccccccggggg
+...........cCC..........QQQ
+...........cCC..........cCC
+...........QCC..........cCC
+..........cCCC..........cCC
+..........cCCC..........cCCQ
+..........cCCc..........cCCC.I
+..........ccc...........ccccI
+`, g2: `
+.
+.
+.......................B
+......................F
+..................gF.gY.gg
+...................YFgYFgF.gg
+................F.gYFgFFgF.gg
+................YFggFgFFgFYgg
+................YFFgFFgFgFFgg
+.............B...gFgFFgFgFFgg
+....YL........F...FFgFgFgFFgg
+.....Y........gYF.FFgFgFgFFggSSS
+....YY.........YFFggFgFFFFgSSGGko
+.....Y..........ggFFgFFFFFgGGGGEkOO
+.....Y............gFFFggggcgGGGGGoo
+.....Q.............FggFFFFgFggggg
+.....CQ.......QQQQQgFFFFFFFFFcc
+.....cC......QCCCCCCggFFFFFFFF
+......cQ..QQQCCCCCCCCCgFFFFFFF
+.......CQQcCCCCCCCCCCCCFFFFFFg
+.......ccccCCCCCCCCCCCCgFFFFFg
+..........cCCCCCCCCCCCCgggggg
+..........ccCCccccccccccggggg
+...........cCC..........QQQ
+...........cCC..........cCC
+...........QCC..........cCC
+..........cCCC..........cCC
+..........cCCC..........cCCQ
+..........cCCc..........cCCC.I
+..........ccc...........ccccI
+`, gm: { bite: `
+.
+.
+.
+.
+.......................B
+...................F.gY.gg
+..................gY.gYFgg
+...................YFgFFgFYgg
+...............gFFgFF.FFgFYgg
+................YFFgFFgFgFFgg
+.....L...........FFgFFgFgFFgg
+.....Y.......BF..gFFgFgFgFFgg
+.....YY.......gYF.FFgFgFgFFg
+....YY.........YFFggFgFFFFgg
+.....Y..........ggFFgFFgFFgg.SSSS
+.....QQ...........gFFggFggSSSGGkkO
+.....CC.......QQQQQggFFFFFggGGGEkOO
+.....cCQ...QQQCCCCCCgFFFFFFFgGGGGooo
+......cC.QQCCCCCCCCCCggFFFFFFggggR
+.......cQccCCCCCCCCCCCCFFFFFFFc
+........c.cCCCCCCCCCCCCgFFFFFg
+..........cCCCCCCCCCCCCggFFFgg
+..........cCCCccccccccccggggg
+..........cCCC..........cggg
+..........cCCC..........cQQQ
+..........cCCc..........ccCC
+..........cCC............cCC
+.........ccCC............cCCQ
+.........cQCC............ccCC.I
+.........cccc............ccccI
+`, charge: `
+.
+.
+.
+.
+......................FB
+..................FF.gY.gg
+..................gYFgYFgF.g
+................F.gYFgFFgF.gg
+...............gYFggFgFFgFYgg
+.....L..........YFFgFFgFgFggg
+.....Y...........gFgFFgFgFggg
+.....YY......BFF..FFgFgFgFggg
+....YY........gYFggFgggFgFgg
+.....Y.........YgFFgFFFFFFgg..SS
+.....QQ..........gFFgFgggFSSSSGkS
+.....CC.......QQQQgFFgFFFggGGGGEkkO
+.....cCQ...Q.QCCCCQggFFFFFggGGGEEoOO
+......cC.QQCQCCCCCCCgFFFFFFFggGGg.oo
+.......cQCcCCCCCCCCCCggFFFFFFFgg
+........cccCCCCCCCCCCCCFFFFFFF
+.........ccCCCCCCCCCCCCgFFFFFg
+.........cQCCccccccCCCCggFFggg
+.........cCCc......cccccggggg
+.........cCC.............ggQQ
+........cQCc..............cCCQ
+.......cQCC...............ccCC
+.......cCCc................ccCQ
+......cQCC..................cCCQ
+......cCCc..................ccCc.I
+.......cc.....................c.I
+`, leap: `
+......................B
+.....................FF.g
+..................FF.gY.gg
+..................gYFgYFgF.g
+...............FF.gYFgFFgY.gg
+...............gYFggFgFFgYgg
+................YFFgFgFFgFgg
+.............B...gFFgFgFgFgSSS
+..............FF..FFgFgFgFSGGkk
+..............YgFFgFFgFFgFGGGEkkOO
+.....L..........gFFgFFFFFFgGGGGooo
+....Y............gFgFggggFcggggoR
+.....Y............gggFFFFgFFcQ.o
+....YY.............gFFFFFFFFFc
+....cY.............QggFFFFFFFF
+.....Y.........QQQQCCCgFFFFFFF
+.....QQ......QQCCCCCCCCFFFFFFg
+.....cC.....QCCCCCCCCCCgFFFFgg
+......CQ..QQCCCCCCCCCCCgggggg
+......cCQQCCCCCCCCCCCCCQgggg
+.......cccCCCCCCCCCccccc.cQQ
+.........cCCCCCcccc......cCCQ
+.........cCCccc...........cCC
+........cQCC..............ccCQ
+.......cQCCc...............cCC
+......cQCCc................ccCc
+.....ccCCc...................c
+.....ccCc
+.......c........................I
+...............................I
+` }, sh: [35, 15], hip: 99, ax: 19, still: 1, noArm: 1, wpn: 'none' },
+  stormgolem: {   // 시안 B 폭풍우 골렘: 몸이 둥근 빗물 덩이(왼쪽 가장자리 물 빛줄) · 몸속에서 내리는 비 줄기와 노란 번개 · 물 머리 속에 뜬 둥근 돌(하늘빛 두 눈) · 물기둥 다리가 이어진 발밑 물웅덩이 · 둘레 빗방울
+    pal: { C: '#3e7cc0', Q: '#7ac0f0', c: '#22508a', F: '#c4ecff', S: '#8a8f9e', s: '#5a5e6c', k: '#0e1626', Y: '#ffd84a', L: '#fff8c0', E: '#8ae8ff', d: '#1a3c6a' },
+    g: `
+........................F
+......F.......QQQQ......Q
+......Q.....QQCCCCQ
+............CCSSSSCQ
+...........QCSSFSSSC
+...........cCSssEEEc......F
+...F....QQ..CCssssC.QQQ..Q
+...Q..QQCCQQCCCCCCCQCCCQQ
+.....QCCCCCCCCCCCCCCCCCCC
+.....CCCFCFCCCCCCCCCCCCCCc
+.....CCFFCFCCCCCCLYCCCCCC
+....QCCFCFCCCCCCLCCCCCCCc
+....CCCFCCCCCCCCLCCCCCCC...F
+...QCCCCCCCCCCCLYCCCCCCC...Q
+..FCCCCCCCCCCCCCCYYCFCCC
+.Q.CCCCCCCCCCCCCCYCCFCCC
+...CCCCCCCCCCCCCCYCCFCCC
+...CCCCCCCCCCCFCYCCCCCCc
+...CCCCCCFCCCCFCYCCCCCc
+...CCCCCcFCCCFCYCCCCCC
+..QCCCCC.CCCCCCCCCCCCC
+..cCCCCC.CCCCCCCCCCFCC
+...cCCcc.CCCCCccCCCFCC
+....cc..QCCCCC..cCFCCC
+........CCCCCC...CCCCCQ
+........CCCCCC...CCCCCC
+........CCCCCC...CCCCCC
+........CCCCCCdddCCCCCC
+.....dddCCCCCCdddCCCCCcddd
+.......dccCCccdddccCCcQQ
+..........cc.......cc
+`, sh: [21, 9], hip: 21, ax: 15, ms: 1.25, arm: ['C', 'c'], hand: 'C', wpn: 'rfist', idle: { h: [1, 3], a: 80 } }
 });
 Object.assign(PXU_ACT, {
   stormcloud: { mag: ['wspit'], atk: ['bswoop'], skl: ['wspit'], tk: 1.0, fx: { mag: { pal: 'bolt', hit: 'bolt', p: 'orb' }, atk: { pal: 'bolt', hit: 'flash' }, skl: { pal: 'bolt', hit: 'bolt', p: 'orb', big: 1, after: 'sparks' } } },
   thunderhawk: { atk: ['bswoop'], skl: ['qdive'], tk: 0.95, fx: { atk: { pal: 'bolt', hit: 'claw' }, skl: { pal: 'bolt', hit: 'bolt', big: 1, after: 'sparks' } } },
   tempestknight: { atk: ['thrust', 'side', 'down'], skl: ['smash'], tk: 1.0, fx: { atk: { pal: 'bolt', hit: 'slashes' }, skl: { pal: 'bolt', hit: 'bolt', big: 1, after: 'sparks', shake: 2 } } },
   thunderdragon: { atk: ['qbite', 'qcharge'], skl: ['cbreath'], tk: 1.25, fx: { atk: { pal: 'bolt', hit: 'bite', big: 1 }, qcharge: { pal: 'bolt', hit: 'star', big: 1 }, skl: { pal: 'bolt', hit: 'flash', big: 1, after: 'sparks', aoe: 'zap', shake: 3 } } },
-  stormking: { mag: ['spush', 'sjab'], skl: ['scharge'], fx: { mag: { pal: 'bolt', hit: 'flash', p: 'orb' }, skl: { pal: 'bolt', hit: 'flash', after: 'sparks', aoe: 'chain', shake: 2 } } }
+  stormking: { mag: ['spush', 'sjab'], skl: ['scharge'], fx: { mag: { pal: 'bolt', hit: 'flash', p: 'orb' }, skl: { pal: 'bolt', hit: 'flash', after: 'sparks', aoe: 'chain', shake: 2 } } },
+  raiju: { atk: ['qbite', 'qcharge'], skl: ['qpounce'], tk: 0.95, fx: { atk: { pal: 'bolt', hit: 'claw' }, skl: { pal: 'bolt', hit: 'bolt', big: 1, after: 'sparks' } } },
+  stormgolem: { atk: ['side', 'down'], skl: ['smash'], tk: 1.25, fx: { atk: { pal: 'bolt', hit: 'star', big: 1 }, skl: { pal: 'bolt', hit: 'stun', big: 1, after: 'sparks', shake: 2 } } }
 });
 // 만날 때마다 모습 하나: 기본 모습이 아닌 것은 드랍 없는 이름표 (pxuLook) · PXU_ACT는 기본 id에만
 pxuLook('stormcloud_b', 'stormcloud', MONS.stormcloud.name);
 pxuLook('thunderhawk_b', 'thunderhawk', MONS.thunderhawk.name); pxuLook('thunderhawk_c', 'thunderhawk', MONS.thunderhawk.name);
 pxuLook('thunderdragon_b', 'thunderdragon', MONS.thunderdragon.name);
-Object.assign(PXU_SKIN, { stormcloud: ['stormcloud', 'stormcloud_b'], thunderhawk: ['thunderhawk', 'thunderhawk_b', 'thunderhawk_c'], thunderdragon: ['thunderdragon', 'thunderdragon_b'] });
-Object.assign(PXU_SKIN_NAME, { stormcloud: ['뭉게 먹구름', '꼬마 뇌운 셋'], thunderhawk: ['먹빛 번개매', '폭풍 수리', '뇌제비'], thunderdragon: ['흰 두 뿔 뇌룡', '먹구름 날개 용'] });
+pxuLook('raiju_b', 'raiju', MONS.raiju.name);
+Object.assign(PXU_SKIN, { stormcloud: ['stormcloud', 'stormcloud_b'], thunderhawk: ['thunderhawk', 'thunderhawk_b', 'thunderhawk_c'], thunderdragon: ['thunderdragon', 'thunderdragon_b'], raiju: ['raiju', 'raiju_b'] });
+Object.assign(PXU_SKIN_NAME, { stormcloud: ['뭉게 먹구름', '꼬마 뇌운 셋'], thunderhawk: ['먹빛 번개매', '폭풍 수리', '뇌제비'], thunderdragon: ['흰 두 뿔 뇌룡', '먹구름 날개 용'], raiju: ['번개 뿔 들소', '번개 그리폰'] });
