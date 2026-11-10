@@ -32,7 +32,7 @@ def line(s, a, b, ch='s'):
     n = int(max(abs(x1 - x0), abs(y1 - y0)) * 2) + 1
     seen = set()
     for k in range(n + 1):
-        t = k / n; x = round(x0 + (x1 - x0) * t - 0.5); y = round(y0 + (y1 - y0) * t - 0.5)
+        t = k / n; x = math.floor(x0 + (x1 - x0) * t + 0.5); y = math.floor(y0 + (y1 - y0) * t + 0.5)
         if (x, y) in seen: continue
         seen.add((x, y))
         if (x, y) not in s.part and 0 <= x < 20 and 0 <= y < 20: s.fx[(x, y)] = ch
