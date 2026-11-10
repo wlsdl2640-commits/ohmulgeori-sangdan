@@ -13,18 +13,17 @@ HEADS = {   # 머리 줄마다 반폭 (대 쪽에서 끝으로)
     'barb':   [2.0, 1.0, 1.5, 1.0, 0.0],
 }
 def one(s, v0, u0, u1, head='bodkin', sh='ab', hd='hgG', fl='fF', vane=2.0, outer=None):
-    for u in range(u0 + 2, u1 + 1):                                                    # 대
+    for u in range(u0 + 3, u1 + 1):                                                    # 대
         for v in (v0 - 1, v0, v0 + 1): P(s, 'blade', u, v, sh[0] if v <= v0 else sh[1])
     for k, hw in enumerate(HEADS[head]):                                               # 머리
         u = u1 + 1 + k
         for v in range(int(v0 - hw - 1), int(v0 + hw + 2)):
             if abs(v - v0) <= hw + 1e-6: P(s, 'head', u, v, hd[0] if v < v0 else (hd[2] if v > v0 else hd[1]))
-    for k in range(3):                                                                 # 깃 (꼬리 세 줄, 대보다 넓게)
-        u = u0 + k; hw = vane - 0.5 * k
+    P(s, 'blade', u0 - 1, v0 - 1, sh[1]); P(s, 'blade', u0 - 1, v0 + 1, sh[1])          # 오늬(꼬리 끝)
+    for k, hw in enumerate((2.0, 2.0, 1.5, 1.0)):                                      # 깃: 양쪽 다 · 꼬리 쪽이 넓고 머리 쪽으로 좁아진다 (11-10 22:57 「화살깃이 잘렸어」)
+        u = u0 + k
         for v in range(int(v0 - hw - 1), int(v0 + hw + 2)):
-            if abs(v - v0) <= hw + 1e-6:
-                if outer is not None and (v - v0) * outer < -1: continue
-                P(s, 'grip', u, v, fl[0] if v <= v0 else fl[1])
+            if abs(v - v0) <= hw + 1e-6: P(s, 'grip', u, v, fl[0] if v <= v0 else fl[1])
 def tie(s, u, v0, v1, ch='rR'):
     for uu in (u, u + 1):
         for v in range(v0, v1 + 1): P(s, 'pommel', uu, v, ch[0] if v < 0 else ch[1])
