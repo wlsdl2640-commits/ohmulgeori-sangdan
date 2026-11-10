@@ -13,8 +13,8 @@ function drawWagon62(w, x, gy, lit, dir) {
   w.restore();
 }
 const isPorterFam = a => jobBase(a.cls) === 'porter';
-const TENT_AT = [[-58, 7], [-94, 1], [-22, -5]];        // 불(cx) 기준 텐트 자리(아래 가운데): 앞 · 뒤 왼쪽 · 뒤 가운데
-const tentsFor = n => (n <= 3 ? 1 : n <= 5 ? 2 : 3);     // 텐트 하나에 두 명 (불침번 한 명은 밖)
+const TENT_AT = [[-58, 7], [-94, 1]];                    // 불(cx) 기준 텐트 자리(아래 가운데): 앞 · 뒤 왼쪽
+const tentsFor = n => (n <= 3 ? 1 : 2);                  // 텐트 한 채에 두 명 · 4명부터 두 채 (01:38: 셋은 없다 — 파티는 짐꾼 포함 5명까지, 한 명은 늘 불침번)
 const _fieldScene62 = fieldScene;
 fieldScene = function (w, t, p, e, lights, post, dark, bg) {
   if (!e.camp || e.foes.length) return _fieldScene62(w, t, p, e, lights, post, dark, bg);
@@ -27,7 +27,7 @@ fieldScene = function (w, t, p, e, lights, post, dark, bg) {
   const seat = [cx + 20, cy];                                      // 불침번 자리: 불 오른쪽, 불과 잠자리를 바라본다
   // 잠자리 (모닥불만이면 불가, 텐트 · 웨건이면 그 안)
   let door = null;
-  // 텐트 (11-11 01:07 사용자): 텐트 하나에 두 명 · 4명 이상이면 텐트 둘(5명까지), 6명부터 셋 — 불침번 한 명은 밖
+  // 텐트 (11-11 01:07 · 01:38 사용자): 한 채에 두 명 · 4명 이상이면 두 채 — 불침번 한 명은 밖, 교대하면 그 빈자리에 앞 불침번이 들어간다
   let TP = null, slots = null;
   if (mode === 'tent') {
     const L = order.length, nT = tentsFor(L);
@@ -75,7 +75,8 @@ fieldScene = function (w, t, p, e, lights, post, dark, bg) {
   post.push(g => fireHi(g, cx, cy, t)); lights.push({ x: cx, y: cy - 6, r: 90, c: '#f09040', glow: 1, flick: 1 });
   Object.assign(V.last, pos);
 };
-window.CAMP_RUN = (mode, taus, crop, n) => {
+window.CAMP_RUN = (mode, taus, crop, n, shift) => {
+  if (shift) { C62.shift = shift; C62.walk = Math.min(0.9, shift * 0.5); }
   if (!S) S = blankState();
   if (!V.g) { const cv = document.createElement('canvas'); cv.width = AW * HI; cv.height = AH * HI; initView(cv); }
   S.t = (C62.hour || 0.84) * DAY_SEC + DAY_SEC * 3;   // 밤
