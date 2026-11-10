@@ -18,13 +18,12 @@ function blankState(company) {
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
-    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, bank: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0, salvage: 0 },
+    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0, salvage: 0 },
     stable: { horses: {} }, league: null, presets: [], wx: { seed: Math.floor(Math.random() * 1e9) },
     settleDay: MONTH_DAYS,
-    bank: { offers: [], deps: [], loans: [] },
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -174,7 +173,7 @@ function migrate5() {
   }
 }
 
-/* ───────── 여관 손님 ───────── */
+/* ───────── 선술집 손님 (고용 후보) ───────── */
 function giftPool() {
   const out = [];
   TIER_FIELDS.filter(isUnlocked).forEach(fid => FIELDS[fid].mons.forEach(mid => MONS[mid].drops.forEach(([it]) => { if (!out.includes(it)) out.push(it); })));
@@ -762,7 +761,6 @@ function upgrade(bid) {
   const cost = B.cost[lv];
   if (S.gold < cost) return '돈이 모자라요.';
   S.gold -= cost; S.bld[bid] = lv + 1;
-  if (bid === 'bank' && lv === 0) bankRoll();
   if (bid === 'temple' && lv === 0) { blessRoll(); queueModal({ title: '신전', body: STORY.temple.concat([`이번 달에는 「${BLESSINGS[S.bless.id].name}」: ${BLESSINGS[S.bless.id].desc}`]) }); }
   if (bid === 'airfield' && lv === 0) queueModal({ title: '비행장', body: S.fields.roots && S.fields.roots.cleared ? STORY.skyOpen : STORY.airfield });
   if (bid === 'stable' && lv === 0) queueModal({ title: '마구간', body: STORY.stable });
@@ -818,63 +816,6 @@ function autoFulfill() {
   let n = 0;
   for (const r of S.reqs.slice()) if (reqHave(r) >= r.qty && !fulfill(r.id, true)) n++;
   return n;
-}
-
-/* ───────── 은행 ───────── */
-const bankCap = () => S.bld.bank * 2 + 1;
-function bankRoll() {
-  if (!S.bld.bank) return;
-  const lv = S.bld.bank;
-  S.bank.offers = S.bank.offers.filter(o => o.until >= today());
-  while (S.bank.offers.length < 2 + lv) {
-    const scale = 0.7 + lv * 0.3;
-    if (rnd() < 0.5) {
-      S.bank.offers.push({ id: nid(), type: 'dep', who: pickOne(BANK.depositors), amount: Math.round((300 + S.fame * 10 + rnd() * 900) * scale / 50) * 50, rate: ri(3, 7), days: ri(12, 24), until: today() + 3 });
-    } else {
-      const b = pickOne(BANK.borrowers), G = BANK.grades[b.grade];
-      S.bank.offers.push({ id: nid(), type: 'loan', who: b.name, grade: b.grade, amount: Math.round((400 + S.fame * 12 + rnd() * 1500) * scale / 50) * 50, rate: ri(G.rate[0], G.rate[1]), days: ri(6, 14), until: today() + 3 });
-    }
-  }
-}
-function bankAccept(oid) {
-  const o = S.bank.offers.find(x => x.id === oid);
-  if (!o) return '';
-  if (S.bank.deps.length + S.bank.loans.length >= bankCap()) return '은행이 맡을 수 있는 거래가 꽉 찼어요. 은행을 넓혀 주세요.';
-  const due = today() + o.days;
-  if (o.type === 'dep') {
-    S.gold += o.amount;
-    S.bank.deps.push({ id: o.id, who: o.who, amount: o.amount, rate: o.rate, due, told: false });
-    log(`${o.who}의 예금 ${g$(o.amount)}을 맡았다. ${dayLabel(due)}까지 이자 ${o.rate}%를 붙여 돌려줘야 한다.`);
-  } else {
-    if (S.gold < o.amount) return '빌려줄 돈이 모자라요.';
-    S.gold -= o.amount;
-    S.bank.loans.push({ id: o.id, who: o.who, grade: o.grade, amount: o.amount, rate: o.rate, due });
-    log(`${o.who}에게 ${g$(o.amount)}을 빌려줬다. ${dayLabel(due)}에 이자 ${o.rate}%와 함께 받는다.`);
-  }
-  S.bank.offers = S.bank.offers.filter(x => x !== o);
-  changed();
-  return '';
-}
-function bankDay(k) {
-  for (const d of S.bank.deps) {
-    const owed = Math.round(d.amount * (1 + d.rate / 100));
-    if (!d.told && d.due - k <= 3) { d.told = true; log(`${d.who}이(가) ${dayLabel(d.due)}에 예금 ${g$(owed)}을 찾으러 오겠다고 연락했다.`); HOOKS.toast(`${d.who}: ${dayLabel(d.due)}에 ${g$(owed)} 찾으러 옴`); }
-    if (d.due <= k) {
-      if (S.gold >= owed) { S.gold -= owed; log(`${d.who}에게 예금과 이자 ${g$(owed)}을 돌려줬다.`); }
-      else {
-        const paid = S.gold; S.gold = 0; S.fame = Math.max(0, S.fame - 8);
-        log(`${d.who}에게 예금을 다 돌려주지 못했다(${g$(paid)} / ${g$(owed)}). 소문이 나서 명성 -8`, 'bad');
-        queueModal({ title: '예금 지급 실패', body: [`${d.who}이(가) 맡긴 돈을 찾으러 왔지만 ${g$(owed)} 중 ${g$(paid)}밖에 돌려주지 못했다.`, '은행에 대한 소문이 나빠져 명성이 8 떨어졌다. 예금을 받을 때는 찾으러 오는 날을 꼭 챙기자.'] });
-      }
-    }
-  }
-  S.bank.deps = S.bank.deps.filter(d => d.due > k);
-  for (const l of S.bank.loans.filter(x => x.due <= k)) {
-    if (rnd() < BANK.grades[l.grade].risk) log(`${l.who}이(가) 빌린 ${g$(l.amount)}을 갚지 못하고 자취를 감췄다.`, 'bad');
-    else { const back = Math.round(l.amount * (1 + l.rate / 100)); S.gold += back; S.stats.earned += back - l.amount; log(`${l.who}이(가) ${g$(back)}을 갚았다. (이자 ${g$(back - l.amount)})`, 'good'); }
-  }
-  S.bank.loans = S.bank.loans.filter(x => x.due > k);
-  if (k % 2 === 0) bankRoll();
 }
 
 /* ───────── 상단 랭크 ───────── */
@@ -1192,7 +1133,6 @@ function onNewDay(k) {
   const salv = salvageDay(k);   // 던전 수거소: 새벽에 수거꾼이 돌아온다 (의뢰 자동 전달보다 먼저)
   autoFulfill();
   if (salv) autoSellRun('수거소');
-  if (S.bld.bank) bankDay(k);
   researchDay(k);
   raidDay();
   kingDay(k);
@@ -1253,7 +1193,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 10;   // 지금 저장 판 (migrate10까지 옮긴 상태)
+const SAVE_V = 11;   // 지금 저장 판 (migrate11까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1270,14 +1210,13 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
-    S.bank = S.bank || { offers: [], deps: [], loans: [] };
     S.research = S.research || { lv: {}, cur: null }; S.spons = S.spons || {};
     ALL_FIELDS.forEach(f => { S.fields[f] = S.fields[f] || newField(); });
-    ['smithy', 'bank', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen', 'salvage'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    ['smithy', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen', 'salvage'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
     S.stable = S.stable || { horses: {} };
     const old = S.v;
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
@@ -1304,6 +1243,7 @@ function loadFrom(v) {
     if (old < 9) { migrate9(); saveGame(); }
     notes38();
     if (old < 10) { migrate10(); saveGame(); }
+    if (old < 11) { migrate11(); saveGame(); }
     notes39();
     notes40();
     notes41();
@@ -1325,6 +1265,7 @@ function loadFrom(v) {
     notes59();
     notes60();
     notes61();
+    notes62();
     return true;
   } catch (_) { return false; }
 }
@@ -1391,6 +1332,26 @@ function migrate10() {
 }
 function notes42() { if (!S.flags.v42) { S.flags.v42 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '모든 직업 공격 동작 · 스킬 효과', body: STORY.v42 }); } }
 function notes57() { if (!S.flags.v57) { S.flags.v57 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '용암 화산 몬스터 새 그림', body: STORY.v57 }); } }
+// 빌드 62: 은행을 없앴다. 은행을 지은 값은 돌려주고, 맡아 둔 예금은 원금을 돌려주고(가진 돈에서 빠진다), 빌려준 돈은 원금을 돌려받는다(이자는 없음)
+const BANK_PAID = [3000, 7000, 15000, 30000, 60000, 110000, 200000, 350000];   // 은행 단계마다 냈던 값
+function migrate11() {
+  const lv = Math.max(0, Math.min(BANK_PAID.length, (S.bld && S.bld.bank) || 0)), bk = S.bank || {};
+  const refund = BANK_PAID.slice(0, lv).reduce((a, b) => a + b, 0), dep = (bk.deps || []).reduce((a, d) => a + (d.amount || 0), 0), loan = (bk.loans || []).reduce((a, l) => a + (l.amount || 0), 0);
+  const before = S.gold || 0;
+  S.gold = Math.max(0, before + refund + loan - dep);
+  if (S.bld) delete S.bld.bank;
+  delete S.bank;
+  S.v = 11;
+  if (!lv && !dep && !loan) return;
+  const body = ['상단 본부를 새로 꾸미면서 은행을 닫았다.'];
+  if (refund) body.push(`은행을 지은 값 ${fmt(refund)}G를 돌려받았다.`);
+  if (loan) body.push(`빌려준 돈의 원금 ${fmt(loan)}G를 돌려받았다. (이자는 없음)`);
+  if (dep) body.push(`맡아 둔 예금의 원금 ${fmt(dep)}G를 주인들에게 돌려주었다.${before + refund + loan < dep ? ' 돈이 모자라 가진 돈을 모두 내주었다.' : ''}`);
+  body.push(`정리한 뒤 가진 돈: ${fmt(S.gold)}G`);
+  S.modals.push({ title: '은행 정리', body });
+  log(`은행을 닫았다. 돌려받은 돈 ${fmt(refund + loan)}G · 돌려준 예금 ${fmt(dep)}G`);
+}
+function notes62() { if (!S.flags.v62) { S.flags.v62 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '상단 본부 새 단장 · 선술집', body: STORY.v62 }); } }
 function notes61() { if (!S.flags.v61) { S.flags.v61 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '뇌수 · 폭풍 골렘 새 그림', body: STORY.v61 }); } }
 function notes60() { if (!S.flags.v60) { S.flags.v60 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '천둥 봉우리 몬스터 새 그림', body: STORY.v60 }); } }
 function notes59() { if (!S.flags.v59) { S.flags.v59 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '구름섬 몬스터 새 그림', body: STORY.v59 }); } }

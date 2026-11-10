@@ -106,14 +106,12 @@ PANELS.co_relic = () => {
 };
 PANELS.co_money = () => {
   const dd = S.settleDay - today(), cost = rent() + payroll(), sp = dateParts(S.settleDay * DAY_SEC);
-  const dueDeps = S.bank.deps.filter(d => d.due - today() <= 5);
   return `<div class="sec" style="margin-top:0"><b>${sp.m}월 ${sp.d}일 정산</b><span>D-${dd}</span></div>
   <div class="card">
     <div class="row"><span class="grow">암살자 길드 자릿세</span><span class="num ${rent() ? 'red-t' : 'ok-t'}">${rent() ? fmt(rent()) + 'G' : '없음'}</span></div>
     <div class="row"><span class="grow">모험가 봉급 ${living().length}명</span><span class="num">${fmt(payroll())}G</span></div>
     <div class="row"><span class="grow"><b>합계</b></span><span class="num ${S.gold >= cost ? 'ok-t' : 'red-t'}">${fmt(cost)}G</span></div>
     <div class="sub">${S.gold >= cost ? '지금 가진 돈으로 낼 수 있어요.' : '돈이 모자라요. 자릿세를 못 내면 창고가 털리고, 봉급이 두 달 밀리면 모험가가 떠나요.'} 날짜는 게임을 켜 둔 동안에만 흘러요.</div>
-    ${dueDeps.length ? `<div class="sub red-t">곧 돌려줄 예금: ${dueDeps.map(d => `${esc(d.who)} ${dayLabel(d.due)} ${fmt(Math.round(d.amount * (1 + d.rate / 100)))}G`).join(', ')}</div>` : ''}
   </div>
   ${ledgerBox()}
   ${S.bld.temple && S.bless ? `<div class="sec"><b>신전의 축복</b><span>다음 정산까지</span></div><div class="card hl"><div class="h">${BLESSINGS[S.bless.id].name}</div><div class="sub">${BLESSINGS[S.bless.id].desc}</div></div>` : ''}`;
@@ -181,17 +179,6 @@ function enhanceBox() {
     <div class="card hl idet"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}${sel.owner ? ` <span class="tag">${esc(sel.owner.name)} 착용</span>` : ''}</span><span class="sub">${statLine(now)}</span>${(g.plus || 0) < PLUS_MAX ? `<span class="sub ok-t">+${(g.plus || 0) + 1}: ${diff || '변화 없음'}</span><span class="sub muted">재료 ${needStr(need)} · ${fmt(plusFee(g))}G · 성공 ${Math.round(plusRate(g) * 100)}%</span>` : '<span class="sub gold-t">최고 강화 +10</span>'}${why && (g.plus || 0) < PLUS_MAX ? `<span class="sub red-t">${why}</span>` : ''}</div></div>
     <div class="btns"><button type="button" class="btn gold grow" data-act="enhance" data-id="${g.id}"${why ? ' disabled' : ''}>${(g.plus || 0) >= PLUS_MAX ? '완료' : `+${(g.plus || 0) + 1} 강화 · ${fmt(plusFee(g))}G`}</button></div></div>`;
 }
-function bankBox() {
-  const deals = S.bank.deps.map(d => `<div class="li"><div class="grow"><span>예금 · ${esc(d.who)}</span><span class="sub">${fmt(d.amount)}G 맡음 · <span class="${d.due - today() <= 3 ? 'red-t' : ''}">${dayLabel(d.due)}(D-${d.due - today()})</span>에 ${fmt(Math.round(d.amount * (1 + d.rate / 100)))}G 돌려줌</span></div></div>`)
-    .concat(S.bank.loans.map(l => `<div class="li"><div class="grow"><span>대출 · ${esc(l.who)} <span class="muted">신용 ${BANK.grades[l.grade].name}</span></span><span class="sub">${fmt(l.amount)}G 빌려줌 · ${dayLabel(l.due)}(D-${l.due - today()})에 ${fmt(Math.round(l.amount * (1 + l.rate / 100)))}G 받을 예정</span></div></div>`)).join('');
-  const offers = S.bank.offers.map(o => o.type === 'dep'
-    ? `<div class="li"><div class="grow"><span>예금 제안 · ${esc(o.who)}</span><span class="sub">${fmt(o.amount)}G를 맡기고 ${o.days}일 뒤 이자 ${o.rate}%와 함께 찾아가요. 그동안 이 돈을 쓸 수 있어요.</span></div><button type="button" class="btn sm gold" data-act="bankok" data-id="${o.id}">받기</button></div>`
-    : `<div class="li"><div class="grow"><span>대출 요청 · ${esc(o.who)} <span class="muted">신용 ${BANK.grades[o.grade].name}</span></span><span class="sub">${fmt(o.amount)}G를 ${o.days}일 빌리고 이자 ${o.rate}%를 주겠대요. 못 갚을 수도 있어요.</span></div><button type="button" class="btn sm" data-act="bankok" data-id="${o.id}"${S.gold < o.amount ? ' disabled' : ''}>빌려주기</button></div>`).join('');
-  return `<div class="sec" style="margin-top:2px"><b>진행 중인 거래</b><span>${S.bank.deps.length + S.bank.loans.length}/${bankCap()}건</span></div>
-    <div class="list">${deals || '<div class="li"><span class="sub">진행 중인 거래가 없어요.</span></div>'}</div>
-    <div class="sec"><b>들어온 제안</b><span>이틀마다 새 제안</span></div>
-    <div class="list">${offers || '<div class="li"><span class="sub">지금은 제안이 없어요.</span></div>'}</div>`;
-}
 function templeBox() {
   const B = S.bless && BLESSINGS[S.bless.id], hs = healers(), plan = healPlan(), pats = patients();
   const free = S.advs.filter(a => isHealer(a.cls) && !a.post && a.status === 'idle' && !a.inj);
@@ -227,7 +214,7 @@ function towerBox() {
     <div class="sec"><b>룬 공방</b><span>룬은 장비 창에서 끼워요</span></div>
     <div class="list">${carve || '<div class="li"><span class="sub">필드 보스가 떨어뜨리는 「우두머리의 증표」로 룬을 새길 수 있어요.</span></div>'}${fuse}</div>`;
 }
-const BLD_INNER = { smithy: '대장간에서 장비 만들기', alchemy: '물약 만들기', temple: '치료와 치유사', bank: '예금과 대출', tower: '마법 연구', pen: '알 품기와 펫 돌보기', stable: '말과 마차', library: '스킬북 만들기', airfield: '비행 마차와 구름섬 원정' };
+const BLD_INNER = { smithy: '대장간에서 장비 만들기', alchemy: '물약 만들기', temple: '치료와 치유사', tower: '마법 연구', pen: '알 품기와 펫 돌보기', stable: '말과 마차', library: '스킬북 만들기', airfield: '비행 마차와 구름섬 원정' };
 const BLD_BOX = {}, BLD_SUM = {};   // 새 시설의 안쪽 창·요약 (world30.js)
 function bldCard(id, full) {
   const B = BUILDINGS[id], lv = S.bld[id], max = lv >= B.max, c = B.cost[lv], need = BUILD_RANK[id] || 0;
@@ -237,7 +224,6 @@ function bldCard(id, full) {
   if (full && lv && id === 'smithy') body = smithyBox();
   if (full && lv && id === 'alchemy') body = `<div class="list">${RECIPES.map((r, i) => `<div class="li">${iconImg(r.out)}<div class="grow"><span>${ITEMS[r.out].name} <span class="muted">창고 ${S.inv[r.out] || 0}</span></span><span class="sub">${S.bld.alchemy >= r.lv ? needStr(r.need) + ` · ${craftFee(r)}G` : '공방 2단계 필요'}</span></div><button type="button" class="btn sm gold" data-act="craft" data-i="${i}"${canCraft(r) ? '' : ' disabled'}>만들기</button></div>`).join('')}</div>`;
   if (lv && id === 'training') body = '<div class="sub">모험가 창에서 능력치를 훈련하고, 스킬을 배우고, 전직할 수 있어요.</div>';
-  if (full && lv && id === 'bank') body = bankBox();
   if (full && lv && id === 'pen') body = penBox();
   if (!full && lv && id === 'pen') body = `<div class="sub">펫 ${S.pets.length}/${penCap()}마리 · 품는 알 ${(S.pen && S.pen.inc.length) || 0}개 · 상단에 남은 펫 ${petsAtHome().length}마리</div>`;
   if (full && lv && id === 'tower') body = towerBox();
@@ -245,7 +231,7 @@ function bldCard(id, full) {
   if (!full && lv && BLD_SUM[id]) body = BLD_SUM[id]();
   if (id === 'temple' && (full || !lv)) body = lv ? templeBox() : innCare();
   if (id === 'shop' && lv) body = `<div class="sub">진열대 ${slotCount()}칸 · 손님 수 ×${traffic().toFixed(2)} · 진열은 창고 창에서 해요.</div>`;
-  if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 자기 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div><div class="btns"><button type="button" class="btn sm gold" data-act="advguest">여관 손님 ${S.cands.length}명 보기 ›</button></div>`;
+  if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 자기 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div><div class="btns"><button type="button" class="btn sm gold" data-act="advguest">선술집 손님 ${S.cands.length}명 보기 ›</button></div>`;
   const open = !full && lv && BLD_INNER[id] ? `<button type="button" class="btn sm gold" data-act="bopen" data-id="${id}">${BLD_INNER[id]} ›</button>` : '';
   const sum = !full && lv && id === 'temple' && patients().length ? `<span class="sub red-t">환자 ${patients().length}명</span>` : '';
   return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? 'Lv' + lv : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}${open || sum ? `<div class="row">${sum}<span class="grow"></span>${open}</div>` : ''}</div>`;
@@ -293,8 +279,8 @@ function candCard(c) {
 function jobTreeList() {
   return ['warrior', 'archer', 'rogue', 'mage', 'cleric'].map(b => `<div><b>${CLASSES[b].name}</b> → ${nextJobs(b).map(c => `${CLASSES[c].name}(${nextJobs(c).map(x => CLASSES[x].name).join('')})`).join(' · ')}</div>`).join('') + '<div class="muted">짐꾼은 짐꾼 그대로예요.</div>';
 }
-// 모험가 창 탭: 기본 직업 계열(2·3차 전직도 계열을 따른다) + 여관 손님
-const ADV_CATS = [['warrior', '전사'], ['archer', '궁수'], ['mage', '마법사'], ['cleric', '성직자'], ['rogue', '도적'], ['porter', '짐꾼'], ['guest', '여관']];
+// 모험가 창 탭: 기본 직업 계열(2·3차 전직도 계열을 따른다) + 선술집 손님(고용 후보)
+const ADV_CATS = [['warrior', '전사'], ['archer', '궁수'], ['mage', '마법사'], ['cleric', '성직자'], ['rogue', '도적'], ['porter', '짐꾼'], ['guest', '선술집']];
 const advCatOf = a => jobBase(a.cls);
 const advCatN = k => (k === 'guest' ? S.cands.length : living().filter(a => advCatOf(a) === k).length);
 function advCatCur() {
@@ -316,13 +302,13 @@ PANELS.adv = () => {
   const cur = advCatCur(), free = Math.max(0, beds() - living().length);
   const head = `<div class="sec"><b>소속 모험가</b><span>${living().length}/${beds()}명${cur === 'guest' ? '' : ' · 눌러서 자세히'}</span></div>${advCatBar(cur)}`;
   if (cur === 'guest') return `${head}
-  <div class="sec"><b>여관 손님</b><span>이틀마다 새 손님 · 빈 방 ${free}개</span></div>
+  <div class="sec"><b>선술집 손님</b><span>이틀마다 새 손님 · 여관 빈 방 ${free}개</span></div>
   ${free ? '' : '<div class="sub red-t">여관 방이 다 찼어요. 여관을 넓히거나 모험가를 내보내야 고용할 수 있어요.</div>'}
-  ${S.cands.map(candCard).join('') || '<div class="card"><div class="sub">지금은 여관에 묵는 손님이 없어요. 이틀마다 새 손님이 와요.</div></div>'}`;
+  ${S.cands.map(candCard).join('') || '<div class="card"><div class="sub">지금은 선술집에 찾아온 모험가가 없어요. 이틀마다 새 손님이 와요.</div></div>'}`;
   const list = living().filter(a => advCatOf(a) === cur);
   return `${head}
   ${S.gear.length && S.advs.some(a => a.status === 'idle') ? '<div class="btns"><button type="button" class="btn sm gold" data-act="autoeqall">대기 중인 모험가 모두 가장 좋은 장비 끼우기</button></div>' : ''}
-  ${list.map(advCard).join('') || `<div class="card"><div class="sub">${CLASSES[cur].name} 계열 모험가가 없어요. 「여관」 탭의 손님 중에서 고용하세요.</div></div>`}
+  ${list.map(advCard).join('') || `<div class="card"><div class="sub">${CLASSES[cur].name} 계열 모험가가 없어요. 「선술집」 탭의 손님 중에서 고용하세요.</div></div>`}
   ${ADV_GUIDE()}`;
 };
 
@@ -778,7 +764,6 @@ const ACT = {
   fuse: d => say(runeFuse(d.it)),
   carve: d => { const r = runeCarve(+d.t); say(r && ITEMS[r] ? `${ITEMS[r].name}을(를) 새겼어요` : r); },
   craft: d => say(craft(+d.i) || '물약을 만들었어요'),
-  bankok: d => say(bankAccept(+d.id)),
   research: d => say(startResearch(d.id)),
   hire: d => say(hire(+d.id) || '고용했어요'),
   advopen: d => openAdv(+d.id),
@@ -863,7 +848,14 @@ function bindUI() {
   $('menu').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && S) menuOpen(b.dataset.open); });
   $('win-back').addEventListener('click', backWin);
   $('win-x').addEventListener('click', closeWins);
-  $('floors').addEventListener('click', e => { const b = e.target.closest('[data-floor]'); if (b) { hqGo(b.dataset.floor); renderFloors(); } });
+  // 장소 판: 화살표 → 옆 장소, 가운데 이름 판 → 그 시설 창
+  $('placebar').addEventListener('click', e => {
+    if (!S) return;
+    const b = e.target.closest('[data-go]');
+    if (b && !b.disabled) { hqGo(b.dataset.go); renderFloors(); return; }
+    const w = e.target.closest('[data-pwin]');
+    if (w && FLOOR_INFO[w.dataset.pwin]) hqOpen({ win: FLOOR_INFO[w.dataset.pwin].win });
+  });
   $('pip').addEventListener('click', () => { if (S) openBattle(); });
   $('pip').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && S) { e.preventDefault(); openBattle(); } });
   // 전투 창: 뒤로·닫기, 복귀·던전 입구 단추
@@ -877,7 +869,7 @@ function bindUI() {
     ACT[b.dataset.act](b.dataset);
     renderBattle(); renderChips(); updateHud(); saveGame();
   });
-  // 본부 화면: 누르면 그 자리의 것, 위아래로 밀면 층 이동
+  // 본부 화면: 누르면 그 자리의 것, 옆으로 밀면 장소 이동 (왼쪽으로 밀면 오른쪽 장소)
   const hq = $('hq');
   let p0 = null;
   hq.addEventListener('pointerdown', e => { p0 = { x: e.clientX, y: e.clientY, t: performance.now() }; });
@@ -885,7 +877,7 @@ function bindUI() {
     if (!p0 || !S) return;
     const dx = e.clientX - p0.x, dy = e.clientY - p0.y;
     p0 = null;
-    if (Math.abs(dy) > 36 && Math.abs(dy) > Math.abs(dx) * 1.2) { hqStep(dy < 0 ? -1 : 1); renderFloors(); return; }
+    if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy) * 1.2) { hqStep(dx < 0 ? 1 : -1); renderFloors(); return; }
     if (Math.abs(dx) < 10 && Math.abs(dy) < 10) hqOpen(hqHit(e.clientX, e.clientY));
   });
   hq.addEventListener('pointercancel', () => { p0 = null; });
@@ -897,7 +889,10 @@ function bindUI() {
   mb.addEventListener('pointerdown', () => { UI.mhold = true; });
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => mb.addEventListener(t, () => setTimeout(() => { UI.mhold = false; }, 180)));
   $('modal').addEventListener('click', e => { if (e.target === $('modal') && $('m-btns').children.length === 1) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (UI.modal) { if ($('m-btns').children.length === 1) closeModal(); } else if (winTop()) backWin(); });
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && S && !UI.modal && !winTop() && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) { hqStep(e.key === 'ArrowRight' ? 1 : -1); renderFloors(); return; }   // PC: 화살표 키로 장소 넘기기
+    if (e.key !== 'Escape') return; if (UI.modal) { if ($('m-btns').children.length === 1) closeModal(); } else if (winTop()) backWin();
+  });
   $('speed').addEventListener('click', () => { if (!S) return; const i = SPEEDS.indexOf(S.speed); setSpeed(SPEEDS[(i + 1) % SPEEDS.length]); });
   $('t-import').addEventListener('click', () => openImport(() => { $('title-scr').hidden = true; cancelAnimationFrame(titleRaf); startGame(); }));
   $('t-form').addEventListener('submit', e => {

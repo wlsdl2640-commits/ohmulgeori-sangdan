@@ -122,15 +122,6 @@ FLOOR_TXT.salvage = () => {
   if (!n) return '공략한 던전이 생기면 수거꾼이 나가요';
   return ph === 1 || ph === 2 ? `수거꾼 ${n}명이 던전에 나가 있어요` : `수거꾼 ${n}명 · 던전 ${n}곳을 돌아요`;
 };
-// 본부 지하 층: 분류대 앞의 장부 담당, 새벽·밤에는 돌아온 수거꾼이 손수레 곁에 (낮·저녁에는 던전에 나가 있다)
-const SALVORS = () => [STAFF.salvor, STAFF.salvor2, STAFF.salvor3];
-function salvScene(it, t) {
-  staffAt(it, STAFF.sorter, 3.6, 2.8, 'read', t, 'f', 0);
-  const n = Math.min(3, salvPicks().length), ph = phaseOf(S.t);
-  if (ph === 1 || ph === 2) return;
-  const spots = [[7.6, 2.4], [5.0, 7.5], [2.4, 6.2]];
-  for (let i = 0; i < n; i++) staffAt(it, SALVORS()[i], spots[i][0], spots[i][1], i === 2 ? 'idle' : 'carry', t + i * 0.37, 'f', i % 2);
-}
 Object.assign(ACT, {
   salvpick: d => { say(salvToggle(d.f)); renderPanel(true); },
   salvauto: () => { say(salvAuto()); renderPanel(true); }

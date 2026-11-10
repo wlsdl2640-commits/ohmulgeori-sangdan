@@ -164,31 +164,28 @@ function layoutWin() {
 // 화면 크기가 바뀌면 원정 창·본부·창 자리를 다시 잡는다
 function layoutStage() { sizeView(); sizeHQ(); layoutWin(); }
 
-/* ───────── 층 버튼과 층 이름 ───────── */
+/* ───────── 장소 판 (아래 가운데 이름 · 양옆 금빛 화살표 · 위치 점) ───────── */
 function floorInfo(f) {
   if (f.id === 'shop') { const sd = S.sold.day === today() ? S.sold : { n: 0, g: 0 }; return `진열대 ${slotCount()}칸 · 오늘 ${sd.n}개 ${fmt(sd.g)}G 판매`; }
-  if (f.id === 'inn') return `방 ${living().length}/${beds()} · 자는 모험가 ${living().filter(a => a.status === 'idle' && ((a.sleep || 0) > 2 || isNight())).length}명`;
+  if (f.id === 'tavern') { const n = hqWhere().tav.length; return `찾아온 모험가 ${S.cands.length}명${n ? ` · 쉬는 모험가 ${n}명` : ' · 이틀마다 새 얼굴'}`; }
+  if (f.id === 'inn') return `방 ${living().length}/${beds()} · 자는 모험가 ${hqWhere().inn.size}명`;
   if (f.id === 'temple') return `환자 ${patients().length}명 · 치유사 ${healers().length}/${healerSlots()}`;
   if (f.id === 'pen') return `펫 ${S.pets.length}/${penCap()} · 품는 알 ${(S.pen && S.pen.inc.length) || 0}`;
-  if (f.id === 'training') return isNight() ? '밤에는 쉬어요' : `훈련하는 모험가 ${Math.min(6, living().filter(a => a.status === 'idle' && !a.inj && !a.post && (a.sleep || 0) <= 2).length)}명`;
+  if (f.id === 'training') { const ph = phaseOf(S.t); return ph === 0 || ph === 3 ? '밤에는 쉬어요' : `훈련하는 모험가 ${hqWhere().train.length}명`; }
   if (f.id === 'alchemy') return `회복 물약 ${(S.inv.pot_s || 0) + (S.inv.pot_m || 0) + (S.inv.pot_l || 0)}개 · 마나 물약 ${(S.inv.mp_s || 0) + (S.inv.mp_m || 0)}개`;
   if (f.id === 'tower') return S.research.cur ? `연구 중: ${RESEARCH[S.research.cur.k].name}` : '연구를 쉬고 있어요';
   if (f.id === 'smithy') return `보관 중인 장비 ${S.gear.length}개`;
-  if (f.id === 'bank') return `거래 ${S.bank.deps.length + S.bank.loans.length}/${bankCap()}건`;
   if (typeof FLOOR_TXT !== 'undefined' && FLOOR_TXT[f.id]) return FLOOR_TXT[f.id]();
   return '';
 }
 function renderFloors() {
   if (!S) return;
-  const L = hqFloors().reverse(), cur = hqFloor(HQ.cur);   // 아래층부터 왼쪽에
-  const html = L.map(f => `<button type="button" class="fl${f.key === cur.key ? ' on' : ''}${f.under ? ' ug' : ''}" data-floor="${f.key}" aria-label="${f.label} ${esc(f.name)}"${f.key === cur.key ? ' aria-current="true"' : ''}>${f.id === 'tower' ? '탑' : f.label}</button>`).join('');
-  if (html !== UI.floors) {
-    const nav = $('floors'); nav.innerHTML = html; UI.floors = html;
-    const b = nav.querySelector('.fl.on');   // 층이 많으면 지금 층 단추가 보이게 옆으로 민다
-    if (b) { const l = b.offsetLeft, r = l + b.offsetWidth; if (l < nav.scrollLeft) nav.scrollLeft = l - 6; else if (r > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = r - nav.clientWidth + 6; }
-  }
-  const fn = `<b>${cur.label}</b>${esc(cur.name)}<small>${esc(floorInfo(cur))}</small>`;
-  if (fn !== UI.fname) { $('floor-name').innerHTML = fn; UI.fname = fn; }
+  const L = hqPlaces(), i = Math.max(0, L.findIndex(f => f.key === HQ.cur)), cur = L[i], prev = L[i - 1], next = L[i + 1];
+  const nav = (f, cls) => f ? `<button type="button" class="pnav ${cls}${f.under ? ' ug' : ''}" data-go="${f.key}" aria-label="${esc(f.name)}(으)로"><i class="parr" style="background-image:url(${Q_ARROW})"></i><span class="pn">${esc(f.name)}</span></button>`
+    : `<button type="button" class="pnav ${cls}" disabled aria-hidden="true"><i class="parr" style="background-image:url(${Q_ARROW})"></i><span class="pn">&nbsp;</span></button>`;
+  const dots = L.map((f, j) => `<i class="${f.under ? 'u' : ''}${j === i ? ' on' : ''}"></i>`).join('');
+  const html = nav(prev, 'prev') + `<button type="button" class="ptab${cur.under ? ' ug' : ''}" data-pwin="${cur.id}" aria-label="${esc(cur.name)} 창 열기"><span class="pnm">${esc(cur.name)}</span><small>${esc(floorInfo(cur))}</small><span class="pdots" aria-hidden="true">${dots}</span></button>` + nav(next, 'next');
+  if (html !== UI.pbar) { $('placebar').innerHTML = html; UI.pbar = html; }
 }
 // 본부 화면을 눌렀을 때: 가구·사람 → 창
 function hqOpen(h) {
@@ -196,9 +193,10 @@ function hqOpen(h) {
   if (h.adv) { openAdv(h.adv); return; }
   const w = h.win;
   if (!w) return;
+  if (w === 'guest') { UI.advCat = 'guest'; openWin('adv'); return; }
   if (w.startsWith('b:')) openWin('b', { b: w.slice(2) }); else openWin(w);
 }
-const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', bank: 'bank0', pen: 'pen0', stable: 'stable0', library: 'library0', airfield: 'airfield0', kitchen: 'kitchen0', salvage: 'salvage0' };
+const BLD_FLOOR = { shop: 'shop0', inn: 'inn0', temple: 'temple0', training: 'training0', alchemy: 'alchemy0', tower: 'tower0', smithy: 'smithy0', pen: 'pen0', stable: 'stable0', library: 'library0', airfield: 'airfield0', kitchen: 'kitchen0', salvage: 'salvage0' };
 
 /* ───────── 배속 ───────── */
 function renderSpeed() {

@@ -98,7 +98,7 @@ function wxtHits(a, w, ff) {
   const SK = WX_SKY[w.sky] || {};
   return !!((W.wxCold && w.T < 0 && !ff.coldRes) || (W.wxHot && w.T > 0 && !ff.hotRes) || (W.wxWet && (SK.wet || w.sky === 'snow')) || (W.wxWind && w.wind === 2));
 }
-// 날씨 특성 칩 (모험가 창·여관 손님)
+// 날씨 특성 칩 (모험가 창·선술집 손님)
 const wxtChip = a => { const W = a && a.wxt && TRAITS[a.wxt]; return W ? `<span class="trait neg wxt" title="${esc(W.desc)}"><b>${W.name}</b> <small>${esc(W.desc)} · 날씨 특성</small></span>` : ''; };
 // 야영(노숙)의 피로 회복 배율
 function campWxF(p, w) {

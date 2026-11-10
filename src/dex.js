@@ -100,7 +100,7 @@ function skinRow(id) {
 /* ───────── 직업 ───────── */
 function clsCard(c) {
   const C = CLASSES[c], t = jobTier(c), n = S.advs.filter(a => a.cls === c).length, Q = JOB_REQ[t];
-  const req = t === 1 ? '여관에서 고용' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${jobReqText(c) ? ` · ${jobReqText(c)}` : ''}`;
+  const req = t === 1 ? '선술집에서 고용' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${jobReqText(c) ? ` · ${jobReqText(c)}` : ''}`;
   return `<details class="card"><summary><span class="row"><img class="por" src="${clsIconURL(c)}" alt=""><span class="grow stack"><span>${C.name}${tierTag(c)}${n ? ` <span class="tag ok-t">${n}명</span>` : ''}</span><span class="sub">${C.desc}</span></span></span></summary>
     <div class="stats"><span>힘 <b>${C.base.str}</b> +${C.grow.str}/Lv</span><span>체력 <b>${C.base.vit}</b> +${C.grow.vit}/Lv</span><span>민첩 <b>${C.base.agi}</b> +${C.grow.agi}/Lv</span><span>지능 <b>${C.base.int}</b> +${C.grow.int}/Lv</span></div>
     <div class="stats"><span>공격 속도 <b>×${C.spd}</b> (기본 공격 ${Math.round(BASIC_CD / C.spd * 10) / 10}초)</span><span>치명 <b>${Math.round(C.crit * 100)}%</b></span><span>짐 <b>${C.carry}</b></span>${C.salary ? `<span>봉급 <b>${C.salary}G</b></span>` : ''}</div>

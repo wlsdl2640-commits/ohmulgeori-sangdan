@@ -6,7 +6,7 @@
 ## 그림 스타일: 「뭉툭 도트」가 기준 (2026-11-03, 사용자 결정)
 - 사용자가 고른 최소 수준: **반 해상도로 찍어 2배로 키운 굵은 픽셀 + B4 손질** (3톤 명암, 부위 사이 어두운 선, 쇠·가죽 질감, 왼쪽 위 가장자리 빛, 눈 반짝임). 사용자 말: "뭉툭으로 가자, 내가 원하던 최소 수준이야. 앞으로 잘 기억해 둬."
 - 구현: `src/pxa.js`의 `PX_CHUNK = 2`(격자를 `pxChunk`로 반으로 줄여 굽고 2배 확대), `PX_FX = { rim, line, tex }`(B4 손질), `PX_PRI`(줄일 때 눈·입·쇠·나무·금을 우선해 살린다). `pxBake(key, g, pal, ax, ay, pre)`의 `pre`는 이미 반 해상도로 그린 격자(레이드 몬스터)라는 뜻.
-- 모험가(앞·옆)·일반 몬스터·레이드 몬스터·초상·영웅 화면 전부 이 방식. 본부(pxhq.js) 작은 사람들은 아직 자체 방식.
+- 모험가(앞·옆)·일반 몬스터·레이드 몬스터·초상·영웅 화면 전부 이 방식. 본부 사람들도 빌드 62부터 같은 그림(src/hq.js — 옛 pxhq.js 작은 사람은 지웠다).
 - 레이드 몬스터는 `scratchpad/raidpx`의 파이썬 도안(m_*.py → variants2.py B4 → export_js.py)에서 `src/pxraid.js`(PXRAID)로 내보낸다. 수정은 파이썬 쪽에서 하고 다시 내보낼 것.
 - 새 그림을 그릴 때는 굵은 픽셀에서 읽히는지(눈 2×2, 무기 2px 폭 이상) 먼저 확인. 1px짜리 선은 사라진다.
 - 과정: 시안을 먼저 보여 주고(게임에 적용하지 말고) 고르게 한 뒤 적용. 사용자는 "간단한 2D 도트", 굵고 또렷한 것을 좋아하고, 자동 명암으로 뭉개진 그림("괴상", "조잡")은 싫어한다.
@@ -232,6 +232,41 @@
 - 시안 도구: `scratchpad/v48/g/px48.py`(공 명암 ball · line · over · `frames()` — 여러 장의 맨 위 빈 줄을 같이 자르고 pad_bottom으로 떠 있게) · snowman.py · icesprite.py · yeti.py · maiden.py(A·B) · queen.py → `../t/*.json` → `emit48.py`(→ game48/src/pxsnow.js) · 시험판 `v48/t/new48.py`(PXU 정의 JSON을 바로 실제 전투 화면 + 가까이로) · `v48/d/render48.py`(묶음 snow) · `lineup.py`.
 - 고친 것: view.js 찢어진 망토 효과(`u:low:tear`)는 이제 `PXU[id].low.id`로 바뀌는 순간에만 — 예전 조건(`did !== f.id`)은 모습이 여럿인 몬스터(골렘·거인·설녀·산양)가 같은 uid를 다시 쓸 때(저장 불러오기·시안 도구) 천 조각을 잘못 날렸다.
 - 시험 `scratchpad/v48/logic48.py`(그림·동작·설녀 모습 둘·크기·사건·눈보라와 눈덩이 그리기·실제 그리기 길·얼음 정령 펫·그리기), 전체 `scratchpad/run49.sh`.
+
+## 상단 본부 장소 장면 · 선술집 · 은행 제거 (빌드 62)
+- 본부는 `src/hq.js`(옛 iso.js · pxhq.js · people.js는 지웠다): 장소마다 한 장면(실내 앞모습, 벽지처럼 화면을 채운다)을 옆으로 넘긴다. 사용자가 고른 시안 A3 — 결정은 `scratchpad/hq2/DECISIONS.md`.
+  - `hqPlaces()` 왼쪽 → 오른쪽: 던전 수거소 · 대장간 · 상점 · 선술집 · 연금술 · 주방 · 훈련소 · 신전 · 여관 n · 사육장 · 마구간 · 도서관 · 마탑 · 비행장(key = id + i).
+  - `hqPlace(key)` · `hqGo(key, quiet)`(HQ.anim: 0.38초 옆으로 밀기) · `hqStep(±1)`.
+- 장면 표 `HQS[id] = { zoom, geo(K), sig?, bg, house, live(g, K, t, T, f) }`.
+  - `hqGeo(z)`가 장면 판을 정한다: 크기 W/z × H/z, top = 메뉴 아래, bot = 장소 판 위 40.
+  - `hqRender(f, t, rec)`는 bg + house를 시간 칸(dp×64)마다 구워 `HQ.shells`에 두고, live는 매번 그린다. `drawHQ`가 기기 캔버스로 한 번에 늘린다.
+  - 가까이: 상점 1.5 · 마구간 · 비행장 1 · 그 밖 1.25. 그리기는 장면당 0.2~0.7ms.
+- 그림 도구: 빛 `q3Light`(어둠 판 amb + 밤 ambN · 렌턴 구멍과 더하기 빛) · 창 `q3Glass`(바깥 하늘, 낮 빛살) · 통나무 벽 `q3Logs` · 원근 판자 `q3Floor` · 렌턴 `q3Lamp`.
+- 사람
+  - 모험가는 뭉툭 그림 그대로(1배).
+  - 일꾼 · 손님은 `QPEO`(직업 그림 + 차림 덮어쓰기, 빈손 `PX_WPN.none`).
+  - 뒷모습 `qBackSpr`: 앞 격자의 얼굴 글자를 머리칼로 바꾼다.
+  - 누운 모습 `q3LieSpr`: 옆 격자를 모자 · 무기 없이 눈 감겨 −90° 돌린다.
+- 모험가 자리 `hqWhere()`: 상단에 있는(status idle) 모험가를 차례로 나눈다 — 신전(치유사 heal · 환자 sick) → 여관(졸림 · 다침 · 새벽 · 밤) → 훈련소(낮, 넷) → 도서관(하나) → 선술집.
+- 장소별 내용
+  - 상점: 진열대 `q3ShelfSpr` — 칸 3 · 6 · 9 · 12개 → 1~4단, 맨 위 덮개 판. 12칸이 넘으면 4단에 단마다 진열대 하나에 두 칸(`hqShopCells`).
+  - 상점 손님 `QCU`: 실제 판매(`hqSale` → HQ.pending)는 그 칸에서 사 가고, 손님 수(traffic)에 맞춰 구경꾼도 들른다. 게시판 종이 = 의뢰(채울 수 있으면 노랑).
+  - 선술집(새 장소, 시설 아님): 고용 후보(S.cands)가 먼저, 남은 자리에 쉬는 모험가가 탁자 셋 × 셋에 앉는다. 누르면 모험가 창 손님 탭(win 'guest'). 손님 탭 이름 「여관」 → 「선술집」.
+  - 여관: 2층 침대 셋 = SEATS 6. 주인(id 순)마다 자리가 있고, 자는 사람만 눕는다. 안 연 방은 판자 + 짐 상자.
+  - 마구간 `hqStableAnimals()`: 산 말(원정 나간 파티가 맨 말 제외) + 집에 있는 파티가 맨 땅짐승 펫 → 칸 셋 + 바닥 다섯(`STALL_FLOOR`). 밤에는 선 채로 쿨쿨.
+  - 비행장: 날개 달린 짐승(HORSES fly)은 둥지 넷(`hqFlyers`), 비행 마차(WAGONS fly)가 있는 집에 있는 파티는 비행선 둘까지(`hqShips`).
+- 누르기
+  - `HQ.hits`는 장면 판 좌표. 맨 앞에 장소 전체(= FLOOR_INFO win)를 두고, `hqHit`가 HQ.hitK 크기로 바꾼다.
+  - 장소 판 `#placebar`(ui.js renderFloors): 양옆 `.pnav`[data-go] · 가운데 `.ptab`[data-pwin](누르면 시설 창) · 위치 점.
+  - panels.js: 옆으로 밀기(dx < 0 → 오른쪽 장소), PC 화살표 키.
+- 은행 제거
+  - 지운 것: BUILDINGS/BUILD_ORDER/BUILD_RANK의 bank · BANK · S.bank · bankRoll/Accept/Day/Cap · bankBox · ACT bankok.
+  - SAVE_V 11 `migrate11`: 지은 값(BANK_PAID 합)과 빌려준 원금을 돌려받고, 예금 원금은 돌려준다(gold ≥ 0). 알림 「은행 정리」.
+  - STORY.v62 · notes62 · flags.v62.
+- 시험
+  - `scratchpad/hq62/t62.py`: src를 IIFE로 묶고 `T62(식)`로 안을 부른다. 장소 16곳 낮 · 밤 · 넘기기 · 밀기 · 누르기 · 16칸 상점.
+  - `t62b.py`: 창 열기 · 새 상태 · 그리기 시간 · 은행 없는 저장.
+  - 전체 `scratchpad/run62.sh`. 옛 UI 시험(ui30 · ui31 · ui34 · logic34)은 `go_place(page, id)`로 장소 판을 넘긴다.
 
 ## 뇌수 · 폭풍 골렘 새 그림 (빌드 61)
 - 사용자 「짐승은 BD추가 골렘은 B만 추가」(둘째 시안 `scratchpad/v60/g/raiju8.py` · `golem7.py`, 판 `v60/t/s60_raiju2.png` · `s60_golem2.png`): `raiju` = B 번개 뿔 들소(기본) · `raiju_b` = D 번개 그리폰(pxuLook · PXU_SKIN), `stormgolem` = B 폭풍우 골렘(하나, PXU_SKIN 없음). 옛 그림(pxmon4.js PXM)은 PXU가 덮는다(art.js는 PXU[id]가 있으면 그것을 그린다).

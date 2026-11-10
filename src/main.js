@@ -17,7 +17,7 @@ function awayReport(r) {
 }
 function startGame() {
   running = true;
-  UI.html = ''; UI.chips = ''; UI.floors = ''; UI.fname = '';
+  UI.html = ''; UI.chips = ''; UI.pbar = '';
   layoutStage(); hqGo('shop0', true);
   renderPanel(true); renderChips(); updateHud(); updateOverlay(); renderFloors(); showWin(false);
   clearInterval(uiTimer);

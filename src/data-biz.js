@@ -10,15 +10,13 @@ const BUILDINGS = {
     desc: '약초로 회복 물약과 치료 소모품을 만든다.', eff: lv => (lv >= 2 ? '상급 물약·만병통치약까지' : '하급·중급 물약과 치료제') + (lv > 2 ? ` · 덤 ${(lv - 2) * 15}% · 조제비 -${(lv - 2) * 10}%` : '') },
   training: { name: '훈련소',      max: 5,  cost: [1200, 6000, 20000, 60000, 150000],
     desc: '능력치를 단련하고, 스킬북으로 스킬을 배우고, 전직한다.', eff: lv => `능력치 훈련 · 스킬 배우기 · 전직${lv > 1 ? ` · 훈련비 -${(lv - 1) * 12}%` : ''}` },
-  bank:     { name: '은행',        max: 8,  cost: [3000, 7000, 15000, 30000, 60000, 110000, 200000, 350000],
-    desc: '모험가의 예금을 받아 굴리고, 돈을 빌려주고 이자를 받는다.', eff: lv => `거래 ${lv * 2 + 1}건까지 · 큰손 ×${(0.7 + lv * 0.3).toFixed(1)}` },
   tower:    { name: '마탑',        max: 5,  cost: [4000, 15000, 40000, 100000, 250000],
     desc: '마법을 연구해 상단 전체를 강하게 만든다.', eff: lv => `마법 연구${lv > 1 ? ` · 연구비 -${(lv - 1) * 10}% · 연구 ${(lv - 1)}일 단축` : ''}` },
   temple:   { name: '신전',        max: 8,  cost: [1000, 4000, 10000, 22000, 45000, 85000, 150000, 260000],
     desc: '다친 모험가를 치료하고, 매달 신의 축복을 내려 준다.', eff: lv => `자연 치료 하루 ${4 + 4 * lv} · 치유사 ${Math.min(4, lv)}명 · 매달 축복` }
 };
 const shopStands = lv => 2 + Math.min(lv, 8) + Math.floor(Math.max(0, lv - 8) / 2);   // Lv8까지 한 칸씩, 그 뒤 두 단계마다
-const BUILD_ORDER = ['shop', 'inn', 'training', 'temple', 'alchemy', 'smithy', 'bank', 'tower'];
+const BUILD_ORDER = ['shop', 'inn', 'training', 'temple', 'alchemy', 'smithy', 'tower'];   // 빌드 62: 은행을 뺐다
 
 /* ───────── 신전의 축복 (매달 하나) ───────── */
 const BLESSINGS = {
@@ -64,7 +62,7 @@ const SPONSORS = {
   clinic:   { name: '오물거리 무료 진료소',  desc: '가난한 사람을 공짜로 치료하는 곳.', cost: [400, 1500, 4500], fame: [5, 12, 25],
               perks: ['물약 사는 값 20% 할인', '대기 중 회복 속도 두 배', '물약 회복량 +20%'] },
   guild:    { name: '모험가 길드 신인 지원', desc: '갓 등록한 모험가에게 장비와 숙식을 지원한다.', cost: [600, 2000, 6000], fame: [5, 12, 25],
-              perks: ['길드 매입가 70% → 80%', '여관 손님 레벨 +2', '여관 손님 한 명 더, 봉급 10% 할인'] },
+              perks: ['길드 매입가 70% → 80%', '선술집 손님 레벨 +2', '선술집 손님 한 명 더, 봉급 10% 할인'] },
   citizens: { name: '하르겐 시민회',         desc: '7번가 상인과 주민의 모임. 암살자 길드에 맞설 힘을 모으고 있다.', cost: [500, 2500, 7000], fame: [6, 15, 30],
               perks: ['상점 손님 +15%', '암살자 길드 토벌 지지', '상점 손님 +15% 더, 특별 의뢰'] },
   dwarves:  { name: '드워프 광산 조합',      desc: '검은바위산 드워프들의 상인 조합.', need: 'mountain', cost: [1500, 4500, 10000], fame: [8, 18, 35],
@@ -73,17 +71,6 @@ const SPONSORS = {
               perks: ['부속품을 얻을 확률 +10%', '경험치 +10%', '경험치 +15% 더'] }
 };
 const GUILD_RAID = { fame: 150, advs: 8, sponsor: 'citizens', tier: 2 };
-
-/* ───────── 은행 ───────── */
-const BANK = {
-  depositors: ['모험가 하라', '은퇴한 용병 고르', '떠돌이 상인 에반', '모험가 파티 「붉은 매」', '항구 선장 마르코', '견습 기사 루시엔', '음유시인 펠', '대장장이 하겐'],
-  borrowers: [
-    { name: '빵집 주인 도라', grade: 'A' }, { name: '포목전 상인 시몬', grade: 'A' }, { name: '대장장이 하겐', grade: 'A' },
-    { name: '선술집 주인 핀', grade: 'B' }, { name: '광산 투자자 크롬', grade: 'B' }, { name: '여행 상단 「모래바람」', grade: 'B' },
-    { name: '몰락한 귀족 벨로아', grade: 'C' }, { name: '노름꾼 짐', grade: 'C' }, { name: '수상한 망토 사내', grade: 'C' }
-  ],
-  grades: { A: { name: '높음', risk: 0.04, rate: [6, 10] }, B: { name: '보통', risk: 0.12, rate: [12, 18] }, C: { name: '낮음', risk: 0.28, rate: [20, 32] } }
-};
 
 /* ───────── 상단 랭크 ───────── */
 // 랭크를 올리면 다음 필드가 열리고(랭크 r = FIELD_IDS[r]까지), 시설·한도·거래 혜택이 늘어난다.
@@ -100,7 +87,7 @@ const RANK_UP = [
   { dungeon: 'snow',     fame: 560, reqs: 80,  sold: 260000, advs: 9, lic: [3, 3] },
   { dungeon: 'desert',   fame: 750, reqs: 110, sold: 460000, advs: 10, lic: [4, 1] }
 ];
-const BUILD_RANK = { shop: 0, inn: 0, training: 0, temple: 0, alchemy: 0, smithy: 1, bank: 2, tower: 3 };
+const BUILD_RANK = { shop: 0, inn: 0, training: 0, temple: 0, alchemy: 0, smithy: 1, tower: 3 };
 const PARTY_MAX = [2, 3, 3, 4, 5, 6, 6];   // 일반 파티는 6개까지
 const RAID_PARTY_RANK = 6, RAID_FIGHTERS = 9;   // 빌드 36: 6개가 다 열린 뒤(S랭크) 레이드 전용 파티 하나 · 짐꾼 계열 빼고 9명 + 짐꾼 1 = 10명
 const rankStands = r => (r >= 2 ? 1 : 0) + (r >= 4 ? 1 : 0) + (r >= 6 ? 1 : 0);
