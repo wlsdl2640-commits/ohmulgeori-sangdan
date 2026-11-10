@@ -1,0 +1,550 @@
+{
+ "note": "도적 계열 캐릭터 시안 (2026-11-10, 사용자 22:15 결정). 머리 · 덧붙이기는 반 해상도(뭉툭 칸) 격자 — 게임에 넣을 때 pxUp으로 두 배(top = top_h×2, x = x_h×2). 앞은 PX_HEAD/PX_EX(BX · HY · BY 기준), 옆은 PXS_HEAD/PXS_EX(SX−1 · SHY · SY 기준, 옆 덧붙이기 x는 온 칸 그대로 · 홀수). 글자는 pxPal: J/j/I 두건·모자(hc) · F/f 셋째 색(c3) · A/a 둘째 색(c2) · R/r 깃털 색(feather) · Z/z 흰 천·뼈 · X 보석(gem) · H/h/L 머리칼 · k 눈(eyes). 트럼프 카드 손 그림은 cards(온 칸).",
+ "parts": {
+  "shinobi": {
+   "front": {
+    "top_h": 1,
+    "x_h": 0,
+    "rows": [
+     "..JJJJ.....",
+     ".JJIJJj....",
+     "JJIJJJjj...",
+     "FFFFFFFfFF.",
+     "J......j.Ff",
+     "JJJJJJJj..f",
+     ".jJJJJj...."
+    ]
+   },
+   "side": {
+    "top_h": 1,
+    "x_h": -2,
+    "rows": [
+     "....JJJ...",
+     "...JJIJj..",
+     "..JJJJJJj.",
+     "FfFFFFFFFf",
+     "F.JJJJ....",
+     "f.JJJJJJJ.",
+     "...JJJJJ.."
+    ]
+   }
+  },
+  "shadow": {
+   "front": {
+    "top_h": 1,
+    "x_h": 0,
+    "rows": [
+     "..JJJJ.....",
+     ".JJIJJj....",
+     "JJIJJJjj...",
+     "FFFFFFFfFF.",
+     "J......j.FX",
+     "JJJJJJJj..X",
+     ".jJJJJj...."
+    ]
+   },
+   "side": {
+    "top_h": 1,
+    "x_h": -2,
+    "rows": [
+     "....JJJ...",
+     "...JJIJj..",
+     "..JJJJJJj.",
+     "FfFFFFFFFf",
+     "X.JJJJ....",
+     "X.JJJJJJJ.",
+     "...JJJJJ.."
+    ]
+   }
+  },
+  "kunoichi": {
+   "front": {
+    "top_h": 2,
+    "x_h": 0,
+    "rows": [
+     ".......LH...",
+     "..JJJJFHHh..",
+     ".JJIJJj.Lh..",
+     "JJIJJJjj.Hh.",
+     "FFFFFFFf.Lh.",
+     "J......j..h.",
+     "JJJJJJJj....",
+     ".jJJJJj....."
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -3,
+    "rows": [
+     "..LH.......",
+     ".HLhFJJJ...",
+     "HL..JJIJj..",
+     "L..JJJJJJj.",
+     "H..FFFFFFFf",
+     "h..JJJJ....",
+     "...JJJJJJJ.",
+     "....JJJJJ.."
+    ]
+   }
+  },
+  "oni": {
+   "front": {
+    "top_h": 2,
+    "x_h": 0,
+    "rows": [
+     ".Z....Z....",
+     ".zJJJJz....",
+     ".JJIJJj....",
+     "JJIJJJjj...",
+     "FFFFFFFfFF.",
+     "J......j.Ff",
+     "RRRRRRRr..f",
+     ".RZRRZr...."
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -2,
+    "rows": [
+     "...Z..Z...",
+     "...zJJz...",
+     "...JJIJj..",
+     "..JJJJJJj.",
+     "FfFFFFFFFf",
+     "F.JJJJ....",
+     "f.JJJJRRR.",
+     "...JJRZR.."
+    ]
+   }
+  },
+  "kitsune": {
+   "front": {
+    "top_h": 2,
+    "x_h": 0,
+    "rows": [
+     ".Z....Z.",
+     ".ZRJJRZ.",
+     ".JJIJJj.",
+     "JZZZZZZj",
+     "JZRZZRZj",
+     "JZkZZkZj",
+     "jzZZZZzj",
+     ".jzRRzj."
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -2,
+    "rows": [
+     ".....Z.....",
+     "....ZRZ....",
+     "...JJJJj...",
+     "..JJJZZZ...",
+     "..JJZZRZZ..",
+     "..JJZZZkZZZ",
+     "..JJzZZZZz.",
+     "...JjzRz..."
+    ]
+   }
+  },
+  "flatcap": {
+   "front": {
+    "top_h": 1,
+    "x_h": 0,
+    "rows": [
+     "..JJJJ...",
+     ".JJIJJJj.",
+     "JJJJJJJJj",
+     "jjjjjjjjj"
+    ]
+   },
+   "side": {
+    "top_h": 1,
+    "x_h": 0,
+    "rows": [
+     "..JJJJ....",
+     ".JJIJJJj..",
+     "JJJJJJJJj.",
+     "jjjjjjjjjj"
+    ]
+   }
+  },
+  "bowler": {
+   "front": {
+    "top_h": 2,
+    "x_h": -1,
+    "rows": [
+     "...JJJJ...",
+     "..JJIJJJj.",
+     "..JJJJJJj.",
+     "..FFFFFFf.",
+     "JJJJJJJJJj"
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -1,
+    "rows": [
+     "...JJJJ....",
+     "..JJIJJJj..",
+     "..JJJJJJj..",
+     "..FFFFFFf..",
+     "JJJJJJJJJJj"
+    ]
+   }
+  },
+  "beanie": {
+   "front": {
+    "top_h": 3,
+    "x_h": 0,
+    "rows": [
+     "...FF...",
+     "...Ff...",
+     "..JJJJ..",
+     ".JJIJJj.",
+     "JJIJJJJj",
+     "AAAAAAAa"
+    ]
+   },
+   "side": {
+    "top_h": 3,
+    "x_h": 0,
+    "rows": [
+     "..FF....",
+     "..Ff....",
+     ".JJJJ...",
+     "JJIJJj..",
+     "JJJJJJJ.",
+     "AAAAAAAa"
+    ]
+   }
+  },
+  "kasa": {
+   "front": {
+    "top_h": 2,
+    "x_h": -2,
+    "rows": [
+     ".....AA.....",
+     "...AAAAAa...",
+     ".AAAAAAAAAa.",
+     "aaaaaaaaaaaa",
+     "..JJJJJJJj..",
+     "..J......j..",
+     "..JJJJJJJj..",
+     "...jJJJJj..."
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -2,
+    "rows": [
+     ".....AA.....",
+     "...AAAAAa...",
+     ".AAAAAAAAAa.",
+     "aaaaaaaaaaaa",
+     "..JJJJJJJj..",
+     "..JJJJ......",
+     "..JJJJJJJJ..",
+     "...JJJJJ...."
+    ]
+   }
+  },
+  "kasa_hat": {
+   "front": {
+    "top_h": 2,
+    "x_h": -2,
+    "rows": [
+     ".....AA.....",
+     "...AAAAAa...",
+     ".AAAAAAAAAa.",
+     "aaaaaaaaaaaa"
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -2,
+    "rows": [
+     ".....AA.....",
+     "...AAAAAa...",
+     ".AAAAAAAAAa.",
+     "aaaaaaaaaaaa"
+    ]
+   }
+  }
+ },
+ "ex": {
+  "kerchief": {
+   "front": {
+    "rows": [
+     "FFFFFf",
+     ".FFf.."
+    ],
+    "x": 2,
+    "y": 0
+   },
+   "side": {
+    "rows": [
+     "FFFFf",
+     "..Ff."
+    ],
+    "x": 1,
+    "y": 0
+   }
+  },
+  "nscarf": {
+   "front": {
+    "rows": [
+     "FFFFFf..",
+     ".....Ff.",
+     "......F.",
+     "......f."
+    ],
+    "x": 2,
+    "y": 0
+   },
+   "side": {
+    "rows": [
+     "....FFFFf",
+     "..FFf....",
+     ".Ff......",
+     ".f......."
+    ],
+    "x": -7,
+    "y": 0
+   }
+  },
+  "sscarf": {
+   "front": {
+    "rows": [
+     "FFFFFf..",
+     ".....Ff.",
+     "......X.",
+     "......X."
+    ],
+    "x": 2,
+    "y": 0
+   },
+   "side": {
+    "rows": [
+     "....FFFFf",
+     "..FFf....",
+     ".XX......",
+     ".X......."
+    ],
+    "x": -7,
+    "y": 0
+   }
+  },
+  "bowtie": {
+   "front": {
+    "rows": [
+     "FfF"
+    ],
+    "x": 6,
+    "y": 0
+   },
+   "side": {
+    "rows": [
+     ".Ff"
+    ],
+    "x": 5,
+    "y": 0
+   }
+  }
+ },
+ "cards": [
+  ".ZZZz.",
+  "ZZRRZz",
+  "ZZRRZz",
+  ".zZZz.",
+  "..@..."
+ ],
+ "looks": {
+  "pickpocket": {
+   "use": "2차 소매치기 (고름)",
+   "look": {
+    "head": "flatcap",
+    "body": "coat",
+    "ex": [
+     "kerchief"
+    ],
+    "c1": "#6a5034",
+    "c2": "#e8dcc0",
+    "c3": "#d8a030",
+    "hc": "#6e6a5a",
+    "gold": "#c8b080",
+    "pants": "#4a4036",
+    "boots": "#3a2a1e",
+    "hair": "short"
+   }
+  },
+  "phantom": {
+   "use": "3차 괴도 — 새 직업 (고름, 이번 시안 B 중절모 도박사)",
+   "look": {
+    "head": "bowler",
+    "body": "coat",
+    "ex": [
+     "bowtie"
+    ],
+    "c1": "#2f5a42",
+    "c2": "#f0ece0",
+    "c3": "#b8322a",
+    "hc": "#4a3426",
+    "gold": "#e0c060",
+    "pants": "#2e2a2a",
+    "boots": "#1e1a1a",
+    "hair": "short"
+   }
+  },
+  "masterthief": {
+   "use": "4차 대도 — 지금 PXL.masterthief 그대로",
+   "look": null
+  },
+  "ninja": {
+   "use": "2차 닌자 (A로 봄)",
+   "look": {
+    "head": "shinobi",
+    "body": "leather",
+    "c1": "#2e3a6a",
+    "c2": "#4a5a8a",
+    "c3": "#d8302a",
+    "hc": "#2e3a6a",
+    "leather": "#3c4c80",
+    "gold": "#d8302a",
+    "pants": "#283460",
+    "boots": "#1c2240",
+    "hair": "short"
+   }
+  },
+  "kageninja": {
+   "use": "3차 카게닌자 (고름, 첫째 시안)",
+   "look": {
+    "head": "shadow",
+    "body": "leather",
+    "c1": "#241c34",
+    "c2": "#3a2a50",
+    "c3": "#5a3a8a",
+    "hc": "#201a2c",
+    "leather": "#30264a",
+    "gold": "#7a4ab8",
+    "gem": "#c89aff",
+    "eyes": "#d8b0ff",
+    "pants": "#1c1626",
+    "boots": "#120e18",
+    "hair": "short",
+    "ex": [
+     "sscarf"
+    ]
+   }
+  },
+  "musa_kasa": {
+   "use": "보관 — 전사 계열 새 1차 무사(→ 검호 → 검제 → 검성)에 삿갓(모자만) 다시 쓰기",
+   "look": {
+    "head": "kasa_hat",
+    "body": "tunic",
+    "c1": "#3a4a6a",
+    "c2": "#d8b878",
+    "c3": "#8a5a3a",
+    "hc": "#d8b878",
+    "pants": "#2e3448",
+    "boots": "#2a2228",
+    "hair": "short"
+   }
+  },
+  "kunoichi": {
+   "use": "보관 — 나중에 (여)도적",
+   "look": {
+    "head": "kunoichi",
+    "body": "leather",
+    "ex": [
+     "nscarf"
+    ],
+    "c1": "#5a2a50",
+    "c2": "#8a4a7a",
+    "c3": "#e0403a",
+    "hc": "#5a2a50",
+    "leather": "#6a3a60",
+    "gold": "#e0403a",
+    "pants": "#4a2242",
+    "boots": "#2a1428",
+    "hair": "short",
+    "hairc": "#3a2232"
+   }
+  },
+  "kage_oni": {
+   "use": "보관 — 닌자 계열 4차(또는 5차 · 각성)",
+   "look": {
+    "head": "oni",
+    "body": "leather",
+    "c1": "#1c1820",
+    "c2": "#3a2a2e",
+    "c3": "#a8222a",
+    "hc": "#16141a",
+    "leather": "#2a2228",
+    "gold": "#a8222a",
+    "feather": "#c8282e",
+    "eyes": "#ff4a3a",
+    "pants": "#18141a",
+    "boots": "#100c10",
+    "hair": "short"
+   }
+  },
+  "kage_kitsune": {
+   "use": "보관 — 닌자 계열 4차(또는 5차 · 각성)",
+   "look": {
+    "head": "kitsune",
+    "body": "leather",
+    "ex": [
+     "nscarf"
+    ],
+    "c1": "#20203a",
+    "c2": "#3a3a5a",
+    "c3": "#6a4ad8",
+    "hc": "#1a1a2e",
+    "leather": "#2c2c4a",
+    "gold": "#6a4ad8",
+    "feather": "#d8283a",
+    "gem": "#ffd84a",
+    "eyes": "#ffd84a",
+    "pants": "#1a1a30",
+    "boots": "#10101e",
+    "hair": "short"
+   }
+  },
+  "unused": {
+   "use": "안 고름 (참고)",
+   "beanie": {
+    "head": "beanie",
+    "body": "leather",
+    "ex": [
+     "kerchief"
+    ],
+    "c1": "#8a4a2e",
+    "c2": "#d8c8a0",
+    "c3": "#e8b040",
+    "hc": "#3a5a8a",
+    "leather": "#6a3a24",
+    "gold": "#c8a060",
+    "pants": "#3e3a4a",
+    "boots": "#2a2430",
+    "hair": "short"
+   },
+   "kasa_ninja": {
+    "head": "kasa",
+    "body": "leather",
+    "ex": [
+     "nscarf"
+    ],
+    "c1": "#3a3c48",
+    "c2": "#d8b878",
+    "c3": "#9a6a40",
+    "hc": "#34363f",
+    "leather": "#4a4c5a",
+    "gold": "#9a6a40",
+    "pants": "#30323c",
+    "boots": "#22232a",
+    "hair": "short"
+   }
+  }
+ }
+}
