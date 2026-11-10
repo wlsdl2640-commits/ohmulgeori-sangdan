@@ -69,10 +69,10 @@ def mk(B, role, deco=None, str_ch='s'):
 # ── 원형 ──
 KIND = {'short': '단궁', 'comp': '복합궁', 'long': '장궁', 'great': '대궁'}
 SPEC = {   # L, D, vs, 손잡이 굵기, 끝 굵기, p, 되휨, 되휨 길이 (uv 단위 — 화면 픽셀 × √2)
-    'short': dict(L=10.5, D=6.5, vs=4.0, hw0=2.2, hw1=1.2, p='arc'),
+    'short': dict(L=8.6, D=5.4, vs=3.2, hw0=2.1, hw1=1.2, p='arc'),             # 11-10 22:53 「단궁은 좀 더 짧게」
     'comp':  dict(L=12.0, D=6.0, vs=4.5, hw0=2.1, hw1=1.1, p='arc', rc=3.0, rcw=3.6),
     'long':  dict(L=13.8, D=5.0, vs=3.0, hw0=1.9, hw1=1.0, p='arc'),
-    'great': dict(L=11.6, D=7.0, vs=4.5, hw0=3.0, hw1=1.8, p='arc'),
+    'great': dict(L=13.0, D=8.2, vs=2.6, hw0=3.3, hw1=2.0, p='arc'),             # 22:53 「대궁 좀 더 크고 길게」
 }
 def B_of(kind, **kw):
     d = dict(SPEC[kind]); d.update(kw); return Bow(**d)

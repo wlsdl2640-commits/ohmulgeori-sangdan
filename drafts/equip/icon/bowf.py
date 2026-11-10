@@ -83,7 +83,7 @@ def gC():
     return mk(B, role), dict(WOOD, a='#f0e0b8', b='#c8a878', c='#7a6040', k='#e8e0d0', K='#a89c88')
 @frm('great', 'D', '고래뼈 대궁', '흰 뼈 활대 · 끝에 가시 · 푸른 끈 손잡이')
 def gD():
-    B = B_of('great', L=10.8)
+    B = B_of('great', L=12.0)
     s = mk(B, lambda pu, off, hw: wood(pu, off, hw, B, grip=2.0, tipk=1.8))
     spike(s, B, 2, 'T')
     return s, dict(WOOD, a='#ffffff', b='#e0dcd0', c='#a8a090', k='#3a5a7a', K='#1e2e48', t='#d8d0c0', T='#8a8478')
