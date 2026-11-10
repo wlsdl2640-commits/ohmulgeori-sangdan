@@ -1,0 +1,332 @@
+{
+ "note": "궁수 계열 트래커 · 스토커 캐릭터 그림 (2026-11-10, 사용자 23:40 결정). 머리 · 덧붙이기 · 손 활은 반 해상도(뭉툭 칸) 격자 — 게임에 넣을 때 pxUp으로 두 배(top = top_h×2, x = x_h×2). 앞은 PX_HEAD/PX_EX(BX · HY · BY 기준), 옆은 PXS_HEAD/PXS_EX(SX−1 · SHY · SY 기준, 옆 덧붙이기 x는 온 칸 그대로 · 홀수). 글자는 pxPal: J/j/I 두건(hc) · Z/z 뼈 · K 검정 · X 빛(gem) · G/g 놋쇠(gold) · F 셋째 색(c3) · r 깃털 짙은 색 · O/v 나무 · N/M 쇠 · R 깃털(feather) · w 시위 · S 손. 손목 석궁 = 먼 팔(왼팔, 옆모습은 몸 뒤 under), 볼트통 = 허리 왼쪽 옆. 손 활은 시안판에서만 단궁 칸을 빌려 쓴 컴파운드 보우(앞 · 옆 · 옆 당기기) — 구현 때 동작 그림과 다시.",
+ "parts": {
+  "wolfhood": {
+   "front": {
+    "top_h": 3,
+    "x_h": 0,
+    "rows": [
+     ".JJ..JJ.",
+     ".JjJJjJ.",
+     "JJJJJJJJ",
+     "JKJZZJKJ",
+     "JJZKKZJJ",
+     "jzZZZZzj",
+     "J......j",
+     "j......j",
+     "j......j"
+    ]
+   },
+   "side": {
+    "top_h": 3,
+    "x_h": -2,
+    "rows": [
+     ".....JJ....",
+     "....JJJJ...",
+     "..JJJJJKJ..",
+     ".JJJJJJJZZ.",
+     "JJJJJJJZZK.",
+     "JJJJjzZZz..",
+     "JJJ........",
+     "JJj........",
+     "Jj........."
+    ]
+   }
+  },
+  "lensmask": {
+   "front": {
+    "top_h": 1,
+    "x_h": 0,
+    "rows": [
+     "..JJJJ..",
+     ".JJIJJj.",
+     "JJIJJJjj",
+     "JGGFFGGj",
+     "JXXFFXXj",
+     "JGGFFGGj",
+     ".jFrrFj."
+    ]
+   },
+   "side": {
+    "top_h": 1,
+    "x_h": -2,
+    "rows": [
+     "....JJJ...",
+     "...JJIJj..",
+     "..JJJJJJj.",
+     "..JJGGGG..",
+     "..JJGXXF..",
+     "..JJGGGFF.",
+     "...JJFrr.."
+    ]
+   }
+  },
+  "wolfhood2": {
+   "front": {
+    "top_h": 3,
+    "x_h": 0,
+    "rows": [
+     ".JJ..JJ.",
+     ".JjJJjJ.",
+     "JJJJJJJJ",
+     "JXJZZJXJ",
+     "JJZKKZJJ",
+     "jzZZZZzj",
+     "J......j",
+     "j......j",
+     "j......j"
+    ]
+   },
+   "side": {
+    "top_h": 3,
+    "x_h": -2,
+    "rows": [
+     ".....JJ....",
+     "....JJJJ...",
+     "..JJJJJXJ..",
+     ".JJJJJJJZZ.",
+     "JJJJJJJZZK.",
+     "JJJJjzZZz..",
+     "JJJ........",
+     "JJj........",
+     "Jj........."
+    ]
+   }
+  }
+ },
+ "ex": {
+  "wxbow": {
+   "front": {
+    "x": 12,
+    "y": 2,
+    "rows": [
+     ".O.",
+     ".O.",
+     "NMN"
+    ]
+   },
+   "side": {
+    "x": -3,
+    "y": 0,
+    "under": true,
+    "rows": [
+     ".O.",
+     ".O.",
+     "NMN"
+    ]
+   }
+  },
+  "bcase": {
+   "front": {
+    "x": 0,
+    "y": 6,
+    "rows": [
+     "R.",
+     "OO",
+     "Ov",
+     "vv"
+    ]
+   },
+   "side": {
+    "x": 1,
+    "y": 5,
+    "under": false,
+    "rows": [
+     ".R",
+     "OO",
+     "Ov",
+     "vv"
+    ]
+   }
+  }
+ },
+ "bow": {
+  "front": {
+   "x": -6,
+   "y": -4,
+   "rows": [
+    ".GG",
+    "v.w",
+    "O.w",
+    "O.w",
+    "OSw",
+    "O.w",
+    "v.w",
+    ".GG"
+   ]
+  },
+  "side": {
+   "x": 11,
+   "y": -6,
+   "rows": [
+    "GG.",
+    "w.v",
+    "w.O",
+    "w.O",
+    "SSO",
+    "w.O",
+    "w.v",
+    "GG."
+   ]
+  },
+  "side_draw": {
+   "x": 7,
+   "y": -6,
+   "rows": [
+    "..GG..",
+    "..w.v.",
+    ".w..O.",
+    "w...O.",
+    "SROOSM",
+    "w...O.",
+    ".w..O.",
+    "..w.v.",
+    "..GG.."
+   ]
+  }
+ },
+ "looks": {
+  "tracker": {
+   "use": "2차 트래커 — 확정 (A 늑대 가죽 두건, 괴물사냥꾼 자리)",
+   "look": {
+    "head": "wolfhood",
+    "body": "leather",
+    "ex": [
+     "quiver",
+     "fur",
+     "wxbow",
+     "bcase"
+    ],
+    "c1": "#4a5a3a",
+    "c2": "#c8b080",
+    "c3": "#8a3a2a",
+    "hc": "#8a8a90",
+    "leather": "#7a7a80",
+    "feather": "#c8322a",
+    "pants": "#3e3a2e",
+    "boots": "#2e241a",
+    "hair": "short",
+    "wv": "long",
+    "hairc": "#4a3424"
+   }
+  },
+  "stalker": {
+   "use": "3차 스토커 — 확정 (A 유리눈 가면, 드래곤 슬레이어 자리)",
+   "look": {
+    "head": "lensmask",
+    "body": "leather",
+    "ex": [
+     "quiver",
+     "cape",
+     "wxbow",
+     "bcase"
+    ],
+    "c1": "#2a2a30",
+    "c2": "#4a4a52",
+    "c3": "#4a3a2e",
+    "hc": "#1e1e24",
+    "leather": "#3a3a42",
+    "gold": "#c89a40",
+    "gem": "#c8ff6a",
+    "feather": "#8a2a22",
+    "cape": "#2a2420",
+    "pants": "#1e1e22",
+    "boots": "#141416",
+    "hair": "short",
+    "wv": "long",
+    "hairc": "#1e1a1e"
+   }
+  },
+  "keep_blackwolf": {
+   "use": "보관 — 검은 늑대 망토 (나중에 4차 프레데터 등)",
+   "look": {
+    "head": "wolfhood2",
+    "body": "leather",
+    "ex": [
+     "quiver",
+     "fur",
+     "cape",
+     "wxbow",
+     "bcase"
+    ],
+    "c1": "#2a2228",
+    "c2": "#6a5a50",
+    "c3": "#8a2a2a",
+    "hc": "#2e2a30",
+    "leather": "#3a343a",
+    "gem": "#ff4a3a",
+    "cape": "#5a1a1a",
+    "pants": "#1e1a1e",
+    "boots": "#121014",
+    "hair": "short",
+    "wv": "long",
+    "hairc": "#1e1a1e"
+   }
+  },
+  "unused": {
+   "use": "안 고름 (참고)",
+   "trapper": {
+    "head": "trapper",
+    "body": "leather",
+    "ex": [
+     "quiver",
+     "kerchief",
+     "wxbow",
+     "bcase"
+    ],
+    "c1": "#6a4a2e",
+    "c2": "#d8c8a8",
+    "c3": "#a8432f",
+    "hc": "#5a3a22",
+    "leather": "#8a6a44",
+    "pants": "#4a3a2a",
+    "boots": "#2e2218",
+    "hair": "short",
+    "wv": "long",
+    "hairc": "#3a2a1e"
+   },
+   "bandana": {
+    "head": "bandana",
+    "body": "leather",
+    "ex": [
+     "quiver",
+     "wxbow",
+     "bcase"
+    ],
+    "c1": "#4e5a34",
+    "c2": "#a8a070",
+    "c3": "#8a6a3a",
+    "hc": "#56603a",
+    "leather": "#6a6a44",
+    "feather": "#c8322a",
+    "pants": "#3a3a28",
+    "boots": "#28241a",
+    "hair": "short",
+    "wv": "long",
+    "hairc": "#2e2418"
+   },
+   "skullmask": {
+    "head": "skullmask",
+    "body": "leather",
+    "ex": [
+     "quiver",
+     "cape",
+     "wxbow",
+     "bcase"
+    ],
+    "c1": "#2e2a26",
+    "c2": "#5a5048",
+    "c3": "#6a5a4a",
+    "hc": "#24201c",
+    "leather": "#3e3832",
+    "gem": "#7af0ff",
+    "cape": "#1e1a18",
+    "pants": "#1c1a18",
+    "boots": "#121010",
+    "hair": "short",
+    "wv": "long",
+    "hairc": "#1e1a1e"
+   }
+  }
+ }
+}
