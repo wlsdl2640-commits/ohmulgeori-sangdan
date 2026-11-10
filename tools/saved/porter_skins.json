@@ -1,0 +1,278 @@
+{
+ "note": "짐꾼 계열 코네스토가 · 캐러밴마스터 캐릭터 그림 (2026-11-11, 사용자 00:49 결정: 「캐릭터는 A를 캐러밴마스터로, B를 코네스토가로」). 머리 · 덧붙이기 · 손 채찍은 반 해상도(뭉툭 칸) 격자 — 게임에 넣을 때 pxUp으로 두 배(top = top_h×2, x = x_h×2). 앞은 PX_HEAD/PX_EX(BX · HY · BY 기준), 옆은 PXS_HEAD/PXS_EX(SX−1 · SHY · SY 기준). 글자는 pxPal: J/j/I 모자(hc) · W/V 가죽 · A/a 둘째 색(c2) · F 셋째 색(c3) · Z/z 담요 · R 깃털(붉은 줄) · G 놋쇠 · X 빛(gem) · O 나무. 손 채찍(whip_hand)은 앞 = 위에 빈 줄 하나를 더 얹어 손 줄을 홀수로(시안 CG_WHIP_F), 옆 = 그대로. 웨건 = 코네스토가 야영 웨건 80×50(앞이 오른쪽, 글자표 wagon_letters), 팔레트는 camp62.js WAG_PAL.",
+ "parts": {
+  "pioneer": {
+   "front": {
+    "top_h": 3,
+    "x_h": -1,
+    "rows": [
+     "...JJJJ...",
+     "..JJIJJj..",
+     "..JJJJJj..",
+     "J.WWWWWW.J",
+     "JJJJJJJJJJ",
+     ".jjjjjjjj."
+    ]
+   },
+   "side": {
+    "top_h": 3,
+    "x_h": -1,
+    "rows": [
+     "....JJJJ...",
+     "...JIJJJj..",
+     "...JJJJJj..",
+     ".J.WWWWWW.J",
+     "JJJJJJJJJJJ",
+     ".jjjjjjjjj."
+    ]
+   }
+  },
+  "straw": {
+   "front": {
+    "top_h": 2,
+    "x_h": -1,
+    "rows": [
+     "..AAAAAA..",
+     "..AaAAaA..",
+     "..FFFFFF..",
+     "AAAAAAAAAA",
+     ".aAaAaAaa."
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -1,
+    "rows": [
+     "...AAAAAA..",
+     "...AaAAaA..",
+     "...FFFFFF..",
+     "AAAAAAAAAAA",
+     ".aAaAaAaAa."
+    ]
+   }
+  },
+  "oilhood": {
+   "front": {
+    "top_h": 2,
+    "x_h": 0,
+    "rows": [
+     "..JJJJ..",
+     ".JJIJJj.",
+     "JJJJJJJj",
+     "jjjjjjjj",
+     "J......j",
+     "J......j",
+     "j......j"
+    ]
+   },
+   "side": {
+    "top_h": 2,
+    "x_h": -1,
+    "rows": [
+     "...JJJJ...",
+     "..JJIJJj..",
+     ".JJJJJJJj.",
+     "JJJJJjjjjj",
+     "JJJJ......",
+     "JJJj......",
+     "JJj......."
+    ]
+   }
+  }
+ },
+ "ex": {
+  "bedroll": {
+   "front": {
+    "x": -2,
+    "y": -3,
+    "under": true,
+    "rows": [
+     "ZZRZZZZRZZ",
+     "zzRzzzzRzz"
+    ]
+   },
+   "side": {
+    "x": -3,
+    "y": -3,
+    "under": true,
+    "rows": [
+     "ZR",
+     "zR"
+    ]
+   }
+  },
+  "lantern": {
+   "front": {
+    "x": -2,
+    "y": 5,
+    "under": false,
+    "rows": [
+     ".G.",
+     "GXG",
+     "GXG",
+     ".G."
+    ]
+   },
+   "side": {
+    "x": 1,
+    "y": 5,
+    "under": false,
+    "rows": [
+     ".G.",
+     "GXG",
+     ".G."
+    ]
+   }
+  },
+  "susp": {
+   "front": {
+    "x": 0,
+    "y": 0,
+    "under": false,
+    "rows": [
+     ".V....V.",
+     ".V....V.",
+     ".V....V."
+    ]
+   },
+   "side": {
+    "x": 3,
+    "y": 0,
+    "under": false,
+    "rows": [
+     "V...",
+     "V..."
+    ]
+   }
+  }
+ },
+ "whip_hand": [
+  ".O.",
+  ".@.",
+  ".W.",
+  "WWV",
+  "W.V",
+  "VVV"
+ ],
+ "looks": {
+  "caravanmaster": {
+   "use": "캐러밴마스터 — 확정 (A 개척민, 지금 실크해트 그림 대신)",
+   "look": {
+    "head": "pioneer",
+    "body": "coat",
+    "ex": [
+     "kerchief",
+     "bedroll"
+    ],
+    "c1": "#d8c8a0",
+    "c2": "#a8906a",
+    "c3": "#c8322a",
+    "hc": "#ece0c4",
+    "leather": "#7a5232",
+    "feather": "#c8322a",
+    "pants": "#5a4630",
+    "boots": "#4a3020",
+    "hairc": "#5a3a22",
+    "hair": "short"
+   }
+  },
+  "conestoga": {
+   "use": "3차 코네스토가 — 확정 (B 푸른 짐칸)",
+   "look": {
+    "head": "straw",
+    "body": "leather",
+    "ex": [
+     "susp"
+    ],
+    "c1": "#3a5aa0",
+    "c2": "#e8c870",
+    "c3": "#2a4a8a",
+    "hc": "#e8c870",
+    "leather": "#7a5232",
+    "pants": "#4a4036",
+    "boots": "#3a2a1e",
+    "hairc": "#c89a5a",
+    "hair": "short"
+   }
+  },
+  "unused": {
+   "use": "안 고름 (참고) — C 불침번",
+   "look": {
+    "head": "oilhood",
+    "body": "coat",
+    "ex": [
+     "kerchief",
+     "lantern"
+    ],
+    "c1": "#5a6a3a",
+    "c2": "#3a4628",
+    "c3": "#d8a030",
+    "hc": "#4a5a32",
+    "leather": "#5a3a22",
+    "gold": "#5a5048",
+    "gem": "#ffd860",
+    "pants": "#3a3a2a",
+    "boots": "#2a2418",
+    "hairc": "#2a2420",
+    "hair": "short"
+   }
+  }
+ },
+ "wagon": {
+  "w": 80,
+  "h": 50,
+  "rows": [
+   "................................................................................",
+   "................................................................................",
+   "..cCC.....................................................................CCc...",
+   "..CCCCCCC.............................................................CCCCCCC...",
+   "..CCCCCCCCCCC.....................................................CCCCCCCCCCC...",
+   "..CCCCCCCCCCdCCCCC...........................................CCCdCCCCCCCCCCCC...",
+   "..CCCCCCCCCCdCCCCCCCdCCC...............................CdCCCCCCCdCCCCCCCCCCCC...",
+   "..CCCCCCCCCCdCCCCCCCdCCCCCCCCdCCCCCCCCd.CCCCCCCdCCCCCCCCdCCCCCCCdCCCCCCCCCCCC...",
+   "..CCCCCCCCCCdCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCdCCCCCCCCeCCC...",
+   "..CCeeCCCCCCdCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCdCCCCCCCeeeCC...",
+   "..CeeeCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCCCdCCCCCCeeeCC...",
+   "..ceeeCCCCCdCCCCCCCCdCCCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCdCCCCCCCCdCCCCCCeeeCc...",
+   "..ceeeCCCCCdCCCCCCCCdCCCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCdCCCCCCCCdCCCCCCeeecc...",
+   "..ceeeCCCCCdCCCCCCCCdCCCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCdCCCCCCCCdCCCCCCeeecc...",
+   "...eeeCCCCCdCCCCCCCCdCCCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCdCCCCCCCCdCCCCCCeeec....",
+   "....eecCCCCdCCCCCCCdCCCCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCCdCCCCCCCdCCCCCCeee.....",
+   ".....eccccdCCCCCCCCdCCCCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCCdCCCCCCCCdCCcccce......",
+   ".....cccccdcccccCCCdCCCCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCCdCCCCCcccdccccccc......",
+   "......ccccdccccccccdcccCCCCCdCCCCCCCCCdCCCCCCCCCdCCCCCCCcdccccccccdcccccc.......",
+   ".......cccdccccccccdccccccccdcccccccccdcccccccccdccccccccdccccccccdccccc........",
+   "......kkkkkkkccccccdccccccccdcccccccccdcccccccccdccccccccdcccccccckkkkkkk.......",
+   "......KKkkkkkkkkkkkkkcccccccdcccccccccdcccccccccdccccccccdkkkkkkkkkkkkkKK.......",
+   "......bBBKKKKKKkkkkkkkkkkkkkkkkkccccccdcccccccckkkkkkkkkkkkkkkkkKKKKKKBBb.......",
+   "......bBBBBBbBBBKKKKKKkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkKKKKKKBBBbBBBBBb.......",
+   "......bBBBBBbBBBBBbBBBBBKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKBBBBBbBBBBBbBBBBBb.......",
+   "......bBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBb.......",
+   "......bBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBb.......",
+   "......bBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBb.......",
+   "......bBBBBBbBBTTTTTBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBb.......",
+   "......KKKKKKKTTTTRTTTTBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBBBBbBBKKKKKKKKKK.......",
+   ".........KKTTRRRRRRRRRTTKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK..........",
+   "..........TTRRVVVrVVVRRTTKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKVVVVV..................",
+   ".........TTRRrrvvrvvrrRRTTvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvTTTv..................",
+   ".........TRR..r..r..r..RRT.............................TTTTRTTTT................",
+   "........TRRr...r.r.r...rRRT...........................TTRRRRRRRTT...............",
+   "........TR.rr..r.r.r..rr.RT..........................TTRRr...rRRTT..............",
+   ".......TTR...rr.rrr.rr...RTT........................TTR...r.r...RTT.............",
+   ".......TTR.....rhhhr.....RTT........................TRRr..r.r..rwRT.............",
+   ".......TRRrrrrrrhhhrrrrrrRRT........................TR..r.....r.Www.............",
+   ".......TTR.....rhhhr.....RTT.......................TTR....hhh....WWww...........",
+   ".......TTR...rr.rrr.rr...RTT.......................TRRrrrrhhhrrrrRRWWw..........",
+   "........TR.rr..r.r.r..rr.RT........................TTR....hhh....RTT.Www........",
+   "........TRRr...r.r.r...rRRT.........................TR..r.....r..RT...WWww......",
+   ".........TRR..r..r..r..RRT..........................TRRr..r.r..rRRT.....WWw.....",
+   ".........TTRRrr..r..rrRRTT..........................TTR...r.r...RTT.......Www...",
+   "..........TTRR...r...RRTT............................TTRRr...rRRTT.........WWww.",
+   "...........TTRRRRRRRRRTT..............................TTRRRRRRRTT............WW.",
+   ".............TTTTRTTTT.................................TTTTRTTTT................",
+   "...............TTTTT......................................TTT...................",
+   "................................................................................"
+  ],
+  "wagon_letters": "덮개 C c(그늘) d(테) e(끝 구멍) · 짐칸 B b(널빤지 틈) k(위 띠) K · 바퀴 R r(살) T(쇠 테) h(통) · 받침 v V · 끌채 w W"
+ }
+}
