@@ -295,3 +295,16 @@ def str_low(lv):
     vk = 'str__low'
     R.SHAPES[vk] = R.SHAPES['str']; R.GLYPH[vk] = STR_LOW[0]; R.GOFF[vk] = STR_LOW[1]; R.GLYPH_FN.pop(vk, None)
     return R.make(vk, COL['str'], lv)
+# 다른 룬도 하급 ~ 상급을 고른 최상급 문양으로 (사용자 11-12 08:02 「다른애들도 하, 중, 상이 모습이 같아야지」):
+# 마력 C 마법진 · 신속 D 번개 화살 · 마나 C 마나 결정 · 폭풍 B 바람 세 줄 · 냉기 합침 2 · 생명 C 두 겹 하트.
+# 최상급 속 채움 o(룬 색)는 아래 등급에서 밝은 칸 w로(옛 물약 · 하트 문양과 같은 결) — R.make가 등급마다 돌 새김 · 그림자 · 빛 번짐으로 칠함
+LOW_PICK = {'matk': (lambda: ALTS['matk'][CHOSEN['matk']], {}), 'haste': (lambda: ALTS['haste'][CHOSEN['haste']], {}),
+            'mana': (lambda: ALTS['mana'][CHOSEN['mana']], {'o': 'w'}), 'windatk': (lambda: ALTS['windatk'][CHOSEN['windatk']], {}),
+            'coldres': (lambda: ICE_MIX[ICE_PICK], {}), 'hp': (lambda: ALTS3['hp'][HP_PICK], {'o': 'w'})}
+
+
+def top_low(k, lv):
+    (nm, rows, off), m = LOW_PICK[k][0](), LOW_PICK[k][1]
+    vk = k + '__lo'
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = [''.join(m.get(ch, ch) for ch in r) for r in rows]; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return R.make(vk, COL[k], lv)
