@@ -173,3 +173,20 @@ def variant4(k, i):
     nm, rows, off = ALTS4[k][i]
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
+
+
+# ───────── 다섯째 (사용자 11-11 22:57 「다시 부족해 좀더 작게 표현해서 옆구리의 근육도 보이게 표현해」) ─────────
+# 9칸으로 줄이고(테 안쪽에 쏙), 양옆에 팔 · 팔과 몸 사이 틈을 두어 몸으로 보이게, 옆구리 근육(배빗근)은 복근 양옆 금빛 띠 또는 사선으로 따로 보이게.
+ALTS5 = {'str': [
+    ('흰 몸 · 금빛 옆구리', ['...###...', '.#######.', '#########', '##w###w##', '#.bb#bb.#', '#.g#b#g.#', '#.gb#bg.#', '#.g#b#g.#', '..gb#bg..', '...#b#...', '...#.#...'], (0, 1)),
+    ('흰 몸 · 옆구리 사선', ['...###...', '.#######.', '#########', '##w###w##', '#.bb#bb.#', '#.b#b#b.#', '#.#b#b#.#', '#.b#b#b.#', '..#b#b#..', '...#b#...', '...#.#...'], (0, 1)),
+    ('금빛 몸 · 흰 옆구리', ['...ggg...', '.ggggggg.', 'ggggggggg', 'ggwgggwgg', 'g.bbgbb.g', 'g.#gbg#.g', 'g.#bgb#.g', 'g.#gbg#.g', '..#bgb#..', '...gbg...', '...g.g...'], (0, 1)),
+    ('가슴 줄 길게 · 금빛 옆구리', ['...###...', '.#######.', '#########', '#bbb#bbb#', '#.g#b#g.#', '#.gb#bg.#', '#.g#b#g.#', '#.gb#bg.#', '..g#b#g..', '...#.#...'], (0, 1)),
+]}
+
+
+def variant5(k, i):
+    vk = f'{k}__z{i}'
+    nm, rows, off = ALTS5[k][i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])
