@@ -226,3 +226,22 @@ def variant7(k, i):
     nm, rows, off = ALTS7[k][i]
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
+
+
+# ───────── 강인 최상급 — 팔 근육 더 작게 (사용자 11-11 23:43 「좀더 작게」) ─────────
+# 10칸 → 9칸(x6~14 · y7~15), 돌의 넓은 아래쪽에 앉힘. 결(마디 빛 · 손끝 금 · 접힌 금 · 알통 빛 · 둥근 그늘 · 아래 곡선 · 삼두 그늘)은 그대로.
+ALTS8 = {'str': [
+    ('흰 팔', ['...www...', '..w###p..', '.w##ppr..', '.w#p.....', 'w#p..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+    ('금빛 팔', ['...###...', '..#gggy..', '.#ggyyb..', '.#gy.....', '#gy..##..', '#gyb#ggh.', '#ggybgghy', '#ggggbbhy', '.yyyyyyy.'], (1, 2)),
+    ('흰 팔 + 금 팔찌', ['...www...', '..w###p..', '.w##ppr..', '.ggy.....', 'bbb..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+    ('금빛 팔 + 근육 결', ['...###...', '..#gggy..', '.#ggyyb..', '.#gy.....', '#gy..w#..', '#gyb#ggh.', '#ggybgghy', '#hhggbbhy', '.yyyyyyy.'], (1, 2)),
+]}
+SMALL8 = [('흰 팔 8칸', ['...ww...', '..w##p..', '.w#ppr..', '.w#p....', 'w#p.ww..', 'w#pr##q.', 'w###rrqp', '.pppppp.'], (0, 1)),   # 더 작게 하면 (비교용)
+          ('금빛 팔 8칸', ['...##...', '..#ggy..', '.#gyyb..', '.#gy....', '#gy.##..', '#gybggh.', '#gggbbhy', '.yyyyyy.'], (0, 1))]
+
+
+def variant8(k, i):
+    vk = f'{k}__c{i}'
+    nm, rows, off = (ALTS8[k] + SMALL8)[i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])
