@@ -104,7 +104,7 @@ const skLv = (a, id) => (a && a.sl && a.sl[id]) || 1;
 const skLvMul = (a, id) => 1 + SK_LV_POW * (skLv(a, id) - 1);
 // 스킬을 lv단계로 올리는 값: 책이 있는 스킬은 책 한 권 + 돈, 고유·기본·각성 스킬은 돈만
 const isInnate = id => Object.values(CLASSES).some(c => c.innate === id);
-const skillNeedsBook = id => { const s = SKILLS[id]; return !!s && !s.own && !s.awk && !isInnate(id); };
+const skillNeedsBook = id => { const s = SKILLS[id]; return !!s && !s.awk && !isInnate(id); };   // 빌드 63: 2차 · 3차 고유 스킬(own)도 스킬북으로 (직업 기본 스킬 · 각성기만 책 없이)
 const skillUpCost = (id, lv) => { const s = SKILLS[id]; return Math.round((skillNeedsBook(id) ? Math.max(60, s.lv * 30) : Math.max(150, s.lv * 40)) * lv); };
 
 /* ───────── 스킬 ───────── */

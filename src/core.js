@@ -238,10 +238,8 @@ function makeGear(base, t, q) {
   g.bonus = rollBonus(t, g.q);
   return g;
 }
-function randomBook(lo, hi) {
-  const pool = BOOK_IDS.filter(id => SKILLS[id].lv >= lo && SKILLS[id].lv <= hi);
-  return pool.length ? 'book_' + pickOne(pool) : null;
-}
+// 빌드 63: 보물 상자 · 던전 공략 상자의 스킬북은 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 …)로 — 레벨 구간의 가운데로 고른다 (data-store.js)
+function randomBook(lo, hi, boss) { return tierBookForLv(Math.round((lo + hi) / 2), boss); }
 
 /* ───────── 원정 ───────── */
 const mHp = (m, L) => m.mh * (25 + 18 * L + 1.15 * L * L);
@@ -1153,8 +1151,8 @@ function kill(p, e, f) {
   const gt = F.treasure ? Math.min(GTIERS.length - 1, raidTier(e.lvo || 10)) : F.tier;   // 보물 던전은 파티 레벨에 맞는 단계
   if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(dropBase(), gt, rollQuality(f.boss ? 0.25 : 0)));
   { const ea = elemArrowOf(f.id); if (ea && rnd() < (f.boss || f.fb ? 0.3 : 0.012) * ap) lootGear(p, e, makeGear(ea, gt, 0)); }   // 속성 화살: 그 속성 몬스터한테서
-  // 스킬북: 몬스터마다 정해진 책만 떨어뜨린다 (data-books.js). 감정 연구·전리품 운이 확률을 올린다
-  for (const sk of monBooks(f.id)) if (ITEMS['book_' + sk] && rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, 'book_' + sk, 1);
+  // 스킬북: 빌드 63부터 모든 몬스터가 스킬북 단계를 떨어뜨린다 — 확률은 예전 그대로(bookRate), 어느 책인지는 그 땅의 단계로(우두머리 · 주인은 한 줄 위) · 감정 연구 · 전리품 운이 확률을 올린다
+  if (rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, tierBookFor(F.treasure ? raidTier(e.lvo || 10) : F.tier != null ? F.tier : tierOfLv(f.lv), f.boss || f.fb), 1);
   bossParts(p, e, f, inD);
   stoneDrops(p, e, f, luck);
   mapDrops(p, e, f, luck);
@@ -1310,9 +1308,8 @@ function arrive(p) {
   const e = p.exp;
   if (e.area === 'trade') tradeHome(p, e);   // 교역: 못 판 짐은 창고로, 보고
   const got = Object.assign({}, e.bag), val = vOf(got);
-  for (const [k, q] of Object.entries(e.bag)) addTo(S.inv, k, q);
-  for (const [k, q] of Object.entries(e.sup)) addTo(S.inv, k, q);
-  e.gbag.forEach(g => S.gear.push(g));
+  for (const [k, q] of Object.entries(e.sup)) addTo(S.inv, k, q);   // 남은 보급품은 메인 창고에서 가져간 것
+  unloadBag(p, e.bag, e.gbag);   // 빌드 63: 메인 창고가 차면 창고 1~10으로, 그래도 빈 칸이 없으면 길드에 판다 (store.js)
   autoFulfill();   // 의뢰품이 다 모였으면 먼저 전달하고, 남는 것을 판다
   autoSellRun(p.name);
   const team = p.members.map(advById).filter(Boolean);
@@ -1359,7 +1356,7 @@ function dungeonClear(p, e) {
     team.forEach(a => { a.pf = (a.pf || 0) + 20; a.dungeons = (a.dungeons || 0) + 1; });
     // 보물 상자: 전설·영웅 장비와 장비 한 점, 스킬북 두 권, 주인의 혼 둘, 중급 룬 둘. 그리고 유물
     e.gbag.push(makeGear(dropBase(), F.tier, 4), makeGear(dropBase(), F.tier, 3), makeGear(dropBase(), F.tier, Math.max(1, rollQuality(0.4))));
-    const b1 = randomBook(F.lv, F.lv + 16), b2 = randomBook(F.lv, F.lv + 20);
+    const b1 = randomBook(F.lv, F.lv + 16, true), b2 = randomBook(F.lv, F.lv + 20, true);
     if (b1) addTo(e.bag, b1, 1); if (b2) addTo(e.bag, b2, 1);
     addTo(e.bag, 'soul_' + F.tier, 2);
     addTo(e.bag, runeId(pickOne(RUNE_IDS), 1), 1); addTo(e.bag, runeId(pickOne(RUNE_IDS), 1), 1);

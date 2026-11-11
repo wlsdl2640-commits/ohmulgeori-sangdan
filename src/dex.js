@@ -79,8 +79,9 @@ function monCard(id) {
   let drops = '';
   if (lvl >= 2) {
     const rows = (m.drops || []).map(([it, ch, q]) => ITEMS[it] ? `<div class="row sub">${iconImg(it)}<span class="grow">${ITEMS[it].name}${q ? ` ×${q}` : ''}</span><b class="num">${lvl >= 3 ? Math.round(ch * 100) + '%' : '?%'}</b></div>` : '').join('');
-    const bookRow = (m.boss && !m.fb) ? BOOK_RATE.boss : BOOK_RATE.field;
-    const books = monBooks(id).filter(sk => ITEMS['book_' + sk]).map(sk => `<div class="row sub">${iconImg('book_' + sk)}<span class="grow">${ITEMS['book_' + sk].name} <span class="muted">· ${SKILLS[sk].cls.includes('all') ? '누구나' : SKILLS[sk].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')} Lv${SKILLS[sk].lv}</span></span><b class="num">${lvl >= 3 ? (Math.round(bookRow * 1000) / 10) + '%' : '?%'}</b></div>`).join('');
+    // 빌드 63: 스킬북은 스킬북 단계로 — 그 땅의 단계에 따라 어느 책인지 (우두머리 · 주인은 한 줄 위)
+    const bt = where.length && FIELDS[where[0].fid] && FIELDS[where[0].fid].tier != null ? FIELDS[where[0].fid].tier : tierOfLv(lv);
+    const books = m.giant ? '' : tierBookMix(bt, m.boss || fbk).map(([b, pc]) => `<div class="row sub">${iconImg(b)}<span class="grow">${ITEMS[b].name} <span class="muted">· 스킬북이 나오면</span></span><b class="num">${lvl >= 3 ? pc + '%' : '?%'}</b></div>`).join('');
     const SD = STONE_DROP, stoneTxt = kind => `개화석 ${stonePct(SD.bloomstone[kind])}·마법사의 돌 ${stonePct(SD.wizstone[kind])}`;
     const extra = m.giant ? `<div class="sub muted">레이드 등수 보상: ${ITEMS['rp_' + where[0].raid] ? ITEMS['rp_' + where[0].raid].name : '부속품'}, ${ITEMS['rh_' + where[0].raid] ? ITEMS['rh_' + where[0].raid].name : '심장'}, 개화석(1위 ${SD.bloomstone.raidN[0]}·2위 ${SD.bloomstone.raidN[1]}·3위 ${SD.bloomstone.raidN[2]}), 마법사의 돌(1위 ${stonePct(SD.wizstone.raidP[0])}~참가 ${stonePct(SD.wizstone.raidP[3])})</div>` : m.boss && !m.fb ? `<div class="sub muted">던전을 처음 공략하면 보물 상자(장비·스킬북·주인의 혼·룬)와 유물. 주인을 잡을 때마다 ${stoneTxt('boss')}</div>` : `<div class="sub muted">필드에서는 약초 12%${lvl >= 3 ? ', 장비 0.6% (던전 2.5%)' : ''}. 스킬북은 던전 안에서 ${BOOK_RATE.dungeon * 100}%, 우두머리로 나오면 ${Math.round(BOOK_RATE.fb * 100)}%, 주인이면 ${Math.round(BOOK_RATE.boss * 100)}%. 우두머리로 나오면 증표·핵·혼과 ${stoneTxt('fb')}, 필드의 주인이면 ${stoneTxt('lord')}</div>`;
     drops = `<div class="sec" style="margin-top:6px"><b>전리품</b><span>${lvl >= 3 ? '확률' : '15마리부터 확률'}</span></div>${rows || '<div class="sub muted">떨어뜨리는 것 없음</div>'}${books ? `<div class="sub muted" style="margin-top:4px">스킬북</div>${books}` : ''}${extra}`;
@@ -138,14 +139,11 @@ function skillHow(id) {
   const s = SKILLS[id];
   if (s.awk) return '각성';
   if (Object.values(CLASSES).some(C => C.innate === id)) return '직업 기본';
-  if (s.own) return '훈련소 고유 수련';
-  if (s.kingdom) return `${KINGDOMS[s.kingdom].name} 상단·의뢰`;
-  if (s.arena) return '투기장 상단';
-  return '스킬북 (전리품·암시장·던전 상자)';
+  return bookSrcText(id) || '스킬북';
 }
 function skillRow(id) {
   const s = SKILLS[id], who = S.advs.filter(a => a.skills.includes(id)).map(a => a.name), book = S.inv['book_' + id] || 0;
-  const from = !s.own && !s.awk && !Object.values(CLASSES).some(C => C.innate === id) ? bookFromText(id) : skillHow(id);
+  const from = skillHow(id);
   return `<div class="li${who.length ? ' on' : ''}"><div class="grow stack"><span>${s.name} <span class="muted">· Lv${s.lv} · ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span><span class="sub muted">${from}${s.cls.includes('all') ? ' · 누구나' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}`}${who.length ? ` · 배움: ${who.map(esc).join(', ')}` : ''}${book ? ` · 스킬북 ${book}권` : ''}</span></div></div>`;
 }
 function dexSkills() {
@@ -176,7 +174,7 @@ function matRow(it) {
   return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.v}G · 무게 ${I.w}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${itemFrom(it).join(', ') || (I.boss === 1 ? '우두머리(필드 보스)' : I.boss === 2 ? '필드의 주인' : I.boss === 3 ? '던전 주인·주인을 다시 잡을 때' : I.raid ? '레이드 등수 보상' : '')}</span>${mats.length || wants.length ? `<span class="sub muted">${mats.length ? `장비 재료(${mats.join('·')})` : ''}${mats.length && wants.length ? ' · ' : ''}${wants.length ? `사는 왕국: ${wants.join(', ')}` : ''}</span>` : ''}</div></div>`;
 }
 function dexMats() {
-  const ids = Object.keys(ITEMS).filter(it => { const I = ITEMS[it]; return !I.book && !I.potion && !I.heal && !I.mana && !I.sup && !I.herb && !it.startsWith('rune_') && !I.runeKind; });
+  const ids = Object.keys(ITEMS).filter(it => { const I = ITEMS[it]; return !I.book && I.btier == null && !I.potion && !I.heal && !I.mana && !I.sup && !I.herb && !it.startsWith('rune_') && !I.runeKind; });   // 스킬북 단계(빌드 63)는 부속품 도감에서 뺀다
   const g1 = ids.filter(it => !ITEMS[it].boss && !ITEMS[it].raid), g2 = ids.filter(it => ITEMS[it].boss), g3 = ids.filter(it => ITEMS[it].raid);
   const known = ids.filter(it => dexState().items[it] || (S.inv[it] || 0) > 0).length;
   const herbs = HERB_IDS.map(it => { const I = ITEMS[it], known = !!dexState().items[it] || (S.inv[it] || 0) > 0, uses = RECIPES.filter(r => r.need[it]).map(r => ITEMS[r.out].name);

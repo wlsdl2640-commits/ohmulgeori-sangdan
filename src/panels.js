@@ -93,7 +93,7 @@ PANELS.co_king = () => {
     return `<div class="card hl" style="--kc:${D.c}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} 상단</div><div class="sub">${D.desc}</div></div></div>
       <div class="sub gold-t">${festOf(v.k) ? '🎉 축제 중: 사 가는 값 두 배, 파는 물건 30% 할인 · ' : ''}${dayLabel(v.until)}까지 머물러요 (D-${v.until - today()}) · 기준가의 ${Math.round(v.m * 100 * festSellMul(v.k))}% · 지금까지 ${fmt(v.earned)}G${v.full ? ' · <span class="ok-t">주문 완료</span>' : ''}</div>
       <div class="list">${rows}</div>
-      ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>여기서만 파는 스킬북도 있어요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].book ? `${SKILLS[ITEMS[o.it].book].desc} · Lv${SKILLS[ITEMS[o.it].book].lv} ${clsList(SKILLS[ITEMS[o.it].book].cls)}<br>${skillSpecLine(ITEMS[o.it].book)}` : `창고 ${S.inv[o.it] || 0}`}</span></div><button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button></div>`).join('')}</div>` : ''}</div>`;
+      ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>빛바랜 · 신비한 스킬북도 가져와요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].book ? `${SKILLS[ITEMS[o.it].book].desc} · Lv${SKILLS[ITEMS[o.it].book].lv} ${clsList(SKILLS[ITEMS[o.it].book].cls)}<br>${skillSpecLine(ITEMS[o.it].book)}` : `창고 ${S.inv[o.it] || 0}`}</span></div><button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button></div>`).join('')}</div>` : ''}</div>`;
   })() : `<div class="card"><div class="sub">지금은 찾아온 왕국 상단이 없어요. ${S.king ? `${dayLabel(S.king.next)}쯤 다음 상단이 올 거예요.` : ''}</div></div>`;
   const list = KINGDOM_IDS.map(k => { const D = KINGDOMS[k], open = kingOpen(k), f = favorOf(k), t = favorTier(f), nx = FAVOR[t + 1];
     return `<div class="card${open ? '' : ' dim'}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} <small>${FAVOR[t].name}</small></div><div class="sub">${open ? `호감 ${Math.floor(f)}${nx ? `/${nx.at}` : ''} · 값 ${Math.round(FAVOR[t].m * 100)}%` : `${FIELDS[D.need].name}에 가 보면 교역을 시작해요`}</div></div></div>
@@ -161,8 +161,10 @@ function smithyBox() {
   }).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. 룬 칸 ${q}개.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">일반 제작은 만들 때마다 일반·고급·희귀 품질이 정해져요. 대장간을 넓힐수록 좋은 품질이 잘 나와요.</div>';
-  const tabs = `<div class="tabs"><button type="button" class="tab${UI.smithTab !== 'enh' ? ' on' : ''}" data-act="smithTab" data-t="make">제작</button><button type="button" class="tab${UI.smithTab === 'enh' ? ' on' : ''}" data-act="smithTab" data-t="enh">강화</button></div>`;
-  if (UI.smithTab === 'enh') return tabs + enhanceBox();
+  const st = UI.smithTab === 'enh' || UI.smithTab === 'fuse' ? UI.smithTab : 'make';
+  const tabs = `<div class="tabs">${[['make', '제작'], ['enh', '강화'], ['fuse', '합성']].map(([id, n]) => `<button type="button" class="tab${st === id ? ' on' : ''}" data-act="smithTab" data-t="${id}">${n}</button>`).join('')}</div>`;
+  if (st === 'enh') return tabs + enhanceBox();
+  if (st === 'fuse') return tabs + fuseBox();   // 빌드 63: 같은 레어도 9점 합성 (store.js)
   return `${tabs}<div class="btns">${chips}</div><div class="btns">${qchips}</div>${note}<div class="list">${rows}</div>`;
 }
 // 강화: 창고와 끼고 있는 장비 중 하나를 골라 +1씩
@@ -350,11 +352,12 @@ function advDetail(a) {
     return `<div class="li col${off ? ' dim' : ''}"><div class="row">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="tag${lv > 1 ? ' gold-t' : ''}">Lv${lv}</span> <span class="muted">· ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}${off ? ' · <span class="red-t">자동 사용 끔</span>' : pri ? ' · <span class="gold-t">우선 사용</span>' : ''}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id, a)}</span>${why && lv < SK_LV_MAX ? `<span class="sub muted">다음 단계: ${esc(why)}</span>` : ''}</div></div><div class="btns">${up}${tog}${id !== CLASSES[a.cls].innate && idle ? `<button type="button" class="btn sm" data-mact="forget" data-s="${id}">잊기</button>` : ''}</div></div>`; }).join('');
   const books = Object.keys(S.inv).filter(k => ITEMS[k].book && S.inv[k] > 0 && !a.skills.includes(ITEMS[k].book) && canLearn(a, ITEMS[k].book));
   const room = a.skills.length < skillSlots(a), chain = chainOf(a.cls), mastList = mastRows(a, idle);
-  const learnable = books.map(k => { const id = ITEMS[k].book, s = SKILLS[id]; return `<div class="li">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv} · ${iconImg(k, 'pi')} 스킬북</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${S.bld.training && idle && room && S.gold >= s.lv * 30 ? '' : ' disabled'}>배우기 ${s.lv * 30}G</button></div>`; }).join('');
-  const owns = SKILL_IDS.filter(id => SKILLS[id].own && chain.some(c => SKILLS[id].cls.includes(c)) && !a.skills.includes(id)).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv);
-  const ownRows = owns.map(id => { const s = SKILLS[id], ok = a.lv >= s.lv; return `<div class="li">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv}${s.cls.includes(a.cls) ? '' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : '').join('')}`}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${ok && S.bld.training && idle && room && S.gold >= ownFee(s) ? '' : ' disabled'}>${ok ? `배우기 ${ownFee(s)}G` : `Lv${s.lv}부터`}</button></div>`; }).join('');
+  const learnable = books.map(k => { const id = ITEMS[k].book, s = SKILLS[id]; return `<div class="li">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv} · ${iconImg(k, 'pi')} 스킬북</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span></div><button type="button" class="btn sm gold" data-mact="learn" data-s="${id}"${S.bld.training && idle && room && S.gold >= learnFee(s) ? '' : ' disabled'}>배우기 ${fmt(learnFee(s))}G</button></div>`; }).join('');
+  // 빌드 63: 2차 · 3차 고유 스킬도 스킬북으로 (빛바랜 · 신비한 스킬북을 펼쳐 나온 책) — 책이 없는 것만 여기, 있는 것은 위 「배울 수 있는 스킬북」
+  const owns = SKILL_IDS.filter(id => SKILLS[id].own && chain.some(c => SKILLS[id].cls.includes(c)) && !a.skills.includes(id) && id !== CLASSES[a.cls].innate && !((S.inv['book_' + id] || 0) > 0)).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv);
+  const ownRows = owns.map(id => { const s = SKILLS[id]; return `<div class="li">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv}${s.cls.includes(a.cls) ? '' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : '').join('')}`}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span><span class="sub muted">${bookFromText(id)}</span></div><span class="tag muted">스킬북 필요</span></div>`; }).join('');
   const table = SKILL_IDS.filter(id => chain.some(c => SKILLS[id].cls.includes(c)) || SKILLS[id].cls.includes('all')).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv)
-    .map(id => { const s = SKILLS[id], has = a.skills.includes(id); return `<div class="${has ? 'ok-t' : a.lv >= s.lv ? '' : 'muted'}">Lv${s.lv} ${s.name} · ${costStr(s)} · ${has ? '배움' : id === CLASSES[a.cls].innate ? '기본' : s.own ? '고유 · 책 없이 배움' : '스킬북 필요'}${s.cls.includes('all') ? ' · 공용' : ''}<div class="sub muted">${skillSpec(id).join(' · ')}${!has && !s.own && !s.awk && id !== CLASSES[a.cls].innate ? ` · ${bookFromText(id)}` : ''}</div></div>`; }).join('');
+    .map(id => { const s = SKILLS[id], has = a.skills.includes(id); return `<div class="${has ? 'ok-t' : a.lv >= s.lv ? '' : 'muted'}">Lv${s.lv} ${s.name} · ${costStr(s)} · ${has ? '배움' : id === CLASSES[a.cls].innate ? '기본' : s.awk ? '각성' : s.own ? '고유 · 스킬북 필요' : '스킬북 필요'}${s.cls.includes('all') ? ' · 공용' : ''}<div class="sub muted">${skillSpec(id).join(' · ')}${!has && !s.awk && id !== CLASSES[a.cls].innate ? ` · ${bookFromText(id)}` : ''}</div></div>`; }).join('');
   const L = LICENSE[a.rank || 0], Ln = licNext(a);
   const licR = licReqs(a), licOk = licR.every(r => r.ok);
   const lic = Ln ? `<div class="li"><div class="grow stack"><span>다음: ${LICENSE[a.rank + 1].name} <span class="muted">· 능력 ×${LICENSE[a.rank + 1].mul}</span></span><span class="sub">${licR.map(r => `<span class="${r.ok ? 'ok-t' : 'red-t'}">${r.label} ${fmt(r.cur)}/${fmt(r.need)}</span>`).join(' · ')} · <span class="${S.gold >= Ln.fee ? '' : 'red-t'}">심사비 ${fmt(Ln.fee)}G</span></span><span class="sub muted">우두머리·주인 처치는 필드 보스(1-10·20·30·40·50)와 던전 주인을 함께 센 수예요. 던전·레이드 공략은 던전 주인을 처음 쓰러뜨리거나 레이드를 끝냈을 때예요.</span></div><button type="button" class="btn sm gold" data-mact="lic"${idle && licOk && S.gold >= Ln.fee ? '' : ' disabled'}>심사</button></div>` : '<div class="li"><span class="sub gold-t">가장 높은 라이선스예요.</span></div>';
@@ -392,7 +395,7 @@ function advDetail(a) {
     <div class="sub muted">스킬은 저마다의 재사용 대기시간이 돌면 바로 나가고, 기본 공격은 그와 상관없이 ${BASIC_CD}초 ÷ 공격 속도마다 한 번 나가요. 피해는 방어 0인 적 기준이고 실제로는 적의 방어력만큼 줄어요. 스킬 레벨은 Lv${SK_LV_MAX}까지, 단계마다 위력 +${Math.round(SK_LV_POW * 100)}%·재사용 -${Math.round(SK_LV_CD * 100)}% (책이 있는 스킬은 같은 책 한 권 더). 「자동 끔」은 그 스킬을 쓰지 않고, 「우선」은 먼저 써요.</div>
     <div class="list">${learned}</div>
     ${mastList ? `<div class="sec"><b>숙련</b><span>스킬 칸과 따로 · ${S.bld.training ? '훈련소에서 한 단계씩' : '훈련소가 필요해요'}</span></div><div class="sub muted">${MAST_TIERS.map(T => `${T.name} Lv${T.lv}${T.job > 1 ? '·' + T.job + '차 전직' : ''}·${fmt(T.fee)}G`).join(' → ')}. 무기술은 그 무기를 들었을 때만 켜지고, 지식·방패·운반 숙련은 늘 켜져 있어요. 「가장 좋은 장비 끼우기」는 숙련한 무기를 조금 더 쳐줘요.</div><div class="list">${mastList}</div>` : ''}
-    ${ownRows ? `<div class="sec"><b>${CLASSES[a.cls].name} 계열 고유 스킬</b><span>${S.bld.training ? '스킬북 없이 훈련소에서' : '훈련소가 필요해요'}</span></div><div class="list">${ownRows}</div>` : ''}
+    ${ownRows ? `<details class="card"><summary>${CLASSES[a.cls].name} 계열 고유 스킬 · 스킬북 ${owns.length}권이 더 있어요</summary><div class="sub muted">2차 · 3차 고유 스킬도 이제 스킬북으로 배워요. 빛바랜 · 신비한 스킬북을 창고에서 펼치면 그 차수 스킬북 하나가 나와요.</div><div class="list">${ownRows}</div></details>` : ''}
     ${learnable ? `<div class="sec"><b>배울 수 있는 스킬북</b><span>${S.bld.training ? '훈련소에서 배워요' : '훈련소가 필요해요'}</span></div><div class="list">${learnable}</div>` : ''}
     <details class="card"><summary>${CLASSES[a.cls].name}이(가) 배울 수 있는 스킬 전체</summary><div class="log">${table}</div></details>${notes}`;
   else if (tab === 'gear') { const SI = setInfo(a); body = `
@@ -596,39 +599,7 @@ PANELS.exp = () => {
   return `${bar}${allBtns}${partyCard(p)}${regs.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지${partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? (rp ? ' · 레이드 전용 파티는 레이드 탭에서 꾸려요' : ` · ${RANKS[RAID_PARTY_RANK].name}랭크가 되면 레이드 전용 파티가 하나 더 열려요`) : ' · 상단 랭크가 오르면 더 만들 수 있어요'}.</div>` : ''}`;
 };
 
-/* 창고 */
-PANELS.inv = () => {
-  while (S.shop.slots.length < slotCount()) S.shop.slots.push(null);
-  const tab = UI.invTab || 'mat', rate = guildRate();
-  const keys = cat => Object.keys(S.inv).filter(k => ITEMS[k] && S.inv[k] > 0 && itemCat(k) === cat);
-  const count = Object.assign(Object.fromEntries(INV_CATS.map(([id]) => [id, id === 'gear' ? S.gear.length : keys(id).length])), { stand: S.shop.slots.filter(Boolean).length });
-  const bar = `<div class="tabs inv">${[['stand', '진열대']].concat(INV_CATS).map(([id, n]) => `<button type="button" class="tab${tab === id ? ' on' : ''}" data-act="invtab" data-id="${id}">${n}${count[id] ? `<small>${count[id]}</small>` : ''}</button>`).join('')}</div>`;
-  if (tab === 'stand') return bar + invStands();
-  // 칸 격자
-  let cells = [], sel = UI.invSel, detail = '';
-  const cell = (k, inner, q, on) => `<button type="button" class="cell${on ? ' on' : ''}${q === 0 ? ' zero' : ''}" data-act="invsel" data-id="${k}">${inner}${q != null ? `<b class="qty">${q}</b>` : ''}</button>`;
-  if (tab === 'gear') {
-    const gear = S.gear.slice().sort((x, y) => gearScore(y) - gearScore(x));
-    cells = gear.map(g => cell('g' + g.id, gImg(g, 'ico lg q-b q' + g.q), null, sel === 'g' + g.id));
-    const g = gear.find(x => 'g' + x.id === sel) || gear[0];
-    if (g) { if (sel !== 'g' + g.id) cells[0] = cell('g' + g.id, gImg(g, 'ico lg q-b q' + g.q), null, true);
-      detail = `<div class="card hl idet"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음 (기본 공격마다 하나, 상단에서 다시 채움)` : ''}</span><span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w} · ${GTYPES[g.base].slot === 'off' ? '부장비 · ' : GTYPES[g.base].slot === 'ammo' ? '화살 칸 · ' : ''}모험가 창에서 끼워요</span></div></div>
-        ${(g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 마탑에서 재감정 (${fmt(REAPPRAISE.fee(g.t))}G${ITEMS['crest_' + g.t] ? ` + ${ITEMS['crest_' + g.t].name} ${REAPPRAISE.crest}` : ''})${reappraiseWhy(g) ? ` · <span class="red-t">${reappraiseWhy(g)}</span>` : ''}</span></div>` : ''}
-        <div class="btns">${S.bld.smithy ? `<button type="button" class="btn sm gold" data-act="enhopen" data-id="${g.id}">강화${g.plus ? ' +' + g.plus : ''}</button>` : ''}${(g.q || 0) >= 2 ? `<button type="button" class="btn sm" data-act="reapp" data-id="${g.id}"${reappraiseWhy(g) ? ' disabled' : ''}>재감정</button>` : ''}${runeSlots(g) ? `<button type="button" class="btn sm" data-act="runewin" data-g="${g.id}">룬 새기기</button>` : ''}<button type="button" class="btn sm" data-act="sellgear" data-id="${g.id}">팔기 ${fmt(Math.round(gearValue(g) * GEAR_SELL))}G</button></div></div>`; }
-    else detail = '<div class="card"><div class="sub">보관 중인 장비가 없어요. 대장간에서 만들거나 원정에서 주워 와요.</div></div>';
-  } else {
-    const list = tab === 'sup' ? SUPPLY_IDS.concat(keys('sup').filter(k => !SUPPLY_IDS.includes(k))) : keys(tab).sort((a, b) => (tab === 'book' ? SKILLS[ITEMS[a].book].lv - SKILLS[ITEMS[b].book].lv : ITEMS[b].v - ITEMS[a].v));
-    cells = list.map(k => cell(k, iconImg(k, 'ico lg'), S.inv[k] || 0, sel === k));
-    const k = list.includes(sel) ? sel : list[0];
-    if (k && sel !== k) cells[0] = cell(k, iconImg(k, 'ico lg'), S.inv[k] || 0, true);
-    detail = k ? invDetail(k, rate) : `<div class="card"><div class="sub">${{ mat: '창고가 비어 있어요. 원정을 보내 부속품을 모아 오세요.', herb: '아직 약초가 없어요. 필드에서 싸운 뒤 가끔 주워 와요.', book: '스킬북이 없어요. 전리품·암시장·왕국 상단에서 얻어요.', rune: '룬이 없어요. 필드 보스와 던전에서 떨어져요.', food: '도시락이 없어요. 주방을 지으면 재료로 만들 수 있어요.', trade: '교역품이 없어요. 교역로로 이웃 나라에 가면 특산물을 싸게 사 와요.' }[tab] || ''}</div></div>`;
-  }
-  const minCells = 24, fill = Math.max(0, minCells - cells.length) + ((6 - (Math.max(cells.length, minCells) % 6)) % 6);
-  for (let i = 0; i < fill; i++) cells.push('<span class="cell empty"></span>');
-  const head = { mat: `부속품 ${count.mat}종 · 기준가 ${fmt(keys('mat').reduce((t, k) => t + ITEMS[k].v * S.inv[k], 0))}G어치 · 길드는 ${Math.round(rate * 100)}%에 사요`, herb: `약초 ${count.herb}종 · 처치와 연금술 공방 조제에 써요`, sup: `물약·치료 소모품 · 원정 보급품으로 가져가면 저절로 써요`, book: `스킬북 ${count.book}권 · 모험가 창에서 배워요 · 책마다 떨어뜨리는 몬스터가 정해져 있어요 (도감)`, rune: `룬 ${count.rune}종 · 장비의 룬 칸에 새겨요`, gear: `장비 ${count.gear}개 · 모험가 창에서 끼워요`, food: `도시락과 요리 재료 · 주방에서 만들고 원정대 창에서 골라요`, trade: `교역품 ${count.trade}종 · 상점에 진열하거나 원하는 나라에 팔면 남아요` }[tab];
-  const bulk = tab === 'mat' && bulkMats().length ? `<div class="btns"><button type="button" class="btn sm" data-act="sellallmat">부속품 모두 팔기 · 약 ${g$(bulkMatValue())}</button></div>` : tab === 'gear' && bulkGears().length ? `<div class="btns"><button type="button" class="btn sm" data-act="selllowgear">일반·고급 장비 ${bulkGears().length}점 모두 팔기</button><button type="button" class="btn sm" data-act="autoeqall">모두 자동 장착</button></div>` : '';
-  return `${bar}<div class="sub muted">${head || ''}</div>${bulk}<div class="igrid ${tab}">${cells.join('')}</div>${detail}`;
-};
+/* 창고: 빌드 63부터 store.js (메인 창고 + 창고 1~10 · 창고 정리 · 직업별 장비 칸) */
 // 상점 진열대 탭
 function invStands() {
   const sold = S.sold.day === today() ? S.sold : { n: 0, g: 0 };
@@ -668,16 +639,18 @@ function invDetail(k, rate) {
     extra = r ? `연금술 공방 조제: ${Object.entries(r.need).map(([m, n]) => `${ITEMS[m].name} ${n}`).join(' · ')} · ${r.fee}G${S.bld.alchemy < r.lv ? ` (공방 ${r.lv}단계)` : ''}` : '';
     if (I.buy) btns += `<button type="button" class="btn sm gold" data-act="buy" data-it="${k}" data-q="1"${S.gold < buyPrice(k) ? ' disabled' : ''}>사기 ${buyPrice(k)}G</button><button type="button" class="btn sm gold" data-act="buy" data-it="${k}" data-q="5"${S.gold < buyPrice(k) * 5 ? ' disabled' : ''}>5개 ${buyPrice(k) * 5}G</button>`;
     if (r) btns += `<button type="button" class="btn sm" data-act="bopen" data-id="alchemy">공방에서 만들기</button>`;
+  } else if (cat === 'book' && I.btier != null) {
+    desc = I.desc; extra = `나오는 곳: ${TIER_BOOK_SRC[I.btier]}`;
   } else if (cat === 'book') {
     const s = SKILLS[I.book];
-    desc = `${s.desc} · ${clsList(s.cls)} · Lv${s.lv}+ · ${costStr(s)}<br>${skillSpecLine(I.book)}`; extra = `${bookFromText(I.book)} · 모험가 창 → 스킬에서 배워요 (수업료 ${s.lv * 30}G)`;
+    desc = `${s.desc} · ${clsList(s.cls)} · Lv${s.lv}+ · ${costStr(s)}<br>${skillSpecLine(I.book)}`; extra = `${bookFromText(I.book)} · 모험가 창 → 스킬에서 배워요 (수업료 ${learnFee(s)}G)`;
   } else if (cat === 'rune') extra = `장비 탭 → 룬 새기기 · ${I.desc || ''}`;
   else if (cat === 'food' && I.dish) { const F = FOODS[I.dish]; desc = `${F.desc} · ${foodFxText(F.fx)}`; extra = `원정대 창에서 파티 도시락으로 골라요 · 주방 ${F.lv}단계: ${needStr(F.need)}`; if (S.bld.kitchen) btns += `<button type="button" class="btn sm" data-act="bopen" data-id="kitchen">주방에서 만들기</button>`; }
   else if (cat === 'food') { const uses = FOOD_IDS.filter(id => FOODS[id].need[k]).map(id => FOODS[id].name); extra = uses.length ? `들어가는 요리: ${uses.join(', ')}` : ''; if (KITCHEN_BUY[k] && S.bld.kitchen) btns += `<button type="button" class="btn sm gold" data-act="fbuy" data-k="${k}" data-n="5"${S.gold < KITCHEN_BUY[k] * 5 ? ' disabled' : ''}>주방에서 5개 ${KITCHEN_BUY[k] * 5}G</button>`; }
   if (I.trade) extra = `${KINGDOMS[I.trade].name} 특산물(교역품) · 그 나라에서 ${g$(tradeBuyPrice(I.trade, k))}에 산다${extra ? ' · ' + extra : ''}`;
   if (q > 0) btns += `<button type="button" class="btn sm" data-act="sell" data-it="${k}" data-q="1">길드에 팔기 ${one}G</button>${q > 1 ? `<button type="button" class="btn sm" data-act="sell" data-it="${k}" data-q="${q}">모두 ${fmt(one * q)}G</button>` : ''}`;
   if (cat === 'mat' || cat === 'herb') { const AS = S.autoSell || {}, on = AS[k] != null; btns += `<button type="button" class="btn sm${on ? ' on' : ''}" data-act="autosell" data-it="${k}">자동 판매 ${on ? '켬' : '끔'}</button>${on ? `<span class="step"><button type="button" class="btn sm" data-act="autokeep" data-it="${k}" data-d="-10">−</button><span>${AS[k]}개 남김</span><button type="button" class="btn sm" data-act="autokeep" data-it="${k}" data-d="10">+</button></span>` : ''}`; }
-  return `<div class="card hl idet"><div class="row">${iconImg(k, 'ico lg')}<div class="grow stack"><span>${I.name} <b class="num">×${q}</b> <span class="muted">· 무게 ${I.w} · 기준가 ${I.v}G</span></span>${desc ? `<span class="sub">${desc}</span>` : ''}${extra ? `<span class="sub muted">${extra}</span>` : ''}</div></div>${btns ? `<div class="btns">${btns}</div>` : ''}</div>`;
+  return `<div class="card hl idet"><div class="row">${iconImg(k, 'ico lg')}<div class="grow stack"><span>${I.name} ${gradeTag(itemGrade(k))} <b class="num">×${q}</b> <span class="muted">· 무게 ${I.w} · 기준가 ${I.v}G</span></span>${desc ? `<span class="sub">${desc}</span>` : ''}${extra ? `<span class="sub muted">${extra}</span>` : ''}</div></div>${I.btier != null ? tierBookBox(k) : ''}${btns ? `<div class="btns">${btns}</div>` : ''}</div>`;
 }
 
 /* 의뢰 */
@@ -827,7 +800,7 @@ const ACT = {
 };
 function pickForSlot(i) {
   const used = S.shop.slots.filter(Boolean).map(s => s.item);
-  const parts = Object.keys(S.inv).filter(k => !ITEMS[k].potion && !ITEMS[k].book && S.inv[k] > 0 && !used.includes(k));
+  const parts = Object.keys(S.inv).filter(k => !ITEMS[k].potion && !ITEMS[k].book && ITEMS[k].btier == null && S.inv[k] > 0 && !used.includes(k));
   const gks = [...new Set(S.gear.map(g => `g:${g.base}:${g.t}`))].filter(k => !used.includes(k));
   if (!parts.length && !gks.length) { say('진열할 물건이 없어요'); return; }
   const rows = parts.map(k => `<button type="button" class="pick" data-slotpick="${k}">${iconImg(k)}<span class="grow">${ITEMS[k].name} <span class="muted">×${S.inv[k]}</span></span><span class="sub">정가 ${Math.round(ITEMS[k].v * TIERS[1].m)}G</span></button>`)
@@ -846,7 +819,14 @@ function bindUI() {
     achvTick();
     renderPanel(true); renderChips(); updateHud(); renderFloors(); saveGame();
   });
-  $('menu').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && S) menuOpen(b.dataset.open); });
+  $('menu').addEventListener('click', e => {   // 빌드 63: 메뉴 하나 → 메뉴판
+    if (!S) return;
+    if (e.target.closest('#menu-btn')) { menuBoard(); return; }
+    const sub = e.target.closest('[data-sub]'); if (sub) { menuBoard(false); menuSub(sub.dataset.sub); return; }
+    const b = e.target.closest('[data-open]'); if (b) { menuBoard(false); menuGo(b.dataset.open); }
+  });
+  document.addEventListener('pointerdown', e => { if (!$('menu-board').hidden && !e.target.closest('#menu')) menuBoard(false); }, true);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('menu-board').hidden) { e.stopPropagation(); menuBoard(false); } }, true);
   $('win-back').addEventListener('click', backWin);
   $('win-x').addEventListener('click', closeWins);
   // 장소 판: 화살표 → 옆 장소, 가운데 이름 판 → 그 시설 창

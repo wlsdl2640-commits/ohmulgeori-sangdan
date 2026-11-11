@@ -133,11 +133,8 @@ function speedBreakdown(a) {
 function bookFromText(id) {
   const s = SKILLS[id]; if (!s) return '';
   if (Object.values(CLASSES).some(C => C.innate === id)) return '직업 기본 스킬 (고용·전직하면 바로)';
-  if (s.own) return '훈련소 고유 수련 (스킬북 없이)';
   if (s.awk) return '각성';
-  const mons = bookFrom(id).filter(m => MONS[m]);
-  if (!mons.length) return s.kingdom ? `${KINGDOMS[s.kingdom].name} 상단·의뢰` : s.arena ? '투기장 상단' : '암시장·던전 보물 상자';
-  return `떨어뜨리는 몬스터: ${mons.map(m => `${MONS[m].name}${MONS[m].boss && !MONS[m].fb ? '(주인 ' + Math.round(BOOK_RATE.boss * 100) + '%)' : ''}`).join(', ')} · 필드 ${BOOK_RATE.field * 100}% · 던전 ${BOOK_RATE.dungeon * 100}% · 우두머리 ${Math.round(BOOK_RATE.fb * 100)}% · 주인 ${Math.round(BOOK_RATE.boss * 100)}%`;
+  return bookSrcText(id) || '스킬북';   // 빌드 63: 모든 스킬북은 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 …)를 펼쳐서 (data-store.js)
 }
 
 /* ───────── 전투 통계 (DPS 미터) ───────── */

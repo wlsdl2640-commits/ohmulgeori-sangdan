@@ -68,7 +68,7 @@ function itemCat(k) {
   if (I.dish || I.food) return 'food';
   if (I.herb) return 'herb';
   if (I.potion || I.sup || I.heal || I.mana || I.use) return 'sup';
-  if (I.book) return 'book';
+  if (I.book || I.btier != null) return 'book';   // 빌드 63: 스킬북 단계도 스킬북 칸
   if (k.startsWith('rune_')) return 'rune';
   return 'mat';
 }

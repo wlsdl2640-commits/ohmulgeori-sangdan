@@ -167,10 +167,11 @@ function arenaWipe(p) {
   e.pos = Math.min(e.pos, STAGE_LEN * 0.2);
 }
 // 투기장 상단: 코인으로만 산다
+const ARENA_TIER_BOOKS = [['bk_old', 60], ['bk_faded', 150], ['bk_myst', 400]];   // 투기장 코인으로 사는 스킬북 단계
 function arenaShop() {
   const t = arenaTier();
   const gear = ARENA_GEAR.map(b => ({ kind: 'gear', base: b, t, q: 3, price: GTYPES[b].slot === 'acc' ? 150 : 100 + t * 30 }));
-  const books = ARENA_BOOKS.map(id => ({ kind: 'book', id, price: 50 + SKILLS[id].lv * 2 }));
+  const books = ARENA_TIER_BOOKS.map(([id, price]) => ({ kind: 'item', id, price }));   // 빌드 63: 투기장 스킬은 이제 스킬북 단계 안에서 나온다
   return gear.concat(books);   // 마법사의 돌은 빌드 28부터 팔지 않는다 (우두머리·던전 주인·레이드에서만)
 }
 function arenaBuy(kind, id) {
@@ -189,8 +190,7 @@ function bmRefresh(k) {
   const B = S.under.bm, t0 = arenaTier();
   B.day = k; B.stock = [];
   for (let i = 0; i < 3; i++) { const t = Math.max(0, t0 - (rnd() < 0.4 ? 1 : 0)), q = pickOne([2, 2, 3, 3, 4]); const g = makeGear(dropBase(), t, q); B.stock.push({ kind: 'gear', g, price: Math.round(gearValue(g) * 3 / 10) * 10 }); }
-  const kb = KINGDOM_IDS.flatMap(x => KINGDOMS[x].books || []);
-  for (let i = 0; i < 2; i++) { const id = rnd() < 0.2 ? pickOne(kb) : pickOne(BOOK_IDS); B.stock.push({ kind: 'item', it: 'book_' + id, price: Math.round(ITEMS['book_' + id].v * 2.5 / 10) * 10 }); }
+  for (let i = 0; i < 2; i++) { const it = tierBookFor(t0, i === 1); B.stock.push({ kind: 'item', it, price: Math.round(ITEMS[it].v * 2.5 / 10) * 10 }); }   // 빌드 63: 스킬북 단계 (상단 수준으로, 둘째는 한 줄 위)
   const r = runeId(pickOne(RUNE_IDS), rnd() < 0.3 ? 1 : 0); if (ITEMS[r]) B.stock.push({ kind: 'item', it: r, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
 }
 function bmBuy(i) {
@@ -253,7 +253,7 @@ function auClose() {
 /* ───────── 왕국 상단이 팔러 온 것 ───────── */
 function kingGoods(D) {
   const goods = (D.sells || []).filter(it => ITEMS[it]).sort(() => rnd() - 0.5).slice(0, 2).map(it => ({ it, n: ri(6, 12), price: Math.round(ITEMS[it].v * 1.3) }));
-  (D.books || []).filter(id => ITEMS['book_' + id]).sort(() => rnd() - 0.5).slice(0, rnd() < 0.5 ? 1 : 2).forEach(id => goods.push({ it: 'book_' + id, n: 1, price: ITEMS['book_' + id].v }));
+  if ((D.books || []).length) goods.push(rnd() < 0.25 ? { it: 'bk_myst', n: 1, price: Math.round(ITEMS.bk_myst.v * 1.2) } : { it: 'bk_faded', n: rnd() < 0.5 ? 1 : 2, price: Math.round(ITEMS.bk_faded.v * 1.2) });   // 빌드 63: 왕국 스킬북 대신 빛바랜(가끔 신비한) 스킬북
   return goods;
 }
 function kingBuy(i) {
@@ -310,7 +310,7 @@ PANELS.arshop = () => {
     : o.kind === 'gear'
     ? `<div class="li">${gImg({ base: o.base, t: o.t, q: o.q, runes: [] }, 'ico q-b q' + o.q)}<div class="grow stack"><span>${GTIERS[o.t].name} ${GTYPES[o.base].name} <span class="tag" style="color:${QUALITY[o.q].c}">${QUALITY[o.q].name}</span></span><span class="sub">${statLine(gearStats({ base: o.base, t: o.t, q: o.q, runes: [] }))} · ${GTYPES[o.base].cls.includes('all') ? '누구나' : GTYPES[o.base].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="gear" data-id="${o.base}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
     : `<div class="li">${iconImg('book_' + o.id)}<div class="grow stack"><span>${ITEMS['book_' + o.id].name} <span class="muted">· Lv${SKILLS[o.id].lv} · ${SKILLS[o.id].cls.map(c => CLASSES[c] ? CLASSES[c].name : '누구나').join('·')}</span></span><span class="sub">${SKILLS[o.id].desc}<br>${skillSpecLine(o.id)}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="book" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`).join('');
-  return `<div class="card hl"><div class="h">투기장 상단</div><div class="sub">투기장 코인으로만 거래해요. 가진 코인 ${coinTag(A.coins)}. 여기 장비는 어디서도 떨어지지 않고, 스킬북도 여기서만 팔아요.</div></div><div class="list">${rows}</div>`;
+  return `<div class="card hl"><div class="h">투기장 상단</div><div class="sub">투기장 코인으로만 거래해요. 가진 코인 ${coinTag(A.coins)}. 여기 장비는 어디서도 떨어지지 않아요. 스킬북 단계(낡은 · 빛바랜 · 신비한)도 코인으로 살 수 있어요.</div></div><div class="list">${rows}</div>`;
 };
 PANELS.bm = () => {
   const B = S.under.bm;

@@ -16,7 +16,8 @@ const UI_PX = {
   box:    ['.kkkkkkk.', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', 'kbbkkbbbk', 'kbbbbbbbk', 'kbkkkkkbk', 'kbbbbbbbk', '.kkkkkkk.'],
   scroll: ['.kkkkkk..', 'kppppppk.', 'kpkkkkpk.', 'kppppppk.', '.kpkkkpk.', '.kppppppk', '.kpkkkkpk', '.kppppppk', '..kkkkkk.'],
   mag:    ['.kkkk....', 'klwwlk...', 'kwllllk..', 'kwllllk..', 'klllllk..', '.kllllkk.', '..kkkkdkk', '......kdk', '.......kk'],
-  map:    ['kkkkkkkkk', 'kpppfpppk', 'kppffpppk', 'kpffppppk', 'kpfpppypk', 'kppppyypk', 'kpppyyppk', 'kppppyppk', 'kkkkkkkkk']
+  map:    ['kkkkkkkkk', 'kpppfpppk', 'kppffpppk', 'kpffppppk', 'kpfpppypk', 'kppppyypk', 'kpppyyppk', 'kppppyppk', 'kkkkkkkkk'],
+  menu:   ['.kkkkkkk.', 'kyyyyyyyk', 'kdddddddk', 'kpppppppk', 'kpkkkkppk', 'kpppppppk', 'kpkkkkkpk', 'kpppppppk', '.kkkkkkk.']   // 빌드 63: 메뉴판
 };
 const UI_PAL = { k: '#0b0d12', y: '#f0b43c', l: '#fff2c0', d: '#9a6a1c', f: '#5fd4c0', w: '#c9c3b8', s: '#f1c9a5', t: '#4a7ac8', b: '#9a6a3c', p: '#e8dcb8' };
 function pxURL(name) {
@@ -48,8 +49,8 @@ function updateHud() {
   const dd = S.settleDay - today(), r = $('h-rent');
   r.textContent = `정산 D-${dd}`;
   r.classList.toggle('due', dd <= 3);
-  const n = S.reqs.filter(q => reqHave(q) >= q.qty).length, b = $('req-badge');
-  b.hidden = !n; b.textContent = n;
+  const n = S.reqs.filter(q => reqHave(q) >= q.qty).length, b = $('req-badge'), mb = $('menu-badge');
+  b.hidden = !n; b.textContent = n; mb.hidden = !n; mb.textContent = n;   // 접은 메뉴 단추에도 (빌드 63)
 }
 const WHY = { trade: '교역을 마치고 돌아오는 중', imm: '공격이 통하지 않아 복귀 중', over: '레이드가 끝나 복귀 중', raid: '레이드 몬스터를 쓰러뜨리고 복귀 중', time: '레이드에서 물러나 복귀 중', retreat: '레이드에서 빠져나와 복귀 중', full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '쓰러진 동료를 들것에 싣고 복귀 중', boss: '던전의 주인을 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중', sleep: '잠이 모자라 복귀 중' };
 function expStatus(p) {
@@ -127,6 +128,28 @@ function menuOpen(id) {
   try { if (d > 1) { UI.skipPop = 1; history.go(-(d - 1)); } } catch (_) {}
   showWin(true);
 }
+// 빌드 63: 메뉴판 — 오른쪽 위 「메뉴」 하나를 누르면 일곱 창과 상단 바로 가기가 펼쳐진다
+function menuBoard(on) {
+  const b = $('menu-board'), open = on == null ? b.hidden : !!on;
+  if (b.hidden === !open) return;
+  b.hidden = !open; $('menu').classList.toggle('open', open); $('menu-btn').setAttribute('aria-expanded', open ? 'true' : 'false'); $('menu-btn').classList.toggle('open', open);
+  sfx(open ? 'open' : 'close');
+}
+// 메뉴판에서 고르기: 그 창이 이미 맨 아래면 그 창으로 돌아가고(안쪽 창을 닫음), 아니면 바꾼다
+function menuGo(id) {
+  const d = UI.stack.length;
+  if (d > 1 && UI.stack[0].id === id) { UI.stack.length = 1; try { UI.skipPop = 1; history.go(-(d - 1)); } catch (_) {} sfx('open'); showWin(true); return; }
+  menuOpen(id);
+}
+// 상단 창 아래의 창(정산 · 도감 · 설정 …)을 바로: 쌓인 창을 [상단, 그 창]으로 바꾼다 (뒤로 가면 상단 창)
+function menuSub(id) {
+  const d = UI.stack.length;
+  UI.stack = [{ id: 'co' }, { id }];
+  try {
+    if (d === 0) { history.pushState({ w: 1 }, ''); history.pushState({ w: 2 }, ''); } else if (d === 1) history.pushState({ w: 2 }, ''); else if (d > 2) { UI.skipPop = 1; history.go(-(d - 2)); }
+  } catch (_) {}
+  sfx('open'); showWin(true);
+}
 function closeWins() {
   const n = UI.stack.length;
   if (!n) return;
@@ -144,7 +167,8 @@ window.addEventListener('popstate', e => {
 function showWin(scroll) {
   const top = winTop(), el = $('win'), bt = !!top && top.id === 'battle';
   $('stage').classList.toggle('win-open', !!top);
-  document.querySelectorAll('.mbtn').forEach(b => b.classList.toggle('on', !!top && UI.stack[0].id === b.dataset.open));
+  document.querySelectorAll('.mtile').forEach(b => b.classList.toggle('on', !!top && UI.stack[0].id === b.dataset.open));
+  $('menu-btn').classList.toggle('on', !!top && !bt);
   if (bt !== V.bopen) showBattle(bt);
   if (!top || bt) { el.hidden = true; UI.html = ''; UI.winKey = ''; return; }
   layoutWin();

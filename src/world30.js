@@ -3,7 +3,7 @@
 Object.assign(WIN_TITLE, { co_league: '상단 랭킹' });
 const FLOOR_TXT = {
   stable: () => `말 ${stableHorses().length}/${stableCap()}마리 · 마차 ${S.parties.filter(p => p.wagon).length}대`,
-  library: () => `양피지 ${S.inv.parchment || 0} · 먹물 ${S.inv.ink || 0} · 스킬북 ${Object.keys(S.inv).filter(k => k.startsWith('book_') && S.inv[k] > 0).length}종`,
+  library: () => `양피지 ${S.inv.parchment || 0} · 먹물 ${S.inv.ink || 0} · 펼칠 스킬북 ${TIER_BOOK_IDS.reduce((n, k) => n + (S.inv[k] || 0), 0)}권`,   // 빌드 63: 스킬북 단계
   airfield: () => (isUnlocked('sky') ? `구름섬 원정 가능 · 비행 마차 ${S.parties.filter(p => wagonFly(p)).length}대` : '구름섬은 세계수의 심장을 공략해야 열려요')
 };
 

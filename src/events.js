@@ -137,7 +137,7 @@ function newMerchant(k) {
   const at = pickOne(pool), stock = [];
   const eggs = PET_IDS.filter(x => isUnlocked(PETS[x].field)).sort(() => rnd() - 0.5).slice(0, 2);
   eggs.forEach(x => stock.push({ it: 'egg_' + x, n: 1, price: Math.round(ITEMS['egg_' + x].v * 2.2 / 10) * 10 }));
-  const b = pickOne(BOOK_IDS); if (ITEMS['book_' + b]) stock.push({ it: 'book_' + b, n: 1, price: Math.round(ITEMS['book_' + b].v * 2.5 / 10) * 10 });
+  { const b = tierBookFor(FIELDS[at].tier, rnd() < 0.3); stock.push({ it: b, n: 1, price: Math.round(ITEMS[b].v * 2.5 / 10) * 10 }); }   // 빌드 63: 스킬북 단계 (그 땅 단계로)
   const r = runeId(pickOne(RUNE_IDS), 1); if (ITEMS[r]) stock.push({ it: r, n: 2, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
   HERB_IDS.filter(h => h !== 'herb').sort(() => rnd() - 0.5).slice(0, 2).forEach(h => stock.push({ it: h, n: 8, price: Math.round(ITEMS[h].v * 1.8) }));
   const ev0 = { id: nid(), type: 'merchant', at, born: k, end: k + 2, stock, done: 0 };

@@ -46,7 +46,7 @@ const elemArrowOf = id => { if (!ELEM_ON) return null; for (const el of monEls(i
 PCT_STATS.push('block', 'movePct');
 Object.assign(STAT_NAMES, { block: '방어 확률', movePct: '이동 속도' });
 // 단계마다 담는 수 (품질 +10%씩, 화살통 +25%). 강철 화살 = 350발 — 레벨에 맞는 원정 한 번에 50~150발쯤 쓴다 (빌드 38에서 처음 1,000발 → 1/3로)
-const AMMO_CAP = { arrows: [100, 200, 350, 450, 600, 750, 850, 1000, 1150, 1250, 1400, 1550, 1650, 1800, 1950, 2050], shuriken: [40, 80, 130, 190, 240, 290, 350, 400, 450, 510, 560, 610, 670, 720, 770, 830] };   // 표창도 1/3 (빌드 39)
+const AMMO_CAP = { arrows: [100, 200, 350, 450, 600, 750, 850, 1000, 1150, 1250, 1400, 1550, 1650, 1800, 1950, 2050], shuriken: [60, 120, 195, 285, 360, 435, 525, 600, 675, 765, 840, 915, 1005, 1080, 1155, 1245] };   // 표창은 빌드 39에서 1/3 → 빌드 63에서 1.5배 (사용자 「표창의 장전량을 좀 더 올려줘」)
 const isAmmo = g => !!(g && GTYPES[g.base] && GTYPES[g.base].ammo);
 function ammoMax(g, a) {
   if (!isAmmo(g)) return 0;
