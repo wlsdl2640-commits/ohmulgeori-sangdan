@@ -95,7 +95,7 @@ function whSort(i) { whSortRaw(i); changed(); return `${whName(i)}를 레어도 
 function whSortRaw(i) {
   const bag = bagOf(i), ks = Object.keys(bag).filter(k => ITEMS[k]).sort((a, b) => itemGrade(b) - itemGrade(a) || ITEMS[b].v - ITEMS[a].v || ITEMS[a].name.localeCompare(ITEMS[b].name, 'ko'));
   const vals = ks.map(k => bag[k]); ks.forEach(k => { delete bag[k]; }); ks.forEach((k, j) => { bag[k] = vals[j]; });
-  gearOf(i).sort((x, y) => (y.q || 0) - (x.q || 0) || y.t - x.t || (y.plus || 0) - (x.plus || 0) || gearValue(y) - gearValue(x));
+  gearOf(i).sort((x, y) => (y.q || 0) - (x.q || 0) || y.t - x.t || gearValue(y) - gearValue(x));
 }
 // 장비 직업 칸: 그 계열이 낄 수 있는 장비 (여러 계열이 쓰면 그 칸마다)
 const WH_JOBS = [['all', '전체'], ['warrior', '전사'], ['archer', '궁수'], ['mage', '마법사'], ['cleric', '성직자'], ['rogue', '도적'], ['porter', '짐꾼'], ['any', '공용']];
@@ -129,14 +129,14 @@ function whJobChips(list) {
   return `<div class="btns whjobs">${WH_JOBS.map(([id, n]) => { const c = list.filter(g => gearInJob(g, id)).length; return `<button type="button" class="btn sm${j === id ? ' on' : ''}" data-act="invjob" data-id="${id}">${n}${c ? ` <small>${c}</small>` : ''}</button>`; }).join('')}</div>`;
 }
 // 옮길 곳 고르기 줄 (고른 칸의 물건 · 장비)
-function whMoveRow(from, kind, id, have) {
+function whMoveRow(from, kind, id, have, extra) {
   const open = whOpenN(), dests = [-1].concat(Array.from({ length: open }, (_, i) => i)).filter(i => i !== from);
   if (!dests.length) return '';
   const to = dests.includes(UI.whTo) ? UI.whTo : dests[0];
   const chips = dests.map(i => `<button type="button" class="btn sm${i === to ? ' on' : ''}" data-act="whto" data-i="${i}">${i < 0 ? '메인' : i + 1}<small>${whFree(i)}</small></button>`).join('');
   const go = kind === 'gear' ? `<button type="button" class="btn sm gold" data-act="whmvg" data-id="${id}" data-f="${from}" data-t="${to}">${whName(to)}로 옮기기</button>`
     : `<button type="button" class="btn sm gold" data-act="whmv" data-k="${id}" data-q="1" data-f="${from}" data-t="${to}">1개</button>${have >= 10 ? `<button type="button" class="btn sm gold" data-act="whmv" data-k="${id}" data-q="10" data-f="${from}" data-t="${to}">10개</button>` : ''}<button type="button" class="btn sm gold" data-act="whmv" data-k="${id}" data-q="${have}" data-f="${from}" data-t="${to}">모두 옮기기</button>`;
-  return `<div class="sec" style="margin-top:6px"><b>옮기기</b><span>숫자는 빈 칸</span></div><div class="btns whto">${chips}</div><div class="btns">${go}</div>`;
+  return `<div class="sec" style="margin-top:6px"><b>옮기기</b><span>숫자는 빈 칸</span></div><div class="btns whto">${chips}</div><div class="btns">${go}${extra || ''}</div>`;
 }
 // 여러 개 고르기 (사용자 11-11 「다른 창고 옮기는 방법 추가」): 칸을 눌러 고르고 한꺼번에 옮긴다 — 칸을 왼쪽 창고 띠로 끌어 놓아도 된다
 function whPickBar(from, keys) {
@@ -163,9 +163,10 @@ function whMoveKeys(keys, from, to) {
 function whGearDetail(g, from) {
   const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''} — ${esc(uniqDesc(g))}</span>` : ''}<span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
   if (from >= 0) return `<div class="card hl idet">${top}${whMoveRow(from, 'gear', g.id)}</div>`;
-  const bonus = (g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 마탑에서 재감정 (${fmt(REAPPRAISE.fee(g.t))}G${ITEMS['crest_' + g.t] ? ` + ${ITEMS['crest_' + g.t].name} ${REAPPRAISE.crest}` : ''})${reappraiseWhy(g) ? ` · <span class="red-t">${reappraiseWhy(g)}</span>` : ''}</span></div>` : '';
-  const btns = `<div class="btns">${S.bld.smithy ? `<button type="button" class="btn sm gold" data-act="enhopen" data-id="${g.id}">강화${g.plus ? ' +' + g.plus : ''}</button>` : ''}${S.bld.smithy && fuseCatOf(g) && !isAmmo(g) && (g.q || 0) < GRADE_MAX ? `<button type="button" class="btn sm" data-act="fuseopen" data-id="${g.id}">합성</button>` : ''}${(g.q || 0) >= 2 ? `<button type="button" class="btn sm" data-act="reapp" data-id="${g.id}"${reappraiseWhy(g) ? ' disabled' : ''}>재감정</button>` : ''}${runeSlots(g) ? `<button type="button" class="btn sm" data-act="runewin" data-g="${g.id}">룬 새기기</button>` : ''}<button type="button" class="btn sm" data-act="sellgear" data-id="${g.id}">팔기 ${fmt(Math.round(gearValue(g) * GEAR_SELL))}G</button></div>`;
-  return `<div class="card hl idet">${top}${bonus}${btns}${whMoveRow(-1, 'gear', g.id)}</div>`;
+  // 빌드 64 (사용자 11-11 19:28 그림): 강화 · 합성 · 재감정 · 룬 새기기는 창고에서 빼고 각 시설에서만 — 팔기는 옮기기 단추 옆으로
+  const bonus = (g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 재감정은 마탑에서</span></div>` : '';
+  const sell = `<button type="button" class="btn sm" data-act="sellgear" data-id="${g.id}">팔기 ${fmt(Math.round(gearValue(g) * GEAR_SELL))}G</button>`;
+  return `<div class="card hl idet">${top}${bonus}${whMoveRow(-1, 'gear', g.id, 0, sell) || `<div class="btns">${sell}</div>`}</div>`;
 }
 function whMainBody() {
   const tab = UI.invTab || 'mat', rate = guildRate();
@@ -179,7 +180,7 @@ function whMainBody() {
     jobs = whJobChips(S.gear);
     const gear = S.gear.filter(g => gearInJob(g, UI.invJob || 'all'));
     const g = gear.find(x => 'g' + x.id === sel) || null;
-    cells = gear.map(x => whCell('g' + x.id, gArt(x, 2), null, g && x.id === g.id, x.q || 0, x.plus ? `<b class="qty">+${x.plus}</b>` : ''));
+    cells = gear.map(x => whCell('g' + x.id, gArt(x, 2), null, g && x.id === g.id, x.q || 0, ''));
     detail = g ? whPop(whGearDetail(g, -1), 'g' + g.id) : gear.length ? '' : '<div class="card"><div class="sub">이 칸에 보관 중인 장비가 없어요. 대장간에서 만들거나 원정에서 주워 와요.</div></div>';
   } else {
     const list = tab === 'sup' ? SUPPLY_IDS.concat(keys('sup').filter(k => !SUPPLY_IDS.includes(k))) : keys(tab);
@@ -202,7 +203,7 @@ function whSubBody(i) {
   if (tab === 'gear') {
     jobs = whJobChips(W.gear);
     const gear = W.gear.filter(g => gearInJob(g, UI.invJob || 'all')), g = gear.find(x => 'g' + x.id === sel) || null;
-    cells = gear.map(x => whCell('g' + x.id, gArt(x, 2), null, g && x.id === g.id, x.q || 0, x.plus ? `<b class="qty">+${x.plus}</b>` : ''));
+    cells = gear.map(x => whCell('g' + x.id, gArt(x, 2), null, g && x.id === g.id, x.q || 0, ''));
     detail = g ? whPop(whGearDetail(g, i), 'g' + g.id) : gear.length ? '' : '<div class="card"><div class="sub">이 칸에 보관 중인 장비가 없어요.</div></div>';
   } else {
     const list = keys(tab), k = list.includes(sel) ? sel : null;
@@ -306,8 +307,8 @@ function fuseClean() {
   F.ids = F.ids.filter(id => C.includes(id)).slice(0, FUSE.n);
   return F;
 }
-function fuseAuto() {   // 가장 낮은 장비부터 (단계 · 강화 · 값이 낮은 것)
-  const F = fuseClean(), C = fuseCands(F.cat, F.q).filter(g => !F.ids.includes(g.id)).sort((x, y) => x.t - y.t || (x.plus || 0) - (y.plus || 0) || (x.runes || []).length - (y.runes || []).length || gearValue(x) - gearValue(y));
+function fuseAuto() {   // 가장 낮은 장비부터 (단계 · 룬 · 값이 낮은 것)
+  const F = fuseClean(), C = fuseCands(F.cat, F.q).filter(g => !F.ids.includes(g.id)).sort((x, y) => x.t - y.t || (x.runes || []).length - (y.runes || []).length || gearValue(x) - gearValue(y));
   while (F.ids.length < FUSE.n && C.length) F.ids.push(C.shift().id);
 }
 function fuseWhy() {
@@ -326,7 +327,7 @@ function fuseDo() {
   const cat = (S.fuseCat || 0) > 0; if (cat) S.fuseCat--;   // 드워프 합성 촉매: 두 단계 위 확률 FUSE_CAT_P
   const jump = q + 2 <= GRADE_MAX && rnd() < (cat ? FUSE_CAT_P : FUSE.jump), nq = Math.min(GRADE_MAX, q + (jump ? 2 : 1)), t = fuseTier(gs);
   let base = pickOne(fuseBases(F.cat).filter(b => tierOk(b, t))); if (base === 'shield') base = pickOne(SHIELDS.filter(b => tierOk(b, t)));   // 빌드 64: 그 단계에 있는 종류만
-  const g = makeGear(base, t, nq); g.plus = 0;
+  const g = makeGear(base, t, nq);
   const where = stashGear(g); F.ids = [];
   log(`대장간에서 ${QUALITY[q].name} 장비 ${FUSE.n}점을 합성해 ${QUALITY[nq].name} 「${gearName(g)}」을(를) 얻었다.${jump ? ' 대성공 — 두 단계 위!' : ''}`, 'good');
   queueModal({ title: jump ? '합성 대성공!' : '합성 성공', body: [`${QUALITY[q].name} ${FUSE_CAT[F.cat]} ${FUSE.n}점이 녹아 ${QUALITY[nq].name} ${GTYPES[g.base].name}이(가) 되었다.${jump ? ` 아주 드물게 두 단계(${Math.round(FUSE.jump * 100)}%)를 뛰어올랐다!` : ''}`, `${gearName(g)} · ${statLine(gearStats(g))}`, where === 'main' ? '메인 창고에 넣었어요.' : where === 'lost' ? '창고가 가득 차 못 가져왔어요.' : `${whName(+where.slice(2))}에 넣었어요.`] });
@@ -336,10 +337,10 @@ function fuseBox() {
   const F = fuseClean(), C = fuseCands(F.cat, F.q), why = fuseWhy(), nq = Math.min(GRADE_MAX, F.q + 1);
   const cats = Object.entries(FUSE_CAT).map(([c, n]) => `<button type="button" class="btn sm${F.cat === c ? ' on' : ''}" data-act="fusecat" data-c="${c}">${n} <small>${S.gear.filter(g => fuseCatOf(g) === c && !isAmmo(g)).length}</small></button>`).join('');
   const qs = QUALITY.slice(0, GRADE_MAX).map((Q, q) => { const n = fuseCands(F.cat, q).length; return `<button type="button" class="btn sm q${q}${F.q === q ? ' on' : ''}" data-act="fuseq" data-q="${q}">${Q.name} <small>${n}</small></button>`; }).join('');
-  const slots = Array.from({ length: FUSE.n }, (_, i) => { const g = F.ids[i] != null ? S.gear.find(x => x.id === F.ids[i]) : null; return g ? `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuserm" data-id="${g.id}" title="빼기">${gArt(g, 2)}${g.plus ? `<b class="qty">+${g.plus}</b>` : ''}</button>` : `<span class="cell empty fslot">${rqEmpty(2)}<b class="fsn">${i + 1}</b></span>`; }).join('');
-  const rest = C.filter(g => !F.ids.includes(g.id)).map(g => `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuseadd" data-id="${g.id}">${gArt(g, 2)}${g.plus ? `<b class="qty">+${g.plus}</b>` : ''}</button>`);
-  const lost = F.ids.map(id => S.gear.find(g => g.id === id)).filter(g => g && ((g.plus || 0) > 0 || (g.runes || []).length)).length;
-  return `<div class="sub muted">같은 레어도 · 같은 갈래(무기 · 부장비 · 방어구 · 장신구) 장비 ${FUSE.n}점을 녹이면 <b class="q${nq}">${QUALITY[nq].name}</b> 장비 하나가 무작위로 나와요. 아주 드물게(${Math.round(FUSE.jump * 100)}%) 두 단계 위가 나와요. 나오는 장비의 단계(Lv 구간)는 넣은 장비 단계의 평균이고, 강화 · 룬은 사라져요.</div>
+  const slots = Array.from({ length: FUSE.n }, (_, i) => { const g = F.ids[i] != null ? S.gear.find(x => x.id === F.ids[i]) : null; return g ? `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuserm" data-id="${g.id}" title="빼기">${gArt(g, 2)}</button>` : `<span class="cell empty fslot">${rqEmpty(2)}<b class="fsn">${i + 1}</b></span>`; }).join('');
+  const rest = C.filter(g => !F.ids.includes(g.id)).map(g => `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuseadd" data-id="${g.id}">${gArt(g, 2)}</button>`);
+  const lost = F.ids.map(id => S.gear.find(g => g.id === id)).filter(g => g && (g.runes || []).length).length;
+  return `<div class="sub muted">같은 레어도 · 같은 갈래(무기 · 부장비 · 방어구 · 장신구) 장비 ${FUSE.n}점을 녹이면 <b class="q${nq}">${QUALITY[nq].name}</b> 장비 하나가 무작위로 나와요. 아주 드물게(${Math.round(FUSE.jump * 100)}%) 두 단계 위가 나와요. 나오는 장비의 단계(Lv 구간)는 넣은 장비 단계의 평균이고, 룬은 사라져요.</div>
     <div class="btns">${cats}</div><div class="btns">${qs}</div>
     <div class="igrid fuse">${slots}</div>
     ${lost ? `<div class="sub red-t">강화나 룬이 있는 장비 ${lost}점이 들어 있어요. 합성하면 사라져요.</div>` : ''}

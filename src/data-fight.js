@@ -256,7 +256,7 @@ const TIER_RES = (() => {
   }
   return out;
 })();
-function setRes(t, n) { return TIER_RES[t] && n >= 3 ? { ['r_' + TIER_RES[t]]: n >= 4 ? 0.2 : 0.1 } : null; }   // data-gear.js setInfo가 부른다
+function setRes(t, n) { return TIER_RES[t] && n >= SET_MIN ? { ['r_' + TIER_RES[t]]: n >= 4 ? 0.2 : 0.1 } : null; }   // 빌드 64: 방어구 · 장신구 2점부터   // data-gear.js setInfo가 부른다
 // 도시락: 뜨거운 수프 → 물·빙결 피해 −10%, 얼음 빙수 → 불·화염 피해 −10%
 ['hotsoup', 'shaveice'].forEach((id, i) => { const t = i ? ' 불·화염 피해 -10%.' : ' 물·빙결 피해 -10%.'; FOODS[id].desc += t; if (ITEMS['food_' + id]) ITEMS['food_' + id].desc += t; });
 const FOOD_RES = { coldRes: 'water', hotRes: 'fire' };

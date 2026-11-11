@@ -463,10 +463,9 @@ const runeSlots = g => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? g.q || 0
 const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
 const PCT_STATS = ['crit', 'eva'];
 
-const PLUS_MUL = 0.06;   // 강화 한 단계마다 기본 능력치 +6%
-const plusMul = g => 1 + PLUS_MUL * (g.plus || 0);
+// 빌드 64: 장비 강화(+1~+10)는 없앴다 (사용자 11-11 19:28). 옛 저장은 migrate12가 들인 재료 · 돈을 돌려준다
 function gearStats(g) {
-  const T = GTYPES[g.base], t = GTIERS[g.t], q = QUALITY[g.q || 0].m * plusMul(g), out = {};
+  const T = GTYPES[g.base], t = GTIERS[g.t], q = QUALITY[g.q || 0].m, out = {};
   for (const [k, v] of Object.entries(T.st)) {
     if (k === 'carry') out.carry = Math.round((6 + v * t.p) * q);
     else if (PCT_STATS.includes(k)) out[k] = Math.min(0.12, Math.round(v * t.p * q * 1000) / 1000);
@@ -484,11 +483,13 @@ const isUniq = g => !!g && UNIQ_T0[g.base] != null;
 const uniqIdx = g => Math.max(0, Math.min(15, (g.t || 0) - (UNIQ_T0[g.base] || 0)));   // 그림 · 이름 차례 (2차 장비는 늪지 = 0번 「Lv50」)
 const tierOk = (b, t) => (UNIQ_T0[b] || 0) <= t;
 const uniqName = g => (typeof WNAME !== 'undefined' && WNAME[g.base] ? WNAME[g.base][uniqIdx(g)] : '');
-const gearBaseName = g => (isUniq(g) && uniqName(g)) || `${GTIERS[g.t].name} ${GTYPES[g.base].name}`;
-const gearName = g => `${gearBaseName(g)}${g.plus ? ' +' + g.plus : ''}`;
+// 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)과 세트 효과는 방어구 · 장신구에만. 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
+const tierNamed = b => !!GTYPES[b] && (GTYPES[b].slot === 'armor' || GTYPES[b].slot === 'acc');
+const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}` : `${GTYPES[g.base].name} Lv${GTIERS[g.t].lv}`);
+const gearName = g => gearBaseName(g);
 const gearNameOf = (base, t) => gearBaseName({ base, t: +t });
 const gearKey = g => `${g.base}:${g.t}`;
-const gearValue = g => Math.round((45 * GTIERS[g.t].p * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) * (1 + 0.12 * (g.plus || 0)) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
+const gearValue = g => Math.round((45 * GTIERS[g.t].p * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
 const recipeFee = t => Math.round(15 * GTIERS[t].p * GTIERS[t].p);
 function recipeNeed(base, t) {
   const need = {}, mats = GTIERS[t].mats;

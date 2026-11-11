@@ -1,9 +1,9 @@
 /* ───────── 창 화면 ───────── */
 const PANELS = {};
 const qTag = g => `<span class="q q${g.q}">${QUALITY[g.q].name}</span>`;
-const gImg = (g, cls = 'ico') => `<img class="${cls}${g.plus >= 10 ? ' p10' : g.plus >= 7 ? ' p7' : g.plus >= 4 ? ' p4' : ''}" src="${gearIconURL(g)}" alt="">`;
+const gImg = (g, cls = 'ico') => `<img class="${cls}" src="${gearIconURL(g)}" alt="">`;
 function statLine(st) {
-  return Object.entries(st).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) || k === 'spdPct' || k === 'cdr' ? (k === 'cdr' ? '-' : '+') + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
+  return Object.entries(st).filter(([, v]) => v !== 0).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) || k === 'spdPct' || k === 'cdr' ? (k === 'cdr' ? '-' : '+') + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
 }
 const clsList = cls => (cls.includes('all') ? '모든 직업' : cls.map(c => CLASSES[c].name + (jobTier(c) === 1 ? ' 계열' : '')).join('·'));
 // 직업 특성을 글로
@@ -161,26 +161,10 @@ function smithyBox() {
   }).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. 룬 칸 ${q}개.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">일반 제작은 만들 때마다 일반·고급·희귀 품질이 정해져요. 대장간을 넓힐수록 좋은 품질이 잘 나와요.</div>';
-  const st = UI.smithTab === 'enh' || UI.smithTab === 'fuse' ? UI.smithTab : 'make';
-  const tabs = `<div class="tabs">${[['make', '제작'], ['enh', '강화'], ['fuse', '합성']].map(([id, n]) => `<button type="button" class="tab${st === id ? ' on' : ''}" data-act="smithTab" data-t="${id}">${n}</button>`).join('')}</div>`;
-  if (st === 'enh') return tabs + enhanceBox();
+  const st = UI.smithTab === 'fuse' ? 'fuse' : 'make';   // 빌드 64: 강화 탭은 없앴다
+  const tabs = `<div class="tabs">${[['make', '제작'], ['fuse', '합성']].map(([id, n]) => `<button type="button" class="tab${st === id ? ' on' : ''}" data-act="smithTab" data-t="${id}">${n}</button>`).join('')}</div>`;
   if (st === 'fuse') return tabs + fuseBox();   // 빌드 63: 같은 레어도 9점 합성 (store.js)
   return `${tabs}<div class="btns">${chips}</div><div class="btns">${qchips}</div>${note}<div class="list">${rows}</div>`;
-}
-// 강화: 창고와 끼고 있는 장비 중 하나를 골라 +1씩
-function enhanceBox() {
-  const all = gearsAll().sort((x, y) => gearScore(y.g) - gearScore(x.g));
-  if (!all.length) return '<div class="card"><div class="sub muted">강화할 장비가 없어요.</div></div>';
-  const sel = all.find(x => x.g.id === UI.enhG) || all[0]; UI.enhG = sel.g.id;
-  const g = sel.g, why = plusWhy(g), next = Object.assign({}, g, { plus: Math.min(PLUS_MAX, (g.plus || 0) + 1) }), now = gearStats(g), nx = gearStats(next);
-  const diff = Object.keys(nx).map(k => { const a = now[k] || 0, b = nx[k] || 0; if (a === b) return ''; return `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) ? (a * 100).toFixed(1) + '%→' + (b * 100).toFixed(1) + '%' : a + '→' + b}`; }).filter(Boolean).join(' · ');
-  const cells = all.map(x => `<button type="button" class="cell${x.g.id === g.id ? ' on' : ''}" data-act="enhsel" data-id="${x.g.id}">${gArt(x.g, 2)}${x.g.plus ? `<b class="qty">+${x.g.plus}</b>` : ''}${x.owner ? '<i class="own"></i>' : ''}</button>`).join('');
-  const fill = (5 - (all.length % 5)) % 5; const pad = Array.from({ length: fill }, () => `<span class="cell empty">${rqEmpty(2)}</span>`).join('');
-  const need = plusNeed(g);
-  return `<div class="sub muted">+1씩 올라가요. 능력치 +6%/단계, +4·+7·+10에서 테두리가 빛나요. 실패해도 단계는 내려가지 않지만 재료와 돈은 잃어요.</div>
-    <div class="igrid gear">${cells}${pad}</div>
-    <div class="card hl idet"><div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}${sel.owner ? ` <span class="tag">${esc(sel.owner.name)} 착용</span>` : ''}</span><span class="sub">${statLine(now)}</span>${(g.plus || 0) < PLUS_MAX ? `<span class="sub ok-t">+${(g.plus || 0) + 1}: ${diff || '변화 없음'}</span><span class="sub muted">재료 ${needStr(need)} · ${fmt(plusFee(g))}G · 성공 ${Math.round(plusRate(g) * 100)}%</span>` : '<span class="sub gold-t">최고 강화 +10</span>'}${why && (g.plus || 0) < PLUS_MAX ? `<span class="sub red-t">${why}</span>` : ''}</div></div>
-    <div class="btns"><button type="button" class="btn gold grow" data-act="enhance" data-id="${g.id}"${why ? ' disabled' : ''}>${(g.plus || 0) >= PLUS_MAX ? '완료' : `+${(g.plus || 0) + 1} 강화 · ${fmt(plusFee(g))}G`}</button></div></div>`;
 }
 function templeBox() {
   const B = S.bless && BLESSINGS[S.bless.id], hs = healers(), plan = healPlan(), pats = patients();
@@ -213,9 +197,16 @@ function towerBox() {
   const fuse = runes.map(k => { const R = ITEMS[k].rune, nx = R[1] < 2 ? runeId(R[0], R[1] + 1) : null; return `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${statLine({ [RUNES[R[0]].st]: RUNES[R[0]].v[R[1]] })}${nx ? ` · ${RUNE_FUSE.n}개 → ${ITEMS[nx].name} (${fmt(RUNE_FUSE.fee[R[1]])}G)` : ''}</span></div>${nx ? `<button type="button" class="btn sm" data-act="fuse" data-it="${k}"${S.inv[k] >= RUNE_FUSE.n && S.gold >= RUNE_FUSE.fee[R[1]] ? '' : ' disabled'}>합치기</button>` : ''}</div>`; }).join('');
   const crests = TIER_FIELDS.map((f, t) => 'crest_' + t).filter(k => (S.inv[k] || 0) > 0);
   const carve = crests.map(k => `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${RUNE_CARVE.crest}개와 ${RUNE_CARVE.fee}G로 무작위 하급 룬을 새겨요</span></div><button type="button" class="btn sm" data-act="carve" data-t="${k.split('_')[1]}"${S.inv[k] >= RUNE_CARVE.crest && S.gold >= RUNE_CARVE.fee ? '' : ' disabled'}>새기기</button></div>`).join('');
+  // 빌드 64 (사용자 11-11 19:28 「각 시설에서만」): 창고 정보창에서 뺀 룬 새기기 · 옵션 재감정을 마탑으로 — 창고 · 모험가가 든 장비를 레어도 높은 것부터
+  const all = gearsAll().sort((x, y) => (y.g.q || 0) - (x.g.q || 0) || y.g.t - x.g.t);
+  const gRow = (x, sub, btn) => `<div class="li">${gArt(x.g, 1)}<div class="grow stack"><span>${gearName(x.g)} ${qTag(x.g)}${runeDots(x.g)}${x.owner ? ` <span class="tag">${esc(x.owner.name)}</span>` : ''}</span><span class="sub">${sub}</span></div>${btn}</div>`;
+  const runeG = all.filter(x => runeSlots(x.g)).map(x => gRow(x, `룬 ${(x.g.runes || []).length}/${runeSlots(x.g)}칸`, `<button type="button" class="btn sm" data-act="runewin" data-g="${x.g.id}">룬 새기기</button>`));
+  const reapG = all.filter(x => (x.g.q || 0) >= 2).map(x => { const why = reappraiseWhy(x.g); return gRow(x, `보너스 ${statLine(x.g.bonus || {}) || '없음'} · ${fmt(REAPPRAISE.fee(x.g.t))}G${ITEMS['crest_' + x.g.t] ? ` + ${ITEMS['crest_' + x.g.t].name} ${REAPPRAISE.crest}` : ''}${why ? ` · <span class="red-t">${why}</span>` : ''}`, `<button type="button" class="btn sm" data-act="reapp" data-id="${x.g.id}"${why ? ' disabled' : ''}>재감정</button>`); });
   return `${cur ? `<div class="sub gold-t">연구 중: ${RESEARCH[cur.k].name} ${rlv(cur.k) + 1}단계 · ${dayLabel(cur.done)} 완료</div>` : '<div class="sub">한 번에 하나씩 연구할 수 있어요. 연구 기간은 게임 속 날짜로 셉니다.</div>'}<div class="list">${rows}</div>
-    <div class="sec"><b>룬 공방</b><span>룬은 장비 창에서 끼워요</span></div>
-    <div class="list">${carve || '<div class="li"><span class="sub">필드 보스가 떨어뜨리는 「우두머리의 증표」로 룬을 새길 수 있어요.</span></div>'}${fuse}</div>`;
+    <div class="sec"><b>룬 공방</b><span>새기고 합치기</span></div>
+    <div class="list">${carve || '<div class="li"><span class="sub">필드 보스가 떨어뜨리는 「우두머리의 증표」로 룬을 새길 수 있어요.</span></div>'}${fuse}</div>
+    <details class="card"><summary><b>장비에 룬 새기기</b> <span class="muted">· ${runeG.length}점 (고급부터 등급마다 한 칸)</span></summary><div class="list">${runeG.join('') || '<div class="li"><span class="sub">룬 칸이 있는 장비가 없어요.</span></div>'}</div></details>
+    <details class="card"><summary><b>옵션 재감정</b> <span class="muted">· ${reapG.length}점 (희귀부터 보너스 옵션을 다시 뽑아요)</span></summary><div class="list">${reapG.join('') || '<div class="li"><span class="sub">희귀 이상 장비가 없어요.</span></div>'}</div></details>`;
 }
 const BLD_INNER = { smithy: '대장간에서 장비 만들기', alchemy: '물약 만들기', temple: '치료와 치유사', tower: '마법 연구', pen: '알 품기와 펫 돌보기', stable: '말과 마차', library: '스킬북 만들기', airfield: '비행 마차와 구름섬 원정' };
 const BLD_BOX = {}, BLD_SUM = {};   // 새 시설의 안쪽 창·요약 (world30.js)
@@ -398,7 +389,7 @@ function advDetail(a) {
     <details class="card"><summary>${CLASSES[a.cls].name}이(가) 배울 수 있는 스킬 전체</summary><div class="log">${table}</div></details>${notes}`;
   else if (tab === 'gear') { const SI = setInfo(a); body = `
     <div class="sec" style="margin-top:0"><b>장비</b>${idle ? '<button type="button" class="btn sm" data-mact="autoeq">가장 좋은 장비 끼우기</button>' : ''}</div>
-    <div class="card${SI.bonus ? ' hl' : ''}"><div class="sub">세트 효과: ${SI.n >= 3 ? `<b>${GTIERS[SI.t].name} ${SI.bonus.name}</b> (${SI.n}/4) · ${setBonusText(SI.bonus)}` : `같은 단계 장비를 3점 끼면 공격·마법·방어 +5%, 4점이면 +8%와 최대 HP +6%${SI.n > 0 ? ` (지금 ${GTIERS[SI.t].name} ${SI.n}점)` : ''}${['weapon', 'off'].some(sl => isUniq(a.eq[sl])) ? ' · 고유 이름 무기 · 방패는 세지 않아요' : ''}`}</div></div>
+    <div class="card${SI.bonus ? ' hl' : ''}"><div class="sub">세트 효과: ${SI.bonus ? `<b>${GTIERS[SI.t].name} ${SI.bonus.name}</b> (방어구 · 장신구 ${SI.n}점) · ${setBonusText(SI.bonus)}` : `같은 단계 방어구와 장신구를 함께 끼면 공격·마법·방어 +5%${SI.n > 0 ? ` (지금 ${GTIERS[SI.t].name} ${SI.n}점)` : ''}`} <span class="muted">· 무기 · 부장비 · 가방은 세트에 세지 않아요</span></div></div>
     <div class="list">${slots}</div>
     <div class="sub muted">강화는 대장간 창의 「강화」나 창고의 장비 탭에서, 희귀 이상 장비의 보너스 옵션 재감정은 창고의 장비 탭(마탑 필요)에서 해요.</div>${notes}`; }
   else body = `
@@ -725,9 +716,6 @@ const ACT = {
   sponsor: d => say(sponsor(d.id)),
   smithT: d => { UI.smithT = +d.i; },
   smithTab: d => { UI.smithTab = d.t; const top = winTop(); if (top) top.tab = d.t; renderPanel(true); },
-  enhsel: d => { UI.enhG = +d.id; renderPanel(true); },
-  enhance: d => { say(enhance(+d.id)); renderPanel(true); },
-  enhopen: d => { UI.smithTab = 'enh'; UI.enhG = +d.id; openWin('b', { b: 'smithy', tab: 'enh' }); },
   reapp: d => { const r = gearAnyById(+d.id); if (!r) return; const g = r.g; confirmBox('옵션 재감정', `「${gearName(g)}」의 보너스 옵션(${statLine(g.bonus || {}) || '없음'})을 다시 뽑을까요? ${fmt(REAPPRAISE.fee(g.t))}G${ITEMS['crest_' + g.t] ? `와 ${ITEMS['crest_' + g.t].name} ${REAPPRAISE.crest}개` : ''}가 들고, 더 나빠질 수도 있어요.`, '재감정', () => { say(reappraise(+d.id)); renderPanel(true); saveGame(); }, false); },
   smith: d => { const r = smith(d.b, +d.t, +d.q || 0); if (typeof r === 'string') say(r); else say(`${QUALITY[r.q].name} ${gearName(r)} 완성`); },
   buyammo: d => { const r = buyAmmo(d.b, +d.t); say(r || `${gearNameOf(d.b, d.t)}을(를) 샀어요`); },

@@ -290,33 +290,16 @@ function unequip(aid, slot) {
   clampVitals(a); changed();
   return '';
 }
-const gearScore = g => (g ? g.t * 10 + g.q * 3.5 + (g.plus || 0) * 0.8 : -1);
-/* ───────── 장비 강화 (+1 ~ +10) ───────── */
-const PLUS_MAX = 10;
-const PLUS_RATE = [1, 1, 1, 0.85, 0.8, 0.75, 0.65, 0.6, 0.5, 0.45];   // 지금 +n에서 +n+1 성공 확률
-function plusNeed(g) {   // 다음 단계 재료: +1~+3 증표 2, +4~+6 핵 1, +7~+9 혼 1, +10 혼 2
-  const n = (g.plus || 0) + 1, t = g.t, need = {};
-  if (n <= 3) need['crest_' + t] = 2; else if (n <= 6) need['core_' + t] = 1; else if (n <= 9) need['soul_' + t] = 1; else need['soul_' + t] = 2;
-  return need;
-}
-const plusFee = g => Math.round(recipeFee(g.t) * (1 + (g.plus || 0)) * 1.2 * (1 - relic('smith')) / 10) * 10;
-const plusRate = g => Math.min(1, PLUS_RATE[g.plus || 0] + (spn('dwarves') >= 2 ? 0.05 : 0));
+const gearScore = g => (g ? g.t * 10 + g.q * 3.5 : -1);
+/* 빌드 64: 장비 강화(+1~+10)는 없앴다. 옛 저장의 강화 단계는 migrate12가 지우고, 성공한 단계만큼 재료 · 돈을 돌려준다 (예전 값 표 PLUS_NEED_OF · PLUS_FEE_OF) */
+const PLUS_NEED_OF = (n, t) => (n <= 3 ? { ['crest_' + t]: 2 } : n <= 6 ? { ['core_' + t]: 1 } : n <= 9 ? { ['soul_' + t]: 1 } : { ['soul_' + t]: 2 });   // +n으로 올릴 때 든 재료
+const PLUS_FEE_OF = (n, t) => Math.round(recipeFee(t) * n * 1.2 / 10) * 10;   // +n으로 올릴 때 든 돈 (유물 할인 없이)
 function gearsAll() {   // 창고 + 끼고 있는 장비 (owner 표시)
   const out = S.gear.map(g => ({ g, owner: null }));
   S.advs.forEach(a => SLOTS.forEach(([sl]) => { if (a.eq[sl]) out.push({ g: a.eq[sl], owner: a }); }));
   return out;
 }
 const gearAnyById = id => { const r = gearsAll().find(x => x.g.id === id); return r || null; };
-function plusWhy(g) {
-  if (!g) return '장비를 고르세요';
-  if (isAmmo(g)) return '화살·표창은 강화할 수 없어요';
-  if (!S.bld.smithy) return '대장간이 필요해요';
-  if ((g.plus || 0) >= PLUS_MAX) return '최고 강화예요';
-  const need = plusNeed(g), lack = Object.entries(need).find(([k, n]) => (S.inv[k] || 0) < n);
-  if (lack) return `${ITEMS[lack[0]].name} ${lack[1]}개 필요 (창고 ${S.inv[lack[0]] || 0})`;
-  if (S.gold < plusFee(g)) return '돈이 모자라요';
-  return '';
-}
 // 옵션 재감정 (마탑): 희귀 이상 장비의 보너스 능력치를 다시 뽑는다. 돈 + 그 단계 증표
 function reappraiseWhy(g) {
   if (!g) return '그 장비가 없어요';
@@ -339,22 +322,6 @@ function reappraise(id) {
   log(`마탑에서 「${gearName(g)}」의 옵션을 다시 감정했다: ${before || '없음'} → ${statLine(g.bonus || {})}`, 'good');
   changed();
   return '';
-}
-function enhance(id) {
-  const r = gearAnyById(id); if (!r) return '그 장비가 없어요.';
-  const g = r.g, why = plusWhy(g); if (why) return why + '.';
-  const need = plusNeed(g), fee = plusFee(g), rate = plusRate(g);
-  Object.entries(need).forEach(([k, n]) => addTo(S.inv, k, -n)); S.gold -= fee; S.stats.spent = (S.stats.spent || 0) + fee;
-  if (rnd() < rate) {
-    g.plus = (g.plus || 0) + 1;
-    log(`${gearName(g)} 강화 성공! (${Math.round(rate * 100)}%)`, 'good');
-    if (r.owner) clampVitals(r.owner);
-    changed();
-    return `성공! ${gearName(g)}`;
-  }
-  log(`${gearName(g)} +${(g.plus || 0) + 1} 강화 실패… 재료와 돈을 잃었다 (${Math.round(rate * 100)}%).`, 'bad');
-  changed();
-  return `실패… ${gearName(g)}은(는) 그대로예요.`;
 }
 // 대장간: 화살·표창은 재료 없이 돈으로도 산다 (대장간이 만들 수 있는 단계까지)
 function buyAmmoWhy(base, t) {
@@ -807,9 +774,9 @@ function genReq() {
 }
 const reqHave = r => (r.gear ? gearsOfKey('g:' + r.gear).length : S.inv[r.item] || 0);
 const reqName = r => (r.gear ? gearNameOf(r.gear.split(':')[0], r.gear.split(':')[1]) : ITEMS[r.item].name);
-// 장비 의뢰에 내줄 것: 가장 싼 것부터 (등급 낮고, 강화·룬 없는 것)
-const reqGearPick = r => gearsOfKey('g:' + r.gear).slice().sort((a, b) => ((a.q || 0) - (b.q || 0)) || ((a.plus || 0) - (b.plus || 0)) || ((a.runes || []).length - (b.runes || []).length))[0];
-const reqGearCheap = g => !!g && (g.q || 0) <= 1 && !(g.plus || 0) && !(g.runes || []).length;
+// 장비 의뢰에 내줄 것: 가장 싼 것부터 (등급 낮고, 룬 없는 것)
+const reqGearPick = r => gearsOfKey('g:' + r.gear).slice().sort((a, b) => ((a.q || 0) - (b.q || 0)) || ((a.runes || []).length - (b.runes || []).length))[0];
+const reqGearCheap = g => !!g && (g.q || 0) <= 1 && !(g.runes || []).length;
 function fulfill(id, auto) {
   const r = S.reqs.find(x => x.id === id);
   if (!r) return '';
@@ -1377,7 +1344,7 @@ function migrate11() {
   log(`은행을 닫았다. 돌려받은 돈 ${fmt(refund + loan)}G · 돌려준 예금 ${fmt(dep)}G`);
 }
 // 빌드 64 장비 개편 1단계: 카이트 · 탑 방패는 라운드 실드로, 그 단계에 없는 2차 직업 장비(늪지 단계 아래의 글라디우스 · 버클러 · 십자 방패)는 장검 · 라운드 실드로.
-// 옛 방패는 모양만 다른 같은 방패였으니, 모험가가 든 방패는 그 직업의 새 방패로(검투사 버클러 · 기사 십자 · 마검사 에테르, 그 단계에 없으면 라운드 실드) — 등급 · 강화 · 룬은 그대로.
+// 옛 방패는 모양만 다른 같은 방패였으니, 모험가가 든 방패는 그 직업의 새 방패로(검투사 버클러 · 기사 십자 · 마검사 에테르, 그 단계에 없으면 라운드 실드) — 등급 · 룬은 그대로.
 // 들고 있던 장비를 더는 못 쓰게 된 모험가(글라디우스를 든 전사 · 쌍검사 등)는 같은 단계 장검으로 바꿔 준다.
 function migrate12() {
   const OLD = { kite: 'shield', tower: 'shield' }, LOW = { gladius: 'sword', great: 'axe', buckler: 'shield', cross: 'shield', ether: 'shield' };
@@ -1417,10 +1384,31 @@ function migrate12() {
     if (Array.isArray(a.skills) && CLASSES[a.cls] && a.skills.length > skillSlots(a)) a.skills = a.skills.slice(0, skillSlots(a));
   });
   (S.hall || []).forEach(x => { delete x.hero; delete x.hero2; });   // 명예의 전당 용사 배율도 없앴다
+  // 빌드 64: 장비 강화(+1~+10)를 없앴다 — 내 장비(창고 · 창고 1~10 · 모험가 · 원정 짐)의 강화 단계를 지우고 성공한 단계만큼 재료 · 돈을 돌려준다. 남의 것(암시장 · 경매 · 투기장 상대 · 손님)은 지우기만
+  const back = {}; let bg = 0, bn = 0;
+  const unplus = (g, mine) => { if (!g || !(g.plus > 0)) { if (g) delete g.plus; return; }
+    if (mine && GTIERS[g.t]) { for (let k = 1; k <= Math.min(10, g.plus); k++) { for (const [it, q] of Object.entries(PLUS_NEED_OF(k, g.t))) if (ITEMS[it]) back[it] = (back[it] || 0) + q; bg += PLUS_FEE_OF(k, g.t); } bn++; }
+    delete g.plus; };
+  (S.gear || []).forEach(g => unplus(g, 1));
+  (S.wh || []).forEach(w => ((w && w.gear) || []).forEach(g => unplus(g, 1)));
+  (S.advs || []).forEach(x => { if (x && x.eq) Object.values(x.eq).forEach(g => unplus(g, 1)); });
+  (S.parties || []).forEach(q => { if (q.exp && q.exp.gbag) q.exp.gbag.forEach(g => unplus(g, 1)); });
+  (S.graves || []).forEach(x => { if (x && x.adv && x.adv.eq) Object.values(x.adv.eq).forEach(g => unplus(g, 1)); });
+  (S.cands || []).forEach(x => { if (x && x.eq) Object.values(x.eq).forEach(g => unplus(g, 0)); });
+  if (U.bm && U.bm.stock) U.bm.stock.forEach(o => { if (o && o.g) unplus(o.g, 0); });
+  if (U.au && U.au.g) unplus(U.au.g, 0);
+  if (U.arena && U.arena.opps) U.arena.opps.forEach(o => ((o && o.members) || []).forEach(x => { if (x && x.eq) Object.values(x.eq).forEach(g => unplus(g, 0)); }));
+  if (bn) {
+    for (const [it, q] of Object.entries(back)) addTo(S.inv, it, q);
+    S.gold = (S.gold || 0) + bg;
+    const mats = Object.entries(back).map(([it, q]) => `${ITEMS[it].name} ${q}`).join(' · ');
+    S.modals.push({ title: '장비 강화 정리', body: ['장비 강화(+1~+10)가 없어졌다. 강화한 장비는 강화 전 능력치로 돌아갔다.', `강화한 장비 ${bn}점에 들인 재료와 돈(성공한 단계만큼)을 돌려받았다: ${mats || '재료 없음'} · ${fmt(bg)}G`] });
+    log(`장비 강화 정리: ${bn}점 · 돌려받은 돈 ${fmt(bg)}G${mats ? ' · ' + mats : ''}`, 'good');
+  }
   (S.graves || []).forEach(g => { if (g) { delete g.hero; delete g.hero2; } });
   S.v = 12;
   unfitGear();
-  if (n || m) log(`장비 개편: 옛 방패 · 투기장 글라디우스 ${fmt(n + m)}점을 새 장비로 바꾸었다 (등급 · 강화 · 룬은 그대로).`);
+  if (n || m) log(`장비 개편: 옛 방패 · 투기장 글라디우스 ${fmt(n + m)}점을 새 장비로 바꾸었다 (등급 · 룬은 그대로).`);
   if (h) log(`각성이 없어졌다: 용사 ${h}명의 각성기를 스킬 칸에서 뺐다 (능력치 · 레벨은 그대로).`);
 }
 function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 전직 레벨', body: STORY.v64 }); } }

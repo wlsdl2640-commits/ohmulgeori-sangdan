@@ -50,7 +50,6 @@ const ACHV = [
   // 살림
   { id: 'pet1', cat: '살림', name: '첫 펫', desc: '펫 1마리 부화', need: 1, get: () => (S.pets || []).length + (S.dex && S.dex.pets ? Object.keys(S.dex.pets).length : 0), rw: { gold: 2000 } },
   { id: 'pet2', cat: '살림', name: '다 컸구나', desc: '펫 진화 1마리', need: 1, get: () => (S.pets || []).filter(x => x.stage).length, rw: { gold: 8000, fame: 10 } },
-  { id: 'plus10', cat: '살림', name: '빛나는 장비', desc: '장비 +10 강화', need: 1, get: () => (anyGear(g => (g.plus || 0) >= 10) ? 1 : 0), rw: { gold: 10000, fame: 15 } },
   { id: 'legend', cat: '살림', name: '전설을 손에', desc: '전설 등급 이상 장비 1점', need: 1, get: () => (anyGear(g => (g.q || 0) >= 4) ? 1 : 0), rw: { gold: 5000 } },
   { id: 'dex1', cat: '살림', name: '도감 수집가', desc: '몬스터 완전 기록 10종', need: 10, get: () => Object.values((S.dex && S.dex.kills) || {}).filter(n => n >= DEX_K[3]).length, rw: { gold: 5000, fame: 10 } },
   { id: 'dex2', cat: '살림', name: '몬스터 박사', desc: '몬스터 완전 기록 30종', need: 30, get: () => Object.values((S.dex && S.dex.kills) || {}).filter(n => n >= DEX_K[3]).length, rw: { gold: 20000, fame: 20, item: ['wizstone', 1] } },

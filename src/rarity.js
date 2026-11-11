@@ -191,5 +191,5 @@ function rqClass(src, g, plus) {
 // 칸 그림 HTML. s = 1(26px) · 2(52px)
 const rqArt = (src, g, s, plus) => `<i class="rqa s${s || 2} ${rqClass(src, Math.max(0, Math.min(GRADE_MAX, g | 0)), plus | 0)}" aria-hidden="true"></i>`;
 const rqEmpty = s => `<i class="rqa s${s || 2} ${rqClass(null, -1, 0)}" aria-hidden="true"></i>`;
-const gArt = (g, s) => rqArt(gearIconURL(g), g.q || 0, s, g.plus || 0);
+const gArt = (g, s) => rqArt(gearIconURL(g), g.q || 0, s, 0);   // 빌드 64: 강화 표시는 없앴다
 const iArt = (k, s) => rqArt(iconURL(k), itemGrade(k), s, 0);

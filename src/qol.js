@@ -104,14 +104,14 @@ function sellAllMats() {
   changed();
   return '';
 }
-const bulkGears = () => S.gear.filter(g => (g.q || 0) <= 1 && !g.plus && !(g.runes || []).some(Boolean) && !g.lock);
+const bulkGears = () => S.gear.filter(g => (g.q || 0) <= 1 && !(g.runes || []).some(Boolean) && !g.lock);
 function sellLowGear() {
   const list = bulkGears(); if (!list.length) return '팔 장비가 없어요.';
   let g = 0;
   for (const x of list) { g += Math.round(gearValue(x) * GEAR_SELL); }
   S.gear = S.gear.filter(x => !list.includes(x));
   S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
-  log(`일반·고급 장비 ${list.length}점을 ${g$(g)}에 한꺼번에 팔았다. (강화·룬 붙은 것은 남겼다)`);
+  log(`일반·고급 장비 ${list.length}점을 ${g$(g)}에 한꺼번에 팔았다. (룬 붙은 것은 남겼다)`);
   HOOKS.toast(`장비 ${list.length}점 · ${g$(g)}`);
   changed();
   return '';

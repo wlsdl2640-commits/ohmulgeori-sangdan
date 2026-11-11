@@ -51,16 +51,19 @@ const RUNES = {
 const RUNE_IDS = Object.keys(RUNES), RUNE_LV = ['하급', '중급', '상급'];
 RUNE_IDS.forEach(k => RUNE_LV.forEach((n, l) => { ITEMS[`rune_${k}_${l}`] = { name: `${n} ${RUNES[k].name}의 룬`, v: [80, 320, 1200][l], w: 1, icon: 'rune', c: RUNES[k].c, rune: [k, l] }; }));
 const runeId = (k, l) => `rune_${k}_${l}`;
-/* ───────── 세트 효과: 같은 단계 장비를 3·4점 끼면 ───────── */
-const SET_BONUS = { 3: { name: '3점 세트', atkPct: 0.05, matkPct: 0.05, defPct: 0.05 }, 4: { name: '4점 세트', atkPct: 0.08, matkPct: 0.08, defPct: 0.08, hpPct: 0.06 } };
+/* ───────── 세트 효과: 같은 단계 방어구 · 장신구 ─────────
+   빌드 64 (사용자 11-11 19:28 「숲지기, 서리 등등의 세트효과와 명은 방어구, 장신구에만」): 무기 · 부장비 · 가방 · 화살은 세지 않는다.
+   지금은 방어구 · 장신구가 한 칸씩이라 둘이 같은 단계면 세트(2점 = 예전 3점 효과). 방어구 · 장신구 개편 때 칸이 늘면 3 · 4점을 다시 쓴다 */
+const SET_SLOTS = ['armor', 'acc'], SET_MIN = 2;
+const SET_BONUS = { 2: { name: '세트', atkPct: 0.05, matkPct: 0.05, defPct: 0.05 }, 3: { name: '3점 세트', atkPct: 0.05, matkPct: 0.05, defPct: 0.05 }, 4: { name: '4점 세트', atkPct: 0.08, matkPct: 0.08, defPct: 0.08, hpPct: 0.06 } };
 // 끼고 있는 장비 가운데 가장 많은 같은 단계: { t, n, bonus }
 function setInfo(a) {
   const cnt = {};
-  for (const [sl] of SLOTS) { if (sl === 'ammo') continue; const g = a.eq && a.eq[sl]; if (g && !isUniq(g)) cnt[g.t] = (cnt[g.t] || 0) + 1; }   // 화살 칸은 세트에 안 센다 · 빌드 64: 고유 이름 무기 · 방패도 안 센다 (방어구만 세트)
+  for (const sl of SET_SLOTS) { const g = a.eq && a.eq[sl]; if (g && GTYPES[g.base] && tierNamed(g.base)) cnt[g.t] = (cnt[g.t] || 0) + 1; }   // 빌드 64: 방어구 · 장신구만
   let best = null;
   for (const t in cnt) if (!best || cnt[t] > best.n || (cnt[t] === best.n && +t > best.t)) best = { t: +t, n: cnt[t] };
   if (!best) return { t: -1, n: 0, bonus: null };
-  const B = best.n >= 4 ? SET_BONUS[4] : best.n >= 3 ? SET_BONUS[3] : null, R = B && typeof setRes === 'function' ? setRes(best.t, best.n) : null;   // 빌드 63: 그 단계 땅에 많은 속성 저항
+  const B = best.n >= 4 ? SET_BONUS[4] : best.n >= 3 ? SET_BONUS[3] : best.n >= SET_MIN ? SET_BONUS[2] : null, R = B && typeof setRes === 'function' ? setRes(best.t, best.n) : null;   // 빌드 63: 그 단계 땅에 많은 속성 저항
   return { t: best.t, n: best.n, bonus: R ? Object.assign({}, B, R) : B };
 }
 const setBonusText = B => B ? Object.entries(B).filter(([k]) => k !== 'name').map(([k, v]) => k.startsWith('r_') ? `${STAT_NAMES[k] || k} ${Math.round(v * 100)}%` : `${{ atkPct: '공격력', matkPct: '마법 공격력', defPct: '방어력', hpPct: '최대 HP' }[k] || k} +${Math.round(v * 100)}%`).join(' · ') : '';
