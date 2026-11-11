@@ -286,3 +286,12 @@ def variant10(k, i):
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
 STR_PICK = 2                      # 강인 = ALTS10 C 엄지 띠 + 접힌 금 · 금빛 (사용자 11-12 02:08 「C ㄱ」) — 게임에 넣음 (runes_final.py)
+# 강인 하급 ~ 상급도 같은 팔 문양 (사용자 11-12 07:39 「강인함 하, 중, 상도 같은 타입으로 문양을 바꿔줘야지」):
+# 최상급 C 흰빛을 아래 등급 글자로 — 흰 그늘 p · 옅은 그늘 q = 몸 #, 장밋빛 금 r = 어둠 o (R.make가 등급마다 돌 새김 · 붉은 그림자 · 빛 번짐으로 칠함)
+STR_LOW = (['...wwww..', '..w###w#.', '.w#wwwo#.', '.w##oo#o.', '.w##.....', 'w##..ww..', 'w##ow###.', 'w###o####', 'w####oo##', '.#######.'], (1, 2))
+
+
+def str_low(lv):
+    vk = 'str__low'
+    R.SHAPES[vk] = R.SHAPES['str']; R.GLYPH[vk] = STR_LOW[0]; R.GOFF[vk] = STR_LOW[1]; R.GLYPH_FN.pop(vk, None)
+    return R.make(vk, COL['str'], lv)
