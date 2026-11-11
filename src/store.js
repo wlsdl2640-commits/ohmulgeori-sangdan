@@ -287,7 +287,7 @@ function lfDo() {
 BLD_SUM.library = () => { const n = Object.keys(S.inv).filter(isBookItem).reduce((x, k) => x + (S.inv[k] || 0), 0); return `<div class="sub">창고 스킬북 ${n}권 · 같은 레어도 ${LIB_FUSE.n}권을 합성해요</div>`; };
 BLD_BOX.library = () => {
   const F = lfClean(), why = lfWhy(), lib = S.bld.library || 0;
-  const chips = QUALITY.slice(0, GRADE_MAX).map((Q, g) => { const n = lfCands(g).reduce((x, k) => x + (S.inv[k] || 0), 0); return `<button type="button" class="btn sm q${g}${F.g === g ? ' on' : ''}" data-act="lfg" data-g="${g}"${lib >= LIB_FUSE.lib[g] ? '' : ' disabled'}>${Q.name} <small>${n}</small></button>`; }).join('');
+  const chips = QUALITY.slice(0, LIB_FUSE.fee.length).map((Q, g) => { const n = lfCands(g).reduce((x, k) => x + (S.inv[k] || 0), 0); return `<button type="button" class="btn sm q${g}${F.g === g ? ' on' : ''}" data-act="lfg" data-g="${g}"${lib >= LIB_FUSE.lib[g] ? '' : ' disabled'}>${Q.name} <small>${n}</small></button>`; }).join('');   // 스킬북은 신화까지
   const slots = Array.from({ length: LIB_FUSE.n }, (_, i) => { const k = F.ids[i]; return k ? `<button type="button" class="cell${rq(itemGrade(k))}" data-act="lfrm" data-i="${i}" title="빼기">${iArt(k, 2)}</button>` : `<span class="cell empty fslot">${rqEmpty(2)}<b class="fsn">${i + 1}</b></span>`; }).join('');
   const rest = lfCands(F.g).map(k => { const left = (S.inv[k] || 0) - lfUsed(F, k); return left > 0 ? `<button type="button" class="cell${rq(F.g)}" data-act="lfadd" data-k="${k}" title="${esc(ITEMS[k].name)}">${iArt(k, 2)}<b class="qty">${left}</b></button>` : ''; }).filter(Boolean);
   return `<div class="sub muted">같은 레어도 스킬북 ${LIB_FUSE.n}권을 넣으면 <b class="q${F.g + 1}">${gradeName(F.g + 1)}</b> 스킬북 하나가 무작위로 나와요(스킬마다 뽑기 무게대로). 아주 드물게(${Math.round(LIB_FUSE.jump * 100)}%) 두 단계 위가 나와요. 펼치지 않은 스킬북 단계(찢어진 · 낡은 …)도 넣을 수 있어요.</div>
@@ -313,7 +313,7 @@ function fuseAuto() {   // 가장 낮은 장비부터 (단계 · 강화 · 값�
 function fuseWhy() {
   const F = fuseClean();
   if (!S.bld.smithy) return '대장간이 필요해요';
-  if (F.q >= GRADE_MAX) return '신성 장비는 더 합성할 수 없어요';
+  if (F.q >= GRADE_MAX) return `${gradeName(GRADE_MAX)} 장비는 더 합성할 수 없어요`;
   if (F.ids.length < FUSE.n) return `${FUSE.n - F.ids.length}점 더 넣어요`;
   if (S.gold < FUSE.fee[F.q]) return `${fmt(FUSE.fee[F.q])}G가 필요해요`;
   return '';

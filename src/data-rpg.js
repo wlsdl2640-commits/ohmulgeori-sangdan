@@ -454,7 +454,8 @@ const QUALITY = [
   { name: '영웅', m: 1.95, c: '#c07af0' },
   { name: '전설', m: 2.45, c: '#f0b43c' },
   { name: '신화', m: 3.1,  c: '#ff6a5a' },
-  { name: '신성', m: 4.0,  c: '#fff4b0' }
+  { name: '신성', m: 4.0,  c: '#fff4b0' },
+  { name: '우주', m: 5.1,  c: '#9c9cff' }   // 빌드 63 다섯째 묶음
 ];
 const runeSlots = g => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? g.q || 0 : 0);   // 화살·표창은 룬 칸이 없다
 const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
