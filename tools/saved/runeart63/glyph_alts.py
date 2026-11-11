@@ -263,3 +263,25 @@ def variant9(k, i):
     nm, rows, off = ALTS9[k][i]
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
+
+
+# ───────── 강인 최상급 — 옆에서 본 주먹 (사용자 11-11 23:50 「주먹모양이 옆모양이여야지」) ─────────
+# 앞에서 본 손가락 넷 → 옆 주먹: 손등 · 마디가 위 왼쪽, 말아 쥔 손가락이 알통 쪽(오른쪽). 팔은 그대로(9 × 10 · x6~14 y6~15).
+# A 손끝 혹 둘(오른쪽 가장자리 울퉁불퉁) · B 접힌 금 덩이 + 손끝 불룩 · C 엄지 띠 + 접힌 금 · D 손끝 혹 + 엄지 — 각각 금빛 / 흰빛.
+ALTS10 = {'str': [
+    ('A 손끝 혹 둘 · 금빛', ['...###...', '..#ggg#y.', '.#gggby..', '.#gggg#y.', '.#gy.....', '#gy..##..', '#gyb#ggh.', '#ggybgghy', '#ggggbbhy', '.yyyyyyy.'], (1, 2)),
+    ('B 접힌 금 덩이 + 손끝 불룩 · 금빛', ['..#####..', '.#gggg#y.', '.#gggbbg.', '.#ggybby.', '.#gy.....', '#gy..##..', '#gyb#ggh.', '#ggybgghy', '#ggggbbhy', '.yyyyyyy.'], (1, 2)),
+    ('C 엄지 띠 + 접힌 금 · 금빛', ['...####..', '..#ggg#y.', '.#g###by.', '.#gybbgb.', '.#gy.....', '#gy..##..', '#gyb#ggh.', '#ggybgghy', '#ggggbbhy', '.yyyyyyy.'], (1, 2)),
+    ('D 손끝 혹 + 엄지 · 금빛', ['...###...', '..#ggg#y.', '.####by..', '.#hhhg#y.', '.#gy.....', '#gy..##..', '#gyb#ggh.', '#ggybgghy', '#ggggbbhy', '.yyyyyyy.'], (1, 2)),
+    ('A 손끝 혹 둘 · 흰빛', ['...www...', '..w###wp.', '.w###rp..', '.w####wp.', '.w#p.....', 'w#p..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+    ('B 접힌 금 덩이 + 손끝 불룩 · 흰빛', ['..wwwww..', '.w####wp.', '.w###rr#.', '.w##prrp.', '.w#p.....', 'w#p..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+    ('C 엄지 띠 + 접힌 금 · 흰빛', ['...wwww..', '..w###wp.', '.w#wwwrp.', '.w#prr#r.', '.w#p.....', 'w#p..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+    ('D 손끝 혹 + 엄지 · 흰빛', ['...www...', '..w###wp.', '.wwwwrp..', '.wqqq#wp.', '.w#p.....', 'w#p..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+]}
+
+
+def variant10(k, i):
+    vk = f'{k}__e{i}'
+    nm, rows, off = ALTS10[k][i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])
