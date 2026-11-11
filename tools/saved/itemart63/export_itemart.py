@@ -1,7 +1,7 @@
 """빌드 63: 고른 스킬북 · 룬 그림(20×20)을 게임 데이터 src/data-itemart.js로 내보낸다. 손으로 고치지 말고 이것으로 다시 뽑는다.
   python3 export_itemart.py <bookart 폴더(books2.py)> <runeart 폴더(runes.py)> <출력 data-itemart.js>
 고른 것(사용자 11-11 13:03 그림에 동그라미): 찢어진 A · 낡은 A · 빛바랜 A · 신비한 A · 고대 B · 신화 A (신화 B = 신성용으로 보관 bk_holy)
-  직업 스킬북 = B(레어도 띠 + 문양 창) — 전사 비스듬한 검 · 궁수 활 · 마법사 반짝이는 지팡이 · 성직자 해 · 짐꾼 바퀴 · 공용 마름모 · 도적 두건 그림자(빛나는 눈 · 웃는 입, 「도적 문양 표정」)
+  직업 스킬북 = B(레어도 띠 + 문양 창) — 전사 비스듬한 검 · 궁수 활 · 마법사 반짝이는 지팡이 · 성직자 해 · 짐꾼 바퀴 · 공용 마름모 · 도적 네 날 표창(「도적 문양 표창」 — 11-11 14:50 시안 A, 두건 그림자는 잘못 알아들은 것)
   룬 17종 × 하급 · 중급 · 상급 (시안 그대로)"""
 import sys
 sys.path.insert(0, sys.argv[1]); sys.path.insert(0, sys.argv[2])
@@ -27,7 +27,8 @@ out = {}
 for key, fn in [('bk_torn', B.torn_a), ('bk_old', B.old_a), ('bk_faded', B.faded_a), ('bk_myst', B.myst_a), ('bk_ancient', B.ancient_b), ('bk_myth', B.myth_a), ('bk_holy', B.myth_b)]:
     out[key] = enc(fn().px)
 B.SIGIL['mage'] = B.SIGIL_B['mage']
-B.SIGIL['rogue'] = ['..bbb..', '.bbbbb.', 'bkkkkkb', 'bkGkGkb', 'bkkkkkb', 'bkfffkb', '.bkkkb.']
+B.SC['d'] = '#6e7888'   # 표창 그늘 쪽 강철
+B.SIGIL['rogue'] = ['B.....b', '.Ba.ab.', '.aBabb.', '..akd..', '.bbddd.', '.bd.dd.', 'b.....d']   # 네 날 표창 (11-11 14:50 사용자 「A로」, 시안 rogue_shuri.py A)
 for cls, _, col in B.CLS:
     for g in range(6):
         out[f'jb_{cls}_{g}'] = enc(B.skill_b(cls, col, g).px)
