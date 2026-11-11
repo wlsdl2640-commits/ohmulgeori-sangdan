@@ -2,7 +2,14 @@
    주방에서 재료로 도시락을 만든다. 파티마다 도시락 하나를 골라 두면 출발할 때 하나를 들고 가고, 원정 내내 효과가 이어진다.
    「없으면 만들기」를 켜 두면 도시락이 떨어졌을 때 출발 직전에 재료로 하나 만든다. */
 const foodOf = e => (e && e.food && FOODS[e.food] ? e.food : null);
-const foodFx = e => (e && e.food && FOODS[e.food] ? FOODS[e.food].fx : {}) || {};
+const FX_MEMO = new WeakMap();
+const foodFx = e => {   // 도시락 효과 + 상단 전용 원정 휴대품(e.bst, store.js boostStart)
+  const f = (e && e.food && FOODS[e.food] ? FOODS[e.food].fx : {}) || {};
+  if (!e || !e.bst) return f;
+  const m = FX_MEMO.get(e); if (m && m.food === e.food) return m.fx;
+  const o = Object.assign({}, f); for (const [k, v] of Object.entries(e.bst)) o[k] = (o[k] || 0) + v;
+  FX_MEMO.set(e, { food: e.food, fx: o }); return o;
+};
 const cookFee = F => Math.round(F.fee * (1 - Math.max(0, (S.bld.kitchen || 0) - 1) * 0.1));
 function cookWhy(id) {
   const F = FOODS[id]; if (!F) return '없는 요리예요.';

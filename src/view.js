@@ -128,7 +128,9 @@ function present() {
   V.shake = Math.max(0, V.shake - 0.4);
 }
 
-/* 어둠: 빛이 닿는 곳만 남기고 덮는다 */
+/* 어둠: 빛이 닿는 곳만 남기고 덮는다 — 빌드 63: 빛 둘레를 부드럽게 흐리지 않고 계단 고리로 끊는다 */
+const DARK_STEPS = [[0, 0.38, 1], [0.381, 0.62, 0.72], [0.621, 0.82, 0.42], [0.821, 0.97, 0.16]];
+const GLOW_STEPS = [[0, 0.4, 1], [0.401, 0.7, 0.55], [0.701, 0.97, 0.22]];
 function applyDark(w, a, col, lights) {
   const L = V.l;
   L.globalCompositeOperation = 'source-over';
@@ -137,7 +139,8 @@ function applyDark(w, a, col, lights) {
   L.globalCompositeOperation = 'destination-out';
   for (const l of lights) {
     const gr = L.createRadialGradient(l.x, l.y, 0, l.x, l.y, l.r);
-    gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.5, 'rgba(0,0,0,0.8)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    for (const [p0, p1, v] of DARK_STEPS) { gr.addColorStop(p0, `rgba(0,0,0,${v})`); gr.addColorStop(p1, `rgba(0,0,0,${v})`); }   // 빌드 63: 흐린 둥근 빛 대신 계단 고리 (도트)
+    gr.addColorStop(1, 'rgba(0,0,0,0)');
     L.fillStyle = gr; L.fillRect(l.x - l.r, l.y - l.r, l.r * 2, l.r * 2);
   }
   L.globalCompositeOperation = 'source-over';
@@ -149,7 +152,8 @@ function glows(g, lights, dark) {
     if (!l.glow) continue;
     const a = (0.08 + dark * 0.16) * (l.flick ? 0.85 + Math.random() * 0.15 : 1), r = l.r * 0.6;
     const gr = g.createRadialGradient(l.x, l.y, 0, l.x, l.y, r);
-    gr.addColorStop(0, rgba(l.c, a.toFixed(3))); gr.addColorStop(1, rgba(l.c, 0));
+    for (const [p0, p1, v] of GLOW_STEPS) { gr.addColorStop(p0, rgba(l.c, (a * v).toFixed(3))); gr.addColorStop(p1, rgba(l.c, (a * v).toFixed(3))); }   // 빌드 63: 계단 빛 (도트)
+    gr.addColorStop(1, rgba(l.c, 0));
     g.fillStyle = gr; g.fillRect(l.x - r, l.y - r, r * 2, r * 2);
   }
   g.restore();

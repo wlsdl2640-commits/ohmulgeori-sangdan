@@ -100,7 +100,7 @@ function offIconURL(base, t) {
   const cells = skiCells(k); if (!cells) return null;
   const [c, x] = mkCanvas(20, 20);
   cells.forEach((col, i) => { if (col !== '#ff00ff') { x.fillStyle = col; x.fillRect(2 + (i % 16), Math.floor(i / 16), 1, 1); } });
-  return (ICON_URL[k] = c.toDataURL());
+  return (ICON_URL[k] = keepCv(c));
 }
 function gearIconURL(g) {
   const off = offIconURL(g.base, g.t); if (off) return off;
@@ -108,13 +108,36 @@ function gearIconURL(g) {
   if (ICON_URL[key]) return ICON_URL[key];
   const [c, x] = mkCanvas(10, 10);
   drawIcon(x, { icon: GTYPES[g.base].icon, c: TIER_COLORS[g.t] });
-  return (ICON_URL[key] = c.toDataURL());
+  return (ICON_URL[key] = keepCv(c));
+}
+const URL_CV = new Map();   // 빌드 63: 그림 data URL → 캔버스 (레어도 칸이 그림 도트를 다시 그린다, rarity.js)
+const keepCv = (c) => { const u = c.toDataURL(); URL_CV.set(u, c); return u; };
+// 빌드 63: 스킬북 · 룬은 20×20 새 그림(data-itemart.js)
+function artCanvas(key) {
+  const code = typeof ITEMART !== 'undefined' && ITEMART[key]; if (!code) return null;
+  const bar = code.indexOf('|'), pal = code.slice(0, bar), cells = code.slice(bar + 1), P = [];
+  for (let i = 0; i < pal.length; i += 6) P.push('#' + pal.slice(i, i + 6));
+  const [c, x] = mkCanvas(20, 20);
+  for (let i = 0; i < 400; i++) { const ch = cells[i]; if (ch === '.' || ch == null) continue; x.fillStyle = P[ITEMART_ALPH.indexOf(ch)]; x.fillRect(i % 20, (i / 20) | 0, 1, 1); }
+  return c;
+}
+function itemArtKey(id) {
+  const I = ITEMS[id]; if (!I) return null;
+  if (I.btier != null) return BOOK_TIERS[I.btier] ? BOOK_TIERS[I.btier].id : null;
+  if (I.book && SKILLS[I.book]) {
+    const s = SKILLS[I.book], c0 = (s.cls || [])[0], fam = !c0 || c0 === 'all' || !CLASSES[c0] ? 'all' : jobBase(c0);
+    return `jb_${['warrior', 'archer', 'mage', 'cleric', 'rogue', 'porter'].includes(fam) ? fam : 'all'}_${Math.max(0, Math.min(5, bookGrade(I.book)))}`;
+  }
+  if (I.rune) return `rn_${I.rune[0]}_${I.rune[1]}`;
+  return null;
 }
 function iconURL(id) {
   if (ICON_URL[id]) return ICON_URL[id];
+  const ak = typeof id === 'string' ? itemArtKey(id) : null, ac = ak ? artCanvas(ak) : null;
+  if (ac) return (ICON_URL[id] = keepCv(ac));
   const [c, x] = mkCanvas(10, 10);
   drawIcon(x, id);
-  return (ICON_URL[id] = c.toDataURL());
+  return (ICON_URL[id] = keepCv(c));
 }
 
 /* ───────── 숫자 (3×5) ───────── */

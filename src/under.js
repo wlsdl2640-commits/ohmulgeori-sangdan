@@ -167,12 +167,11 @@ function arenaWipe(p) {
   e.pos = Math.min(e.pos, STAGE_LEN * 0.2);
 }
 // 투기장 상단: 코인으로만 산다
-const ARENA_TIER_BOOKS = [['bk_old', 600], ['bk_faded', 1800], ['bk_myst', 4500]];   // 투기장 코인으로 사는 스킬북 단계 — 아주 비싸게 (하루 최대 150코인, 사용자 「드랍 외에는 더 어렵게」)
 function arenaShop() {
   const t = arenaTier();
   const gear = ARENA_GEAR.map(b => ({ kind: 'gear', base: b, t, q: 3, price: GTYPES[b].slot === 'acc' ? 150 : 100 + t * 30 }));
-  const books = ARENA_TIER_BOOKS.map(([id, price]) => ({ kind: 'item', id, price }));   // 빌드 63: 투기장 스킬은 이제 스킬북 단계 안에서 나온다
-  return gear.concat(books);   // 마법사의 돌은 빌드 28부터 팔지 않는다 (우두머리·던전 주인·레이드에서만)
+  const excl = exclOf('arena').map(id => ({ kind: 'item', id, price: EXCL[id].coins }));   // 빌드 63: 스킬북 대신 투기장 상단 전용 물건 (깃발 · 월계관)
+  return gear.concat(excl);   // 마법사의 돌은 빌드 28부터 팔지 않는다 (우두머리·던전 주인·레이드에서만)
 }
 function arenaBuy(kind, id) {
   const U = S.under.arena, o = arenaShop().find(x => x.kind === kind && (x.base === id || x.id === id));
@@ -186,12 +185,12 @@ function arenaBuy(kind, id) {
   return `${ITEMS[it].name}을(를) 창고에 넣었어요.`;
 }
 
-/* ───────── 암시장: 날마다 바뀌는 장비·스킬북·룬 ───────── */
+/* ───────── 암시장: 날마다 바뀌는 장비 · 룬 · 암시장 전용 물건 (빌드 63부터 스킬북은 안 판다) ───────── */
 function bmRefresh(k) {
   const B = S.under.bm, t0 = arenaTier();
   B.day = k; B.stock = [];
   for (let i = 0; i < 3; i++) { const t = Math.max(0, t0 - (rnd() < 0.4 ? 1 : 0)), q = pickOne([2, 2, 3, 3, 4]); const g = makeGear(dropBase(), t, q); B.stock.push({ kind: 'gear', g, price: Math.round(gearValue(g) * 3 / 10) * 10 }); }
-  if (rnd() < BOOK_SHOP.bm) { const it = tierBookFor(t0, true); if (it) B.stock.push({ kind: 'item', it, price: Math.round(ITEMS[it].v * BOOK_SHOP.mul / 10) * 10 }); }   // 빌드 63: 스킬북 단계 — 가끔 한 권, 아주 비싸게
+  { const k = pickOne(exclOf('bm')); B.stock.push({ kind: 'item', it: k, price: exclPrice(k) }); if (rnd() < 0.25) B.stock.push({ kind: 'item', it: 'tmap', price: Math.round(ITEMS.tmap.v * 3 / 10) * 10 }); }   // 빌드 63: 스킬북 대신 암시장 전용 물건 (부적 · 미끼) · 가끔 밀거래 보물 지도   // 빌드 63: 스킬북 단계 — 가끔 한 권, 아주 비싸게
   const r = runeId(pickOne(RUNE_IDS), rnd() < 0.3 ? 1 : 0); if (ITEMS[r]) B.stock.push({ kind: 'item', it: r, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
 }
 function bmBuy(i) {
@@ -245,7 +244,7 @@ function auClose() {
   const A = S.under && S.under.au;
   if (!A || !A.g) return;
   if (A.top === 'me') {
-    stashGear(A.g); A.held = 0;   // 낙찰: 넘치면 창고 1~10 → 길드
+    stashGear(A.g); A.held = 0;   // 낙찰: 넘치면 창고 1~10, 그래도 없으면 잃는다
     log(`경매장에서 ${gearName(A.g)}을(를) ${fmt(A.price)}G에 낙찰받았다!`, 'good');
     queueModal({ title: '낙찰', body: [`경매장의 ${gearName(A.g)}(${QUALITY[A.g.q].name})이(가) ${fmt(A.price)}G에 우리 것이 됐다. 창고에 들어 있다.`] });
   } else if (A.bids) log(`경매장의 ${gearName(A.g)}은(는) ${A.npc}에게 ${fmt(A.price)}G에 넘어갔다.`);
@@ -255,7 +254,8 @@ function auClose() {
 /* ───────── 왕국 상단이 팔러 온 것 ───────── */
 function kingGoods(D) {
   const goods = (D.sells || []).filter(it => ITEMS[it]).sort(() => rnd() - 0.5).slice(0, 2).map(it => ({ it, n: ri(6, 12), price: Math.round(ITEMS[it].v * 1.3) }));
-  if ((D.books || []).length && rnd() < BOOK_SHOP.king) { const it = rnd() < 0.2 ? 'bk_myst' : 'bk_faded'; goods.push({ it, n: 1, price: Math.round(ITEMS[it].v * BOOK_SHOP.mul) }); }   // 빌드 63: 왕국 스킬북 대신 가끔 빛바랜(드물게 신비한) 스킬북 한 권 — 아주 비싸게
+  const kid = KINGDOM_IDS.find(x => KINGDOMS[x] === D);
+  exclOf(kid).forEach(it => goods.push({ it, n: ri(1, 3), price: exclPrice(it) }));   // 빌드 63: 스킬북 대신 그 나라 상단 전용 물건 스킬북 한 권 — 아주 비싸게
   return goods;
 }
 function kingBuy(i) {
@@ -285,7 +285,7 @@ PANELS.under = () => {
   return `<div class="card hl"><div class="h">등불 없는 도시</div><div class="sub">하수도를 따라 내려가면 범죄자들이 세운 또 하나의 거리가 나온다. 이곳에선 이름표도, 영수증도 없다.</div></div>
   <div class="submenu">
     ${subBtn('ar', '투기장', `랭킹 점수 <b>${fmt(A.score)}</b> · 코인 ${fmt(A.coins)} · 오늘 ${A.fights}/${ARENA_PER_DAY}판`, A.fights < ARENA_PER_DAY)}
-    ${subBtn('arshop', '투기장 상단', `코인으로만 사는 장비와 스킬북 · 코인 ${fmt(A.coins)}`)}
+    ${subBtn('arshop', '투기장 상단', `코인으로만 사는 장비와 전용 물건 · 코인 ${fmt(A.coins)}`)}
     ${subBtn('bm', '암시장', `오늘 물건 ${U.bm.stock.filter(o => !o.sold).length}개 · 새벽 4시에 바뀌어요`)}
     ${subBtn('au', '경매장', au.g ? `<span class="gold-t">${esc(gearName(au.g))}</span> · 지금 ${fmt(au.price)}G${au.top === 'me' ? ' · 우리가 최고' : ''}` : '오늘 경매는 끝났어요', au.g && au.top !== 'me')}
     ${subBtn('ag', '암살자 길드 본부', S.flags.guildDown ? '토벌 완료 · 자릿세 없음' : `매달 자릿세 ${fmt(rent())}G`)}
@@ -309,25 +309,25 @@ PANELS.ar = () => {
 PANELS.arshop = () => {
   const A = S.under.arena, list = arenaShop();
   const rows = list.map(o => o.kind === 'item'
-    ? `<div class="li">${iconImg(o.id)}<div class="grow stack"><span>${ITEMS[o.id].name}${(S.inv[o.id] || 0) ? ` <span class="tag ok-t">${S.inv[o.id]}</span>` : ''}</span><span class="sub">${ITEMS[o.id].desc}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="item" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
+    ? `<div class="li">${iconImg(o.id)}<div class="grow stack"><span>${ITEMS[o.id].name}${(S.inv[o.id] || 0) ? ` <span class="tag ok-t">${S.inv[o.id]}</span>` : ''}</span><span class="sub">${ITEMS[o.id].desc}${EXCL[o.id] ? `<br><span class="gold-t">전용 · ${exclEffText(o.id)}</span>` : ''}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="item" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
     : o.kind === 'gear'
-    ? `<div class="li">${gImg({ base: o.base, t: o.t, q: o.q, runes: [] }, 'ico q-b q' + o.q)}<div class="grow stack"><span>${GTIERS[o.t].name} ${GTYPES[o.base].name} <span class="tag" style="color:${QUALITY[o.q].c}">${QUALITY[o.q].name}</span></span><span class="sub">${statLine(gearStats({ base: o.base, t: o.t, q: o.q, runes: [] }))} · ${GTYPES[o.base].cls.includes('all') ? '누구나' : GTYPES[o.base].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="gear" data-id="${o.base}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
+    ? `<div class="li">${gArt({ base: o.base, t: o.t, q: o.q, runes: [] }, 1)}<div class="grow stack"><span>${GTIERS[o.t].name} ${GTYPES[o.base].name} <span class="tag" style="color:${QUALITY[o.q].c}">${QUALITY[o.q].name}</span></span><span class="sub">${statLine(gearStats({ base: o.base, t: o.t, q: o.q, runes: [] }))} · ${GTYPES[o.base].cls.includes('all') ? '누구나' : GTYPES[o.base].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="gear" data-id="${o.base}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
     : `<div class="li">${iconImg('book_' + o.id)}<div class="grow stack"><span>${ITEMS['book_' + o.id].name} <span class="muted">· Lv${SKILLS[o.id].lv} · ${SKILLS[o.id].cls.map(c => CLASSES[c] ? CLASSES[c].name : '누구나').join('·')}</span></span><span class="sub">${SKILLS[o.id].desc}<br>${skillSpecLine(o.id)}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="book" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`).join('');
-  return `<div class="card hl"><div class="h">투기장 상단</div><div class="sub">투기장 코인으로만 거래해요. 가진 코인 ${coinTag(A.coins)}. 여기 장비는 어디서도 떨어지지 않아요. 스킬북 단계(낡은 · 빛바랜 · 신비한)도 코인으로 살 수 있어요.</div></div><div class="list">${rows}</div>`;
+  return `<div class="card hl"><div class="h">투기장 상단</div><div class="sub">투기장 코인으로만 거래해요. 가진 코인 ${coinTag(A.coins)}. 여기 장비와 깃발 · 월계관은 어디서도 떨어지지 않아요. 스킬북은 몬스터에게서만 나와요.</div></div><div class="list">${rows}</div>`;
 };
 PANELS.bm = () => {
   const B = S.under.bm;
   const rows = B.stock.map((o, i) => o.kind === 'gear'
-    ? `<div class="li${o.sold ? ' dim' : ''}">${gImg(o.g, 'ico q-b q' + o.g.q)}<div class="grow stack"><span>${gearName(o.g)} ${qTag(o.g)}</span><span class="sub">${statLine(gearStats(o.g))}</span></div><button type="button" class="btn sm gold" data-act="bmbuy" data-i="${i}"${!o.sold && S.gold >= o.price ? '' : ' disabled'}>${o.sold ? '팔림' : fmt(o.price) + 'G'}</button></div>`
-    : `<div class="li${o.sold ? ' dim' : ''}">${iconImg(o.it)}<div class="grow stack"><span>${ITEMS[o.it].name}</span><span class="sub">${ITEMS[o.it].book ? `${SKILLS[ITEMS[o.it].book].desc} · Lv${SKILLS[ITEMS[o.it].book].lv}<br>${skillSpecLine(ITEMS[o.it].book)}` : ITEMS[o.it].desc || '룬'}</span></div><button type="button" class="btn sm gold" data-act="bmbuy" data-i="${i}"${!o.sold && S.gold >= o.price ? '' : ' disabled'}>${o.sold ? '팔림' : fmt(o.price) + 'G'}</button></div>`).join('');
-  return `<div class="card hl"><div class="h">암시장</div><div class="sub">출처를 묻지 않는 물건들. 값은 비싸지만 날마다 새 장비·스킬북·룬이 올라와요. 새벽 4시에 바뀌어요.</div></div><div class="list">${rows || '<div class="sub">오늘은 물건이 없어요.</div>'}</div>`;
+    ? `<div class="li${o.sold ? ' dim' : ''}">${gArt(o.g, 1)}<div class="grow stack"><span>${gearName(o.g)} ${qTag(o.g)}</span><span class="sub">${statLine(gearStats(o.g))}</span></div><button type="button" class="btn sm gold" data-act="bmbuy" data-i="${i}"${!o.sold && S.gold >= o.price ? '' : ' disabled'}>${o.sold ? '팔림' : fmt(o.price) + 'G'}</button></div>`
+    : `<div class="li${o.sold ? ' dim' : ''}">${iconImg(o.it)}<div class="grow stack"><span>${ITEMS[o.it].name}</span><span class="sub">${ITEMS[o.it].book ? `${SKILLS[ITEMS[o.it].book].desc} · Lv${SKILLS[ITEMS[o.it].book].lv}<br>${skillSpecLine(ITEMS[o.it].book)}` : ITEMS[o.it].desc || '룬'}${EXCL[o.it] ? `<br><span class="gold-t">전용 · ${exclEffText(o.it)}</span>` : ''}</span></div><button type="button" class="btn sm gold" data-act="bmbuy" data-i="${i}"${!o.sold && S.gold >= o.price ? '' : ' disabled'}>${o.sold ? '팔림' : fmt(o.price) + 'G'}</button></div>`).join('');
+  return `<div class="card hl"><div class="h">암시장</div><div class="sub">출처를 묻지 않는 물건들. 값은 비싸지만 날마다 새 장비 · 룬 · 암시장 전용 물건(금서 사냥꾼의 부적 · 희귀종 미끼)이 올라오고, 가끔 밀거래 보물 지도도 있어요. 새벽 4시에 바뀌어요.</div></div><div class="list">${rows || '<div class="sub">오늘은 물건이 없어요.</div>'}</div>`;
 };
 PANELS.au = () => {
   const A = S.under.au;
   if (!A.g) return `<div class="card"><div class="sub">오늘 경매는 끝났어요. 새벽 4시에 새 경매품이 올라와요.</div></div>`;
   const g = A.g, next = auBidNext(A), mine = A.top === 'me';
   return `<div class="card hl"><div class="h">오늘의 경매품</div>
-    <div class="row">${gImg(g, 'ico q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}</span><span class="sub">${statLine(gearStats(g))}${g.bonus ? ' · 보너스 ' + Object.entries(g.bonus).map(([k, v]) => `${STAT_NAMES[k]} +${v}`).join(', ') : ''}</span><span class="sub muted">룬 칸 ${runeSlots(g)}개 · 시작가 ${fmt(A.start)}G</span></div></div>
+    <div class="row">${gArt(g, 1)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}</span><span class="sub">${statLine(gearStats(g))}${g.bonus ? ' · 보너스 ' + Object.entries(g.bonus).map(([k, v]) => `${STAT_NAMES[k]} +${v}`).join(', ') : ''}</span><span class="sub muted">룬 칸 ${runeSlots(g)}개 · 시작가 ${fmt(A.start)}G</span></div></div>
     <div class="stats boxed"><span>지금 값 <b class="gold-t">${fmt(A.price)}G</b></span><span>최고 입찰 <b>${A.top === 'me' ? '우리 상단' : A.top === 'npc' ? esc(A.npc) : '아직 없음'}</b></span><span>입찰 ${A.bids}번</span></div>
     <div class="sub">${mine ? (A.out ? `<span class="ok-t">${esc(A.npc)}이(가) 물러섰어요.</span> 새벽 4시에 낙찰돼요.` : '지금은 우리가 최고 입찰자예요. 새벽 4시까지 아무도 더 부르지 않으면 낙찰돼요. 다른 상단이 더 부르면 돈은 돌려받아요.') : `다음 입찰은 ${fmt(next)}G. 돈은 입찰할 때 맡겨 두고, 밀리면 돌려받아요.`}</div>
     <button type="button" class="btn gold block" data-act="aubid"${!mine && S.gold >= next ? '' : ' disabled'}>${mine ? '최고 입찰 중' : `${fmt(next)}G 부르기`}</button></div>

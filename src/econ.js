@@ -716,7 +716,7 @@ const slotCount = () => shopStands(S.bld.shop) + rankStands(S.rank || 0);
 const isGearKey = k => typeof k === 'string' && k.startsWith('g:');
 function gearsOfKey(k) { const [, b, t] = k.split(':'); return S.gear.filter(g => g.base === b && g.t === +t).sort((x, y) => x.q - y.q); }
 const stockOf = k => (isGearKey(k) ? gearsOfKey(k).length : S.inv[k] || 0);
-function slotPrice(s) { return (isGearKey(s.item) ? (gearsOfKey(s.item)[0] ? gearValue(gearsOfKey(s.item)[0]) : 0) * TIERS[s.tier].m : ITEMS[s.item].v * TIERS[s.tier].m) * (1 + relic('price') + Math.max(0, S.bld.shop - 5) * 0.02); }
+function slotPrice(s) { return (isGearKey(s.item) ? (gearsOfKey(s.item)[0] ? gearValue(gearsOfKey(s.item)[0]) : 0) * TIERS[s.tier].m : ITEMS[s.item].v * TIERS[s.tier].m) * (1 + relic('price') + Math.max(0, S.bld.shop - 5) * 0.02 + (S.salePlus || 0)); }   // 상인 길드 인장
 function setSlot(i, it, tier) {
   while (S.shop.slots.length < slotCount()) S.shop.slots.push(null);
   S.shop.slots[i] = it ? { item: it, tier: tier || 0, tm: 0 } : null;

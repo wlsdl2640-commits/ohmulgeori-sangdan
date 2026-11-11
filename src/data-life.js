@@ -96,6 +96,8 @@ function foodFxText(fx) {
   const out = [];
   for (const [k, v] of Object.entries(fx || {})) {
     if (FOOD_FX_TXT[k]) out.push(`${FOOD_FX_TXT[k]} +${Math.round(v * 100)}%`);
+    else if (k === 'book') out.push(`스킬북 뽑기 확률 +${Math.round(v * 100)}%`);
+    else if (k === 'rare') out.push(`반짝이는 희귀종 ×${1 + v}`);
     else if (k === 'crit') out.push(`치명타 +${Math.round(v * 100)}%p`);
     else if (k === 'regen') out.push(`초당 HP ${Math.round(v * 1000) / 10}% 재생`);
     else if (k === 'fat') out.push(`피로 ${Math.round(v * 100)}% 덜 쌓임`);

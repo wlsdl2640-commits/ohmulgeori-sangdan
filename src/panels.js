@@ -93,7 +93,7 @@ PANELS.co_king = () => {
     return `<div class="card hl" style="--kc:${D.c}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} 상단</div><div class="sub">${D.desc}</div></div></div>
       <div class="sub gold-t">${festOf(v.k) ? '🎉 축제 중: 사 가는 값 두 배, 파는 물건 30% 할인 · ' : ''}${dayLabel(v.until)}까지 머물러요 (D-${v.until - today()}) · 기준가의 ${Math.round(v.m * 100 * festSellMul(v.k))}% · 지금까지 ${fmt(v.earned)}G${v.full ? ' · <span class="ok-t">주문 완료</span>' : ''}</div>
       <div class="list">${rows}</div>
-      ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>빛바랜 · 신비한 스킬북도 가져와요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].book ? `${SKILLS[ITEMS[o.it].book].desc} · Lv${SKILLS[ITEMS[o.it].book].lv} ${clsList(SKILLS[ITEMS[o.it].book].cls)}<br>${skillSpecLine(ITEMS[o.it].book)}` : `창고 ${S.inv[o.it] || 0}`}</span></div><button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button></div>`).join('')}</div>` : ''}</div>`;
+      ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>그 나라 상단 전용 물건도 가져와요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${EXCL[o.it] ? `${ITEMS[o.it].desc}<br><span class="gold-t">전용 · ${exclEffText(o.it)}</span>` : `창고 ${S.inv[o.it] || 0}`}</span></div><button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button></div>`).join('')}</div>` : ''}</div>`;
   })() : `<div class="card"><div class="sub">지금은 찾아온 왕국 상단이 없어요. ${S.king ? `${dayLabel(S.king.next)}쯤 다음 상단이 올 거예요.` : ''}</div></div>`;
   const list = KINGDOM_IDS.map(k => { const D = KINGDOMS[k], open = kingOpen(k), f = favorOf(k), t = favorTier(f), nx = FAVOR[t + 1];
     return `<div class="card${open ? '' : ' dim'}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} <small>${FAVOR[t].name}</small></div><div class="sub">${open ? `호감 ${Math.floor(f)}${nx ? `/${nx.at}` : ''} · 값 ${Math.round(FAVOR[t].m * 100)}%` : `${FIELDS[D.need].name}에 가 보면 교역을 시작해요`}</div></div></div>
@@ -157,7 +157,7 @@ function smithyBox() {
   const B = q >= 3 ? BOSS_RECIPE[q] : null;
   const rows = CRAFT_IDS.map(b => {
     const g = { base: b, t, q }, ok = canSmith(b, t, q);
-    return `<div class="li">${gImg(g, 'ico q-b q' + q)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${clsList(GTYPES[b].cls)} · Lv${GTIERS[t].lv}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" title="${esc(buyAmmoWhy(b, t))}"${buyAmmoWhy(b, t) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t))}G</button>` : ''}</div></div>`;
+    return `<div class="li">${gArt(g, 1)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${clsList(GTYPES[b].cls)} · Lv${GTIERS[t].lv}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" title="${esc(buyAmmoWhy(b, t))}"${buyAmmoWhy(b, t) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t))}G</button>` : ''}</div></div>`;
   }).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. 룬 칸 ${q}개.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">일반 제작은 만들 때마다 일반·고급·희귀 품질이 정해져요. 대장간을 넓힐수록 좋은 품질이 잘 나와요.</div>';
@@ -174,12 +174,12 @@ function enhanceBox() {
   const sel = all.find(x => x.g.id === UI.enhG) || all[0]; UI.enhG = sel.g.id;
   const g = sel.g, why = plusWhy(g), next = Object.assign({}, g, { plus: Math.min(PLUS_MAX, (g.plus || 0) + 1) }), now = gearStats(g), nx = gearStats(next);
   const diff = Object.keys(nx).map(k => { const a = now[k] || 0, b = nx[k] || 0; if (a === b) return ''; return `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) ? (a * 100).toFixed(1) + '%→' + (b * 100).toFixed(1) + '%' : a + '→' + b}`; }).filter(Boolean).join(' · ');
-  const cells = all.map(x => `<button type="button" class="cell${x.g.id === g.id ? ' on' : ''}" data-act="enhsel" data-id="${x.g.id}">${gImg(x.g, 'ico lg q-b q' + x.g.q)}${x.g.plus ? `<b class="qty">+${x.g.plus}</b>` : ''}${x.owner ? '<i class="own"></i>' : ''}</button>`).join('');
-  const fill = (6 - (all.length % 6)) % 6; const pad = Array.from({ length: fill }, () => '<span class="cell empty"></span>').join('');
+  const cells = all.map(x => `<button type="button" class="cell${x.g.id === g.id ? ' on' : ''}" data-act="enhsel" data-id="${x.g.id}">${gArt(x.g, 2)}${x.g.plus ? `<b class="qty">+${x.g.plus}</b>` : ''}${x.owner ? '<i class="own"></i>' : ''}</button>`).join('');
+  const fill = (5 - (all.length % 5)) % 5; const pad = Array.from({ length: fill }, () => `<span class="cell empty">${rqEmpty(2)}</span>`).join('');
   const need = plusNeed(g);
   return `<div class="sub muted">+1씩 올라가요. 능력치 +6%/단계, +4·+7·+10에서 테두리가 빛나요. 실패해도 단계는 내려가지 않지만 재료와 돈은 잃어요.</div>
     <div class="igrid gear">${cells}${pad}</div>
-    <div class="card hl idet"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}${sel.owner ? ` <span class="tag">${esc(sel.owner.name)} 착용</span>` : ''}</span><span class="sub">${statLine(now)}</span>${(g.plus || 0) < PLUS_MAX ? `<span class="sub ok-t">+${(g.plus || 0) + 1}: ${diff || '변화 없음'}</span><span class="sub muted">재료 ${needStr(need)} · ${fmt(plusFee(g))}G · 성공 ${Math.round(plusRate(g) * 100)}%</span>` : '<span class="sub gold-t">최고 강화 +10</span>'}${why && (g.plus || 0) < PLUS_MAX ? `<span class="sub red-t">${why}</span>` : ''}</div></div>
+    <div class="card hl idet"><div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}${sel.owner ? ` <span class="tag">${esc(sel.owner.name)} 착용</span>` : ''}</span><span class="sub">${statLine(now)}</span>${(g.plus || 0) < PLUS_MAX ? `<span class="sub ok-t">+${(g.plus || 0) + 1}: ${diff || '변화 없음'}</span><span class="sub muted">재료 ${needStr(need)} · ${fmt(plusFee(g))}G · 성공 ${Math.round(plusRate(g) * 100)}%</span>` : '<span class="sub gold-t">최고 강화 +10</span>'}${why && (g.plus || 0) < PLUS_MAX ? `<span class="sub red-t">${why}</span>` : ''}</div></div>
     <div class="btns"><button type="button" class="btn gold grow" data-act="enhance" data-id="${g.id}"${why ? ' disabled' : ''}>${(g.plus || 0) >= PLUS_MAX ? '완료' : `+${(g.plus || 0) + 1} 강화 · ${fmt(plusFee(g))}G`}</button></div></div>`;
 }
 function templeBox() {
@@ -243,7 +243,7 @@ PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
 PANELS.b = w => bldCard(w.b, true);
 
 /* 모험가 */
-function eqIcons(a) { return SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => (a.eq[s] ? gImg(a.eq[s], 'ico q-b q' + a.eq[s].q) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
+function eqIcons(a) { return SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => (a.eq[s] ? gArt(a.eq[s], 1) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
 function advState(a, p) {
   if (a.status === 'away') return `<span class="warn">${esc(p ? p.name : '')} 원정 중</span>`;
   if (a.inj) return `<span class="red-t">${INJ[a.inj.sev].name} · ${S.bld.temple ? '신전에서' : '여관 방에서'} 치료 중</span>`;
@@ -341,7 +341,7 @@ function advDetail(a) {
   const slots = SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => {
     const g = a.eq[s];
     const pool = S.gear.filter(x => GTYPES[x.base].slot === s && gearFits(a, x) && (!g || gearScore(x) >= gearScore(g))).sort((x, y) => gearScore(y) - gearScore(x)).slice(0, 4);
-    return `<div class="li col"><div class="row">${g ? gImg(g, 'ico q-b q' + g.q) : '<span class="ico empty"></span>'}<div class="grow stack"><span>${n} · ${g ? gearName(g) + ' ' + qTag(g) : `<span class="${s === 'ammo' && needsArrows(a) ? 'red-t' : 'muted'}">비어 있음${s === 'ammo' && needsArrows(a) ? ' · 화살이 없으면 기본 공격을 못 해요' : ''}</span>`}</span>${g ? `<span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · <b class="${ammoLeft(g, a) ? '' : 'red-t'}">${ammoTag(g, a)}</b>` : ''}</span>` : ''}</div>${g && idle ? `<button type="button" class="btn sm" data-mact="uneq" data-s="${s}">빼기</button>` : ''}</div>
+    return `<div class="li col"><div class="row">${g ? gArt(g, 1) : '<span class="ico empty"></span>'}<div class="grow stack"><span>${n} · ${g ? gearName(g) + ' ' + qTag(g) : `<span class="${s === 'ammo' && needsArrows(a) ? 'red-t' : 'muted'}">비어 있음${s === 'ammo' && needsArrows(a) ? ' · 화살이 없으면 기본 공격을 못 해요' : ''}</span>`}</span>${g ? `<span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · <b class="${ammoLeft(g, a) ? '' : 'red-t'}">${ammoTag(g, a)}</b>` : ''}</span>` : ''}</div>${g && idle ? `<button type="button" class="btn sm" data-mact="uneq" data-s="${s}">빼기</button>` : ''}</div>
       ${g && runeSlots(g) ? `<div class="row sub"><span class="grow">룬 ${(g.runes || []).length}/${runeSlots(g)}${runeDots(g)}</span>${idle ? `<button type="button" class="btn sm" data-mact="rune" data-g="${g.id}">룬 끼우기</button>` : ''}</div>` : ''}
       ${idle ? pool.map(x => `<div class="row sub swap">${gImg(x)}<span class="grow">${gearName(x)} ${qTag(x)} · ${statLine(gearStats(x))}${isAmmo(x) ? ` · ${fmt(ammoMax(x, a))}${ammoUnit(x)}` : ''}</span><button type="button" class="btn sm" data-mact="eq" data-g="${x.id}">끼우기</button></div>`).join('') : ''}</div>`;
   }).join('');
@@ -478,6 +478,7 @@ function partyCard(p) {
       <div class="sub" data-pwhere="${p.id}"></div>
       ${(() => { const w = wxNow(e); if (w.indoor) return ''; const weak = teamOf(p).filter(a => wxtHits(a, w, foodFx(e))); return `<div class="row sub">${wxImg(w)}<span class="grow"><span class="${wxTCls(w)}">${wxLabel(w)}</span> · ${wxFxText(w, p)}${weak.length ? ` · <span class="red-t">이 날씨에 약함: ${weak.map(a => esc(a.name)).join('·')} -10% 더</span>` : ''}</span></div>`; })()}
       ${foodOf(e) ? `<div class="sub gold-t">도시락 ${FOODS[foodOf(e)].name} · ${foodFxText(FOODS[foodOf(e)].fx)}</div>` : ''}
+      ${e.bstIds && e.bstIds.length ? `<div class="sub gold-t">휴대품 ${e.bstIds.filter(x => EXCL[x]).map(x => EXCL[x].name).join(' · ')} · ${foodFxText(e.bst)}</div>` : ''}
       ${e.area === 'trade' ? `<div class="sub">${e.leg === 'back' ? `${KINGDOMS[e.trade.k].name}에서 ${g$(e.trade.sold || 0)}에 팔고 돌아오는 중` : `교역품 ${Object.values(e.cargo || {}).reduce((t, q) => t + q, 0)}개를 싣고 ${KINGDOMS[e.trade.k].name}(으)로`}</div>` : ''}
       <div class="bar big load"><i data-prog="${p.id}"></i></div>
       ${petOfParty(p) ? `<div class="row sub"><img class="peti" src="${monIconURL(petLook(petOfParty(p)))}" alt=""><span class="grow">펫 ${esc(petOfParty(p).name)} <span class="muted">· ${petOfParty(p).stage ? PETS[petOfParty(p).kind].evo : PETS[petOfParty(p).kind].name} Lv${petOfParty(p).lv} · ${PET_ACT_NAME[PETS[petOfParty(p).kind].act]}</span></span></div>` : ''}
@@ -574,7 +575,7 @@ PANELS.rune = w => {
   const cur = (g.runes || []).map((rid, i) => `<div class="li">${iconImg(rid)}<div class="grow"><span>${ITEMS[rid].name}</span><span class="sub">${statLine({ [RUNES[ITEMS[rid].rune[0]].st]: RUNES[ITEMS[rid].rune[0]].v[ITEMS[rid].rune[1]] })}</span></div><button type="button" class="btn sm" data-act="runeout" data-g="${g.id}" data-i="${i}"${idle && S.gold >= RUNE_OUT[ITEMS[rid].rune[1]] ? '' : ' disabled'}>빼기 ${fmt(RUNE_OUT[ITEMS[rid].rune[1]])}G</button></div>`).join('');
   const inv = Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].rune && S.inv[k] > 0).sort((x, y) => ITEMS[y].v - ITEMS[x].v);
   const add = inv.map(k => `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${statLine({ [RUNES[ITEMS[k].rune[0]].st]: RUNES[ITEMS[k].rune[0]].v[ITEMS[k].rune[1]] })}</span></div><button type="button" class="btn sm gold" data-act="runein" data-g="${g.id}" data-it="${k}"${idle && (g.runes || []).length < n ? '' : ' disabled'}>끼우기</button></div>`).join('');
-  return `<div class="card hl"><div class="row">${gImg(g, 'ico lg q-b q' + g.q)}<div class="grow"><div class="h">${gearName(g)} ${qTag(g)}</div><div class="sub">${statLine(gearStats(g))}</div><div class="sub">${f.a ? `${esc(f.a.name)}이(가) 쓰는 중` : '창고에 보관 중'} · 룬 ${(g.runes || []).length}/${n}${runeDots(g)}</div></div></div></div>
+  return `<div class="card hl"><div class="row">${gArt(g, 2)}<div class="grow"><div class="h">${gearName(g)} ${qTag(g)}</div><div class="sub">${statLine(gearStats(g))}</div><div class="sub">${f.a ? `${esc(f.a.name)}이(가) 쓰는 중` : '창고에 보관 중'} · 룬 ${(g.runes || []).length}/${n}${runeDots(g)}</div></div></div></div>
     ${n ? '' : '<div class="sub red-t">일반 장비에는 룬 칸이 없어요. 고급부터 등급마다 한 칸씩 열려요.</div>'}
     <div class="sec"><b>끼운 룬</b><span>빼면 창고로 돌아와요</span></div><div class="list">${cur || '<div class="li"><span class="sub">끼운 룬이 없어요.</span></div>'}</div>
     <div class="sec"><b>창고의 룬</b><span>마탑에서 새기고 합쳐요</span></div><div class="list">${add || '<div class="li"><span class="sub">룬이 없어요. 필드 보스와 던전, 레이드에서 얻거나 마탑에서 새겨요.</span></div>'}</div>`;
@@ -596,7 +597,8 @@ PANELS.exp = () => {
   const p = regs.find(x => x.id === tab);
   if (!p) return `${bar}<div class="card"><div class="sub">파티가 없어요. 「+ 새 파티」를 눌러 만들고 모험가를 넣어 주세요.</div></div>`;
   const allBtns = regs.length > 1 ? `<div class="btns"><button type="button" class="btn sm" data-act="allgo"${regs.some(x => !x.exp && x.members.length) ? '' : ' disabled'}>대기 파티 모두 출발</button><button type="button" class="btn sm" data-act="allback"${S.parties.some(x => x.exp && x.exp.mode === 'advance') ? '' : ' disabled'}>원정 파티 모두 복귀</button></div>` : '';
-  return `${bar}${allBtns}${partyCard(p)}${regs.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지${partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? (rp ? ' · 레이드 전용 파티는 레이드 탭에서 꾸려요' : ` · ${RANKS[RAID_PARTY_RANK].name}랭크가 되면 레이드 전용 파티가 하나 더 열려요`) : ' · 상단 랭크가 오르면 더 만들 수 있어요'}.</div>` : ''}`;
+  const bst = boostLine() ? `<div class="sub gold-t">꺼내 둔 원정 휴대품 · ${boostLine()} — 다음에 떠나는 원정마다 하나씩 써요</div>` : '';
+  return `${bar}${allBtns}${bst}${partyCard(p)}${regs.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지${partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? (rp ? ' · 레이드 전용 파티는 레이드 탭에서 꾸려요' : ` · ${RANKS[RAID_PARTY_RANK].name}랭크가 되면 레이드 전용 파티가 하나 더 열려요`) : ' · 상단 랭크가 오르면 더 만들 수 있어요'}.</div>` : ''}`;
 };
 
 /* 창고: 빌드 63부터 store.js (메인 창고 + 창고 1~10 · 창고 정리 · 직업별 장비 칸) */
@@ -631,6 +633,10 @@ function invDetail(k, rate) {
   } else if (cat === 'sup' && I.egg) {
     desc = I.desc; extra = `${FIELDS[PETS[I.egg].field] ? FIELDS[PETS[I.egg].field].name : ''}의 우두머리·던전 주인이 남겨요 · 상단에 두면 ${petHomeText(I.egg)}`;
     btns += `<button type="button" class="btn sm gold" data-act="bopen" data-id="pen">사육장에서 품기</button>`;
+  } else if (cat === 'sup' && I.excl) {   // 빌드 63: 상단 전용 물건
+    const X = EXCL[k], why = exclWhy(k);
+    desc = I.desc; extra = `<span class="gold-t">${EXCL_SHOP[X.shop]} 전용</span> · ${exclEffText(k)}${X.bst && S.boost && S.boost[k] ? ` · 꺼내 둔 것 원정 ${S.boost[k]}번` : ''}`;
+    btns += `<button type="button" class="btn sm gold" data-act="useexcl" data-it="${k}"${why ? ' disabled' : ''}>${X.bst ? '꺼내 두기 (다음 원정부터)' : '쓰기'}</button>`;
   } else if (cat === 'sup' && I.use) {
     desc = I.desc; extra = `${stoneFromText(k)} · 모험가 창의 특성에서 써요`;
   } else if (cat === 'sup') {
@@ -650,7 +656,7 @@ function invDetail(k, rate) {
   if (I.trade) extra = `${KINGDOMS[I.trade].name} 특산물(교역품) · 그 나라에서 ${g$(tradeBuyPrice(I.trade, k))}에 산다${extra ? ' · ' + extra : ''}`;
   if (q > 0) btns += `<button type="button" class="btn sm" data-act="sell" data-it="${k}" data-q="1">길드에 팔기 ${one}G</button>${q > 1 ? `<button type="button" class="btn sm" data-act="sell" data-it="${k}" data-q="${q}">모두 ${fmt(one * q)}G</button>` : ''}`;
   if (cat === 'mat' || cat === 'herb') { const AS = S.autoSell || {}, on = AS[k] != null; btns += `<button type="button" class="btn sm${on ? ' on' : ''}" data-act="autosell" data-it="${k}">자동 판매 ${on ? '켬' : '끔'}</button>${on ? `<span class="step"><button type="button" class="btn sm" data-act="autokeep" data-it="${k}" data-d="-10">−</button><span>${AS[k]}개 남김</span><button type="button" class="btn sm" data-act="autokeep" data-it="${k}" data-d="10">+</button></span>` : ''}`; }
-  return `<div class="card hl idet"><div class="row">${iconImg(k, 'ico lg')}<div class="grow stack"><span>${I.name} ${gradeTag(itemGrade(k))} <b class="num">×${q}</b> <span class="muted">· 무게 ${I.w} · 기준가 ${I.v}G</span></span>${desc ? `<span class="sub">${desc}</span>` : ''}${extra ? `<span class="sub muted">${extra}</span>` : ''}</div></div>${I.btier != null ? tierBookBox(k) : ''}${btns ? `<div class="btns">${btns}</div>` : ''}</div>`;
+  return `<div class="card hl idet"><div class="row">${iArt(k, 2)}<div class="grow stack"><span>${I.name} ${gradeTag(itemGrade(k))} <b class="num">×${q}</b> <span class="muted">· 무게 ${I.w} · 기준가 ${I.v}G</span></span>${desc ? `<span class="sub">${desc}</span>` : ''}${extra ? `<span class="sub muted">${extra}</span>` : ''}</div></div>${I.btier != null ? tierBookBox(k) : ''}${btns ? `<div class="btns">${btns}</div>` : ''}</div>`;
 }
 
 /* 의뢰 */
@@ -770,7 +776,7 @@ const ACT = {
   sell: d => sellGuild(d.it, +d.q),
   advcat: d => { UI.advCat = d.id; const top = winTop(); if (top) top.tab = d.id; renderPanel(true); $('panel') && ($('panel').scrollTop = 0); },
   advguest: () => { UI.advCat = 'guest'; openWin('adv'); },
-  invtab: d => { UI.invTab = d.id; UI.invSel = null; const top = winTop(); if (top) top.tab = d.id; renderPanel(true); },
+  invtab: d => { UI.invTab = d.id; UI.invSel = null; UI.whPick = []; const top = winTop(); if (top) top.tab = d.id; renderPanel(true); },
   ausfx: () => { auSet('sfx', !AU.sfx); renderPanel(true); },
   aubgm: () => { auSet('bgm', !AU.bgm); renderPanel(true); },
   auvol: d => { auSet('vol', Math.max(0, Math.min(1, Math.round((AU.vol + (+d.d)) * 10) / 10))); sfx('coin'); renderPanel(true); },

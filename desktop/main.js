@@ -1,4 +1,4 @@
-// 판타지세계 상단 키우기 — PC 판 (일렉트론)
+// 판타지상단키우기 — PC 판 (일렉트론)
 // 게임은 game/index.html(웹 판 dist/web과 같은 파일)을 창 하나에 그대로 띄운다. tools/pc_build.py가 싼다.
 // 저장: 웹 판과 같은 localStorage(열쇠 paros-sangdan:v1)를 file:// 출처에 둔다. 저장 폴더는 판이 바뀌어도
 // 같은 곳(%APPDATA%\ohmulgeori-sangdan-pc)이라 새 판 폴더로 바꿔도 이어진다.
@@ -42,7 +42,7 @@ function createWindow() {
   win = new BrowserWindow({
     ...(b ? { x: b.x, y: b.y, width: b.width, height: b.height } : { width: W, height: H, center: true }),
     minWidth: 360, minHeight: 560,
-    backgroundColor: '#0b0d12', title: '판타지세계 상단 키우기',
+    backgroundColor: '#0b0d12', title: '판타지상단키우기',
     icon: path.join(__dirname, 'icon.png'), autoHideMenuBar: true, show: false,
     webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, spellcheck: false, zoomFactor: zoom }
   });

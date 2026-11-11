@@ -1,4 +1,4 @@
-"""판타지세계 상단 키우기 빌드: 소스를 한 파일로 묶고, 설치형 웹앱(PWA) 패키지를 만든다."""
+"""판타지상단키우기 빌드: 소스를 한 파일로 묶고, 설치형 웹앱(PWA) 패키지를 만든다."""
 import base64, io, json, os, pathlib, shutil, zipfile
 from fontTools import subset
 from fontTools.ttLib import TTFont
@@ -6,8 +6,9 @@ from PIL import Image
 
 ROOT = pathlib.Path(__file__).parent
 SRC, FONTS, DIST = ROOT / 'src', ROOT / 'fonts', ROOT / 'dist'
-JS = ['data.js', 'data-rpg.js', 'data-mast.js', 'data-off.js', 'data-officon.js', 'data-gearicon.js', 'data-biz.js', 'data-gear.js', 'data-world.js', 'data-skin.js', 'data-under.js', 'data-trait.js', 'data-demon.js', 'data-herb.js', 'data-pet.js', 'data-books.js', 'data-sky.js', 'data-star.js', 'data-elem.js', 'data-life.js', 'data-salv.js', 'data-fight.js', 'data-store.js', 'sprites.js', 'pxa.js', 'pxs.js', 'pxmon.js', 'pxmon2.js', 'pxpet.js', 'pxmon3.js', 'pxmon4.js', 'pxraid.js', 'pxund.js', 'pxplains.js', 'pxforest.js', 'pxmountain.js', 'pxvalley.js', 'pxsnow.js', 'pxdesert.js', 'pxalley.js', 'pxsewer.js', 'pxswamp.js', 'pxbarren.js', 'pxcastle.js', 'pxvolcano.js', 'pxroots.js', 'pxsky.js', 'pxthunder.js', 'art.js', 'bg.js', 'arena.js', 'scene.js', 'woods.js', 'front.js', 'demon.js', 'sky.js', 'sky2.js', 'audio.js', 'core.js', 'econ.js', 'pet.js', 'hq.js', 'ui.js', 'view.js', 'skfx.js', 'skfx2.js', 'fmot.js', 'skillinfo.js', 'panels.js', 'data-skicon.js', 'data-masticon.js', 'hero.js', 'under.js', 'map.js', 'events.js', 'world30.js', 'weather.js', 'kitchen.js', 'trade.js', 'qol.js', 'salvage.js', 'dex.js', 'hall.js', 'achv.js', 'store.js', 'main.js']
-NAME = '판타지세계 상단 키우기'
+JS = ['data.js', 'data-rpg.js', 'data-mast.js', 'data-off.js', 'data-officon.js', 'data-gearicon.js', 'data-biz.js', 'data-gear.js', 'data-world.js', 'data-skin.js', 'data-under.js', 'data-trait.js', 'data-demon.js', 'data-herb.js', 'data-pet.js', 'data-books.js', 'data-sky.js', 'data-star.js', 'data-elem.js', 'data-life.js', 'data-salv.js', 'data-fight.js', 'data-store.js', 'data-itemart.js', 'sprites.js', 'pxa.js', 'pxs.js', 'pxmon.js', 'pxmon2.js', 'pxpet.js', 'pxmon3.js', 'pxmon4.js', 'pxraid.js', 'pxund.js', 'pxplains.js', 'pxforest.js', 'pxmountain.js', 'pxvalley.js', 'pxsnow.js', 'pxdesert.js', 'pxalley.js', 'pxsewer.js', 'pxswamp.js', 'pxbarren.js', 'pxcastle.js', 'pxvolcano.js', 'pxroots.js', 'pxsky.js', 'pxthunder.js', 'art.js', 'bg.js', 'arena.js', 'scene.js', 'woods.js', 'front.js', 'demon.js', 'sky.js', 'sky2.js', 'audio.js', 'core.js', 'econ.js', 'pet.js', 'hq.js', 'ui.js', 'view.js', 'skfx.js', 'skfx2.js', 'fmot.js', 'skillinfo.js', 'panels.js', 'data-skicon.js', 'data-masticon.js', 'hero.js', 'under.js', 'map.js', 'events.js', 'world30.js', 'weather.js', 'kitchen.js', 'trade.js', 'qol.js', 'salvage.js', 'dex.js', 'hall.js', 'achv.js', 'rarity.js', 'store.js', 'main.js']
+NAME = '판타지상단키우기'   # 빌드 63 (11-11 사용자): 예전 「판타지세계 상단 키우기」
+ICON_TITLE = '판타지 상단키우기'   # 앱 그림 제목은 두 줄 (띄어쓰기에서 나눈다)
 VERSION = '0.7.0'
 
 css = (SRC / 'style.css').read_text(encoding='utf-8')
@@ -88,10 +89,10 @@ head = f'''<!doctype html>
 import sys as _sys
 _sys.path.insert(0, str(ROOT / 'tools'))
 import appart
-_art = appart.art_square(NAME)
+_art = appart.art_square(ICON_TITLE)
 appart.fit(_art, 192).save(WEB / 'icons' / 'icon-192.png')
 appart.fit(_art, 512).save(WEB / 'icons' / 'icon-512.png')
-appart.adaptive_fg(appart.art_square(NAME, y0=46), 512, 0.8).save(WEB / 'icons' / 'maskable-512.png')   # 가려지는 가장자리를 빼고 가운데 80%에 · 제목은 조금 아래
+appart.adaptive_fg(appart.art_square(ICON_TITLE, y0=46), 512, 0.8).save(WEB / 'icons' / 'maskable-512.png')   # 가려지는 가장자리를 빼고 가운데 80%에 · 제목은 조금 아래
 appart.fit(_art, 180).save(WEB / 'icons' / 'apple-touch-icon.png')
 
 manifest = {

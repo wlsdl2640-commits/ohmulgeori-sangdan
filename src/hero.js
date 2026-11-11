@@ -595,12 +595,21 @@ function heroDraw(cv, a, now) {
   g.setTransform(dpr, 0, 0, dpr, 0, 0); g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
   const t = now / 1000, cyc = t % 5.2, gy = H - 12;
   // 발밑 그림자
-  g.fillStyle = 'rgba(40, 24, 8, .3)'; g.beginPath(); g.ellipse(W / 2, gy + 2, 30, 6, 0, 0, Math.PI * 2); g.fill();
+  // 빌드 63: 매끈한 타원 대신 Z칸 계단 타원 (도트)
+  { g.fillStyle = 'rgba(40, 24, 8, .3)'; const rx = Math.round(30 / Z), ry = Math.max(1, Math.round(6 / Z)), cx = Math.round(W / 2), cy = gy + 2;
+    for (let j = -ry; j <= ry; j++) { const hw = Math.max(1, Math.round(rx * Math.sqrt(Math.max(0, 1 - (j / (ry + 0.5)) ** 2)))); g.fillRect(cx - hw * Z, Math.round(cy + j * Z - Z / 2), hw * 2 * Z, Z); } }
   let pose = 'idle', fr = Math.floor(t * 1.6) % 2;
   if (cyc > 4.3 && cyc < 5.0) { pose = 'atk'; fr = cyc < 4.5 ? 0 : 1; }
   const s = pxAdvSprite(heroAdv(a), pose, fr);
   // 휘두를 때 하얀 호
-  if (pose === 'atk' && fr === 1) { const k = (cyc - 4.5) / 0.5; g.strokeStyle = `rgba(255,255,255,${(1 - k) * 0.8})`; g.lineWidth = 3; g.beginPath(); g.arc(W / 2 + 26, gy - 40, 30 + k * 10, -Math.PI * 0.55, Math.PI * 0.15); g.stroke(); }
+  if (pose === 'atk' && fr === 1) {   // 빌드 63: 매끈한 호 대신 Z칸 네모를 호를 따라 (투명도도 계단)
+    const k = (cyc - 4.5) / 0.5, al = Math.ceil((1 - k) * 4) / 4 * 0.8, r = 30 + Math.floor(k * 3) * 4, cx = W / 2 + 26, cy = gy - 40, seen = new Set();
+    g.fillStyle = `rgba(255,255,255,${al})`;
+    for (let a2 = -Math.PI * 0.55; a2 <= Math.PI * 0.15; a2 += Z / r / 1.5) for (const rr of [r, r - Z]) {
+      const x = Math.round((cx + Math.cos(a2) * rr) / Z) * Z, y = Math.round((cy + Math.sin(a2) * rr) / Z) * Z, key = x + ',' + y;
+      if (!seen.has(key)) { seen.add(key); g.fillRect(x, y, Z, Z); }
+    }
+  }
   g.save(); g.translate(Math.round(W / 2), gy); g.scale(Z, Z); pxBlit(g, s); g.restore();
 }
 function heroTick(now) {

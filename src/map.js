@@ -136,19 +136,17 @@ function kqAccept(k) {
   changed();
   return '의뢰를 받았어요.';
 }
-const KQ_BOOK = 'bk_faded', KQ_BOOK_N = 1, KQ_BOOK_P = 0.25, kqBookTxt = () => `${ITEMS[KQ_BOOK].name} ${Math.round(KQ_BOOK_P * 100)}%`;
 function kqTurnIn(k) {
   const q = kqOf(k), st = kqState(k);
   if (!q || !kqReady(k)) return '아직 다 채우지 못했어요.';
   if (q.type === 'deliver') addTo(S.inv, q.it, -q.n);
   S.gold += q.gold; S.stats.earned += q.gold; S.fame += 5;
   S.king.favor[k] = favorOf(k) + 12;
-  const gotBook = q.book && rnd() < KQ_BOOK_P;   // 빌드 63: 왕국 스킬북 대신 가끔 빛바랜 스킬북 한 권 (왕국 스킬은 그 안에서 나온다)
-  if (gotBook) stashItem(KQ_BOOK, KQ_BOOK_N);
+  // 빌드 63: 스킬북은 몬스터 드랍으로만 — 왕국 의뢰는 돈 · 호감 · 명성만
   st.done.push(q.id); st.cur = null; st.got = 0;
-  log(`${KINGDOMS[k].name}의 의뢰를 마쳤다. ${fmt(q.gold)}G, 호감 +12, 명성 +5${gotBook ? `, ${ITEMS[KQ_BOOK].name}` : ''}`, 'good');
+  log(`${KINGDOMS[k].name}의 의뢰를 마쳤다. ${fmt(q.gold)}G, 호감 +12, 명성 +5`, 'good');
   changed();
-  return `보상 ${fmt(q.gold)}G${gotBook ? `와 ${ITEMS[KQ_BOOK].name}` : ''}을(를) 받았어요.`;
+  return `보상 ${fmt(q.gold)}G을(를) 받았어요.`;
 }
 // 처치 의뢰 진행 (kill에서 부른다)
 function kqKill(id) { if (!S.kq) return; for (const k in S.kq) { const q = kqOf(k); if (q && q.type === 'hunt' && q.mon === id) S.kq[k].got++; } }
@@ -225,8 +223,8 @@ function talkLines(id) {
 PANELS.talk = w => {
   const id = w.who, K = KINGDOMS[id], O = MAP_ORGS[id], name = K ? K.name : O.name;
   const q = K ? kqOf(id) : null, nq = K ? kqNext(id) : null, v = S.king && S.king.visit && S.king.visit.k === id;
-  const lines = (w.mode === 'quest' && q) ? [`"${kqText(q)}"`, `"지금까지 ${kqProgress(id)}. ${kqReady(id) ? '다 채웠군. 약속한 것을 주겠소.' : '마치면 다시 오시오.'}"`, `보상: ${fmt(q.gold)}G, 호감 +12, 명성 +5${q.book ? `, ${kqBookTxt()}` : ''}`]
-    : (w.mode === 'quest' && nq) ? [`"부탁이 하나 있소. ${kqText(nq)}"`, `보상: ${fmt(nq.gold)}G, 호감 +12, 명성 +5${nq.book ? `, ${kqBookTxt()}` : ''}`]
+  const lines = (w.mode === 'quest' && q) ? [`"${kqText(q)}"`, `"지금까지 ${kqProgress(id)}. ${kqReady(id) ? '다 채웠군. 약속한 것을 주겠소.' : '마치면 다시 오시오.'}"`, `보상: ${fmt(q.gold)}G, 호감 +12, 명성 +5`]
+    : (w.mode === 'quest' && nq) ? [`"부탁이 하나 있소. ${kqText(nq)}"`, `보상: ${fmt(nq.gold)}G, 호감 +12, 명성 +5`]
     : w.mode === 'quest' ? ['"지금은 부탁할 일이 없소. 고맙소."'] : talkLines(id);
   const btns = w.mode === 'quest'
     ? (q ? (kqReady(id) ? `<button type="button" class="btn gold" data-act="kqdone" data-id="${id}">납품하기</button>` : `<button type="button" class="btn" data-act="talkmode" data-id="${id}" data-m="">알겠소</button>`) : nq ? `<button type="button" class="btn gold" data-act="kqok" data-id="${id}">수락</button><button type="button" class="btn" data-act="talkmode" data-id="${id}" data-m="">나중에</button>` : `<button type="button" class="btn" data-act="talkmode" data-id="${id}" data-m="">알겠소</button>`)

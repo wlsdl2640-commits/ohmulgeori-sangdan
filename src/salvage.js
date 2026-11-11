@@ -55,7 +55,7 @@ function salvageDay(k) {
     if (soul) { st.sacc[f] = (st.sacc[f] || 0) + SALV.soul[lv]; if (st.sacc[f] >= 1 - 1e-9) { st.sacc[f] = Math.max(0, st.sacc[f] - 1); addTo(got, soul, 1); boss.push(soul); } }
   }
   let n = 0;
-  for (const [it, q] of Object.entries(got)) { stashItem(it, q); n += q; }   // 빌드 63: 넘치면 창고 1~10 → 길드
+  for (const [it, q] of Object.entries(got)) { stashItem(it, q); n += q; }   // 빌드 63: 넘치면 창고 1~10, 그래도 없으면 못 가져온다
   st.last = { day: k, got, boss, from: picks };
   S.stats.salvaged = (S.stats.salvaged || 0) + n; S.stats.salvBoss = (S.stats.salvBoss || 0) + boss.length;
   if (n) {

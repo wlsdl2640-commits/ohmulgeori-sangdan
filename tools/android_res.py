@@ -7,7 +7,7 @@ import appart
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / 'android-res'
-NAME = '판타지세계 상단 키우기'
+NAME = '판타지 상단키우기'   # 앱 그림 제목 두 줄 (빌드 63 이름 「판타지상단키우기」)
 
 def save(img, rel):
     p = OUT / rel

@@ -20,13 +20,61 @@ const UI_PX = {
   menu:   ['.kkkkkkk.', 'kyyyyyyyk', 'kdddddddk', 'kpppppppk', 'kpkkkkppk', 'kpppppppk', 'kpkkkkkpk', 'kpppppppk', '.kkkkkkk.']   // 빌드 63: 메뉴판
 };
 const UI_PAL = { k: '#0b0d12', y: '#f0b43c', l: '#fff2c0', d: '#9a6a1c', f: '#5fd4c0', w: '#c9c3b8', s: '#f1c9a5', t: '#4a7ac8', b: '#9a6a3c', p: '#e8dcb8' };
+// 빌드 63 메뉴판 (사용자 「A안」 · 「안쪽 모양도 각각 업그레이드」): 칸 아이콘 12×12 · 바로 가기 아이콘 7×7, 한 칸 = 3px
+Object.assign(UI_PAL, {"Y": "#ffe08a", "r": "#c0392b", "R": "#e8705a", "q": "#7a2018", "W": "#f4ecd8", "v": "#a8a08e", "B": "#c08a54", "n": "#5a3a20", "g": "#8a8e98", "G": "#d0d4dc", "h": "#50545e", "S": "#c8946a", "T": "#7aa8f0", "u": "#2a4a88", "F": "#a8f0e0", "P": "#fff6dc", "o": "#c4ac80", "e": "#5ac84a", "E": "#2e7a2a", "m": "#8a5a32"});
+Object.assign(UI_PX, {
+  m_house: [".....kk.....", "....kRRk....", "...kRrrrk...", "..kRrrrrrk..", ".kRrrrrrrqk.", "kkkkkkkkkkkk", "kWrWrWrWrWrk", "kkkkkkkkkkkk", ".kWWkkkkWvk.", ".kWWkBnkWvk.", ".kWWkBnkWvk.", ".kkkkkkkkkk."],
+  m_anvil: [".......kk...", "......kBnk..", ".....kBnk...", "..kkkkGkk...", ".kGGGGGGGGk.", "kGGGGGGGGgk.", ".kggggggghk.", "...kkghkk...", "....kghk....", "...kgGghk...", "..kgggggghk.", "..kkkkkkkk.."],
+  m_person: ["....kkkk....", "...kGGGgk...", "..kGGGGggk..", "..kkkkkkkk..", "..kssssSSk..", "..kskskSSk..", "...kssSSk...", "..kkTttTkk..", ".kTTtttttuk.", ".kTttyytuuk.", ".kTttttttuk.", "..kkkkkkkk.."],
+  m_map: ["kkkkkkkkkkkk", "kPPPPoPPPPok", "kPeePoPPfPok", "kPeEPoPfFPok", "kPPPPofPPPok", "kPPPfoPPrrok", "kPPfPoPPrqok", "kPfPPoPPkPok", "kPPPPoPPkPok", "kPPPPoPkkkok", "kooooooooook", "kkkkkkkkkkkk"],
+  m_sword: [".........kk.", "........kGk.", ".......kGgk.", "......kGgk..", ".kkk.kGgk...", "kTTTkGgk....", "kTtykgk.....", "kTyytkyk....", "kTtttkkyk...", ".kTtuk.knk..", "..kuk...kk..", "...k........"],
+  m_box: [".kkkkkkkkkk.", "kBBBBBBBBBnk", "kBmmmmmmmmnk", "kggggggggggk", "khhhhkkhhhhk", "kBBBkYykBBnk", "kBmmkydkmmnk", "kggggkkggggk", "kBBBBBBBBBnk", "kBmmmmmmmmnk", "kmnnnnnnnnnk", ".kkkkkkkkkk."],
+  m_scroll: ["kkkkkkkkkkkk", "kBBBBBBBBBBk", "kBkkkkkBkkkk", "kBkPrPkBkPrk", "kBkPPPkBkPPk", "kBkhhPkBkhhk", "kBkPPPkBkPPk", "kBkhPPkBkkkk", "kBkkkkkBBBBk", "kBBBBBBBBBBk", "kmmmmmmmmmmk", "kkkkkkkkkkkk"],
+  c_money: ["..kkk..", ".kYyyk.", "kYlyydk", "kYyyydk", "kyyyydk", ".kdddk.", "..kkk.."],
+  c_dex: ["kkkkkk.", "krRRrkk", "krPPPkk", "krhhPkk", "krPPPkk", "krrrrkk", "kkkkkk."],
+  c_achv: ["kkkkkkk", "kYyyydk", ".kyyyk.", "..kyk..", "..kdk..", ".kyydk.", ".kkkkk."],
+  c_log: ["...k...", "..kYk..", ".kYyyk.", ".kyyyk.", "kYyyydk", "kkkkkkk", "...kk.."],
+  c_set: [".k.k.k.", ".kGGGk.", "kGhhhgk", ".Gh.hg.", "kGhhhgk", ".kgggk.", ".k.k.k."]
+});
+// 메뉴판 도트 판 (한 칸 = 3px): 나무 테(4칸 경사 · 쇠 모서리 · 리벳) · 세로 널빤지 · 붉은 리본 · 나무 명패(못) · 바로 가기 나무 패
+function mbArtURL(w, h, draw) { const [c, x] = mkCanvas(w, h); draw((px, py, col) => { x.fillStyle = col; x.fillRect(px, py, 1, 1); }, (x0, y0, x1, y1, col) => { x.fillStyle = col; x.fillRect(x0, y0, x1 - x0 + 1, y1 - y0 + 1); }); return c.toDataURL(); }
+function mbArt() {
+  const K = '#140e0a', FW = ['#b87a44', '#8e582e', '#623c1e', '#402614'], PL = { l: '#704a2c', m: '#5c3a22', d: '#46301a', s: '#2c1c10' };
+  const IR = { l: '#969aa2', m: '#5c5c66', d: '#32323a', h: '#d2d2dc' }, PQ = { l: '#f0d098', m: '#dab074', d: '#aa7e4a', g: '#c49860' }, RB = { l: '#ee6452', m: '#c4342c', d: '#7e1c18' };
+  const wood = mbArtURL(20, 20, (P, F) => {
+    F(0, 0, 19, 19, K);
+    const tl = [FW[0], FW[0], FW[1], FW[3]], br = [FW[2], FW[3], FW[1], FW[3]];
+    for (let k = 1; k <= 4; k++) { F(k, k, 19 - k, k, tl[k - 1]); F(k, k, k, 19 - k, tl[k - 1]); F(k, 19 - k, 19 - k, 19 - k, br[k - 1]); F(19 - k, k, 19 - k, 19 - k, br[k - 1]); }
+    F(5, 5, 14, 5, PL.s); F(5, 5, 5, 14, PL.s); F(5, 14, 14, 14, PL.s); F(14, 5, 14, 14, PL.s);
+    P(9, 2, FW[2]); P(10, 2, FW[2]); P(2, 9, FW[2]); P(2, 10, FW[2]); P(9, 17, FW[0]); P(17, 9, FW[0]);
+    for (const [sx, sy, dx, dy] of [[1, 1, 1, 1], [18, 1, -1, 1], [1, 18, 1, -1], [18, 18, -1, -1]]) {
+      for (let i = 0; i < 5; i++) for (let t = 0; t < 3; t++) { const c = t === 0 ? IR.l : t === 1 ? IR.m : IR.d; P(sx + dx * i, sy + dy * t, c); P(sx + dx * t, sy + dy * i, c); }
+      P(sx + dx * 3, sy + dy, IR.h); P(sx + dx, sy + dy * 3, IR.h);
+    }
+  });
+  const plank = mbArtURL(9, 17, (P, F) => { F(0, 0, 8, 16, PL.m); F(0, 0, 0, 16, PL.l); F(8, 0, 8, 16, PL.s); P(3, 4, PL.d); P(3, 5, PL.d); P(4, 6, PL.d); P(5, 11, PL.d); P(5, 12, PL.d); P(6, 13, PL.d); });
+  const ribbon = mbArtURL(60, 10, (P, F) => {
+    for (const [x0, x1] of [[0, 6], [53, 59]]) { F(x0, 2, x1, 9, K); F(x0 + 1, 3, x1 - 1, 8, RB.d); }
+    P(1, 5, K); P(58, 5, K);   // 꼬리 끝 홈
+    F(4, 0, 55, 8, K); F(5, 1, 54, 7, RB.m); F(5, 1, 54, 1, RB.l); F(5, 7, 54, 7, RB.d);
+  });
+  const tile = mbArtURL(12, 12, (P, F) => {
+    F(0, 0, 11, 11, K); F(1, 1, 10, 10, PQ.m); F(1, 1, 10, 1, PQ.l); F(1, 1, 1, 10, PQ.l); F(1, 10, 10, 10, PQ.d); F(10, 1, 10, 10, PQ.d);
+    for (const x0 of [1, 9]) { F(x0, 1, x0 + 1, 2, IR.m); P(x0, 1, IR.h); }
+    P(5, 2, PQ.g); P(6, 2, PQ.g); P(5, 9, PQ.g);
+  });
+  const chip = mbArtURL(6, 6, (P, F) => { F(0, 0, 5, 5, K); F(1, 1, 4, 4, '#3a2414'); F(1, 1, 4, 1, '#7a5434'); F(1, 1, 1, 4, '#7a5434'); F(1, 4, 4, 4, '#22140c'); F(4, 1, 4, 4, '#22140c'); });
+  const R = document.documentElement.style;
+  R.setProperty('--mb-wood', `url(${wood})`); R.setProperty('--mb-plank', `url(${plank})`); R.setProperty('--mb-ribbon', `url(${ribbon})`);
+  R.setProperty('--mb-tile', `url(${tile})`); R.setProperty('--mb-chip', `url(${chip})`);
+}
 function pxURL(name) {
   const pat = UI_PX[name], w = pat[0].length, h = pat.length;
   const [c, x] = mkCanvas(w, h);
   pat.forEach((row, y) => { for (let i = 0; i < w; i++) if (row[i] !== '.') R(x, i, y, 1, 1, UI_PAL[row[i]]); });
   return c.toDataURL();
 }
-function applyPx() { document.querySelectorAll('img[data-px]').forEach(im => { im.src = pxURL(im.dataset.px); }); }
+function applyPx() { document.querySelectorAll('img[data-px]').forEach(im => { im.src = pxURL(im.dataset.px); }); if (!applyPx.mb) { applyPx.mb = 1; mbArt(); } }
 
 const POR = {}, POR_W = 46, POR_H = 56;
 function portrait(a) {
@@ -287,7 +335,7 @@ async function openExport() {
     <textarea class="code" id="code-out" readonly rows="5">${code}</textarea>
     <div class="btns"><button type="button" class="btn sm gold" id="code-copy">복사하기</button>${canShare() ? '<button type="button" class="btn sm" id="code-share">공유하기</button>' : ''}${isApp() ? '' : '<button type="button" class="btn sm" id="code-file">파일로 저장</button>'}</div>`;
   $('code-copy').onclick = async () => { say((await copyText($('code-out'))) ? '저장 코드를 복사했어요' : '코드를 길게 눌러 전체 선택한 뒤 복사해 주세요'); };
-  if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '판타지세계 상단 키우기 저장 코드', text: code }); } catch (_) {} };
+  if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '판타지상단키우기 저장 코드', text: code }); } catch (_) {} };
   // 설치한 앱의 WebView는 내려받기를 못 해서 파일 단추를 숨긴다 (복사·백업 슬롯을 쓴다)
   if ($('code-file')) $('code-file').onclick = async () => {
     const name = `ohmulgeori-save-${new Date().toISOString().slice(0, 10)}.txt`;
