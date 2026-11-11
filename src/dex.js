@@ -89,7 +89,28 @@ function monCard(id) {
   const rr = dexRare(id), rareRow = m.boss || m.giant || m.fb ? '' : rr ? `<div class="sub gold-t">★ 희귀종 ${rr}마리 기록: 이 종에게 주는 피해 +${Math.round(RARE.dmg * 100)}% · 전리품 +${Math.round(RARE.drop * 100)}%</div>` : `<div class="sub muted">희귀종(반짝이는 개체, 1/${Math.round(1 / RARE.p)})을 잡으면 이 종에게 피해 +${Math.round(RARE.dmg * 100)}%·전리품 +${Math.round(RARE.drop * 100)}%</div>`;
   return `<details class="card dexm"><summary><span class="row"><img class="dexi" src="${monIconURL(id)}" alt=""><span class="grow stack"><span>${m.name} ${tags}${rr ? ' <span class="tag gold-t">★희귀</span>' : ''}</span><span class="sub">${where.map(w => esc(w.where)).join(' · ') || '?'} · 잡음 <b class="num">${k}</b> · 기록 ${lvl}/4</span></span></span></summary>
     <div class="sub">${monTypes(id).map(t => `<span class="tyt">${MTYPES[t] ? MTYPES[t].name : t}</span>`).join('')} 속성 ${monEls(id).length ? monEls(id).map(elTag).join('·') : '<span class="muted">없음</span>'}${monElNote(id) ? ` <span class="muted">· ${monElNote(id)}</span>` : ''}</div>
-    ${skinRow(id)}${stats}${drops}${sta}${rareRow}</details>`;
+    ${monFightRow(id, lvl)}${skinRow(id)}${stats}${drops}${sta}${rareRow}</details>`;
+}
+// 빌드 63: 공격 속성 · 날아다님 · 몸의 면역 · 몬스터 스킬 · 우두머리 단계
+function mskText(s, id) {
+  const K = { hit: '한 명', drain: '한 명 · 흡혈', all: '모두', buff: '자기 강화', rally: '동료 모두 강화', heal: s.self ? '자기 회복' : '동료 회복', shield: '보호막', summon: '졸개 부르기' }[s.kind] || '';
+  const P = [K], f = { id };
+  if (['hit', 'drain', 'all'].includes(s.kind)) { P.push(`×${s.mult}${(s.hits || 1) > 1 ? ' ' + s.hits + '번' : ''}${s.magic ? ' 마법' : ''}`); const el = mskEl(s, f); if (el !== 'none') P.push(elName(el)); }
+  const st = mskSta(s, f); if (st && STATUS[st.k]) P.push(`${STATUS[st.k].name} ${Math.round(st.p * 100)}%`);
+  if (s.stat) P.push(`${{ atk: '공격', def: '방어', spd: '속도' }[s.stat] || s.stat} ×${s.mul} ${s.dur}초`);
+  if (s.pct) P.push(`최대 HP ${Math.round(s.pct * 100)}%`);
+  if (s.mon) P.push(s.mon.map(x => (MONS[x] ? MONS[x].name : x)).join('·'));
+  P.push(`${s.cd}초마다`);
+  return `<div class="row sub"><b>${esc(s.name)}</b><span class="grow muted">${P.filter(Boolean).join(' · ')}</span></div>`;
+}
+function monFightRow(id, lvl) {
+  const m = MONS[id], f = { id }, el = fAtkEl(f), imm = ['undead', 'construct', 'elemental'].some(t => monTypes(id).includes(t));
+  const tags = [m.fly ? '<span class="tag">날아다님 · 근접 기본 공격 -30%</span>' : '', imm ? '<span class="tag">중독 · 맹독 · 출혈 면역</span>' : ''].filter(Boolean).join(' ');
+  const head = `<div class="sub">공격 속성 ${el !== 'none' ? elTag(el) : '<span class="muted">무속성</span>'}<span class="muted"> · 마법 공격과 광역기에 실린다</span>${tags ? ' ' + tags : ''}</div>`;
+  const L = (m.msk || []);
+  if (!L.length && !m.boss) return head;
+  if (lvl < 2) return head + `<div class="sub muted">5마리 잡으면 스킬이 열려요.</div>`;
+  return head + `<div class="sec" style="margin-top:4px"><b>스킬</b><span>${L.length}개</span></div>${L.map(s => mskText(s, id)).join('')}${m.boss || m.giant ? '<div class="sub muted">우두머리: HP 50%에서 분노(공격 속도 ×1.3), 25%에서 마지막 발악(광역기 ↑ · 졸개를 부른다)</div>' : ''}`;
 }
 // 모습 여럿 (빌드 46: 골렘·바위거인은 만날 때마다 넷 중 하나)
 function skinRow(id) {

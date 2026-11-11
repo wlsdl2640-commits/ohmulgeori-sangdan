@@ -18,7 +18,8 @@ const TR_TXT = {
 };
 Object.assign(TR_TXT, {
   vs: v => Object.entries(v).map(([t, x]) => `${MTYPES[t] ? MTYPES[t].name : t}에게 주는 피해 +${Math.round(x * 100)}%`).join(' · '),
-  elw: v => `약점 속성 피해 +${Math.round(v * 100)}%`, immPierce: v => `면역인 적에게도 피해 ${Math.round(v * 100)}%`
+  elw: v => `약점 속성 피해 +${Math.round(v * 100)}%`, immPierce: v => `면역인 적에게도 피해 ${Math.round(v * 100)}%`,
+  ccRes: v => `행동 방해 시간 -${Math.round(v * 100)}%`, baImm: () => '기본 공격을 맞지 않는다 (혼자 남으면 맞는다)', subst: () => '싸움마다 쓰러질 한 방을 한 번 피한다'   // 빌드 63
 });
 const trText = c => Object.entries(CLASSES[c].tr || {}).map(([k, v]) => (TR_TXT[k] ? TR_TXT[k](v) : '')).filter(Boolean).join(' · ');
 const tierTag = c => (jobTier(c) > 1 ? ` <span class="tag fame-t">${jobTier(c)}차</span>` : '');
@@ -332,7 +333,7 @@ function mastRows(a, idle) {
 function advDetail(a) {
   const d = derive(a), G = gearSum(a), idle = a.status === 'idle', canTr = S.bld.training && idle && trainedTotal(a) < trainCap(a);
   const stats = STATS.map(([k, n]) => `<div class="li flat"><span class="grow">${n} <b class="num">${d.T[k]}</b> <span class="sub muted">· 기본 ${a.st[k]}${a.tr[k] ? ` · 훈련 +${a.tr[k]}` : ''}${G[k] ? ` · 장비 ${G[k] > 0 ? '+' : ''}${G[k]}` : ''}</span></span>${S.bld.training ? `<button type="button" class="btn sm" data-mact="train" data-k="${k}"${canTr && S.gold >= trainCost(a) ? '' : ' disabled'}>+1 · ${fmt(trainCost(a))}G</button>` : ''}</div>`).join('');
-  const derived = [['HP', `${Math.ceil(a.hp)}/${d.maxHp}`], ['MP', `${Math.ceil(a.mp)}/${d.maxMp}`], ['피로', `${Math.round(a.fat || 0)}/100`], ['숙면 피로', `${Math.round(a.sleep || 0)}/100`], ['공격', d.atk.toFixed(1)], ['마법', d.matk.toFixed(1)], ['방어', d.def.toFixed(1)], ['회피', Math.round(d.eva * 1000) / 10 + '%'], ['치명', Math.round(d.crit * 1000) / 10 + '%'], ['방어 확률', Math.round(d.block * 100) + '%'], ['반격', Math.round(d.counter * 100) + '%'], ['연타', Math.round(((TR(a).double || 0) + d.double) * 100) + '%'], ['공격 속도', '×' + d.spd.toFixed(2)], ['기본 공격', basicCd(a, d, null).toFixed(1) + '초마다'], ['스킬 재사용', '-' + Math.round(d.cdr * 100) + '%'], ['이동속도', d.move.toFixed(1)], ['짐', d.carry]]
+  const derived = [['HP', `${Math.ceil(a.hp)}/${d.maxHp}`], ['MP', `${Math.ceil(a.mp)}/${d.maxMp}`], ['피로', `${Math.round(a.fat || 0)}/100`], ['숙면 피로', `${Math.round(a.sleep || 0)}/100`], ['공격', d.atk.toFixed(1)], ['마법', d.matk.toFixed(1)], ['방어', d.def.toFixed(1)], ['회피', Math.round(d.eva * 1000) / 10 + '%'], ['치명', Math.round(d.crit * 1000) / 10 + '%'], ['방어 확률', Math.round(d.block * 100) + '%'], ['반격', Math.round(d.counter * 100) + '%'], ['연타', Math.round(((TR(a).double || 0) + d.double) * 100) + '%'], ['공격 속도', '×' + d.spd.toFixed(2)], ['기본 공격', basicCd(a, d, null).toFixed(1) + '초마다'], ['스킬 재사용', '-' + Math.round(d.cdr * 100) + '%'], ['마법 저항', Math.round((d.mres || 0) * 100) + '%'], ['속성 저항', Object.entries(d.res || {}).map(([f, v]) => `${RES_NAME[f]} ${Math.round(v * 100)}%`).join(' · ') || '없음'], ['이동속도', d.move.toFixed(1)], ['짐', d.carry]]
     .map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('');
   const spdB = speedBreakdown(a);
   const slots = SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => {

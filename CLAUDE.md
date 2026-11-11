@@ -308,7 +308,7 @@
   - 그림 시안(01:52 「스킬 그림 다 그리기」): 시안 저장소 가지 `skill-icons-draft` 2ba6f97 `drafts/skill-icons/dot/` — `c_v63.py`(ICONS 65 · GROUPS 7묶음) · `c_ride63.py`(늑대 · 와이번 · 날개 · 안장을 다각형 · 타원 모델로 그려 돌리고 키워 16×20 판에 찍는 `raster()` — 동물은 손으로 친 줄그림보다 이쪽이 읽힌다) · `m_v63.py`(숙련 15 + 달인 백금 틀 제안) · `v63sheet.py` → v63_1~7.png · m_v63.png. 옛 그림을 그대로 쓰는 스킬: 늑대 부르기 · 늑대와 한 몸 · 와이번 강하 · deadeye. 고르면 export_game.py로 게임에.
 - 전투 시스템 보고서 (11-11 01:52 사용자 「다 종합해서 보고해」 · 「전투 시스템의 완성을 해야겠어」): Claude 문서 「전투 시스템 정리 — 직업 · 몬스터 · 상성 · 상태이상」 https://claude.ai/artifact/4baeh7SFZve3Fus7xQn6a9 (빌드 62 자료를 `scratchpad/war/sk/dump2.py`로 뽑음 → dump2.json · classes.txt · mons.txt, 저장소 equip-draft `drafts/equip/sk/`에도).
   - 찾은 것: 몬스터는 기본 공격(물리 98 · 마법 32종) + 광역 30%(35종) + 맞힐 때 상태이상(93종)뿐 — 스킬 · 강화 · 치유(코드는 있으나 안 씀) · 공격 속성이 없다. 스킬은 빗나가지 않는다(회피는 기본 공격만). 어둠 · 악은 약점이 하나도 없다. 모험가 상태이상 스킬 63개 중 37개가 기절. 지속 피해는 몬스터마다 한 칸(f.dot)이라 서로 덮어쓴다. 인간 · 골렘 · 원소 · 천상 특공 직업이 없다. 마비는 몬스터에겐 기절과 같다(모험가는 기본 공격만 막힘).
-  - 제안: 새 상태이상 눈멂(결정) · 수면 · 저주 · 부식 먼저, 맹독 · 공포 · 빙결 · 석화 다음. 새 장치: 몬스터 스킬 · 우두머리 단계 · 명중 · 어둠 · 악 약점 · 몬스터 공격 속성 + 모험가 속성 저항 · 타입별 면역 · 지속 피해 칸 합치기 · 탱커 저항 · 마법 저항 · 비행 몬스터. 물음 8개는 문서 「물어볼 것」 — 답이 오면 전투 개편 순서를 정한다.
+  - 제안: 새 상태이상 눈멂(결정) · 수면 · 저주 · 부식 먼저, 맹독 · 공포 · 빙결 · 석화 다음. 새 장치: 몬스터 스킬 · 우두머리 단계 · 명중 · 어둠 · 악 약점 · 몬스터 공격 속성 + 모험가 속성 저항 · 타입별 면역 · 지속 피해 칸 합치기 · 탱커 저항 · 마법 저항 · 비행 몬스터. 물음 8개(문서 「물어볼 것」)는 11-11 09:24에 모두 「응」(상태이상 「다넣어」 · 「회피는 기본공격 직업에만」 · 마법 저항 「새로둬」) → 빌드 63 전투 개편(아래 절)으로 넣었다.
 - 전직 레벨 · 장비 단계 (11-10 21:31~21:40 사용자, 자세히는 `scratchpad/war/DECISIONS.md` — 코드는 장비 개편 구현 때)
   - 2차 전직 Lv50(금장 · 3만G · 직업별 추가 조건) · 3차 Lv100(백은 · 30만G · 주인의 혼 2) · 4차 예정 Lv150(백금 · 300만G · 혼 4 + 별의 핵). 각성(용사) · 2차 각성(초월 용사)은 지운다 → 레벨 상한 모두 150(4차 때 200).
   - 2차 · 3차 직업 스킬 배우는 레벨도 새 전직 레벨에 맞춰 올린다. 옛 저장의 hero/hero2 · 각성기는 지우고, 이미 전직한 모험가는 그대로.
@@ -320,6 +320,29 @@
   - 부장비: 마법서 → 마법 두루마리(마법사 계열 · 원소술사, `icon/scr.py` 사선 · 축 대칭, 원형 A 말린 · C 봉인 · D 축 셋 — 펼친 두루마리는 뺌(21:09)), 네크로맨서 = 여러 꼴의 공물(`icon/ofr.py` 해골 · 그릇 · 불 · 뼈 — 시안대로 확정(21:09)), 정령술사 = 여러 꼴 · 속성의 정령(`icon/spr.py` 불꽃 · 방울 · 날개 · 바위꼴 + 번개 정령만 구름꼴(먹구름에서 번개가 삐져나옴, 21:09), 얼굴 있음). 판 `icon/mkmage.py`.
   - 네크로노미콘 표지끼리 겹쳐 보이면 안 된다(21:09 「혈월의 서 · 피의 서 똑같이 생겼어」): 혈월의 서 = 꽉 찬 붉은 달, 저주의 마법진 = 살가죽 표지.
   - 이름은 모두 제안 — 나중에 다듬는다.
+
+## 전투 개편 · 몬스터 스킬 · 새 상태이상 (빌드 63, 가지 wip-63 — 시험 · APK 아직)
+- 사용자(11-11 09:24 「전투시스템 보고는 답 했어. 완료하고 보고해」): 보고서 https://claude.ai/artifact/4baeh7SFZve3Fus7xQn6a9 의 물음 8개 모두 응 · 상태이상은 「다넣어」(매혹 · 혼란까지) · 스킬 명중은 「회피는 기본공격 직업에만」 · 마법 저항 「새로둬」. 빌드 62(wip-62)는 그대로 두고 wip-63에서 했다.
+- `src/data-fight.js`(build.py에서 data-salv 뒤):
+  - 상태이상 10개 더: 맹독 venom(중독이 셋까지 쌓임, 틱 × 중첩) · 눈멂 blind · 수면 sleep · 저주 curse · 부식 corrode(방어 −15% × 셋) · 공포 fear · 빙결 freeze · 석화 petrify · 매혹 charm · 혼란 confuse. STATUS_IDS에 push(같은 배열을 쓰는 「모든 상태이상」 해제에도 들어감) · CC_IDS에 행동 방해 더함 · HARD_CC/isHard(기절 · 수면 · 빙결 · 석화 = 아무것도 못 함) · DOT_STA · STACK_STA · ADV_STA() · 수치는 FIGHT. 그림은 없이 색점 · 이름 띠만.
+  - 몸 면역 STA_TYPE_IMM(언데드 · 골렘 · 원소 → 중독 · 맹독 · 출혈) · 지속 피해 스킬 독 종류 DOT_KIND → s.dk · 비행 FLY → MONS.fly/isFly · 공격 속성 fAtkEl(MON_ATK_EL 또는 첫 속성) · elFam · RES_FAMS/RES_NAME(STAT_NAMES · PCT_STATS r_*) · EL_STA(숨결 · 폭풍이 속성에 맞춰 거는 것).
+  - 몬스터 스킬: 틀 MSK(kind hit · all · drain · buff · rally · heal · shield · summon, mult · cd · magic · el 'self' · sta 'el') + MON_SK(130종 모두, [틀, 이름, 덮어쓰기]) → MONS[id].msk(레이드 거인은 부르기 뺌). monSkills · mskEl · mskSta.
+  - 모험가 쪽: 안약 eyedrop(눈멂) · 성수 holyvial(저주) + 소모품 cure 늘림(해독약 맹독 · 온열약 빙결 · 각성 소금 수면 · 공포 · 매혹 · 혼란 · 강장제 부식 · 만병통치약 전부) · 조제법 둘 · 특성 frostproof(추위에 강함) · warded(마력 저항) · 냉정함 = 모든 행동 방해 · 불에 강함 r_fire · 기사 · 성기사 tr.ccRes 0.3 · 마법 저항 mresJob(성직자 계열 · 마검사 · 마검성 · 성기사) + 로브 · 마법서 · 성표 st.mres + 룬 결계(barrier) · 속성 저항 룬 내화 · 내한 · 피뢰 · 정결 · 세트 3 · 4점 setRes(TIER_RES = 그 단계 땅에 많은 속성 10 · 20%) · 도시락 FOOD_RES.
+  - 스킬 SK63: 자장가 → 수면 · 얼음 감옥 · 빙결 플라스크 → 빙결 · 섬광 화살 · 섬광탄 → 눈멂 · 진혼곡 수면 · 라그나로크 공포 · 저주 · 술탄의 저주 → 저주 · 부패의 파도 · 금속 변성 → 부식 · 맹독 · 역병 확산 → 맹독 · 정화(사제) pcures 저주 · 결의 cures 공포 · 해독 · 숲의 숨결 · 만병통치약(스킬) 해제 늘림. STORY.v63.
+- core.js:
+  - 상태이상: inflictAdv/inflictFoe(쌓임 · 행동 방해 저항 · 몸 면역 · 우두머리는 매혹 · 혼란 면역 · 식물 화상 ×1.5) · wakeOnHit(수면 · 매혹 · 혼란은 맞으면 풀림, 사건 'stoff') · staTimers · staMods(공포 · 부식 · 석화 → stepExp의 dm) · healMul/fHealMul(저주: 받는 회복 절반 · 재생 · hpRegen 멈춤).
+  - 명중: 회피는 기본 공격에만. 스킬 · 광역기 · 몬스터 스킬은 눈멀었을 때만 FIGHT.blind 20% 빗나간다(사건 fmiss sk:1 · miss bl:1).
+  - hitFoe: 몬스터 강화 fBuf · 부식 · 석화 · 불에 깨지는 빙결 ×1.3 · 몬스터 보호막 f.shd · wakeOnHit. 표적은 frontFoe/lowAwake(잠든 · 돌이 된 · 홀린 적은 되도록 건드리지 않음).
+  - 지속 피해 스킬: f.dot 한 칸 → f.dots[스킬 id](옛 저장은 battle이 옮김) · s.sta도 건다 · s.dk 독은 몸 면역.
+  - 몬스터 차례(battle): fTick(강화 시간 · 스킬 대기, 행동 방해 중엔 멈춤) → fPhase(우두머리 HP 50% ph1 분노 = 공격 속도 FIGHT.rage · 25% ph2 마지막 발악 = f.aoe · 광역 50% · 졸개 둘 · 스킬 서두름) → 행동 방해 · 공포(30% 건너뜀 'ffear') · 매혹 · 혼란(foeAllyHit 'fhit') → pvp 치유 → fSkill(fSkillPick · 준비되면 75% · 'fskill') → 광역기 → 기본 공격(기본 공격 면역 baImm은 혼자 남았을 때만 · coverOf).
+  - fSummon: s.mon 또는 그 땅 몬스터 · 서 있는 몬스터 다섯까지 · m.sum → kill에서 경험치 절반 · 전리품 없음.
+  - hitAdv(p, e, f, x, mult, dm, o): o.skill이면 회피 없음 · magic이면 방어 절반 × (1 − mres) · 속성이면 × (1 − res[계열]) · 모험가 빙결도 불에 깨짐 · subst(쓰러질 한 방을 싸움마다 한 번, 'subst') · o.sta가 없으면 몬스터 on-hit sta.
+  - 매혹 · 혼란 모험가: advAllyHit(반 피해 · 쓰러뜨리지 않음 'ahit'), 매혹이면 스킬도 못 씀. 날아다니는 적에게 근접 기본 공격 ×0.7.
+  - deriveBase: mres(상한 0.6) · res = resOf(상한 0.75) · baImm · subst(passive P에서 — 개편 직업용 장치). weather.js expMods에 도시락 저항 · data-gear setInfo에 setRes · setBonusText r_*.
+- data-elem.js: 어둠 · 악 → 빛 · 신성 몬스터 ×1.5(빛 · 신성의 속성 면역에서 어둠 계열만 뺌) · 천상 · 인간 ×1.3 · 속성 없는 몬스터도 타입 상성을 받는다(예전엔 `if (!fe.length) return 1`로 식물 화염 ×1.3이 안 들었다).
+- 화면: view.js 'fskill' 이름 띠(.call.msk) · fbuff · fphase(가운데 boss 글 · 흔들림) · ffear · fhit · ahit · stoff · subst + 기록 글 · 적 HP 막대 옆 지속 피해 점(f.dots) · 보호막 줄 · 분노 점. fmot.js: 몬스터 스킬 한 방(x.ms)은 스킬 갈래, 스킬 광역기는 FMOT_NAME 띠를 안 띄움. dex.js monFightRow(공격 속성 · 날아다님 · 몸 면역 · 스킬 목록(5마리부터) · 우두머리 단계). panels.js 능력치 마법 저항 · 속성 저항 · TR_TXT ccRes · baImm · subst. skillinfo.js 정화 · 결의 해제 줄 · 독 면역 줄. 알림 notes63 · flags.v63.
+- 시험: 아직 없음. 이번엔 `node --check`와 묶은 파일 eslint no-undef(`scratchpad/v63/bundle.js`)까지만 · 데이터 확인 `scratchpad/v63/datachk.js`(몬스터 스킬 표 id · 상태이상 · 룬 · 치료 목록). 사용자가 시험을 시키면 logic63(상태이상 열 · 몬스터 스킬 · 우두머리 단계 · 부르기 · 저항 · 비행 · 몸 면역 · 옛 저장 f.dot)을 만들어 돌리고 classbal · fieldsim으로 난이도를 잰다(몬스터 스킬 · 분노 · 회피 안 드는 광역기로 어려워졌을 것).
+- 아직 안 한 것: 바실리스크(새 몬스터 — 그림 시안부터) · 새 스킬 「정화」(지금은 사제 정화에 파티 저주 해제를 붙임) · 특공 직업 빈칸(인간 · 골렘 · 원소 · 천상 — 직업 개편 때) · 상태이상 그림 · README(배포 때).
 
 ## 상단 본부 장소 장면 · 선술집 · 은행 제거 (빌드 62)
 - 본부는 `src/hq.js`(옛 iso.js · pxhq.js · people.js는 지웠다): 장소마다 한 장면(실내 앞모습, 벽지처럼 화면을 채운다)을 옆으로 넘긴다. 사용자가 고른 시안 A3 — 결정은 `scratchpad/hq2/DECISIONS.md`.

@@ -25,7 +25,7 @@ function fmotOn(e, x, t, nx, at) {
   }
   if (m0 && m0.t0 === t && m0.d === x.d && (x.type === 'shield' || m0.from === 'shield')) return m0.hit + m0.fl;   // 보호막이 받은 한 방과 그 뒤 맞기: 같은 동작
   const sta = nx && nx.type === 'sta' && nx.side === 'a' && nx.d === x.d;
-  const cat = x.type === 'aoe' ? 'skl' : A.skl && !MONS[f.id].aoe && !f.aoe && (x.c || sta) ? 'skl' : x.k === 'magic' && A.mag ? 'mag' : A.atk ? 'atk' : 'mag';
+  const cat = x.type === 'aoe' ? 'skl' : A.skl && !MONS[f.id].aoe && !f.aoe && (x.c || sta || x.ms) ? 'skl' : x.k === 'magic' && A.mag ? 'mag' : A.atk ? 'atk' : 'mag';   // 몬스터 스킬 한 방(ms, 빌드 63)도 스킬 갈래
   const mk = pxuPick(f.id, cat, m0 && m0.mk), T = pxuMotT(f.id, mk), hf = pxsMotHit(mk), sk = fmotSk(f.id, cat, mk);
   let hit = 0; for (let i = 0; i < hf; i++) hit += T[i];
   const fl = sk && sk.proj && FMOT_CAST[mk] && x.type !== 'aoe' ? SK_PROJ_T[sk.proj] || 0.2 : 0;
@@ -79,7 +79,7 @@ function fmotAoe(e, x, t, fd, team, at) {
   const dir = V.dir || 1, fq = at('f' + f.uid), z = fq ? zAt(fq[1]) : 1, sk = fmotSk(f.id, 'skl'), id = 'u:' + f.id + ':skl', T1 = t + fd, k = m.aoe.k;
   if (!fq || !sk) return;
   const H = monH(f.id, f.sc) * z, cx = fq[0], cy = fq[1] - H * 0.55, tg = team.filter(a => !a.down).map(a => at('a' + a.id)).filter(Boolean);
-  if (FMOT_NAME[f.id]) callout(fq[0], fq[1] - H - 6, FMOT_NAME[f.id] + '!', 'boss');
+  if (FMOT_NAME[f.id] && !x.ms) callout(fq[0], fq[1] - H - 6, FMOT_NAME[f.id] + '!', 'boss');   // 몬스터 스킬(빌드 63)은 이름 띠를 따로 띄운다
   let dmin = null;   // 땅속 독니 · 가시 덩굴 채찍 · 깃털 폭풍: 가장 먼저 맞는 때까지 (흔들림)
   if (k === 'bats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'ubat', id, x0: cx - 6 * dir + (j - 1) * 6, y0: cy - 10 + j * 6, x1: q[0] + (j - 1) * 4, y1: q[1] - 14 * zAt(q[1]) + (j - 1) * 5, t0: T1 + j * 0.06, d: Math.abs(q[0] - cx) / FMOT_AOE_V.bats, s: i * 3 + j }); });
   else if (k === 'rats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'urat', id, x0: cx - 8 * dir + (j - 1) * 5, y0: fq[1] - 1 - j * 3, x1: q[0] + (j - 1) * 6, y1: q[1] - 1 - j * 2, t0: T1 + j * 0.07, d: Math.abs(q[0] - cx) / FMOT_AOE_V.rats, s: i * 3 + j }); });

@@ -1,7 +1,7 @@
 /* ───────── 빌드 31: 속성과 상성 · 몬스터 타입 · 기절 스킬 ─────────
    스킬 속성: 무속성(베기·찌르기·화살 같은 물리 공격과 기본 공격) + 물·불·바람·흙·번개·강철·빙결·화염·폭풍·빛·어둠·신성·악.
    같은 계열끼리는 서로 면역: 불↔화염, 물↔빙결, 바람↔폭풍, 빛↔신성, 어둠↔악 (흙·번개·강철은 저마다 한 계열).
-   빛·신성 몬스터는 속성 스킬에 모두 면역 (기본 공격·무속성만 들어간다). 강철 몬스터는 무속성에 면역 (속성 스킬로만 들어간다).
+   빛·신성 몬스터는 속성 스킬에 모두 면역 (기본 공격·무속성 · 빌드 63부터 어둠·악만 들어간다). 강철 몬스터는 무속성에 면역 (속성 스킬로만 들어간다).
    빛·신성 → 어둠·악 ×1.5 · 물·빙결 → 불·화염 ×1.5 · 번개 → 물·강철 ×1.5 · 불·화염 → 빙결·강철 ×1.5 · 바람·폭풍 → 흙 ×1.5 · 흙 → 번개 ×1.5
    반대로 불 → 물 ×0.5 · 번개 → 흙 ×0.5 · 흙 → 바람·폭풍 ×0.5. 빛·신성은 언데드·악마에게, 불·화염은 식물에게 ×1.3 더.
    몬스터 타입: 마물·짐승·괴수·언데드·식물·원소·인간·악마·천상·골렘·용. 하나 이상, 여럿일 수도 있다. */
@@ -17,9 +17,9 @@ const ELEMS = {
   blaze:   { name: '화염', c: '#ff4a2a', fam: 'fire',    vs: { ice: 1.5, steel: 1.5, water: 0.5 } },
   storm:   { name: '폭풍', c: '#5ad8c8', fam: 'wind',    vs: { earth: 1.5, water: 1.3 } },
   light:   { name: '빛',   c: '#fff4a0', fam: 'light',   vs: { dark: 1.5, evil: 1.5 } },
-  dark:    { name: '어둠', c: '#8a6ad8', fam: 'dark' },
+  dark:    { name: '어둠', c: '#8a6ad8', fam: 'dark',    vs: { light: 1.5, holy: 1.5 } },   // 빌드 63: 빛 · 신성 몬스터에게 ×1.5
   holy:    { name: '신성', c: '#ffe8a0', fam: 'light',   vs: { dark: 1.5, evil: 1.5 } },
-  evil:    { name: '악',   c: '#c03a6a', fam: 'dark' }
+  evil:    { name: '악',   c: '#c03a6a', fam: 'dark',    vs: { light: 1.5, holy: 1.5 } }
 };
 const ELEM_IDS = Object.keys(ELEMS).filter(k => k !== 'none');
 const MTYPES = {
@@ -115,15 +115,15 @@ const elOf = s => (s && s.el) || 'none';
 function elemBase(el, f) {
   if (!f || f.pvp) return 1;
   const fe = monEls(f.id), atk = el || 'none';
-  if (!fe.length) return 1;
-  if (atk === 'none') return fe.includes('steel') ? 0 : 1;               // 강철: 무속성 면역
-  if (fe.includes('light') || fe.includes('holy')) return 0;             // 빛·신성: 속성 면역
+  if (atk === 'none') return fe.includes('steel') ? 0 : 1;               // 강철: 무속성 면역   (빌드 63: 속성이 없는 몬스터도 타입 상성은 받는다 — 식물 · 인간)
   const E = ELEMS[atk]; if (!E) return 1;
+  if ((fe.includes('light') || fe.includes('holy')) && E.fam !== 'dark') return 0;   // 빛·신성: 속성 면역 (어둠 · 악만 들어간다 — 빌드 63)
   let m = 1;
   for (const x of fe) { if (ELEMS[x] && ELEMS[x].fam === E.fam) return 0; m *= (E.vs && E.vs[x]) || 1; }   // 같은 계열: 면역
   const ty = monTypes(f.id);
   if (E.fam === 'light' && (ty.includes('undead') || ty.includes('demon'))) m *= 1.3;
   if (E.fam === 'fire' && ty.includes('plant')) m *= 1.3;
+  if (E.fam === 'dark' && (ty.includes('divine') || ty.includes('human'))) m *= 1.3;   // 어둠 · 악 → 천상 · 인간 (빌드 63)
   return m;
 }
 // 모험가(직업 특성 elw: 약점 피해 · immPierce: 면역 관통)까지 더한 배율
@@ -172,7 +172,7 @@ const monTypeText = id => monTypes(id).map(t => MTYPES[t] ? MTYPES[t].name : t).
 const monElText = id => monEls(id).map(elName).join('·') || '없음';
 function monElNote(id) {
   const fe = monEls(id);
-  if (fe.includes('light') || fe.includes('holy')) return '속성 스킬 면역 · 기본 공격과 무속성으로';
+  if (fe.includes('light') || fe.includes('holy')) return '어둠 · 악 말고는 속성 스킬 면역 · 기본 공격 · 무속성 · 어둠 · 악으로 (어둠 · 악 ×1.5)';
   if (fe.includes('steel')) return '무속성·기본 공격 면역 · 속성 스킬로';
   if (!fe.length) return '';
   const fam = [...new Set(fe.map(x => ELEMS[x].fam))];

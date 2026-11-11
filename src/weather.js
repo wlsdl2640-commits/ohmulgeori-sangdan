@@ -128,6 +128,7 @@ function expMods(d, a) {
   if (ff.crit) d.crit = Math.min(0.75, d.crit + ff.crit);
   if (ff.regen) d.hpRegen = (d.hpRegen || 0) + ff.regen;
   if (ff.carry) d.carry += ff.carry;
+  for (const k in FOOD_RES) if (ff[k]) { const f = FOOD_RES[k]; d.res = Object.assign({}, d.res); d.res[f] = Math.min(FIGHT.resMax, (d.res[f] || 0) + 0.1); }   // 뜨거운 수프 · 얼음 빙수: 그 속성 피해 −10% (빌드 63)
   return d;
 }
 

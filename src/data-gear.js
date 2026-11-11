@@ -60,9 +60,10 @@ function setInfo(a) {
   let best = null;
   for (const t in cnt) if (!best || cnt[t] > best.n || (cnt[t] === best.n && +t > best.t)) best = { t: +t, n: cnt[t] };
   if (!best) return { t: -1, n: 0, bonus: null };
-  return { t: best.t, n: best.n, bonus: best.n >= 4 ? SET_BONUS[4] : best.n >= 3 ? SET_BONUS[3] : null };
+  const B = best.n >= 4 ? SET_BONUS[4] : best.n >= 3 ? SET_BONUS[3] : null, R = B && typeof setRes === 'function' ? setRes(best.t, best.n) : null;   // 빌드 63: 그 단계 땅에 많은 속성 저항
+  return { t: best.t, n: best.n, bonus: R ? Object.assign({}, B, R) : B };
 }
-const setBonusText = B => B ? Object.entries(B).filter(([k]) => k !== 'name').map(([k, v]) => `${{ atkPct: '공격력', matkPct: '마법 공격력', defPct: '방어력', hpPct: '최대 HP' }[k] || k} +${Math.round(v * 100)}%`).join(' · ') : '';
+const setBonusText = B => B ? Object.entries(B).filter(([k]) => k !== 'name').map(([k, v]) => k.startsWith('r_') ? `${STAT_NAMES[k] || k} ${Math.round(v * 100)}%` : `${{ atkPct: '공격력', matkPct: '마법 공격력', defPct: '방어력', hpPct: '최대 HP' }[k] || k} +${Math.round(v * 100)}%`).join(' · ') : '';
 /* ───────── 옵션 재감정: 희귀 이상 장비의 보너스 능력치를 마탑에서 다시 뽑는다 ───────── */
 const REAPPRAISE = { fee: t => Math.round(150 * GTIERS[t].p), crest: 1 };
 const RUNE_FUSE = { n: 3, fee: [600, 2500] };            // 같은 룬 3개 → 한 단계 위 (마탑)

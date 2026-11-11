@@ -81,6 +81,8 @@ function skillSpec(id, a) {
   }
   if (s.sta) { const St = STATUS[s.sta.k]; out.push(`${St ? St.name : s.sta.k} ${skPct(s.sta.p)} · ${s.sta.d}초${s.sta.m ? ` · 초당 스킬 공격력의 ${skPct(s.sta.m)}` : ''}`); }
   if (s.slow) out.push(`${s.slow}초 느려짐 (적 공격 간격 ×1.6)`);
+  if (s.pcures || (s.kind === 'buff' && s.cures)) out.push(`파티의 ${(s.pcures || s.cures).map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);   // 빌드 63: 정화 · 결의
+  if (s.dk && STA_TYPE_IMM[s.dk]) out.push('언데드 · 골렘 · 원소에게는 안 듣는다');
   // 비용과 재사용 대기시간
   out.push(s.cost.hp ? `HP ${skPct(s.cost.hp)}${d ? ` (${skN(d.maxHp * s.cost.hp)})` : ''} 소모` : `MP ${s.cost.mp} 소모`);
   if (arrowSkill(s) && (!a || needsArrows(a))) out.push(`화살 ${s.tgt === 'all' ? `맞히는 적마다 ${s.kind === 'dmg' ? s.hits || 1 : 1}발 (여섯까지)` : `${arrowCost(s, 1)}발`} · 모자라면 못 씀`);

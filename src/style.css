@@ -257,6 +257,7 @@ details.card summary::-webkit-details-marker { display: none; }
 .call.mast { color: #a8ffd8; border-color: rgba(138, 240, 192, .7); }
 .call.rare { color: #fff2a0; border-color: rgba(255, 208, 64, .9); background: rgba(40, 30, 4, .88); font-size: 11px; animation-duration: 2.2s; }
 .call.noammo { color: #ffb4a0; border-color: rgba(232, 72, 72, .85); background: rgba(40, 8, 8, .85); }
+.call.msk { color: #ffd2b0; border-color: rgba(255, 120, 72, .85); background: rgba(48, 14, 8, .9); font-size: 10.5px; letter-spacing: .02em; }   /* 몬스터 스킬 이름 띠 (빌드 63) */
 .call.boss { color: #ffe08a; border-color: rgba(240, 90, 60, .8); background: rgba(40, 8, 8, .85); font-size: 11px; animation-duration: 2.2s; }
 @keyframes callup { 0% { opacity: 0; transform: translate(-50%, -70%); } 14% { opacity: 1; transform: translate(-50%, -100%); } 72% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -170%); } }
 
