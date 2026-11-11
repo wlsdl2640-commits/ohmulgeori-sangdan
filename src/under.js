@@ -189,7 +189,7 @@ function arenaBuy(kind, id) {
 function bmRefresh(k) {
   const B = S.under.bm, t0 = arenaTier();
   B.day = k; B.stock = [];
-  for (let i = 0; i < 3; i++) { const t = Math.max(0, t0 - (rnd() < 0.4 ? 1 : 0)), q = pickOne([2, 2, 3, 3, 4]); const g = makeGear(dropBase(), t, q); B.stock.push({ kind: 'gear', g, price: Math.round(gearValue(g) * 3 / 10) * 10 }); }
+  for (let i = 0; i < 3; i++) { const t = Math.max(0, t0 - (rnd() < 0.4 ? 1 : 0)), q = pickOne([2, 2, 2, 3, 3]); const g = makeGear(dropBase(), t, q);   /* 빌드 63 다섯째 묶음: 전설부터는 드랍으로만 */ B.stock.push({ kind: 'gear', g, price: Math.round(gearValue(g) * 3 / 10) * 10 }); }
   { const k = pickOne(exclOf('bm')); B.stock.push({ kind: 'item', it: k, price: exclPrice(k) }); if (rnd() < 0.25) B.stock.push({ kind: 'item', it: 'tmap', price: Math.round(ITEMS.tmap.v * 3 / 10) * 10 }); }   // 빌드 63: 스킬북 대신 암시장 전용 물건 (부적 · 미끼) · 가끔 밀거래 보물 지도   // 빌드 63: 스킬북 단계 — 가끔 한 권, 아주 비싸게
   const r = runeId(pickOne(RUNE_IDS), rnd() < 0.3 ? 1 : 0); if (ITEMS[r]) B.stock.push({ kind: 'item', it: r, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
 }
@@ -206,7 +206,7 @@ function bmBuy(i) {
 
 /* ───────── 경매장: 날마다 한 점, 새벽 4시에 낙찰 ───────── */
 function auRefresh(k) {
-  const A = S.under.au, t = Math.min(GTIERS.length - 1, arenaTier() + (rnd() < 0.3 ? 1 : 0)), q = rnd() < 0.6 ? 5 : 6;
+  const A = S.under.au, t = Math.min(GTIERS.length - 1, arenaTier() + (rnd() < 0.3 ? 1 : 0)), q = 3;   // 빌드 63 다섯째 묶음: 신화 · 신성 → 영웅 (전설부터는 드랍으로만)
   const g = makeGear(dropBase(), t, q), start = Math.round(gearValue(g) * 4 / 100) * 100;
   A.day = k; A.g = g; A.start = start; A.price = start; A.top = null; A.held = 0; A.bids = 0;
   A.npc = pickOne(ARENA_NAMES); A.npcMax = Math.round(start * (2.2 + rnd() * 1.6) / 100) * 100;
@@ -331,7 +331,7 @@ PANELS.au = () => {
     <div class="stats boxed"><span>지금 값 <b class="gold-t">${fmt(A.price)}G</b></span><span>최고 입찰 <b>${A.top === 'me' ? '우리 상단' : A.top === 'npc' ? esc(A.npc) : '아직 없음'}</b></span><span>입찰 ${A.bids}번</span></div>
     <div class="sub">${mine ? (A.out ? `<span class="ok-t">${esc(A.npc)}이(가) 물러섰어요.</span> 새벽 4시에 낙찰돼요.` : '지금은 우리가 최고 입찰자예요. 새벽 4시까지 아무도 더 부르지 않으면 낙찰돼요. 다른 상단이 더 부르면 돈은 돌려받아요.') : `다음 입찰은 ${fmt(next)}G. 돈은 입찰할 때 맡겨 두고, 밀리면 돌려받아요.`}</div>
     <button type="button" class="btn gold block" data-act="aubid"${!mine && S.gold >= next ? '' : ' disabled'}>${mine ? '최고 입찰 중' : `${fmt(next)}G 부르기`}</button></div>
-    <div class="sub muted">경매품은 날마다 한 점, 신화·신성 등급만 올라와요.</div>`;
+    <div class="sub muted">경매품은 날마다 한 점, 영웅 장비가 올라와요. 전설부터는 높은 단계 땅의 드랍으로만 나와요.</div>`;
 };
 PANELS.ag = () => `<div class="card hl"><div class="h">암살자 길드 본부</div><div class="sub">지하수로 가장 깊은 곳, 등불 하나 없는 문 뒤에 길드장 검은 두건이 앉아 있다. 7번가의 모든 상단은 이들에게 자릿세를 낸다.</div></div>
   <div class="card"><div class="row"><span class="grow">매달 자릿세</span><span class="num ${S.flags.guildDown ? 'ok-t' : 'red-t'}">${S.flags.guildDown ? '없음 (토벌 완료)' : fmt(rent()) + 'G'}</span></div>

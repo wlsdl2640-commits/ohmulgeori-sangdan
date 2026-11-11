@@ -392,6 +392,10 @@ function notes63b() {
   if (!S.flags.v63b) { S.flags.v63b = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '창고 · 합성 · 스킬북 단계', body: STORY.v63b }); }
 }
 
+function notes63c() {   // 빌드 63 다섯째 묶음: 장비 드랍 · 레어도 알림
+  if (!S.flags.v63c) { S.flags.v63c = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '장비 드랍 · 레어도', body: STORY.v63c }); }
+}
+
 /* ───────── 상단 전용 물건 쓰기 (빌드 63) ───────── */
 function exclWhy(k) {
   const X = EXCL[k]; if (!X) return '쓸 수 없는 물건이에요.';

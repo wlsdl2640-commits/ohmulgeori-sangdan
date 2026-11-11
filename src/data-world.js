@@ -57,8 +57,8 @@ const RIVALS = [
   { name: '실바레아 순찰대', c: '#3f8a4a', k: 'elves' }, { name: '브론하임 철벽대', c: '#7a5a3a', k: 'dwarves' }
 ];
 const RAID_REWARD = [
-  { gold: 1.0, fame: 40, part: 4, heart: 1, gear: 4, rune: 2 },
-  { gold: 0.6, fame: 25, part: 3, heart: 0, gear: 3, rune: 1 },
+  { gold: 1.0, fame: 40, part: 4, heart: 1, gear: 3, rune: 2 },   // gear = 적어도 이 레어도 (빌드 63 다섯째 묶음: 1등 전설 → 영웅, 그 위는 rollGrade)
+  { gold: 0.6, fame: 25, part: 3, heart: 0, gear: 2, rune: 1 },
   { gold: 0.4, fame: 15, part: 2, heart: 0, gear: 0, rune: 1 },
   { gold: 0.15, fame: 5, part: 1, heart: 0, gear: 0, rune: -1 }
 ];

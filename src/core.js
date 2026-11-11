@@ -220,10 +220,19 @@ function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete 
 
 /* ───────── 장비 만들기 ───────── */
 // 품질: 일반·고급·희귀는 무작위, 보스에게서는 가끔 영웅. 전설 이상은 보스 부속품으로 만들거나 던전·레이드 보상
-function rollQuality(boost = 0) {
+function rollQuality(boost = 0) {   // 대장간에서 만들 때만 (드랍은 빌드 63 다섯째 묶음부터 rollGrade)
   const r = rnd(), dw = spn('dwarves'), hero = boost >= 0.2 ? 0.01 + boost * 0.08 : 0;
   const rare = 0.05 + boost * 0.5 + (dw >= 3 ? 0.06 : 0), fine = 0.25 + boost + (dw >= 2 ? 0.08 : 0);
   return r < hero ? 3 : r < hero + rare ? 2 : r < hero + rare + fine ? 1 : 0;
+}
+// 드랍 장비의 레어도 (빌드 63 다섯째 묶음): 모든 레어도가 나오지만 영웅부터는 아주 드물고, 전설부터는 GRADE_DROP.tier 단계 땅에서만. kind = 0 보통 · fb · boss · chest · raid
+function rollGrade(tier, kind) {
+  const D = GRADE_DROP, b = D.lo[kind] || 0, hm = D.hi[kind] || 1, dw = spn('dwarves'), T = tier || 0;
+  const p = [0, D.p[1] + b + (dw >= 2 ? 0.08 : 0), D.p[2] + b * 0.5 + (dw >= 3 ? 0.06 : 0)];
+  for (let g = 3; g <= GRADE_MAX; g++) p[g] = T >= D.tier[g] ? D.p[g] * hm : 0;
+  let r = rnd();
+  for (let g = GRADE_MAX; g >= 1; g--) { if (r < p[g]) return g; r -= p[g]; }
+  return 0;
 }
 // 희귀 이상은 보너스 능력치가 붙는다 (등급이 높을수록 여러 개, 더 크게)
 const BONUS_Q = [null, null, [1, 0.6], [1, 1.0], [2, 1.0], [2, 1.4], [3, 1.6]];
@@ -533,7 +542,7 @@ function treasureChest(p, e) {
   S.gold += gold; S.stats.earned += gold; e.chests = (e.chests || 0) + 1;
   const got = [g$(gold)];
   addTo(e.bag, 'gold_dust', 1); got.push('황금 가루');
-  if (rnd() < 0.35) { const g = makeGear(dropBase(), Math.min(GTIERS.length - 1, raidTier(L)), Math.max(1, rollQuality(0.3))); e.gbag.push(g); got.push(`${QUALITY[g.q].name} 장비`); }
+  if (rnd() < GEAR_DROP.chest) { const t = Math.min(GTIERS.length - 1, raidTier(L)), g = makeGear(dropBase(), t, Math.max(1, rollGrade(t, 'chest'))); e.gbag.push(g); got.push(`${QUALITY[g.q].name} 장비`); }
   if (rnd() < 0.3) { const b = randomBook(Math.max(1, L - 20), L + 5); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); } }
   ev(e, 'chest', {});
   log(`${p.name}이(가) 보물고 ${e.stage}층의 상자를 열었다: ${got.join(', ')}`, 'good');
@@ -1150,7 +1159,7 @@ function kill(p, e, f) {
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
   const gt = F.treasure ? Math.min(GTIERS.length - 1, raidTier(e.lvo || 10)) : F.tier;   // 보물 던전은 파티 레벨에 맞는 단계
-  if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(dropBase(), gt, rollQuality(f.boss ? 0.25 : 0)));
+  { const gk = f.fb ? 'fb' : f.boss ? 'boss' : 0; if (rnd() < (gk ? GEAR_DROP[gk] : inD ? GEAR_DROP.dungeon : GEAR_DROP.field) * ap) lootGear(p, e, makeGear(dropBase(), gt, rollGrade(gt, gk))); }   // 빌드 63 다섯째 묶음: 드랍 줄임 · 레어도는 rollGrade
   { const ea = elemArrowOf(f.id); if (ea && rnd() < (f.boss || f.fb ? 0.3 : 0.012) * ap) lootGear(p, e, makeGear(ea, gt, 0)); }   // 속성 화살: 그 속성 몬스터한테서
   // 스킬북: 빌드 63부터 모든 몬스터가 스킬북 단계를 떨어뜨린다 — 확률은 예전 그대로(bookRate), 어느 책인지는 그 땅의 단계로(우두머리 · 주인은 한 줄 위) · 감정 연구 · 전리품 운이 확률을 올린다
   if (rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck) * (1 + (foodFx(e).book || 0)))) { const tb = tierBookFor(F.treasure ? raidTier(e.lvo || 10) : F.tier != null ? F.tier : tierOfLv(f.lv), f.boss || f.fb); if (tb) loot(p, e, tb, 1); }   // 꽝이면 없음
@@ -1354,8 +1363,8 @@ function dungeonClear(p, e) {
     const gold = DUNGEON_GOLD[F.tier] || 3000, fame = 60 + F.tier * 25;
     S.gold += gold; S.fame += fame; S.stats.earned += gold; S.stats.dungeons = (S.stats.dungeons || 0) + 1;
     team.forEach(a => { a.pf = (a.pf || 0) + 20; a.dungeons = (a.dungeons || 0) + 1; });
-    // 보물 상자: 전설·영웅 장비와 장비 한 점, 스킬북 두 권, 주인의 혼 둘, 중급 룬 둘. 그리고 유물
-    e.gbag.push(makeGear(dropBase(), F.tier, 4), makeGear(dropBase(), F.tier, 3), makeGear(dropBase(), F.tier, Math.max(1, rollQuality(0.4))));
+    // 보물 상자: 영웅 장비(높은 단계 던전이면 아주 드물게 그 위)와 장비 한 점, 스킬북 두 권, 주인의 혼 둘, 중급 룬 둘. 그리고 유물 (빌드 63 다섯째 묶음: 정해진 전설 장비는 뺐다)
+    e.gbag.push(makeGear(dropBase(), F.tier, Math.max(3, rollGrade(F.tier, 'chest'))), makeGear(dropBase(), F.tier, Math.max(1, rollGrade(F.tier, 'chest'))));
     const b1 = randomBook(F.lv, F.lv + 16, true), b2 = randomBook(F.lv, F.lv + 20, true);
     if (b1) addTo(e.bag, b1, 1); if (b2) addTo(e.bag, b2, 1);
     addTo(e.bag, 'soul_' + F.tier, 2);
@@ -1363,7 +1372,7 @@ function dungeonClear(p, e) {
     const RL = RELICS[e.field], newRelic = RL && !(S.relics || []).includes(e.field);
     if (newRelic) (S.relics = S.relics || []).push(e.field);
     log(`${p.name}이(가) ${F.dungeon.name}의 주인 ${MONS[F.dungeon.boss].name}을(를) 쓰러뜨렸다! 보물 ${g$(gold)}, 명성 +${fame}${newRelic ? `, 유물 「${RL.name}」` : ''}`, 'good');
-    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 전설·영웅 장비, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 상단 창의 유물에서 볼 수 있다.`] : []) });
+    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 영웅 장비, 장비 한 점, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 상단 창의 유물에서 볼 수 있다.`] : []) });
     if (e.field === 'barren' && STORY.frontier) queueModal({ title: '북쪽 변경', body: STORY.frontier });   // 빌드 30: 안개 묘지가 열린다
     if (e.field === 'roots' && S.bld.airfield && STORY.skyOpen) queueModal({ title: '구름 위의 섬', body: STORY.skyOpen });
   } else {
@@ -1381,7 +1390,7 @@ function treasureClear(p, e) {
   team.forEach(a => { a.pf = (a.pf || 0) + 6; });
   const got = [g$(gold), '명성 +6'];
   addTo(e.bag, 'gold_dust', 3); got.push('황금 가루 3');
-  const g = makeGear(dropBase(), Math.min(GTIERS.length - 1, raidTier(L)), rnd() < 0.3 ? 4 : 3); e.gbag.push(g); got.push(`${QUALITY[g.q].name} ${gearName(g)}`);
+  const gt = Math.min(GTIERS.length - 1, raidTier(L)), g = makeGear(dropBase(), gt, Math.max(3, rollGrade(gt, 'chest'))); e.gbag.push(g); got.push(`${QUALITY[g.q].name} ${gearName(g)}`);   // 영웅 (예전 30% 전설)
   const b = randomBook(Math.max(1, L - 15), L + 10); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); }
   if (rnd() < 0.5) { addTo(e.bag, 'bloomstone', 1); got.push('개화석'); }
   if (rnd() < 0.1) { addTo(e.bag, 'wizstone', 1); got.push('마법사의 돌'); }

@@ -23,7 +23,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, wh63: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -1023,7 +1023,7 @@ function raidReward(rec, i, half) {
   got.push(g$(gold), `명성 +${fame}`);
   const np = Math.max(1, Math.round(W.part * k)); stashItem('rp_' + rec.id, np); got.push(`${ITEMS['rp_' + rec.id].name} ${np}개`);   // 보상: 넘치면 창고 1~10 → 길드 (store.js)
   if (W.heart && !half) { stashItem('rh_' + rec.id, W.heart); got.push(ITEMS['rh_' + rec.id].name); }
-  if (W.gear) { const q = Math.max(2, W.gear - (half ? 1 : 0)), g = makeGear(dropBase(), raidTier(R.lv), q); stashGear(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }
+  if (W.gear) { const t = raidTier(R.lv), q = Math.max(Math.max(2, W.gear - (half ? 1 : 0)), rollGrade(t, 'raid')), g = makeGear(dropBase(), t, q); stashGear(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }   // 1등 영웅 · 2등 희귀 + 아주 드물게 그 위 (빌드 63 다섯째 묶음)
   const rl = W.rune - (half ? 1 : 0);
   if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); stashItem(id, 1); got.push(ITEMS[id].name); }
   // 특성 돌: 개화석은 등수별 개수(몬스터가 떠나면 절반), 마법사의 돌은 등수별 낮은 확률
@@ -1280,6 +1280,7 @@ function loadFrom(v) {
     notes62();
     notes63();
     notes63b();
+    notes63c();
     return true;
   } catch (_) { return false; }
 }
