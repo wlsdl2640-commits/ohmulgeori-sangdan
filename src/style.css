@@ -337,10 +337,10 @@ details.card .list { margin-top: 8px; }
 @media (min-width: 900px) and (min-height: 600px) { #app { max-width: 520px; } }
 
 /* v0.7 */
-.q3 { color: #c07af0; } .q4 { color: #f0b43c; } .q5 { color: #ff6a5a; } .q6 { color: #fff4b0; text-shadow: 1px 1px 0 #3a2c08; } .q7 { color: #9c9cff; text-shadow: 1px 1px 0 #14104a; }
-.ico.q-b.q3, .ico.q-b.q4, .ico.q-b.q5, .ico.q-b.q6, .ico.q-b.q7 { outline-width: 2px; }
-.btn.q3.on, .btn.q4.on, .btn.q5.on, .btn.q6.on, .btn.q7.on { color: #1d1408; }
-.btn.q3.on { background: #c07af0; } .btn.q4.on { background: #f0b43c; } .btn.q5.on { background: #ff6a5a; } .btn.q6.on { background: #fff4b0; } .btn.q7.on { background: #9c9cff; }
+.q3 { color: #c07af0; } .q4 { color: #f0b43c; } .q5 { color: #ff6a5a; } .q6 { color: #fff4b0; text-shadow: 1px 1px 0 #3a2c08; } .q7 { color: #9c9cff; text-shadow: 1px 1px 0 #14104a; } .q8 { color: #ffffff; text-shadow: 1px 1px 0 #6a2a78; }
+.ico.q-b.q3, .ico.q-b.q4, .ico.q-b.q5, .ico.q-b.q6, .ico.q-b.q7, .ico.q-b.q8 { outline-width: 2px; }
+.btn.q3.on, .btn.q4.on, .btn.q5.on, .btn.q6.on, .btn.q7.on, .btn.q8.on { color: #1d1408; }
+.btn.q3.on { background: #c07af0; } .btn.q4.on { background: #f0b43c; } .btn.q5.on { background: #ff6a5a; } .btn.q6.on { background: #fff4b0; } .btn.q7.on { background: #9c9cff; } .btn.q8.on { background: #ffffff; }
 .runes { display: inline-flex; gap: 2px; vertical-align: middle; margin-left: 2px; }
 .runes i { width: 7px; height: 7px; border: 1px solid #4a4650; background: #15121a; transform: rotate(45deg); }
 .runes i.on { background: var(--c); border-color: #000; box-shadow: inset -1px -1px 0 rgba(0, 0, 0, .35); }
@@ -624,7 +624,7 @@ details.card > .list { margin-top: 8px; }
 .whto .btn.on small { color: var(--gold); }
 
 /* ───────── 빌드 63: 레어도 칸 = 도트 판 (rarity.js — A안 테 + B안 보석, 영웅부터 홀로그램 빛줄기 12장) · 꼬리표 ───────── */
-.rqt.rq0 { color: #c9c3b8; } .rqt.rq1 { color: var(--ok); } .rqt.rq2 { color: #6ab0ff; } .rqt.rq3 { color: #c07af0; } .rqt.rq4 { color: #f0b43c; } .rqt.rq5 { color: #ff6a5a; } .rqt.rq6 { color: #fff4b0; text-shadow: 1px 1px 0 #3a2c08; } .rqt.rq7 { color: #9c9cff; text-shadow: 1px 1px 0 #14104a; }
+.rqt.rq0 { color: #c9c3b8; } .rqt.rq1 { color: var(--ok); } .rqt.rq2 { color: #6ab0ff; } .rqt.rq3 { color: #c07af0; } .rqt.rq4 { color: #f0b43c; } .rqt.rq5 { color: #ff6a5a; } .rqt.rq6 { color: #fff4b0; text-shadow: 1px 1px 0 #3a2c08; } .rqt.rq7 { color: #9c9cff; text-shadow: 1px 1px 0 #14104a; } .rqt.rq8 { color: #ffffff; text-shadow: 1px 1px 0 #6a2a78; }
 .rqa { display: block; flex: none; image-rendering: pixelated; background-repeat: no-repeat; background-position: 0 0; }
 .rqa.s2 { width: 52px; height: 52px; background-size: 52px auto; }
 .rqa.s1 { width: 26px; height: 26px; background-size: 26px auto; }

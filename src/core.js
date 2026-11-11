@@ -235,7 +235,7 @@ function rollGrade(tier, kind) {
   return 0;
 }
 // 희귀 이상은 보너스 능력치가 붙는다 (등급이 높을수록 여러 개, 더 크게)
-const BONUS_Q = [null, null, [1, 0.6], [1, 1.0], [2, 1.0], [2, 1.4], [3, 1.6], [3, 1.9]];
+const BONUS_Q = [null, null, [1, 0.6], [1, 1.0], [2, 1.0], [2, 1.4], [3, 1.6], [3, 1.9], [4, 2.2]];
 function rollBonus(t, q) {
   const B = BONUS_Q[q]; if (!B) return null;
   const bonus = {}, ks = STAT_KEYS.slice().sort(() => rnd() - 0.5).slice(0, B[0]);
