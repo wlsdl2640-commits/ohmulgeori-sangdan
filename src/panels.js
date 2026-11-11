@@ -27,7 +27,7 @@ const tierTag = c => (jobTier(c) > 1 ? ` <span class="tag fame-t">${jobTier(c)}�
 function runeDerived(a, d) {
   const pc = v => Math.round(v * 1000) / 10 + '%', out = [];
   if (d.hit) out.push(['명중', '+' + pc(d.hit)]);
-  if (d.bblock) out.push(['기본 공격 방어', pc(d.bblock)]);
+  if (d.bblock) out.push(['기본 공격 방어 확률', pc(d.bblock)]);
   if (d.ccRes) out.push(['행동 방해 시간', '-' + pc(d.ccRes)]);
   if (d.blindHit) out.push(['기본 공격 눈멂', pc(d.blindHit)]);
   if (d.blindRes) out.push(['눈멂 저항', pc(d.blindRes)]);

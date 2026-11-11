@@ -68,7 +68,7 @@ RES_FAMS.forEach(f => { STAT_NAMES['r_' + f] = RES_NAME[f] + ' 저항'; PCT_STAT
 STAT_NAMES.mres = '마법 저항'; PCT_STATS.push('mres');
 // 빌드 64 룬 개편: 무기 룬의 속성 피해 (d_불 계열 …) · 명중 · 기본 공격 방어 · 행동 방해 시간 · 눈멂 걸기 / 저항 · 주는 / 받는 회복 · 흡혈 · MP 회복 · 최대 MP
 RES_FAMS.forEach(f => { STAT_NAMES['d_' + f] = RES_NAME[f] + ' 피해'; PCT_STATS.push('d_' + f); });
-Object.assign(STAT_NAMES, { hit: '명중', bblock: '기본 공격 방어', ccRes: '행동 방해 시간', blindHit: '기본 공격 눈멂', blindRes: '눈멂 저항', healPow: '주는 회복', rheal: '받는 회복', lifesteal: '흡혈', mpRegen: 'MP 회복', mpPct: '최대 MP' });
+Object.assign(STAT_NAMES, { hit: '명중', bblock: '기본 공격 방어 확률', ccRes: '행동 방해 시간', blindHit: '기본 공격 눈멂', blindRes: '눈멂 저항', healPow: '주는 회복', rheal: '받는 회복', lifesteal: '흡혈', mpRegen: 'MP 회복 속도', mpPct: '최대 MP' });
 PCT_STATS.push('hit', 'bblock', 'ccRes', 'blindHit', 'blindRes', 'healPow', 'rheal', 'lifesteal', 'mpRegen', 'mpPct');
 // 속성 스킬 · 숨결이 거는 상태이상 (MSK의 sta: 'el')
 const EL_STA = { fire: { k: 'burn', p: 0.35, d: 8, m: 0.2 }, blaze: { k: 'burn', p: 0.45, d: 8, m: 0.25 }, water: { k: 'chill', p: 0.35, d: 5 }, ice: { k: 'chill', p: 0.45, d: 5 },
