@@ -190,3 +190,21 @@ def variant5(k, i):
     nm, rows, off = ALTS5[k][i]
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
+
+
+# ───────── 강인 최상급 — 팔 근육 (사용자 11-11 23:01 「팔근육모양 시안 4개로 가보자」) ─────────
+# 굽힌 팔: 주먹이 위에서 오른쪽으로 감아쥐고, 왼쪽 팔뚝 · 오른쪽 아래 둥근 알통 · 그 사이 빈 틈. 테 안쪽 어두운 줄 안에만 그림(흰 테와 안 붙게).
+# 줄은 비스듬한 접힌 금 하나(+ 알통 아래 곡선) — 가로세로가 엇갈리는 줄 없음(십자 피함). p 흰 그늘 · r 장밋빛 줄 · y 금 그늘.
+ALTS6 = {'str': [
+    ('흰 팔', ['....www#...', '...w####p..', '..w###ppr..', '..w##p.....', '.w##p......', '.w###..ww..', 'w###p.w###p', 'w####r.###p', 'w#####r###p', 'w#########p', '.pppppppppp'], (1, 1)),
+    ('금빛 팔', ['....###g...', '...#ggggy..', '..#gggyyb..', '..#ggy.....', '.#ggy......', '.#ggg..##..', '#gggy.#gggy', '#ggggb.gggy', '#gggggbgggy', '#gggggggggy', '.yyyyyyyyyy'], (1, 1)),
+    ('흰 팔 + 금 팔찌', ['....www#...', '...w####p..', '..w###ppr..', '..w##p.....', '.gggy......', '.bbbb..ww..', 'w###p.w###p', 'w####r.###p', 'w#####r###p', 'w#########p', '.pppppppppp'], (1, 1)),
+    ('금빛 팔 + 근육 결', ['....###g...', '...#ggggy..', '..#gggyyb..', '..#ggy.....', '.#ggy......', '.#ggg..##..', '#ggyy.#wggy', '#ggygb.gggy', '#gygggbggyy', '#ggggggbbgy', '.yyyyyyyyyy'], (1, 1)),
+]}
+
+
+def variant6(k, i):
+    vk = f'{k}__a{i}'
+    nm, rows, off = ALTS6[k][i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])

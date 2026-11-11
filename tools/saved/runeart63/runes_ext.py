@@ -148,7 +148,8 @@ def make_top(k, col):
         if q in inner and q not in ring2: px[q] = mix(Md, c, .72)
     for (x, y), ch in G.items():
         if (x, y) not in M: continue
-        px[(x, y)] = {'g': (255, 236, 150), 'b': (180, 122, 64), 'w': (255, 255, 255), 'o': c if k not in ('lightres', 'darkatk') else dk(c, .55)}.get(ch, (255, 252, 240))
+        px[(x, y)] = {'g': (255, 236, 150), 'b': (180, 122, 64), 'w': (255, 255, 255), 'o': c if k not in ('lightres', 'darkatk') else dk(c, .55),
+                      'p': (238, 194, 176), 'r': (196, 108, 92), 'y': (228, 172, 84)}.get(ch, (255, 252, 240))   # p 흰 그늘 · r 장밋빛 줄 · y 금 그늘 (강인 팔 문양)
     out = {}
     for (x, y) in M:
         for dx, dy in N4:
