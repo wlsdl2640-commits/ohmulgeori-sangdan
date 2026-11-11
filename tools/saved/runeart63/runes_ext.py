@@ -1,0 +1,173 @@
+"""룬 더하기 시안 (빌드 64, 사용자 11-11 21:34 「새롭게 추가해야할 효과들에 맞는 룬도 디자인 하고 각 룬마다 최상급룬도 만들어줘」).
+빌드 63 룬(runes.py — 지금 게임 그림)은 그대로 두고 그 위에 더한다:
+  ① 최상급(넷째 등급) 재질 — 깊은 룬 색 수정 · 백금 테 + 안쪽 룬 색 테 · 흰빛 문양과 두 겹 빛 · 둘레에 은은한 룬 색 빛 · 반짝이 셋
+  ② 새 효과 룬 19종(하급 ~ 최상급) — 사용자 예시(세계수의 씨앗 · 만년빙 · 원천물 예시)에 나온 효과 가운데 지금 룬에 없는 것 + 속성마다 공격 · 저항 짝
+게임에는 아직 넣지 않는다 (사용자가 고른 뒤 runes.py에 옮겨 export_itemart.py로 뽑는다)."""
+import math
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import runes as R
+from runes import hx, mix, lt, dk, poly, ell, W, H, CX, CY, K
+
+N4 = ((1, 0), (-1, 0), (0, 1), (0, -1))
+CELLBG = (30, 36, 52)
+
+
+def lensf(x0, y0, x1, y1, w, pw=0.8):
+    L = math.hypot(x1 - x0, y1 - y0); ux, uy = (x1 - x0) / L, (y1 - y0) / L
+    def f(x, y):
+        dx, dy = x - x0, y - y0; u = (dx * ux + dy * uy) / L; v = -dx * uy + dy * ux
+        return 0 <= u <= 1 and abs(v) <= w * math.sin(math.pi * u) ** pw
+    return f
+
+
+def circ(cx, cy, r): return lambda x, y: (x - cx) ** 2 + (y - cy) ** 2 <= r * r
+def uni(*fs): return lambda x, y: any(f(x, y) for f in fs)
+
+
+# ───────── 새 룬 돌 모양 (가운데 기준 좌표, 지금 17종과 겹치지 않게) ─────────
+NEW_SHAPES = {
+    'fireatk':  uni(circ(0, 2.6, 6.2), poly([(0, -9.2), (3.6, -2), (-3.6, -2)]), poly([(-6.6, -6.6), (-1.4, -1), (-6.8, 1.8)]), poly([(6.6, -6.6), (6.8, 1.8), (1.4, -1)])),   # 불꽃
+    'iceatk':   poly([(-8.8, -7.4), (8.8, -7.4), (0, 9.2)]),                                         # 아래로 뾰족한 세모 (고드름)
+    'windatk':  lambda x, y: abs(x) <= 9.2 and abs(y) <= 6.8 * (1 - (x / 9.4) ** 2),                 # 가로 렌즈 (양끝 뾰족)
+    'earthatk': poly([(-8.8, -7.4), (8.8, -7.4), (5.4, 8.4), (-5.4, 8.4)]),                          # 쐐기돌 (위가 넓은 사다리꼴)
+    'boltatk':  poly([(-1.4, -9.4), (7.0, -9.4), (2.6, -2.4), (7.8, -2.4), (-3.8, 9.6), (0.0, 1.0), (-6.2, 1.0)]),   # 번개 모양 판
+    'lightatk': lambda x, y: (abs(x) <= 7.0 and -1.6 <= y <= 8.6) or (x * x + (y + 1.6) ** 2 <= 49 and y < -1.6),   # 아치 (위가 둥근 문)
+    'darkatk':  lambda x, y: x * x + y * y <= 8.6 ** 2 and (x - 3.8) ** 2 + (y + 2.8) ** 2 > 6.4 ** 2,              # 초승달
+    'windres':  lambda x, y: y <= 7.8 and (x / 8.4) ** 2 + ((y - 7.8) / 16.6) ** 2 <= 1,              # 둥근 지붕 (총알 꼴)
+    'earthres': poly([(-5.4, -7.6), (8.8, -7.6), (5.4, 7.6), (-8.8, 7.6)]),                          # 평행사변형
+    'lightres': lambda x, y: abs(x / 8.3) ** 4 + abs(y / 8.3) ** 4 <= 1,                              # 둥근 네모
+    'heal':     lensf(-6.6, 7.8, 6.8, -7.8, 6.0),                                                     # 나뭇잎
+    'grace':    uni(circ(-4.6, 1.2, 4.4), circ(0.4, -2.8, 5.6), circ(5.2, 0.8, 4.3), ell(8.6, 4.2, 3.6)),   # 구름
+    'regen':    uni(circ(0, -4.2, 4.6), circ(-3.9, 2.4, 4.6), circ(3.9, 2.4, 4.6), circ(0, 0, 3.8)),  # 세 잎 클로버
+    'mana':     poly([(-6.2, -7.8), (6.2, -7.8), (8.8, -3.0), (0, 9.4), (-8.8, -3.0)]),             # 보석 (위가 평평 · 아래가 뾰족)
+    'spring':   lambda x, y: math.hypot(x, y - 9.0) <= 16.8 and abs(math.degrees(math.atan2(x, 9.0 - y))) <= 28,   # 부채꼴 (꼭짓점이 아래)
+    'acc':      poly([(0, -9.0), (7.8, -3.0), (0, 9.4), (-7.8, -3.0)]),                              # 연 (위가 짧은 마름모)
+    'flash':    lambda x, y: (abs(x) <= 3.0 and abs(y) <= 6.2) or ((abs(x) - 3.0) ** 2 + y * y <= 6.2 ** 2),   # 가로 캡슐
+    'block':    lambda x, y: (abs(x) <= 8.4 and -6.0 <= y <= 8.4) or (-8.8 <= y < -6.0 and any(a <= x <= b for a, b in ((-8.4, -5.0), (-1.7, 1.7), (5.0, 8.4)))),   # 성벽 (위에 성가퀴)
+    'move':     uni(circ(-3.4, 0, 6.2), poly([(-3.4, -6.2), (9.6, 0), (-3.4, 6.2)])),             # 꼬리별 (오른쪽이 뾰족)
+}
+# 문양 (9칸 안): # = 문양 색, w = 밝은 칸, o = 어두운 칸
+NEW_GLYPH = {
+    'fireatk':  ['.....###.', '....#www#', '....#www#', '...##ww#.', '..##.##..', '.##......', '#........'],                     # 불덩이 (꼬리를 끌며 날아간다)
+    'iceatk':   ['#########', '.ww.www.w', '.##..#..#', '..#..#...', '..#..#...', '.....#...'],                                   # 고드름 셋
+    'windatk':  ['#########', '.........', '.##www##.', '.........', '...####..', '.........', '....##...'],                         # 회오리 (층층이 좁아지는 바람)
+    'earthatk': ['...#.....', '...##....', '....#..#.', '...##.#..', '..##.#...', '..#......', '.##......'],                       # 갈라진 땅
+    'boltatk':  ['...ww', '..ww.', '.www.', '..ww.', '.ww..', 'w....'],                                                              # 판 속 번갯불
+    'lightatk': ['#...w...#', '.#..w..#.', '..#.w.#..', '....w....', '...www...', '....w....'],                                    # 내리꽂는 빛
+    'darkatk':  ['.###.', '#ooo#', '#ooo#', '.###.'],                                                                               # 검은 구슬
+    'windres':  ['..###..', '.#####.', '#######', '.#####.', '...#...', '...#...', '.#####.'],                                     # 바람에 버티는 나무
+    'earthres': ['.....#...', '....###..', '..#.####.', '.###.####', '#########'],                                                  # 산
+    'lightres': ['..ww###..', '.#ooooo#.', '#ooooooo#', '#ooooooo#', '#ooooooo#', '.#ooooo#.', '..#####..'],                       # 일식
+    'heal':     ['##.....##', '###...###', '.###.###.', '...#w#...', '....w....', '....w....', '...###...'],                       # 새싹
+    'grace':    ['#.......#', '##.....##', '###...###', '####.####', '.###w###.', '..##.##..'],                                    # 날개 한 쌍
+    'regen':    ['.####....', '#....#...', '#.....#..', '#...#####', '#....###.', '.#....#..', '..###....'],                       # 도는 화살
+    'mana':     ['...###...', '....#....', '...###...', '..#www#..', '.#wwwww#.', '.#wwwww#.', '..#####..'],                       # 물약 병
+    'spring':   ['....#....', '...###...', '...###...', '....#....', '.........', '#.......#', '.#######.'],                       # 물방울 · 물결
+    'acc':      ['..#####..', '.#.....#.', '#..###..#', '#..#w#..#', '#..###..#', '.#.....#.', '..#####..'],                       # 과녁
+    'flash':    ['...###...', '..#www#..', '#########', '..#www#..', '...###...'],                                               # 눈부신 빛 (가로로 번진 섬광)
+    'block':    ['#########', '#...#...#', '#########', '..#...#..', '#########'],                                                  # 벽돌
+    'move':     ['..#######', '.........', '#########', '.........', '....#####'],                                               # 속도 줄 셋
+}
+NEW_GOFF = {'darkatk': (-4, 2), 'boltatk': (-1, -1), 'fireatk': (0, 1), 'iceatk': (0, -3), 'windatk': (0, -1), 'lightatk': (0, 0), 'mana': (0, -1),
+            'spring': (0, -2), 'heal': (0, 0), 'grace': (0, 0), 'regen': (0, 0), 'windres': (0, 1), 'earthres': (0, 0), 'block': (0, 1), 'move': (-2, 0), 'earthatk': (0, -2)}
+R.SHAPES.update(NEW_SHAPES); R.GLYPH.update(NEW_GLYPH); R.GOFF.update(NEW_GOFF)
+
+# 새 룬: (키, 이름, 색, 효과, 값 [하급, 중급, 상급, 최상급], 단위) — 단위 '%'면 퍼센트, 'pp'면 %p, '/s'면 초당 HP %
+NEW_RUNES = [
+    ('fireatk', '작열', '#ff6a3a', '불·화염 피해', [5, 10, 18, 30], '%'),
+    ('iceatk', '혹한', '#4aa8ff', '물·빙결 피해', [5, 10, 18, 30], '%'),
+    ('windatk', '폭풍', '#4ad8c0', '바람·폭풍 피해', [5, 10, 18, 30], '%'),
+    ('earthatk', '지진', '#c08a50', '흙 피해', [5, 10, 18, 30], '%'),
+    ('boltatk', '뇌격', '#ffd040', '번개 피해', [5, 10, 18, 30], '%'),
+    ('lightatk', '성광', '#fff0a0', '빛·신성 피해', [5, 10, 18, 30], '%'),
+    ('darkatk', '암흑', '#9a6ae8', '어둠·악 피해', [5, 10, 18, 30], '%'),
+    ('windres', '내풍', '#8ae8b0', '바람·폭풍 저항', [4, 8, 14, 24], '%'),
+    ('earthres', '내진', '#d8b880', '흙 저항', [4, 8, 14, 24], '%'),
+    ('lightres', '차광', '#f0dca8', '빛·신성 저항', [4, 8, 14, 24], '%'),
+    ('heal', '치유', '#7ae07a', '주는 회복', [5, 10, 18, 30], '%'),
+    ('grace', '가호', '#ffc0d4', '받는 회복', [5, 10, 18, 30], '%'),
+    ('regen', '재생', '#5ad8a0', 'HP 재생 (초당)', [0.1, 0.2, 0.35, 0.6], '/s'),
+    ('mana', '마나', '#5a8aff', '최대 MP', [4, 8, 14, 24], '%'),
+    ('spring', '샘', '#7ad0ff', 'MP 회복', [8, 15, 25, 40], '%'),
+    ('acc', '명중', '#f0a040', '명중 (적 회피를 깎음)', [1, 2, 4, 7], 'pp'),
+    ('flash', '섬광', '#fff4c8', '기본 공격에 눈멂 (4초)', [1, 2, 4, 7], '%'),
+    ('block', '방벽', '#a8b0c0', '방어 확률', [1, 2, 4, 7], 'pp'),
+    ('move', '질주', '#a0dcff', '이동 속도', [3, 6, 10, 16], '%'),
+]
+# 지금 룬 17종의 최상급 값 (하급 · 중급 · 상급은 게임 그대로)
+TOP_VAL = {'str': 18, 'vit': 18, 'agi': 18, 'int': 18, 'atk': 36, 'matk': 36, 'def': 28, 'hp': 180, 'crit': 0.07, 'eva': 0.07,
+           'haste': 0.16, 'time': 0.12, 'barrier': 0.12, 'fireres': 0.24, 'coldres': 0.24, 'boltres': 0.24, 'darkres': 0.24}
+
+
+def glyph_cells(k):
+    g = R.GLYPH[k]; gh = len(g); gw = max(len(r) for r in g)
+    off = R.GOFF.get(k, (0, 0))
+    G = {}
+    if k in R.GLYPH_FN:
+        ox = round(CX - 4.5) + off[0]; oy = round(CY - 4.5) + off[1]
+        for (i, j), ch in R.GLYPH_FN[k]().items(): G[(ox + i, oy + j)] = ch
+    else:
+        ox = round(CX - gw / 2) + off[0]; oy = round(CY - gh / 2) + off[1]
+        for j, row in enumerate(g):
+            for i, ch in enumerate(row):
+                if ch != '.': G[(ox + i, oy + j)] = ch
+    return G
+
+
+def make_top(k, col):
+    """최상급: 깊은 룬 색 수정 + 백금 테 + 안쪽 룬 색 테 + 흰빛 문양(두 겹 빛) + 둘레 빛 + 반짝이 셋"""
+    c = hx(col); f = R.SHAPES[k]
+    M = {(x, y) for y in range(H) for x in range(W) if f(x - CX, y - CY)}
+    edge = {p for p in M if any((p[0] + dx, p[1] + dy) not in M for dx, dy in N4)}
+    ring = {p for p in M - edge if any((p[0] + dx, p[1] + dy) in edge for dx, dy in N4)}
+    ring2 = {p for p in M - edge - ring if any((p[0] + dx, p[1] + dy) in ring for dx, dy in N4)}
+    L, Md, D = lt(c, .1), mix(dk(c, .56), (20, 14, 40), .25), dk(c, .8)
+    px = {}
+    for (x, y) in M:
+        tl = (x - 1, y) not in M or (x, y - 1) not in M
+        br = (x + 1, y) not in M or (x, y + 1) not in M
+        s = (x - CX) + (y - CY)
+        if tl and not br: col_ = L
+        elif br and not tl: col_ = D
+        elif tl and br: col_ = Md
+        else: col_ = mix(Md, L, .32) if s < -7 else (mix(Md, D, .35) if s > 7 else Md)
+        if (x, y) not in edge and -10 <= s <= -6 and (x + y) % 2 == 0: col_ = mix(col_, L, .6)     # 위쪽 수정 결
+        if (x, y) not in edge and 5 <= s <= 7 and (x + y) % 2 == 1: col_ = mix(col_, c, .45)       # 아래쪽 비친 빛
+        px[(x, y)] = col_
+    for (x, y) in ring: px[(x, y)] = (250, 252, 255) if (x - CX) + (y - CY) < 0 else (172, 182, 208)   # 백금 테
+    for (x, y) in ring2: px[(x, y)] = mix(D, c, .3)                                                   # 테 안쪽 어두운 룬 색 줄
+    G = glyph_cells(k)
+    inner = M - edge - ring
+    d1 = {(x + dx, y + dy) for (x, y) in G for dx, dy in N4} - set(G)
+    d2 = {(x + dx, y + dy) for (x, y) in d1 for dx, dy in N4} - set(G) - d1
+    for q in d2:
+        if q in inner and q not in ring2: px[q] = mix(Md, c, .32)
+    for q in d1:
+        if q in inner and q not in ring2: px[q] = mix(Md, c, .72)
+    for (x, y), ch in G.items():
+        if (x, y) not in M: continue
+        px[(x, y)] = {'g': (255, 236, 150), 'b': (180, 122, 64), 'w': (255, 255, 255), 'o': c if k not in ('lightres', 'darkatk') else dk(c, .55)}.get(ch, (255, 252, 240))
+    out = {}
+    for (x, y) in M:
+        for dx, dy in N4:
+            q = (x + dx, y + dy)
+            if q not in M and 0 <= q[0] < W and 0 <= q[1] < H: out[q] = K
+    px.update(out)
+    occ = set(px)
+    for (x, y) in occ:                                                        # 둘레 빛 (테 바깥 한 칸)
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                q = (x + dx, y + dy)
+                if q not in occ and 0 <= q[0] < W and 0 <= q[1] < H and q not in px: px[q] = mix(c, CELLBG, .62)
+    for (sx, sy) in ((18, 1), (1, 18), (18, 17)):                            # 반짝이 셋 (가운데 흰 칸 + 대각 흐린 칸)
+        if (sx, sy) in px: continue
+        px[(sx, sy)] = (255, 252, 230)
+        for dx, dy in ((1, 1), (-1, -1), (1, -1), (-1, 1)):
+            q = (sx + dx, sy + dy)
+            if q not in px and 0 <= q[0] < W and 0 <= q[1] < H: px[q] = lt(c, .3)
+    return px
+
+
+def make(k, col, lv): return make_top(k, col) if lv == 3 else R.make(k, col, lv)
