@@ -245,3 +245,21 @@ def variant8(k, i):
     nm, rows, off = (ALTS8[k] + SMALL8)[i]
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
+
+
+# ───────── 강인 최상급 — 주먹 다시 (사용자 11-11 23:46 「주먹이 너무 주먹이 아닌것 같아」) ─────────
+# 갈고리 주먹 → 손가락 넷이 보이는 주먹: 손가락 사이 세로 금 셋(둘이면 눈처럼 읽힘) · 아래에 엄지가 가로질러 감쌈 · 윗모서리 둥글게.
+# 팔(팔뚝 · 알통 · 접힌 금 · 아래 곡선 · 삼두 그늘)은 9칸 그대로, 주먹이 한 줄 늘어 9 × 10(x6~14 · y6~15).
+ALTS9 = {'str': [
+    ('흰 팔', ['..wwwwwp.', '.wr#r#rp.', '.wr#r#rp.', '..wwwpp..', '.w#p.....', 'w#p..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+    ('금빛 팔', ['..#####y.', '.#bgbgby.', '.#bgbgby.', '..###yy..', '.#gy.....', '#gy..##..', '#gyb#ggh.', '#ggybgghy', '#ggggbbhy', '.yyyyyyy.'], (1, 2)),
+    ('흰 팔 + 금 팔찌', ['..wwwwwp.', '.wr#r#rp.', '.wr#r#rp.', '..wwwpp..', '.ggy.....', 'bbb..ww..', 'w#prw##q.', 'w##pr##qp', 'w####rrqp', '.ppppppp.'], (1, 2)),
+    ('금빛 팔 + 근육 결', ['..#####y.', '.#bgbgby.', '.#bgbgby.', '..###yy..', '.#gy.....', '#gy..w#..', '#gyb#ggh.', '#ggybgghy', '#hhhgbbhy', '.yyyyyyy.'], (1, 2)),
+]}
+
+
+def variant9(k, i):
+    vk = f'{k}__d{i}'
+    nm, rows, off = ALTS9[k][i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])
