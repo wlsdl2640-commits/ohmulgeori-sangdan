@@ -1,0 +1,143 @@
+--- src/hq.js	2026-11-10 14:05:43.533963299 +0900
++++ /tmp/claude-0/-home-claude/4368c869-ae47-5efb-8102-510605121dd4/scratchpad/v63/hqdraft/src/hq.js	2026-11-11 11:41:55.160778315 +0900
+@@ -339,8 +339,17 @@
+   for (const [wx, wy, ww, wh] of L.wins || []) { x.fillStyle = 'rgba(0,0,0,1)'; x.fillRect(wx, wy, ww, wh); hole(wx + ww / 2, wy + wh / 2, Math.max(ww, wh) * 0.9, 0.55 * (1 - nt)); }
+   for (const [ax, ay, r, a] of L.soft || []) hole(ax, ay, r, a);
+   x.globalCompositeOperation = 'source-over';
++  const dot = HQD().includes('L');
++  if (dot) q3Dither(x, K.W, K.H, amt, 4);
+   g.drawImage(c, 0, 0);
+   g.save(); g.globalCompositeOperation = 'lighter';
++  if (dot) {   // 등불 빛도 계단 + 바둑 무늬로
++    let c2 = Q3LC.c2; if (!c2 || c2.width !== K.W || c2.height !== K.H) { [c2] = mkCanvas(K.W, K.H); Q3LC.c2 = c2; }
++    const y2 = c2.getContext('2d'); y2.clearRect(0, 0, K.W, K.H);
++    for (const [lx, ly, r, col] of L.lamps || []) { const rr = r * 0.66, gr = y2.createRadialGradient(lx, ly, 0, lx, ly, rr); gr.addColorStop(0, rgba(col || '#f8b048', 0.32)); gr.addColorStop(1, rgba(col || '#f8b048', 0)); y2.fillStyle = gr; y2.fillRect(lx - rr, ly - rr, rr * 2, rr * 2); }
++    q3Dither(y2, K.W, K.H, 0.32, 3);
++    g.globalAlpha = Math.min(1, (0.2 + nt * 0.12) / 0.32); g.drawImage(c2, 0, 0); g.globalAlpha = 1;
++  } else
+   for (const [lx, ly, r, col] of L.lamps || []) { const a = (0.2 + nt * 0.12) * (0.9 + 0.1 * Math.sin(t * 7 + ly)), rr = r * 0.66, gr = g.createRadialGradient(lx, ly, 0, lx, ly, rr); gr.addColorStop(0, rgba(col || '#f8b048', a.toFixed(3))); gr.addColorStop(1, rgba(col || '#f8b048', 0)); g.fillStyle = gr; g.fillRect(lx - rr, ly - rr, rr * 2, rr * 2); }
+   if (nt < 0.85) for (const [wx, wy, ww, wh, len] of L.wins || []) {   // 낮 창 빛살: 창에서 바닥 쪽으로 비스듬히
+     g.globalAlpha = 0.09 * (1 - nt); g.fillStyle = '#fff4d0';
+@@ -453,6 +462,78 @@
+ }
+ 
+ /* ═══ 상점 · 본부 (가까이 1.5배 · 통나무 오두막 · 렌턴) ═══ */
++/* ───────── 시안 (빌드 63 · 11-11 사용자 「2D 도트로 디자인」): window.HQD에 'A'(물건 그림) · 'L'(도트 빛) ───────── */
++const HQD = () => (typeof window !== 'undefined' && window.HQD) || '';
++const aBoard2 = () => qSpr('aBoard2', 28, 22, 0, 0, (g) => {   // 게시판: 굵은 나무 테(경사) · 코르크 결 · 모서리 못
++  qF(g, 0, 0, 28, 22, '#1c130e'); qF(g, 1, 1, 26, 20, '#7a4e2a');
++  qF(g, 1, 1, 26, 1, '#a8743e'); qF(g, 1, 1, 1, 20, '#a8743e'); qF(g, 1, 20, 26, 1, '#4e3018'); qF(g, 26, 1, 1, 20, '#4e3018');
++  qF(g, 3, 3, 22, 16, '#2a1a0e'); qF(g, 4, 4, 20, 14, '#b88a50');
++  const r = rng(11); for (let k = 0; k < 52; k++) qP(g, 4 + Math.floor(r() * 20), 4 + Math.floor(r() * 14), r() < 0.55 ? '#9c7038' : '#d0a466');
++  qF(g, 4, 4, 20, 1, '#8a6030'); qF(g, 4, 4, 1, 14, '#8a6030');
++  for (const [x, y] of [[2, 2], [25, 2], [2, 19], [25, 19]]) qP(g, x, y, '#d8dce4');
++});
++function hqNotes2(g, x, y, n, hl) {   // 쪽지: 그림자 · 접힌 귀 · 글줄 · 두 칸 압정 (노랑 = 채울 수 있는 의뢰)
++  const P = [[5, 5], [11, 4], [17, 6], [6, 11], [12, 10], [18, 12]];
++  for (let i = 0; i < Math.min(6, n); i++) {
++    const [dx, dy] = P[i], X = x + dx, Y = y + dy, on = hl && hl(i), c = on ? '#fff0a0' : '#f2e8d2', e = on ? '#c8a840' : '#b4a88e';
++    qF(g, X + 1, Y + 1, 5, 6, '#6e4a22'); qF(g, X, Y, 5, 6, c); qF(g, X, Y + 5, 5, 1, e); qF(g, X + 4, Y, 1, 6, e);
++    qP(g, X + 4, Y + 5, '#6e4a22'); qP(g, X + 3, Y + 5, e);
++    qF(g, X + 1, Y + 2, 3, 1, '#8a8070'); qF(g, X + 1, Y + 4, 2, 1, '#8a8070');
++    qP(g, X + 1, Y, '#e04848'); qP(g, X + 2, Y, '#9a1e1e');
++  }
++}
++function q3WallBooks(g, x, y) {   // 계산대 뒤 벽 선반: 받침 판 · 까치발 · 책등(빛 · 띠) · 기댄 책 · 단지
++  qF(g, x, y, 31, 4, '#1c130e'); qF(g, x, y, 31, 3, '#6e4626'); qF(g, x, y, 31, 1, '#a07448'); qF(g, x, y + 2, 31, 1, '#4e3018');
++  for (const bx of [x + 3, x + 26]) { qF(g, bx, y + 3, 2, 4, '#4e3018'); qF(g, bx + 2, y + 3, 1, 2, '#4e3018'); qP(g, bx, y + 3, '#7a5232'); }
++  let bxx = x + 1;
++  for (const [w, h, c] of [[3, 8, '#b03a2e'], [2, 9, '#3f6a9a'], [3, 7, '#4f8a43'], [2, 8, '#c8a040'], [3, 9, '#7a4a9a']]) {
++    qF(g, bxx, y - h, w, h, '#1c130e'); qF(g, bxx, y - h + 1, w - 1, h - 1, c); qF(g, bxx, y - h + 1, 1, h - 1, shade(c, 0.28)); qF(g, bxx, y - h + 1, w - 1, 1, shade(c, 0.4));
++    qF(g, bxx, y - 3, w - 1, 1, shade(c, -0.4)); qF(g, bxx, y - h + 3, w - 1, 1, '#e8c060');
++    bxx += w;
++  }
++  for (let k = 0; k < 7; k++) { qF(g, bxx + 1 + (k >> 1), y - 1 - k, 3, 1, k ? '#c87a3a' : '#1c130e'); qP(g, bxx + 3 + (k >> 1), y - 1 - k, '#1c130e'); }   // 기댄 책
++  const jx = x + 24; qF(g, jx, y - 6, 5, 6, '#1c130e'); qF(g, jx + 1, y - 5, 3, 5, '#5a8a9a'); qP(g, jx + 1, y - 5, '#9ad0e0'); qF(g, jx + 1, y - 7, 3, 2, '#1c130e'); qF(g, jx + 2, y - 7, 1, 1, '#c8a060');   // 단지
++}
++function q3Cloth(g, x, y, w) {   // 안 연 칸을 덮은 천: 테 · 위 빛 · 주름 · 단 · 꼬리표
++  qF(g, x, y - 6, w, 6, '#1c130e'); qF(g, x + 1, y - 5, w - 2, 5, '#b8a074'); qF(g, x + 1, y - 5, w - 2, 1, '#e2d0a6');
++  for (let k = x + 3; k < x + w - 2; k += 4) { qF(g, k, y - 4, 1, 3, '#8e7a52'); qP(g, k + 1, y - 4, '#d4c094'); }
++  qF(g, x + 1, y - 1, w - 2, 1, '#8e7a52');
++  if (w > 12) { qF(g, x + w - 6, y - 3, 4, 4, '#1c130e'); qF(g, x + w - 5, y - 2, 2, 2, '#e8dcb8'); qP(g, x + w - 4, y - 4, '#8e7a52'); }
++}
++function q3Rug(g, xl0, xr0, xl1, xr1, y0, y1) {   // 원근 깔개: 줄마다 두 끝을 잇고 칸 무늬 (테 · 금 띠 · 마름모) + 술
++  const H = y1 - y0;
++  for (let y = y0; y <= y1; y++) {
++    const v = (y - y0) / H, xl = Math.round(xl0 + (xl1 - xl0) * v), xr = Math.round(xr0 + (xr1 - xr0) * v), Wd = xr - xl, pv = Math.round(v * 12);
++    for (let x = xl; x <= xr; x++) {
++      const pu = Math.round((x - xl) / Wd * 46); let c;
++      if (x === xl || x === xr || y === y0 || y === y1) c = '#3a120e';
++      else if (pv <= 1 || pv >= 11 || pu <= 2 || pu >= 44) c = (pu + pv) % 4 === 0 ? '#e8c060' : '#c89a3a';
++      else if (pv === 2 || pv === 10 || pu === 3 || pu === 43) c = '#5e1c16';
++      else { const mu = (pu - 4) % 8, dd = Math.abs(mu - 4) + Math.abs(pv - 6); c = dd === 3 ? '#c89a3a' : dd < 3 ? (dd === 0 ? '#e8c060' : '#a8342c') : '#8a2a24'; }
++      qP(g, x, y, c);
++    }
++  }
++  for (let x = xl1 + 1; x < xr1; x += 2) { qP(g, x, y1 + 1, '#e8d8b0'); qP(g, x, y1 + 2, '#b8a47e'); }
++  for (let x = xl0 + 1; x < xr0; x += 2) qP(g, x, y0 - 1, '#e8d8b0');
++}
++const aCash = () => qSpr('aCash', 12, 9, 0, 9, (g) => {   // 돈 상자: 열린 뚜껑 · 금화 더미 · 쇠 모서리 · 자물쇠
++  qF(g, 1, 0, 10, 3, '#1c130e'); qF(g, 2, 0, 8, 2, '#8a5a30'); qF(g, 2, 0, 8, 1, '#b08048');
++  qF(g, 0, 3, 12, 6, '#1c130e'); qF(g, 1, 4, 10, 4, '#7a4e2a'); qF(g, 1, 4, 10, 1, '#a8743e'); qF(g, 1, 7, 10, 1, '#4e3018');
++  qF(g, 1, 3, 10, 1, '#f0c24a'); qP(g, 3, 2, '#f0c24a'); qP(g, 4, 2, '#fff2a0'); qP(g, 6, 2, '#c08a20'); qP(g, 7, 2, '#f0c24a'); qP(g, 8, 2, '#fff2a0');
++  for (const x of [1, 10]) { qP(g, x, 4, '#c8ccd4'); qP(g, x, 7, '#8a8e98'); }
++  qP(g, 5, 5, '#e8c060'); qP(g, 6, 5, '#e8c060'); qP(g, 5, 6, '#8a6a20'); qP(g, 6, 6, '#8a6a20');
++});
++function q3Coins(g, x, y, n) { for (let k = 0; k < n; k++) { const yy = y - 2 - k * 2; qF(g, x, yy, 5, 2, '#1c130e'); qF(g, x, yy, 4, 1, '#f0c24a'); qP(g, x, yy, '#fff2a0'); qF(g, x, yy + 1, 4, 1, '#c08a20'); } }
++const BAY4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
++function q3Dither(x, W, H, top, steps) {   // 투명도를 몇 계단으로 끊고 4×4 바둑 무늬로 잇는다 (도트 빛)
++  const id = x.getImageData(0, 0, W, H), d = id.data;
++  for (let i = 0, p = 0; i < d.length; i += 4, p++) {
++    if (!d[i + 3]) continue;
++    const px = p % W, py = (p / W) | 0, v = d[i + 3] / 255 / top * steps, lo = Math.floor(v), th = (BAY4[(py & 3) * 4 + (px & 3)] + 0.5) / 16;
++    d[i + 3] = Math.round(Math.min(steps, lo + (v - lo > th ? 1 : 0)) / steps * top * 255);
++  }
++  x.putImageData(id, 0, 0);
++}
+ const A3_SHOP = {
+   zoom: 1.5,
+   geo(K) { K.FB = K.bot - 46; K.lane = K.FB + 24; K.door = -8; K.shX = [10, 41, 72]; K.payX = 108; K.n = Math.max(1, slotCount()); Object.assign(K, hqShopCells(K.n, K)); return K; },
+@@ -463,25 +544,31 @@
+     q3Beam(g, K.top - 6, W, '#5e3a20');
+     for (const x of [3, 101]) q3Post(g, x, K.top + 3, FB, '#6e4626');
+     q3Floor(g, K, '#7a5232', '#6e4a2c', '#4e3018', 10);
++    if (HQD().includes('A')) q3Rug(g, 6, 104, -2, 112, FB + 12, FB + 37);
++    else {
+     qQ(g, [[6, FB + 12], [104, FB + 12], [112, FB + 38], [-2, FB + 38]], '#c89a3a'); qQ(g, [[8, FB + 14], [102, FB + 14], [108, FB + 36], [0, FB + 36]], '#8a2e28');
+     for (let x = 14; x < 100; x += 6) qP(g, x, FB + 25, '#c89a3a');
++    }
+   },
+   house(g, K, T) {
+     const { FB } = K;
+     q3Win(g, 20, K.top + 14, 22, 20, T, { curtain: '#8a2e28' }); q3Win(g, 70, K.top + 14, 22, 20, T, { curtain: '#8a2e28' });
+     qB(g, aCrest(), 56, K.top + 6);
++    if (HQD().includes('A')) { qB(g, aBoard2(), 105, K.top + 11); q3WallBooks(g, 104, FB - 46); }
++    else {
+     qB(g, aBoard(), 106, K.top + 12);
+     qF(g, 104, FB - 46, 30, 3, '#5e3a20'); qF(g, 104, FB - 46, 30, 1, '#8a6038');   // 계산대 뒤 벽 선반
+     for (const [x, c, h] of [[107, '#c0392b', 7], [111, '#3f6a9a', 8], [116, '#4f8a43', 6], [121, '#e8c060', 9], [126, '#8a5a9a', 7]]) { qF(g, x, FB - 46 - h, 3, h, c); qP(g, x, FB - 46 - h, shade(c, 0.4)); }
++    }
+     for (const x of K.shX) qB(g, q3ShelfSpr(K.tiers, '#9a6a3a'), x, FB + 1);
+   },
+   live(g, K, t, T) {
+     const { FB, n } = K;
+-    hqNotes(g, 106, K.top + 12, S.reqs.length, i => S.reqs[i] && reqHave(S.reqs[i]) >= S.reqs[i].qty);
++    (HQD().includes('A') ? hqNotes2 : hqNotes)(g, 106, K.top + 12, S.reqs.length, i => S.reqs[i] && reqHave(S.reqs[i]) >= S.reqs[i].qty);
+     // 물건: 칸 i (재고만큼 1~2개 · 값표). 비었으면 값표만, 안 연 칸은 접은 천
+     const hide = {}; for (const c of QCU.list) if ((c.st === 'pick' && c.buy && t - c.t0 > 0.35) || c.hold != null) hide[c.slot] = 1;
+     K.cells.forEach((c, i) => {
+-      if (i >= n) { if (c.wide) { qF(g, c.x, c.y - 3, 11, 3, '#c8b48a'); qF(g, c.x, c.y - 3, 11, 1, '#e2d2ae'); } else { qF(g, c.x + 2, c.y - 4, 18, 4, '#c8b48a'); qF(g, c.x + 2, c.y - 4, 18, 1, '#e2d2ae'); qF(g, c.x + 4, c.y - 7, 14, 3, '#b8a47e'); } return; }
++      if (i >= n) { if (HQD().includes('A')) { q3Cloth(g, c.wide ? c.x : c.x + 1, c.y, c.wide ? 11 : 20); return; } if (c.wide) { qF(g, c.x, c.y - 3, 11, 3, '#c8b48a'); qF(g, c.x, c.y - 3, 11, 1, '#e2d2ae'); } else { qF(g, c.x + 2, c.y - 4, 18, 4, '#c8b48a'); qF(g, c.x + 2, c.y - 4, 18, 1, '#e2d2ae'); qF(g, c.x + 4, c.y - 7, 14, 3, '#b8a47e'); } return; }
+       const s = S.shop.slots[i]; if (!s) return;
+       const st = stockOf(s.item), cnt = st > 0 ? Math.min(c.wide ? 1 : 2, st) - (hide[i] ? 1 : 0) : 0, itm = slotIcon(s);
+       for (let j = 0; j < cnt; j++) drawIcon(g, itm, c.x + j * 11, c.y - 10);
+@@ -492,7 +579,8 @@
+     const pay = QCU.paid && t - QCU.paid < 0.6 && t >= QCU.paid;
+     qPeo('keeper', g, false, pay ? 'atk' : 'idle', pay ? 0 : Math.floor(t * 1.2) % 2, 122, FB + 5);
+     qB(g, aCounter(36), 104, FB + 19);
+-    qF(g, 128, FB - 4, 8, 5, '#6e4626'); qF(g, 128, FB - 4, 8, 1, '#a07448'); qP(g, 131, FB - 2, '#f0c24a');
++    if (HQD().includes('A')) { qB(g, aCash(), 125, FB + 1); q3Coins(g, 119, FB + 1, 3); }
++    else { qF(g, 128, FB - 4, 8, 5, '#6e4626'); qF(g, 128, FB - 4, 8, 1, '#a07448'); qP(g, 131, FB - 2, '#f0c24a'); }
+     hqCustDraw(g, K, t);
+     for (const x of [24, 86]) qB(g, q3Lamp(10), x, K.top + 3);
+     q3Light(g, K, T, { amb: 0.34, lamps: [[28, K.top + 19, 48], [90, K.top + 19, 48], [128, FB - 18, 34], [60, FB + 20, 50]], wins: [[20, K.top + 14, 22, 20, 46], [70, K.top + 14, 22, 20, 46]] }, t);
