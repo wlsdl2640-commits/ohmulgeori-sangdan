@@ -1264,7 +1264,15 @@ const pxsFam = a => PXS_FAMW[pxsWk(a)] || 'sword';
 function pxsMotOK(a) {
   return !!(a && a.cls && CLASSES[a.cls]);
 }
-const pxsMotShield = a => { const o = a && a.eq && a.eq.off; return (o && PX_SHIELD_SHAPE[o.base]) || null; };
+const pxsMotShield = a => { const o = a && a.eq && a.eq.off; return (o && PX_SHIELD_SHAPE[o.base] && PX_OFFSHAPE[PX_SHIELD_SHAPE[o.base]] ? PX_SHIELD_SHAPE[o.base] : null); };
+// 방패 자리 (뭉툭 칸): 장의 sh(몸 앞에 든 자리) 또는 평소 자리. 빌드 64 새 방패(옆면 두께 wp_)는 좁아서 앞 끝을 옛 방패(5칸) 앞 끝에 맞추고, 평소에는 가슴 뒤(몸에 가림)
+function pxsShAt(a, F) {
+  const shape = pxsMotShield(a); if (!shape) return null;
+  const rows = pxRows(PX_OFFSHAPE[shape]), w = Math.max(...rows.map(r => r.length)), h = rows.length, wp = shape.startsWith('wp_');
+  let d = F.sh && !(wp && !F.sh[2]) ? F.sh : [...PX_OFFAT.side.shield[shape], 0];
+  if (wp && d[2]) d = [d[0] + 5 - w, d[1] + Math.round((6 - h) / 2), 1];
+  return { shape, rows, x: d[0], y: d[1], front: !!d[2] };
+}
 function pxsHz(F) {
   if (F.th == null) return F;
   const t = F.th * Math.PI / 180, c = Math.cos(t), s = Math.sin(t), yy = F.hy || 0;
@@ -1301,7 +1309,12 @@ function pxsMSword(F, great) {
 // 칼이 아닌 무기 (빌드 42): 손에서 방향 a로 (옆 s + = 방향을 시계로 90°). { cells, hand2 (활 시위를 당기는 손) }
 const PXS_POLE_LF = { lance: 4, trident: 4, staff: 4, skull: 4, crozier: 4.5 };   // 손 앞 자루 칸 (머리는 그 끝에)
 function pxsMWpn(F, wk) {
-  if (!PXS_FAMW[wk] || PXS_FAMW[wk] === 'sword') return { cells: pxsMSword(F, wk === 'great') };
+  if (!PXS_FAMW[wk] || PXS_FAMW[wk] === 'sword') {
+    const cells = pxsMSword(F, wk === 'great');
+    if (wk !== 'great') return { cells };
+    const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a || 0);   // 빌드 64: 대검은 두 손으로 쥔다 (자루 아래쪽에 다른 손)
+    return { cells, hand2: [Math.round(hx - dx), Math.round(hy - dy)] };
+  }
   const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a || 0), px = -dy, py = dx, out = [];
   const fam = PXS_FAMW[wk], k = fam === 'dagger' || fam === 'heavy' ? Math.max(0.5, F.k) : 1;
   const at = (t, s, ch) => out.push([hx + dx * t * k + px * s, hy + dy * t * k + py * s, ch]);
@@ -1386,12 +1399,13 @@ function pxsMotGrid(a, mk, f, Lx) {
   if (F.lean) for (let y = 0; y <= 18; y++) { const r = c[y], n = new Array(r.length).fill('.'); for (let x = 0; x < r.length; x++) { const X = x + F.lean; if (r[x] !== '.' && X >= 0 && X < r.length) n[X] = r[x]; } c[y] = n; }
   if (F.cr) { for (let y = 21; y >= 1; y--) c[y] = c[y - 1].slice(); c[0] = new Array(PXS_MW).fill('.'); }
   // 방패 (먼 팔): 뒤에 깔리거나(0) 몸 앞에(1, 테 두름)
-  const shape = pxsMotShield(a);
+  const SP = pxsShAt(a, F);
   let sh = null;
-  if (shape) {
-    const d = F.sh || [...PX_OFFAT.side.shield[shape], 0], rows = pxRows(PX_OFFSHAPE[shape]), x0 = d[0] + (d[2] ? F.lean : 0), y0 = d[1] + F.cr, cells = [];
+  if (SP) {
+    const rows = SP.rows, x0 = SP.x + (SP.front ? F.lean : 0), y0 = SP.y + F.cr, cells = [];
     rows.forEach((r, j) => [...r].forEach((ch, k) => ch !== '.' && cells.push([x0 + k, y0 + j, ch])));
-    if (d[2]) pxsMOver(c, cells, 'all'); else cells.forEach(([x, y, ch]) => pxsMSet(c, x, y, ch, 1));
+    if (SP.front) { pxsMOver(c, cells.filter(q => q[2] !== '='), 'all'); cells.filter(q => q[2] === '=').forEach(([x, y, ch]) => pxsMSet(c, x, y, ch)); }   // 에테르 막(=)은 테 없이 빛처럼
+    else cells.forEach(([x, y, ch]) => pxsMSet(c, x, y, ch, 1));
     sh = { x: x0, y: y0, w: rows[0].length, h: rows.length };
   }
   const tone = L.body === 'plate' || L.body === 'chain' ? { C: 'M', c: 'N' } : L.body === 'bare' ? { C: 'S', c: 's' } : {};

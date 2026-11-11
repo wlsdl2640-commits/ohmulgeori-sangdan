@@ -117,8 +117,8 @@ function skWpnCells(a, mo) {
   return { all: W, glow: glow.length ? glow : W, tip };
 }
 function skShieldCells(a, mo) {
-  const F = pxsMotFr(mo.mk, mo.f), shape = pxsMotShield(a); if (!shape || !F.sh || !F.sh[2]) return [];
-  const rows = pxRows(PX_OFFSHAPE[shape]), out = [], x0 = F.sh[0] + F.lean + F.dx, y0 = F.sh[1] + F.cr;
+  const F = pxsMotFr(mo.mk, mo.f), P = pxsShAt(a, F); if (!P || !P.front) return [];
+  const rows = P.rows, out = [], x0 = P.x + F.lean + F.dx, y0 = P.y + F.cr;
   rows.forEach((r, j) => [...r].forEach((ch, k) => ch !== '.' && out.push([x0 + k, y0 + j]))); return out;
 }
 function skRing(cells) {   // 칸 둘레 한 칸

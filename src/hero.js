@@ -603,10 +603,11 @@ function heroDraw(cv, a, now) {
   const s = pxAdvSprite(heroAdv(a), pose, fr);
   // 휘두를 때 하얀 호
   if (pose === 'atk' && fr === 1) {   // 빌드 63: 매끈한 호 대신 Z칸 네모를 호를 따라 (투명도도 계단)
-    const k = (cyc - 4.5) / 0.5, al = Math.ceil((1 - k) * 4) / 4 * 0.8, r = 30 + Math.floor(k * 3) * 4, cx = W / 2 + 26, cy = gy - 40, seen = new Set();
+    const mi = pxWSh(a.eq && a.eq.off) ? -1 : 1;   // 빌드 64: 방패를 들면 무기가 오른손(보는 사람 왼쪽) → 호도 왼쪽으로
+    const k = (cyc - 4.5) / 0.5, al = Math.ceil((1 - k) * 4) / 4 * 0.8, r = 30 + Math.floor(k * 3) * 4, cx = W / 2 + 26 * mi, cy = gy - 40, seen = new Set();
     g.fillStyle = `rgba(255,255,255,${al})`;
     for (let a2 = -Math.PI * 0.55; a2 <= Math.PI * 0.15; a2 += Z / r / 1.5) for (const rr of [r, r - Z]) {
-      const x = Math.round((cx + Math.cos(a2) * rr) / Z) * Z, y = Math.round((cy + Math.sin(a2) * rr) / Z) * Z, key = x + ',' + y;
+      const x = Math.round((cx + mi * Math.cos(a2) * rr) / Z) * Z, y = Math.round((cy + Math.sin(a2) * rr) / Z) * Z, key = x + ',' + y;
       if (!seen.has(key)) { seen.add(key); g.fillRect(x, y, Z, Z); }
     }
   }
