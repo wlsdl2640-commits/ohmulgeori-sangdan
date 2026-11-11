@@ -154,3 +154,22 @@ def fire_pick(lv):
     nm, shape, rows, off = FIRE_PICK
     R.SHAPES['fire__pick'] = shape; R.GLYPH['fire__pick'] = rows; R.GOFF['fire__pick'] = off; R.GLYPH_FN.pop('fire__pick', None)
     return X.make('fire__pick', COL['fireres'], lv)
+
+
+# ───────── 넷째 (사용자 11-11 22:49 「생명 c · 강인은 A가 맞긴한데 내복사근 표현이 전혀 없잖아. 가슴근육, 내복사근, 복근 다 넣어」) ─────────
+HP_PICK = 2                       # 생명 = C 두 겹 하트
+# 강인 근육 상체 (11칸 · 테 안쪽까지 넓게): 가슴(두 판 · 가운데 짧은 홈 · 아래 곡선) · 배빗근(옆구리 톱니 사선) · 복근(2 × 3 칸) · 양옆에 팔.
+# 흰 바탕 + 붉은 줄이 가운데서 십자로 만나면 적십자 표장처럼 보여서, 줄은 갈색(b)으로 · 가슴 가운데 홈과 가슴 아랫줄이 만나지 않게 했다.
+_ARM = ['....ggg....', '..ggggggg..', '.ggggggggg.', 'gggggbggggg', 'gggggbggggg', 'gbbbbgbbbbg', 'g.gbgbgbg.g', 'g.bgggggb.g', 'g.gbbgbbg.g', '..bgggggb..', '...bbgbb...', '....ggg....']
+ALTS4 = {'str': [
+    ('흰 근육 상체 (A 그대로 · 갈색 줄)', [r.replace('g', '#') for r in _ARM], (0, 1)),
+    ('금빛 근육 상체', _ARM, (0, 1)),
+    ('금빛 근육 상체 + 빛', ['....ggg....', '..ggggggg..', '.ggggggggg.', 'gggggbggggg', 'ggwggbggwgg', 'gbbbbgbbbbg', 'g.gbgbgbg.g', 'g.bgggggb.g', 'b.gbbgbbg.b', '..bgggggb..', '...bbgbb...', '....ggg....'], (0, 1)),
+]}
+
+
+def variant4(k, i):
+    vk = f'{k}__y{i}'
+    nm, rows, off = ALTS4[k][i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])
