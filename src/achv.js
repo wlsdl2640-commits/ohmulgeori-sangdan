@@ -76,7 +76,7 @@ function achvGrant(A) {
   const R = A.rw, got = [];
   if (R.gold) { S.gold += R.gold; S.stats.earned += R.gold; got.push(`${fmt(R.gold)}G`); }
   if (R.fame) { S.fame += R.fame; got.push(`명성 +${R.fame}`); }
-  if (R.item && ITEMS[R.item[0]]) { addTo(S.inv, R.item[0], R.item[1]); got.push(`${ITEMS[R.item[0]].name} ${R.item[1]}개`); }
+  if (R.item && ITEMS[R.item[0]]) { stashItem(R.item[0], R.item[1]); got.push(`${ITEMS[R.item[0]].name} ${R.item[1]}개`); }
   log(`업적 「${A.name}」 달성! ${A.desc} · 보상 ${got.join(', ')}`, 'good');
   HOOKS.toast(`업적 달성 · ${A.name}`);
 }

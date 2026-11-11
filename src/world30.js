@@ -89,6 +89,7 @@ function enhanceWagon(pid) {
 function buyShoe(n) {
   const cost = ITEMS.horseshoe.buy * n;
   if (S.gold < cost) return '돈이 모자라요.';
+  if (!roomItem('horseshoe')) return WH_FULL;
   S.gold -= cost; S.stats.spent = (S.stats.spent || 0) + cost; addTo(S.inv, 'horseshoe', n);
   changed();
   return `강철 편자 ${n}개를 샀어요.`;
@@ -147,6 +148,7 @@ function buyLibMat(k, n) {
   const I = ITEMS[k]; if (!I || !I.buy) return '';
   const cost = I.buy * n;
   if (S.gold < cost) return '돈이 모자라요.';
+  if (!roomItem(k)) return WH_FULL;
   S.gold -= cost; S.stats.spent = (S.stats.spent || 0) + cost; addTo(S.inv, k, n);
   changed();
   return `${I.name} ${n}개를 샀어요.`;

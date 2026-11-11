@@ -24,6 +24,7 @@ function retireWhy(a) {
   if (a.status !== 'idle' || a.post) return '상단에서 쉬고 있을 때만';
   if (a.inj) return '다 나은 뒤에';
   if (hallList().length >= HALL_MAX) return `전당이 가득 찼어요 (${HALL_MAX}개)`;
+  { const n = SLOTS.filter(([sl]) => a.eq[sl]).length; if (n > whFree(-1)) return `메인 창고에 빈 칸이 ${n}개 있어야 해요 (끼던 장비를 넣을 자리)`; }   // 빌드 63
   return '';
 }
 function retire(id) {

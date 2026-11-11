@@ -136,18 +136,19 @@ function kqAccept(k) {
   changed();
   return '의뢰를 받았어요.';
 }
-const KQ_BOOK = 'bk_faded', KQ_BOOK_N = 2, kqBookTxt = () => `${ITEMS[KQ_BOOK].name} ${KQ_BOOK_N}권`;
+const KQ_BOOK = 'bk_faded', KQ_BOOK_N = 1, KQ_BOOK_P = 0.25, kqBookTxt = () => `${ITEMS[KQ_BOOK].name} ${Math.round(KQ_BOOK_P * 100)}%`;
 function kqTurnIn(k) {
   const q = kqOf(k), st = kqState(k);
   if (!q || !kqReady(k)) return '아직 다 채우지 못했어요.';
   if (q.type === 'deliver') addTo(S.inv, q.it, -q.n);
   S.gold += q.gold; S.stats.earned += q.gold; S.fame += 5;
   S.king.favor[k] = favorOf(k) + 12;
-  if (q.book) addTo(S.inv, KQ_BOOK, KQ_BOOK_N);   // 빌드 63: 왕국 스킬북 대신 빛바랜 스킬북 두 권 (왕국 스킬은 그 안에서 나온다)
+  const gotBook = q.book && rnd() < KQ_BOOK_P;   // 빌드 63: 왕국 스킬북 대신 가끔 빛바랜 스킬북 한 권 (왕국 스킬은 그 안에서 나온다)
+  if (gotBook) stashItem(KQ_BOOK, KQ_BOOK_N);
   st.done.push(q.id); st.cur = null; st.got = 0;
-  log(`${KINGDOMS[k].name}의 의뢰를 마쳤다. ${fmt(q.gold)}G, 호감 +12, 명성 +5${q.book ? `, ${kqBookTxt()}` : ''}`, 'good');
+  log(`${KINGDOMS[k].name}의 의뢰를 마쳤다. ${fmt(q.gold)}G, 호감 +12, 명성 +5${gotBook ? `, ${ITEMS[KQ_BOOK].name}` : ''}`, 'good');
   changed();
-  return `보상 ${fmt(q.gold)}G${q.book ? `와 ${kqBookTxt()}` : ''}을(를) 받았어요.`;
+  return `보상 ${fmt(q.gold)}G${gotBook ? `와 ${ITEMS[KQ_BOOK].name}` : ''}을(를) 받았어요.`;
 }
 // 처치 의뢰 진행 (kill에서 부른다)
 function kqKill(id) { if (!S.kq) return; for (const k in S.kq) { const q = kqOf(k); if (q && q.type === 'hunt' && q.mon === id) S.kq[k].got++; } }

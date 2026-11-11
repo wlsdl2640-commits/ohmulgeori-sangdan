@@ -137,7 +137,7 @@ function newMerchant(k) {
   const at = pickOne(pool), stock = [];
   const eggs = PET_IDS.filter(x => isUnlocked(PETS[x].field)).sort(() => rnd() - 0.5).slice(0, 2);
   eggs.forEach(x => stock.push({ it: 'egg_' + x, n: 1, price: Math.round(ITEMS['egg_' + x].v * 2.2 / 10) * 10 }));
-  { const b = tierBookFor(FIELDS[at].tier, rnd() < 0.3); stock.push({ it: b, n: 1, price: Math.round(ITEMS[b].v * 2.5 / 10) * 10 }); }   // 빌드 63: 스킬북 단계 (그 땅 단계로)
+  if (rnd() < BOOK_SHOP.merchant) { const b = tierBookFor(FIELDS[at].tier, true); if (b) stock.push({ it: b, n: 1, price: Math.round(ITEMS[b].v * BOOK_SHOP.mul / 10) * 10 }); }   // 빌드 63: 가끔 스킬북 단계 한 권, 아주 비싸게
   const r = runeId(pickOne(RUNE_IDS), 1); if (ITEMS[r]) stock.push({ it: r, n: 2, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
   HERB_IDS.filter(h => h !== 'herb').sort(() => rnd() - 0.5).slice(0, 2).forEach(h => stock.push({ it: h, n: 8, price: Math.round(ITEMS[h].v * 1.8) }));
   const ev0 = { id: nid(), type: 'merchant', at, born: k, end: k + 2, stock, done: 0 };
@@ -150,6 +150,7 @@ function merchantBuy(evId, i) {
   if (!o || o.n <= 0) return '다 팔렸어요.';
   if (ev0.done) return '상인이 떠났어요.';
   if (S.gold < o.price) return '돈이 모자라요.';
+  if (!roomItem(o.it)) return WH_FULL;
   S.gold -= o.price; o.n--; S.stats.spent = (S.stats.spent || 0) + o.price;
   addTo(S.inv, o.it, 1);
   log(`떠돌이 상인에게서 ${ITEMS[o.it].name}을(를) ${g$(o.price)}에 샀다.`);
@@ -175,7 +176,7 @@ function nestKill(p, e, f) {
   ev0.done = 1; ev0.won = 1;
   const R = nestReward(ev0), F = FIELDS[ev0.at], kinds = petsOfField(ev0.at), egg = kinds.length ? 'egg_' + pickOne(kinds) : null;
   S.gold += R.gold; S.stats.earned += R.gold; S.fame += R.fame; S.stats.nests = (S.stats.nests || 0) + 1;
-  if (egg) addTo(S.inv, egg, 1);
+  if (egg) stashItem(egg, 1);
   teamOf(p).filter(a => !a.down).forEach(a => { a.pf = (a.pf || 0) + 4; });
   log(`${p.name}이(가) ${F.name}의 몬스터 둥지를 치웠다! 상금 ${g$(R.gold)}, 명성 +${R.fame}${egg ? `, ${ITEMS[egg].name}` : ''}`, 'good');
   HOOKS.toast(`둥지 소탕 · ${g$(R.gold)} · 명성 +${R.fame}`);

@@ -60,7 +60,7 @@ function tradeStage(p, e) {
 }
 // 집에 닿았을 때 (arrive가 부른다)
 function tradeHome(p, e) {
-  if (e.cargo) for (const [it, q] of Object.entries(e.cargo)) addTo(S.inv, it, q);   // 못 팔고 돌아왔으면 창고로
+  if (e.cargo) for (const [it, q] of Object.entries(e.cargo)) stashItem(it, q);   // 못 팔고 돌아왔으면 창고로 (넘치면 창고 1~10 → 길드)
   const T = e.trade; if (!T || !T.sold) return;
   const D = KINGDOMS[T.k], bought = Object.entries(T.bought || {});
   queueModal({ title: `교역 보고 · ${D.name}`, body: [`${p.name}이(가) ${D.name}에서 돌아왔다.`, `교역품 ${T.n}개를 ${g$(T.sold)}에 팔았다 (기준가의 ${Math.round(tradeSellMul(T.k) * 100)}%).`, bought.length ? `특산물 ${bought.map(([it, q]) => `${ITEMS[it].name} ${q}개`).join(', ')}를 ${g$(T.spent)}에 사 왔다. 상점에 진열하거나 다른 나라에 팔면 남는다.` : '특산물은 사지 않았다.', `${D.name}의 호감 ${Math.round(favorOf(T.k))} (${FAVOR[favorTier(favorOf(T.k))].name})`] });

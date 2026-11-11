@@ -11,6 +11,7 @@ const WH_CAP = 100;                      // 창고 1~10 칸
 const WH_N = 10;
 const WH_OPEN = [1, 2, 3, 5, 6, 8, 10];  // 상단 랭크 F · E · D · C · B · A · S마다 열린 창고 수 (기본 1)
 const whOpenAt = i => WH_OPEN.findIndex(n => n > i);   // 창고 i(0부터)가 열리는 랭크
+const WH_FULL = '메인 창고에 빈 칸이 없어요. 팔거나 창고 1~10으로 옮긴 뒤에 받을 수 있어요.';   // 사용자 「넘치면 못 얻게」
 
 /* ── 레어도 등급 (QUALITY와 같은 이름 · 색) ── */
 const GRADE_MAX = 6;
@@ -118,25 +119,27 @@ function drawBook(t) {
 }
 /* 어디서 나오나: 몬스터를 잡으면 스킬북이 나올 확률(BOOK_RATE 그대로: 필드 0.4% · 던전 0.8% · 우두머리 8% · 주인 25%) 뒤
    그 땅의 단계에 따라 어느 책인지 고른다. 우두머리 · 주인은 한 줄 아래 표를 쓴다. 고대의 · 신화 속 스킬북은 4차 · 5차가 생길 때부터 */
-const BOOK_MIX = [   // [찢어진, 낡은, 빛바랜, 신비한]
-  [55, 45, 0, 0],    // 땅 단계 0~2 (평원 · 원시림 · 검은바위산)
-  [35, 40, 25, 0],   // 3~5
-  [25, 30, 35, 10],  // 6~8
-  [20, 20, 35, 25],  // 9~11
-  [15, 15, 30, 40]   // 12~
+const BOOK_MIX = [   // [찢어진, 낡은, 빛바랜, 신비한] — 합이 50: 나머지 50은 꽝 (사용자 「찢어진 30 · 낡은 20, 너무 높음」)
+  [30, 20, 0, 0],    // 땅 단계 0~2 (평원 · 원시림 · 검은바위산)
+  [18, 20, 12, 0],   // 3~5
+  [12, 15, 18, 5],   // 6~8
+  [10, 10, 18, 12],  // 9~11
+  [8, 7, 15, 20]     // 12~
 ];
 const bookBand = tier => Math.min(BOOK_MIX.length - 1, Math.floor(Math.max(0, tier || 0) / 3));
-function tierBookFor(tier, boss) {
-  const row = BOOK_MIX[Math.min(BOOK_MIX.length - 1, bookBand(tier) + (boss ? 1 : 0))], sum = row.reduce((x, v) => x + v, 0);
-  let r = rnd() * sum;
-  for (let i = 0; i < row.length; i++) { r -= row[i]; if (r <= 0 && row[i] > 0 && BOOK_POOL[i].length) return BOOK_TIERS[i].id; }
-  return 'bk_torn';
+function tierBookFor(tier, boss) {   // 꽝이면 null
+  const row = BOOK_MIX[Math.min(BOOK_MIX.length - 1, bookBand(tier) + (boss ? 1 : 0))];
+  let r = rnd() * 100;
+  for (let i = 0; i < row.length; i++) { r -= row[i]; if (r < 0) return row[i] > 0 && BOOK_POOL[i].length ? BOOK_TIERS[i].id : null; }
+  return null;
 }
-// 도감 · 설명용: 그 땅에서 스킬북이 나오면 어느 책이 몇 %인지 [[책 id, %], …]
+// 도감 · 설명용: 그 땅에서 스킬북 뽑기를 하면 어느 책이 몇 %인지 [[책 id, %], …] (나머지는 꽝)
 function tierBookMix(tier, boss) {
-  const row = BOOK_MIX[Math.min(BOOK_MIX.length - 1, bookBand(tier) + (boss ? 1 : 0))].map((v, i) => (BOOK_POOL[i].length ? v : 0)), sum = row.reduce((x, v) => x + v, 0) || 1;
-  return row.map((v, i) => [BOOK_TIERS[i].id, Math.round(v / sum * 100)]).filter(([, pc]) => pc > 0);
+  const row = BOOK_MIX[Math.min(BOOK_MIX.length - 1, bookBand(tier) + (boss ? 1 : 0))];
+  return row.map((v, i) => [BOOK_TIERS[i].id, BOOK_POOL[i].length ? v : 0]).filter(([, pc]) => pc > 0);
 }
+// 드랍 말고 다른 곳은 아주 드물고 비싸게 (사용자 11-11 11:10): 상인 · 암시장 · 왕국 상단에 나올 확률과 값(기준가 ×)
+const BOOK_SHOP = { merchant: 0.35, bm: 0.4, king: 0.3, mul: 8 };
 // 레벨로 (보물 상자 · 상인 · 의뢰 보상): 그 레벨 장비 단계를 땅 단계로 본다
 const tierOfLv = L => { let t = 0; GTIERS.forEach((T, i) => { if (T.lv <= L) t = Math.max(t, i); }); return t; };
 const tierBookForLv = (L, boss) => tierBookFor(tierOfLv(L), boss);
@@ -150,29 +153,24 @@ function bookSrcText(id) {
 }
 // 스킬북 단계가 어디서 나오는지
 const TIER_BOOK_SRC = [
-  '어느 땅의 몬스터든(낮은 땅일수록 잘 나옴) · 보물 상자 · 떠돌이 상인 · 암시장 · 도서관',
-  '어느 땅의 몬스터든 · 보물 상자 · 떠돌이 상인 · 암시장 · 투기장 상단(60코인) · 도서관',
-  '바람계곡 · 뒷골목부터의 몬스터 · 그 앞 땅의 우두머리 · 던전 주인 · 보물 상자 · 떠돌이 상인 · 암시장 · 투기장 상단(150코인) · 왕국 상단 · 왕국 의뢰(두 권) · 도서관 2단계',
-  '늪지대부터의 몬스터 · 바람계곡부터의 우두머리 · 던전 주인 · 보물 상자 · 암시장 · 투기장 상단(400코인) · 왕국 상단 · 도서관 3단계',
+  '몬스터(땅이 낮을수록 잘 나옴) · 보물 상자 · 가끔 떠돌이 상인 · 암시장(아주 비쌈)',
+  '몬스터 · 보물 상자 · 가끔 떠돌이 상인 · 암시장(아주 비쌈) · 투기장 상단(600코인)',
+  '바람계곡 · 뒷골목부터의 몬스터 · 그 앞 땅의 우두머리 · 던전 주인 · 보물 상자 · 가끔 상인 · 암시장 · 왕국 상단(아주 비쌈) · 투기장 상단(1,800코인) · 왕국 의뢰(25%)',
+  '늪지대부터의 몬스터 · 바람계곡부터의 우두머리 · 던전 주인 · 보물 상자 · 가끔 암시장 · 왕국 상단(아주 비쌈) · 투기장 상단(4,500코인)',
   '4차 직업이 생기면 나와요',
   '5차 직업이 생기면 나와요'
 ];
-BUILDINGS.library.desc = '양피지 · 먹물로 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한)를 만든다.';
-BUILDINGS.library.eff = lv => `${['낡은', '빛바랜', '신비한'][lv - 1]} 스킬북까지 제작${lv > 1 ? ` · 제작비 -${(lv - 1) * 15}%` : ''}`;
-const libTierFee = k => Math.round(LIB_TIER_BOOKS[k].fee * (1 - Math.max(0, ((S && S.bld.library) || 1) - 1) * 0.15) / 10) * 10;   // 넓힐수록 싸게 (예전 도서관과 같음)
-const LIB_TIER_BOOKS = {
-  bk_torn:  { lib: 1, need: { parchment: 2, ink: 1 }, fee: 300 },
-  bk_old:   { lib: 1, need: { parchment: 3, ink: 2 }, fee: 900 },
-  bk_faded: { lib: 2, need: { parchment: 5, ink: 3 }, fee: 4000 },
-  bk_myst:  { lib: 3, need: { parchment: 8, ink: 5 }, fee: 20000 }
-};
+BUILDINGS.library.desc = '같은 레어도 스킬북 9권을 합성해 한 단계 위 레어도 스킬북 하나를 만든다.';
+BUILDINGS.library.eff = lv => `${['고급 · 희귀', '영웅 · 전설', '신화'][lv - 1]} 스킬북 합성까지`;
+const LIB_FUSE = { n: 9, jump: 0.01, fee: [200, 800, 3000, 12000, 40000, 150000], lib: [1, 1, 2, 2, 3, 3] };   // 넣는 레어도마다 비용 · 도서관 단계
 
 STORY.v63b = [
   '상단 창고가 넓어졌다. 지금까지 쓰던 창고는 「메인 창고」(200칸)가 되고, 그 왼편에 창고 1~10(100칸씩)이 생겼다. 창고 1은 처음부터 열려 있고, 나머지는 상단 랭크가 오를 때마다 열린다.',
-  '물건 한 종류 · 장비 한 점이 한 칸이다. 원정에서 돌아왔을 때 메인 창고가 가득 차면 짐이 창고 1~10으로 가고, 거기에도 빈 칸이 없으면 길드에 판다. 창고 1~10은 보관용이라 쓰거나 팔려면 메인 창고로 옮긴다.',
+  '물건 한 종류 · 장비 한 점이 한 칸이다. 메인 창고에 빈 칸이 없으면 사기 · 만들기 · 장비 빼기를 할 수 없다. 원정 짐은 메인이 가득 차면 창고 1~10으로 가고, 거기에도 빈 칸이 없으면 길드에 판다. 창고 1~10은 보관용이라 쓰거나 팔려면 메인 창고로 옮긴다.',
   '「창고 정리」를 누르면 레어도가 높은 것부터 늘어선다. 부속품 · 재료도 제작에 어디 들어가는지에 따라 레어도(일반 ~ 신성)가 매겨져 칸 테두리 색이 달라지고, 레어도가 높을수록 칸이 빛난다. 장비 칸은 직업마다 나눠 볼 수 있다.',
   '대장간에 「합성」이 생겼다. 같은 레어도 · 같은 갈래(무기 · 부장비 · 방어구 · 장신구) 장비 9점을 넣으면 다음 레어도 장비 하나가 무작위로 나온다. 아주 드물게(1%) 두 단계 위가 나온다.',
   '스킬북은 이제 스킬북 단계로 나온다: 찢어진(공용) · 낡은(1차) · 빛바랜(2차) · 신비한(3차) 스킬북. 고대의 · 신화 속 스킬북은 4차 · 5차 직업이 생기면 나온다. 창고에서 펼치면 그 차수 스킬북 하나가 뽑힌다 — 스킬마다 뽑힐 확률이 다르다.',
+  '스킬북은 몬스터가 떨어뜨리는 것이 거의 전부다. 떠돌이 상인 · 암시장 · 왕국 상단에는 가끔 아주 비싸게 나오고, 투기장 상단은 코인이 많이 든다. 도서관에서는 같은 레어도 스킬북 9권을 합성해 한 단계 위 스킬북을 만든다.',
   '2차 · 3차 고유 스킬도 이제 스킬북으로 배운다. 직업 기본 스킬은 전직할 때 그대로 받는다. 이미 배운 스킬과 가지고 있던 스킬북은 그대로다.',
   '메뉴는 오른쪽 위 「메뉴」 하나로 접었다. 누르면 메뉴판이 펼쳐진다. 표창은 한 통에 1.5배 더 담는다.'
 ];

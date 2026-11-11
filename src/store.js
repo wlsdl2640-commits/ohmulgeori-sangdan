@@ -13,6 +13,12 @@ const whUsed = i => kindsOf(bagOf(i)) + gearOf(i).length;
 const whCap = i => (i < 0 ? WH_MAIN_CAP : WH_CAP);
 const whFree = i => whCap(i) - whUsed(i);
 const whName = i => (i < 0 ? '메인 창고' : `창고 ${i + 1}`);
+// 메인 창고 자리 (사용자 「넘치면 못 얻게」): 사기 · 제작 · 장비 빼기 같은 일은 자리가 없으면 막는다
+// 같은 물건이 있으면 쌓이고, 새 종류 · 장비 한 점은 빈 칸 하나. freed = 이 일로 다 써서 비는 칸 수
+function roomItem(k, freed) { return (S.inv[k] || 0) > 0 || whFree(-1) + (freed || 0) > 0; }
+function roomGear(n, freed) { return whFree(-1) + (freed || 0) >= (n == null ? 1 : n); }
+function freedBy(need) { return Object.entries(need || {}).filter(([k, q]) => (S.inv[k] || 0) > 0 && (S.inv[k] || 0) <= q).length; }
+// 받을 수밖에 없는 것(원정 짐 · 보상 · 은퇴 · 떠난 모험가의 장비 · 경매 낙찰)은 넘치면 창고 1~10 → 길드
 // 메인 창고에 넣는다: 같은 물건이 있으면 쌓이고, 새 종류 · 장비는 빈 칸이 있어야 한다 → 없으면 열린 창고 1~10 → 그래도 없으면 길드에 판다
 function stashItem(k, q) {
   if (!ITEMS[k] || !(q > 0)) return 'none';
@@ -82,6 +88,8 @@ PANELS.inv = () => {
     return `<button type="button" class="whb${on ? ' on' : ''}${lock ? ' lock' : ''}${full ? ' full' : ''}" data-act="whsel" data-i="${i}"${lock ? ` title="${RANKS[whOpenAt(i)] ? RANKS[whOpenAt(i)].name + '랭크에 열려요' : ''}"` : ''}><b>${i < 0 ? '메인' : i + 1}</b><small>${lock ? `${RANKS[whOpenAt(i)] ? RANKS[whOpenAt(i)].name : 'S'}랭크` : `${used}/${cap}`}</small></button>`; }).join('')}</nav>`;
   return `<div class="whwrap">${side}<div class="whmain">${W < 0 ? whMainBody() : whSubBody(W)}</div></div>`;
 };
+// 고른 칸의 정보창: 창 아래에 붙어 바로 보이고 「닫기」로 접는다 (사용자 11-11 「장비 선택시 정보창 바로 보이게 · 닫기 버튼」)
+const whPop = (html, key) => (UI.invPop === key ? `<div class="ipop" role="dialog" aria-label="고른 칸 정보"><div class="ipop-h"><b>고른 칸</b><button type="button" class="btn sm" data-act="invpop">닫기 ✕</button></div>${html}</div>` : '');
 const whCapLine = i => { const u = whUsed(i), c = whCap(i); return `<span class="${u > c ? 'red-t' : u >= c ? 'warn' : ''}">${whName(i)} ${u}/${c}칸${u > c ? ' · 넘침 — 새 물건은 다른 창고로 가요' : ''}</span>`; };
 const whSortBtn = i => `<button type="button" class="btn sm" data-act="whsort" data-i="${i}">창고 정리 (레어도순)</button>`;
 function whTabs(tab, count, withStand) {
@@ -122,14 +130,14 @@ function whMainBody() {
   if (tab === 'gear') {
     jobs = whJobChips(S.gear);
     const gear = S.gear.filter(g => gearInJob(g, UI.invJob || 'all'));
-    const g = gear.find(x => 'g' + x.id === sel) || gear[0];
+    const g = gear.find(x => 'g' + x.id === sel) || null;
     cells = gear.map(x => whCell('g' + x.id, gImg(x, 'ico lg q-b q' + x.q), null, g && x.id === g.id, x.q || 0, x.plus ? `<b class="qty">+${x.plus}</b>` : ''));
-    detail = g ? whGearDetail(g, -1) : '<div class="card"><div class="sub">이 칸에 보관 중인 장비가 없어요. 대장간에서 만들거나 원정에서 주워 와요.</div></div>';
+    detail = g ? whPop(whGearDetail(g, -1), 'g' + g.id) : gear.length ? '' : '<div class="card"><div class="sub">이 칸에 보관 중인 장비가 없어요. 대장간에서 만들거나 원정에서 주워 와요.</div></div>';
   } else {
     const list = tab === 'sup' ? SUPPLY_IDS.concat(keys('sup').filter(k => !SUPPLY_IDS.includes(k))) : keys(tab);
-    const k = list.includes(sel) ? sel : list[0];
+    const k = list.includes(sel) ? sel : null;
     cells = list.map(x => whCell(x, iconImg(x, 'ico lg'), S.inv[x] || 0, x === k, itemGrade(x)));
-    detail = k ? invDetail(k, rate) + ((S.inv[k] || 0) > 0 ? `<div class="card idet">${whMoveRow(-1, 'item', k, S.inv[k])}</div>` : '') : `<div class="card"><div class="sub">${{ mat: '창고가 비어 있어요. 원정을 보내 부속품을 모아 오세요.', herb: '아직 약초가 없어요. 필드에서 싸운 뒤 가끔 주워 와요.', book: '스킬북이 없어요. 몬스터 · 던전 보물 상자 · 도서관 · 투기장 · 암시장 · 왕국 상단에서 스킬북 단계(찢어진 ~ 신비한)를 얻어 펼쳐요.', rune: '룬이 없어요. 필드 보스와 던전에서 떨어져요.', food: '도시락이 없어요. 주방을 지으면 재료로 만들 수 있어요.', trade: '교역품이 없어요. 교역로로 이웃 나라에 가면 특산물을 싸게 사 와요.' }[tab] || ''}</div></div>`;
+    detail = k ? whPop(invDetail(k, rate) + ((S.inv[k] || 0) > 0 ? `<div class="card idet">${whMoveRow(-1, 'item', k, S.inv[k])}</div>` : ''), k) : list.length ? '' : `<div class="card"><div class="sub">${{ mat: '창고가 비어 있어요. 원정을 보내 부속품을 모아 오세요.', herb: '아직 약초가 없어요. 필드에서 싸운 뒤 가끔 주워 와요.', book: '스킬북이 없어요. 몬스터 · 던전 보물 상자 · 도서관 · 투기장 · 암시장 · 왕국 상단에서 스킬북 단계(찢어진 ~ 신비한)를 얻어 펼쳐요.', rune: '룬이 없어요. 필드 보스와 던전에서 떨어져요.', food: '도시락이 없어요. 주방을 지으면 재료로 만들 수 있어요.', trade: '교역품이 없어요. 교역로로 이웃 나라에 가면 특산물을 싸게 사 와요.' }[tab] || ''}</div></div>`;
   }
   const info = { mat: `부속품 ${count.mat}종 · 기준가 ${fmt(keys('mat').reduce((t, k) => t + ITEMS[k].v * S.inv[k], 0))}G어치 · 길드는 ${Math.round(rate * 100)}%에 사요 · 테두리 색 = 레어도(제작에 들어가는 곳)`, herb: `약초 ${count.herb}종 · 처치와 연금술 공방 조제에 써요`, sup: '물약·치료 소모품 · 원정 보급품으로 가져가면 저절로 써요', book: `스킬북 ${count.book}종 · 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 …)를 펼치면 그 차수 스킬북 하나가 나와요 · 모험가 창 → 스킬에서 배워요`, rune: `룬 ${count.rune}종 · 장비의 룬 칸에 새겨요`, gear: `장비 ${count.gear}점 · 같은 레어도 9점을 대장간에서 합성하면 다음 레어도로`, food: '도시락과 요리 재료 · 주방에서 만들고 원정대 창에서 골라요', trade: `교역품 ${count.trade}종 · 상점에 진열하거나 원하는 나라에 팔면 남아요` }[tab];
   const bulk = tab === 'mat' && bulkMats().length ? `<div class="btns"><button type="button" class="btn sm" data-act="sellallmat">부속품 모두 팔기 · 약 ${g$(bulkMatValue())}</button></div>` : tab === 'gear' && bulkGears().length ? `<div class="btns"><button type="button" class="btn sm" data-act="selllowgear">일반·고급 장비 ${bulkGears().length}점 모두 팔기</button><button type="button" class="btn sm" data-act="autoeqall">모두 자동 장착</button></div>` : '';
@@ -144,13 +152,13 @@ function whSubBody(i) {
   const sel = UI.invSel;
   if (tab === 'gear') {
     jobs = whJobChips(W.gear);
-    const gear = W.gear.filter(g => gearInJob(g, UI.invJob || 'all')), g = gear.find(x => 'g' + x.id === sel) || gear[0];
+    const gear = W.gear.filter(g => gearInJob(g, UI.invJob || 'all')), g = gear.find(x => 'g' + x.id === sel) || null;
     cells = gear.map(x => whCell('g' + x.id, gImg(x, 'ico lg q-b q' + x.q), null, g && x.id === g.id, x.q || 0, x.plus ? `<b class="qty">+${x.plus}</b>` : ''));
-    detail = g ? whGearDetail(g, i) : '<div class="card"><div class="sub">이 칸에 보관 중인 장비가 없어요.</div></div>';
+    detail = g ? whPop(whGearDetail(g, i), 'g' + g.id) : gear.length ? '' : '<div class="card"><div class="sub">이 칸에 보관 중인 장비가 없어요.</div></div>';
   } else {
-    const list = keys(tab), k = list.includes(sel) ? sel : list[0];
+    const list = keys(tab), k = list.includes(sel) ? sel : null;
     cells = list.map(x => whCell(x, iconImg(x, 'ico lg'), W.inv[x] || 0, x === k, itemGrade(x)));
-    detail = k ? `<div class="card hl idet"><div class="row">${iconImg(k, 'ico lg')}<div class="grow stack"><span>${ITEMS[k].name} <b class="num">×${W.inv[k]}</b> ${gradeTag(itemGrade(k))}</span>${ITEMS[k].desc ? `<span class="sub">${ITEMS[k].desc}</span>` : ''}<span class="sub muted">기준가 ${ITEMS[k].v}G · 무게 ${ITEMS[k].w}</span></div></div>${whMoveRow(i, 'item', k, W.inv[k])}</div>` : `<div class="card"><div class="sub">${whName(i)}의 이 칸은 비어 있어요. 메인 창고에서 물건을 고르고 「옮기기」로 넣어요.</div></div>`;
+    detail = k ? whPop(`<div class="card hl idet"><div class="row">${iconImg(k, 'ico lg')}<div class="grow stack"><span>${ITEMS[k].name} <b class="num">×${W.inv[k]}</b> ${gradeTag(itemGrade(k))}</span>${ITEMS[k].desc ? `<span class="sub">${ITEMS[k].desc}</span>` : ''}<span class="sub muted">기준가 ${ITEMS[k].v}G · 무게 ${ITEMS[k].w}</span></div></div>${whMoveRow(i, 'item', k, W.inv[k])}</div>`, k) : list.length ? '' : `<div class="card"><div class="sub">${whName(i)}의 이 칸은 비어 있어요. 메인 창고에서 물건을 고르고 「옮기기」로 넣어요.</div></div>`;
   }
   return `${head}${whTabs(tab, count, false)}${jobs}<div class="igrid ${tab}">${whPad(cells, 18).join('')}</div>${detail}`;
 }
@@ -159,45 +167,84 @@ function tierBookBox(k) {
   const t = ITEMS[k].btier, L = BOOK_POOL[t], have = S.inv[k] || 0;
   if (!L.length) return `<div class="sub muted">아직 이 책에서 나올 스킬이 없어요 (${t}차 직업이 생기면 열려요).</div>`;
   const band = BOOK_BAND.map((B, b) => { const n = L.filter(id => BOOK_BAND_OF[id] === b).length; return n ? `${B.n} ${n}개 · 하나에 ${pctTxt(L.filter(id => BOOK_BAND_OF[id] === b).reduce((x, id) => x + BOOK_P[id], 0) / n)}` : ''; }).filter(Boolean).join(' · ');
-  return `<div class="sub">나오는 스킬 ${L.length}개 — ${band}</div><div class="btns"><button type="button" class="btn sm gold" data-act="bkopen" data-k="${k}" data-n="1"${have ? '' : ' disabled'}>펼치기</button>${have >= 10 ? `<button type="button" class="btn sm gold" data-act="bkopen" data-k="${k}" data-n="10">10권 펼치기</button>` : ''}${have > 1 && have < 10 ? `<button type="button" class="btn sm gold" data-act="bkopen" data-k="${k}" data-n="${have}">모두 펼치기 (${have})</button>` : ''}</div>`;
+  return `<div class="sub">나오는 스킬 ${L.length}개 — ${band}</div><div class="btns"><button type="button" class="btn sm gold" data-act="bkopen" data-k="${k}" data-n="1"${have ? '' : ' disabled'}>낱개로 펼치기</button>${have >= 10 ? `<button type="button" class="btn sm gold" data-act="bkopen" data-k="${k}" data-n="10">10권 펼치기</button>` : ''}${have > 1 ? `<button type="button" class="btn sm" data-act="bkopen" data-k="${k}" data-n="${have}">모두 펼치기 (${have})</button>` : ''}</div>`;
 }
+// n권 펼치기: 한 권마다 메인 창고에 자리가 있어야 한다 (새 스킬북이 들어갈 빈 칸 · 마지막 한 권이면 그 칸이 빈다)
 function openTierBook(k, n) {
   const I = ITEMS[k]; if (!I || I.btier == null) return '';
   const t = I.btier; if (!BOOK_POOL[t].length) return '아직 이 책에서 나올 스킬이 없어요.';
   n = Math.min(n || 1, S.inv[k] || 0); if (n <= 0) return '책이 없어요.';
-  const got = {};
-  for (let i = 0; i < n; i++) { const id = drawBook(t); if (!id) break; addTo(S.inv, k, -1); stashItem('book_' + id, 1); got[id] = (got[id] || 0) + 1; if (S.dex) { S.dex.items = S.dex.items || {}; S.dex.items['book_' + id] = 1; } }
-  const rows = Object.entries(got).sort((x, y) => BOOK_BAND_OF[y[0]] - BOOK_BAND_OF[x[0]]).map(([id, c]) => `${ITEMS['book_' + id].name}${c > 1 ? ` ×${c}` : ''} — ${BOOK_BAND[BOOK_BAND_OF[id]].n} (${pctTxt(BOOK_P[id])}) · ${clsList(SKILLS[id].cls)} Lv${SKILLS[id].lv}`);
-  const best = Object.keys(got).reduce((b, id) => (BOOK_BAND_OF[id] > BOOK_BAND_OF[b] ? id : b), Object.keys(got)[0]);
-  queueModal({ title: `${I.name} ${n}권을 펼쳤다${BOOK_BAND_OF[best] >= 3 ? ' — ' + BOOK_BAND[BOOK_BAND_OF[best]].n + '!' : ''}`, body: rows.concat(['나온 스킬북은 창고 스킬북 칸에 들어갔어요. 모험가 창 → 스킬에서 배우고, 같은 책을 한 권 더 바치면 스킬 단계가 올라요.']) });
-  log(`${I.name} ${n}권을 펼쳐 ${Object.entries(got).map(([id, c]) => SKILLS[id].name + (c > 1 ? ` ×${c}` : '')).join(', ')} 스킬북을 얻었다.`, 'good');
+  const got = {}, order = []; let done = 0;
+  for (let i = 0; i < n; i++) {
+    if (whFree(-1) <= 0 && (S.inv[k] || 0) > 1) break;
+    const id = drawBook(t); if (!id) break;
+    addTo(S.inv, k, -1); addTo(S.inv, 'book_' + id, 1); done++;
+    got[id] = (got[id] || 0) + 1; order.push(id);
+    if (S.dex) { S.dex.items = S.dex.items || {}; S.dex.items['book_' + id] = 1; }
+  }
+  if (!done) return WH_FULL;
+  const ids = Object.keys(got).sort((x, y) => BOOK_BAND_OF[y] - BOOK_BAND_OF[x] || SKILLS[x].lv - SKILLS[y].lv);
+  const best = ids[0], rare = BOOK_BAND_OF[best] >= 3;
+  const rows = ids.map(id => `<div class="li bkres rq${bookGrade(id)}">${iconImg('book_' + id)}<div class="grow stack"><span>${SKILLS[id].name}${got[id] > 1 ? ` <b class="num">×${got[id]}</b>` : ''} ${gradeTag(bookGrade(id))}</span><span class="sub muted">${BOOK_BAND[BOOK_BAND_OF[id]].n} ${pctTxt(BOOK_P[id])} · ${clsList(SKILLS[id].cls)} Lv${SKILLS[id].lv}${(S.inv['book_' + id] || 0) > got[id] ? ` · 창고 ${S.inv['book_' + id]}권` : ''}</span></div></div>`).join('');
+  log(`${I.name} ${done}권을 펼쳐 ${ids.map(id => SKILLS[id].name + (got[id] > 1 ? ` ×${got[id]}` : '')).join(', ')} 스킬북을 얻었다.`, 'good');
+  const left = S.inv[k] || 0, btns = [];
+  if (left >= 1) btns.push({ label: `하나 더 펼치기 (${left})`, fn: () => { say(openTierBook(k, 1)); renderPanel(true); saveGame(); } });
+  if (left >= 10) btns.push({ label: '10권 더', fn: () => { say(openTierBook(k, 10)); renderPanel(true); saveGame(); } });
+  btns.push({ label: '확인', cls: 'gold' });
+  openModal(`${I.name} ${done}권을 펼쳤다${rare ? ' — ' + BOOK_BAND[BOOK_BAND_OF[best]].n + '!' : ''}`, `<div class="list">${rows}</div><p class="sub muted">${done < n ? `메인 창고에 빈 칸이 없어 ${done}권만 펼쳤어요. ` : ''}나온 스킬북은 창고 스킬북 칸에 들어갔어요. 모험가 창 → 스킬에서 배우고, 같은 책을 한 권 더 바치면 스킬 단계가 올라요. 남는 책은 도서관에서 합성해요.</p>`, btns);
   changed(); return '';
 }
-// 도서관: 스킬북 단계 만들기 (world30.js 도서관 창을 바꾼다)
-function craftTierBook(k) {
-  const R = LIB_TIER_BOOKS[k]; if (!R) return '';
-  if (!S.bld.library) return '도서관이 필요해요.';
-  if ((S.bld.library || 0) < R.lib) return `도서관 ${R.lib}단계부터 만들어요.`;
-  const fee = libTierFee(k);
-  if (S.gold < fee) return '돈이 모자라요.';
-  const short = Object.entries(R.need).find(([m, q]) => (S.inv[m] || 0) < q);
-  if (short) return `${ITEMS[short[0]].name}이(가) ${short[1] - (S.inv[short[0]] || 0)}개 모자라요.`;
-  S.gold -= fee; S.stats.spent = (S.stats.spent || 0) + fee;
-  Object.entries(R.need).forEach(([m, q]) => addTo(S.inv, m, -q));
-  stashItem(k, 1); S.stats.books = (S.stats.books || 0) + 1;
-  log(`도서관에서 「${ITEMS[k].name}」을(를) 만들었다. (${g$(fee)})`, 'good');
+/* ── 도서관: 스킬북 합성 (사용자 「만들기 말고 장비처럼 합성」) — 같은 레어도 스킬북 9권 → 다음 레어도 스킬북 하나 (아주 드물게 두 단계) ── */
+const lfState = () => (UI.lfuse = UI.lfuse || { g: 1, ids: [] });
+const isBookItem = k => !!(ITEMS[k] && (ITEMS[k].book || ITEMS[k].btier != null));
+const lfCands = g => Object.keys(S.inv).filter(k => isBookItem(k) && S.inv[k] > 0 && itemGrade(k) === g);
+const lfOut = g => Object.keys(BOOK_W).filter(id => ITEMS['book_' + id] && bookGrade(id) === g);   // 그 레어도로 나올 수 있는 스킬북
+function lfClean() {
+  const F = lfState(), cnt = {};
+  F.ids = F.ids.filter(k => { if (!isBookItem(k) || itemGrade(k) !== F.g) return false; cnt[k] = (cnt[k] || 0) + 1; return cnt[k] <= (S.inv[k] || 0); }).slice(0, LIB_FUSE.n);
+  return F;
+}
+const lfUsed = (F, k) => F.ids.filter(x => x === k).length;
+function lfAuto() {   // 가장 낮은 것부터: 기준가 낮은 책 · 많이 가진 책 먼저
+  const F = lfClean(), C = lfCands(F.g).sort((x, y) => ITEMS[x].v - ITEMS[y].v || (S.inv[y] || 0) - (S.inv[x] || 0));
+  for (const k of C) while (F.ids.length < LIB_FUSE.n && lfUsed(F, k) < (S.inv[k] || 0)) F.ids.push(k);
+}
+function lfWhy() {
+  const F = lfClean(), lib = S.bld.library || 0;
+  if (!lib) return '도서관이 필요해요';
+  if (lib < LIB_FUSE.lib[F.g]) return `도서관 ${LIB_FUSE.lib[F.g]}단계부터`;
+  if (!lfOut(F.g + 1).length) return `${gradeName(F.g + 1)} 스킬북이 아직 없어요`;
+  if (F.ids.length < LIB_FUSE.n) return `${LIB_FUSE.n - F.ids.length}권 더 넣어요`;
+  if (S.gold < LIB_FUSE.fee[F.g]) return `${fmt(LIB_FUSE.fee[F.g])}G가 필요해요`;
+  const cnt = {}; F.ids.forEach(k => { cnt[k] = (cnt[k] || 0) + 1; });
+  if (whFree(-1) + freedBy(cnt) <= 0) return '메인 창고에 빈 칸이 없어요';
+  return '';
+}
+function lfPick(g) { const L = lfOut(g), sum = L.reduce((x, id) => x + BOOK_W[id], 0); let r = rnd() * sum; for (const id of L) { r -= BOOK_W[id]; if (r <= 0) return id; } return L[L.length - 1]; }
+function lfDo() {
+  const why = lfWhy(); if (why) return why;
+  const F = lfState(), g = F.g;
+  S.gold -= LIB_FUSE.fee[g]; S.stats.spent = (S.stats.spent || 0) + LIB_FUSE.fee[g];
+  F.ids.forEach(k => addTo(S.inv, k, -1));
+  const jump = lfOut(g + 2).length && rnd() < LIB_FUSE.jump, ng = g + (jump ? 2 : 1), id = lfPick(ng);
+  addTo(S.inv, 'book_' + id, 1); F.ids = []; S.stats.books = (S.stats.books || 0) + 1;
+  if (S.dex) { S.dex.items = S.dex.items || {}; S.dex.items['book_' + id] = 1; }
+  log(`도서관에서 ${gradeName(g)} 스킬북 ${LIB_FUSE.n}권을 합성해 ${gradeName(ng)} 「${ITEMS['book_' + id].name}」을(를) 얻었다.${jump ? ' 대성공 — 두 단계 위!' : ''}`, 'good');
+  openModal(jump ? '스킬북 합성 대성공!' : '스킬북 합성', `<div class="list"><div class="li bkres rq${ng}">${iconImg('book_' + id)}<div class="grow stack"><span>${SKILLS[id].name} ${gradeTag(ng)}</span><span class="sub muted">${clsList(SKILLS[id].cls)} Lv${SKILLS[id].lv} · ${BOOK_BAND[BOOK_BAND_OF[id]].n}</span></div></div></div><p class="sub muted">${gradeName(g)} 스킬북 ${LIB_FUSE.n}권이 하나로 묶였어요.${jump ? ` 아주 드물게(${Math.round(LIB_FUSE.jump * 100)}%) 두 단계 위가 나왔어요!` : ''}</p>`, [{ label: '확인', cls: 'gold' }]);
   changed(); return '';
 }
-BLD_SUM.library = () => `<div class="sub">양피지 ${S.inv.parchment || 0} · 먹물 ${S.inv.ink || 0} · 스킬북 단계 ${Object.keys(LIB_TIER_BOOKS).filter(k => (S.bld.library || 0) >= LIB_TIER_BOOKS[k].lib).length}가지 제작</div>`;
+BLD_SUM.library = () => { const n = Object.keys(S.inv).filter(isBookItem).reduce((x, k) => x + (S.inv[k] || 0), 0); return `<div class="sub">창고 스킬북 ${n}권 · 같은 레어도 ${LIB_FUSE.n}권을 합성해요</div>`; };
 BLD_BOX.library = () => {
-  const rows = Object.entries(LIB_TIER_BOOKS).map(([k, R]) => {
-    const ok = (S.bld.library || 0) >= R.lib, fee = libTierFee(k), can = ok && S.gold >= fee && Object.entries(R.need).every(([m, q]) => (S.inv[m] || 0) >= q), t = ITEMS[k].btier;
-    return `<div class="li${ok ? '' : ' dim'}">${iconImg(k)}<div class="grow stack"><span>${ITEMS[k].name} ${gradeTag(itemGrade(k))}${S.inv[k] ? ` <span class="muted">· 창고 ${S.inv[k]}권</span>` : ''}</span><span class="sub">${ITEMS[k].desc} (나오는 스킬 ${BOOK_POOL[t].length}개)</span><span class="sub muted">${Object.entries(R.need).map(([m, q]) => `${ITEMS[m].name} ${q}`).join(' · ')} · ${fmt(fee)}G${ok ? '' : ` · 도서관 ${R.lib}단계`}</span></div><button type="button" class="btn sm gold" data-act="libtb" data-k="${k}"${can ? '' : ' disabled'}>만들기</button></div>`;
-  }).join('');
-  return `<div class="sub">스킬북은 이제 스킬북 단계로 나와요 — 도서관에서 양피지 · 먹물로 만들고, 창고에서 펼치면 그 차수 스킬북 하나가 뽑혀요. 훈련소에서 배우고, 같은 책을 한 권 더 바치면 스킬 단계를 올려요.</div>
-    <div class="row sub"><span class="grow">양피지 <b class="num">${S.inv.parchment || 0}</b> <span class="muted">· 하나 ${ITEMS.parchment.buy}G</span></span><button type="button" class="btn sm" data-act="libbuy" data-k="parchment" data-n="5"${S.gold >= ITEMS.parchment.buy * 5 ? '' : ' disabled'}>5개</button></div>
-    <div class="row sub"><span class="grow">먹물 <b class="num">${S.inv.ink || 0}</b> <span class="muted">· 하나 ${ITEMS.ink.buy}G</span></span><button type="button" class="btn sm" data-act="libbuy" data-k="ink" data-n="5"${S.gold >= ITEMS.ink.buy * 5 ? '' : ' disabled'}>5개</button></div>
-    <div class="list">${rows}</div>`;
+  const F = lfClean(), why = lfWhy(), lib = S.bld.library || 0;
+  const chips = QUALITY.slice(0, GRADE_MAX).map((Q, g) => { const n = lfCands(g).reduce((x, k) => x + (S.inv[k] || 0), 0); return `<button type="button" class="btn sm q${g}${F.g === g ? ' on' : ''}" data-act="lfg" data-g="${g}"${lib >= LIB_FUSE.lib[g] ? '' : ' disabled'}>${Q.name} <small>${n}</small></button>`; }).join('');
+  const slots = Array.from({ length: LIB_FUSE.n }, (_, i) => { const k = F.ids[i]; return k ? `<button type="button" class="cell${rq(itemGrade(k))}" data-act="lfrm" data-i="${i}" title="빼기">${iconImg(k, 'ico lg')}${whGems(itemGrade(k))}</button>` : `<span class="cell empty fslot">${i + 1}</span>`; }).join('');
+  const rest = lfCands(F.g).map(k => { const left = (S.inv[k] || 0) - lfUsed(F, k); return left > 0 ? `<button type="button" class="cell${rq(F.g)}" data-act="lfadd" data-k="${k}" title="${esc(ITEMS[k].name)}">${iconImg(k, 'ico lg')}${whGems(F.g)}<b class="qty">${left}</b></button>` : ''; }).filter(Boolean);
+  return `<div class="sub muted">같은 레어도 스킬북 ${LIB_FUSE.n}권을 넣으면 <b class="q${F.g + 1}">${gradeName(F.g + 1)}</b> 스킬북 하나가 무작위로 나와요(스킬마다 뽑기 무게대로). 아주 드물게(${Math.round(LIB_FUSE.jump * 100)}%) 두 단계 위가 나와요. 펼치지 않은 스킬북 단계(찢어진 · 낡은 …)도 넣을 수 있어요.</div>
+    <div class="btns">${chips}</div>
+    <div class="igrid fuse">${slots}</div>
+    <div class="btns"><button type="button" class="btn sm" data-act="lfauto"${F.ids.length < LIB_FUSE.n && rest.length ? '' : ' disabled'}>가장 낮은 책 자동으로 넣기</button><button type="button" class="btn sm" data-act="lfclr"${F.ids.length ? '' : ' disabled'}>비우기</button><button type="button" class="btn gold grow" data-act="lfgo"${why ? ' disabled' : ''}>${why || `합성하기 · ${fmt(LIB_FUSE.fee[F.g])}G`}</button></div>
+    <div class="sec"><b>넣을 수 있는 스킬북</b><span>${gradeName(F.g)} · 메인 창고</span></div>
+    <div class="igrid book">${whPad(rest, 6).join('')}</div>`;
 };
 
 /* ── 대장간 합성: 같은 레어도 · 같은 갈래 9점 → 다음 레어도 무작위 장비 ── */
@@ -250,6 +297,14 @@ function fuseBox() {
 }
 
 Object.assign(ACT, {
+  invsel: d => { UI.invSel = d.id; UI.invPop = UI.invPop === d.id ? null : d.id; renderPanel(true); },   // 같은 칸을 다시 누르면 닫힌다
+  invpop: () => { UI.invPop = null; renderPanel(true); },
+  lfg: d => { const F = lfState(); F.g = +d.g; F.ids = []; renderPanel(true); },
+  lfadd: d => { const F = lfClean(); if (F.ids.length < LIB_FUSE.n && lfUsed(F, d.k) < (S.inv[d.k] || 0)) F.ids.push(d.k); renderPanel(true); },
+  lfrm: d => { const F = lfState(); F.ids.splice(+d.i, 1); renderPanel(true); },
+  lfauto: () => { lfAuto(); renderPanel(true); },
+  lfclr: () => { lfState().ids = []; renderPanel(true); },
+  lfgo: () => { say(lfDo()); renderPanel(true); },
   whsel: d => { const i = +d.i; if (i >= whOpenN()) { say(`${whName(i)}는 ${RANKS[whOpenAt(i)] ? RANKS[whOpenAt(i)].name : 'S'}랭크에 열려요.`); return; } UI.wh = i; UI.invSel = null; if (i >= 0 && UI.invTab === 'stand') UI.invTab = 'mat'; const top = winTop(); if (top) top.tab = 'wh' + i; renderPanel(true); },
   whto: d => { UI.whTo = +d.i; renderPanel(true); },
   whmv: d => { say(whMoveItem(d.k, +d.q, +d.f, +d.t)); renderPanel(true); },
@@ -257,7 +312,6 @@ Object.assign(ACT, {
   whsort: d => { say(whSort(+d.i)); UI.invSel = null; renderPanel(true); },
   invjob: d => { UI.invJob = d.id; UI.invSel = null; const top = winTop(); if (top) top.tab = 'job' + d.id; renderPanel(true); },
   bkopen: d => { say(openTierBook(d.k, +d.n)); renderPanel(true); },
-  libtb: d => { say(craftTierBook(d.k)); renderPanel(true); },
   fuseopen: d => { const g = S.gear.find(x => x.id === +d.id); if (g) { const F = fuseState(); F.cat = fuseCatOf(g); F.q = g.q || 0; F.ids = [g.id]; } UI.smithTab = 'fuse'; openWin('b', { b: 'smithy', tab: 'fuse' }); },
   fusecat: d => { const F = fuseState(); F.cat = d.c; F.ids = []; renderPanel(true); },
   fuseq: d => { const F = fuseState(); F.q = +d.q; F.ids = []; renderPanel(true); },
@@ -267,7 +321,7 @@ Object.assign(ACT, {
   fuseclr: () => { fuseState().ids = []; renderPanel(true); },
   fusego: () => { say(fuseDo()); renderPanel(true); }
 });
-ACT_SFX.bkopen = 'loot'; ACT_SFX.fusego = 'lvl';
+ACT_SFX.bkopen = 'loot'; ACT_SFX.fusego = 'lvl'; ACT_SFX.lfgo = 'lvl';
 
 // 옛 저장: 창고 1~10을 만들고 메인 창고를 한 번 레어도 순서로 정리해 둔다 (예전엔 창이 값 순서로 보여 줬다) · 알림
 function notes63b() {

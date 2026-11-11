@@ -11,6 +11,7 @@ function cookWhy(id) {
   const miss = Object.entries(F.need).find(([k, q]) => (S.inv[k] || 0) < q);
   if (miss) return `${ITEMS[miss[0]].name}이(가) 모자라요 (${S.inv[miss[0]] || 0}/${miss[1]}).`;
   if (S.gold < cookFee(F)) return '돈이 모자라요.';
+  if (!roomItem('food_' + id, freedBy(F.need))) return WH_FULL;
   return '';
 }
 function cookFood(id, quiet) {
@@ -30,6 +31,7 @@ function buyFoodMat(k, n) {
   const price = KITCHEN_BUY[k]; if (!price) return '';
   n = Math.max(1, n || 1);
   if (S.gold < price * n) return '돈이 모자라요.';
+  if (!roomItem(k)) return WH_FULL;
   S.gold -= price * n; S.stats.spent = (S.stats.spent || 0) + price * n; addTo(S.inv, k, n);
   changed();
   return '';

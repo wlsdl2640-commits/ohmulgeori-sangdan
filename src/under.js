@@ -167,7 +167,7 @@ function arenaWipe(p) {
   e.pos = Math.min(e.pos, STAGE_LEN * 0.2);
 }
 // 투기장 상단: 코인으로만 산다
-const ARENA_TIER_BOOKS = [['bk_old', 60], ['bk_faded', 150], ['bk_myst', 400]];   // 투기장 코인으로 사는 스킬북 단계
+const ARENA_TIER_BOOKS = [['bk_old', 600], ['bk_faded', 1800], ['bk_myst', 4500]];   // 투기장 코인으로 사는 스킬북 단계 — 아주 비싸게 (하루 최대 150코인, 사용자 「드랍 외에는 더 어렵게」)
 function arenaShop() {
   const t = arenaTier();
   const gear = ARENA_GEAR.map(b => ({ kind: 'gear', base: b, t, q: 3, price: GTYPES[b].slot === 'acc' ? 150 : 100 + t * 30 }));
@@ -178,6 +178,7 @@ function arenaBuy(kind, id) {
   const U = S.under.arena, o = arenaShop().find(x => x.kind === kind && (x.base === id || x.id === id));
   if (!o) return '';
   if (U.coins < o.price) return `투기장 코인이 모자라요 (${o.price} 필요).`;
+  if (kind === 'gear' ? !roomGear() : !roomItem(kind === 'item' ? o.id : 'book_' + o.id)) return WH_FULL;
   U.coins -= o.price;
   if (kind === 'gear') { const g = makeGear(o.base, o.t, o.q); S.gear.push(g); log(`투기장 상단에서 ${gearName(g)}을(를) 샀다. (코인 ${o.price})`); return `${gearName(g)}을(를) 창고에 넣었어요.`; }
   const it = kind === 'item' ? o.id : 'book_' + o.id;
@@ -190,13 +191,14 @@ function bmRefresh(k) {
   const B = S.under.bm, t0 = arenaTier();
   B.day = k; B.stock = [];
   for (let i = 0; i < 3; i++) { const t = Math.max(0, t0 - (rnd() < 0.4 ? 1 : 0)), q = pickOne([2, 2, 3, 3, 4]); const g = makeGear(dropBase(), t, q); B.stock.push({ kind: 'gear', g, price: Math.round(gearValue(g) * 3 / 10) * 10 }); }
-  for (let i = 0; i < 2; i++) { const it = tierBookFor(t0, i === 1); B.stock.push({ kind: 'item', it, price: Math.round(ITEMS[it].v * 2.5 / 10) * 10 }); }   // 빌드 63: 스킬북 단계 (상단 수준으로, 둘째는 한 줄 위)
+  if (rnd() < BOOK_SHOP.bm) { const it = tierBookFor(t0, true); if (it) B.stock.push({ kind: 'item', it, price: Math.round(ITEMS[it].v * BOOK_SHOP.mul / 10) * 10 }); }   // 빌드 63: 스킬북 단계 — 가끔 한 권, 아주 비싸게
   const r = runeId(pickOne(RUNE_IDS), rnd() < 0.3 ? 1 : 0); if (ITEMS[r]) B.stock.push({ kind: 'item', it: r, price: Math.round(ITEMS[r].v * 2 / 10) * 10 });
 }
 function bmBuy(i) {
   const B = S.under.bm, o = B.stock[i];
   if (!o || o.sold) return '';
   if (S.gold < o.price) return '돈이 모자라요.';
+  if (o.kind === 'gear' ? !roomGear() : !roomItem(o.it)) return WH_FULL;
   S.gold -= o.price; o.sold = 1; S.stats.spent = (S.stats.spent || 0) + o.price;
   if (o.kind === 'gear') { S.gear.push(o.g); log(`암시장에서 ${gearName(o.g)}을(를) ${fmt(o.price)}G에 샀다.`); return `${gearName(o.g)}을(를) 창고에 넣었어요.`; }
   addTo(S.inv, o.it, 1); log(`암시장에서 ${ITEMS[o.it].name}을(를) ${fmt(o.price)}G에 샀다.`);
@@ -243,7 +245,7 @@ function auClose() {
   const A = S.under && S.under.au;
   if (!A || !A.g) return;
   if (A.top === 'me') {
-    S.gear.push(A.g); A.held = 0;
+    stashGear(A.g); A.held = 0;   // 낙찰: 넘치면 창고 1~10 → 길드
     log(`경매장에서 ${gearName(A.g)}을(를) ${fmt(A.price)}G에 낙찰받았다!`, 'good');
     queueModal({ title: '낙찰', body: [`경매장의 ${gearName(A.g)}(${QUALITY[A.g.q].name})이(가) ${fmt(A.price)}G에 우리 것이 됐다. 창고에 들어 있다.`] });
   } else if (A.bids) log(`경매장의 ${gearName(A.g)}은(는) ${A.npc}에게 ${fmt(A.price)}G에 넘어갔다.`);
@@ -253,7 +255,7 @@ function auClose() {
 /* ───────── 왕국 상단이 팔러 온 것 ───────── */
 function kingGoods(D) {
   const goods = (D.sells || []).filter(it => ITEMS[it]).sort(() => rnd() - 0.5).slice(0, 2).map(it => ({ it, n: ri(6, 12), price: Math.round(ITEMS[it].v * 1.3) }));
-  if ((D.books || []).length) goods.push(rnd() < 0.25 ? { it: 'bk_myst', n: 1, price: Math.round(ITEMS.bk_myst.v * 1.2) } : { it: 'bk_faded', n: rnd() < 0.5 ? 1 : 2, price: Math.round(ITEMS.bk_faded.v * 1.2) });   // 빌드 63: 왕국 스킬북 대신 빛바랜(가끔 신비한) 스킬북
+  if ((D.books || []).length && rnd() < BOOK_SHOP.king) { const it = rnd() < 0.2 ? 'bk_myst' : 'bk_faded'; goods.push({ it, n: 1, price: Math.round(ITEMS[it].v * BOOK_SHOP.mul) }); }   // 빌드 63: 왕국 스킬북 대신 가끔 빛바랜(드물게 신비한) 스킬북 한 권 — 아주 비싸게
   return goods;
 }
 function kingBuy(i) {
@@ -261,6 +263,7 @@ function kingBuy(i) {
   if (!o) return '';
   if (o.n <= 0) return '다 팔렸어요.';
   if (S.gold < o.price) return '돈이 모자라요.';
+  if (!roomItem(o.it)) return WH_FULL;
   S.gold -= o.price; o.n--; addTo(S.inv, o.it, 1); S.stats.spent = (S.stats.spent || 0) + o.price;
   S.king.favor[v.k] = favorOf(v.k) + o.price / 800;
   log(`${KINGDOMS[v.k].name} 상단에서 ${ITEMS[o.it].name}을(를) ${fmt(o.price)}G에 샀다.`);

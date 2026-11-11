@@ -1152,7 +1152,7 @@ function kill(p, e, f) {
   if ((f.boss && !f.fb) || (f.fb && rnd() < 0.6) || rnd() < (inD ? 0.025 : 0.006) * ap) lootGear(p, e, makeGear(dropBase(), gt, rollQuality(f.boss ? 0.25 : 0)));
   { const ea = elemArrowOf(f.id); if (ea && rnd() < (f.boss || f.fb ? 0.3 : 0.012) * ap) lootGear(p, e, makeGear(ea, gt, 0)); }   // 속성 화살: 그 속성 몬스터한테서
   // 스킬북: 빌드 63부터 모든 몬스터가 스킬북 단계를 떨어뜨린다 — 확률은 예전 그대로(bookRate), 어느 책인지는 그 땅의 단계로(우두머리 · 주인은 한 줄 위) · 감정 연구 · 전리품 운이 확률을 올린다
-  if (rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) loot(p, e, tierBookFor(F.treasure ? raidTier(e.lvo || 10) : F.tier != null ? F.tier : tierOfLv(f.lv), f.boss || f.fb), 1);
+  if (rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck))) { const tb = tierBookFor(F.treasure ? raidTier(e.lvo || 10) : F.tier != null ? F.tier : tierOfLv(f.lv), f.boss || f.fb); if (tb) loot(p, e, tb, 1); }   // 꽝이면 없음
   bossParts(p, e, f, inD);
   stoneDrops(p, e, f, luck);
   mapDrops(p, e, f, luck);
@@ -1308,7 +1308,7 @@ function arrive(p) {
   const e = p.exp;
   if (e.area === 'trade') tradeHome(p, e);   // 교역: 못 판 짐은 창고로, 보고
   const got = Object.assign({}, e.bag), val = vOf(got);
-  for (const [k, q] of Object.entries(e.sup)) addTo(S.inv, k, q);   // 남은 보급품은 메인 창고에서 가져간 것
+  for (const [k, q] of Object.entries(e.sup)) stashItem(k, q);   // 남은 보급품 (메인에 같은 것이 없고 칸도 없으면 창고 1~10)
   unloadBag(p, e.bag, e.gbag);   // 빌드 63: 메인 창고가 차면 창고 1~10으로, 그래도 빈 칸이 없으면 길드에 판다 (store.js)
   autoFulfill();   // 의뢰품이 다 모였으면 먼저 전달하고, 남는 것을 판다
   autoSellRun(p.name);
@@ -1334,7 +1334,7 @@ function arrive(p) {
 function leave(a, why) {
   const p = partyOf(a.id);
   if (p) p.members = p.members.filter(id => id !== a.id);
-  SLOTS.forEach(([s]) => { if (a.eq[s]) { S.gear.push(a.eq[s]); a.eq[s] = null; } });
+  SLOTS.forEach(([s]) => { if (a.eq[s]) { stashGear(a.eq[s]); a.eq[s] = null; } });   // 떠난 모험가의 장비 (넘치면 창고 1~10 → 길드)
   S.advs = S.advs.filter(x => x.id !== a.id);
   log(`${a.name}이(가) ${why}`, 'bad');
 }

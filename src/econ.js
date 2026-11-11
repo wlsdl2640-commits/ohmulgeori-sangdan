@@ -282,6 +282,7 @@ function unequip(aid, slot) {
   const a = advById(aid);
   if (!a || !a.eq[slot]) return '';
   if (a.status !== 'idle') return '원정 중에는 장비를 바꿀 수 없어요.';
+  if (!roomGear()) return WH_FULL;   // 빌드 63: 창고가 가득 차면 못 뺀다
   S.gear.push(a.eq[slot]); a.eq[slot] = null;
   clampVitals(a); changed();
   return '';
@@ -357,6 +358,7 @@ function buyAmmoWhy(base, t) {
   if (!GTYPES[base] || !GTYPES[base].ammo) return '화살·표창만 살 수 있어요';
   if (!S.bld.smithy) return '대장간이 필요해요';
   if (!GTIERS[t] || S.bld.smithy < GTIERS[t].smith) return `대장간 Lv${GTIERS[t] ? GTIERS[t].smith : '?'}부터`;
+  if (!roomGear()) return '메인 창고에 빈 칸이 없어요';
   if (S.gold < ammoPrice(base, t)) return `${fmt(ammoPrice(base, t))}G가 필요해요`;
   return '';
 }
@@ -392,9 +394,10 @@ function sellGear(gid) {
 const smithFee = (t, q = 0) => Math.round(recipeFee(t) * (spn('dwarves') >= 1 ? 0.7 : 1) * (1 - relic('smith')) * (q >= 3 ? BOSS_RECIPE[q].fee : 1));
 const smithNeed = (base, t, q = 0) => (q >= 3 ? bossNeed(base, t, q) : recipeNeed(base, t));
 const smithLv = (t, q = 0) => Math.max(GTIERS[t].smith, q >= 3 ? BOSS_RECIPE[q].smith : 0);
-const canSmith = (base, t, q = 0) => S.bld.smithy >= smithLv(t, q) && Object.entries(smithNeed(base, t, q)).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= smithFee(t, q);
+const canSmith = (base, t, q = 0) => S.bld.smithy >= smithLv(t, q) && Object.entries(smithNeed(base, t, q)).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= smithFee(t, q) && roomGear(1, freedBy(smithNeed(base, t, q)));
 function smith(base, t, q = 0) {
   if (S.bld.smithy < smithLv(t, q)) return `대장간 Lv${smithLv(t, q)}이 있어야 해요.`;
+  if (!roomGear(1, freedBy(smithNeed(base, t, q)))) return WH_FULL;
   if (!canSmith(base, t, q)) return '재료나 돈이 모자라요.';
   Object.entries(smithNeed(base, t, q)).forEach(([k, n]) => addTo(S.inv, k, -n));
   S.gold -= smithFee(t, q);
@@ -433,6 +436,7 @@ function runeOut(gid, i) {
   if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
   const rid = f.g.runes[i], fee = RUNE_OUT[ITEMS[rid].rune[1]];
   if (S.gold < fee) return `룬을 빼려면 ${g$(fee)}이 들어요.`;
+  if (!roomItem(rid)) return WH_FULL;
   S.gold -= fee; f.g.runes.splice(i, 1); addTo(S.inv, rid, 1);
   if (f.a) clampVitals(f.a);
   changed();
@@ -446,6 +450,7 @@ function runeFuse(rid) {
   if ((S.inv[rid] || 0) < RUNE_FUSE.n) return `같은 룬이 ${RUNE_FUSE.n}개 있어야 해요.`;
   const fee = RUNE_FUSE.fee[R[1]];
   if (S.gold < fee) return '돈이 모자라요.';
+  if (!roomItem(runeId(R[0], R[1] + 1), (S.inv[rid] || 0) === RUNE_FUSE.n ? 1 : 0)) return WH_FULL;
   S.gold -= fee; addTo(S.inv, rid, -RUNE_FUSE.n);
   const out = runeId(R[0], R[1] + 1); addTo(S.inv, out, 1);
   log(`마탑에서 룬을 합쳐 ${ITEMS[out].name}을(를) 만들었다.`, 'good');
@@ -457,6 +462,7 @@ function runeCarve(t) {
   const k = 'crest_' + t;
   if ((S.inv[k] || 0) < RUNE_CARVE.crest) return `${ITEMS[k].name} ${RUNE_CARVE.crest}개가 필요해요.`;
   if (S.gold < RUNE_CARVE.fee) return '돈이 모자라요.';
+  if (!roomGear(1, (S.inv[k] || 0) === RUNE_CARVE.crest ? 1 : 0)) return WH_FULL;   // 무작위 룬이라 빈 칸 하나를 둔다
   S.gold -= RUNE_CARVE.fee; addTo(S.inv, k, -RUNE_CARVE.crest);
   const out = runeId(pickOne(RUNE_IDS), 0); addTo(S.inv, out, 1);
   log(`마탑에서 ${ITEMS[k].name}에 ${ITEMS[out].name}을(를) 새겼다.`, 'good');
@@ -739,15 +745,17 @@ const buyPrice = it => Math.round(ITEMS[it].buy * (spn('clinic') >= 1 ? 0.8 : 1)
 function buy(it, q) {
   const cost = buyPrice(it) * q;
   if (S.gold < cost) return '돈이 모자라요.';
+  if (!roomItem(it)) return WH_FULL;
   S.gold -= cost; addTo(S.inv, it, q);
   changed();
   return '';
 }
 const craftFee = r => Math.round(r.fee * (1 - Math.max(0, S.bld.alchemy - 2) * 0.1));
-const canCraft = r => S.bld.alchemy >= r.lv && Object.entries(r.need).every(([k, q]) => (S.inv[k] || 0) >= q) && S.gold >= craftFee(r);
+const canCraft = r => S.bld.alchemy >= r.lv && Object.entries(r.need).every(([k, q]) => (S.inv[k] || 0) >= q) && S.gold >= craftFee(r) && roomItem(r.out, freedBy(r.need));
 function craft(i) {
   const r = RECIPES[i];
   if (S.bld.alchemy < r.lv) return r.lv > 1 ? '연금술 공방을 넓혀야 해요.' : '연금술 공방이 필요해요.';
+  if (!roomItem(r.out, freedBy(r.need))) return WH_FULL;
   if (!canCraft(r)) return '재료나 돈이 모자라요.';
   Object.entries(r.need).forEach(([k, q]) => addTo(S.inv, k, -q));
   S.gold -= craftFee(r); addTo(S.inv, r.out, 1);
@@ -883,8 +891,11 @@ function promoWhy(a, cls) {
   if ((a.rank || 0) < Q.rank) return `${LICENSE[Q.rank].name} 라이선스 필요`;
   if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
   if (S.gold < Q.fee) return '돈이 모자라요';
+  const mv = promoMoves(a, cls); if (mv > whFree(-1)) return `메인 창고에 빈 칸이 ${mv}개 있어야 해요 (새 직업에 안 맞는 장비를 넣을 자리)`;
   return '';
 }
+// 전직하면 창고로 빠지는 장비 수 (안 맞는 장비 · 활을 안 쏘게 되면 화살)
+function promoMoves(a, cls) { const b = Object.assign({}, a, { cls }); return SLOTS.filter(([sl]) => { const g = a.eq[sl]; return g && (!gearFits(b, g) || (sl === 'ammo' && !needsArrows(b))); }).length; }
 function useStone(aid, tid) {
   const a = advById(aid);
   if (!a) return '';
@@ -1010,15 +1021,15 @@ function raidReward(rec, i, half) {
   const gold = Math.round(raidGold(R.lv) * W.gold * k / 10) * 10, fame = Math.round(W.fame * k);
   S.gold += gold; S.stats.earned += gold; S.fame += fame;
   got.push(g$(gold), `명성 +${fame}`);
-  const np = Math.max(1, Math.round(W.part * k)); addTo(S.inv, 'rp_' + rec.id, np); got.push(`${ITEMS['rp_' + rec.id].name} ${np}개`);
-  if (W.heart && !half) { addTo(S.inv, 'rh_' + rec.id, W.heart); got.push(ITEMS['rh_' + rec.id].name); }
-  if (W.gear) { const q = Math.max(2, W.gear - (half ? 1 : 0)), g = makeGear(dropBase(), raidTier(R.lv), q); S.gear.push(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }
+  const np = Math.max(1, Math.round(W.part * k)); stashItem('rp_' + rec.id, np); got.push(`${ITEMS['rp_' + rec.id].name} ${np}개`);   // 보상: 넘치면 창고 1~10 → 길드 (store.js)
+  if (W.heart && !half) { stashItem('rh_' + rec.id, W.heart); got.push(ITEMS['rh_' + rec.id].name); }
+  if (W.gear) { const q = Math.max(2, W.gear - (half ? 1 : 0)), g = makeGear(dropBase(), raidTier(R.lv), q); stashGear(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }
   const rl = W.rune - (half ? 1 : 0);
-  if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); addTo(S.inv, id, 1); got.push(ITEMS[id].name); }
+  if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); stashItem(id, 1); got.push(ITEMS[id].name); }
   // 특성 돌: 개화석은 등수별 개수(몬스터가 떠나면 절반), 마법사의 돌은 등수별 낮은 확률
   const ri4 = Math.min(i, 3), bn = STONE_DROP.bloomstone.raidN[ri4], bq = half ? Math.floor(bn / 2) : bn;
-  if (bq > 0) { addTo(S.inv, 'bloomstone', bq); got.push(`개화석 ${bq}개`); }
-  if (rnd() < STONE_DROP.wizstone.raidP[ri4] * k) { addTo(S.inv, 'wizstone', 1); got.push('마법사의 돌'); }
+  if (bq > 0) { stashItem('bloomstone', bq); got.push(`개화석 ${bq}개`); }
+  if (rnd() < STONE_DROP.wizstone.raidP[ri4] * k) { stashItem('wizstone', 1); got.push('마법사의 돌'); }
   return `우리 상단 ${i + 1}위! 보상: ${got.join(', ')}`;
 }
 function raidEnd(rec, how) {

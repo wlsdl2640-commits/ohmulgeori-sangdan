@@ -658,3 +658,11 @@ details.card > .list { margin-top: 8px; }
 /* ───────── 빌드 63: 대장간 합성 ───────── */
 .igrid.fuse { grid-template-columns: repeat(3, 54px); justify-content: center; gap: 5px; padding: 10px; background: radial-gradient(circle at 50% 50%, #2a1e14, #121620 80%); border-color: #4a3c28; }
 .igrid.fuse .cell.fslot { font-size: 11px; color: #5a5038; background: #1e1a14; border-color: #4a3c28; border-style: dashed; }
+
+/* ───────── 빌드 63: 고른 칸 정보창 (창 아래에 붙어 바로 보임 · 닫기) · 스킬북 결과 줄 ───────── */
+.ipop { position: sticky; bottom: 0; z-index: 5; margin: 6px -4px 0; padding: 0 4px 4px; max-height: 60vh; overflow-y: auto; background: var(--app); border-top: 2px solid var(--gold-d); box-shadow: 0 -12px 18px rgba(0, 0, 0, .6); animation: winup .14s ease-out; }
+.ipop-h { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 0 4px; background: var(--app); font-size: 12px; color: var(--ink-3); }
+.ipop-h b { color: var(--gold); font-weight: 700; }
+.ipop .idet { margin-bottom: 4px; }
+.li.bkres { border-left-width: 4px; }
+.li.bkres.rq1 { border-left-color: #4a8a3e; } .li.bkres.rq2 { border-left-color: #3c76b8; } .li.bkres.rq3 { border-left-color: #9356cc; } .li.bkres.rq4 { border-left-color: #e0a032; } .li.bkres.rq5 { border-left-color: #ff6a5a; } .li.bkres.rq6 { border-left-color: #fff4b0; }
