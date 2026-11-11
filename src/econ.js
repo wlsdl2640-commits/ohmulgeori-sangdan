@@ -1,7 +1,7 @@
 /* ───────── 새 게임과 저장 이전 ───────── */
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
-  gladiator: 'sword', champion: 'sword', knight: 'sword', paladin: 'sword', berserker: 'axe', bloodlord: 'axe',
+  gladiator: 'gladius', champion: 'gladius', knight: 'sword', paladin: 'sword', berserker: 'great', bloodlord: 'great',   // 빌드 64: 2차 무기는 늪지 단계부터 (weaponOf, data-warr.js)
   ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute', coachman: 'club', caravanmaster: 'axe', scout: 'bow', pathfinder: 'bow', mhunter: 'bow', dslayer: 'bow', huntsman: 'bow', kaijuhunter: 'bow', sorcerer: 'staff', archmage: 'staff', elemancer: 'staff', alchemist: 'staff',
   assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'dagger', masterthief: 'dagger',
   elementalist: 'staff', elementlord: 'staff', necromancer: 'staff', lich: 'staff', spellblade: 'sword', arcblade: 'sword',
@@ -32,7 +32,7 @@ function blankState(company) {
 function newParty(name, members) {
   return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null, wagon: null, horse: null, wagonPlus: 0, dmode: 'ask', campNight: true, start: 1, pet: null };
 }
-function starterGear(a) { a.eq.weapon = makeGear(WEAPON_OF[a.cls], 0, 0); const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp; }
+function starterGear(a) { a.eq.weapon = makeGear(weaponOf(a.cls, 0), 0, 0); const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp; }
 function newGame(company) {
   S = blankState(company);
   const w = makeAdv({ cls: 'warrior', name: '브람', bio: '오물거리에서 나고 자란 덩치. 당신의 첫 직원이다.' });
@@ -188,7 +188,7 @@ function makeCand() {
   const a = makeAdv({ lv });
   if (spn('guild') >= 3) a.salary = Math.round(a.salary * 0.9 / 5) * 5;
   a.fee = a.salary; a.cond = cond;
-  if (rnd() < 0.35) { const t = Math.max(0, GTIERS.reduce((m, T, i) => (a.lv >= T.lv ? i : m), 0) - 1); a.eq.weapon = makeGear(WEAPON_OF[a.cls], t, 0); }
+  if (rnd() < 0.35) { const t = Math.max(0, GTIERS.reduce((m, T, i) => (a.lv >= T.lv ? i : m), 0) - 1); a.eq.weapon = makeGear(weaponOf(a.cls, t), t, 0); if (twoHand(a.eq.weapon)) a.eq.off = null; }
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
   return a;
 }
@@ -272,9 +272,12 @@ function equip(aid, gid) {
   const g = S.gear[i];
   if (!gearFits(a, g) || (GTYPES[g.base].slot === 'ammo' && !needsArrows(a))) return `${a.name}은(는) 이 장비를 쓸 수 없어요.`;
   const slot = GTYPES[g.base].slot;
+  if (slot === 'off' && twoHand(a.eq.weapon)) return `${jo(GTYPES[a.eq.weapon.base].name, '은', '는')} 두 손으로 들어서 부장비를 함께 낄 수 없어요.`;   // 빌드 64
+  if (slot === 'weapon' && twoHand(g) && a.eq.off && a.eq.weapon && !roomGear()) return WH_FULL;   // 두 손 무기: 무기와 부장비가 함께 창고로
   S.gear.splice(i, 1);
   if (a.eq[slot]) S.gear.push(a.eq[slot]);
   a.eq[slot] = g; if (isAmmo(g)) g.n = null;   // 상단에서 끼우면 가득
+  if (slot === 'weapon') dropOffFor(a);
   clampVitals(a); changed();
   return '';
 }
@@ -377,6 +380,7 @@ function autoEquip(aid) {
   for (const [slot] of SLOTS) {
     const sc = g => gearScore(g) + mastGearBonus(a, g);   // 숙련한 무기·갑옷을 조금 더 쳐준다
     if (slot === 'ammo' && !needsArrows(a)) continue;   // 화살 칸은 활을 쏘는 직업만
+    if (slot === 'off' && twoHand(a.eq.weapon)) continue;   // 빌드 64: 두 손 무기(대검)를 들면 부장비 칸은 비운다
     const best = S.gear.filter(g => GTYPES[g.base].slot === slot && gearFits(a, g) && !GTYPES[g.base].el).sort((x, y) => sc(y) - sc(x))[0];   // 속성 화살은 출발할 때 고른다
     if (best && sc(best) > (a.eq[slot] ? sc(a.eq[slot]) : -1)) { equip(aid, best.id); n++; }
   }
@@ -394,8 +398,9 @@ function sellGear(gid) {
 const smithFee = (t, q = 0) => Math.round(recipeFee(t) * (spn('dwarves') >= 1 ? 0.7 : 1) * (1 - relic('smith')) * (q >= 3 ? BOSS_RECIPE[q].fee : 1));
 const smithNeed = (base, t, q = 0) => (q >= 3 ? bossNeed(base, t, q) : recipeNeed(base, t));
 const smithLv = (t, q = 0) => Math.max(GTIERS[t].smith, q >= 3 ? BOSS_RECIPE[q].smith : 0);
-const canSmith = (base, t, q = 0) => S.bld.smithy >= smithLv(t, q) && Object.entries(smithNeed(base, t, q)).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= smithFee(t, q) && roomGear(1, freedBy(smithNeed(base, t, q)));
+const canSmith = (base, t, q = 0) => tierOk(base, t) && S.bld.smithy >= smithLv(t, q) && Object.entries(smithNeed(base, t, q)).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= smithFee(t, q) && roomGear(1, freedBy(smithNeed(base, t, q)));
 function smith(base, t, q = 0) {
+  if (!GTYPES[base] || !tierOk(base, t)) return `${GTIERS[t] ? GTIERS[t].name : '그'} 단계에는 없는 장비예요.`;   // 빌드 64: 2차 직업 장비는 늪지 단계부터
   if (S.bld.smithy < smithLv(t, q)) return `대장간 Lv${smithLv(t, q)}이 있어야 해요.`;
   if (!roomGear(1, freedBy(smithNeed(base, t, q)))) return WH_FULL;
   if (!canSmith(base, t, q)) return '재료나 돈이 모자라요.';
@@ -789,7 +794,7 @@ function genReq() {
   const client = special ? pickOne(SPECIAL_CLIENTS) : pickOne(CLIENTS);
   const mult = (special ? 2.3 : 1) * (1 + 0.06 * (S.rank || 0));
   if (S.bld.smithy && rnd() < 0.3) {
-    const t = ri(0, maxGearTier()), base = dropBase(), v = gearValue({ base, t, q: 0 });
+    const t = ri(0, maxGearTier()), base = dropBase(t), v = gearValue({ base, t, q: 0 });
     S.reqs.push({ id: nid(), client, gear: `${base}:${t}`, qty: 1, reward: Math.round(v * (1.8 + rnd() * 0.5) * mult / 5) * 5, fame: Math.round((2 + t) * (special ? 3 : 1)), due: today() + ri(5, 9), special });
     return;
   }
@@ -801,7 +806,7 @@ function genReq() {
     fame: Math.round(Math.min(6, 1 + Math.floor(v * qty / 70)) * (special ? 3 : 1)), due: today() + ri(4, 7), special });
 }
 const reqHave = r => (r.gear ? gearsOfKey('g:' + r.gear).length : S.inv[r.item] || 0);
-const reqName = r => (r.gear ? `${GTIERS[+r.gear.split(':')[1]].name} ${GTYPES[r.gear.split(':')[0]].name}` : ITEMS[r.item].name);
+const reqName = r => (r.gear ? gearNameOf(r.gear.split(':')[0], r.gear.split(':')[1]) : ITEMS[r.item].name);
 // 장비 의뢰에 내줄 것: 가장 싼 것부터 (등급 낮고, 강화·룬 없는 것)
 const reqGearPick = r => gearsOfKey('g:' + r.gear).slice().sort((a, b) => ((a.q || 0) - (b.q || 0)) || ((a.plus || 0) - (b.plus || 0)) || ((a.runes || []).length - (b.runes || []).length))[0];
 const reqGearCheap = g => !!g && (g.q || 0) <= 1 && !(g.plus || 0) && !(g.runes || []).length;
@@ -940,7 +945,8 @@ function promote(aid, cls) {
   SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } });
   if (needsArrows(a) && !a.eq.ammo) { a.eq.ammo = makeGear('arrows', arrowTierOf(a.lv), 0); log(`${a.name}이(가) 활을 쏘게 되어 화살을 받았다.`); }
   if (!needsArrows(a) && a.eq.ammo) { S.gear.push(a.eq.ammo); a.eq.ammo = null; }   // 창을 드는 용기병처럼 활을 안 쏘면 화살은 창고로   // 정찰가처럼 새로 활을 쏘는 직업
-  if (!a.eq.weapon) a.eq.weapon = makeGear(WEAPON_OF[cls], wasT, 0);   // 길드가 새 직업에 맞는 무기를 준다
+  if (!a.eq.weapon) a.eq.weapon = makeGear(weaponOf(cls, wasT), wasT, 0);   // 길드가 새 직업에 맞는 무기를 준다
+  dropOffFor(a);   // 빌드 64: 두 손 무기(대검)를 들면 부장비는 창고로
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
   clampVitals(a);
   log(`${a.name}이(가) ${C0.name}에서 ${C1.name}(으)로 전직했다!`, 'good');
@@ -1023,7 +1029,7 @@ function raidReward(rec, i, half) {
   got.push(g$(gold), `명성 +${fame}`);
   const np = Math.max(1, Math.round(W.part * k)); stashItem('rp_' + rec.id, np); got.push(`${ITEMS['rp_' + rec.id].name} ${np}개`);   // 보상: 넘치면 창고 1~10 → 길드 (store.js)
   if (W.heart && !half) { stashItem('rh_' + rec.id, W.heart); got.push(ITEMS['rh_' + rec.id].name); }
-  if (W.gear) { const t = raidTier(R.lv), q = Math.max(Math.max(2, W.gear - (half ? 1 : 0)), rollGrade(t, 'raid')), g = makeGear(dropBase(), t, q); stashGear(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }   // 1등 영웅 · 2등 희귀 + 아주 드물게 그 위 (빌드 63 다섯째 묶음)
+  if (W.gear) { const t = raidTier(R.lv), q = Math.max(Math.max(2, W.gear - (half ? 1 : 0)), rollGrade(t, 'raid')), g = makeGear(dropBase(t), t, q); stashGear(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }   // 1등 영웅 · 2등 희귀 + 아주 드물게 그 위 (빌드 63 다섯째 묶음)
   const rl = W.rune - (half ? 1 : 0);
   if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); stashItem(id, 1); got.push(ITEMS[id].name); }
   // 특성 돌: 개화석은 등수별 개수(몬스터가 떠나면 절반), 마법사의 돌은 등수별 낮은 확률
@@ -1205,7 +1211,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 11;   // 지금 저장 판 (migrate11까지 옮긴 상태)
+const SAVE_V = 12;   // 지금 저장 판 (migrate12까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1222,7 +1228,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1256,6 +1262,7 @@ function loadFrom(v) {
     notes38();
     if (old < 10) { migrate10(); saveGame(); }
     if (old < 11) { migrate11(); saveGame(); }
+    if (old < 12) { migrate12(); saveGame(); }
     notes39();
     notes40();
     notes41();
@@ -1340,7 +1347,7 @@ function migrate10() {
   all.forEach(a => {
     if (!a || !a.eq || a.eq.off || !CLASSES[a.cls] || !gearFits(a, { base: 'shield', t: 0 })) return;
     const t = a.eq.weapon ? Math.min(a.eq.weapon.t, arrowTierOf(a.lv)) : arrowTierOf(a.lv);
-    a.eq.off = makeGear(shieldOf(a.cls), t, 0); if ((S.advs || []).includes(a)) n++;
+    a.eq.off = makeGear(shieldOf(a.cls, t), t, 0); if ((S.advs || []).includes(a)) n++;
   });
   S.v = 10;
   if (n) log(`방패가 네 종류(원형·히터·카이트·탑)가 되었다. 방패가 없던 전사·마부 계열 ${n}명에게 방패를 나눠 주었다.`);
@@ -1365,6 +1372,39 @@ function migrate11() {
   body.push(`정리한 뒤 가진 돈: ${fmt(S.gold)}G`);
   S.modals.push({ title: '은행 정리', body });
   log(`은행을 닫았다. 돌려받은 돈 ${fmt(refund + loan)}G · 돌려준 예금 ${fmt(dep)}G`);
+}
+// 빌드 64 장비 개편 1단계: 카이트 · 탑 방패는 라운드 실드로, 그 단계에 없는 2차 직업 장비(늪지 단계 아래의 글라디우스 · 버클러 · 십자 방패)는 장검 · 라운드 실드로.
+// 옛 방패는 모양만 다른 같은 방패였으니, 모험가가 든 방패는 그 직업의 새 방패로(검투사 버클러 · 기사 십자 · 마검사 에테르, 그 단계에 없으면 라운드 실드) — 등급 · 강화 · 룬은 그대로.
+// 들고 있던 장비를 더는 못 쓰게 된 모험가(글라디우스를 든 전사 · 쌍검사 등)는 같은 단계 장검으로 바꿔 준다.
+function migrate12() {
+  const OLD = { kite: 'shield', tower: 'shield' }, LOW = { gladius: 'sword', great: 'axe', buckler: 'shield', cross: 'shield', ether: 'shield' };
+  const baseFix = (b, t) => OLD[b] || (GTYPES[b] && !tierOk(b, t) ? LOW[b] || b : b);
+  let n = 0, m = 0;
+  const fix = g => { if (!g || !GTYPES[g.base]) return; const nb = baseFix(g.base, g.t); if (nb !== g.base) { g.base = nb; n++; } };
+  (S.gear || []).forEach(fix);
+  (S.wh || []).forEach(w => ((w && w.gear) || []).forEach(fix));
+  (S.parties || []).forEach(q => { if (q.exp && q.exp.gbag) q.exp.gbag.forEach(fix); });
+  const U = S.under || {};
+  if (U.bm && U.bm.stock) U.bm.stock.forEach(o => { if (o && o.kind === 'gear') fix(o.g); });
+  if (U.au && U.au.g) fix(U.au.g);
+  if (U.arena && U.arena.opps) U.arena.opps.forEach(o => ((o && o.members) || []).forEach(x => { if (x && x.eq) Object.values(x.eq).forEach(fix); }));
+  const key = (b, t) => `${baseFix(b, +t)}:${t}`;
+  ((S.shop && S.shop.slots) || []).forEach(sl => { if (sl && typeof sl.item === 'string' && sl.item.startsWith('g:')) { const [, b, t] = sl.item.split(':'); sl.item = 'g:' + key(b, t); } });
+  (S.reqs || []).forEach(r => { if (r && r.gear) { const [b, t] = r.gear.split(':'); r.gear = key(b, t); } });
+  const SH_OLD = ['shield', 'buckler', 'kite', 'tower', 'cross'];
+  [...(S.advs || []), ...(S.cands || [])].forEach(a => {
+    if (!a || !a.eq || !CLASSES[a.cls]) return;
+    const o = a.eq.off, mine = (S.advs || []).includes(a);
+    if (o && SH_OLD.includes(o.base)) { const nb = shieldOf(a.cls, o.t); if (nb !== o.base) { o.base = nb; if (mine) m++; } }
+    Object.values(a.eq).forEach(fix);
+    const w = a.eq.weapon;
+    if (w && GTYPES[w.base] && !gearFits(a, w) && gearFits(a, { base: 'sword', t: w.t })) { w.base = 'sword'; if (mine) m++; }
+    if (o && GTYPES[o.base] && GTYPES[o.base].slot === 'off' && SHIELDS.includes(o.base) && !gearFits(a, o)) o.base = 'shield';
+    if (twoHand(a.eq.weapon) && a.eq.off) { S.gear.push(a.eq.off); a.eq.off = null; }
+  });
+  S.v = 12;
+  unfitGear();
+  if (n || m) log(`장비 개편: 옛 방패 · 투기장 글라디우스 ${fmt(n + m)}점을 새 장비로 바꾸었다 (등급 · 강화 · 룬은 그대로).`);
 }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }
 function notes62() { if (!S.flags.v62) { S.flags.v62 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '상단 본부 새 단장 · 선술집', body: STORY.v62 }); } }
@@ -1408,7 +1448,9 @@ function notes34() { if (!S.flags.v34) { S.flags.v34 = 1; S.bld.salvage = S.bld.
 function notes31() { if (!S.flags.v31) { S.flags.v31 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 · 요리 · 교역 · 2차 각성', body: STORY.v31 }); } }
 function notes30() { if (!S.flags.v30) { S.flags.v30 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '북쪽 변경 · 하늘 · 마구간', body: STORY.v30 }); } }
 // 의상·숙련도 칸 (없으면 만든다)
-function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); migrateSkillIds(); }
+function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); if ((S.v || 0) >= 12) unfitGear(); migrateSkillIds(); }   // 빌드 64: 옛 저장은 migrate12가 장비를 새 종류로 바꾼 뒤에 본다
+// 모험가가 더는 못 쓰는 장비는 창고로 (불러올 때마다)
+function unfitGear() { S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); }
 // 겹치던 스킬 id를 갈랐다: 결의(resolve)·치유의 찬가(chant)·유성 낙하(meteorfall). 옛 저장의 스킬·스킬북·숙련도를 옮기고, 라이선스 심사용 처치 수를 어림한다
 function migrateSkillIds() {
   const ren = (a, from, to) => { if (!a.skills) return; a.skills = a.skills.map(id => (id === from ? to : id)); if (a.sm && a.sm[from] != null) { a.sm[to] = (a.sm[to] || 0) + a.sm[from]; delete a.sm[from]; } };

@@ -63,25 +63,45 @@ const ICON_PX = {
 };
 // 부장비 그림을 10×10으로 (진열대·손님 손): 2×2칸마다 많은 색(테두리보다 안쪽 색), 칠한 칸 둘레에 다시 테두리
 const OFF_MINI = {};
+// 빌드 64: 전사 계열 고유 장비 그림 (data-wicon.js · 20×20, 단계마다 하나) → 칸 색 400개 (빈칸 null)
+const WIC_CELLS = {};
+function wicCells(base, i) {
+  const k = base + ':' + i; if (WIC_CELLS[k] !== undefined) return WIC_CELLS[k];
+  const code = typeof WICON !== 'undefined' && WICON[base] && WICON[base][i]; if (!code) return (WIC_CELLS[k] = null);
+  const bar = code.indexOf('|'), pal = code.slice(0, bar), cells = code.slice(bar + 1), P = [], out = new Array(400).fill(null);
+  for (let j = 0; j < pal.length; j += 6) P.push('#' + pal.slice(j, j + 6));
+  for (let j = 0; j < 400; j++) { const ch = cells[j]; if (ch && ch !== '.') out[j] = P[WICON_ALPH.indexOf(ch)] || null; }
+  return (WIC_CELLS[k] = out);
+}
+function wicURL(g) {
+  if (!isUniq(g)) return null;
+  const i = uniqIdx(g), k = 'w:' + g.base + ':' + i; if (ICON_URL[k]) return ICON_URL[k];
+  const cells = wicCells(g.base, i); if (!cells) return null;
+  const [c, x] = mkCanvas(20, 20);
+  cells.forEach((col, j) => { if (col) { x.fillStyle = col; x.fillRect(j % 20, (j / 20) | 0, 1, 1); } });
+  return (ICON_URL[k] = keepCv(c));
+}
 function offMini(base, t) {
-  const k = base + ':' + offLook(t); if (OFF_MINI[k] !== undefined) return OFF_MINI[k];
-  const cells = typeof OFFICON !== 'undefined' && OFFICON[base] ? skiCells('o:' + k) : null;
+  const uq = isUniq({ base, t }), ui = uq ? uniqIdx({ base, t }) : 0;
+  const k = uq ? 'w:' + base + ':' + ui : base + ':' + offLook(t); if (OFF_MINI[k] !== undefined) return OFF_MINI[k];
+  const cells = uq ? wicCells(base, ui) : typeof OFFICON !== 'undefined' && OFFICON[base] ? skiCells('o:' + k) : null;
   if (!cells) return (OFF_MINI[k] = null);
+  const W = uq ? 20 : 16, X0 = uq ? 0 : 1;   // 20×20 그림은 2×2칸 그대로 10×10, 16×20 그림은 가운데 8칸
   const lum = h => { const n = parseInt(h.slice(1), 16); return 0.3 * (n >> 16) + 0.59 * ((n >> 8) & 255) + 0.11 * (n & 255); };
   const g = Array.from({ length: 10 }, () => new Array(10).fill(null));
-  for (let y = 0; y < 10; y++) for (let x = 0; x < 8; x++) {
-    const cs = [0, 1, 16, 17].map(o => cells[2 * y * 16 + 2 * x + o]).filter(c => c !== '#ff00ff');
+  for (let y = 0; y < 10; y++) for (let x = 0; x < W / 2; x++) {
+    const cs = [0, 1, W, W + 1].map(o => cells[2 * y * W + 2 * x + o]).filter(c => c && c !== '#ff00ff');
     if (cs.length < 2) continue;
     const inner = cs.filter(c => lum(c) > 45), pool = inner.length ? inner : cs, cnt = {};
     pool.forEach(c => { cnt[c] = (cnt[c] || 0) + 1; });
-    g[y][x + 1] = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a] || lum(b) - lum(a))[0];
+    g[y][x + X0] = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a] || lum(b) - lum(a))[0];
   }
   const out = g.map(r => r.slice());
   for (let y = 0; y < 10; y++) for (let x = 0; x < 10; x++) if (!g[y][x] && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => { const v = g[y + dy] && g[y + dy][x + dx]; return v && v !== '#1a1414'; })) out[y][x] = '#1a1414';
   return (OFF_MINI[k] = out);
 }
 // 진열대에 놓인 장비 키('g:종류:단계')의 아이콘
-const gearKeyIcon = key => { const [, b, t] = key.split(':'); return { icon: GTYPES[b].icon, c: TIER_COLORS[+t], off: typeof OFFICON !== 'undefined' && OFFICON[b] ? b : null, t: +t }; };
+const gearKeyIcon = key => { const [, b, t] = key.split(':'); return { icon: GTYPES[b].icon, c: TIER_COLORS[+t], off: (typeof OFFICON !== 'undefined' && OFFICON[b]) || isUniq({ base: b, t: +t }) ? b : null, t: +t }; };
 function drawIcon(ctx, id, ox = 0, oy = 0) {
   if (id && typeof id === 'object' && id.off) { const m = offMini(id.off, id.t); if (m) { m.forEach((r, y) => r.forEach((c, x) => { if (c) R(ctx, ox + x, oy + y, 1, 1, c); })); return; } }
   const it = typeof id === 'object' ? id : ITEMS[id]; if (!it) return;
@@ -103,6 +123,7 @@ function offIconURL(base, t) {
   return (ICON_URL[k] = keepCv(c));
 }
 function gearIconURL(g) {
+  const w = wicURL(g); if (w) return w;   // 빌드 64: 고유 이름 장비는 단계마다 그림
   const off = offIconURL(g.base, g.t); if (off) return off;
   const key = 'g:' + g.base + ':' + g.t;
   if (ICON_URL[key]) return ICON_URL[key];

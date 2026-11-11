@@ -161,7 +161,7 @@ function whMoveKeys(keys, from, to) {
   return `${moved}칸을 ${whName(to)}로 옮겼어요.${left ? ` (${left}칸은 자리가 없어 그대로)` : ''}`;
 }
 function whGearDetail(g, from) {
-  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span><span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
+  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''} — ${esc(uniqDesc(g))}</span>` : ''}<span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
   if (from >= 0) return `<div class="card hl idet">${top}${whMoveRow(from, 'gear', g.id)}</div>`;
   const bonus = (g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 마탑에서 재감정 (${fmt(REAPPRAISE.fee(g.t))}G${ITEMS['crest_' + g.t] ? ` + ${ITEMS['crest_' + g.t].name} ${REAPPRAISE.crest}` : ''})${reappraiseWhy(g) ? ` · <span class="red-t">${reappraiseWhy(g)}</span>` : ''}</span></div>` : '';
   const btns = `<div class="btns">${S.bld.smithy ? `<button type="button" class="btn sm gold" data-act="enhopen" data-id="${g.id}">강화${g.plus ? ' +' + g.plus : ''}</button>` : ''}${S.bld.smithy && fuseCatOf(g) && !isAmmo(g) && (g.q || 0) < GRADE_MAX ? `<button type="button" class="btn sm" data-act="fuseopen" data-id="${g.id}">합성</button>` : ''}${(g.q || 0) >= 2 ? `<button type="button" class="btn sm" data-act="reapp" data-id="${g.id}"${reappraiseWhy(g) ? ' disabled' : ''}>재감정</button>` : ''}${runeSlots(g) ? `<button type="button" class="btn sm" data-act="runewin" data-g="${g.id}">룬 새기기</button>` : ''}<button type="button" class="btn sm" data-act="sellgear" data-id="${g.id}">팔기 ${fmt(Math.round(gearValue(g) * GEAR_SELL))}G</button></div>`;
@@ -325,7 +325,7 @@ function fuseDo() {
   for (const g of gs) { const i = S.gear.indexOf(g); if (i >= 0) S.gear.splice(i, 1); }
   const cat = (S.fuseCat || 0) > 0; if (cat) S.fuseCat--;   // 드워프 합성 촉매: 두 단계 위 확률 FUSE_CAT_P
   const jump = q + 2 <= GRADE_MAX && rnd() < (cat ? FUSE_CAT_P : FUSE.jump), nq = Math.min(GRADE_MAX, q + (jump ? 2 : 1)), t = fuseTier(gs);
-  let base = pickOne(fuseBases(F.cat)); if (base === 'shield') base = pickOne(SHIELDS);
+  let base = pickOne(fuseBases(F.cat).filter(b => tierOk(b, t))); if (base === 'shield') base = pickOne(SHIELDS.filter(b => tierOk(b, t)));   // 빌드 64: 그 단계에 있는 종류만
   const g = makeGear(base, t, nq); g.plus = 0;
   const where = stashGear(g); F.ids = [];
   log(`대장간에서 ${QUALITY[q].name} 장비 ${FUSE.n}점을 합성해 ${QUALITY[nq].name} 「${gearName(g)}」을(를) 얻었다.${jump ? ' 대성공 — 두 단계 위!' : ''}`, 'good');

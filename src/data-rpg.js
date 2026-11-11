@@ -476,7 +476,16 @@ function gearStats(g) {
   for (const id of g.runes || []) { const R = ITEMS[id] && ITEMS[id].rune; if (!R) continue; const [k, l] = R, st = RUNES[k].st; out[st] = Math.round(((out[st] || 0) + RUNES[k].v[l]) * 1000) / 1000; }
   return out;
 }
-const gearName = g => `${GTIERS[g.t].name} ${GTYPES[g.base].name}${g.plus ? ' +' + g.plus : ''}`;
+// 빌드 64 장비 개편 1단계 (전사 계열): 단계마다 고유 이름 · 그림이 있는 장비 (data-wicon.js · data-warr.js)
+// 1차부터 쓰는 장검 · 라운드 실드는 견습 단계부터, 2차 직업 장비는 늪지(Lv52) 단계부터만 있다 — 그 아래로는 나오지도, 만들지도 않는다
+const UNIQ_T0 = { sword: 0, shield: 0, gladius: 6, great: 6, buckler: 6, cross: 6, ether: 6 };
+const isUniq = g => !!g && UNIQ_T0[g.base] != null;
+const uniqIdx = g => Math.max(0, Math.min(15, (g.t || 0) - (UNIQ_T0[g.base] || 0)));   // 그림 · 이름 차례 (2차 장비는 늪지 = 0번 「Lv50」)
+const tierOk = (b, t) => (UNIQ_T0[b] || 0) <= t;
+const uniqName = g => (typeof WNAME !== 'undefined' && WNAME[g.base] ? WNAME[g.base][uniqIdx(g)] : '');
+const gearBaseName = g => (isUniq(g) && uniqName(g)) || `${GTIERS[g.t].name} ${GTYPES[g.base].name}`;
+const gearName = g => `${gearBaseName(g)}${g.plus ? ' +' + g.plus : ''}`;
+const gearNameOf = (base, t) => gearBaseName({ base, t: +t });
 const gearKey = g => `${g.base}:${g.t}`;
 const gearValue = g => Math.round((45 * GTIERS[g.t].p * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) * (1 + 0.12 * (g.plus || 0)) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
 const recipeFee = t => Math.round(15 * GTIERS[t].p * GTIERS[t].p);
@@ -485,7 +494,7 @@ function recipeNeed(base, t) {
   GTYPES[base].mat.forEach((n, i) => { if (n) need[mats[i]] = n; });
   return need;
 }
-const gearFits = (a, g) => (GTYPES[g.base].cls.includes('all') || chainOf(a.cls).some(c => GTYPES[g.base].cls.includes(c))) && a.lv >= GTIERS[g.t].lv;
+const gearFits = (a, g) => (GTYPES[g.base].cls.includes('all') || chainOf(a.cls).some(c => GTYPES[g.base].cls.includes(c))) && a.lv >= GTIERS[g.t].lv && tierOk(g.base, g.t);
 
 /* ───────── 연금술 ───────── */
 const RECIPES = [

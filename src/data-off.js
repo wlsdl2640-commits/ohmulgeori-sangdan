@@ -5,28 +5,30 @@
    상단에 돌아오면(arrive·wipe) 다시 가득 찬다. 화살이 0이면 궁수는 기본 공격도, 화살 스킬(fx 'arrow')도 못 쓴다. 표창은 기본 공격마다 하나를 더 던진다. */
 SLOTS.splice(1, 0, ['off', '부장비'], ['ammo', '화살']);
 Object.assign(GTYPES, {
-  shield:   { name: '히터 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },     w: 3, icon: 'crest',   mat: [3, 1, 0] },
+  shield:   { name: '라운드 실드', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },   w: 3, icon: 'crest',   mat: [3, 1, 0] },   // 빌드 64: 히터 방패 → 라운드 실드 (방패를 드는 직업 모두의 공용)
   quiver:   { name: '화살통', slot: 'off',  cls: ['archer', 'scout'],     st: { atk: 1.0, agi: 0.6, crit: 0.003 },      w: 1, icon: 'horn',    mat: [0, 3, 0], capPct: 0.25 },
   tome:     { name: '마법서', slot: 'off',  cls: ['mage'],                st: { matk: 2.4, int: 0.6, mp: 5 },            w: 2, icon: 'book',    mat: [0, 1, 3] },
   relic:    { name: '성표',   slot: 'off',  cls: ['cleric'],              st: { matk: 1.4, int: 0.5, vit: 0.4, mp: 3 },  w: 1, icon: 'amulet',  mat: [1, 0, 3] },
   shuriken: { name: '표창',   slot: 'off',  cls: ['rogue'],               st: { atk: 0.8, crit: 0.004 },                 w: 1, icon: 'blade',   mat: [2, 0, 0], ammo: 1, unit: '개' },
   lantern:  { name: '등불',   slot: 'off',  cls: ['porter'],              st: { def: 1.2, vit: 0.6, movePct: 0.005 },    w: 2, icon: 'potion',  mat: [2, 0, 1] },
   arrows:   { name: '화살',   slot: 'ammo', cls: ['archer', 'scout'],     st: { atk: 1.2 },                              w: 1, icon: 'feather', mat: [1, 1, 0], ammo: 1, unit: '발' },
-  // 방패 종류 (빌드 39): 능력치는 히터 방패와 같고 모양·이름만 다르다. 그림 색은 단계 모습
-  buckler:  { name: '원형 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },     w: 2, icon: 'crest',   mat: [2, 2, 0] },
-  kite:     { name: '카이트 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },   w: 3, icon: 'crest',   mat: [3, 1, 0] },
-  tower:    { name: '탑 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },       w: 4, icon: 'crest',   mat: [4, 1, 0] },
-  // 빌드 40: 빌드 38 성기사 방패 모양 (모서리 둥근 네모 + 큰 십자) — 성기사가 처음 든다
-  cross:    { name: '십자 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },     w: 3, icon: 'crest',   mat: [3, 1, 0] }
+  // 빌드 64 장비 개편 1단계: 2차 직업 방패 셋 (늪지 Lv52 단계부터 · 고유 이름 · 그림 16) — 버클러 = 검투사 · 챔피언, 십자 방패 = 기사 · 성기사, 에테르 실드 = 마검사 · 마검성
+  buckler:  { name: '버클러', slot: 'off', cls: ['gladiator', 'champion'], st: { def: 1.6, hp: 5, block: 0.004, agi: 0.4 },   w: 2, icon: 'crest', mat: [2, 2, 0] },
+  cross:    { name: '십자 방패', slot: 'off', cls: ['knight', 'paladin'], st: { def: 2.3, hp: 8, block: 0.0035 },          w: 4, icon: 'crest', mat: [3, 1, 0] },
+  ether:    { name: '에테르 실드', slot: 'off', cls: ['spellblade', 'arcblade'], st: { def: 1.3, hp: 4, matk: 1.2, mp: 3, block: 0.003 }, w: 1, icon: 'crest', mat: [1, 0, 3] },
+  // 빌드 39~63의 카이트 · 탑 방패는 없어졌다 (옛 저장은 migrate12가 라운드 실드로 바꾼다 — 남은 게 있어도 깨지지 않게 정의만 둔다)
+  kite:     { name: '카이트 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },   w: 3, icon: 'crest',   mat: [3, 1, 0], old: 1 },
+  tower:    { name: '탑 방패', slot: 'off', cls: ['warrior', 'coachman'], st: { def: 1.8, hp: 6, block: 0.003 },       w: 4, icon: 'crest',   mat: [4, 1, 0], old: 1 }
 });
-const SHIELDS = ['buckler', 'shield', 'kite', 'tower', 'cross'];
+const SHIELDS = ['shield', 'buckler', 'cross', 'ether'];   // 빌드 64: 라운드 · 버클러 · 십자 · 에테르
 const isShield = g => !!g && SHIELDS.includes(g.base);
-const OFF_IDS = ['shield', 'buckler', 'kite', 'tower', 'cross', 'quiver', 'tome', 'relic', 'shuriken', 'lantern', 'arrows'];
+const OFF_IDS = ['shield', 'buckler', 'cross', 'ether', 'quiver', 'tome', 'relic', 'shuriken', 'lantern', 'arrows'];
 GTYPE_IDS.push(...OFF_IDS.filter(b => !SHIELDS.includes(b) || b === 'shield'));   // 떨어뜨리는 표에는 방패 하나만 (나올 때 종류를 고른다 → dropBase)
-const dropBase = () => { const b = pickOne(GTYPE_IDS); return b === 'shield' ? pickOne(SHIELDS) : b; };
-// 처음 받는 방패 종류: 직업 그림의 방패 모양 (검투사 원형 · 기사 카이트 · 성기사 십자(빌드 40, 전에는 탑)), 나머지는 히터. 마부 계열은 가벼운 원형
-const SHIELD_OF = { gladiator: 'buckler', champion: 'buckler', knight: 'kite', paladin: 'cross', coachman: 'buckler', caravanmaster: 'buckler' };
-const shieldOf = c => SHIELD_OF[c] || 'shield';
+// 빌드 64: 단계 t에 있는 종류만 (2차 직업 장비는 늪지 단계부터 → tierOk)
+const dropBase = (t = 99) => { const b = pickOne(GTYPE_IDS.filter(x => tierOk(x, t))); return b === 'shield' ? pickOne(SHIELDS.filter(x => tierOk(x, t))) : b; };
+// 처음 받는 방패 종류 (빌드 64): 2차 직업 방패는 그 단계에 있을 때만, 아니면 라운드 실드
+const SHIELD_OF = { gladiator: 'buckler', champion: 'buckler', knight: 'cross', paladin: 'cross', spellblade: 'ether', arcblade: 'ether' };
+const shieldOf = (c, t = 99) => { const b = SHIELD_OF[c]; return b && tierOk(b, t) ? b : 'shield'; };
 MASTERY.shield.w = SHIELDS.slice(); MASTERY.shield.wn = '방패';
 /* 속성 화살 (빌드 39): 「화살」 칸에 끼운다. 기본 공격과 속성이 따로 없는 화살 스킬이 그 화살의 속성이 되고, 맞힐 때 낮은 확률로 상태이상.
    담는 양은 보통 화살의 60%, 값은 2배. 대장간에서 만들거나 사고, 같은 속성 몬스터한테서도 나온다.

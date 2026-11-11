@@ -194,10 +194,11 @@ function dexGear() {
   const D = dexState();
   const tiers = `<div class="card"><div class="h">단계</div>${GTIERS.map((T, i) => `<div class="stack sub" style="margin-bottom:4px"><span><b style="color:${TIER_COLORS[i]}">${T.name}</b> · Lv${T.lv}~ · 힘 ×${T.p}</span><span class="muted">재료 ${T.mats.map(m => ITEMS[m].name).join(' · ')}</span></div>`).join('')}</div>`;
   const quals = `<div class="card"><div class="h">등급</div><div class="row wrap">${QUALITY.map((q, i) => `<span class="tag" style="color:${q.c}">${q.name} ×${q.m} · 룬 ${i}칸</span>`).join(' ')}</div><div class="sub muted">희귀부터 보너스 능력치가 붙고, 등급이 높을수록 여러 개·더 크게.</div></div>`;
-  const rows = Object.keys(GTYPES).map(b => { const G = GTYPES[b], known = !!D.gear[b];
+  const ids = Object.keys(GTYPES).filter(b => !GTYPES[b].old);   // 빌드 64: 없어진 카이트 · 탑 방패는 빼고
+  const rows = ids.map(b => { const G = GTYPES[b], known = !!D.gear[b];
     const st = Object.entries(G.st).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) ? `+${(v * 100).toFixed(1)}%` : `+${v}`}/단계힘`).join(', ');
-    return `<div class="li${known ? '' : ' dim'}">${gImg({ base: b, t: 0, q: 0, runes: [] })}<div class="grow stack"><span>${known ? G.name : '???'} <span class="muted">· ${SLOTS.find(s => s[0] === G.slot)[1]} · 무게 ${G.w}${G.arena ? ' · <span class="gold-t">투기장 전용</span>' : ''}</span></span><span class="sub">${known ? st : '한 번 얻으면 열려요'}</span><span class="sub muted">${G.cls.includes('all') ? '누구나' : G.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')} · 재료 단단 ${G.mat[0]}·질긴 ${G.mat[1]}·마력 ${G.mat[2]}</span></div></div>`; }).join('');
-  return tiers + quals + `<div class="sec"><b>장비 종류</b><span>${Object.keys(D.gear).length}/${Object.keys(GTYPES).length} 얻어 봄</span></div><div class="list">${rows}</div>`;
+    return `<div class="li${known ? '' : ' dim'}">${gImg({ base: b, t: 0, q: 0, runes: [] })}<div class="grow stack"><span>${known ? G.name : '???'} <span class="muted">· ${SLOTS.find(s => s[0] === G.slot)[1]} · 무게 ${G.w}${G.arena ? ' · <span class="gold-t">투기장 전용</span>' : ''}${UNIQ_T0[b] ? ` · ${GTIERS[UNIQ_T0[b]].name} 단계부터` : ''}${G.two ? ' · 두 손' : ''}${UNIQ_T0[b] != null ? ' · 단계마다 고유 이름' : ''}</span></span><span class="sub">${known ? st : '한 번 얻으면 열려요'}</span><span class="sub muted">${G.cls.includes('all') ? '누구나' : G.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')} · 재료 단단 ${G.mat[0]}·질긴 ${G.mat[1]}·마력 ${G.mat[2]}</span></div></div>`; }).join('');
+  return tiers + quals + `<div class="sec"><b>장비 종류</b><span>${ids.filter(b => D.gear[b]).length}/${ids.length} 얻어 봄</span></div><div class="list">${rows}</div>`;
 }
 
 function dexSub() {

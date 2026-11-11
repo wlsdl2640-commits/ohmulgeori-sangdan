@@ -56,7 +56,7 @@ const SET_BONUS = { 3: { name: '3점 세트', atkPct: 0.05, matkPct: 0.05, defPc
 // 끼고 있는 장비 가운데 가장 많은 같은 단계: { t, n, bonus }
 function setInfo(a) {
   const cnt = {};
-  for (const [sl] of SLOTS) { if (sl === 'ammo') continue; const g = a.eq && a.eq[sl]; if (g) cnt[g.t] = (cnt[g.t] || 0) + 1; }   // 화살 칸은 세트에 안 센다
+  for (const [sl] of SLOTS) { if (sl === 'ammo') continue; const g = a.eq && a.eq[sl]; if (g && !isUniq(g)) cnt[g.t] = (cnt[g.t] || 0) + 1; }   // 화살 칸은 세트에 안 센다 · 빌드 64: 고유 이름 무기 · 방패도 안 센다 (방어구만 세트)
   let best = null;
   for (const t in cnt) if (!best || cnt[t] > best.n || (cnt[t] === best.n && +t > best.t)) best = { t: +t, n: cnt[t] };
   if (!best) return { t: -1, n: 0, bonus: null };
