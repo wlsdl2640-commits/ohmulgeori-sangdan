@@ -19,7 +19,7 @@ const ACHV = [
   { id: 'raid1', cat: '사냥', name: '거인 사냥', desc: '레이드 몬스터 1마리 처치', need: 1, get: () => S.stats.raids || 0, rw: { gold: 5000, fame: 15 } },
   { id: 'raid2', cat: '사냥', name: '거인들의 공포', desc: '레이드 몬스터 5마리 처치', need: 5, get: () => S.stats.raids || 0, rw: { gold: 25000, fame: 30, item: ['rune_crit_1', 1] } },
   { id: 'wave1', cat: '사냥', name: '성문의 수호자', desc: '몬스터 웨이브 방어 1번', need: 1, get: () => S.stats.waves || 0, rw: { gold: 3000, fame: 10 } },
-  { id: 'wave2', cat: '사냥', name: '하르겐의 방패', desc: '몬스터 웨이브 방어 5번', need: 5, get: () => S.stats.waves || 0, rw: { gold: 15000, fame: 25, item: ['rune_def_1', 1] } },
+  { id: 'wave2', cat: '사냥', name: '하르겐의 방패', desc: '몬스터 웨이브 방어 5번', need: 5, get: () => S.stats.waves || 0, rw: { gold: 15000, fame: 25, item: ['rune_str_1', 1] } },
   // 장사
   { id: 'earn1', cat: '장사', name: '첫 금화 자루', desc: '누적 수입 10,000G', need: 10000, get: () => S.stats.earned || 0, rw: { gold: 1000 } },
   { id: 'earn2', cat: '장사', name: '이름난 상인', desc: '누적 수입 100,000G', need: 100000, get: () => S.stats.earned || 0, rw: { gold: 5000, fame: 10 } },

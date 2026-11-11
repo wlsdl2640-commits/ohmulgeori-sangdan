@@ -473,7 +473,8 @@ function gearStats(g) {
     else out[k] = Math.round(v * t.p * q * 10) / 10;
   }
   if (g.bonus) for (const [k, v] of Object.entries(g.bonus)) out[k] = Math.round(((out[k] || 0) + v) * 1000) / 1000;
-  for (const id of g.runes || []) { const R = ITEMS[id] && ITEMS[id].rune; if (!R) continue; const [k, l] = R, st = RUNES[k].st; out[st] = Math.round(((out[st] || 0) + RUNES[k].v[l]) * 1000) / 1000; }
+  const side = runeSide(g);   // 빌드 64: 무기에 새긴 룬은 무기 효과, 나머지 칸은 방어구 효과
+  for (const id of g.runes || []) { const R = ITEMS[id] && ITEMS[id].rune, F = R && runeFx(R[0], side); if (!F) continue; out[F.st] = Math.round(((out[F.st] || 0) + F.v[R[1]]) * 1000) / 1000; }
   return out;
 }
 // 빌드 64 장비 개편 1단계 (전사 계열): 단계마다 고유 이름 · 그림이 있는 장비 (data-wicon.js · data-warr.js)

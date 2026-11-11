@@ -60,6 +60,12 @@ function gearSum(a) {
   for (const [slot] of SLOTS) { const g = a.eq && a.eq[slot]; if (!g || (isAmmo(g) && ammoLeft(g, a) <= 0) || (slot === 'ammo' && !needsArrows(a))) continue; const gs = gearStats(g); for (const k in gs) s[k] = (s[k] || 0) + gs[k]; }   // 다 쓴 화살·표창은 능력치 없음
   return s;
 }
+// 빌드 64 룬 개편: 끼운 장비의 룬 가운데 한 능력치만 더한다 (전투 중 상태이상 · 속성 피해에 바로 쓴다 · RUNE_CAP까지)
+function runeSum(a, st) {
+  let s = 0;
+  for (const [slot] of SLOTS) { const g = a.eq && a.eq[slot]; if (!g || !g.runes || !g.runes.length) continue; const side = runeSide(g); for (const id of g.runes) { const R = ITEMS[id] && ITEMS[id].rune, F = R && runeFx(R[0], side); if (F && F.st === st) s += F.v[R[1]]; } }
+  return Math.min(RUNE_CAP[st.startsWith('d_') ? 'd' : st] || 9, s);
+}
 function passives(a) {
   const p = {};
   for (const id of a.skills || []) { const P = SKILLS[id] && SKILLS[id].passive; if (P) { const L = skLvMul(a, id); for (const k in P) p[k] = (p[k] || 0) + P[k] * L; } }   // 스킬 레벨만큼 커진다
@@ -81,18 +87,21 @@ function deriveBase(a) {
     matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0) + X('matkPct')) * war * lic,
     def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08 + X('defPct')) * (earth ? 1.1 : 1) * lic,
     maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct') + relic('hp'))),   // 유물: 세계수의 씨앗·별의 여왕의 왕관
-    maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct') + (P.mpPct || 0))),
+    maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct') + (P.mpPct || 0) + Math.min(RUNE_CAP.mpPct, G.mpPct || 0))),   // 마나 룬 (방어구)
     eva: Math.min(0.6, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva')),
     crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0) + X('crit')),
     block: Math.min(0.6, (G.block || 0) + (P.block || 0) + X('block')),
     counter: Math.min(0.7, (G.counter || 0) + (P.counter || 0) + X('counter')),
     double: Math.min(0.6, (G.double || 0) + (P.double || 0) + X('double')),
-    healPow: 1 + X('healPow') + (P.healPow || 0), rheal: X('rheal'), hpRegen: X('hpRegen'), mpFlat: X('mpFlat'),
+    healPow: 1 + X('healPow') + (P.healPow || 0) + Math.min(RUNE_CAP.healPow, G.healPow || 0), rheal: X('rheal') + Math.min(RUNE_CAP.rheal, G.rheal || 0), hpRegen: X('hpRegen'), mpFlat: X('mpFlat'),   // 치유 룬: 무기 주는 회복 · 방어구 받는 회복
     spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd
     cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 50%)
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
     move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct') + (G.movePct || 0)) * (wind ? 1.15 : 1),
-    mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3,
+    mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3 + Math.min(RUNE_CAP.mpRegen, G.mpRegen || 0),   // 영민 룬(방어구) · 마나 룬(무기)
+    // 빌드 64 룬 개편: 명중(몬스터 회피 −%p) · 기본 공격 방어 · 행동 방해 시간 − · 기본 공격 눈멂 · 눈멂 저항 · 흡혈 (속성 피해 d_*는 runeSum으로 hitFoe에서)
+    hit: Math.min(RUNE_CAP.hit, G.hit || 0), bblock: Math.min(RUNE_CAP.bblock, G.bblock || 0), ccRes: Math.min(RUNE_CAP.ccRes, G.ccRes || 0),
+    blindHit: Math.min(RUNE_CAP.blindHit, G.blindHit || 0), blindRes: Math.min(RUNE_CAP.blindRes, G.blindRes || 0), lifesteal: Math.min(RUNE_CAP.lifesteal, G.lifesteal || 0),
     mExec: P.exec || 0, mStun: P.stun || 0, mBuff: P.buffDur || 0,   // 숙련: 처형 피해 · 기본 공격 기절 · 강화 지속
     mres: Math.min(FIGHT.mresMax, mresJob(a) + (G.mres || 0) + (P.mres || 0) + X('mres')),   // 마법 저항 (빌드 63): 마법 피해 −%
     res: resOf(G, P, X),                                                                   // 속성 저항: { 불 계열: 0.1, … }
@@ -522,11 +531,14 @@ function inflictAdv(e, a, o, atk) {
     else { if (st[k] && st[k].dps >= dps) { st[k].t = Math.max(st[k].t, t); return; } st[k] = { t, dps, acc: 0 }; }
   } else if (STACK_STA[k]) { const c = st[k], t = (o.d || 10) * (1 - ff); if (c) { c.n = Math.min(STACK_STA[k], (c.n || 1) + 1); c.t = Math.max(c.t, t); } else st[k] = { t, n: 1 }; }   // 부식
   else if (CC_IDS.includes(k)) {
-    const cut = traitSum(a, 'resCc') + (TR(a).ccRes || 0) + (k === 'freeze' ? traitSum(a, 'resFreeze') : 0);
+    const cut = traitSum(a, 'resCc') + (TR(a).ccRes || 0) + runeSum(a, 'ccRes') + (k === 'freeze' ? traitSum(a, 'resFreeze') : 0);   // 시간 룬 (방어구)
     const d = (o.d || 3) * Math.max(0, 1 - cut) * (1 - ff); if (d <= 0.2) return;
     st[k] = Math.max(st[k] || 0, d);
     if (k === 'para' || k === 'charm' || HARD_CC.includes(k)) comboBreak(e, a.id);   // 기절 · 마비 · 수면 · 빙결 · 석화 · 매혹이면 연계가 끊긴다
-  } else { const d = (o.d || 8) * (1 - ff); if (d <= 0.2) return; st[k] = Math.max(st[k] || 0, d); }   // 쇠약 · 눈멂 · 저주
+  } else {   // 쇠약 · 눈멂 · 저주
+    if (k === 'blind' && rnd() < runeSum(a, 'blindRes')) { ev(e, 'resist', { d: a.id, k }); return; }   // 섬광 룬 (방어구): 눈멂에 안 걸림
+    const d = (o.d || 8) * (1 - ff); if (d <= 0.2) return; st[k] = Math.max(st[k] || 0, d);
+  }
   ev(e, 'sta', { d: a.id, k, side: 'a' });
 }
 // 몬스터 속성에 따라 걸리지 않는 상태이상: 불 계열은 화상, 물·빙결 계열은 냉기 · 빙결, 번개는 감전, 흙은 석화, 강철은 중독 · 맹독 · 출혈
@@ -603,6 +615,7 @@ function hitFoe(e, f, atk, crit, magic, a, el, sk) {
   if (a && f.boss) m *= 1 + traitSum(a, 'bossDmg');
   if (a && !f.pvp && dexKills(f.id) >= DEX_K[3]) m *= 1.03;   // 도감 완전 기록
   if (a && !f.pvp && dexRare(f.id)) m *= 1 + RARE.dmg;         // 희귀종 기록: 그 종에게 주는 피해 +15%
+  if (a && el && el !== 'none') { const rd = runeSum(a, 'd_' + elFam(el)); if (rd) m *= 1 + rd; }   // 빌드 64: 속성 룬(무기) — 그 속성으로 주는 피해 +%
   if (T.exec && f.hp <= f.maxHp * EXEC_HP) m *= T.exec;                                  // 처형 (한방딜): HP 30% 아래 적
   if (fs && fs.mark) m *= 1 + MARK_BONUS;                                                 // 표식: 받는 피해 +20%
   if (a && T.combo && e.combo && e.combo[a.id]) m *= 1 + T.combo * e.combo[a.id];        // 연계 (지속딜): 중첩만큼
@@ -628,7 +641,7 @@ function partyDrain(e, team, dm, a, v) {
 }
 // 흡혈 (물리·마법)
 function leech(e, a, d, v, magic) {
-  const T = TR(a), k = magic ? T.mdrain : T.lifesteal;
+  const T = TR(a), k = ((magic ? T.mdrain : T.lifesteal) || 0) + (d.lifesteal || 0);   // 생명 룬 (무기): 물리 · 마법 모두
   if (!k || !v || a.hp >= d.maxHp) return;
   const h = Math.max(1, Math.round(v * k * healMul(e, a.id)));
   a.hp = Math.min(d.maxHp, a.hp + h);
@@ -791,6 +804,7 @@ function basicAct(e, a, d, team, dm, foes) {
     if (blind && rnd() < FIGHT.blind) { ev(e, 'fmiss', { s: a.id, d: f.uid }); return; }   // 눈멂
     const mk = d.matk * buffMul(e, a.id, 'matk') * BASIC_MAGIC, crit = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, f, mk, crit, true, a, 'none');
     ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: 'magic', b: 1 }, hitTag()));
+    if (v && d.blindHit && f.hp > 0 && rnd() < d.blindHit) inflictFoe(e, f, { k: 'blind', d: RUNE_BLIND }, mk, a.id, 'rune');   // 섬광 룬 (무기)
     leech(e, a, d, v, true);
     partyDrain(e, team, dm, a, v);
     // 정령술사: 다른 적에게도 번진다
@@ -805,7 +819,7 @@ function basicAct(e, a, d, team, dm, foes) {
   for (let i = 0; i < swings; i++) {
     if (f.hp <= 0) break;
     if (bow && !useAmmo(a.eq.ammo, a, 1)) { noAmmo(e, a); break; }   // 한 발씩
-    if (rnd() < f.eva + (blind ? FIGHT.blind : 0)) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }   // 회피는 기본 공격에만 · 눈멀면 20%p 더
+    if (rnd() < Math.max(0, f.eva - (d.hit || 0)) + (blind ? FIGHT.blind : 0)) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }   // 회피는 기본 공격에만 · 눈멀면 20%p 더 · 바람 룬 명중은 몬스터 회피를 깎는다
     const crit = rnd() < d.crit + buffAdd(e, a.id, 'crit');
     const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1) * (act === 'melee' && isFly(f) ? FIGHT.fly : 1);   // 날아다니는 적: 근접 기본 공격 ×0.7   // 5초에 한 번, 그만큼 세게 (숙련 처형)
     const bel = bow ? arrowEl(a) || 'none' : 'none';   // 속성 화살 (빌드 39)
@@ -814,6 +828,7 @@ function basicAct(e, a, d, team, dm, foes) {
     if (!v) continue;
     if (bow) { const AS = arrowSta(a); if (AS && f.hp > 0 && rnd() < AS.p) inflictFoe(e, f, AS, d.atk * buffMul(e, a.id, 'atk'), a.id, 'arrow'); }
     if (d.mStun && f.hp > 0 && rnd() < d.mStun) inflictFoe(e, f, { k: 'stun', d: 1.2 }, atk, a.id, 'mast');   // 숙련 (상급 둔기술)
+    if (d.blindHit && f.hp > 0 && rnd() < d.blindHit) inflictFoe(e, f, { k: 'blind', d: RUNE_BLIND }, atk, a.id, 'rune');   // 섬광 룬 (무기): 기본 공격에 눈멂
     leech(e, a, d, v, false);
     comboUp(e, a);   // 연계 중첩 (지속딜)
   }
@@ -1063,7 +1078,7 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   const def = d.def * buffMul(e, x.id, 'def') * (magic ? 0.5 : 1);
   const crit = rnd() < (f.boss ? 0.08 : 0.04) + (o.crit || 0);
   const pet0 = petOfParty(p), guard = Math.min(0.6, TQ(x, 'guard') + relic('guard') + buffAdd(e, x.id, 'guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
-  const blk = rnd() < Math.min(0.6, (d.block || 0) + buffAdd(e, x.id, 'block'));
+  const blk = rnd() < Math.min(0.6, (d.block || 0) + buffAdd(e, x.id, 'block') + (o.skill || o.ms || o.aoe ? 0 : d.bblock || 0));   // 예리함 룬(방어구): 기본 공격만 막는다
   const resist = (magic ? 1 - (d.mres || 0) : 1) * (fam !== 'none' ? 1 - ((d.res && d.res[fam]) || 0) : 1);   // 마법 저항 · 속성 저항
   let v = Math.max(1, Math.round(f.atk * fBuf(f, 'atk') * (fs && fs.weak ? 0.8 : 1) * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard) * (blk ? 0.25 : 1) * resist));
   if (xs && xs.freeze && fam === 'fire') { v = Math.round(v * FIGHT.thaw); delete xs.freeze; ev(e, 'stoff', { d: x.id, k: 'freeze', side: 'a' }); }   // 빙결: 불에 깨지며 ×1.3

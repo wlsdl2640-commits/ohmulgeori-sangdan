@@ -387,7 +387,7 @@ function findGear(gid) {
   for (const a of S.advs) for (const [sl] of SLOTS) if (a.eq[sl] && a.eq[sl].id === gid) return { g: a.eq[sl], a };
   return null;
 }
-const RUNE_OUT = [100, 400, 1500];   // 룬을 빼는 값 (빼낸 룬은 창고로)
+const RUNE_OUT = [100, 400, 1500, 6000];   // 룬을 빼는 값 (빼낸 룬은 창고로 · 빌드 64: 최상급)
 function runeIn(gid, rid) {
   const f = findGear(gid);
   if (!f) return '장비를 찾을 수 없어요.';
@@ -418,7 +418,7 @@ function runeOut(gid, i) {
 function runeFuse(rid) {
   const R = ITEMS[rid] && ITEMS[rid].rune;
   if (!S.bld.tower) return '마탑이 필요해요.';
-  if (!R || R[1] >= 2) return '더 합칠 수 없는 룬이에요.';
+  if (!R || R[1] >= RUNE_TOP) return '더 합칠 수 없는 룬이에요 (최상급).';
   if ((S.inv[rid] || 0) < RUNE_FUSE.n) return `같은 룬이 ${RUNE_FUSE.n}개 있어야 해요.`;
   const fee = RUNE_FUSE.fee[R[1]];
   if (S.gold < fee) return '돈이 모자라요.';
@@ -1180,7 +1180,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 12;   // 지금 저장 판 (migrate12까지 옮긴 상태)
+const SAVE_V = 13;   // 지금 저장 판 (migrate13까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1197,7 +1197,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1206,6 +1206,7 @@ function loadFrom(v) {
     ['smithy', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen', 'salvage'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
     S.stable = S.stable || { horses: {} };
     const old = S.v;
+    if (old < 13) runeRename();   // 빌드 64 룬 개편: 옛 룬 이름 → 합친 룬 (창고 정리보다 먼저)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
@@ -1232,6 +1233,7 @@ function loadFrom(v) {
     if (old < 10) { migrate10(); saveGame(); }
     if (old < 11) { migrate11(); saveGame(); }
     if (old < 12) { migrate12(); saveGame(); }
+    if (old < 13) { migrate13(); saveGame(); }
     notes39();
     notes40();
     notes41();
@@ -1411,7 +1413,33 @@ function migrate12() {
   if (n || m) log(`장비 개편: 옛 방패 · 투기장 글라디우스 ${fmt(n + m)}점을 새 장비로 바꾸었다 (등급 · 룬은 그대로).`);
   if (h) log(`각성이 없어졌다: 용사 ${h}명의 각성기를 스킬 칸에서 뺐다 (능력치 · 레벨은 그대로).`);
 }
-function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 전직 레벨', body: STORY.v64 }); } }
+// 빌드 64 룬 개편: 17종 → 합친 19종 (무기 · 방어구 두 효과 · 하급 ~ 최상급). 옛 룬은 같은 등급의 합친 룬으로 바꾼다 —
+// 창고 · 창고 1~10 · 원정 짐 · 장비에 끼운 룬 · 암시장 · 손님 · 진열대 어디에 있든 저장 전체를 훑어 이름(값 · 열쇠)을 바꾼다 (같은 칸에 겹치면 개수를 더한다)
+// migrateSkillIds가 ITEMS에 없는 물건을 창고에서 지우므로, 이름 바꾸기(runeRename)는 불러오자마자 먼저 하고 migrate13은 판만 올린다
+const RUNE_OLD = { vit: 'str', agi: 'int', def: 'atk', barrier: 'matk', fireres: 'fire', coldres: 'cold', boltres: 'bolt', darkres: 'dark' };
+let RUNE_RENAMED = 0;
+function runeRename() {
+  const re = /^rune_(vit|agi|def|barrier|fireres|coldres|boltres|darkres)_(\d)$/;
+  const map = x => { const m = re.exec(x); return m ? `rune_${RUNE_OLD[m[1]]}_${m[2]}` : x; };
+  let n = 0;
+  const walk = o => {
+    if (Array.isArray(o)) { for (let i = 0; i < o.length; i++) { const v = o[i]; if (typeof v === 'string') { const w = map(v); if (w !== v) { o[i] = w; n++; } } else if (v && typeof v === 'object') walk(v); } return; }
+    for (const k of Object.keys(o)) {
+      let v = o[k];
+      if (typeof v === 'string') { const w = map(v); if (w !== v) { o[k] = v = w; n++; } } else if (v && typeof v === 'object') walk(v);
+      const nk = map(k);
+      if (nk !== k) { if (typeof o[nk] === 'number' && typeof v === 'number') o[nk] += v; else if (o[nk] === undefined) o[nk] = v; delete o[k]; n++; }
+    }
+  };
+  walk(S);
+  RUNE_RENAMED += n;
+}
+function migrate13() {
+  S.v = 13;
+  if (RUNE_RENAMED) log(`룬 개편: 옛 룬 ${fmt(RUNE_RENAMED)}개를 같은 등급의 합친 룬으로 바꾸었다 (체력 → 강인 · 민첩 → 영민 · 수호 → 공방 · 결계 → 마력 · 내화 · 내한 · 피뢰 → 화염 · 냉기 · 번개 · 정결 → 어둠).`);
+  RUNE_RENAMED = 0;
+}
+function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 룬 개편 · 전직 레벨', body: STORY.v64 }); } }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }
 function notes62() { if (!S.flags.v62) { S.flags.v62 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '상단 본부 새 단장 · 선술집', body: STORY.v62 }); } }
 function notes61() { if (!S.flags.v61) { S.flags.v61 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '뇌수 · 폭풍 골렘 새 그림', body: STORY.v61 }); } }

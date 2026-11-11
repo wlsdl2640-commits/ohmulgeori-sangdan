@@ -285,3 +285,4 @@ def variant10(k, i):
     nm, rows, off = ALTS10[k][i]
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
+STR_PICK = 2                      # 강인 = ALTS10 C 엄지 띠 + 접힌 금 · 금빛 (사용자 11-12 02:08 「C ㄱ」) — 게임에 넣음 (runes_final.py)

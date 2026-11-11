@@ -3,7 +3,7 @@ const PANELS = {};
 const qTag = g => `<span class="q q${g.q}">${QUALITY[g.q].name}</span>`;
 const gImg = (g, cls = 'ico') => `<img class="${cls}" src="${gearIconURL(g)}" alt="">`;
 function statLine(st) {
-  return Object.entries(st).filter(([, v]) => v !== 0).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) || k === 'spdPct' || k === 'cdr' ? (k === 'cdr' ? '-' : '+') + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
+  return Object.entries(st).filter(([, v]) => v !== 0).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) || k === 'spdPct' || k === 'cdr' ? (k === 'cdr' || k === 'ccRes' ? '-' : '+') + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
 }
 const clsList = cls => (cls.includes('all') ? '모든 직업' : cls.map(c => CLASSES[c].name + (jobTier(c) === 1 ? ' 계열' : '')).join('·'));
 // 직업 특성을 글로
@@ -23,6 +23,23 @@ Object.assign(TR_TXT, {
 });
 const trText = c => Object.entries(CLASSES[c].tr || {}).map(([k, v]) => (TR_TXT[k] ? TR_TXT[k](v) : '')).filter(Boolean).join(' · ');
 const tierTag = c => (jobTier(c) > 1 ? ` <span class="tag fame-t">${jobTier(c)}차</span>` : '');
+// 빌드 64 룬 개편: 모험가 창에 룬으로 붙은 새 능력치를 있는 것만
+function runeDerived(a, d) {
+  const pc = v => Math.round(v * 1000) / 10 + '%', out = [];
+  if (d.hit) out.push(['명중', '+' + pc(d.hit)]);
+  if (d.bblock) out.push(['기본 공격 방어', pc(d.bblock)]);
+  if (d.ccRes) out.push(['행동 방해 시간', '-' + pc(d.ccRes)]);
+  if (d.blindHit) out.push(['기본 공격 눈멂', pc(d.blindHit)]);
+  if (d.blindRes) out.push(['눈멂 저항', pc(d.blindRes)]);
+  if (d.lifesteal) out.push(['흡혈', pc(d.lifesteal)]);
+  const ed = RES_FAMS.map(f => [f, runeSum(a, 'd_' + f)]).filter(([, v]) => v > 0);
+  if (ed.length) out.push(['속성 피해', ed.map(([f, v]) => `${RES_NAME[f]} +${Math.round(v * 100)}%`).join(' · ')]);
+  return out;
+}
+// 빌드 64 룬 개편: 룬 하나의 무기 · 방어구 효과 (등급 값 · 넷 모두)
+const runeBoth = rid => `무기 ${statLine(runeStat(rid, 'w'))} · 방어구 ${statLine(runeStat(rid, 'a'))}`;
+const runeValTxt = (st, v) => statLine({ [st]: v }).slice((STAT_NAMES[st] || st).length + 1);
+const runeLine = (k, side) => { const F = runeFx(k, side); return `${STAT_NAMES[F.st] || F.st} ${F.v.map(v => runeValTxt(F.st, v)).join(' / ')}`; };
 const runeDots = g => (runeSlots(g) ? ` <span class="runes">${Array.from({ length: runeSlots(g) }, (_, i) => { const r = g.runes && g.runes[i]; return r ? `<i style="--c:${ITEMS[r].c}" class="on"></i>` : '<i></i>'; }).join('')}</span>` : '');
 const costStr = s => (s.passive ? '지속 효과' : s.cost.hp ? `HP ${Math.round(s.cost.hp * 100)}%` : `MP ${s.cost.mp}`);
 const needStr = need => Object.entries(need).map(([k, q]) => { const h = S.inv[k] || 0; return `<span class="${h >= q ? '' : 'red-t'}">${ITEMS[k].name} ${h}/${q}</span>`; }).join(' · ');
@@ -194,7 +211,7 @@ function towerBox() {
     return `<div class="li"><div class="grow"><span>${Rr.name} <small class="gold-t">${dots(lv, Rr.max)}</small></span><span class="sub">${lv ? '지금: ' + Rr.desc(lv) + ' · ' : ''}${c ? '다음: ' + Rr.desc(lv + 1) : '최고 단계'}</span>${c ? `<span class="sub">${fmt(c[0])}G · ${needStr(c[1])} · ${Rr.days[lv]}일</span>` : ''}</div>${c ? `<button type="button" class="btn sm gold" data-act="research" data-id="${k}"${canResearch(k) ? '' : ' disabled'}>연구</button>` : ''}</div>`;
   }).join('');
   const runes = Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].rune && S.inv[k] > 0).sort();
-  const fuse = runes.map(k => { const R = ITEMS[k].rune, nx = R[1] < 2 ? runeId(R[0], R[1] + 1) : null; return `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${statLine({ [RUNES[R[0]].st]: RUNES[R[0]].v[R[1]] })}${nx ? ` · ${RUNE_FUSE.n}개 → ${ITEMS[nx].name} (${fmt(RUNE_FUSE.fee[R[1]])}G)` : ''}</span></div>${nx ? `<button type="button" class="btn sm" data-act="fuse" data-it="${k}"${S.inv[k] >= RUNE_FUSE.n && S.gold >= RUNE_FUSE.fee[R[1]] ? '' : ' disabled'}>합치기</button>` : ''}</div>`; }).join('');
+  const fuse = runes.map(k => { const R = ITEMS[k].rune, nx = R[1] < RUNE_TOP ? runeId(R[0], R[1] + 1) : null; return `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${runeBoth(k)}${nx ? ` · ${RUNE_FUSE.n}개 → ${ITEMS[nx].name} (${fmt(RUNE_FUSE.fee[R[1]])}G)` : ' · 최상급'}</span></div>${nx ? `<button type="button" class="btn sm" data-act="fuse" data-it="${k}"${S.inv[k] >= RUNE_FUSE.n && S.gold >= RUNE_FUSE.fee[R[1]] ? '' : ' disabled'}>합치기</button>` : ''}</div>`; }).join('');
   const crests = TIER_FIELDS.map((f, t) => 'crest_' + t).filter(k => (S.inv[k] || 0) > 0);
   const carve = crests.map(k => `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${RUNE_CARVE.crest}개와 ${RUNE_CARVE.fee}G로 무작위 하급 룬을 새겨요</span></div><button type="button" class="btn sm" data-act="carve" data-t="${k.split('_')[1]}"${S.inv[k] >= RUNE_CARVE.crest && S.gold >= RUNE_CARVE.fee ? '' : ' disabled'}>새기기</button></div>`).join('');
   // 빌드 64 (사용자 11-11 19:28 「각 시설에서만」): 창고 정보창에서 뺀 룬 새기기 · 옵션 재감정을 마탑으로 — 창고 · 모험가가 든 장비를 레어도 높은 것부터
@@ -327,6 +344,7 @@ function advDetail(a) {
   const d = derive(a), G = gearSum(a), idle = a.status === 'idle', canTr = S.bld.training && idle && trainedTotal(a) < trainCap(a);
   const stats = STATS.map(([k, n]) => `<div class="li flat"><span class="grow">${n} <b class="num">${d.T[k]}</b> <span class="sub muted">· 기본 ${a.st[k]}${a.tr[k] ? ` · 훈련 +${a.tr[k]}` : ''}${G[k] ? ` · 장비 ${G[k] > 0 ? '+' : ''}${G[k]}` : ''}</span></span>${S.bld.training ? `<button type="button" class="btn sm" data-mact="train" data-k="${k}"${canTr && S.gold >= trainCost(a) ? '' : ' disabled'}>+1 · ${fmt(trainCost(a))}G</button>` : ''}</div>`).join('');
   const derived = [['HP', `${Math.ceil(a.hp)}/${d.maxHp}`], ['MP', `${Math.ceil(a.mp)}/${d.maxMp}`], ['피로', `${Math.round(a.fat || 0)}/100`], ['숙면 피로', `${Math.round(a.sleep || 0)}/100`], ['공격', d.atk.toFixed(1)], ['마법', d.matk.toFixed(1)], ['방어', d.def.toFixed(1)], ['회피', Math.round(d.eva * 1000) / 10 + '%'], ['치명', Math.round(d.crit * 1000) / 10 + '%'], ['방어 확률', Math.round(d.block * 100) + '%'], ['반격', Math.round(d.counter * 100) + '%'], ['연타', Math.round(((TR(a).double || 0) + d.double) * 100) + '%'], ['공격 속도', '×' + d.spd.toFixed(2)], ['기본 공격', basicCd(a, d, null).toFixed(1) + '초마다'], ['스킬 재사용', '-' + Math.round(d.cdr * 100) + '%'], ['마법 저항', Math.round((d.mres || 0) * 100) + '%'], ['속성 저항', Object.entries(d.res || {}).map(([f, v]) => `${RES_NAME[f]} ${Math.round(v * 100)}%`).join(' · ') || '없음'], ['이동속도', d.move.toFixed(1)], ['짐', d.carry]]
+    .concat(runeDerived(a, d))   // 빌드 64 룬 개편: 룬으로 붙은 새 능력치 (있을 때만)
     .map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('');
   const spdB = speedBreakdown(a);
   const slots = SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => {
@@ -559,10 +577,11 @@ PANELS.rune = w => {
   const f = findGear(w.gid);
   if (!f) return '<div class="card"><div class="sub">장비를 찾을 수 없어요.</div></div>';
   const g = f.g, n = runeSlots(g), idle = !f.a || f.a.status === 'idle';
-  const cur = (g.runes || []).map((rid, i) => `<div class="li">${iconImg(rid)}<div class="grow"><span>${ITEMS[rid].name}</span><span class="sub">${statLine({ [RUNES[ITEMS[rid].rune[0]].st]: RUNES[ITEMS[rid].rune[0]].v[ITEMS[rid].rune[1]] })}</span></div><button type="button" class="btn sm" data-act="runeout" data-g="${g.id}" data-i="${i}"${idle && S.gold >= RUNE_OUT[ITEMS[rid].rune[1]] ? '' : ' disabled'}>빼기 ${fmt(RUNE_OUT[ITEMS[rid].rune[1]])}G</button></div>`).join('');
+  const side = runeSide(g), sideNm = side === 'w' ? '무기' : '방어구';   // 빌드 64: 무기에는 무기 효과, 나머지 칸에는 방어구 효과
+  const cur = (g.runes || []).map((rid, i) => `<div class="li">${iconImg(rid)}<div class="grow"><span>${ITEMS[rid].name}</span><span class="sub">${statLine(runeStat(rid, side))}</span></div><button type="button" class="btn sm" data-act="runeout" data-g="${g.id}" data-i="${i}"${idle && S.gold >= RUNE_OUT[ITEMS[rid].rune[1]] ? '' : ' disabled'}>빼기 ${fmt(RUNE_OUT[ITEMS[rid].rune[1]])}G</button></div>`).join('');
   const inv = Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].rune && S.inv[k] > 0).sort((x, y) => ITEMS[y].v - ITEMS[x].v);
-  const add = inv.map(k => `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${statLine({ [RUNES[ITEMS[k].rune[0]].st]: RUNES[ITEMS[k].rune[0]].v[ITEMS[k].rune[1]] })}</span></div><button type="button" class="btn sm gold" data-act="runein" data-g="${g.id}" data-it="${k}"${idle && (g.runes || []).length < n ? '' : ' disabled'}>끼우기</button></div>`).join('');
-  return `<div class="card hl"><div class="row">${gArt(g, 2)}<div class="grow"><div class="h">${gearName(g)} ${qTag(g)}</div><div class="sub">${statLine(gearStats(g))}</div><div class="sub">${f.a ? `${esc(f.a.name)}이(가) 쓰는 중` : '창고에 보관 중'} · 룬 ${(g.runes || []).length}/${n}${runeDots(g)}</div></div></div></div>
+  const add = inv.map(k => `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${sideNm}: ${statLine(runeStat(k, side))} <span class="muted">· ${side === 'w' ? '방어구' : '무기'}에는 ${statLine(runeStat(k, side === 'w' ? 'a' : 'w'))}</span></span></div><button type="button" class="btn sm gold" data-act="runein" data-g="${g.id}" data-it="${k}"${idle && (g.runes || []).length < n ? '' : ' disabled'}>끼우기</button></div>`).join('');
+  return `<div class="card hl"><div class="row">${gArt(g, 2)}<div class="grow"><div class="h">${gearName(g)} ${qTag(g)}</div><div class="sub">${statLine(gearStats(g))}</div><div class="sub">${f.a ? `${esc(f.a.name)}이(가) 쓰는 중` : '창고에 보관 중'} · 룬 ${(g.runes || []).length}/${n}${runeDots(g)}</div><div class="sub muted">${side === 'w' ? '무기라 룬의 「무기」 효과(때리는 쪽)가 붙어요.' : '무기가 아니라 룬의 「방어구」 효과(막는 쪽)가 붙어요.'}</div></div></div></div>
     ${n ? '' : '<div class="sub red-t">일반 장비에는 룬 칸이 없어요. 고급부터 등급마다 한 칸씩 열려요.</div>'}
     <div class="sec"><b>끼운 룬</b><span>빼면 창고로 돌아와요</span></div><div class="list">${cur || '<div class="li"><span class="sub">끼운 룬이 없어요.</span></div>'}</div>
     <div class="sec"><b>창고의 룬</b><span>마탑에서 새기고 합쳐요</span></div><div class="list">${add || '<div class="li"><span class="sub">룬이 없어요. 필드 보스와 던전, 레이드에서 얻거나 마탑에서 새겨요.</span></div>'}</div>`;
@@ -637,7 +656,7 @@ function invDetail(k, rate) {
   } else if (cat === 'book') {
     const s = SKILLS[I.book];
     desc = `${s.desc} · ${clsList(s.cls)} · Lv${s.lv}+ · ${costStr(s)}<br>${skillSpecLine(I.book)}`; extra = `${bookFromText(I.book)} · 모험가 창 → 스킬에서 배워요 (수업료 ${learnFee(s)}G)`;
-  } else if (cat === 'rune') extra = `장비 탭 → 룬 새기기 · ${I.desc || ''}`;
+  } else if (cat === 'rune') extra = `${runeBoth(k)} · 마탑에서 장비에 새기고, 같은 룬 셋을 합쳐 한 단계 위로${I.rune[1] >= RUNE_TOP ? ' (최상급)' : ''}`;   // 빌드 64 룬 개편: 무기 · 방어구 두 효과
   else if (cat === 'food' && I.dish) { const F = FOODS[I.dish]; desc = `${F.desc} · ${foodFxText(F.fx)}`; extra = `원정대 창에서 파티 도시락으로 골라요 · 주방 ${F.lv}단계: ${needStr(F.need)}`; if (S.bld.kitchen) btns += `<button type="button" class="btn sm" data-act="bopen" data-id="kitchen">주방에서 만들기</button>`; }
   else if (cat === 'food') { const uses = FOOD_IDS.filter(id => FOODS[id].need[k]).map(id => FOODS[id].name); extra = uses.length ? `들어가는 요리: ${uses.join(', ')}` : ''; if (KITCHEN_BUY[k] && S.bld.kitchen) btns += `<button type="button" class="btn sm gold" data-act="fbuy" data-k="${k}" data-n="5"${S.gold < KITCHEN_BUY[k] * 5 ? ' disabled' : ''}>주방에서 5개 ${KITCHEN_BUY[k] * 5}G</button>`; }
   if (I.trade) extra = `${KINGDOMS[I.trade].name} 특산물(교역품) · 그 나라에서 ${g$(tradeBuyPrice(I.trade, k))}에 산다${extra ? ' · ' + extra : ''}`;

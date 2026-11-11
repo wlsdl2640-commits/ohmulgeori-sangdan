@@ -48,7 +48,7 @@ function itemGrade(k) {
   if (I.g != null) return I.g;                          // 정해 둔 레어도 (상단 전용 물건)
   if (I.book) return bookGrade(I.book);
   if (I.btier != null) return BOOK_TIERS[I.btier].g;
-  if (I.rune) return [1, 3, 5][I.rune[1]] || 1;
+  if (I.rune) return [1, 3, 5, 7][I.rune[1]] || 1;   // 하급 고급 · 중급 영웅 · 상급 신화 · 최상급 우주 (빌드 64)
   if (I.egg) return 3;
   if (I.use) return 4;                                   // 마법사의 돌 · 개화석
   if (I.dish) return Math.min(GRADE_MAX, (FOODS[I.dish] && FOODS[I.dish].lv) || 1);

@@ -972,6 +972,7 @@ function logEvent(x, e, p) {
   if (x.type === 'hurt') return add(`${foe(Fn(x.s))}의 공격! ${ally(jo(A(x.d), '이', '가'))} ${num(x.v, 'r')} 피해를 입었습니다.${x.blk ? ' <i class="lg-c">막았다!</i>' : ''}`);
   if (x.type === 'sta') { const St = STATUS[x.k]; if (St) add(x.side === 'f' ? `${foe(jo(Fn(x.d), '이', '가'))} ${St.name} 상태가 됐습니다.` : `${ally(jo(A(x.d), '이', '가'))} ${St.name} 상태가 됐습니다!`, x.side === 'f' ? 'sk' : 'warn'); return; }
   if (x.type === 'cure') return add(`${ally(A(x.d))}의 상태이상이 풀렸습니다.`, 'dim');
+  if (x.type === 'resist') return add(`${ally(A(x.d))}: 섬광 룬이 ${STATUS[x.k] ? STATUS[x.k].name : '눈멂'}을(를) 막았습니다.`, 'dim');   // 빌드 64 룬 개편
   if (x.type === 'miss') return add(x.bl ? `${foe(Fn(x.s))}의 공격이 ${ally(A(x.d))}에게 빗나갔습니다. (눈멂)` : `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
   if (x.type === 'aoe') { if (!x.ms) add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn'); return; }
   if (x.type === 'fskill') return add(`${foe(Fn(x.s))}의 「${esc(x.name)}」!`, 'warn');

@@ -66,6 +66,10 @@ const RES_FAMS = ['fire', 'water', 'wind', 'earth', 'thunder', 'steel', 'light',
 const RES_NAME = { fire: '불·화염', water: '물·빙결', wind: '바람·폭풍', earth: '흙', thunder: '번개', steel: '강철', light: '빛·신성', dark: '어둠·악' };
 RES_FAMS.forEach(f => { STAT_NAMES['r_' + f] = RES_NAME[f] + ' 저항'; PCT_STATS.push('r_' + f); });
 STAT_NAMES.mres = '마법 저항'; PCT_STATS.push('mres');
+// 빌드 64 룬 개편: 무기 룬의 속성 피해 (d_불 계열 …) · 명중 · 기본 공격 방어 · 행동 방해 시간 · 눈멂 걸기 / 저항 · 주는 / 받는 회복 · 흡혈 · MP 회복 · 최대 MP
+RES_FAMS.forEach(f => { STAT_NAMES['d_' + f] = RES_NAME[f] + ' 피해'; PCT_STATS.push('d_' + f); });
+Object.assign(STAT_NAMES, { hit: '명중', bblock: '기본 공격 방어', ccRes: '행동 방해 시간', blindHit: '기본 공격 눈멂', blindRes: '눈멂 저항', healPow: '주는 회복', rheal: '받는 회복', lifesteal: '흡혈', mpRegen: 'MP 회복', mpPct: '최대 MP' });
+PCT_STATS.push('hit', 'bblock', 'ccRes', 'blindHit', 'blindRes', 'healPow', 'rheal', 'lifesteal', 'mpRegen', 'mpPct');
 // 속성 스킬 · 숨결이 거는 상태이상 (MSK의 sta: 'el')
 const EL_STA = { fire: { k: 'burn', p: 0.35, d: 8, m: 0.2 }, blaze: { k: 'burn', p: 0.45, d: 8, m: 0.25 }, water: { k: 'chill', p: 0.35, d: 5 }, ice: { k: 'chill', p: 0.45, d: 5 },
   thunder: { k: 'shock', p: 0.3, d: 3 }, storm: { k: 'shock', p: 0.25, d: 2.5 }, wind: { k: 'blind', p: 0.25, d: 4 }, earth: { k: 'stun', p: 0.15, d: 1.5 },
@@ -235,15 +239,7 @@ const MRES_JOB = { cleric: 0.08 }, MRES_CLS = { spellblade: 0.08, arcblade: 0.12
 const mresJob = a => (MRES_CLS[a.cls] || 0) + (MRES_JOB[jobBase(a.cls)] || 0);
 // 장비: 로브 · 마법서 · 성표에 마법 저항 (단계 힘을 곱하고 한 점에 12%까지)
 GTYPES.robe.st.mres = 0.004; GTYPES.tome.st.mres = 0.002; GTYPES.relic.st.mres = 0.003;
-// 룬: 결계(마법 저항) · 내화 · 내한 · 피뢰 · 정결(속성 저항)
-Object.assign(RUNES, {
-  barrier: { name: '결계', st: 'mres',      v: [0.02, 0.04, 0.07], c: '#c8b8ff' },
-  fireres: { name: '내화', st: 'r_fire',    v: [0.04, 0.08, 0.14], c: '#ff9a5a' },
-  coldres: { name: '내한', st: 'r_water',   v: [0.04, 0.08, 0.14], c: '#8ad0ff' },
-  boltres: { name: '피뢰', st: 'r_thunder', v: [0.04, 0.08, 0.14], c: '#f0e070' },
-  darkres: { name: '정결', st: 'r_dark',    v: [0.04, 0.08, 0.14], c: '#e0d0f8' }
-});
-['barrier', 'fireres', 'coldres', 'boltres', 'darkres'].forEach(k => { if (!RUNE_IDS.includes(k)) RUNE_IDS.push(k); RUNE_LV.forEach((n, l) => { ITEMS[`rune_${k}_${l}`] = { name: `${n} ${RUNES[k].name}의 룬`, v: [80, 320, 1200][l], w: 1, icon: 'rune', c: RUNES[k].c, rune: [k, l] }; }); });
+// 룬: 빌드 63의 결계 · 내화 · 내한 · 피뢰 · 정결은 빌드 64 룬 개편에서 마력 · 화염 · 냉기 · 번개 · 어둠으로 합쳤다 (data-gear.js RUNES · migrate13)
 // 세트: 같은 단계 3 · 4점이면 그 단계 땅에 많은 속성 저항 10% · 20%
 const TIER_RES = (() => {
   const out = {};
