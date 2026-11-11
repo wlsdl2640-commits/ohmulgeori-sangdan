@@ -293,7 +293,7 @@ BLD_BOX.library = () => {
   return `<div class="sub muted">같은 레어도 스킬북 ${LIB_FUSE.n}권을 넣으면 <b class="q${F.g + 1}">${gradeName(F.g + 1)}</b> 스킬북 하나가 무작위로 나와요(스킬마다 뽑기 무게대로). 아주 드물게(${Math.round(LIB_FUSE.jump * 100)}%) 두 단계 위가 나와요. 펼치지 않은 스킬북 단계(찢어진 · 낡은 …)도 넣을 수 있어요.</div>
     <div class="btns">${chips}</div>
     <div class="igrid fuse">${slots}</div>
-    <div class="btns"><button type="button" class="btn sm" data-act="lfauto"${F.ids.length < LIB_FUSE.n && rest.length ? '' : ' disabled'}>가장 낮은 책 자동으로 넣기</button><button type="button" class="btn sm" data-act="lfclr"${F.ids.length ? '' : ' disabled'}>비우기</button><button type="button" class="btn gold grow" data-act="lfgo"${why ? ' disabled' : ''}>${why || `합성하기 · ${fmt(LIB_FUSE.fee[F.g])}G`}</button></div>
+    <div class="btns"><button type="button" class="btn sm" data-act="lfauto"${F.ids.length < LIB_FUSE.n && rest.length ? '' : ' disabled'}>가장 낮은 책 자동으로 넣기</button><button type="button" class="btn sm" data-act="lfclr"${F.ids.length ? '' : ' disabled'}>비우기</button><button type="button" class="btn gold grow" data-act="lfgo"${why ? ' disabled' : ''}>${why || `<span class="col2"><span class="nw">합성하기</span><span class="nw">${fmt(LIB_FUSE.fee[F.g])}G</span></span>`}</button></div>
     <div class="sec"><b>넣을 수 있는 스킬북</b><span>${gradeName(F.g)} · 메인 창고</span></div>
     <div class="igrid book">${whPad(rest, 6).join('')}</div>`;
 };
@@ -343,7 +343,7 @@ function fuseBox() {
     <div class="btns">${cats}</div><div class="btns">${qs}</div>
     <div class="igrid fuse">${slots}</div>
     ${lost ? `<div class="sub red-t">강화나 룬이 있는 장비 ${lost}점이 들어 있어요. 합성하면 사라져요.</div>` : ''}
-    <div class="btns"><button type="button" class="btn sm" data-act="fuseauto"${C.length > F.ids.length && F.ids.length < FUSE.n ? '' : ' disabled'}>가장 낮은 장비 자동으로 넣기</button><button type="button" class="btn sm" data-act="fuseclr"${F.ids.length ? '' : ' disabled'}>비우기</button><button type="button" class="btn gold grow" data-act="fusego"${why ? ' disabled' : ''}>${why || `합성하기 · ${fmt(FUSE.fee[F.q])}G`}</button></div>
+    <div class="btns"><button type="button" class="btn sm" data-act="fuseauto"${C.length > F.ids.length && F.ids.length < FUSE.n ? '' : ' disabled'}>가장 낮은 장비 자동으로 넣기</button><button type="button" class="btn sm" data-act="fuseclr"${F.ids.length ? '' : ' disabled'}>비우기</button><button type="button" class="btn gold grow" data-act="fusego"${why ? ' disabled' : ''}>${why || `<span class="col2"><span class="nw">합성하기</span><span class="nw">${fmt(FUSE.fee[F.q])}G</span></span>`}</button></div>
     <div class="sec"><b>넣을 수 있는 장비</b><span>${QUALITY[F.q].name} ${FUSE_CAT[F.cat]} ${C.length}점 · 메인 창고</span></div>
     <div class="igrid gear">${whPad(rest, 6).join('')}</div>`;
 }

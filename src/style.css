@@ -661,3 +661,6 @@ details.card > .list { margin-top: 8px; }
 .ipop .idet { margin-bottom: 4px; }
 .li.bkres { border-left-width: 4px; }
 .li.bkres.rq1 { border-left-color: #4a8a3e; } .li.bkres.rq2 { border-left-color: #3c76b8; } .li.bkres.rq3 { border-left-color: #9356cc; } .li.bkres.rq4 { border-left-color: #e0a032; } .li.bkres.rq5 { border-left-color: #ff6a5a; } .li.bkres.rq6 { border-left-color: #fff4b0; }
+
+.nw { white-space: nowrap; }   /* 큰 값이 줄 사이에서 끊기지 않게 (합성 단추 5,000,000G) */
+.col2 { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }   /* 단추 안 두 줄: 합성하기 / 값 */
