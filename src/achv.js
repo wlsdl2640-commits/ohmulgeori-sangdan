@@ -42,7 +42,6 @@ const ACHV = [
   { id: 'advs', cat: '모험가', name: '북적이는 여관', desc: '모험가 8명', need: 8, get: () => S.advs.length, rw: { gold: 3000, fame: 5 } },
   { id: 'job2', cat: '모험가', name: '첫 전직', desc: '2차 직업 모험가 1명', need: 1, get: () => S.advs.filter(a => jobTier(a.cls) >= 2).length, rw: { gold: 3000, fame: 10 } },
   { id: 'job3', cat: '모험가', name: '정점에 선 자', desc: '3차 직업 모험가 1명', need: 1, get: () => S.advs.filter(a => jobTier(a.cls) >= 3).length, rw: { gold: 10000, fame: 20 } },
-  { id: 'hero', cat: '모험가', name: '용사의 탄생', desc: '각성한 용사 1명', need: 1, get: () => S.advs.filter(a => a.hero).length, rw: { gold: 30000, fame: 30, item: ['wizstone', 1] } },
   { id: 'lic', cat: '모험가', name: '백금 라이선스', desc: '백금 라이선스 모험가 1명', need: 1, get: () => S.advs.filter(a => (a.rank || 0) >= LICENSE.length - 1).length, rw: { gold: 20000, fame: 20 } },
   { id: 'sklv5', cat: '모험가', name: '스킬의 달인', desc: '스킬 하나를 Lv5까지', need: 1, get: () => S.advs.filter(a => a.sl && Object.values(a.sl).some(v => v >= SK_LV_MAX)).length, rw: { gold: 5000, fame: 10 } },
   { id: 'hall1', cat: '모험가', name: '첫 동상', desc: '명예의 전당 동상 1개', need: 1, get: () => (S.hall || []).length, rw: { gold: 20000, fame: 20 } },
@@ -62,7 +61,6 @@ const ACHV = [
   { id: 'trade2', cat: '장사', name: '대상단', desc: '교역 20번', need: 20, get: () => S.stats.trades || 0, rw: { gold: 30000, fame: 20 } },
   { id: 'cook1', cat: '살림', name: '첫 도시락', desc: '주방에서 요리 10번', need: 10, get: () => S.stats.cooked || 0, rw: { gold: 2000 } },
   { id: 'cook2', cat: '살림', name: '상단의 요리사', desc: '주방에서 요리 200번', need: 200, get: () => S.stats.cooked || 0, rw: { gold: 15000, fame: 10 } },
-  { id: 'hero2', cat: '모험가', name: '한계를 넘어', desc: '2차 각성한 초월 용사 1명', need: 1, get: () => S.advs.filter(a => a.hero2).length + ((S.hall || []).filter(h => h.hero2).length), rw: { gold: 50000, fame: 50, item: ['wizstone', 1] } },
   { id: 'lv150', cat: '모험가', name: '별에 닿다', desc: '모험가 Lv150', need: 1, get: () => (S.advs.some(a => a.lv >= 150) || (S.hall || []).some(h => h.lv >= 150) ? 1 : 0), rw: { gold: 100000, fame: 80, item: ['bloomstone', 1] } }
 ];
 ACHV.push(   // 빌드 34: 던전 수거소

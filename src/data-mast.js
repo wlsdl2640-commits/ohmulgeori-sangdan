@@ -5,8 +5,8 @@
            exec(HP 30% 아래 적에게 주는 피해 +) · stun(기본 공격이 기절시킬 확률) · buffDur(강화 스킬 지속 시간 +) */
 const MAST_TIERS = [
   { name: '초급', lv: 10, job: 1, fee: 1000 },
-  { name: '중급', lv: 30, job: 2, fee: 5000 },
-  { name: '상급', lv: 60, job: 3, fee: 20000 }
+  { name: '중급', lv: 50, job: 2, fee: 5000 },    // 빌드 64: 2차 전직 Lv50 · 3차 전직 Lv100에 맞춤 (예전 Lv30 · 60)
+  { name: '상급', lv: 100, job: 3, fee: 20000 }
 ];
 const MASTERY = {
   sword:  { name: '검술',      w: ['sword'],         icon: 'sword',  fx: [{ atkPct: 0.04 }, { atkPct: 0.08, crit: 0.01 }, { atkPct: 0.12, crit: 0.03 }], desc: '장검을 쥐는 법부터 베는 각도까지.' },

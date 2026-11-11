@@ -109,19 +109,7 @@ Object.assign(SKILLS, TRAIT_SKILLS);
 Object.keys(TRAIT_SKILLS).forEach(id => { const s = SKILLS[id]; SKILL_IDS.push(id); BOOK_IDS.push(id); ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + s.lv * 35, w: 1, icon: 'book', c: BOOK_COLORS[s.cls[0]] || '#4a8ac8', book: id }; });
 ITEMS.bandage = { name: '붕대', v: 18, w: 1, icon: 'hide', c: '#f0ece0', sup: 1, desc: '출혈을 멎게 한다. 보급품으로 가져가면 저절로 쓴다.' };
 
-// 각성(용사): 3차 직업의 끝에 선 모험가를 용사로. 각성기를 받고 능력이 15% 오른다
-const AWAKEN = { lv: 60, rank: 3, fee: 30000, souls: 2 };
-const AWK_SKILLS = {
-  awk_warrior: { name: '용사의 일격',  cls: ['warrior'], lv: 1, cost: { mp: 30 }, cd: 30, kind: 'dmg',  mult: 4.5, tgt: 'all', fx: 'jump', crit: 0.2, awk: 1, desc: '각성기. 모든 적을 한 번에 내리친다.' },
-  awk_archer:  { name: '유성우',       cls: ['archer'],  lv: 1, cost: { mp: 30 }, cd: 30, kind: 'dmg',  mult: 1.6, hits: 3, tgt: 'all', fx: 'arrow', awk: 1, desc: '각성기. 화살이 별똥별처럼 쏟아진다.' },
-  awk_mage:    { name: '종말의 불꽃',  cls: ['mage'],    lv: 1, cost: { mp: 40 }, cd: 30, kind: 'mdmg', mult: 3.2, tgt: 'all', fx: 'fire', sta: { k: 'burn', p: 1, d: 10, m: 0.3 }, awk: 1, desc: '각성기. 모든 적을 태우고 불을 붙인다.' },
-  awk_cleric:  { name: '신의 기적',    cls: ['cleric'],  lv: 1, cost: { mp: 40 }, cd: 30, kind: 'heal', mult: 3.0, tgt: 'party', cures: STATUS_IDS, awk: 1, desc: '각성기. 파티를 크게 치료하고 모든 상태이상을 푼다.' },
-  awk_rogue:   { name: '그림자 처형',  cls: ['rogue'],   lv: 1, cost: { mp: 30 }, cd: 30, kind: 'dmg',  mult: 7.0, tgt: 'low', crit: 1, awk: 1, desc: '각성기. 가장 약한 적을 반드시 치명타로 벤다.' },
-  awk_porter:  { name: '거인의 등짐',  cls: ['porter'],  lv: 1, cost: { mp: 30 }, cd: 30, kind: 'buff', stat: 'atk', mult: 1.5, dur: 10, tgt: 'party', awk: 1, desc: '각성기. 10초 동안 파티의 공격력이 크게 오른다.' }
-};
-Object.assign(SKILLS, AWK_SKILLS);
-Object.keys(AWK_SKILLS).forEach(id => SKILL_IDS.push(id));
-const awkSkillOf = a => 'awk_' + jobBase(a.cls);
+// 빌드 64: 각성(용사)과 각성기는 없앴다 (옛 저장의 각성기는 migrate12가 스킬 칸에서 뺀다)
 STAT_NAMES.block = '방어 확률'; STAT_NAMES.counter = '반격'; STAT_NAMES.double = '연타'; STAT_NAMES.heal = '회복량'; STAT_NAMES.rheal = '받는 회복';
 
 /* ───────── 직업 특성 (2차·3차 전직 때 붙는다, 마법사의 돌로 바꿀 수 없다) · 마법사의 돌 ───────── */

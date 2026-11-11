@@ -91,7 +91,7 @@ Object.keys(SKILLS).forEach(id => { const t = skillBookTier(id); if (t >= 0) BOO
 BOOK_POOL.forEach(L => L.forEach(id => {
   if (ITEMS['book_' + id]) return;
   const s = SKILLS[id], fam = (s.cls || []).map(c => (CLASSES[c] ? jobBase(c) : c))[0] || 'all';
-  ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + s.lv * 35, w: 1, icon: 'book', c: BOOK_COLORS[fam] || '#4a8ac8', book: id };
+  ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + (s.lv0 || s.lv) * 35, w: 1, icon: 'book', c: BOOK_COLORS[fam] || '#4a8ac8', book: id };   // 빌드 64: 값은 예전 배우는 레벨로
   if (!BOOK_IDS.includes(id)) BOOK_IDS.push(id);
 }));
 /* 뽑기 확률: 직업(공용은 공용끼리)마다 배우는 레벨 순서로 등급을 매기고 무게로 나눈다
@@ -111,7 +111,7 @@ BOOK_POOL.forEach((L, t) => {
       let b = f < 0.35 ? 0 : f < 0.6 ? 1 : f < 0.85 ? 2 : 3;
       if (s.passive) b = Math.min(3, b + 1);
       if (s.kingdom || s.arena) b = Math.max(2, b);
-      if (s.lv >= 90) b = 4;
+      if ((s.lv0 || s.lv) >= 90) b = 4;   // 빌드 64: 예전 배우는 레벨로 (2차 · 3차 스킬 레벨을 옮기기 전과 같은 등급)
       BOOK_BAND_OF[id] = b; BOOK_W[id] = BOOK_W_SET[id] != null ? BOOK_W_SET[id] : BOOK_BAND[b].w;
     });
   });

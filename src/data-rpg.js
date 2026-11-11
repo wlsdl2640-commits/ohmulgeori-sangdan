@@ -74,15 +74,16 @@ const jobTier = c => CLASSES[c].tier || 1;
 const chainOf = c => { const out = [c]; while (JOB_PARENT[out[out.length - 1]]) out.push(JOB_PARENT[out[out.length - 1]]); return out; };
 const jobBase = c => chainOf(c).pop();
 const nextJobs = c => JOB_TREE[c] || [];
-const JOB_REQ = { 2: { lv: 20, rank: 1, fee: 2000 }, 3: { lv: 50, rank: 2, fee: 8000 } };
+const JOB_REQ = { 2: { lv: 50, rank: 2, fee: 30000 }, 3: { lv: 100, rank: 3, fee: 300000, souls: 2 } };   // 빌드 64: 2차 Lv50 · 금장 / 3차 Lv100 · 백은 · 주인의 혼 2 (4차 Lv150 · 백금은 나중에). 2차 · 3차 스킬 레벨은 data-job64.js가 옮긴다
 const jobName = c => CLASSES[c].name + (jobTier(c) > 1 ? ` (${jobTier(c)}차)` : '');
 const TR = a => (CLASSES[a.cls] && CLASSES[a.cls].tr) || {};
 const CLASS_IDS = Object.keys(CLASSES).filter(k => !CLASSES[k].special);   // 여관에 무작위로 오는 직업
 const ALL_CLASS_IDS = Object.keys(CLASSES);
 const MAX_SKILLS = 4;   // 기본 스킬 칸. LV30·50·70·90·100마다 한 칸씩 늘어난다
-const MAX_LV = 100;
+const MAX_LV = 150;   // 빌드 64: 누구나 Lv150 (2차 각성을 없앴다 · 4차 전직이 들어오면 200)
+const RETIRE_LV = 100;   // 명예의 전당 은퇴 (예전 최고 레벨 그대로)
 const SKILL_SLOT_LV = [30, 50, 70, 90, 100];
-const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length + (a.hero ? 1 : 0) + (a.hero2 ? 1 : 0);   // 용사는 각성기 칸이 따로, 2차 각성하면 한 칸 더
+const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length;   // 빌드 64: 각성 칸은 없앴다
 
 /* ───────── 기본 공격 · 재사용 대기시간 ─────────
    기본 공격은 5초마다 한 번(공격 속도로 나눈다), 그 대신 한 방이 세다. 스킬은 저마다의 재사용 대기시간이 돌면 따로 나간다.
@@ -105,7 +106,7 @@ const skLvMul = (a, id) => 1 + SK_LV_POW * (skLv(a, id) - 1);
 // 스킬을 lv단계로 올리는 값: 책이 있는 스킬은 책 한 권 + 돈, 고유·기본·각성 스킬은 돈만
 const isInnate = id => Object.values(CLASSES).some(c => c.innate === id);
 const skillNeedsBook = id => { const s = SKILLS[id]; return !!s && !s.awk && !isInnate(id); };   // 빌드 63: 2차 · 3차 고유 스킬(own)도 스킬북으로 (직업 기본 스킬 · 각성기만 책 없이)
-const skillUpCost = (id, lv) => { const s = SKILLS[id]; return Math.round((skillNeedsBook(id) ? Math.max(60, s.lv * 30) : Math.max(150, s.lv * 40)) * lv); };
+const skillUpCost = (id, lv) => { const s = SKILLS[id], L = s.lv0 || s.lv; return Math.round((skillNeedsBook(id) ? Math.max(60, L * 30) : Math.max(150, L * 40)) * lv); };   // 빌드 64: 값은 예전 배우는 레벨(lv0)로
 
 /* ───────── 스킬 ───────── */
 // cls: 배울 수 있는 직업 (all = 모두), lv: 배울 수 있는 레벨, cost: { mp } 또는 { hp: 최대 HP 비율 }

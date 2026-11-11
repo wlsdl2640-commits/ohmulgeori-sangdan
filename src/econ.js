@@ -23,7 +23,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
@@ -896,6 +896,7 @@ function promoWhy(a, cls) {
   if ((a.rank || 0) < Q.rank) return `${LICENSE[Q.rank].name} 라이선스 필요`;
   if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
   if (S.gold < Q.fee) return '돈이 모자라요';
+  if (Q.souls && soulCount() < Q.souls) return `주인의 혼 ${Q.souls}개 필요 (지금 ${soulCount()})`;   // 빌드 64: 3차 전직
   const mv = promoMoves(a, cls); if (mv > whFree(-1)) return `메인 창고에 빈 칸이 ${mv}개 있어야 해요 (새 직업에 안 맞는 장비를 넣을 자리)`;
   return '';
 }
@@ -936,6 +937,7 @@ function promote(aid, cls) {
   if (why) return why + '.';
   const C0 = CLASSES[a.cls], C1 = CLASSES[cls], wasT = a.eq.weapon ? a.eq.weapon.t : 0, Q = JOB_REQ[jobTier(cls)];
   S.gold -= Q.fee;
+  if (Q.souls) useSouls(Q.souls);   // 빌드 64: 3차 전직에 주인의 혼
   if (C1.req && C1.req.item) addTo(S.inv, C1.req.item[0], -C1.req.item[1]);   // 전직 재료(피눈물 등)
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
   a.cls = cls;
@@ -1228,7 +1230,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1288,6 +1290,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
+    notes64();
     return true;
   } catch (_) { return false; }
 }
@@ -1402,10 +1405,25 @@ function migrate12() {
     if (o && GTYPES[o.base] && GTYPES[o.base].slot === 'off' && SHIELDS.includes(o.base) && !gearFits(a, o)) o.base = 'shield';
     if (twoHand(a.eq.weapon) && a.eq.off) { S.gear.push(a.eq.off); a.eq.off = null; }
   });
+  // 빌드 64: 각성(용사) · 2차 각성(초월 용사)을 없앴다 — 표시를 지우고 각성기는 스킬 칸에서 뺀다 (이미 오른 능력치 · 레벨은 그대로, 이미 전직한 모험가도 그대로)
+  let h = 0;
+  const AWK = id => /^awk2?_/.test(id);
+  [...(S.advs || []), ...(S.cands || []), ...((S.graves || []).map(g => g && g.adv).filter(Boolean))].forEach(a => {
+    if (!a) return;
+    if (a.hero || a.hero2) h++;
+    delete a.hero; delete a.hero2;
+    if (Array.isArray(a.skills)) a.skills = a.skills.filter(id => !AWK(id) && SKILLS[id]);
+    for (const k of ['sl', 'skoff', 'skpri']) if (a[k]) for (const id of Object.keys(a[k])) if (AWK(id)) delete a[k][id];
+    if (Array.isArray(a.skills) && CLASSES[a.cls] && a.skills.length > skillSlots(a)) a.skills = a.skills.slice(0, skillSlots(a));
+  });
+  (S.hall || []).forEach(x => { delete x.hero; delete x.hero2; });   // 명예의 전당 용사 배율도 없앴다
+  (S.graves || []).forEach(g => { if (g) { delete g.hero; delete g.hero2; } });
   S.v = 12;
   unfitGear();
   if (n || m) log(`장비 개편: 옛 방패 · 투기장 글라디우스 ${fmt(n + m)}점을 새 장비로 바꾸었다 (등급 · 강화 · 룬은 그대로).`);
+  if (h) log(`각성이 없어졌다: 용사 ${h}명의 각성기를 스킬 칸에서 뺐다 (능력치 · 레벨은 그대로).`);
 }
+function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 전직 레벨', body: STORY.v64 }); } }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }
 function notes62() { if (!S.flags.v62) { S.flags.v62 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '상단 본부 새 단장 · 선술집', body: STORY.v62 }); } }
 function notes61() { if (!S.flags.v61) { S.flags.v61 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '뇌수 · 폭풍 골렘 새 그림', body: STORY.v61 }); } }
@@ -1448,7 +1466,7 @@ function notes34() { if (!S.flags.v34) { S.flags.v34 = 1; S.bld.salvage = S.bld.
 function notes31() { if (!S.flags.v31) { S.flags.v31 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 · 요리 · 교역 · 2차 각성', body: STORY.v31 }); } }
 function notes30() { if (!S.flags.v30) { S.flags.v30 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '북쪽 변경 · 하늘 · 마구간', body: STORY.v30 }); } }
 // 의상·숙련도 칸 (없으면 만든다)
-function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); if (a.hero) { const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk); } }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); if ((S.v || 0) >= 12) unfitGear(); migrateSkillIds(); }   // 빌드 64: 옛 저장은 migrate12가 장비를 새 종류로 바꾼 뒤에 본다
+function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); if ((S.v || 0) >= 12) unfitGear(); migrateSkillIds(); }   // 빌드 64: 옛 저장은 migrate12가 장비를 새 종류로 바꾼 뒤에 본다
 // 모험가가 더는 못 쓰는 장비는 창고로 (불러올 때마다)
 function unfitGear() { S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); }
 // 겹치던 스킬 id를 갈랐다: 결의(resolve)·치유의 찬가(chant)·유성 낙하(meteorfall). 옛 저장의 스킬·스킬북·숙련도를 옮기고, 라이선스 심사용 처치 수를 어림한다

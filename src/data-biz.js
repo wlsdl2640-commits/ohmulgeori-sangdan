@@ -111,11 +111,12 @@ const LICENSE = [
 ];
 // LICENSE_UP[r]: r → r+1 조건 (레벨, 개인 명성, 길드 심사비, 처치 수, 우두머리·주인 처치 수, 던전 공략 수)
 // 길드는 레벨만 보지 않는다. 몬스터를 얼마나 잡았고 우두머리를 몇이나 쓰러뜨렸는지, 던전을 공략해 봤는지를 따진다.
+// 빌드 64: 전직 레벨(2차 Lv50 · 3차 Lv100)에 맞춰 금장 Lv35 · 백은 Lv75 · 백금 Lv125 (예전 32 · 48 · 65), 처치 · 우두머리 · 던전 수도 함께 올렸다
 const LICENSE_UP = [
-  { lv: 18, pf: 100,  fee: 1000,  kills: 300,  bosses: 3 },
-  { lv: 32, pf: 350,  fee: 4000,  kills: 1200, bosses: 15, dungeons: 1 },
-  { lv: 48, pf: 800,  fee: 12000, kills: 3000, bosses: 40, dungeons: 3 },
-  { lv: 65, pf: 1500, fee: 35000, kills: 6000, bosses: 80, dungeons: 6 }
+  { lv: 18,  pf: 100,  fee: 1000,   kills: 300,   bosses: 3 },
+  { lv: 35,  pf: 400,  fee: 5000,   kills: 1500,  bosses: 18,  dungeons: 1 },
+  { lv: 75,  pf: 1500, fee: 30000,  kills: 6000,  bosses: 80,  dungeons: 6 },
+  { lv: 125, pf: 4000, fee: 150000, kills: 15000, bosses: 200, dungeons: 15 }
 ];
 // 심사 조건 하나하나 (UI와 심사가 같은 표를 본다)
 function licReqs(a) {

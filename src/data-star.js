@@ -1,23 +1,8 @@
-/* ───────── 빌드 31: 2차 각성(Lv100 → 150) · 구름섬의 섬 셋 ─────────
-   용사(1차 각성)가 Lv100에 2차 각성하면 2차 각성기를 받고 레벨 상한이 150으로 풀린다.
+/* ───────── 빌드 31: 레벨 상한 150 · 구름섬의 섬 셋 ─────────
+   빌드 31~63에는 용사가 Lv100에 2차 각성해야 상한이 150이었다 — 빌드 64부터 각성 없이 누구나 Lv150.
    구름섬 너머의 섬 셋: 천둥 봉우리(Lv120~130) → 천계의 유적 폐허(Lv130~140) → 별의 정원(Lv140~150). 앞 섬의 던전을 공략하면 다음 섬이 열린다. 모두 비행 마차가 있어야 간다. */
-const MAX_LV2 = 150;
-const lvCap = a => (a && a.hero2 ? MAX_LV2 : MAX_LV);
+const lvCap = () => MAX_LV;   // 빌드 64: 2차 각성(초월 용사)을 없애고 누구나 Lv150까지
 SKILL_SLOT_LV.push(120, 140);
-const AWAKEN2 = { lv: 100, rank: 4, fee: 300000, souls: 4, core: 'core_12', cores: 1 };
-const AWK2_SKILLS = {
-  awk2_warrior: { name: '천지개벽',      cls: ['warrior'], lv: 1, cost: { mp: 50 }, cd: 40, kind: 'dmg',  mult: 8.0, tgt: 'all', fx: 'jump', crit: 0.25, sta: { k: 'stun', p: 0.5, d: 2.5 }, awk: 2, desc: '2차 각성기. 하늘과 땅을 가르는 일격으로 모든 적을 베고 기절시킨다.' },
-  awk2_archer:  { name: '천궁 강림',     cls: ['archer'],  lv: 1, cost: { mp: 50 }, cd: 40, kind: 'dmg',  mult: 2.4, hits: 5, tgt: 'all', fx: 'arrow', crit: 0.2, awk: 2, desc: '2차 각성기. 하늘에서 내려온 활이 모든 적에게 다섯 번 쏟아진다.' },
-  awk2_mage:    { name: '별의 종언',     cls: ['mage'],    lv: 1, cost: { mp: 60 }, cd: 40, kind: 'mdmg', mult: 6.0, tgt: 'all', fx: 'fire', sta: { k: 'burn', p: 1, d: 12, m: 0.4 }, awk: 2, desc: '2차 각성기. 별 하나를 떨어뜨려 모든 적을 태운다.' },
-  awk2_cleric:  { name: '천상의 기적',   cls: ['cleric'],  lv: 1, cost: { mp: 60 }, cd: 45, kind: 'heal', mult: 4.5, tgt: 'party', cures: STATUS_IDS, reviveAll: 0.5, awk: 2, desc: '2차 각성기. 파티를 크게 치료하고, 쓰러진 동료를 모두 HP 50%로 일으킨다.' },
-  awk2_rogue:   { name: '무영참',        cls: ['rogue'],   lv: 1, cost: { mp: 50 }, cd: 40, kind: 'dmg',  mult: 12, tgt: 'low', crit: 1, exec: 1.5, awk: 2, desc: '2차 각성기. 그림자도 남기지 않는 일격. 가장 약한 적을 반드시 치명타로 베고, 다 죽어 가는 적에게는 더 아프다.' },
-  awk2_porter:  { name: '대상단의 기적', cls: ['porter'],  lv: 1, cost: { mp: 50 }, cd: 40, kind: 'buff', stat: 'atk', mult: 1.8, haste: 1.3, dur: 12, tgt: 'party', awk: 2, desc: '2차 각성기. 12초 동안 파티의 공격력이 크게 오르고 손이 빨라진다.' }
-};
-Object.assign(SKILLS, AWK2_SKILLS);
-Object.keys(AWK2_SKILLS).forEach(id => SKILL_IDS.push(id));
-const awk2SkillOf = a => 'awk2_' + jobBase(a.cls);
-const heroTag = a => (a && a.hero2 ? ' <span class="tag gold-t">초월 용사</span>' : a && a.hero ? ' <span class="tag gold-t">용사</span>' : '');
-const hallMul = h => (h.hero2 ? 3 : h.hero ? 2 : 1);   // 동상 효과: 용사 ×2, 초월 용사 ×3
 
 /* ───────── 부속품 ───────── */
 Object.assign(ITEMS, {

@@ -77,7 +77,7 @@ PANELS.co = () => {
     ${subBtn('co_league', '상단 랭킹', (() => { const st = leagueStand(), my = st.findIndex(x => x.me); return `이달 ${my + 1}위 · ${fmt(leagueScore())}점 · 1위 ${esc(st[0].n)}`; })(), leagueStand()[0].me)}
     ${subBtn('dex', '도감', dexSub())}
     ${subBtn('achv', '업적', `${achvDone()}/${ACHV.length} 달성 · 돈·명성·마법사의 돌`)}
-    ${subBtn('hall', '명예의 전당', `동상 ${(S.hall || []).length}/${HALL_MAX} · Lv${MAX_LV} 모험가 은퇴${S.advs.some(a => a.lv >= MAX_LV) ? ' · <span class="gold-t">은퇴할 수 있는 모험가가 있어요</span>' : ''}`, S.advs.some(a => a.lv >= MAX_LV))}
+    ${subBtn('hall', '명예의 전당', `동상 ${(S.hall || []).length}/${HALL_MAX} · Lv${RETIRE_LV} 모험가 은퇴${S.advs.some(a => a.lv >= RETIRE_LV) ? ' · <span class="gold-t">은퇴할 수 있는 모험가가 있어요</span>' : ''}`, S.advs.some(a => a.lv >= RETIRE_LV))}
     ${subBtn('co_relic', '유물', `${(S.relics || []).length}/${TIER_FIELDS.length}개 · 던전 공략 보상`)}
     ${subBtn('co_goal', '목표', S.flags.guildDown ? '암살자 길드 토벌 완료' : raidReady() ? '<span class="gold-t">길드 토벌 준비 완료</span>' : '암살자 길드 · 마왕의 봉인', raidReady() && !S.flags.guildDown)}
     ${subBtn('co_log', '소식', esc((S.log[0] && S.log[0].text) || '아직 없어요').slice(0, 22) + '…')}
@@ -254,7 +254,7 @@ function advState(a, p) {
 function advCard(a) {
   const p = partyOf(a.id), d = derive(a);
   return `<button type="button" class="card advc" data-act="advopen" data-id="${a.id}">
-    <div class="row"><img class="por" src="${portrait(a)}" alt=""><div class="grow"><div class="h">${esc(a.name)} <small>${CLASSES[a.cls].name} Lv${a.lv}</small> ${licTag(a)}${heroTag(a)}${tierTag(a.cls)}${injTag(a)}${a.quit ? ' <span class="tag red-t">퇴사 예정</span>' : ''}</div><div class="sub">${advState(a, p)}</div></div><div class="eqs">${eqIcons(a)}</div></div>
+    <div class="row"><img class="por" src="${portrait(a)}" alt=""><div class="grow"><div class="h">${esc(a.name)} <small>${CLASSES[a.cls].name} Lv${a.lv}</small> ${licTag(a)}${tierTag(a.cls)}${injTag(a)}${a.quit ? ' <span class="tag red-t">퇴사 예정</span>' : ''}</div><div class="sub">${advState(a, p)}</div></div><div class="eqs">${eqIcons(a)}</div></div>
     <div class="bar hp"><i data-hp="${a.id}"></i></div><div class="bar mp"><i data-mp="${a.id}"></i></div><div class="bar fat"><i data-fat="${a.id}"></i></div><div class="bar slp"><i data-slp="${a.id}"></i></div>
     ${a.inj ? `<div class="bar inj"><i data-inj="${a.id}"></i></div>` : ''}
     <div class="stats"><span>힘 <b>${d.T.str}</b></span><span>체력 <b>${d.T.vit}</b></span><span>민첩 <b>${d.T.agi}</b></span><span>지능 <b>${d.T.int}</b></span><span>명성 <b>${Math.floor(a.pf || 0)}</b></span><span>피로 <b data-fatn="${a.id}">${Math.round(a.fat || 0)}</b></span><span>숙면 <b data-slpn="${a.id}">${Math.round(a.sleep || 0)}</b></span><span class="muted">${a.skills.map(s => SKILLS[s].name).join(' · ')}</span></div>
@@ -296,10 +296,10 @@ const ADV_GUIDE = () => `
   <details class="card"><summary>라이선스와 전직 안내</summary><div class="log">
     <div>모험가는 원정에서 몬스터를 잡고, 필드 보스와 던전을 쓰러뜨리고, 무사히 돌아올 때마다 개인 명성을 쌓아요. 레벨·개인 명성·처치 수·우두머리 처치 수·던전 공략 수가 차면 모험가 길드 심사를 받아 ${LICENSE.map(L => L.name).join(' → ')}로 올라가요 (${LICENSE_UP.map((L, i) => `${LICENSE[i + 1].name} Lv${L.lv}·명성 ${L.pf}·처치 ${fmt(L.kills)}·우두머리 ${L.bosses}${L.dungeons ? '·던전 ' + L.dungeons : ''}·${fmt(L.fee)}G`).join(', ')}). 라이선스가 오를수록 능력이 강해지고 봉급도 올라요.</div>
     <div>전투에서 기본 공격은 ${BASIC_CD}초 ÷ 공격 속도마다 한 번 나가고(공격력 ×${BASIC_MULT}), 스킬은 저마다의 재사용 대기시간이 돌면 따로 나가요. 공격 속도는 민첩·특성 「재빠름」·지속 스킬 「신속」·신속의 룬·강화 스킬로, 스킬 재사용 감소는 지속 스킬 「전술」·특성 「전술가」·시간의 룬·숙련도로 모여요. 스킬 창에서 모든 스킬의 계수·피해·확률·대기시간을 볼 수 있어요.</div>
-    <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·레인저·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>
+    <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G·주인의 혼 ${JOB_REQ[3].souls}개가 들어요. 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·레인저·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>
     <div>2차·3차 직업은 역할이 갈려요. 전사: 기사=탱커(도발·엄호·받는 피해 감소) · 검투사=지속딜(연계) · 광전사=한방딜(분노·처형) · 마검사=브루저(마법 검+보호막). 마법사: 네크로맨서=지속딜(저주·역병) · 마도사=한방딜(긴 쿨 큰 한 방·처형) · 정령술사=혼합(광역+치유·방어). 궁수: 레인저=지속딜(연사·늑대) · 저격수=한방딜(선공·관통·처형) · 괴물사냥꾼=혼합(표식·보스). 도적: 쌍검사=지속딜 · 암살자=한방딜 · 보물 사냥꾼=혼합(금화·연막·대박). 성직자: 사제=치유·보호막·부활(3차) · 역병의사=재생+지속 딜 · 퇴마사=전투 사제(때리면 파티가 회복). 짐꾼: 음유시인=공격 버퍼 · 마부=방어 버퍼(보호막·엄호) · 정찰가=디버퍼(표식·약점 간파).</div>
     <div>장치: 연계 — 기본 공격을 맞힐 때마다 피해가 쌓이고(5중첩) 빗나가거나 기절하면 끊겨요. 처형 — HP 30% 아래 적에게 더 큰 피해. 표식 — 걸린 적이 받는 피해 +20%. 보호막 — 피해를 대신 받는 임시 HP(HP 막대 위 하늘색). 엄호 — 동료가 노려지면 탱커가 대신 맞아요. 재생 — 초당 회복이 이어져요.</div>${jobTreeList()}
-    <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이고, 2차 각성하면 ${MAX_LV2}까지 올라가요.</div>
+    <div>스킬 칸은 기본 ${MAX_SKILLS}칸이고 Lv${SKILL_SLOT_LV.join('·')}에 한 칸씩 늘어요. 최고 레벨은 ${MAX_LV}이에요.</div>
     <div>숙련은 스킬 칸과 따로 훈련소에서 배워요: ${MAST_IDS.map(k => MASTERY[k].name).join('·')}. ${MAST_TIERS.map(T => `${T.name} Lv${T.lv}${T.job > 1 ? '·' + T.job + '차 전직' : ''}`).join(' → ')}. 무기술(검술·궁술 …)은 그 무기를 들었을 때만 켜져요.</div></div></details>`;
 PANELS.adv = () => {
   const cur = advCatCur(), free = Math.max(0, beds() - living().length);
@@ -357,7 +357,7 @@ function advDetail(a) {
   const owns = SKILL_IDS.filter(id => SKILLS[id].own && chain.some(c => SKILLS[id].cls.includes(c)) && !a.skills.includes(id) && id !== CLASSES[a.cls].innate && !((S.inv['book_' + id] || 0) > 0)).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv);
   const ownRows = owns.map(id => { const s = SKILLS[id]; return `<div class="li">${skIco(id)}<div class="grow stack"><span>${s.name} <span class="muted">· ${costStr(s)} · Lv${s.lv}${s.cls.includes(a.cls) ? '' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : '').join('')}`}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span><span class="sub muted">${bookFromText(id)}</span></div><span class="tag muted">스킬북 필요</span></div>`; }).join('');
   const table = SKILL_IDS.filter(id => chain.some(c => SKILLS[id].cls.includes(c)) || SKILLS[id].cls.includes('all')).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv)
-    .map(id => { const s = SKILLS[id], has = a.skills.includes(id); return `<div class="${has ? 'ok-t' : a.lv >= s.lv ? '' : 'muted'}">Lv${s.lv} ${s.name} · ${costStr(s)} · ${has ? '배움' : id === CLASSES[a.cls].innate ? '기본' : s.awk ? '각성' : s.own ? '고유 · 스킬북 필요' : '스킬북 필요'}${s.cls.includes('all') ? ' · 공용' : ''}<div class="sub muted">${skillSpec(id).join(' · ')}${!has && !s.awk && id !== CLASSES[a.cls].innate ? ` · ${bookFromText(id)}` : ''}</div></div>`; }).join('');
+    .map(id => { const s = SKILLS[id], has = a.skills.includes(id); return `<div class="${has ? 'ok-t' : a.lv >= s.lv ? '' : 'muted'}">Lv${s.lv} ${s.name} · ${costStr(s)} · ${has ? '배움' : id === CLASSES[a.cls].innate ? '기본' : s.own ? '고유 · 스킬북 필요' : '스킬북 필요'}${s.cls.includes('all') ? ' · 공용' : ''}<div class="sub muted">${skillSpec(id).join(' · ')}${!has && id !== CLASSES[a.cls].innate ? ` · ${bookFromText(id)}` : ''}</div></div>`; }).join('');
   const L = LICENSE[a.rank || 0], Ln = licNext(a);
   const licR = licReqs(a), licOk = licR.every(r => r.ok);
   const lic = Ln ? `<div class="li"><div class="grow stack"><span>다음: ${LICENSE[a.rank + 1].name} <span class="muted">· 능력 ×${LICENSE[a.rank + 1].mul}</span></span><span class="sub">${licR.map(r => `<span class="${r.ok ? 'ok-t' : 'red-t'}">${r.label} ${fmt(r.cur)}/${fmt(r.need)}</span>`).join(' · ')} · <span class="${S.gold >= Ln.fee ? '' : 'red-t'}">심사비 ${fmt(Ln.fee)}G</span></span><span class="sub muted">우두머리·주인 처치는 필드 보스(1-10·20·30·40·50)와 던전 주인을 함께 센 수예요. 던전·레이드 공략은 던전 주인을 처음 쓰러뜨리거나 레이드를 끝냈을 때예요.</span></div><button type="button" class="btn sm gold" data-mact="lic"${idle && licOk && S.gold >= Ln.fee ? '' : ' disabled'}>심사</button></div>` : '<div class="li"><span class="sub gold-t">가장 높은 라이선스예요.</span></div>';
@@ -371,7 +371,7 @@ function advDetail(a) {
     ${(a.sleep || 0) >= SLEEP.block ? `<div class="sub warn">숙면 피로 ${Math.round(a.sleep)} · ${SLEEP.block} 아래로 내려갈 때까지 여관에서 자야 원정에 나갈 수 있어요.</div>` : ''}`;
   let body = '';
   if (tab === 'sum') body = `
-    <div class="card"><div class="h">${esc(a.name)} <span class="muted">· ${CLASSES[a.cls].name} Lv${a.lv}</span>${tierTag(a.cls)} ${licTag(a)}${heroTag(a)}${injTag(a)}</div>${trText(a.cls) ? `<div class="sub gold-t">${trText(a.cls)}</div>` : ''}<div class="sub">${a.lv >= lvCap(a) ? `최고 레벨${a.hero2 ? '' : a.hero ? ` (Lv${AWAKEN2.lv} 2차 각성으로 ${MAX_LV2}까지)` : ''}` : `경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))}`} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0} · 개인 명성 ${Math.floor(a.pf || 0)}</div></div>
+    <div class="card"><div class="h">${esc(a.name)} <span class="muted">· ${CLASSES[a.cls].name} Lv${a.lv}</span>${tierTag(a.cls)} ${licTag(a)}${injTag(a)}</div>${trText(a.cls) ? `<div class="sub gold-t">${trText(a.cls)}</div>` : ''}<div class="sub">${a.lv >= lvCap(a) ? '최고 레벨' : `경험치 ${fmt(a.exp)}/${fmt(expNeed(a.lv))}`} · 봉급 ${fmt(a.salary)}G/월 · 처치 ${a.kills || 0} · 개인 명성 ${Math.floor(a.pf || 0)}</div></div>
     <div class="sec"><b>특성</b><span>타고난 ${innateTraits(a).length}/${TRAIT_MAX}${(S.inv.wizstone || 0) ? ` · 마법사의 돌 ${S.inv.wizstone}개` : ''}${(S.inv.bloomstone || 0) ? ` · 개화석 ${S.inv.bloomstone}개` : ''}</span></div>
     <div class="traits">${traitChips(a, idle && (S.inv.wizstone || 0) > 0)}${emptyTraitChips(a, idle && (S.inv.bloomstone || 0) > 0)}</div>
     ${a.wxt ? `<div class="sec"><b>날씨 특성</b><span>모험가마다 하나 · 타고난 특성과 따로</span></div><div class="traits">${wxtChip(a)}</div>` : ''}
@@ -387,8 +387,6 @@ function advDetail(a) {
     <div class="sub muted">공격 속도 ${spdB.spd} → 기본 공격은 ${BASIC_CD}초 ÷ 공격 속도마다 한 번(공격력 ×${BASIC_MULT}). 스킬 재사용 감소: ${spdB.cdr}. 숙련도가 오르면 그 스킬의 재사용도 2%씩 줄어요.</div>${notes}`;
   else if (tab === 'job') body = `
     ${promo ? `<div class="sec" style="margin-top:0"><b>${jobTier(a.cls) + 1}차 전직</b><span>${jobTier(a.cls) === 1 ? '하나를 골라요 · 되돌릴 수 없어요' : '훈련소에서'}</span></div><div class="list">${promo}</div>` : `<div class="sub muted" style="margin-top:0">${jobTier(a.cls) >= 3 ? '3차 직업의 끝이에요. 아래에서 각성할 수 있어요.' : '더 전직할 수 없어요.'}</div>`}
-    ${jobTier(a.cls) >= 3 || a.hero ? `<div class="sec"><b>각성</b><span>${a.hero ? '용사' : '3차 직업의 끝'}</span></div><div class="card${a.hero ? ' hl' : ''}">${a.hero ? `<div class="h gold-t">용사 ${esc(a.name)}</div><div class="sub">각성기 「${SKILLS[awkSkillOf(a)].name}」 · ${SKILLS[awkSkillOf(a)].desc} 능력 +15%, 성장 ×1.2.</div>` : `<div class="sub">Lv${AWAKEN.lv} 이상, ${LICENSE[AWAKEN.rank].name} 라이선스, 주인의 혼 ${AWAKEN.souls}개, ${fmt(AWAKEN.fee)}G. 각성하면 각성기 「${SKILLS[awkSkillOf(a)].name}」을 받고 능력이 15% 오르며 성장이 빨라져요.</div><div class="row"><span class="sub grow ${awakenWhy(a) ? 'red-t' : 'ok-t'}">${awakenWhy(a) || '각성할 수 있어요'}</span><button type="button" class="btn sm gold" data-mact="awaken"${awakenWhy(a) ? ' disabled' : ''}>각성</button></div>`}</div>` : ''}
-    ${a.hero ? `<div class="sec"><b>2차 각성</b><span>${a.hero2 ? '초월 용사' : `Lv${AWAKEN2.lv} 용사의 한계`}</span></div><div class="card${a.hero2 ? ' hl' : ''}">${a.hero2 ? `<div class="h gold-t">초월 용사 ${esc(a.name)}</div><div class="sub">2차 각성기 「${SKILLS[awk2SkillOf(a)].name}」 · ${SKILLS[awk2SkillOf(a)].desc} 레벨 상한 ${MAX_LV2}, 능력 +15% 더, 성장 ×1.35.</div>` : `<div class="sub">Lv${AWAKEN2.lv} 이상, ${LICENSE[AWAKEN2.rank].name} 라이선스, ${ITEMS[AWAKEN2.core].name} ${AWAKEN2.cores}개, 주인의 혼 ${AWAKEN2.souls}개, ${fmt(AWAKEN2.fee)}G. 2차 각성하면 2차 각성기 「${SKILLS[awk2SkillOf(a)].name}」을 받고 레벨 상한이 ${MAX_LV2}까지 풀려요. 능력 +15% 더, 성장 ×1.35, 스킬 칸 +1.</div><div class="row"><span class="sub grow ${awaken2Why(a) ? 'red-t' : 'ok-t'}">${awaken2Why(a) || '2차 각성할 수 있어요'}</span><button type="button" class="btn sm gold" data-mact="awaken2"${awaken2Why(a) ? ' disabled' : ''}>2차 각성</button></div>`}</div>` : ''}
     <details class="card"><summary>전직 길 안내</summary><div class="log">${jobTreeList()}<div class="muted">계열마다 맨 앞 2차 직업은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요. 2차 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G.</div></div></details>${notes}`;
   else if (tab === 'skill') body = `
     <div class="sec" style="margin-top:0"><b>스킬</b><span>${a.skills.length}/${skillSlots(a)}칸${SKILL_SLOT_LV.find(l => a.lv < l) ? ` · Lv${SKILL_SLOT_LV.find(l => a.lv < l)}에 한 칸 더` : ''}</span></div>
@@ -407,7 +405,7 @@ function advDetail(a) {
     ${post ? `<div class="sec" style="margin-top:0"><b>신전</b><span>치유사 배치</span></div><div class="list">${post}</div>` : ''}
     <div class="sec"><b>이력</b><span>${CLASSES[a.cls].name} Lv${a.lv}</span></div>
     <div class="card"><div class="sub">${esc(a.bio)}</div><div class="stats"><span>처치 <b>${fmt(a.kills || 0)}</b></span><span>개인 명성 <b>${Math.floor(a.pf || 0)}</b></span><span>봉급 <b>${fmt(salaryOf(a))}G/월</b></span><span>훈련 <b>${trainedTotal(a)}</b>번</span></div></div>
-    ${a.lv >= MAX_LV ? `<div class="sec"><b>은퇴</b><span>명예의 전당</span></div><div class="row"><span class="sub grow">Lv${MAX_LV}이에요. 명예의 전당에 동상을 세우고 은퇴시킬 수 있어요.</span><button type="button" class="btn sm gold" data-act="sub" data-id="hall">전당 열기</button></div>` : ''}
+    ${a.lv >= RETIRE_LV ? `<div class="sec"><b>은퇴</b><span>명예의 전당</span></div><div class="row"><span class="sub grow">Lv${a.lv}이에요. 명예의 전당에 동상을 세우고 은퇴시킬 수 있어요.</span><button type="button" class="btn sm gold" data-act="sub" data-id="hall">전당 열기</button></div>` : ''}
     ${idle ? '<div class="btns"><button type="button" class="btn sm red" data-mact="fire">내보내기</button></div>' : ''}${notes}`;
   return bar + body;
 }
@@ -430,8 +428,6 @@ function advAct(aid, b) {
   if (k === 'skoff') m = skillToggle(aid, b.dataset.s, 'off');
   if (k === 'skpri') m = skillToggle(aid, b.dataset.s, 'pri');
   if (k === 'lic') m = licenseUp(aid);
-  if (k === 'awaken2') { confirmBox('2차 각성', `${x.name}을(를) 2차 각성시킬까요? ${fmt(AWAKEN2.fee)}G, ${ITEMS[AWAKEN2.core].name} ${AWAKEN2.cores}개, 주인의 혼 ${AWAKEN2.souls}개가 들어요. 레벨 상한이 ${MAX_LV2}까지 풀려요.`, '2차 각성', () => { say(awaken2(aid)); renderPanel(true); updateHud(); saveGame(); }); return; }
-  if (k === 'awaken') { confirmBox('각성', `${x.name}을(를) 용사로 각성시킬까요? ${fmt(AWAKEN.fee)}G와 주인의 혼 ${AWAKEN.souls}개가 들어요.`, '각성', () => { say(awaken(aid)); renderPanel(true); }); return; }
   if (k === 'promo') { const c = b.dataset.c; confirmBox('전직', `${x.name}을(를) ${CLASSES[c].name}(으)로 전직시킬까요? ${fmt(JOB_REQ[jobTier(c)].fee)}G가 들고, 되돌릴 수 없어요.`, '전직', () => { say(promote(aid, c)); renderPanel(true); updateHud(); saveGame(); }, false); return; }
   if (k === 'rune') { openWin('rune', { gid: +b.dataset.g }); return; }
   if (k === 'stone') { const t = b.dataset.t; confirmBox('마법사의 돌', `${x.name}의 「${TRAITS[t].name}」을(를) 무작위 다른 특성으로 바꿀까요? 마법사의 돌 1개를 써요.`, '바꾸기', () => { say(useStone(aid, t)); renderPanel(true); saveGame(); }, false); return; }
@@ -815,7 +811,7 @@ function pickForSlot(i) {
   $('m-body').onclick = e => { const b = e.target.closest('[data-slotpick]'); if (!b) return; setSlot(i, b.dataset.slotpick, 1); $('m-body').onclick = null; closeModal(); renderPanel(true); };
 }
 
-const ACT_SFX = { sell: 'coin', sellgear: 'coin', buy: 'buy', bmbuy: 'buy', arbuy: 'buy', kingbuy: 'buy', merbuy: 'buy', kingsell: 'coin', craft: 'pot', smith: 'forge', buyammo: 'buy', enhance: 'forge', build: 'forge', hatch: 'buff', feed: 'pot', go: 'open', wavego: 'warn', retire: 'win', train: 'buff', learn: 'buff', promo: 'win', awaken: 'win', stone: 'buff', fulfill: 'coin', dest: 'ui', desttab: 'ui', invtab: 'ui', dextab: 'ui' };
+const ACT_SFX = { sell: 'coin', sellgear: 'coin', buy: 'buy', bmbuy: 'buy', arbuy: 'buy', kingbuy: 'buy', merbuy: 'buy', kingsell: 'coin', craft: 'pot', smith: 'forge', buyammo: 'buy', enhance: 'forge', build: 'forge', hatch: 'buff', feed: 'pot', go: 'open', wavego: 'warn', retire: 'win', train: 'buff', learn: 'buff', promo: 'win', stone: 'buff', fulfill: 'coin', dest: 'ui', desttab: 'ui', invtab: 'ui', dextab: 'ui' };
 function bindUI() {
   $('panel-in').addEventListener('click', e => {
     const b = e.target.closest('[data-act],[data-mact]');

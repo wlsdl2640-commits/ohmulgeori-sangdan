@@ -32,13 +32,13 @@ const isNight = () => phaseOf(S.t) === 3;
 /* ───────── 모험가 능력치 ───────── */
 function expNeed(lv) { return Math.round(30 * Math.pow(lv, 1.8)); }
 function growStats(a, n) {
-  const g = CLASSES[a.cls].grow, mul = a.hero2 ? 1.35 : a.hero ? 1.2 : 1;   // 용사는 1.2배, 2차 각성하면 1.35배로 자란다
-  for (let i = 0; i < n; i++) for (const [k] of STATS) { const v = g[k] * mul, f = Math.floor(v); a.st[k] += f + (rnd() < v - f ? 1 : 0); }
+  const g = CLASSES[a.cls].grow;
+  for (let i = 0; i < n; i++) for (const [k] of STATS) { const v = g[k], f = Math.floor(v); a.st[k] += f + (rnd() < v - f ? 1 : 0); }
 }
 function makeAdv(o = {}) {
   const cls = o.cls || pickOne(CLASS_IDS), C = CLASSES[cls], lv = o.lv || 1;
   const a = {
-    id: nid(), name: o.name || (pickOne(NAME_A) + pickOne(NAME_B)), cls, lv, exp: 0, hero: !!o.hero,
+    id: nid(), name: o.name || (pickOne(NAME_A) + pickOne(NAME_B)), cls, lv, exp: 0,
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
@@ -52,58 +52,9 @@ function makeAdv(o = {}) {
   a.hp = d.maxHp; a.mp = d.maxMp;
   return a;
 }
-/* ───────── 각성: 3차 직업을 용사로 ───────── */
-function awakenWhy(a) {
-  if (a.hero) return '이미 용사예요';
-  if (jobTier(a.cls) < 3) return '3차 직업이어야 해요';
-  if (a.lv < AWAKEN.lv) return `Lv${AWAKEN.lv}부터`;
-  if ((a.rank || 0) < AWAKEN.rank) return `${LICENSE[AWAKEN.rank].name} 라이선스 필요`;
-  if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
-  const souls = Object.keys(S.inv).filter(k => k.startsWith('soul_')).reduce((n, k) => n + S.inv[k], 0);
-  if (souls < AWAKEN.souls) return `주인의 혼 ${AWAKEN.souls}개 필요 (지금 ${souls})`;
-  if (S.gold < AWAKEN.fee) return `${fmt(AWAKEN.fee)}G 필요`;
-  return '';
-}
-function awaken(aid) {
-  const a = advById(aid); if (!a) return '';
-  const why = awakenWhy(a); if (why) return why + '.';
-  let need = AWAKEN.souls;
-  for (const k of Object.keys(S.inv).filter(k => k.startsWith('soul_')).sort()) { const t = Math.min(need, S.inv[k]); addTo(S.inv, k, -t); need -= t; if (!need) break; }
-  S.gold -= AWAKEN.fee; a.hero = true; S.fame += 30;
-  const sk = awkSkillOf(a); if (!a.skills.includes(sk)) a.skills.unshift(sk);
-  const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
-  log(`${a.name}이(가) 각성해 용사가 되었다! 각성기 「${SKILLS[sk].name}」. 상단 명성 +30`, 'good');
-  queueModal({ title: '각성', body: [`${a.name}의 안에서 잠들어 있던 힘이 깨어났다. 모험가 길드 명예의 벽에 「용사」로 이름이 새겨진다.`, `각성기 「${SKILLS[sk].name}」: ${SKILLS[sk].desc}`, '능력이 15% 오르고, 레벨이 오를 때마다 더 크게 자란다.', `Lv${AWAKEN2.lv}이 되면 2차 각성으로 레벨 상한을 ${MAX_LV2}까지 풀 수 있다.`] });
-  changed();
-  return '';
-}
-/* ───────── 2차 각성: Lv100 용사의 한계를 풀어 Lv150까지 ───────── */
+// 빌드 64: 각성(용사) · 2차 각성(초월 용사)은 없앴다 — 3차 전직(Lv100)에 주인의 혼을 쓴다 (promote, econ.js)
 const soulCount = () => Object.keys(S.inv).filter(k => k.startsWith('soul_')).reduce((n, k) => n + S.inv[k], 0);
-function awaken2Why(a) {
-  if (a.hero2) return '이미 2차 각성했어요';
-  if (!a.hero) return '먼저 각성해 용사가 되어야 해요';
-  if (a.lv < AWAKEN2.lv) return `Lv${AWAKEN2.lv}부터`;
-  if ((a.rank || 0) < AWAKEN2.rank) return `${LICENSE[AWAKEN2.rank].name} 라이선스 필요`;
-  if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
-  if ((S.inv[AWAKEN2.core] || 0) < AWAKEN2.cores) return `${ITEMS[AWAKEN2.core].name} ${AWAKEN2.cores}개 필요 (창고 ${S.inv[AWAKEN2.core] || 0})`;
-  if (soulCount() < AWAKEN2.souls) return `주인의 혼 ${AWAKEN2.souls}개 필요 (지금 ${soulCount()})`;
-  if (S.gold < AWAKEN2.fee) return `${fmt(AWAKEN2.fee)}G 필요`;
-  return '';
-}
-function awaken2(aid) {
-  const a = advById(aid); if (!a) return '';
-  const why = awaken2Why(a); if (why) return why + '.';
-  let need = AWAKEN2.souls;
-  for (const k of Object.keys(S.inv).filter(k => k.startsWith('soul_')).sort()) { const t = Math.min(need, S.inv[k]); addTo(S.inv, k, -t); need -= t; if (!need) break; }
-  addTo(S.inv, AWAKEN2.core, -AWAKEN2.cores);
-  S.gold -= AWAKEN2.fee; a.hero2 = true; S.fame += 60; a.exp = 0;
-  const sk = awk2SkillOf(a); if (!a.skills.includes(sk)) a.skills.splice(a.skills.includes(awkSkillOf(a)) ? 1 : 0, 0, sk);
-  const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
-  log(`${a.name}이(가) 2차 각성했다! 레벨 상한이 ${MAX_LV2}까지 풀렸다. 2차 각성기 「${SKILLS[sk].name}」. 상단 명성 +60`, 'good');
-  queueModal({ title: '2차 각성', body: [`${a.name}이(가) 용사의 한계를 넘었다. 몸 안에서 별빛 같은 힘이 넘친다.`, `2차 각성기 「${SKILLS[sk].name}」: ${SKILLS[sk].desc}`, `레벨 상한 ${MAX_LV} → ${MAX_LV2}. 능력이 15% 더 오르고, 레벨이 오를 때마다 1.35배로 자란다. 스킬 칸이 하나 늘었다.`] });
-  changed();
-  return '';
-}
+function useSouls(n) { for (const k of Object.keys(S.inv).filter(k => k.startsWith('soul_')).sort()) { const t = Math.min(n, S.inv[k]); addTo(S.inv, k, -t); n -= t; if (!n) break; } }
 function gearSum(a) {
   const s = {};
   for (const [slot] of SLOTS) { const g = a.eq && a.eq[slot]; if (!g || (isAmmo(g) && ammoLeft(g, a) <= 0) || (slot === 'ammo' && !needsArrows(a))) continue; const gs = gearStats(g); for (const k in gs) s[k] = (s[k] || 0) + gs[k]; }   // 다 쓴 화살·표창은 능력치 없음
@@ -123,7 +74,7 @@ function deriveBase(a) {
   for (const [k] of STATS) T[k] = Math.max(0, a.st[k] + a.tr[k] + (G[k] || 0));
   let atk = jb === 'archer' ? T.str * 0.5 + T.agi * 0.75 : jb === 'rogue' ? T.str * 0.8 + T.agi * 0.45 : T.str * 1.1;
   atk += L * 0.4 + (G.atk || 0);
-  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul * (a.hero ? 1.15 : 1) * (a.hero2 ? 1.15 : 1);
+  const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul;
   const X = k => traitSum(a, k);   // 타고난 특성
   return {
     T, atk: atk * war * lic * (1 + (P.atkPct || 0) + X('atkPct')),
@@ -151,7 +102,7 @@ function deriveBase(a) {
 function resOf(G, P, X) { const r = {}; for (const f of RES_FAMS) { const k = 'r_' + f, v = (G[k] || 0) + (P[k] || 0) + X(k); if (v > 0) r[f] = Math.min(FIGHT.resMax, v); } return r; }
 function clampVitals(a) { const d = derive(a); a.hp = Math.min(a.hp, d.maxHp); a.mp = Math.min(a.mp == null ? d.maxMp : a.mp, d.maxMp); }
 function addExp(a, n) {
-  const cap = lvCap(a);   // Lv100, 2차 각성하면 150
+  const cap = lvCap(a);   // 빌드 64: 누구나 Lv150 (4차 전직이 들어오면 200)
   if (a.lv >= cap) { a.exp = 0; return false; }
   a.exp += Math.round(n * (1 + traitSum(a, 'expPct')));
   let up = false;
@@ -389,7 +340,7 @@ function startExp(p, fid) {
   p.exp.food = packFood(p);   // 도시락
   boostStart(p.exp);   // 빌드 63: 상단 전용 원정 휴대품 (나침반 · 은화 · 부적 · 미끼 · 깃발 · 월계관 · 이슬 · 방울)
   if (FIELDS[fid].trade) tradeSetup(p, p.exp);
-  if (FIELDS[fid].treasure) { addTo(S.inv, 'tmap', -1); p.exp.lvo = Math.max(8, Math.min(MAX_LV2, Math.round(avgLvOf(p)))); p.exp.chests = 0; }
+  if (FIELDS[fid].treasure) { addTo(S.inv, 'tmap', -1); p.exp.lvo = Math.max(8, Math.min(MAX_LV, Math.round(avgLvOf(p)))); p.exp.chests = 0; }
   team.forEach(a => { refillAmmo(a); a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.stats.trips++;
   if (!FIELDS[fid].trade) log(`${p.name}이(가) ${FIELDS[fid].name}(으)로 출발했다.${p.exp.food ? ` 도시락 ${FOODS[p.exp.food].name}을(를) 챙겼다.` : ''}${FIELDS[fid].treasure ? ' 보물 지도 한 장을 썼다.' : wagonFly(p) ? ` ${rigName(p)}이(가) 하늘로 떠올랐다.` : ''}`);
