@@ -2,7 +2,7 @@
    「A안 보석은 B」 → 26×26 도트 판(2배 = 52px): A안 테(2~3칸 경사 · 계단 바탕 · 희귀부터 모서리 따기 · 전설부터 금 줄 · 반짝이)
      + B안 위 보석(레어도만큼 커진다, 신화부터 아래 보석도).
    「영웅등급부터 테두리, 안쪽배경, 장비, 아이템 도트에 홀로그램처럼 레어도 빛이 움직이는 효과」 → 테 · 바탕 · 그림 도트를 한 판으로 굽고,
-     그 위로 그 레어도 색의 빛줄기(빌드 63 다섯째 묶음부터 — 처음엔 무지갯빛)가 대각선으로 지나가는 12장을 세로로 이어 붙여 CSS steps로 넘긴다 (흐림 · 부드러운 이동 없음, 모두 칸으로).
+     그 위로 홀로그램(빌드 63 다섯째 묶음: 칸 전체에 레어도 색 필름 결 + 넓은 빛 덩어리 — 처음엔 무지갯빛 한 줄)이 흐르는 12장을 세로로 이어 붙여 CSS steps로 넘긴다 (흐림 · 부드러운 이동 없음, 모두 칸으로).
    우주(빌드 63 다섯째 묶음): 남빛 테 · 칸 안 별밤(rqSpace) · 옆 보석 · 깜빡이는 별(rqCosmos) · 보석 너비 8.
    그림 하나 · 레어도 · 강화 단계마다 한 번만 굽고(RQ_CACHE), 큰 data URL은 칸마다 쓰지 않고 스타일 규칙 하나(.rqa.kN)로 붙인다. */
 const RQ_N = 26, RQ_NF = 12, RQ_K = [12, 14, 20];
@@ -112,16 +112,23 @@ function rqFrame(g, t) {
   return P;
 }
 // 홀로그램 빛줄기: 대각선(x + y)으로 장마다 6칸씩 지나간다. 신화부터 줄기 둘
-function rqHolo(P, g, t) {
+const RQ_BAY = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];   // 4×4 바둑 무늬 문턱
+// 홀로그램 (11-11 17:37 사용자 확정 「C안」 — 「한 줄 말고 전체적으로」 · 「필름이랑 넓은 빛을 합쳐」 · 「필름 세기를 A와 B 사이로」):
+//   칸 전체에 레어도 색 필름 결(밝은 칸일수록 진하게, 조금 가파른 결)이 흐르고, 넓은 빛 덩어리가 대각선으로 한 번 지나간다.
+//   필름 세기 = 기본 × (0.7 + 0.35 × 빛이 닿은 정도), 넓은 빛은 레어도 색을 흰빛 쪽으로 35% 섞어 더한다. 그림(M) 칸은 0.6배.
+function rqHolo(P, g, t, M) {
   const N = RQ_N, pal = RQ_HOLO[g]; if (!pal) return;
-  const bands = [-6 + t * 6]; if (g >= 5) bands.push(-6 + t * 6 - 30);
+  const n = pal.length, md = (a, b) => ((a % b) + b) % b;
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
-    const c = P[y * N + x]; if (!c) continue;
-    let s = 0;
-    for (const bc of bands) { const d = Math.abs(x + y - bc); if (d <= 1) s = Math.max(s, 0.62); else if (d <= 3) s = Math.max(s, 0.3); }
-    if (!s) continue;
-    const hc = pal[((((x - y) >> 2) + t) % pal.length + pal.length) % pal.length];
-    P[y * N + x] = rqMix(c, hc, s);
+    const i = y * N + x, c = P[i]; if (!c) continue;
+    const th = (RQ_BAY[(y & 3) * 4 + (x & 3)] + 0.5) / 16, im = M && M[i] ? 0.6 : 1;
+    const w = md(x * 2 + y - t * 2, 24) / 24, lum = (c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11) / 255, lv = 0.12 + 0.5 * lum;
+    const sf = lv > 0.45 ? 0.5 : lv > 0.3 ? (th < 0.5 ? 0.42 : 0.3) : (th < 0.5 ? 0.24 : 0.14);
+    const d = Math.abs(x + y + 26 - t * 6.5), k = d < 4 ? 1 : d < 9 ? (th < 0.66 ? 0.7 : 0.45) : d < 15 ? (th < 0.4 ? 0.35 : 0.15) : 0;
+    const ss = d < 4 ? 0.45 : d < 9 ? (th < 0.66 ? 0.3 : 0.18) : d < 15 ? (th < 0.4 ? 0.14 : 0.05) : 0;
+    let q = rqMix(c, pal[Math.floor(w * n) % n], sf * (0.7 + 0.35 * k) * im);
+    if (ss) q = rqMix(q, rqMix(pal[md(((x - y) >> 2) + t, n)], RQ_W, 0.35), ss * im);
+    P[i] = q;
   }
 }
 // 강화 표시 (+4 · +7 · +10): 왼쪽 아래 2×2 도트 (예전 흐린 빛 대신)
@@ -150,9 +157,10 @@ function rqClass(src, g, plus) {
   const [c, x] = mkCanvas(N, N * nf), img = x.createImageData(N, N * nf), D = img.data;
   for (let t = 0; t < nf; t++) {
     const P = rqFrame(g, t);
-    if (ic) for (const [px, py, col] of ic) { const X = px + 3, Y = py + 3; if (X >= 0 && Y >= 0 && X < N && Y < N) P[Y * N + X] = col; }
+    const M = new Uint8Array(N * N);   // 그림 칸 (홀로그램을 조금 약하게)
+    if (ic) for (const [px, py, col] of ic) { const X = px + 3, Y = py + 3; if (X >= 0 && Y >= 0 && X < N && Y < N) { P[Y * N + X] = col; M[Y * N + X] = 1; } }
     rqPlus(P, plus);
-    if (holo) rqHolo(P, g, t);
+    if (holo) rqHolo(P, g, t, M);
     for (let i = 0; i < N * N; i++) { const col = P[i]; if (!col) continue; const o = (t * N * N + i) * 4; D[o] = col[0]; D[o + 1] = col[1]; D[o + 2] = col[2]; D[o + 3] = 255; }
   }
   x.putImageData(img, 0, 0);
