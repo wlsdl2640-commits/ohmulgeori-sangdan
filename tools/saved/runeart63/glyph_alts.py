@@ -208,3 +208,21 @@ def variant6(k, i):
     nm, rows, off = ALTS6[k][i]
     R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL[k])
+
+
+# ───────── 강인 최상급 — 팔 근육 작게 · 세세하게 (사용자 11-11 23:37 「근육모양 좀만 줄여서 세세하게 해봐」) ─────────
+# 11칸 → 10칸(x5~14 · y6~15), 팔뚝 가늘게 · 알통 크고 둥글게 · 주먹과 알통 사이 틈 깊게.
+# 주먹 마디 빛 · 손가락 밑 그늘 · 손끝 금 / 팔뚝 빛 쪽 · 그늘 쪽 / 접힌 금 / 알통 꼭대기 빛 · 둥근 그늘 q h · 아래 곡선 / 아랫면(삼두) 그늘.
+ALTS7 = {'str': [
+    ('흰 팔', ['....www...', '...w###p..', '..w##ppr..', '..w#p.....', '.w#p......', '.w#p.ww#..', 'w##prw##qp', 'w###pr##qp', 'w#####rrqp', '.pppppppp.'], (1, 2)),
+    ('금빛 팔', ['....###...', '...#gggy..', '..#ggyyb..', '..#gy.....', '.#gy......', '.#gy.##g..', '#ggyb#gghy', '#gggybgghy', '#gggggbbhy', '.yyyyyyyy.'], (1, 2)),
+    ('흰 팔 + 금 팔찌', ['....www...', '...w###p..', '..w##ppr..', '..w#p.....', '.ggy......', '.bbb.ww#..', 'w##prw##qp', 'w###pr##qp', 'w#####rrqp', '.pppppppp.'], (1, 2)),
+    ('금빛 팔 + 근육 결', ['....###...', '...#gggy..', '..#ggyyb..', '..#gy.....', '.#gy......', '.#gy.#wg..', '#ghyb#gghy', '#ghgybgghy', '#ghgggbbhy', '.yyyyyyyy.'], (1, 2)),
+]}
+
+
+def variant7(k, i):
+    vk = f'{k}__b{i}'
+    nm, rows, off = ALTS7[k][i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])
