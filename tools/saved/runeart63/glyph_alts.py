@@ -124,3 +124,33 @@ def ice_mix(i):
     nm, rows, off = ICE_MIX[i]
     R.SHAPES[vk] = R.SHAPES['coldres']; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
     return X.make_top(vk, COL['coldres'])
+
+
+# ───────── 셋째 (사용자 11-11 22:42 「강인은 안에 근육을 표현한 그림 — 가슴근육, 내복사근, 복근이 표현된 상체모양 · 생명은 안에 하트 하나더 · 냉기는 합침2로」 + 화염 A 돌 + B 불꽃) ─────────
+ICE_PICK = 1                      # 냉기 = 합침 2
+FIRE_PICK = ('불꽃 돌 + 불꽃', X.NEW_SHAPES['fireatk'], FIRE_ALTS[1][2], (0, 2))   # 화염 = A 불꽃 돌 + B 불꽃 문양
+ALTS3 = {
+    'str': [   # 근육 상체: 가슴 · 배빗근(옆구리 사선) · 복근
+        ('근육 상체 · 선', ['...###...', '.#######.', '####o####', '#w##o##w#', '#ooooooo#', '.o##o##o.', '..#ooo#..', '..##o##..', '..#ooo#..', '...#o#...'], (0, 1)),
+        ('두 팔 든 상체', ['##.....##', '##..#..##', '.#.###.#.', '.##.#.##.', '..#####..', '..#o#o#..', '..##o##..', '...#o#...'], (0, 1)),
+        ('역삼각 상체', ['#.......#', '#########', '##w#o#w##', '#ooo#ooo#', '.#o#o#o#.', '..#o#o#..', '..##o##..', '...#o#...'], (0, 1)),
+    ],
+    'hp': [   # 하트 안에 하트
+        ('꽉 찬 속 하트', ['.##.##.', '#oo#oo#', '#ooooo#', '.#ooo#.', '..#o#..', '...#...'], (0, 0)),
+        ('빛나는 속 하트', ['.##.##.', '#ww#ww#', '#wwwww#', '.#www#.', '..#w#..', '...#...'], (0, 0)),
+        ('두 겹 하트', ['.##...##.', '#..#.#..#', '#..o#o..#', '.#.ooo.#.', '..#.o.#..', '...#.#...', '....#....'], (0, 0)),
+    ],
+}
+
+
+def variant3(k, i):
+    vk = f'{k}__x{i}'
+    nm, rows, off = ALTS3[k][i]
+    R.SHAPES[vk] = R.SHAPES[k]; R.GLYPH[vk] = rows; R.GOFF[vk] = off; R.GLYPH_FN.pop(vk, None)
+    return X.make_top(vk, COL[k])
+
+
+def fire_pick(lv):
+    nm, shape, rows, off = FIRE_PICK
+    R.SHAPES['fire__pick'] = shape; R.GLYPH['fire__pick'] = rows; R.GOFF['fire__pick'] = off; R.GLYPH_FN.pop('fire__pick', None)
+    return X.make('fire__pick', COL['fireres'], lv)
