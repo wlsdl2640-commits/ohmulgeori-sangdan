@@ -16,13 +16,13 @@ Object.assign(MASTERY, {
   lockpick: { name: '따개 솜씨', w: ['lockpick'], wn: '락핀', icon: 'blade', fx: [{ chestGold: 0.1 }, { chestGold: 0.2, eva: 0.02 }, { chestGold: 0.3, eva: 0.04, chestExtra: 0.15 }, { chestGold: 0.4, eva: 0.06, chestExtra: 0.25 }], desc: '자물쇠를 따는 손. 보물 상자 · 보물고에서 돈을 더 챙기고, 상급부터 보물고 상자를 하나 더 찾는다.' },
   shuriken: { name: '암기술', w: ['shuriken'], wn: '암기', icon: 'blade', fx: [{ thrownPct: 0.08 }, { thrownPct: 0.15, thrownCap: 0.2 }, { thrownPct: 0.25, thrownCap: 0.4 }, { thrownPct: 0.35, thrownCap: 0.6, thrownTwice: 0.1 }], desc: '던지는 암기를 다루는 법. 암기 피해가 오르고 더 많이 지닌다.' },
   twin:     { name: '쌍수술', w: ['dagger2'], wn: '보조 단검', icon: 'dagger', fx: [{ spdPct: 0.04 }, { spdPct: 0.07, comboMax: 1 }, { spdPct: 0.1, comboMax: 1, offDmg: 0.2 }, { spdPct: 0.13, comboMax: 2, offDmg: 0.2 }], desc: '두 손에 단검을 쥐고 엇갈려 벤다. 중급부터 연계가 더 쌓이고, 상급부터 둘째 칼이 세진다.' },
-  gladius:  { name: '글라디우스술', w: ['gladius'], icon: 'sword', fx: [{ atkPct: 0.04 }, { atkPct: 0.07, counter: 0.04 }, { atkPct: 0.1, counter: 0.06, arenaFame: 0.1 }, { atkPct: 0.14, counter: 0.08, arenaFame: 0.1 }], desc: '투기장의 짧은 칼. 찌르고 받아친다. 상급부터 투기장 랭킹 점수를 더 얻는다.' },
+  gladius:  { name: '투기장식검술', w: ['gladius'], icon: 'sword', fx: [{ atkPct: 0.04 }, { atkPct: 0.07, counter: 0.04 }, { atkPct: 0.1, counter: 0.06, arenaFame: 0.1 }, { atkPct: 0.14, counter: 0.08, arenaFame: 0.1 }], desc: '투기장의 짧은 칼. 찌르고 받아친다. 상급부터 투기장 랭킹 점수를 더 얻는다.' },
   great:    { name: '대검술', w: ['great'], icon: 'sword', fx: [{ atkPct: 0.05 }, { atkPct: 0.1 }, { atkPct: 0.15, exec: 0.1 }, { atkPct: 0.2, exec: 0.15 }], desc: '두 손 대검의 무게를 실어 벤다. 상급부터 약해진 적을 끝낸다.' },
   ether:    { name: '마력 방패술', w: ['ether'], wn: '에테르 실드', icon: 'gem', fx: [{ shieldPow: 0.06 }, { shieldPow: 0.12, mpPct: 0.05 }, { shieldPow: 0.18, mpPct: 0.08, block: 0.03 }, { shieldPow: 0.24, mpPct: 0.1, block: 0.05 }], desc: '작은 구슬로 마나 막을 편다. 거는 보호막이 세진다.' },
   xbow:     { name: '석궁술', w: ['wxbow'], wn: '손목 석궁', icon: 'bow', fx: [{ boltPct: 0.08 }, { boltPct: 0.15, boltPierce: 0.1 }, { boltPct: 0.25, boltPierce: 0.2, boltTwice: 0.15 }, { boltPct: 0.35, boltPierce: 0.3, boltTwice: 0.25 }], desc: '손목 석궁을 다루는 법. 볼트가 세지고 방어를 뚫는다. 상급부터 볼트를 한 발 더 쏜다.' },
-  ride:     { name: '기승술', job: ['ranger'], icon: 'feather', fx: [{ petDmg: 0.08 }, { petDmg: 0.15, eva: 0.02 }, { petDmg: 0.25, eva: 0.04, petTwice: 0.15 }, { petDmg: 0.35, eva: 0.06, petTwice: 0.25 }], desc: '늑대 · 와이번과 한 몸이 된다. 탈것의 공격이 세지고, 상급부터 탈것이 한 번 더 문다.' },
+  ride:     { name: '기마술', job: ['ranger'], icon: 'feather', fx: [{ petDmg: 0.08 }, { petDmg: 0.15, eva: 0.02 }, { petDmg: 0.25, eva: 0.04, petTwice: 0.15 }, { petDmg: 0.35, eva: 0.06, petTwice: 0.25 }], desc: '늑대 · 와이번과 한 몸이 된다. 탈것의 공격이 세지고, 상급부터 탈것이 한 번 더 문다.' },
   wand:     { name: '완드술', w: ['wand'], icon: 'staff', fx: [{ matkPct: 0.03, cdr: 0.02 }, { matkPct: 0.06, cdr: 0.02, spiritPct: 0.1 }, { matkPct: 0.1, cdr: 0.04, spiritPct: 0.1 }, { matkPct: 0.14, cdr: 0.06, spiritPct: 0.1 }], desc: '짧은 완드로 정령을 부른다. 중급부터 정령술사 · 정령왕 스킬 피해가 오른다.' },
-  orb:      { name: '구슬술', w: ['orb'], icon: 'gem', fx: [{ matkPct: 0.04 }, { matkPct: 0.08, weakPct: 0.1 }, { matkPct: 0.12, weakPct: 0.15, immPierce: 0.05 }, { matkPct: 0.16, weakPct: 0.2, immPierce: 0.1 }], desc: '원소를 가둔 구슬을 다룬다. 약점을 더 세게 치고, 상급부터 면역인 적에게도 조금 들어간다.' },
+  orb:      { name: '오브술', w: ['orb'], icon: 'gem', fx: [{ matkPct: 0.04 }, { matkPct: 0.08, weakPct: 0.1 }, { matkPct: 0.12, weakPct: 0.15, immPierce: 0.05 }, { matkPct: 0.16, weakPct: 0.2, immPierce: 0.1 }], desc: '원소를 가둔 구슬을 다룬다. 약점을 더 세게 치고, 상급부터 면역인 적에게도 조금 들어간다.' },
   tome:     { name: '금서 해독', w: ['necro'], icon: 'book', fx: [{ matkPct: 0.04 }, { matkPct: 0.08, mdrain: 0.04 }, { matkPct: 0.12, mdrain: 0.07, dotPct: 0.15 }, { matkPct: 0.16, mdrain: 0.1, dotPct: 0.25 }], desc: '죽은 자의 금서를 읽는다. 마법 피해 일부를 흡수하고, 상급부터 지속 피해가 세진다.' }
 });
 MAST_IDS.push('whip', 'wagon', 'machete', 'cards', 'lockpick', 'shuriken', 'twin', 'gladius', 'great', 'ether', 'xbow', 'ride', 'wand', 'orb', 'tome');
@@ -34,7 +34,7 @@ MASTERY.shuriken.w = ['shuriken'].concat(SPECIAL_THROWN);
 // 정령 스킬(완드술): 정령술사 · 정령왕의 스킬
 const SPIRIT_CLS = ['elementalist', 'elementlord'];
 const isSpiritSkill = s => !!s && (s.cls || []).some(c => SPIRIT_CLS.includes(c));
-// 이미 배운 단계를 새 숙련으로 (econ.js notes65 — 늘 부른다, 이미 옮겼으면 그대로): 검투사 계열의 검술 → 글라디우스술 · 광전사 계열의 검술 → 대검술 · 마검사 계열의 방패술 → 마력 방패술
+// 이미 배운 단계를 새 숙련으로 (econ.js notes65 — 늘 부른다, 이미 옮겼으면 그대로): 검투사 계열의 검술 → 투기장식검술 · 광전사 계열의 검술 → 대검술 · 마검사 계열의 방패술 → 마력 방패술
 function mast65(a) {
   if (!a || !a.mast || !CLASSES[a.cls]) return 0;
   const ch = chainOf(a.cls); let n = 0;
@@ -45,6 +45,6 @@ function mast65(a) {
   return n;
 }
 STORY.v65.push(
-  `새 숙련 15개 — 채찍술 · 마차 몰기 · 정글칼술 · 카드술 · 따개 솜씨 · 암기술 · 쌍수술 · 글라디우스술 · 대검술 · 마력 방패술 · 석궁술 · 기승술 · 완드술 · 구슬술 · 금서 해독. 숙련에 넷째 단계 「달인」(Lv150 · 4차 전직)이 생겼다. 값: ${MAST_TIERS.map(T => `${T.name} ${T.fee.toLocaleString('ko-KR')}G`).join(' · ')}.`,
+  `새 숙련 15개 — 채찍술 · 마차 몰기 · 정글칼술 · 카드술 · 따개 솜씨 · 암기술 · 쌍수술 · 투기장식검술 · 대검술 · 마력 방패술 · 석궁술 · 기마술 · 완드술 · 오브술 · 금서 해독. 숙련에 넷째 단계 「달인」(Lv150 · 4차 전직)이 생겼다. 값: ${MAST_TIERS.map(T => `${T.name} ${T.fee.toLocaleString('ko-KR')}G`).join(' · ')}.`,
   '검술은 장검 · 마나소드, 방패술은 라운드 · 버클러 · 십자 방패에만 켜진다 — 글라디우스 · 대검 · 에테르 실드는 제 숙련이 생겼고, 이미 배운 단계는 그 숙련으로 옮겨졌다.'
 );

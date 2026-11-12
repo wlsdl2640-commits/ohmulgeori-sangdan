@@ -144,7 +144,7 @@ function stepArena(p, e, team, dm, dt, fr) {
 function arenaEnd(p, e, win) {
   const U = S.under.arena, tier = e.oppTier || 0, avg = avgLvOf(p);
   if (win) {
-    const gain = Math.round((ARENA_SCORE_WIN[tier] + Math.max(-30, Math.min(30, Math.round(((e.oppLv || avg) - avg) * 3)))) * (1 + Math.max(0, ...teamOf(p).map(a => passives(a).arenaFame || 0))));   // 글라디우스술 상급: 랭킹 점수 +10%
+    const gain = Math.round((ARENA_SCORE_WIN[tier] + Math.max(-30, Math.min(30, Math.round(((e.oppLv || avg) - avg) * 3)))) * (1 + Math.max(0, ...teamOf(p).map(a => passives(a).arenaFame || 0))));   // 투기장식검술 상급: 랭킹 점수 +10%
     U.coins += ARENA_COIN.win; U.score += gain; U.wins++; U.best = Math.max(U.best || 0, U.score); S.fame += 1;
     if (U.season) { U.season.score += gain; U.season.wins++; }
     log(`${p.name}이(가) 투기장에서 ${e.oppName}을(를) 이겼다! 랭킹 점수 +${gain}, 투기장 코인 +${ARENA_COIN.win}, 명성 +1`, 'good');

@@ -543,8 +543,8 @@ function skiCells(id) {
   for (let i = 0; i < 320; i++) { let k = 0; for (let j = 0; j < w; j++) k = k * 64 + SKI_A.indexOf(q[i * w + j]); out.push(pal[k] || '#ff00ff'); }
   return (SKI_CELLS[id] = out);
 }
-// 틀 색: 0 기본(스킬) · 1 동(초급) · 2 은(중급) · 3 금(상급) — [바깥 위, 바깥 아래·안 위, 안 아래]
-const HEX_FR = [['#c8a870', '#8a6a3c', '#5a4428'], ['#d89a64', '#9a5e34', '#64381c'], ['#e4e8f0', '#9aa2ae', '#5e6672'], ['#ffe07a', '#c8962c', '#7e5814']];
+// 틀 색: 0 기본(스킬) · 1 동(초급) · 2 은(중급) · 3 금(상급) · 4 백금(달인, 빌드 65) — [바깥 위, 바깥 아래·안 위, 안 아래]
+const HEX_FR = [['#c8a870', '#8a6a3c', '#5a4428'], ['#d89a64', '#9a5e34', '#64381c'], ['#e4e8f0', '#9aa2ae', '#5e6672'], ['#ffe07a', '#c8962c', '#7e5814'], ['#f4f8ff', '#a8b8d8', '#5a6a8a']];
 // 육각 칸 한 장: 글리프(또는 스킬 그림)·종류·숙련 완료 표시·틀 색
 function hexURL(glyph, kind, max, sid, fr = 0) {
   const art = sid ? skiCells(sid) : null, F = HEX_FR[fr] || HEX_FR[0], on = !!(glyph || art);
@@ -582,7 +582,7 @@ function hexURL(glyph, kind, max, sid, fr = 0) {
 // 스킬 창 목록에 붙이는 스킬 그림 (48px 육각)
 const skIco = (id, cls = 'skico') => { const s = SKILLS[id]; return s ? `<img class="${cls}" src="${hexURL(skillGlyph(s), s.kind, false, id)}" alt="">` : ''; };
 // 숙련 그림 (단계 t: 0 안 배움 · 1~3): 틀 색이 동·은·금. 그림이 아직 없으면 임시 아이템 그림
-const mastHexURL = (k, t) => (typeof MASTICON !== 'undefined' && MASTICON[k] ? hexURL(null, 'buff', false, `m:${k}:${Math.min(t, MASTICON[k].length - 1)}`, Math.min(t, HEX_FR.length - 1)) : null);   // 빌드 65: 달인 그림을 고르기 전까지는 상급 그림
+const mastHexURL = (k, t) => (typeof MASTICON !== 'undefined' && MASTICON[k] ? hexURL(null, 'buff', false, `m:${k}:${Math.min(t, MASTICON[k].length - 1)}`, Math.min(t, HEX_FR.length - 1)) : null);   // 빌드 65: 다섯 단계 (달인 = 백금 틀 · 11-12 19:57 그림 합격)
 const mastIco = (k, t) => { const u = mastHexURL(k, t); return u ? `<img class="skico${t ? '' : ' off'}" src="${u}" alt="">` : `<img class="ico lg" src="${mastIconURL(k, t)}" alt="">`; };
 
 /* ───────── 무대 그리기 ───────── */

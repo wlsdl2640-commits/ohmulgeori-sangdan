@@ -880,7 +880,7 @@ function basicAct(e, a, d, team, dm, foes) {
   // 암기 · 손목 석궁: 기본 공격마다 하나를 더 던진다 · 쏜다 (남은 적 중 가장 약한 적, 직업 특성은 안 탄다 — data-gear65.js offShot)
   offShot(e, a, d, foes);
   // 레인저·용기병: 동물 동료가 함께 문다
-  if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) for (let j = 0; j < (d.pet2 && rnd() < d.pet2 ? 2 : 1) && f.hp > 0; j++) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT * (1 + (d.petDmg || 0)), false, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: false, k: 'pet' }, hitTag())); }   // 기승술: 탈것이 한 번 더
+  if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) for (let j = 0; j < (d.pet2 && rnd() < d.pet2 ? 2 : 1) && f.hp > 0; j++) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT * (1 + (d.petDmg || 0)), false, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: false, k: 'pet' }, hitTag())); }   // 기마술: 탈것이 한 번 더
 }
 // 적이 노릴 상대: 앞줄과 방패를 든 직업이 더 자주 맞는다
 function tankW(a) { const t = TR(a).tank; return Math.max(0, (t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0) + traitSum(a, 'tank')); }
