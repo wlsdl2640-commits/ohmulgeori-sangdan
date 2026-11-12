@@ -638,17 +638,7 @@ function heroPortrait(a, z, W, H) {
   return (HPOR[key] = c.toDataURL());
 }
 
-// 큰 초상: 앞모습 머리·어깨를 4배로 (어두운 틀 안)
-const HBUST = {};
-function heroBust(a) {
-  const key = advKey(a);
-  if (HBUST[key]) return HBUST[key];
-  const [c, x] = mkCanvas(84, 84);
-  x.fillStyle = '#1a1612'; x.fillRect(0, 0, 84, 84);
-  x.translate(42, 110); x.scale(2.5, 2.5);
-  pxBlit(x, pxAdvSprite(a, 'idle', 0));
-  return (HBUST[key] = c.toDataURL());
-}
+// 빌드 66: 오른쪽 위 큰 초상(heroBust — 머리 · 어깨를 잘라 어두운 칸에)은 사용자 요청으로 뺐다
 /* ───────── 화면 ───────── */
 const ARR_L = '<span class="tri l"></span>', ARR_R = '<span class="tri r"></span>';
 function heroPanel(a) {
@@ -670,7 +660,7 @@ function heroPanel(a) {
           <div class="hero-lv">Lv.${a.lv}</div>
           <div class="hero-xp"><div class="hbar"><i style="width:${(xp * 100).toFixed(1)}%"></i></div><button type="button" class="hero-mag${UI.heroDet === false ? '' : ' on'}" data-mact="hdet" aria-label="자세히"><img src="${pxURL('mag')}" alt=""></button></div>
         </div>
-        <div class="hero-side"><div class="hero-por"><img src="${heroBust(a)}" alt=""></div><div class="hero-sk">${hexes.join('')}</div></div>
+        <div class="hero-side"><div class="hero-sk">${hexes.join('')}</div></div>
       </div>
       <div class="hero-party">${thumbs}</div>
       <div class="traits hero-traits">${(a.traits || []).map(id => TRAITS[id] ? `<span class="trait${TRAITS[id].job ? ' job' : ''}${TRAITS[id].neg ? ' neg' : ''}" title="${esc(TRAITS[id].desc)}"><b>${TRAITS[id].name}</b></span>` : '').join('')}${a.hero ? '<span class="trait awk"><b>용사</b></span>' : ''}${MAST_IDS.filter(k => mastTier(a, k)).map(k => `<span class="trait mast${mastOn(a, k) ? '' : ' off'}" title="${esc(mastFxText(MASTERY[k].fx[mastTier(a, k) - 1]) + ' · ' + mastCond(k))}"><b>${mastName(k, mastTier(a, k))}</b></span>`).join('')}</div>

@@ -1,5 +1,5 @@
 /* ───────── 지도: 필드·던전·레이드를 골라 원정을 보내고, 왕국·단체와 이야기한다 ─────────
-   지도 그림은 240×200 논리 픽셀(두 배로 굽는다). 노드는 그 위에 HTML 단추로 얹는다. */
+   지도 그림은 240×240 논리 픽셀(빌드 66부터 data-mapart.js 그림). 노드는 그 위에 HTML 단추로 얹는다. */
 const MAP_W = 240, MAP_H = 240;   // 아래 40칸은 마계
 const MAP_NODES = {
   plains:   { x: 84, y: 116, dun: [18, 10] },
@@ -21,7 +21,6 @@ const MAP_NODES = {
 // 하늘 지도 (구름섬): 따로 그린 지도 위에 놓인다
 const SKY_MAP_W = 240, SKY_MAP_H = 150;
 const MAP_NODES_SKY = { sky: { x: 118, y: 84, dun: [26, -14] }, thunder: { x: 196, y: 44, dun: [18, -16] }, ruins: { x: 198, y: 118, dun: [-22, -6] }, stargarden: { x: 50, y: 40, dun: [20, -14] } };
-const MAP_EXTRA = [];   // 지도 그림에 덧그리는 함수들 (world30.js)
 const MAP_KINGS = { inglisia: { x: 22, y: 134 }, frama: { x: 58, y: 186 }, elves: { x: 24, y: 48 }, dwarves: { x: 128, y: 26 }, sarak: { x: 226, y: 178 } };
 const MAP_ORGS = {
   city:   { x: 120, y: 148, name: '제도 하르겐 · 모험가 길드', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
@@ -30,61 +29,8 @@ const MAP_ORGS = {
 // 레이드 몬스터가 나타나는 자리 (그 필드 근처)
 const MAP_RAID = { kingslime: 'plains', kaishar: 'forest', griffon: 'valley', tempest: 'mountain', behemoth: 'snow' };
 
-let MAP_CV = null;
-function mapArt() {
-  if (MAP_CV) return MAP_CV;
-  const r = rng(99), [cv, g] = mkCanvas(MAP_W * 2, MAP_H * 2);
-  g.scale(2, 2); g.imageSmoothingEnabled = false;
-  // 땅과 바다
-  R(g, 0, 0, MAP_W, MAP_H, '#6f9a48');
-  for (let i = 0; i < 260; i++) R(g, Math.floor(r() * MAP_W), Math.floor(r() * MAP_H), 1 + Math.floor(r() * 2), 1, r() < 0.5 ? '#7aa852' : '#64903e');
-  ell(g, 18, 196, 78, 42, '#3a6aa8'); ell(g, 10, 200, 60, 30, '#4a7ab8');
-  for (let i = 0; i < 18; i++) { const x = Math.floor(r() * 70), y = 160 + Math.floor(r() * 40); if ((x - 18) ** 2 / (78 ** 2) + (y - 196) ** 2 / (42 ** 2) < 0.9) R(g, x, y, 4, 1, '#8ab8e0'); }
-  R(g, 0, 168, 1, 32, '#2a4a80');
-  // 숲
-  ell(g, 44, 74, 42, 30, '#3f7a3f'); ell(g, 40, 70, 30, 20, '#4a8a46');
-  for (let i = 0; i < 60; i++) { const a = r() * Math.PI * 2, rr = Math.sqrt(r()); const x = Math.round(44 + Math.cos(a) * 38 * rr), y = Math.round(74 + Math.sin(a) * 26 * rr); R(g, x - 1, y - 3, 3, 3, '#2e5a2e'); R(g, x, y - 4, 1, 1, '#2e5a2e'); R(g, x, y, 1, 2, '#5a3a22'); if (r() < 0.4) R(g, x - 1, y - 3, 1, 1, '#5a9a52'); }
-  // 산
-  ell(g, 122, 54, 46, 24, '#7a7a74'); ell(g, 118, 52, 34, 16, '#8a8a84');
-  for (const [px, py, h] of [[100, 60, 14], [114, 52, 20], [128, 56, 16], [142, 62, 12], [122, 44, 10], [108, 46, 9]]) { for (let i = 0; i < h; i++) R(g, px - i, py - h + i + 1 + h - h, i * 2 + 1, 1, i < h * 0.35 ? '#f0f0f4' : '#8c8c88'); for (let i = Math.floor(h * 0.35); i < h; i++) R(g, px, py - h + i + 1, i, 1, '#6a6a66'); }
-  // 협곡
-  ell(g, 176, 92, 34, 22, '#a89a62'); ell(g, 172, 90, 22, 12, '#b8aa70');
-  for (let i = 0; i < 10; i++) { const y = 80 + i * 3; R(g, 150 + (i % 3) * 6, y, 20 + (i % 2) * 8, 1, '#c8ba82'); R(g, 182 + (i % 2) * 6, y + 1, 14, 1, '#8a7a46'); }
-  // 설산
-  ell(g, 204, 40, 34, 28, '#e8f0f8'); ell(g, 200, 36, 22, 16, '#f8fcff');
-  for (let i = 0; i < 24; i++) { const a = r() * Math.PI * 2, rr = Math.sqrt(r()); const x = Math.round(204 + Math.cos(a) * 30 * rr), y = Math.round(40 + Math.sin(a) * 24 * rr); R(g, x - 1, y - 2, 3, 2, '#9ab8c8'); R(g, x, y - 3, 1, 1, '#ffffff'); R(g, x, y, 1, 1, '#5a4a3a'); }
-  for (const [px, py, h] of [[196, 30, 12], [212, 26, 14]]) for (let i = 0; i < h; i++) R(g, px - i, py + i, i * 2 + 1, 1, i < h * 0.5 ? '#ffffff' : '#c8d8e8');
-  // 사막
-  ell(g, 206, 150, 38, 30, '#d8c070'); ell(g, 210, 146, 26, 18, '#e8d488');
-  for (let i = 0; i < 9; i++) { const y = 128 + i * 5; R(g, 176 + (i % 2) * 10, y, 18 + (i % 3) * 6, 1, '#c0a858'); R(g, 206 + (i % 3) * 5, y + 2, 12, 1, '#f0e0a0'); }
-  R(g, 222, 140, 2, 6, '#5a8a4a'); R(g, 220, 138, 6, 2, '#5a8a4a'); R(g, 226, 136, 2, 4, '#5a8a4a');
-  // 마계: 남쪽 검은 땅 (늪 · 재의 땅 · 검은 성)
-  R(g, 0, 204, MAP_W, 36, '#2a2230');
-  for (let x = 0; x < MAP_W; x += 3) { const h = 2 + ((x * 7) % 5); R(g, x, 204 - h, 3, h + 1, '#3a2a3a'); R(g, x, 203 - h, 2, 1, '#5a3a4a'); }
-  for (let i = 0; i < 120; i++) R(g, Math.floor(r() * MAP_W), 206 + Math.floor(r() * 32), 1 + Math.floor(r() * 2), 1, r() < 0.5 ? '#342a3c' : '#221c28');
-  ell(g, 44, 222, 34, 12, '#1e3a2a'); ell(g, 40, 220, 22, 7, '#2a4a34'); for (let i = 0; i < 16; i++) { const x = 14 + Math.floor(r() * 60), y = 213 + Math.floor(r() * 18); R(g, x, y, 3, 1, '#4a6a4a'); R(g, x + 1, y - 2, 1, 2, '#3a5a3a'); }
-  ell(g, 122, 224, 36, 12, '#5a3a32'); ell(g, 118, 222, 22, 6, '#6a4a3a'); for (let i = 0; i < 9; i++) { const x = 90 + i * 8, y = 216 + (i % 3) * 5; R(g, x, y, 5, 1, '#3a2420'); R(g, x + 2, y + 1, 1, 2, '#3a2420'); } R(g, 104, 212, 2, 3, '#f08a30'); R(g, 136, 230, 2, 2, '#f08a30');
-  ell(g, 200, 224, 32, 12, '#2e2a3a'); for (const [tx, th, tw] of [[186, 14, 5], [194, 20, 7], [204, 16, 5], [212, 12, 5]]) { R(g, tx, 230 - th, tw, th, '#1a1622'); R(g, tx + 1, 229 - th, tw - 2, 1, '#2e2a3a'); R(g, tx + Math.floor(tw / 2), 226 - th, 1, 3, '#6a1a2a'); } R(g, 186, 230, 32, 2, '#1a1622');
-  R(g, 0, 232, 1, 8, '#3a2a3a');
-  // 뒷골목·지하수로 (도시 근처 어두운 땅)
-  ell(g, 92, 166, 12, 8, '#5a5a5a'); ell(g, 150, 178, 14, 9, '#4a5048'); ell(g, 150, 178, 8, 4, '#2e4a4a');
-  MAP_EXTRA.forEach(f => f(g, r));
-  // 길
-  const road = (x0, y0, x1, y1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i += 3) { const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); R(g, x, y, 2, 1, '#8a6a3a'); } };
-  road(120, 150, 84, 118); road(84, 118, 44, 78); road(84, 118, 122, 60); road(122, 60, 176, 94); road(176, 94, 204, 42); road(120, 150, 206, 150); road(120, 150, 92, 164); road(120, 150, 150, 176);
-  road(84, 118, 22, 134); road(44, 78, 24, 50); road(122, 60, 128, 28); road(206, 150, 226, 178); road(120, 150, 58, 186);
-  road(92, 166, 44, 220); road(44, 222, 122, 224); road(122, 224, 200, 222);
-  // 도시 하르겐: 성벽과 집들
-  R(g, 106, 142, 28, 14, '#8a7a62'); R(g, 106, 142, 28, 1, '#a89a82'); R(g, 106, 155, 28, 1, '#5a4a3a');
-  for (const [hx, hy, w] of [[108, 146, 6], [116, 144, 7], [125, 147, 6], [110, 150, 5], [119, 151, 6], [127, 152, 5]]) { R(g, hx, hy, w, 4, '#c8b088'); R(g, hx - 1, hy - 2, w + 2, 2, '#a83a2a'); R(g, hx + 1, hy + 1, 1, 1, '#4a3a2a'); }
-  R(g, 119, 136, 2, 7, '#3a3a40'); R(g, 121, 136, 4, 3, '#f0c24a'); R(g, 112, 139, 4, 3, '#6a5a4a'); R(g, 112, 138, 4, 1, '#8a7a6a');
-  // 왕국 성
-  for (const k of KINGDOM_IDS) { const P = MAP_KINGS[k], D = KINGDOMS[k]; R(g, P.x - 7, P.y - 4, 14, 8, '#9a9088'); R(g, P.x - 7, P.y - 4, 14, 1, '#c8c0b8'); R(g, P.x - 9, P.y - 9, 4, 13, '#a8a098'); R(g, P.x + 5, P.y - 9, 4, 13, '#a8a098'); R(g, P.x - 1, P.y - 12, 3, 16, '#b8b0a8'); R(g, P.x - 2, P.y, 4, 4, '#3a2a1a'); R(g, P.x, P.y - 16, 1, 5, '#4a3a2a'); R(g, P.x + 1, P.y - 16, 5, 3, D.c); R(g, P.x - 9, P.y - 10, 4, 1, D.c); R(g, P.x + 5, P.y - 10, 4, 1, D.c); }
-  // 나침반과 테두리
-  R(g, 8, 8, 1, 14, '#f0e8c8'); R(g, 2, 14, 13, 1, '#f0e8c8'); R(g, 7, 6, 3, 3, '#e04a4a'); R(g, 6, 24, 5, 1, '#f0e8c8');
-  R(g, 0, 0, MAP_W, 2, '#3a2a14'); R(g, 0, MAP_H - 2, MAP_W, 2, '#3a2a14'); R(g, 0, 0, 2, MAP_H, '#3a2a14'); R(g, MAP_W - 2, 0, 2, MAP_H, '#3a2a14');
-  return (MAP_CV = cv.toDataURL());
-}
+// 빌드 66: 지도 그림은 사용자가 고른 시안 A 양피지 고지도 — data-mapart.js MAP_ART(240×240 그대로, 화면은 .map-img image-rendering: pixelated로 키운다)
+function mapArt() { return MAP_ART; }
 // 왕국 문장: 방패 모양, 왕국 색
 const EMB = {};
 function emblemURL(id, big) {

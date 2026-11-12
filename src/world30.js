@@ -251,67 +251,9 @@ PANELS.co_league = () => {
     <div class="sub muted">점수: 번 돈 50G당 1 · 명성 1당 15 · 던전 공략 400 · 희귀종 100 · 보물 던전 150 · 둥지 소탕 120. 경쟁 상단은 우리가 연 땅이 높을수록 세져요.</div>`;
 };
 
-/* ───────── 지도 그림: 대륙 북쪽 변경과 하늘 ───────── */
-MAP_EXTRA.push((g, r) => {
-  // 안개 묘지 (서쪽, 평원 왼쪽): 잿빛 땅, 비석, 죽은 나무, 안개
-  ell(g, 34, 112, 22, 14, '#5a5a6a'); ell(g, 32, 110, 14, 8, '#6a6a7a');
-  for (let i = 0; i < 9; i++) { const x = 18 + Math.floor(r() * 32), y = 104 + Math.floor(r() * 16); R(g, x, y, 2, 3, '#9a9aa8'); R(g, x, y - 1, 2, 1, '#b8b8c8'); }
-  for (const [tx, th] of [[22, 7], [44, 6], [36, 8]]) { R(g, tx, 118 - th, 1, th, '#2a2a30'); R(g, tx - 2, 120 - th, 2, 1, '#2a2a30'); R(g, tx + 1, 121 - th, 3, 1, '#2a2a30'); }
-  for (let y = 102; y < 124; y += 3) R(g, 12 + (y % 2) * 4, y, 36, 1, 'rgba(200,210,230,0.22)');
-  // 용암 화산 (북쪽 산맥 위): 검은 원뿔, 붉은 화구, 용암 줄기
-  for (let i = 0; i < 16; i++) R(g, 158 - i, 8 + i, i * 2 + 1, 1, i < 3 ? '#8a2a1a' : i % 4 === 0 ? '#3a2a2a' : '#2e2222');
-  R(g, 156, 7, 5, 2, '#ff6a2a'); R(g, 157, 6, 3, 1, '#ffd040');
-  R(g, 156, 10, 1, 6, '#f08a30'); R(g, 160, 11, 1, 8, '#f08a30'); R(g, 158, 12, 1, 4, '#ffb040');
-  for (let i = 0; i < 6; i++) R(g, 150 + i * 3, 3 + (i % 2), 2, 1, '#5a5a66');
-  // 세계수 뿌리 (원시림 북쪽): 거대한 뿌리와 세계수 둥치
-  ell(g, 76, 34, 18, 10, '#5a4a2a'); ell(g, 74, 32, 12, 6, '#6a5a34');
-  for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; for (let k = 2; k < 14; k++) R(g, Math.round(76 + Math.cos(a) * k * 1.4), Math.round(34 + Math.sin(a) * k * 0.8), 1, 1, k % 3 ? '#8a6a3a' : '#a07a44'); }
-  R(g, 74, 18, 5, 16, '#6a4a2a'); R(g, 74, 18, 2, 16, '#8a6a3a'); ell(g, 76, 16, 9, 5, '#3f7a3f'); ell(g, 75, 14, 6, 3, '#5a9a52');
-  // 길
-  const road = (x0, y0, x1, y1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i += 3) { const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); R(g, x, y, 2, 1, '#8a6a3a'); } };
-  road(84, 118, 34, 112); road(122, 60, 158, 24); road(44, 78, 76, 36);
-});
-let SKY_CV = null;
-function skyMapArt() {
-  if (SKY_CV) return SKY_CV;
-  const r = rng(77), W = SKY_MAP_W, H = SKY_MAP_H, [cv, g] = mkCanvas(W * 2, H * 2);
-  g.scale(2, 2); g.imageSmoothingEnabled = false;
-  for (let y = 0; y < H; y += 2) R(g, 0, y, W, 2, mix('#3a6ac8', '#9ac8f0', y / H));
-  // 먼 구름
-  for (let i = 0; i < 26; i++) { const x = Math.floor(r() * W), y = 10 + Math.floor(r() * (H - 20)), w = 10 + Math.floor(r() * 26); ell(g, x, y, w, 3 + Math.floor(r() * 3), i % 3 ? '#e8f2fc' : '#ffffff'); ell(g, x - 4, y - 2, Math.round(w * 0.5), 3, '#ffffff'); }
-  // 구름섬: 바위 밑동과 풀밭, 폭포, 신전
-  const cx = 118, cy = 84;
-  for (let i = 0; i < 22; i++) R(g, cx - 40 + i, cy + 4 + i, 80 - i * 2, 1, i % 5 === 0 ? '#5a5a6a' : i < 4 ? '#8a8a9a' : '#6a6a7a');
-  ell(g, cx, cy, 44, 12, '#5a9a4a'); ell(g, cx - 6, cy - 2, 30, 7, '#6aaa52'); ell(g, cx + 16, cy + 1, 14, 4, '#7ab85a');
-  for (let i = 0; i < 30; i++) R(g, cx - 40 + Math.floor(r() * 80), cy - 8 + Math.floor(r() * 16), 1 + Math.floor(r() * 2), 1, r() < 0.5 ? '#86c060' : '#4f8a3c');
-  for (let i = 0; i < 5; i++) { const x = cx - 30 + i * 14, y = cy - 4 + (i % 2) * 5; R(g, x, y - 5, 2, 5, '#5a3a22'); ell(g, x + 1, y - 7, 4, 3, '#3f7a3f'); }
-  for (let i = 0; i < 14; i++) R(g, cx + 22, cy + 10 + i, 2, 1, i % 3 ? '#9ad8ff' : '#ffffff'); ell(g, cx + 23, cy + 25, 5, 2, 'rgba(255,255,255,0.6)');
-  // 신전 (던전 자리)
-  const tx = cx + 26, ty = cy - 14; R(g, tx - 9, ty - 2, 18, 8, '#e8e4d8'); R(g, tx - 11, ty - 4, 22, 2, '#f8f4ec'); for (let i = 0; i < 5; i++) R(g, tx - 8 + i * 4, ty - 2, 1, 8, '#b8b4a8'); R(g, tx - 7, ty - 9, 14, 5, '#d8d4c8'); R(g, tx - 1, ty - 11, 2, 2, '#f0c24a');
-  // 하늘길 (구름섬 → 천둥 봉우리 → 유적 폐허 → 별의 정원)
-  for (const [ax, ay, bx, by] of [[150, 76, 184, 52], [204, 58, 204, 106], [184, 116, 70, 48]]) for (let i = 0; i <= 24; i++) if (i % 3 < 2) R(g, Math.round(ax + (bx - ax) * i / 24), Math.round(ay + (by - ay) * i / 24), 2, 1, 'rgba(255,255,255,0.55)');
-  // 천둥 봉우리: 먹구름 아래 뾰족한 바위와 첨탑
-  { const ix = 196, iy = 44; for (let i = 0; i < 14; i++) R(g, ix - 22 + i, iy + 2 + i, 44 - i * 2, 1, i % 4 === 0 ? '#3a4054' : '#4a5068'); ell(g, ix, iy, 24, 6, '#5a6078'); for (const [px, ph] of [[-12, 12], [-3, 18], [8, 14], [16, 9]]) for (let i = 0; i < ph; i++) R(g, ix + px - Math.round((ph - i) / 4), iy - i, Math.max(1, Math.round((ph - i) / 2)), 1, i % 4 ? '#6a7088' : '#8a94b0');
-    ell(g, ix + 2, iy - 26, 22, 5, '#3a4058'); ell(g, ix - 8, iy - 28, 12, 4, '#2e3448'); for (let i = 0; i < 6; i++) R(g, ix - 6 + (i % 2) * 3, iy - 22 + i * 2, 2, 2, '#ffe060');
-    R(g, ix + 17, iy - 26, 3, 14, '#3a3e54'); R(g, ix + 16, iy - 28, 5, 2, '#8ad8ff'); }
-  // 천계의 유적 폐허: 흰 기둥과 무너진 아치
-  { const ix = 198, iy = 118; for (let i = 0; i < 12; i++) R(g, ix - 24 + i, iy + 2 + i, 48 - i * 2, 1, i % 4 === 0 ? '#8a7a5a' : '#a8987a'); ell(g, ix, iy, 26, 6, '#d8ccb0'); ell(g, ix - 4, iy - 1, 16, 3, '#e8dcc0');
-    for (const px of [-16, -9, 6, 14]) { const h = 8 + ((px + 20) % 7); R(g, ix + px, iy - h, 3, h, '#f4ecd8'); R(g, ix + px - 1, iy - h - 1, 5, 1, '#fff8e8'); }
-    for (let i = 0; i <= 10; i++) R(g, ix - 24 + i * 2, iy - 12 - Math.round(Math.sin(Math.PI * i / 10) * 5), 2, 2, '#f0e8d0'); R(g, ix - 3, iy - 4, 4, 4, '#f0c24a'); }
-  // 별의 정원: 밤하늘 빛무리 속 별꽃 나무
-  { const ix = 50, iy = 40; ell(g, ix, iy - 6, 34, 18, 'rgba(40,40,110,0.35)'); for (let i = 0; i < 12; i++) R(g, ix - 22 + i, iy + 2 + i, 44 - i * 2, 1, i % 4 === 0 ? '#2a2a5a' : '#3a3a6a'); ell(g, ix, iy, 24, 5, '#4a4a8a'); ell(g, ix + 4, iy - 1, 14, 3, '#5a5aa0');
-    for (const px of [-12, 0, 12]) { R(g, ix + px, iy - 9, 1, 9, '#6a5a8a'); ell(g, ix + px, iy - 11, 5, 3, '#5a4a9a'); R(g, ix + px - 2, iy - 12, 1, 1, '#fff0a0'); R(g, ix + px + 2, iy - 10, 1, 1, '#fff0a0'); }
-    for (let i = 0; i < 18; i++) R(g, ix - 30 + Math.floor(r() * 60), iy - 30 + Math.floor(r() * 26), 1, 1, i % 3 ? '#fff0a0' : '#ffffff'); }
-  // 작은 섬들
-  for (const [ix, iy, iw] of [[60, 122, 12], [150, 132, 8]]) { for (let i = 0; i < 6; i++) R(g, ix - iw + i, iy + 2 + i, iw * 2 - i * 2, 1, '#6a6a7a'); ell(g, ix, iy, iw, 3, '#5a9a4a'); R(g, ix - 4, iy - 2, 2, 1, '#7ab85a'); }
-  // 비행 마차 (상단 → 구름섬)
-  R(g, 20, 118, 8, 4, '#8a6238'); R(g, 18, 116, 12, 2, '#a07848'); R(g, 16, 114, 4, 2, '#e8e0d0'); R(g, 28, 114, 4, 2, '#e8e0d0'); R(g, 22, 116, 3, 2, '#2a2a34');
-  for (let i = 0; i < 12; i++) R(g, 30 + i * 7, 112 - i * 2, 3, 1, 'rgba(255,255,255,0.5)');
-  // 나침반과 테두리
-  R(g, 8, 8, 1, 14, '#f0e8c8'); R(g, 2, 14, 13, 1, '#f0e8c8'); R(g, 7, 6, 3, 3, '#e04a4a');
-  R(g, 0, 0, W, 2, '#2a4a8a'); R(g, 0, H - 2, W, 2, '#2a4a8a'); R(g, 0, 0, 2, H, '#2a4a8a'); R(g, W - 2, 0, 2, H, '#2a4a8a');
-  return (SKY_CV = cv.toDataURL());
-}
+/* ───────── 지도 그림 ─────────
+   빌드 66: 대륙 지도에 덧그리던 북쪽 변경(묘지 · 화산 · 세계수 · 길)과 하늘 지도는 data-mapart.js 그림(시안 A 양피지 고지도 결)으로 바뀌었다. */
+function skyMapArt() { return SKY_MAP_ART; }
 
 /* ───────── 단추 ───────── */
 Object.assign(ACT, {
