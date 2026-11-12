@@ -345,6 +345,24 @@ reg('food_omelet', '감자 오믈렛', 'dish', 'kitchen', 1, omelette(), '무정
 reg('food_seasoup', '해물 수프', 'dish', 'kitchen', 2, seasoup(), '고등어 · 새우 · 가리비 · 양파')
 reg('food_sus', '수상한 죽', 'dish', 'kitchen', 0, sus(), '레시피에 없는 조합 · 펫 먹이로는 그럭저럭')
 
+
+# ── 레시피 (왕국 상단 · 해상왕국 배가 판다, 100,000G) ──
+def recipe():
+    ic = Ico(); ic.mat('p', '#efe0bc', '#fff6dc', '#c4ac80', hi='#ffffff'); ic.mat('c', '#d8c49a', '#ecdcb4', '#a88c60')
+    ic.rect(4, 3, 12, 15, 'p'); ic.rect(3, 2, 14, 2, 'c'); ic.rect(3, 17, 14, 2, 'c')
+    ic.shade(deep=False); im = ic.render(); P = im.load()
+    for x in range(7, 14): P[x, 9] = hx('#a8703e')
+    for x in range(8, 13): P[x, 10] = hx('#a8703e')
+    for x in range(9, 12): P[x, 11] = hx('#7a4a22')
+    for x in range(7, 14): P[x, 8] = hx('#8a4a22') if x % 2 else hx('#c87a3a')
+    for (x, y) in ((8, 6), (9, 5), (11, 6), (12, 5)): P[x, y] = hx('#b8b8c0')
+    for x in range(6, 15, 1): P[x, 13] = hx('#8a7a60') if x not in (10,) else P[x, 13]
+    for x in range(6, 12): P[x, 15] = hx('#8a7a60')
+    for (x, y) in ((15, 15), (16, 16), (15, 16), (16, 15)): P[x, y] = hx('#c0392b')
+    P[15, 15] = hx('#e05a4a'); P[17, 17] = hx('#8a1e14'); P[16, 17] = hx('#a82a1e')
+    return im
+reg('recipe', '레시피', 'recipe', 'kitchen', 3, recipe(), '왕국 상단 · 해상왕국 배가 판다 (100,000G) — 사면 도감에 적힌다')
+
 if __name__ == '__main__':
     out, prev = sys.argv[1], sys.argv[2]
     json.dump({k: dict(name=v['name'], cat=v['cat'], src=v['src'], grade=v['grade'], desc=v['desc'], url=png_url(v['im'])) for k, v in ICONS.items()}, open(out, 'w'), ensure_ascii=False)

@@ -11,5 +11,7 @@
   `run.py <출력> still|gif|fail [dpr]` — 게임 빌드(dist/play.html)에 `window.__EV` 훅을 걸어 게임 그리기 도구(q* · q3Light · rqArt)를 빌려 그린다.
 - `farm/farm68.js` 재배소 장소 장면(HQS.farm · hqPlaces에 끼움) · `run.py` 낮 · 밤 · 2동, `win68.js` · `winrun.py` 재배소 창.
 - `pen/pen68.js` 사육장 창(부화 확률 계단 · 품는 알 ? · 펫 레어도 칸) · 유정란/무정란 알림 · 도감 요리 탭 · 식재료 그림판, `run.py`.
+- `port/port68.js` 항구 장소 장면(HQS.port · 선술집 다음 · 배가 있을 때 / 없을 때 「다음 배 D-n」) · `run.py` 낮 · 밤 · 빈 부두, `win68.js` · `winrun.py` 항구 창(해산물 · 레시피 100,000G).
+  (11-12 19:57 사용자 답: 해상왕국은 「처음부터 열린 시설 항구 + 해상왕국 배가 찾아온다」 — 교역 원정 길은 버림.) `ing68.py`에 레시피 그림 `recipe` 더함.
 - 스크립트 안의 `D`는 세션 작업 폴더(scratchpad/v68/) — 다시 돌릴 때 이 폴더 구조로 옮기고 D를 바꾼다.
-- `out/` 보여 준 그림: d68_cook.gif · d68_cookfail_dex.png · d68_farm_scene.png · d68_farm_win.png · d68_pen.png · d68_ingredients.png.
+- `out/` 보여 준 그림: d68_cook.gif · d68_cookfail_dex.png · d68_farm_scene.png · d68_farm_win.png · d68_pen.png · d68_ingredients.png · d68_port.png · d68_skyeye.png(하늘의 눈 다시 그린 시안 넷 — 원본은 시안 저장소 dot/skyeye68.py).
