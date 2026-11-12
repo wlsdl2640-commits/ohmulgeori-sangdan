@@ -80,6 +80,7 @@ const TIER_BOOK_IDS = BOOK_TIERS.map(B => B.id);
 // 스킬의 차수: 공용 0 · 직업 차수(여러 직업이면 가장 높은 것) · 왕국 스킬북처럼 「n차 전직 후」(s.tier)면 그 차수
 function skillBookTier(id) {
   const s = SKILLS[id]; if (!s || s.awk || isInnate(id)) return -1;
+  if (!(s.cls || []).length) return -1;   // 빌드 66: 배울 직업이 없는 보관 스킬(데드아이 · 하늘 낙하 — 나중 거너 · 창 직업용)은 책에서 안 나온다 (예전엔 낡은 스킬북에 섞여 있었다)
   if ((s.cls || []).includes('all')) return 0;
   let t = Math.max(1, ...(s.cls || []).map(c => (CLASSES[c] ? jobTier(c) : 1)));
   if (s.tier) t = Math.max(t, s.tier);
@@ -94,6 +95,11 @@ BOOK_POOL.forEach(L => L.forEach(id => {
   ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + (s.lv0 || s.lv) * 35, w: 1, icon: 'book', c: BOOK_COLORS[fam] || '#4a8ac8', book: id };   // 빌드 64: 값은 예전 배우는 레벨로
   if (!BOOK_IDS.includes(id)) BOOK_IDS.push(id);
 }));
+// 빌드 66: 배울 직업이 없는 보관 스킬의 책은 뽑기에서 빠졌지만, 예전에 뽑아 둔 책이 옛 저장(창고 1~10 포함)에서 깨지지 않게 물건으로는 남긴다 (팔 수만 있다)
+Object.keys(SKILLS).forEach(id => {
+  const s = SKILLS[id];
+  if (!(s.cls || []).length && !s.awk && !ITEMS['book_' + id]) ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + (s.lv0 || s.lv) * 35, w: 1, icon: 'book', c: '#4a8ac8', book: id };
+});
 /* 뽑기 확률: 직업(공용은 공용끼리)마다 배우는 레벨 순서로 등급을 매기고 무게로 나눈다
    앞 35% 흔함 4 · 60%까지 보통 2.5 · 85%까지 드묾 1.5 · 나머지 희귀 1 · Lv90 이상 전설 0.4 · 패시브는 한 칸 드물게 · 왕국 · 투기장 스킬은 드묾부터.
    표는 사용자에게 시트로 보냈다 (빌드 63) — 손으로 바꾼 무게는 BOOK_W_SET에.
@@ -168,7 +174,7 @@ const TIER_BOOK_SRC = [   // 몬스터 드랍과 원정 중 보물 상자(보물
   '몬스터 · 원정 보물 상자',
   '바람계곡 · 뒷골목부터의 몬스터 · 그 앞 땅의 우두머리 · 던전 주인 · 원정 보물 상자',
   '늪지대부터의 몬스터 · 바람계곡부터의 우두머리 · 던전 주인 · 원정 보물 상자',
-  '4차 직업이 생기면 나와요',
+  '구름섬부터의 몬스터 · 안개 묘지부터의 우두머리 · 던전 주인 · 원정 보물 상자',   // 빌드 66: 빌드 65에 4차 스킬북이 생겼는데 글이 옛 그대로였다
   '5차 직업이 생기면 나와요'
 ];
 BUILDINGS.library.desc = '같은 레어도 스킬북 9권을 합성해 한 단계 위 레어도 스킬북 하나를 만든다.';

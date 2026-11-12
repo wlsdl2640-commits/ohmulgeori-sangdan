@@ -1197,7 +1197,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 15;   // 지금 저장 판 (migrate15까지 옮긴 상태)
+const SAVE_V = 16;   // 지금 저장 판 (migrate16까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1214,7 +1214,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); notes68(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1225,6 +1225,7 @@ function loadFrom(v) {
     const old = S.v;
     if (old < 13) runeRename();   // 빌드 64 룬 개편: 옛 룬 이름 → 합친 룬 (창고 정리보다 먼저)
     if (old < 14) refit65();      // 빌드 65 직업 개편: 못 끼게 된 무기를 같은 단계 새 무기로 (migrateS의 unfitGear보다 먼저)
+    if (old < 16) lowJob66();     // 빌드 66: 늪지대 아래 단계의 2차 직업 전용 장비 → 같은 단계 1차 장비 (migrateS의 unfitGear보다 먼저)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
@@ -1254,6 +1255,7 @@ function loadFrom(v) {
     if (old < 13) { migrate13(); saveGame(); }
     if (old < 14) { migrate14(); saveGame(); }
     if (old < 15) { migrate15(); saveGame(); }
+    if (old < 16) { migrate16(); saveGame(); }
     notes39();
     notes40();
     notes41();
@@ -1493,6 +1495,36 @@ function migrate15() {   // 빌드 65 넷째 묶음: 펫 만렙 30 · 레어도(
   petState().lucky = petState().lucky || {};
   S.bld.farm = S.bld.farm || 0;
   if (!S.port) S.port = { next: today() + 1, ship: null };
+}
+// 빌드 66: 2차 직업만 입는 장비(data-armor65.js JOB2_LOW — 중갑 · 중갑 하의 · 판금 · 판금 하의 · 창 · 류트)는 늪지대 단계부터. 그 아래 단계로 갖고 있던 것은
+// 같은 단계 · 레어도 · 룬 · 옵션 그대로 1차 장비로 (loadFrom에서 migrateS의 unfitGear보다 먼저 — 끼고 있던 것은 그 모험가가 입을 수 있는 같은 칸 장비로)
+let LOW66 = 0;
+function lowJob66() {
+  const low = g => !!g && !!JOB2_LOW[g.base] && !tierOk(g.base, g.t);
+  const fix = g => { if (low(g)) { g.base = JOB2_LOW[g.base]; LOW66++; } };
+  (S.gear || []).forEach(fix);
+  (S.wh || []).forEach(w => ((w && w.gear) || []).forEach(fix));
+  (S.parties || []).forEach(q => { if (q.exp && q.exp.gbag) q.exp.gbag.forEach(fix); });
+  const U = S.under || {};
+  if (U.bm && U.bm.stock) U.bm.stock.forEach(o => { if (o && o.kind === 'gear') fix(o.g); });
+  if (U.au && U.au.g) fix(U.au.g);
+  if (U.arena && U.arena.opps) U.arena.opps.forEach(o => ((o && o.members) || []).forEach(x => { if (x && x.eq) Object.values(x.eq).forEach(fix); }));
+  const key = (b, t) => `${JOB2_LOW[b] && !tierOk(b, +t) ? JOB2_LOW[b] : b}:${t}`;
+  ((S.shop && S.shop.slots) || []).forEach(sl => { if (sl && typeof sl.item === 'string' && sl.item.startsWith('g:')) { const [, b, t] = sl.item.split(':'); sl.item = 'g:' + key(b, t); } });
+  (S.reqs || []).forEach(r => { if (r && r.gear) { const [b, t] = r.gear.split(':'); r.gear = key(b, t); } });
+  [...(S.advs || []), ...(S.cands || [])].forEach(a => {
+    if (!a || !a.eq || !CLASSES[a.cls]) return;
+    for (const sl of Object.keys(a.eq)) {
+      const g = a.eq[sl]; if (!low(g)) continue;
+      const opts = [JOB2_LOW[g.base], ...(GTYPES[g.base].slot === 'armor' ? ['leather', 'robe', 'cloth'] : [])];   // 기사가 입던 중갑 → 경갑은 못 입으니 가죽 갑옷
+      g.base = opts.find(b => gearFits(a, { base: b, t: g.t })) || JOB2_LOW[g.base]; LOW66++;
+    }
+  });
+}
+function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
+  S.v = 16;
+  if (LOW66) log(`장비 점검: 2차 직업만 입는 중갑 · 중갑 하의 · 판금 · 판금 하의 · 창 · 류트는 이제 늪지대 단계(Lv52)부터 나온다. 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).`);
+  LOW66 = 0;
 }
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
