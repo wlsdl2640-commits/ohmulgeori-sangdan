@@ -292,7 +292,7 @@ function unequip(aid, slot) {
   clampVitals(a); changed();
   return '';
 }
-const gearScore = g => (g ? g.t * 10 + g.q * 3.5 : -1);
+const gearScore = g => (g ? g.t * 10 + (LADDER_B[g.base] && g.lv ? ladderIdx(g) * 0.1 : 0) + g.q * 3.5 : -1);   // 빌드 67: 같은 단계의 중갑 · 판금은 착용 레벨이 높은 쪽
 /* 빌드 64: 장비 강화(+1~+10)는 없앴다. 옛 저장의 강화 단계는 migrate12가 지우고, 성공한 단계만큼 재료 · 돈을 돌려준다 (예전 값 표 PLUS_NEED_OF · PLUS_FEE_OF) */
 const PLUS_NEED_OF = (n, t) => (n <= 3 ? { ['crest_' + t]: 2 } : n <= 6 ? { ['core_' + t]: 1 } : n <= 9 ? { ['soul_' + t]: 1 } : { ['soul_' + t]: 2 });   // +n으로 올릴 때 든 재료
 const PLUS_FEE_OF = (n, t) => Math.round(recipeFee(t) * n * 1.2 / 10) * 10;   // +n으로 올릴 때 든 돈 (유물 할인 없이)
@@ -368,15 +368,16 @@ function sellGear(gid) {
 const smithFee = (t, q = 0) => Math.round(recipeFee(t) * (spn('dwarves') >= 1 ? 0.7 : 1) * (1 - relic('smith')) * (q >= 3 ? BOSS_RECIPE[q].fee : 1));
 const smithNeed = (base, t, q = 0) => (q >= 3 ? bossNeed(base, t, q) : recipeNeed(base, t));
 const smithLv = (t, q = 0) => Math.max(GTIERS[t].smith, q >= 3 ? BOSS_RECIPE[q].smith : 0);
-const canSmith = (base, t, q = 0) => tierOk(base, t) && S.bld.smithy >= smithLv(t, q) && Object.entries(smithNeed(base, t, q)).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= smithFee(t, q) && roomGear(1, freedBy(smithNeed(base, t, q)));
-function smith(base, t, q = 0) {
-  if (!GTYPES[base] || !tierOk(base, t)) return `${GTIERS[t] ? GTIERS[t].name : '그'} 단계에는 없는 장비예요.`;   // 빌드 64: 2차 직업 장비는 늪지 단계부터
+const smithTierOk = (base, t, lv) => (LADDER_B[base] ? ladderSteps(t).includes(lv) : tierOk(base, t));   // 빌드 67: 2차 직업 방어구는 그 단계 칩의 착용 레벨마다 (사막왕 = Lv50 — 막 전직한 기사 · 광전사 · 마검사용)
+const canSmith = (base, t, q = 0, lv = 0) => smithTierOk(base, t, lv) && S.bld.smithy >= smithLv(t, q) && Object.entries(smithNeed(base, t, q)).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= smithFee(t, q) && roomGear(1, freedBy(smithNeed(base, t, q)));
+function smith(base, t, q = 0, lv = 0) {
+  if (!GTYPES[base] || !smithTierOk(base, t, lv)) return `${GTIERS[t] ? GTIERS[t].name : '그'} 단계에는 없는 장비예요.`;   // 빌드 64: 2차 직업 장비는 늪지 단계부터
   if (S.bld.smithy < smithLv(t, q)) return `대장간 Lv${smithLv(t, q)}이 있어야 해요.`;
   if (!roomGear(1, freedBy(smithNeed(base, t, q)))) return WH_FULL;
-  if (!canSmith(base, t, q)) return '재료나 돈이 모자라요.';
+  if (!canSmith(base, t, q, lv)) return '재료나 돈이 모자라요.';
   Object.entries(smithNeed(base, t, q)).forEach(([k, n]) => addTo(S.inv, k, -n));
   S.gold -= smithFee(t, q);
-  const g = makeGear(base, t, q >= 3 ? q : rollQuality(0.03 * S.bld.smithy + (relic('smith') ? 0.05 : 0)));
+  const g = makeGear(base, t, q >= 3 ? q : rollQuality(0.03 * S.bld.smithy + (relic('smith') ? 0.05 : 0)), lv);
   S.gear.push(g);
   log(`대장간에서 ${QUALITY[g.q].name} 「${gearName(g)}」을(를) 만들었다.`, g.q ? 'good' : '');
   changed();
@@ -1500,7 +1501,7 @@ function migrate15() {   // 빌드 65 넷째 묶음: 펫 만렙 30 · 레어도(
 // 같은 단계 · 레어도 · 룬 · 옵션 그대로 1차 장비로 (loadFrom에서 migrateS의 unfitGear보다 먼저 — 끼고 있던 것은 그 모험가가 입을 수 있는 같은 칸 장비로)
 let LOW66 = 0;
 function lowJob66() {
-  const low = g => !!g && !!JOB2_LOW[g.base] && !tierOk(g.base, g.t);
+  const low = g => !!g && !!JOB2_LOW[g.base] && (LADDER_B[g.base] ? (g.t || 0) < 5 : !tierOk(g.base, g.t));   // 빌드 67: 중갑 · 판금은 사막왕 단계(Lv50 그림)부터 쓴다
   const fix = g => { if (low(g)) { g.base = JOB2_LOW[g.base]; LOW66++; } };
   (S.gear || []).forEach(fix);
   (S.wh || []).forEach(w => ((w && w.gear) || []).forEach(fix));
@@ -1509,7 +1510,7 @@ function lowJob66() {
   if (U.bm && U.bm.stock) U.bm.stock.forEach(o => { if (o && o.kind === 'gear') fix(o.g); });
   if (U.au && U.au.g) fix(U.au.g);
   if (U.arena && U.arena.opps) U.arena.opps.forEach(o => ((o && o.members) || []).forEach(x => { if (x && x.eq) Object.values(x.eq).forEach(fix); }));
-  const key = (b, t) => `${JOB2_LOW[b] && !tierOk(b, +t) ? JOB2_LOW[b] : b}:${t}`;
+  const key = (b, t) => `${JOB2_LOW[b] && (LADDER_B[b] ? +t < 5 : !tierOk(b, +t)) ? JOB2_LOW[b] : b}:${t}`;
   ((S.shop && S.shop.slots) || []).forEach(sl => { if (sl && typeof sl.item === 'string' && sl.item.startsWith('g:')) { const [, b, t] = sl.item.split(':'); sl.item = 'g:' + key(b, t); } });
   (S.reqs || []).forEach(r => { if (r && r.gear) { const [b, t] = r.gear.split(':'); r.gear = key(b, t); } });
   [...(S.advs || []), ...(S.cands || [])].forEach(a => {
@@ -1523,7 +1524,7 @@ function lowJob66() {
 }
 function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
   S.v = 16;
-  if (LOW66) log(`장비 점검: 2차 직업만 입는 중갑 · 중갑 하의 · 판금 · 판금 하의 · 창 · 류트는 이제 늪지대 단계(Lv52)부터 나온다. 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).`);
+  log(`장비 점검: 2차 직업만 입는 장비는 이제 2차 전직 레벨부터 — 중갑 · 판금(상의 · 하의)은 그림마다 착용 레벨 Lv50 · 55 · 60 …(대장간 사막왕 단계에서 Lv50부터 만들고, 늪지대부터 떨어진다), 창 · 류트는 늪지대 단계(Lv52)부터.${LOW66 ? ` 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).` : ''}`);   // 빌드 67: 바꾼 것이 없어도 한 줄
   LOW66 = 0;
 }
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }

@@ -465,8 +465,28 @@ const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp:
 const PCT_STATS = ['crit', 'eva'];
 
 // 빌드 64: 장비 강화(+1~+10)는 없앴다 (사용자 11-11 19:28). 옛 저장은 migrate12가 들인 재료 · 돈을 돌려준다
+// 빌드 67 (11-12 23:36 사용자 — 중갑 상의 판에 「LV.1 → 50 · LV.10 → 55 … LV.90 → 95」, LV.100부터는 그대로): 2차 직업 방어구(중갑 · 중갑 하의 · 판금 · 판금 하의)는
+// 그림 21장마다 착용 레벨이 따로 있다(ARM_LADDER). 장비의 g.lv = 그 레벨 = 그림 차례 · 착용 레벨 · 이름 끝 「Lv」, 능력치는 그 레벨로 단계 사이를 잇는다(ladderP).
+// g.t는 그 레벨을 넘지 않는 가장 높은 레벨의 단계(재료 · 값 · 이름 앞머리). g.lv가 없는 옛 장비는 예전 그대로(그 단계 레벨 · 능력치, 그림은 그 레벨을 넘지 않는 그림).
+const ARM_LADDER = [50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200];
+const LADDER_B = { hvarmor: 1, hvpants: 1, plate: 1, ppants: 1 };
+const lvTier = L => { let b = 0; GTIERS.forEach((T, i) => { if (T.lv <= L && T.lv >= GTIERS[b].lv) b = i; }); return b; };
+const ladderOn = L => L < Math.max(...GTIERS.map(T => T.lv)) + 10;   // 그 레벨 대의 단계가 있어야 (Lv150 ~ 200 그림은 단계가 늘면 그대로)
+const ladderSteps = t => ARM_LADDER.filter(L => ladderOn(L) && lvTier(L) === t);   // 대장간 단계 칩마다 만드는 착용 레벨 (사막왕 = Lv50 · 늪지 = 55 · 60 …)
+const ladderPick = t => { const L = ladderSteps(t); if (L.length) return pickOne(L); const on = ARM_LADDER.filter(ladderOn), lv = GTIERS[t].lv; return on.reduce((b, x) => (Math.abs(x - lv) < Math.abs(b - lv) ? x : b), on[0]); };   // 그 레벨 대가 비면(백작 Lv76) 가장 가까운 것
+let LADDER_PTS = null;
+function ladderP(L) {   // 단계 레벨 · 배율을 레벨 차례로 이은 선 (배율이 거꾸로 가는 단계는 뺀다 — 백작 Lv76 < 망령 Lv70의 배율)
+  if (!LADDER_PTS) { LADDER_PTS = []; GTIERS.map(T => [T.lv, T.p]).sort((a, b) => a[0] - b[0]).forEach(pt => { if (!LADDER_PTS.length || pt[1] > LADDER_PTS[LADDER_PTS.length - 1][1]) LADDER_PTS.push(pt); }); }
+  const P = LADDER_PTS; if (L <= P[0][0]) return P[0][1];
+  for (let i = 1; i < P.length; i++) if (L <= P[i][0]) { const [x0, y0] = P[i - 1], [x1, y1] = P[i]; return y0 + (y1 - y0) * (L - x0) / (x1 - x0); }
+  return P[P.length - 1][1];
+}
+const gearReqLv = g => (LADDER_B[g.base] && g.lv ? g.lv : GTIERS[g.t].lv);   // 착용 레벨
+const gearP = g => (LADDER_B[g.base] && g.lv ? ladderP(g.lv) : GTIERS[g.t].p);
+const ladderIdx = g => { const L = gearReqLv(g); let i = 0; ARM_LADDER.forEach((x, k) => { if (x <= L) i = k; }); return i; };   // 그림 차례
+const gearTierOk = g => (LADDER_B[g.base] ? (g.lv ? ARM_LADDER.includes(g.lv) && ladderOn(g.lv) : (g.t || 0) >= 5) : tierOk(g.base, g.t));
 function gearStats(g) {
-  const T = GTYPES[g.base], t = GTIERS[g.t], q = QUALITY[g.q || 0].m, out = {};
+  const T = GTYPES[g.base], t = { p: gearP(g) }, q = QUALITY[g.q || 0].m, out = {};
   for (const [k, v] of Object.entries(T.st)) {
     if (k === 'carry') out.carry = Math.round((6 + v * t.p) * q);
     else if (PCT_STATS.includes(k)) out[k] = Math.min(0.12, Math.round(v * t.p * q * 1000) / 1000);
@@ -487,22 +507,22 @@ const uniqIdx = g => Math.max(0, Math.min(uniqLen(g.base) - 1, (g.t || 0) - (UNI
 // 빌드 65: 한 단계에만 있는 장비(속성 대검 넷 — UNIQ_ONLY[종류] = 레벨) = 그 레벨 이상인 첫 단계에서만 나온다. 그 레벨 단계가 아직 없으면(Lv150 · 200) 어디서도 안 나오고, 단계가 생기면 바로 나온다
 const UNIQ_ONLY = {};
 const uniqOnlyTier = b => GTIERS.findIndex(T => T.lv >= UNIQ_ONLY[b]);
-const tierOk = (b, t) => (UNIQ_ONLY[b] != null ? uniqOnlyTier(b) === t : (UNIQ_T0[b] || 0) <= t && ((GTYPES[b] && GTYPES[b].tmin) || 0) <= t);   // tmin: 그림은 처음 단계부터 쓰되 그 단계부터 나오는 장비(보조 단검)
+const tierOk = (b, t) => (UNIQ_ONLY[b] != null ? uniqOnlyTier(b) === t : (UNIQ_T0[b] || 0) <= t && ((GTYPES[b] && GTYPES[b].tmin) || 0) <= t && (!LADDER_B[b] || ladderSteps(t).length > 0));   // tmin: 그림은 처음 단계부터 쓰되 그 단계부터 나오는 장비(보조 단검) · 빌드 67: 중갑 · 판금은 그 단계 레벨 대에 착용 레벨이 있어야(백작 Lv76 단계엔 없음 — 떨어뜨리기 · 의뢰 열쇠가 늘 실제 장비와 맞게)
 const uniqName = g => { const L = typeof WNAME !== 'undefined' && WNAME[g.base]; return !L ? '' : L.length === 1 ? (UNIQ_ONLY[g.base] != null ? L[0] : `${L[0]} Lv${GTIERS[g.t || 0].lv}`) : L[uniqIdx(g)]; };   // 그림이 하나뿐이면 단계 Lv를 붙인다(「지옥의 업화 Lv52」)
 // 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에만(세트 효과는 빌드 65에서 없앰). 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
 const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc', 'ear'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이도
-const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}` : `${GTYPES[g.base].name} Lv${GTIERS[g.t].lv}`);
+const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}${LADDER_B[g.base] ? ' Lv' + gearReqLv(g) : ''}` : `${GTYPES[g.base].name} Lv${GTIERS[g.t].lv}`);   // 빌드 67: 2차 직업 방어구는 착용 레벨도
 const gearName = g => gearBaseName(g);
-const gearNameOf = (base, t) => gearBaseName({ base, t: +t });
+const gearNameOf = (base, t) => { const L = LADDER_B[base] ? ladderSteps(+t) : []; return L.length ? `${GTIERS[+t].name} ${GTYPES[base].name} Lv${L[0]}${L.length > 1 ? '~' + L[L.length - 1] : ''}` : gearBaseName({ base, t: +t }); };   // 진열대 · 의뢰 열쇠(종류:단계) 이름 — 빌드 67: 중갑 · 판금은 그 단계의 착용 레벨 대(「늪지 중갑 Lv55~60」)
 const gearKey = g => `${g.base}:${g.t}`;
-const gearValue = g => Math.round((45 * GTIERS[g.t].p * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
+const gearValue = g => Math.round((45 * gearP(g) * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
 const recipeFee = t => Math.round(15 * GTIERS[t].p * GTIERS[t].p);
 function recipeNeed(base, t) {
   const need = {}, mats = GTIERS[t].mats;
   GTYPES[base].mat.forEach((n, i) => { if (n) need[mats[i]] = n; });
   return need;
 }
-const gearFits = (a, g) => (GTYPES[g.base].cls.includes('all') || chainOf(a.cls).some(c => GTYPES[g.base].cls.includes(c))) && !(GTYPES[g.base].cx && chainOf(a.cls).some(c => GTYPES[g.base].cx.includes(c))) && a.lv >= GTIERS[g.t].lv && tierOk(g.base, g.t);   // 빌드 65: cx = 같은 계열이라도 못 입는 직업(경갑은 기사 · 광전사 · 마검사 계열 빼고)
+const gearFits = (a, g) => (GTYPES[g.base].cls.includes('all') || chainOf(a.cls).some(c => GTYPES[g.base].cls.includes(c))) && !(GTYPES[g.base].cx && chainOf(a.cls).some(c => GTYPES[g.base].cx.includes(c))) && a.lv >= gearReqLv(g) && gearTierOk(g);   // 빌드 67: 2차 직업 방어구는 착용 레벨(g.lv) · 빌드 65: cx = 같은 계열이라도 못 입는 직업(경갑은 기사 · 광전사 · 마검사 계열 빼고)
 
 /* ───────── 연금술 ───────── */
 const RECIPES = [

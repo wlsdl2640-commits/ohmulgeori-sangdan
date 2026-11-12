@@ -131,7 +131,7 @@ function offIconURL(base, t) {
 const HR_URL = new Set();
 function armArtURL(g) {
   const T = g && GTYPES[g.base], L = T && T.art && ((typeof ARMART !== 'undefined' && ARMART[T.art]) || (typeof HDART !== 'undefined' && HDART[T.art])); if (!L) return null;   // HDART: 화살통 · 마나소드 (data-hdart65.js)
-  const u = L[Math.max(0, Math.min(L.length - 1, g.t | 0))]; if (u) HR_URL.add(u);
+  const u = L[Math.max(0, Math.min(L.length - 1, LADDER_B[g.base] ? ladderIdx(g) : g.t | 0))]; if (u) HR_URL.add(u);   // 빌드 67: 2차 직업 방어구는 착용 레벨의 그림
   return u || null;
 }
 function gearIconURL(g) {

@@ -72,8 +72,9 @@ function fakeAdv(lv, tier) {
   const q = tier;   // 일반 · 고급 · 희귀
   for (const [slot] of SLOTS) {
     if (slot === 'bag') continue;
-    const bases = GTYPE_IDS.filter(b => GTYPES[b].slot === slot && tierOk(b, gt) && gearFits(a, { base: b, t: UNIQ_T0[b] || 0 }));   // 빌드 64: 그 단계에 있는 종류만
-    if (bases.length) { const b = pickOne(bases); a.eq[slot] = makeGear(b === 'shield' ? shieldOf(a.cls, gt) : dropKind(b, gt), gt, q); }
+    const bases = GTYPE_IDS.filter(b => GTYPES[b].slot === slot && tierOk(b, gt) && clsFits(a, b));   // 빌드 64: 그 단계에 있는 종류만 · 빌드 67: 계열만 본다(예전엔 견습 단계로 재서 늪지부터인 보조 단검 · 중갑 · 판금이 빠졌다)
+    const fitLv = b => (LADDER_B[b] ? ARM_LADDER.filter(x => ladderOn(x) && x <= lv && GTIERS[lvTier(x)].lv <= GTIERS[gt].lv).pop() : 0);   // 빌드 67: 중갑 · 판금은 그 상대가 입을 수 있는 착용 레벨로
+    if (bases.length) { const b = pickOne(bases); a.eq[slot] = makeGear(b === 'shield' ? shieldOf(a.cls, gt) : dropKind(b, gt), gt, q, fitLv(b)); }
   }
   if (twoHand(a.eq.weapon)) a.eq.off = null;   // 대검은 두 손
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;

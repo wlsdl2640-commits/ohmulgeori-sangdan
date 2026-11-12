@@ -218,9 +218,10 @@ function rollBonus(t, q) {
   ks.forEach(k => { bonus[k] = Math.max(1, Math.round(B[1] * GTIERS[t].p * (0.8 + rnd() * 0.5))); });   // 같은 등급이라도 조금씩 다르다
   return bonus;
 }
-function makeGear(base, t, q) {
+function makeGear(base, t, q, lv) {
   const g = { id: nid(), base, t, q: q || 0, bonus: null, runes: [] };
-  g.bonus = rollBonus(t, g.q);
+  if (LADDER_B[base]) { g.lv = lv && ARM_LADDER.includes(lv) ? lv : ladderPick(t); g.t = lvTier(g.lv); }   // 빌드 67: 2차 직업 방어구는 착용 레벨(그림) — 떨어지면 그 단계 레벨 대에서 하나
+  g.bonus = rollBonus(g.t, g.q);
   return g;
 }
 // 빌드 63: 보물 상자 · 던전 공략 상자의 스킬북은 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 …)로 — 레벨 구간의 가운데로 고른다 (data-store.js)
