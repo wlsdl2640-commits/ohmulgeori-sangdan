@@ -161,7 +161,7 @@ function whMoveKeys(keys, from, to) {
   return `${moved}칸을 ${whName(to)}로 옮겼어요.${left ? ` (${left}칸은 자리가 없어 그대로)` : ''}`;
 }
 function whGearDetail(g, from) {
-  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''} — ${esc(uniqDesc(g))}</span>` : ''}<span class="sub muted">${clsList(GTYPES[g.base].cls)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
+  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''} — ${esc(uniqDesc(g))}</span>` : ''}${GTYPES[g.base].desc ? `<span class="sub">${GTYPES[g.base].desc}</span>` : ''}<span class="sub muted">${gearWho(g.base)} · Lv${GTIERS[g.t].lv}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
   if (from >= 0) return `<div class="card hl idet">${top}${whMoveRow(from, 'gear', g.id)}</div>`;
   // 빌드 64 (사용자 11-11 19:28 그림): 강화 · 합성 · 재감정 · 룬 새기기는 창고에서 빼고 각 시설에서만 — 팔기는 옮기기 단추 옆으로
   const bonus = (g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 재감정은 마탑에서</span></div>` : '';
@@ -340,7 +340,7 @@ function fuseBox() {
   const slots = Array.from({ length: FUSE.n }, (_, i) => { const g = F.ids[i] != null ? S.gear.find(x => x.id === F.ids[i]) : null; return g ? `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuserm" data-id="${g.id}" title="빼기">${gArt(g, 2)}</button>` : `<span class="cell empty fslot">${rqEmpty(2)}<b class="fsn">${i + 1}</b></span>`; }).join('');
   const rest = C.filter(g => !F.ids.includes(g.id)).map(g => `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuseadd" data-id="${g.id}">${gArt(g, 2)}</button>`);
   const lost = F.ids.map(id => S.gear.find(g => g.id === id)).filter(g => g && (g.runes || []).length).length;
-  return `<div class="sub muted">같은 레어도 · 같은 갈래(무기 · 부장비 · 방어구 · 장신구) 장비 ${FUSE.n}점을 녹이면 <b class="q${nq}">${QUALITY[nq].name}</b> 장비 하나가 무작위로 나와요. 아주 드물게(${Math.round(FUSE.jump * 100)}%) 두 단계 위가 나와요. 나오는 장비의 단계(Lv 구간)는 넣은 장비 단계의 평균이고, 룬은 사라져요.</div>
+  return `<div class="sub muted">같은 레어도 · 같은 갈래(${Object.values(FUSE_CAT).join(' · ')}) 장비 ${FUSE.n}점을 녹이면 <b class="q${nq}">${QUALITY[nq].name}</b> 장비 하나가 무작위로 나와요. 아주 드물게(${Math.round(FUSE.jump * 100)}%) 두 단계 위가 나와요. 나오는 장비의 단계(Lv 구간)는 넣은 장비 단계의 평균이고, 룬은 사라져요.</div>
     <div class="btns">${cats}</div><div class="btns">${qs}</div>
     <div class="igrid fuse">${slots}</div>
     ${lost ? `<div class="sub red-t">강화나 룬이 있는 장비 ${lost}점이 들어 있어요. 합성하면 사라져요.</div>` : ''}

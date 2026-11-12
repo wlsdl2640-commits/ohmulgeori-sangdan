@@ -222,6 +222,7 @@ textarea.code { width: 100%; min-height: 96px; padding: 8px; font: 11px/1.4 ui-m
 
 .por { flex: none; width: 46px; height: 56px; background: #0e1118; border: 2px solid #000; image-rendering: pixelated; }
 .ico { flex: none; width: 20px; height: 20px; image-rendering: pixelated; }
+.ico.hr { image-rendering: auto; object-fit: contain; }
 .ico.lg { width: 30px; height: 30px; }
 
 .list { display: grid; gap: 2px; }
@@ -625,7 +626,9 @@ details.card > .list { margin-top: 8px; }
 
 /* ───────── 빌드 63: 레어도 칸 = 도트 판 (rarity.js — A안 테 + B안 보석, 영웅부터 홀로그램 빛줄기 12장) · 꼬리표 ───────── */
 .rqt.rq0 { color: #c9c3b8; } .rqt.rq1 { color: var(--ok); } .rqt.rq2 { color: #6ab0ff; } .rqt.rq3 { color: #c07af0; } .rqt.rq4 { color: #f0b43c; } .rqt.rq5 { color: #ff6a5a; } .rqt.rq6 { color: #fff4b0; text-shadow: 1px 1px 0 #3a2c08; } .rqt.rq7 { color: #9c9cff; text-shadow: 1px 1px 0 #14104a; } .rqt.rq8 { color: #ffffff; text-shadow: 1px 1px 0 #6a2a78; }
-.rqa { display: block; flex: none; image-rendering: pixelated; background-repeat: no-repeat; background-position: 0 0; }
+.rqa { display: block; flex: none; image-rendering: pixelated; background-repeat: no-repeat; background-position: 0 0; position: relative; }
+/* 빌드 65: 디자인 그림을 그대로 쓰는 장비(경갑) — 칸 안쪽 20/26 자리에 부드럽게 줄여 얹는다 */
+.rqa.hr::after { content: ''; position: absolute; left: 11.54%; top: 11.54%; width: 76.92%; height: 76.92%; background-repeat: no-repeat; background-position: center; background-size: contain; image-rendering: auto; pointer-events: none; }
 .rqa.s2 { width: 52px; height: 52px; background-size: 52px auto; }
 .rqa.s1 { width: 26px; height: 26px; background-size: 26px auto; }
 .rqa.holo.s2 { animation: rqh2 1.8s steps(12) infinite; }

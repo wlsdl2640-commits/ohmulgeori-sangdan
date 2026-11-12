@@ -122,7 +122,15 @@ function offIconURL(base, t) {
   cells.forEach((col, i) => { if (col !== '#ff00ff') { x.fillStyle = col; x.fillRect(2 + (i % 16), Math.floor(i / 16), 1, 1); } });
   return (ICON_URL[k] = keepCv(c));
 }
+// 빌드 65: 사용자가 준 디자인 그림을 그대로 쓰는 장비(ARMART — 경갑 · 경갑 하의). 도트 칸에 굽지 않고 칸 위에 얹는다(rarity.js rqClass · panels.js gImg)
+const HR_URL = new Set();
+function armArtURL(g) {
+  const T = g && GTYPES[g.base], L = T && T.art && typeof ARMART !== 'undefined' && ARMART[T.art]; if (!L) return null;
+  const u = L[Math.max(0, Math.min(L.length - 1, g.t | 0))]; if (u) HR_URL.add(u);
+  return u || null;
+}
 function gearIconURL(g) {
+  const h = armArtURL(g); if (h) return h;
   const w = wicURL(g); if (w) return w;   // 빌드 64: 고유 이름 장비는 단계마다 그림
   const off = offIconURL(g.base, g.t); if (off) return off;
   const key = 'g:' + g.base + ':' + g.t;

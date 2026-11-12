@@ -1,11 +1,12 @@
 /* ───────── 창 화면 ───────── */
 const PANELS = {};
 const qTag = g => `<span class="q q${g.q}">${QUALITY[g.q].name}</span>`;
-const gImg = (g, cls = 'ico') => `<img class="${cls}" src="${gearIconURL(g)}" alt="">`;
+const gImg = (g, cls = 'ico') => { const u = gearIconURL(g); return `<img class="${cls}${HR_URL.has(u) ? ' hr' : ''}" src="${u}" alt="">`; };   // 빌드 65: 디자인 그림(hr)은 부드럽게 줄인다
 function statLine(st) {
   return Object.entries(st).filter(([, v]) => v !== 0).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) || k === 'spdPct' || k === 'cdr' ? (k === 'cdr' || k === 'ccRes' ? '-' : '+') + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
 }
 const clsList = cls => (cls.includes('all') ? '모든 직업' : cls.map(c => CLASSES[c].name + (jobTier(c) === 1 ? ' 계열' : '')).join('·'));
+const gearWho = b => GTYPES[b].who || clsList(GTYPES[b].cls);   // 빌드 65: 같은 계열이라도 못 입는 직업이 있으면(cx) who 글로
 // 직업 특성을 글로
 const TR_TXT = {
   critMul: v => `치명타 피해 ×${v}`, guard: v => (v < 0 ? `받는 피해 +${Math.round(-v * 100)}%` : `받는 피해 -${Math.round(v * 100)}%`), tank: v => (v < 0 ? '적이 덜 노린다' : v >= 2 ? '적이 아주 자주 노린다' : '적이 자주 노린다'),
@@ -174,7 +175,7 @@ function smithyBox() {
   const B = q >= 3 ? BOSS_RECIPE[q] : null;
   const rows = CRAFT_IDS.filter(b => tierOk(b, t)).map(b => {   // 빌드 64: 2차 직업 장비는 늪지 단계부터
     const g = { base: b, t, q }, ok = canSmith(b, t, q);
-    return `<div class="li">${gArt(g, 1)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${clsList(GTYPES[b].cls)} · Lv${GTIERS[t].lv}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" title="${esc(buyAmmoWhy(b, t))}"${buyAmmoWhy(b, t) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t))}G</button>` : ''}</div></div>`;
+    return `<div class="li">${gArt(g, 1)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${gearWho(b)} · Lv${GTIERS[t].lv}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" title="${esc(buyAmmoWhy(b, t))}"${buyAmmoWhy(b, t) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t))}G</button>` : ''}</div></div>`;
   }).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. 룬 칸 ${q}개.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">일반 제작은 만들 때마다 일반·고급·희귀 품질이 정해져요. 대장간을 넓힐수록 좋은 품질이 잘 나와요.</div>';
@@ -251,7 +252,7 @@ PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
 PANELS.b = w => bldCard(w.b, true);
 
 /* 모험가 */
-function eqIcons(a) { return SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => (a.eq[s] ? gArt(a.eq[s], 1) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
+function eqIcons(a) { return SLOTS.filter(([s]) => (s !== 'ammo' || hasAmmoSlot(a)) && (s !== 'legs' || hasLegs(a) || a.eq.legs)).map(([s, n]) => (a.eq[s] ? gArt(a.eq[s], 1) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
 function advState(a, p) {
   if (a.status === 'away') return `<span class="warn">${esc(p ? p.name : '')} 원정 중</span>`;
   if (a.inj) return `<span class="red-t">${INJ[a.inj.sev].name} · ${S.bld.temple ? '신전에서' : '여관 방에서'} 치료 중</span>`;
@@ -347,7 +348,7 @@ function advDetail(a) {
     .concat(runeDerived(a, d))   // 빌드 64 룬 개편: 룬으로 붙은 새 능력치 (있을 때만)
     .map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('');
   const spdB = speedBreakdown(a);
-  const slots = SLOTS.filter(([s]) => s !== 'ammo' || hasAmmoSlot(a)).map(([s, n]) => {
+  const slots = SLOTS.filter(([s]) => (s !== 'ammo' || hasAmmoSlot(a)) && (s !== 'legs' || hasLegs(a) || a.eq.legs)).map(([s, n]) => {   // 빌드 65: 하의 칸은 입을 하의가 있는 직업만
     const g = a.eq[s], two = s === 'off' && twoHand(a.eq.weapon);   // 빌드 64: 대검(두 손)을 들면 부장비 칸은 쓸 수 없다
     const pool = two ? [] : S.gear.filter(x => GTYPES[x.base].slot === s && gearFits(a, x) && (!g || gearScore(x) >= gearScore(g))).sort((x, y) => gearScore(y) - gearScore(x)).slice(0, 4);
     return `<div class="li col"><div class="row">${g ? gArt(g, 1) : '<span class="ico empty"></span>'}<div class="grow stack"><span>${n} · ${g ? gearName(g) + ' ' + qTag(g) : `<span class="${s === 'ammo' && needsArrows(a) ? 'red-t' : 'muted'}">비어 있음${s === 'ammo' && needsArrows(a) ? ' · 화살이 없으면 기본 공격을 못 해요' : two ? ` · ${jo(GTYPES[a.eq.weapon.base].name, '을', '를')} 두 손으로 들어요` : ''}</span>`}</span>${g ? `<span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · <b class="${ammoLeft(g, a) ? '' : 'red-t'}">${ammoTag(g, a)}</b>` : ''}</span>` : ''}</div>${g && idle ? `<button type="button" class="btn sm" data-mact="uneq" data-s="${s}">빼기</button>` : ''}</div>

@@ -185,7 +185,7 @@ function dexMats() {
 function dexPots() {
   const ids = SUPPLY_IDS;
   const rows = ids.map(it => { const I = ITEMS[it], r = RECIPES.find(x => x.out === it); return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.buy ? `사는 값 ${I.buy}G` : `${I.v}G`}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${I.heal ? `HP ${Math.round(potionHeal(it))} 회복 (기본 ${I.heal})` : I.mana ? `MP ${I.mana} 회복` : `${cureName(I.cure)} 치료 · ${I.desc || ''}`} · 보급품으로 가져가면 저절로 써요</span>${r ? `<span class="sub muted">조제: ${Object.entries(r.need).map(([m, n]) => `${ITEMS[m].name} ${n}`).join(' · ')} · ${r.fee}G${r.lv > 1 ? ' · 공방 2단계' : ''}</span>` : ''}</div></div>`; }).join('');
-  const runes = RUNE_IDS.map(k => `<div class="li">${iconImg(runeId(k, RUNE_TOP))}<div class="grow stack"><span>${RUNES[k].name}의 룬 <span class="muted">· ${RUNE_LV.join('·')}</span></span><span class="sub">무기: ${runeLine(k, 'w')}</span><span class="sub">부장비 · 방어구 · 장신구 · 가방: ${runeLine(k, 'a')}</span></div></div>`).join('');   // 빌드 64: 한 룬에 두 효과
+  const runes = RUNE_IDS.map(k => `<div class="li">${iconImg(runeId(k, RUNE_TOP))}<div class="grow stack"><span>${RUNES[k].name}의 룬 <span class="muted">· ${RUNE_LV.join('·')}</span></span><span class="sub">무기: ${runeLine(k, 'w')}</span><span class="sub">부장비 · 방어구 · 하의 · 장신구 · 가방: ${runeLine(k, 'a')}</span></div></div>`).join('');   // 빌드 64: 한 룬에 두 효과
   return `<div class="list">${rows}</div><div class="sec"><b>룬</b><span>마탑에서 장비에 새기고 합쳐요 (상급 셋 → 최상급)</span></div><div class="list">${runes}</div>`;
 }
 
@@ -197,7 +197,7 @@ function dexGear() {
   const ids = Object.keys(GTYPES).filter(b => !GTYPES[b].old);   // 빌드 64: 없어진 카이트 · 탑 방패는 빼고
   const rows = ids.map(b => { const G = GTYPES[b], known = !!D.gear[b];
     const st = Object.entries(G.st).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) ? `+${(v * 100).toFixed(1)}%` : `+${v}`}/단계힘`).join(', ');
-    return `<div class="li${known ? '' : ' dim'}">${gImg({ base: b, t: 0, q: 0, runes: [] })}<div class="grow stack"><span>${known ? G.name : '???'} <span class="muted">· ${SLOTS.find(s => s[0] === G.slot)[1]} · 무게 ${G.w}${G.arena ? ' · <span class="gold-t">투기장 전용</span>' : ''}${UNIQ_T0[b] ? ` · ${GTIERS[UNIQ_T0[b]].name} 단계부터` : ''}${G.two ? ' · 두 손' : ''}${UNIQ_T0[b] != null ? ' · 단계마다 고유 이름' : ''}</span></span><span class="sub">${known ? st : '한 번 얻으면 열려요'}</span><span class="sub muted">${G.cls.includes('all') ? '누구나' : G.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')} · 재료 단단 ${G.mat[0]}·질긴 ${G.mat[1]}·마력 ${G.mat[2]}</span></div></div>`; }).join('');
+    return `<div class="li${known ? '' : ' dim'}">${gImg({ base: b, t: 0, q: 0, runes: [] })}<div class="grow stack"><span>${known ? G.name : '???'} <span class="muted">· ${SLOTS.find(s => s[0] === G.slot)[1]} · 무게 ${G.w}${G.arena ? ' · <span class="gold-t">투기장 전용</span>' : ''}${UNIQ_T0[b] ? ` · ${GTIERS[UNIQ_T0[b]].name} 단계부터` : ''}${G.two ? ' · 두 손' : ''}${UNIQ_T0[b] != null ? ' · 단계마다 고유 이름' : ''}</span></span><span class="sub">${known ? st : '한 번 얻으면 열려요'}</span><span class="sub muted">${G.who || (G.cls.includes('all') ? '누구나' : G.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·'))} · 재료 단단 ${G.mat[0]}·질긴 ${G.mat[1]}·마력 ${G.mat[2]}</span></div></div>`; }).join('');
   return tiers + quals + `<div class="sec"><b>장비 종류</b><span>${ids.filter(b => D.gear[b]).length}/${ids.length} 얻어 봄</span></div><div class="list">${rows}</div>`;
 }
 

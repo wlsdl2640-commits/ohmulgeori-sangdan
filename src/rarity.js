@@ -171,7 +171,7 @@ let RQ_STYLE = null, RQ_SEQ = 0;
 function rqClass(src, g, plus) {
   const pt = plus >= 10 ? 3 : plus >= 7 ? 2 : plus >= 4 ? 1 : 0, key = (src || '') + '|' + g + '|' + pt;
   if (RQ_CACHE.has(key)) return RQ_CACHE.get(key);
-  const holo = g >= 3, nf = holo ? RQ_NF : 1, N = RQ_N, ic = rqIconPx(src);
+  const holo = g >= 3, nf = holo ? RQ_NF : 1, N = RQ_N, hr = !!src && typeof HR_URL !== 'undefined' && HR_URL.has(src), ic = hr ? null : rqIconPx(src);   // 빌드 65: 디자인 그림은 칸에 굽지 않는다
   const [c, x] = mkCanvas(N, N * nf), img = x.createImageData(N, N * nf), D = img.data;
   for (let t = 0; t < nf; t++) {
     const P = rqFrame(g, t);
@@ -185,7 +185,12 @@ function rqClass(src, g, plus) {
   const cls = 'k' + (++RQ_SEQ);
   if (!RQ_STYLE) { RQ_STYLE = document.createElement('style'); RQ_STYLE.id = 'rq-sheets'; document.head.appendChild(RQ_STYLE); }
   try { RQ_STYLE.sheet.insertRule(`.rqa.${cls} { background-image: url(${c.toDataURL()}); }`, RQ_STYLE.sheet.cssRules.length); } catch (_) { /* 규칙을 못 넣으면 빈 칸 */ }
-  const out = cls + (holo ? ' holo' : '');
+  let out = cls + (holo ? ' holo' : '');
+  if (hr) {   // 디자인 그림을 칸 안쪽(20×20 자리)에 그대로 얹는다
+    const hc = 'h' + (++RQ_SEQ);
+    try { RQ_STYLE.sheet.insertRule(`.rqa.${hc}::after { background-image: url(${src}); }`, RQ_STYLE.sheet.cssRules.length); } catch (_) { /* 못 넣으면 칸만 */ }
+    out += ' hr ' + hc;
+  }
   RQ_CACHE.set(key, out); return out;
 }
 // 칸 그림 HTML. s = 1(26px) · 2(52px)

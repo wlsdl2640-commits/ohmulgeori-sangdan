@@ -485,7 +485,7 @@ const uniqIdx = g => Math.max(0, Math.min(15, (g.t || 0) - (UNIQ_T0[g.base] || 0
 const tierOk = (b, t) => (UNIQ_T0[b] || 0) <= t;
 const uniqName = g => (typeof WNAME !== 'undefined' && WNAME[g.base] ? WNAME[g.base][uniqIdx(g)] : '');
 // 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에만(세트 효과는 빌드 65에서 없앰). 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
-const tierNamed = b => !!GTYPES[b] && (GTYPES[b].slot === 'armor' || GTYPES[b].slot === 'acc');
+const tierNamed = b => !!GTYPES[b] && (GTYPES[b].slot === 'armor' || GTYPES[b].slot === 'legs' || GTYPES[b].slot === 'acc');   // 빌드 65: 하의도
 const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}` : `${GTYPES[g.base].name} Lv${GTIERS[g.t].lv}`);
 const gearName = g => gearBaseName(g);
 const gearNameOf = (base, t) => gearBaseName({ base, t: +t });
@@ -497,7 +497,7 @@ function recipeNeed(base, t) {
   GTYPES[base].mat.forEach((n, i) => { if (n) need[mats[i]] = n; });
   return need;
 }
-const gearFits = (a, g) => (GTYPES[g.base].cls.includes('all') || chainOf(a.cls).some(c => GTYPES[g.base].cls.includes(c))) && a.lv >= GTIERS[g.t].lv && tierOk(g.base, g.t);
+const gearFits = (a, g) => (GTYPES[g.base].cls.includes('all') || chainOf(a.cls).some(c => GTYPES[g.base].cls.includes(c))) && !(GTYPES[g.base].cx && chainOf(a.cls).some(c => GTYPES[g.base].cx.includes(c))) && a.lv >= GTIERS[g.t].lv && tierOk(g.base, g.t);   // 빌드 65: cx = 같은 계열이라도 못 입는 직업(경갑은 기사 · 광전사 · 마검사 계열 빼고)
 
 /* ───────── 연금술 ───────── */
 const RECIPES = [
