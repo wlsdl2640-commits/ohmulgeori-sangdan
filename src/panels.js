@@ -326,7 +326,7 @@ PANELS.adv = () => {
 };
 
 /* 숙련 (초급·중급·상급) 줄: 스킬 창 */
-const MAST_COL = ['#6a6458', '#c8884a', '#c8d0d8', '#f0c24a'];   // 안 배움 · 초급(동) · 중급(은) · 상급(금)
+const MAST_COL = ['#6a6458', '#c8884a', '#c8d0d8', '#f0c24a', '#e8f0ff'];   // 안 배움 · 초급(동) · 중급(은) · 상급(금) · 달인(백금 — 빌드 65)
 function mastIconURL(k, t) {
   const key = 'm:' + k + ':' + t; if (ICON_URL[key]) return ICON_URL[key];
   const [c, x] = mkCanvas(10, 10); drawIcon(x, { icon: MASTERY[k].icon, c: MAST_COL[t] || MAST_COL[0] });

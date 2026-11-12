@@ -1,26 +1,27 @@
-/* ───────── 숙련 패시브: 초급 → 중급 → 상급 (빌드 37) ─────────
+/* ───────── 숙련 패시브: 초급 → 중급 → 상급 (빌드 37) → 달인 (빌드 65, 4차 전직) ─────────
    무기술(w)은 그 무기·갑옷을 끼고 있을 때만, 지식·방패·운반(job)은 늘 켜져 있다.
-   훈련소에서 돈을 내고 한 단계씩 배운다. 스킬 칸을 차지하지 않는다 → a.mast = { 숙련 id: 단계(1~3) }
+   훈련소에서 돈을 내고 한 단계씩 배운다. 스킬 칸을 차지하지 않는다 → a.mast = { 숙련 id: 단계(1~4) } · 새 숙련 15개는 data-mast65.js
    fx 글자: atkPct matkPct defPct hpPct mpPct crit block counter spdPct cdr carryPct movePct healPow
            exec(HP 30% 아래 적에게 주는 피해 +) · stun(기본 공격이 기절시킬 확률) · buffDur(강화 스킬 지속 시간 +) */
 const MAST_TIERS = [
   { name: '초급', lv: 10, job: 1, fee: 1000 },
-  { name: '중급', lv: 50, job: 2, fee: 5000 },    // 빌드 64: 2차 전직 Lv50 · 3차 전직 Lv100에 맞춤 (예전 Lv30 · 60)
-  { name: '상급', lv: 100, job: 3, fee: 20000 }
+  { name: '중급', lv: 50, job: 2, fee: 10000 },    // 빌드 64: 2차 전직 Lv50 · 3차 전직 Lv100에 맞춤 (예전 Lv30 · 60)
+  { name: '상급', lv: 100, job: 3, fee: 100000 },
+  { name: '달인', lv: 150, job: 4, fee: 1000000 }   // 빌드 65 (스킬 시안 문서 · 사용자 「그렇게」): 4차 전직 · 값 1,000 · 10,000 · 100,000 · 1,000,000G
 ];
 const MASTERY = {
-  sword:  { name: '검술',      w: ['sword'],         icon: 'sword',  fx: [{ atkPct: 0.04 }, { atkPct: 0.08, crit: 0.01 }, { atkPct: 0.12, crit: 0.03 }], desc: '장검을 쥐는 법부터 베는 각도까지.' },
-  axe:    { name: '도끼술',    w: ['axe'],           icon: 'axe',    fx: [{ atkPct: 0.05 }, { atkPct: 0.1 }, { atkPct: 0.15, exec: 0.1 }], desc: '무게를 실어 내리찍는다. 상급은 약해진 적을 끝낸다.' },
-  blunt:  { name: '둔기술',    w: ['club', 'mace'],  icon: 'club',   fx: [{ atkPct: 0.03, defPct: 0.02 }, { atkPct: 0.06, defPct: 0.04 }, { atkPct: 0.1, defPct: 0.06, stun: 0.06 }], desc: '묵직하게 치고 버틴다. 상급은 기본 공격이 가끔 적을 기절시킨다.' },
-  lance:  { name: '창술',      w: ['lance'],         icon: 'lance',  fx: [{ atkPct: 0.03, counter: 0.03 }, { atkPct: 0.06, counter: 0.05 }, { atkPct: 0.1, counter: 0.08 }], desc: '거리를 지키며 찌르고, 달려드는 적을 받아친다.' },
-  bow:    { name: '궁술',      w: ['bow'],           icon: 'bow',    fx: [{ atkPct: 0.04, crit: 0.02 }, { atkPct: 0.08, crit: 0.03 }, { atkPct: 0.12, crit: 0.05 }], desc: '숨을 고르고 겨눈다. 급소를 꿰뚫는다.' },
-  dagger: { name: '단검술',    w: ['dagger'],        icon: 'dagger', fx: [{ crit: 0.03, spdPct: 0.05 }, { crit: 0.05, spdPct: 0.08 }, { crit: 0.08, spdPct: 0.12 }], desc: '빠르고 날카롭게, 틈을 찌른다.' },
-  lute:   { name: '연주법',    w: ['lute'],          icon: 'lute',   fx: [{ buffDur: 0.1, atkPct: 0.02 }, { buffDur: 0.2, atkPct: 0.04 }, { buffDur: 0.3, atkPct: 0.06, cdr: 0.04 }], desc: '노래(강화 스킬)가 더 오래 울린다.' },
-  plate:  { name: '갑옷 숙련', w: ['plate'],         icon: 'armor',  fx: [{ hpPct: 0.04 }, { hpPct: 0.07, defPct: 0.03 }, { hpPct: 0.1, defPct: 0.06 }], desc: '무거운 판금 갑옷을 몸처럼 입는다.' },
-  magic:  { name: '마법 지식', job: ['mage', 'cleric'], icon: 'book', fx: [{ matkPct: 0.04 }, { matkPct: 0.08, mpPct: 0.08 }, { matkPct: 0.12, mpPct: 0.15, cdr: 0.03 }], desc: '마력을 다루는 이론. 마법 공격력이 오르면 치유량도 함께 오른다.' },
-  holy:   { name: '신성학',    job: ['cleric'],      icon: 'heart',  fx: [{ healPow: 0.05 }, { healPow: 0.1 }, { healPow: 0.15 }], desc: '기도와 의술. 치유·재생·보호막이 더 세진다.' },
-  shield: { name: '방패술',    w: ['shield'],        icon: 'crest', fx: [{ defPct: 0.04, block: 0.02 }, { defPct: 0.07, block: 0.04 }, { defPct: 0.1, block: 0.06 }], desc: '방패를 세워 받아 막고 버틴다.' },   // 빌드 39: 방어 5/10/15 → 4/7/10%, 막기 3/5/8 → 2/4/6%p. w는 data-off에서 방패 네 종류로
-  carry:  { name: '운반술',    job: ['porter'],      icon: 'bag',    fx: [{ carryPct: 0.1 }, { carryPct: 0.2 }, { carryPct: 0.3, movePct: 0.05 }], desc: '짐을 꾸리고 나르는 요령. 상급은 발걸음도 빨라진다.' }
+  sword:  { name: '검술',      w: ['sword'],         icon: 'sword',  fx: [{ atkPct: 0.04 }, { atkPct: 0.08, crit: 0.01 }, { atkPct: 0.12, crit: 0.03 }, { atkPct: 0.16, crit: 0.04 }], desc: '장검을 쥐는 법부터 베는 각도까지.' },
+  axe:    { name: '도끼술',    w: ['axe'],           icon: 'axe',    fx: [{ atkPct: 0.05 }, { atkPct: 0.1 }, { atkPct: 0.15, exec: 0.1 }, { atkPct: 0.2, exec: 0.13 }], desc: '무게를 실어 내리찍는다. 상급은 약해진 적을 끝낸다.' },
+  blunt:  { name: '둔기술',    w: ['club', 'mace'],  icon: 'club',   fx: [{ atkPct: 0.03, defPct: 0.02 }, { atkPct: 0.06, defPct: 0.04 }, { atkPct: 0.1, defPct: 0.06, stun: 0.06 }, { atkPct: 0.13, defPct: 0.08, stun: 0.08 }], desc: '묵직하게 치고 버틴다. 상급은 기본 공격이 가끔 적을 기절시킨다.' },
+  lance:  { name: '창술',      w: ['lance'],         icon: 'lance',  fx: [{ atkPct: 0.03, counter: 0.03 }, { atkPct: 0.06, counter: 0.05 }, { atkPct: 0.1, counter: 0.08 }, { atkPct: 0.13, counter: 0.1 }], desc: '거리를 지키며 찌르고, 달려드는 적을 받아친다.' },
+  bow:    { name: '궁술',      w: ['bow'],           icon: 'bow',    fx: [{ atkPct: 0.04, crit: 0.02 }, { atkPct: 0.08, crit: 0.03 }, { atkPct: 0.12, crit: 0.05 }, { atkPct: 0.16, crit: 0.07 }], desc: '숨을 고르고 겨눈다. 급소를 꿰뚫는다.' },
+  dagger: { name: '단검술',    w: ['dagger'],        icon: 'dagger', fx: [{ crit: 0.03, spdPct: 0.05 }, { crit: 0.05, spdPct: 0.08 }, { crit: 0.08, spdPct: 0.12 }, { crit: 0.1, spdPct: 0.16 }], desc: '빠르고 날카롭게, 틈을 찌른다.' },
+  lute:   { name: '연주법',    w: ['lute'],          icon: 'lute',   fx: [{ buffDur: 0.1, atkPct: 0.02 }, { buffDur: 0.2, atkPct: 0.04 }, { buffDur: 0.3, atkPct: 0.06, cdr: 0.04 }, { buffDur: 0.4, atkPct: 0.08, cdr: 0.05 }], desc: '노래(강화 스킬)가 더 오래 울린다.' },
+  plate:  { name: '갑옷 숙련', w: ['plate'],         icon: 'armor',  fx: [{ hpPct: 0.04 }, { hpPct: 0.07, defPct: 0.03 }, { hpPct: 0.1, defPct: 0.06 }, { hpPct: 0.13, defPct: 0.08 }], desc: '무거운 판금 갑옷을 몸처럼 입는다.' },
+  magic:  { name: '마법 지식', job: ['mage', 'cleric'], icon: 'book', fx: [{ matkPct: 0.04 }, { matkPct: 0.08, mpPct: 0.08 }, { matkPct: 0.12, mpPct: 0.15, cdr: 0.03 }, { matkPct: 0.16, mpPct: 0.2, cdr: 0.04 }], desc: '마력을 다루는 이론. 마법 공격력이 오르면 치유량도 함께 오른다.' },
+  holy:   { name: '신성학',    job: ['cleric'],      icon: 'heart',  fx: [{ healPow: 0.05 }, { healPow: 0.1 }, { healPow: 0.15 }, { healPow: 0.2 }], desc: '기도와 의술. 치유·재생·보호막이 더 세진다.' },
+  shield: { name: '방패술',    w: ['shield'],        icon: 'crest', fx: [{ defPct: 0.04, block: 0.02 }, { defPct: 0.07, block: 0.04 }, { defPct: 0.1, block: 0.06 }, { defPct: 0.13, block: 0.08 }], desc: '방패를 세워 받아 막고 버틴다.' },   // 빌드 39: 방어 5/10/15 → 4/7/10%, 막기 3/5/8 → 2/4/6%p. w는 data-off에서 방패 네 종류로
+  carry:  { name: '운반술',    job: ['porter'],      icon: 'bag',    fx: [{ carryPct: 0.1 }, { carryPct: 0.2 }, { carryPct: 0.3, movePct: 0.05 }, { carryPct: 0.4, movePct: 0.07 }], desc: '짐을 꾸리고 나르는 요령. 상급은 발걸음도 빨라진다.' }
 };
 const MAST_IDS = Object.keys(MASTERY);
 const MAST_MAX = MAST_TIERS.length;

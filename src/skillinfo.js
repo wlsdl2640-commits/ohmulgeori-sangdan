@@ -7,10 +7,13 @@ const SK_KIND = { dmg: '물리 피해', mdmg: '마법 피해', heal: '치유', b
 const SK_BUFF = { deflect: '기본 공격 튕겨내기', steal: '훔치는 돈', hide: '적이 덜 노림', ncrit: '다음 공격 치명타 확정', nmul: '다음 공격', ground: '땅에 내려앉음', atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '공격 속도', heal: '회복량', crit: '치명타', guard: '받는 피해 감소', cdr: '스킬 재사용 감소' };
 // 지속 효과 이름과 표기 방식: pct(배율 %) · pp(%p 더함) · neg(줄임) · x(배)
 const SK_PASS = { atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['공격 속도', 'pct'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'], healPow: ['치유량', 'pct'], exec: ['약해진 적(HP 30% 아래) 피해', 'pct'], stun: ['기본 공격 기절', 'pp'], buffDur: ['강화 스킬 지속 시간', 'pct'],
-  critDmg: ['치명타 피해', 'pct'], chestGold: ['보물 상자 · 보물고 돈', 'pct'], thrownPct: ['암기 피해', 'pct'], thrownCap: ['암기 담는 수', 'pct'], petDmg: ['늑대 · 와이번 공격 피해', 'pct'], pbuffDur: ['파티 강화 스킬 지속 시간', 'pct'], camp: ['야영 회복', 'pct'] };   // 빌드 65 직업 개편
+  critDmg: ['치명타 피해', 'pct'], chestGold: ['보물 상자 · 보물고 돈', 'pct'], thrownPct: ['암기 피해', 'pct'], thrownCap: ['암기 담는 수', 'pct'], petDmg: ['늑대 · 와이번 공격 피해', 'pct'], pbuffDur: ['파티 강화 스킬 지속 시간', 'pct'], camp: ['야영 회복', 'pct'],   // 빌드 65 직업 개편
+  slowHit: ['기본 공격에 맞은 적 1.5초 느림', 'pp'], bleedHit: ['기본 공격 출혈', 'pp'], stealPct: ['훔치는 돈', 'pct'], chestExtra: ['보물고 상자 하나 더', 'pp'], thrownTwice: ['암기 한 번 더', 'pp'], comboMax: ['연계 한도', 'n'],   // 빌드 65 새 숙련
+  offDmg: ['둘째 칼(보조 단검) 피해', 'pct'], arenaFame: ['투기장 랭킹 점수', 'pct'], shieldPow: ['거는 보호막', 'pct'], boltPct: ['볼트 피해', 'pct'], boltPierce: ['볼트 방어 무시', 'pct'], boltTwice: ['볼트 한 발 더', 'pp'], petTwice: ['탈것이 한 번 더', 'pp'],
+  spiritPct: ['정령 스킬 피해', 'pct'], weakPct: ['약점 피해', 'pct'], immPierce: ['면역인 적에게도 피해', 'pct'], mdrain: ['마법 피해 흡수', 'pct'], dotPct: ['지속 피해', 'pct'], wagonSpd: ['모는 마차 속도', 'pct'], wagonCap: ['모는 마차 짐', 'pct'] };
 const SK_PASS_FLAG = { subst: '싸움마다 한 번, 쓰러질 한 방을 피하고 HP 30%로 버틴다', firstCrit: '싸움마다 첫 공격은 반드시 치명타', baImm: '기본 공격에 맞지 않는다' };
 // 숙련 효과 한 줄: 공격력 +8% · 치명타 +1%p
-const mastFxText = f => Object.entries(f).map(([k, v]) => { const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct']; return `${P[0]} ${P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`; }).join(' · ');
+const mastFxText = f => Object.entries(f).map(([k, v]) => { const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct']; return `${P[0]} ${P[1] === 'n' ? '+' + v : P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`; }).join(' · ');
 const skPct = v => `${Math.round(v * 1000) / 10}%`;
 const skSec = v => `${Math.round(v * 10) / 10}초`;
 const skN = v => fmt(Math.round(v));

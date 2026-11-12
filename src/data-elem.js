@@ -131,9 +131,9 @@ function elemMul(el, f, a, s) {
   let m = elemBase(el, f);
   if (m === 0 && s && s.armor && (el || 'none') === 'none' && monEls(f.id).includes('steel')) m = 0.8;   // 철갑 화살
   if (!a) return m;
-  const T = TR(a);
-  if (m > 1) m *= 1 + (T.elw || 0) + traitSum(a, 'elw');
-  if (m === 0 && T.immPierce) m = T.immPierce;
+  const T = TR(a), P = passives(a);   // 빌드 65 구슬술: 약점 피해 + · 면역 꿰뚫기
+  if (m > 1) m *= 1 + (T.elw || 0) + traitSum(a, 'elw') + (P.weakPct || 0);
+  if (m === 0 && (T.immPierce || P.immPierce)) m = Math.max(T.immPierce || 0, P.immPierce || 0);
   return m;
 }
 // 여러 속성 스킬: 그 적에게 가장 잘 듣는 속성

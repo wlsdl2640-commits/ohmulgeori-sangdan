@@ -406,6 +406,7 @@ html, body { overflow-x: hidden; }
 .mpips i.on.t1 { background: #c8884a; border-color: #5a3a1a; }
 .mpips i.on.t2 { background: #c8d0d8; border-color: #4a525a; }
 .mpips i.on.t3 { background: #f0c24a; border-color: #6a4a10; }
+.mpips i.on.t4 { background: #eef4ff; border-color: #5a6a8a; }   /* 빌드 65: 달인 */
 .trait.mast { background: #2a3a4a; border-color: #5a7a9a; }
 .trait.mast.off { opacity: .55; }
 .skico.off { opacity: .55; }

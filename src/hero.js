@@ -582,7 +582,7 @@ function hexURL(glyph, kind, max, sid, fr = 0) {
 // 스킬 창 목록에 붙이는 스킬 그림 (48px 육각)
 const skIco = (id, cls = 'skico') => { const s = SKILLS[id]; return s ? `<img class="${cls}" src="${hexURL(skillGlyph(s), s.kind, false, id)}" alt="">` : ''; };
 // 숙련 그림 (단계 t: 0 안 배움 · 1~3): 틀 색이 동·은·금. 그림이 아직 없으면 임시 아이템 그림
-const mastHexURL = (k, t) => (typeof MASTICON !== 'undefined' && MASTICON[k] ? hexURL(null, 'buff', false, `m:${k}:${t}`, t) : null);
+const mastHexURL = (k, t) => (typeof MASTICON !== 'undefined' && MASTICON[k] ? hexURL(null, 'buff', false, `m:${k}:${Math.min(t, MASTICON[k].length - 1)}`, Math.min(t, HEX_FR.length - 1)) : null);   // 빌드 65: 달인 그림을 고르기 전까지는 상급 그림
 const mastIco = (k, t) => { const u = mastHexURL(k, t); return u ? `<img class="skico${t ? '' : ' off'}" src="${u}" alt="">` : `<img class="ico lg" src="${mastIconURL(k, t)}" alt="">`; };
 
 /* ───────── 무대 그리기 ───────── */
