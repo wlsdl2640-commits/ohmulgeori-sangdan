@@ -42,7 +42,7 @@ function makeAdv(o = {}) {
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
-    eq: { weapon: null, off: null, ammo: null, armor: null, legs: null, gloves: null, boots: null, belt: null, acc: null, ear: null, bag: null }, skills: [C.innate], sm: {}, mast: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
+    eq: { weapon: null, off: null, ammo: null, bcase: null, bolt: null, armor: null, legs: null, gloves: null, boots: null, belt: null, acc: null, ear: null, bag: null }, skills: [C.innate], sm: {}, mast: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
     salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
   };
   growStats(a, lv - 1);
@@ -789,12 +789,12 @@ function cast(e, a, d, id, team, dm, foes) {
 }
 // 화살이 떨어졌다: 원정마다 한 번 알린다
 function noAmmo(e, a, k) {   // 기록은 원정마다 한 번, 전투 화면 말풍선은 8초마다 · k 'shuri'면 표창
-  const key = a.id + (k || ''), nm = k === 'shuri' ? '표창' : '화살';
+  const key = a.id + (k || ''), nm = k === 'shuri' ? '암기' : k === 'bolt' ? '볼트' : '화살';
   e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[key]) { e.noAmmo[key] = 1; log(`${a.name}의 ${nm}이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
   e.noAmmoT = e.noAmmoT || {}; const last = e.noAmmoT[key]; if (last == null || S.t - last >= 8) { e.noAmmoT[key] = S.t; ev(e, 'noammo', k ? { s: a.id, k } : { s: a.id }); }
 }
 function basicAct(e, a, d, team, dm, foes) {
-  const act0 = CLASSES[a.cls].act, act = act0 === 'melee' && shootsArrows(a) ? 'arrow' : act0, T = TR(a), st = e.sta && e.sta[a.id];   // 용기병이 활을 들면 사격
+  const act0 = CLASSES[a.cls].act, act = act0 === 'melee' && shootsArrows(a) ? 'arrow' : act0 === 'arrow' && needsArrows(a) && meleeHeld(a) ? 'melee' : act0, T = TR(a), st = e.sta && e.sta[a.id];   // 용기병이 활을 들면 사격 · 정찰가가 정글칼을 들면 근접(빌드 65)
   if (st && (st.para || isHard(st))) return;
   if (st && (st.charm || (st.confuse && rnd() < FIGHT.confuse)) && advAllyHit(e, a, d, team, dm)) return;   // 매혹 · 혼란: 같은 편을 친다
   const blind = !!(st && st.blind);
@@ -812,7 +812,7 @@ function basicAct(e, a, d, team, dm, foes) {
   }
   const f = act === 'arrow' ? lowAwake(foes) : frontFoe(foes);   // 잠든 · 돌이 된 · 홀린 적은 되도록 건드리지 않는다
   const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
-  const bow = shootsArrows(a);
+  const bow = shootsArrows(a), WR = bow ? null : wpnRune(a);   // WR = 룬소드(빌드 65): 그 속성 추가 피해 · 상태이상
   if (bow && ammoLeft(a.eq.ammo, a) <= 0) { noAmmo(e, a); return; }   // 화살이 없으면 기본 공격을 못 한다
   const swings = 1 + (rnd() < (T.double || 0) + (d.double || 0) ? 1 : 0);
   for (let i = 0; i < swings; i++) {
@@ -822,19 +822,19 @@ function basicAct(e, a, d, team, dm, foes) {
     const crit = rnd() < d.crit + buffAdd(e, a.id, 'crit');
     const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1) * (act === 'melee' && isFly(f) ? FIGHT.fly : 1);   // 날아다니는 적: 근접 기본 공격 ×0.7   // 5초에 한 번, 그만큼 세게 (숙련 처형)
     const bel = bow ? arrowEl(a) || 'none' : 'none';   // 속성 화살 (빌드 39)
-    const v = hitFoe(e, f, atk, crit, false, a, bel);
-    ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 }, bel !== 'none' ? { el: bel } : {}, hitTag()));
+    const v0 = hitFoe(e, f, atk, crit, false, a, bel), tag0 = hitTag();
+    const vx = WR && f.hp > 0 ? hitFoe(e, f, atk * RUNE_SWORD_MUL, false, true, a, WR.el) : 0, v = v0 + vx;   // 룬소드: 한 번 벨 때 그 속성 피해가 덧붙는다(면역이면 0 — 본 피해는 그대로)
+    ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 }, bel !== 'none' ? { el: bel } : {}, v0 || !vx ? tag0 : hitTag()));
     if (!v) continue;
+    if (WR && WR.sta && f.hp > 0 && rnd() < WR.sta.p) inflictFoe(e, f, WR.sta, d.atk * buffMul(e, a.id, 'atk'), a.id, 'rsw');
     if (bow) { const AS = arrowSta(a); if (AS && f.hp > 0 && rnd() < AS.p) inflictFoe(e, f, AS, d.atk * buffMul(e, a.id, 'atk'), a.id, 'arrow'); }
     if (d.mStun && f.hp > 0 && rnd() < d.mStun) inflictFoe(e, f, { k: 'stun', d: 1.2 }, atk, a.id, 'mast');   // 숙련 (상급 둔기술)
     if (d.blindHit && f.hp > 0 && rnd() < d.blindHit) inflictFoe(e, f, { k: 'blind', d: RUNE_BLIND }, atk, a.id, 'rune');   // 섬광 룬 (무기): 기본 공격에 눈멂
     leech(e, a, d, v, false);
     comboUp(e, a);   // 연계 중첩 (지속딜)
   }
-  // 표창: 기본 공격마다 하나를 더 던진다 (남은 적 중 가장 약한 적, 직업 특성은 안 탄다)
-  const sh = a.eq && a.eq.off;
-  if (isAmmo(sh) && sh.base === 'shuriken' && !ammoLeft(sh, a)) noAmmo(e, a, 'shuri');
-  else if (isAmmo(sh) && sh.base === 'shuriken' && useAmmo(sh, a, 1)) { const live = foes.filter(x => x.hp > 0); if (live.length) { const tg = lowestFoe(live), c = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, tg, d.atk * buffMul(e, a.id, 'atk') * BASIC_MULT * SHURI_MUL, c, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: tg.uid, v, c, k: 'arrow', sid: 'shuri' }, hitTag())); } }
+  // 암기 · 손목 석궁: 기본 공격마다 하나를 더 던진다 · 쏜다 (남은 적 중 가장 약한 적, 직업 특성은 안 탄다 — data-gear65.js offShot)
+  offShot(e, a, d, foes);
   // 레인저·용기병: 동물 동료가 함께 문다
   if (T.pet && f.hp > 0 && rnd() < 0.5 + T.pet) { const v = hitFoe(e, f, d.atk * (0.35 + T.pet) * BASIC_MULT, false, false, null, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: false, k: 'pet' }, hitTag())); }
 }

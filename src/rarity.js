@@ -1,12 +1,15 @@
 /* ───────── 빌드 63: 레어도 칸 · 홀로그램 (사용자 11-11 13:03) ─────────
-   「A안 보석은 B」 → 26×26 도트 판(2배 = 52px): A안 테(2~3칸 경사 · 계단 바탕 · 희귀부터 모서리 따기 · 전설부터 금 줄 · 반짝이)
+   「A안 보석은 B」 → 도트 판(처음 26×26 · 빌드 65부터 30×30, 2배 = 60px): A안 테(2~3칸 경사 · 계단 바탕 · 희귀부터 모서리 따기 · 전설부터 금 줄 · 반짝이)
      + B안 위 보석(레어도만큼 커진다, 신화부터 아래 보석도).
    「영웅등급부터 테두리, 안쪽배경, 장비, 아이템 도트에 홀로그램처럼 레어도 빛이 움직이는 효과」 → 테 · 바탕 · 그림 도트를 한 판으로 굽고,
      그 위로 홀로그램(빌드 63 다섯째 묶음: 칸 전체에 레어도 색 필름 결 + 넓은 빛 덩어리 — 처음엔 무지갯빛 한 줄)이 흐르는 12장을 세로로 이어 붙여 CSS steps로 넘긴다 (흐림 · 부드러운 이동 없음, 모두 칸으로).
    우주(빌드 63 다섯째 묶음): 남빛 테 · 칸 안 별밤(rqSpace) · 옆 보석 · 깜빡이는 별(rqCosmos) · 보석 너비 8.
    창조: 진주빛 흰 테 위에 무지개 두 줄이 돌고 · 칸 안 여러 빛깔 별 · 옆 보석 가운데 무지개(rqCreate).
    그림 하나 · 레어도 · 강화 단계마다 한 번만 굽고(RQ_CACHE), 큰 data URL은 칸마다 쓰지 않고 스타일 규칙 하나(.rqa.kN)로 붙인다. */
-const RQ_N = 26, RQ_NF = 12, RQ_K = [12, 14, 20];
+const RQ_N = 30, RQ_NF = 12, RQ_K = [12, 14, 20];   // 빌드 65 (사용자 11-12 14:15 「모든 장비의 테두리를 조금더 키워서 못나가게」): 26 → 30칸 — 테 · 보석 굵기는 그대로, 칸 안이 20 → 24칸
+const RQ_I = (RQ_N - 20) / 2;   // 그림(20×20) 놓는 자리 = (5, 5) — 테(1~3칸) · 안쪽 그늘 줄(4칸) · 위아래 · 옆 보석과 겹치지 않는다
+const RQ_O = (RQ_N - 26) / 2;   // 가운데에 맞춘 것(옆 보석)을 옮기는 칸 수
+const rqS = v => Math.round((v - 12.5) * (RQ_N - 6) / 20 + (RQ_N - 1) / 2);   // 26칸 판에서 정한 칸 안 자리(별 · 반짝이)를 넓어진 칸 안에 고르게
 const RQ_GR = [   // [바탕, 밝음, 어두움, 칸 안]
   [[70, 78, 96], [100, 108, 128], [44, 50, 64], [26, 30, 42]],
   [[74, 138, 62], [123, 211, 106], [38, 78, 32], [22, 38, 24]],
@@ -44,24 +47,24 @@ const rqRing = (N, k) => { const r = []; for (let i = k + 1; i < N - k - 1; i++)
 function rqCreate(set, get, t, base, L, D) {
   const N = RQ_N;
   for (const [x0, s] of [[0, 1], [N - 4, -1]]) {
-    for (let y = 10; y <= 15; y++) for (let x = x0; x < x0 + 4; x++) set(x, y, RQ_K);
-    const gx = x0 + 1, cc = RQ_RAIN[(t + (s > 0 ? 0 : 3)) % 6];
-    set(gx, 11, rqMix(cc, RQ_W, 0.45)); set(gx + 1, 11, base); set(gx, 12, base); set(gx + 1, 12, cc); set(gx, 13, cc); set(gx + 1, 13, D); set(gx, 14, D); set(gx + 1, 14, rqMix(D, [0, 0, 0], 0.3));
+    for (let y = 10 + RQ_O; y <= 15 + RQ_O; y++) for (let x = x0; x < x0 + 4; x++) set(x, y, RQ_K);
+    const gx = x0 + 1, gy = 11 + RQ_O, cc = RQ_RAIN[(t + (s > 0 ? 0 : 3)) % 6];
+    set(gx, gy, rqMix(cc, RQ_W, 0.45)); set(gx + 1, gy, base); set(gx, gy + 1, base); set(gx + 1, gy + 1, cc); set(gx, gy + 2, cc); set(gx + 1, gy + 2, D); set(gx, gy + 3, D); set(gx + 1, gy + 3, rqMix(D, [0, 0, 0], 0.3));
   }
   for (const k of [1, 2]) { const ring = rqRing(N, k); ring.forEach(([x, y], i) => { const c = get(x, y); if (c) set(x, y, rqMix(c, RQ_RAIN[(Math.floor(i * 6 / ring.length) + (t >> 1)) % 6], k === 1 ? 0.75 : 0.55)); }); }
-  for (const [x, y, ph] of [[6, 6, 0], [19, 6, 2], [6, 19, 4], [19, 19, 1], [12, 5, 3], [5, 12, 5], [20, 13, 2], [13, 20, 0]]) { const k = (t + ph) % 3; if (k === 2) continue; set(x, y, k === 0 ? RQ_W : RQ_RAIN[(ph + t) % 6]); }
+  for (const [x0, y0, ph] of [[6, 6, 0], [19, 6, 2], [6, 19, 4], [19, 19, 1], [12, 5, 3], [5, 12, 5], [20, 13, 2], [13, 20, 0]]) { const k = (t + ph) % 3; if (k === 2) continue; set(rqS(x0), rqS(y0), k === 0 ? RQ_W : RQ_RAIN[(ph + t) % 6]); }
   const cx = N / 2 - 4; set(cx + 3, 1, RQ_RAIN[t % 6]); set(cx + 4, 2, RQ_RAIN[(t + 3) % 6]);
 }
 // 우주부터: 왼쪽 · 오른쪽 가운데 보석 둘 · 별이 깜빡(가끔 비스듬한 빛) · 네 모서리 별이 번갈아
 function rqCosmos(set, get, t, base, L, D) {
   const N = RQ_N;
   for (const x0 of [0, N - 4]) {
-    for (let y = 10; y <= 15; y++) for (let x = x0; x < x0 + 4; x++) set(x, y, RQ_K);
-    const gx = x0 + 1;
-    set(gx, 11, rqMix(L, RQ_W, 0.45)); set(gx + 1, 11, base); set(gx, 12, base); set(gx + 1, 12, L); set(gx, 13, L); set(gx + 1, 13, D); set(gx, 14, D); set(gx + 1, 14, rqMix(D, [0, 0, 0], 0.3));
+    for (let y = 10 + RQ_O; y <= 15 + RQ_O; y++) for (let x = x0; x < x0 + 4; x++) set(x, y, RQ_K);
+    const gx = x0 + 1, gy = 11 + RQ_O;
+    set(gx, gy, rqMix(L, RQ_W, 0.45)); set(gx + 1, gy, base); set(gx, gy + 1, base); set(gx + 1, gy + 1, L); set(gx, gy + 2, L); set(gx + 1, gy + 2, D); set(gx, gy + 3, D); set(gx + 1, gy + 3, rqMix(D, [0, 0, 0], 0.3));
   }
-  for (const [x, y, ph] of RQ_STARS) {
-    const k = (t + ph) % 4; if (k === 3) continue;
+  for (const [x0, y0, ph] of RQ_STARS) {
+    const x = rqS(x0), y = rqS(y0), k = (t + ph) % 4; if (k === 3) continue;
     set(x, y, k === 0 ? RQ_W : [176, 196, 255]);
     if (k === 0 && (t + ph) % 8 === 0) for (const [dx, dy] of [[1, 1], [-1, -1], [1, -1], [-1, 1]]) { const c = get(x + dx, y + dy); if (c) set(x + dx, y + dy, rqMix(c, [150, 170, 255], 0.6)); }
   }
@@ -73,10 +76,10 @@ function rqFrame(g, t) {
   const N = RQ_N, P = new Array(N * N).fill(null), set = (x, y, c) => { if (x >= 0 && y >= 0 && x < N && y < N) P[y * N + x] = c; }, get = (x, y) => P[y * N + x];
   const [base, L, D, B] = g < 0 ? RQ_EMPTY : RQ_GR[g], gg = Math.max(0, g);
   // 바탕: 둥근 빛 대신 계단 세 겹 + 이음매 바둑 무늬
-  const c0 = B, c1 = rqMix(B, base, g < 0 ? 0.06 : 0.16), c2 = rqMix(B, base, g < 0 ? 0.1 : 0.3), m = (N - 1) / 2;
+  const c0 = B, c1 = rqMix(B, base, g < 0 ? 0.06 : 0.16), c2 = rqMix(B, base, g < 0 ? 0.1 : 0.3), m = (N - 1) / 2, u = (N - 6) / 20;
   for (let y = 3; y <= N - 4; y++) for (let x = 3; x <= N - 4; x++) {
     const ax = Math.abs(x - m), ay = Math.abs(y - m + 1), r = Math.max(ax, ay) + 0.25 * Math.min(ax, ay), ck = (x + y) % 2;
-    set(x, y, r < 4.5 ? c2 : r < 5.6 ? (ck ? c2 : c1) : r < 7.8 ? c1 : r < 8.9 ? (ck ? c1 : c0) : c0);
+    set(x, y, r < 4.5 * u ? c2 : r < 5.6 * u ? (ck ? c2 : c1) : r < 7.8 * u ? c1 : r < 8.9 * u ? (ck ? c1 : c0) : c0);
   }
   if (gg === 7) rqSpace(set, B);
   for (let i = 0; i < N; i++) { set(i, 0, RQ_K); set(i, N - 1, RQ_K); set(0, i, RQ_K); set(N - 1, i, RQ_K); }
@@ -107,7 +110,7 @@ function rqFrame(g, t) {
     const spots = [[7, 7], [19, 9], [9, 19], [18, 18], [13, 6], [6, 13]], n = gg === 4 ? 1 : gg === 5 ? 2 : 3;
     for (let j = 0; j < n; j++) {
       if ((t + j) % 3 === 2) continue;
-      const [sx, sy] = spots[(t + j * 2) % spots.length], big = gg === 6 && (t + j) % 2 === 0;
+      const [sx0, sy0] = spots[(t + j * 2) % spots.length], sx = rqS(sx0), sy = rqS(sy0), big = gg === 6 && (t + j) % 2 === 0;
       set(sx, sy, RQ_W);
       for (const [dx, dy] of big ? [[1, 0], [-1, 0], [0, 1], [0, -1]] : [[1, 1], [-1, -1], [1, -1], [-1, 1]]) set(sx + dx, sy + dy, L);
     }
@@ -142,7 +145,7 @@ function rqHolo(P, g, t, M) {
     const th = (RQ_BAY[(y & 3) * 4 + (x & 3)] + 0.5) / 16, im = M && M[i] ? 0.6 : 1;
     const w = md(x * 2 + y - t * 2, 24) / 24, lum = (c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11) / 255, lv = 0.12 + 0.5 * lum;
     const sf = lv > 0.45 ? 0.5 : lv > 0.3 ? (th < 0.5 ? 0.42 : 0.3) : (th < 0.5 ? 0.24 : 0.14);
-    const d = Math.abs(x + y + 26 - t * 6.5), k = d < 4 ? 1 : d < 9 ? (th < 0.66 ? 0.7 : 0.45) : d < 15 ? (th < 0.4 ? 0.35 : 0.15) : 0;
+    const d = Math.abs(x + y + N - t * N / 4), k = d < 4 ? 1 : d < 9 ? (th < 0.66 ? 0.7 : 0.45) : d < 15 ? (th < 0.4 ? 0.35 : 0.15) : 0;
     const ss = d < 4 ? 0.45 : d < 9 ? (th < 0.66 ? 0.3 : 0.18) : d < 15 ? (th < 0.4 ? 0.14 : 0.05) : 0;
     let q = rqMix(c, pal[Math.floor(w * n) % n], sf * (0.7 + 0.35 * k) * im);
     if (ss) q = rqMix(q, rqMix(pal[md(((x - y) >> 2) + t, n)], RQ_W, 0.35), ss * im);
@@ -155,7 +158,7 @@ function rqPlus(P, plus) {
   const c = plus >= 10 ? [240, 180, 60] : plus >= 7 ? [192, 122, 240] : [106, 176, 255], N = RQ_N, x0 = 4, y0 = N - 7;
   for (let dy = -1; dy <= 2; dy++) for (let dx = -1; dx <= 2; dx++) { const x = x0 + dx, y = y0 + dy; P[y * N + x] = dx < 0 || dy < 0 || dx > 1 || dy > 1 ? RQ_K : dx === 0 && dy === 0 ? rqMix(c, RQ_W, 0.5) : c; }
 }
-// 그림 도트 얹기: 20×20(또는 10×10을 2배) 그림을 (3,3)에
+// 그림 도트 얹기: 20×20(또는 10×10을 2배) 그림을 (RQ_I, RQ_I)에
 function rqIconPx(src) {
   const cv = src && URL_CV.get(src); if (!cv) return null;
   const w = cv.width, h = cv.height, d = cv.getContext('2d').getImageData(0, 0, w, h).data, sc = w <= 10 ? 2 : 1, out = [];
@@ -176,7 +179,7 @@ function rqClass(src, g, plus) {
   for (let t = 0; t < nf; t++) {
     const P = rqFrame(g, t);
     const M = new Uint8Array(N * N);   // 그림 칸 (홀로그램을 조금 약하게)
-    if (ic) for (const [px, py, col] of ic) { const X = px + 3, Y = py + 3; if (X >= 0 && Y >= 0 && X < N && Y < N) { P[Y * N + X] = col; M[Y * N + X] = 1; } }
+    if (ic) for (const [px, py, col] of ic) { const X = px + RQ_I, Y = py + RQ_I; if (X >= 0 && Y >= 0 && X < N && Y < N) { P[Y * N + X] = col; M[Y * N + X] = 1; } }
     rqPlus(P, plus);
     if (holo) rqHolo(P, g, t, M);
     for (let i = 0; i < N * N; i++) { const col = P[i]; if (!col) continue; const o = (t * N * N + i) * 4; D[o] = col[0]; D[o + 1] = col[1]; D[o + 2] = col[2]; D[o + 3] = 255; }
@@ -193,7 +196,7 @@ function rqClass(src, g, plus) {
   }
   RQ_CACHE.set(key, out); return out;
 }
-// 칸 그림 HTML. s = 1(26px) · 2(52px)
+// 칸 그림 HTML. s = 1(30px) · 2(60px)
 const rqArt = (src, g, s, plus) => `<i class="rqa s${s || 2} ${rqClass(src, Math.max(0, Math.min(GRADE_MAX, g | 0)), plus | 0)}" aria-hidden="true"></i>`;
 const rqEmpty = s => `<i class="rqa s${s || 2} ${rqClass(null, -1, 0)}" aria-hidden="true"></i>`;
 const gArt = (g, s) => rqArt(gearIconURL(g), g.q || 0, s, 0);   // 빌드 64: 강화 표시는 없앴다

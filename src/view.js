@@ -529,7 +529,7 @@ const SHURI_FR = [0, 22.5, 45, 67.5].map(th => {
   for (const [x, y] of star) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const q = (x + dx) + ',' + (y + dy); if (!pts.has(q)) out.set(q, [x + dx, y + dy]); }
   return { star, out: [...out.values()] };
 });
-const shuriLook = id => { const a = typeof advById === 'function' ? advById(id) : null, g = a && a.eq && a.eq.off; return g && g.base === 'shuriken' ? offLook(g.t) : 0; };
+const shuriLook = id => { const a = typeof advById === 'function' ? advById(id) : null, g = a && a.eq && a.eq.off; return g && GTYPES[g.base] && GTYPES[g.base].thrown ? offLook(g.t) : 0; };
 const PROJ = { arrow: 0.18, magic: 0.24, fire: 0.26, ice: 0.22, bolt: 0.06, holy: 0.1, wind: 0.24, dark: 0.26, jump: 0.2, spell: 0.2, note: 0.24, pet: 0 };
 const SKILL_CLS = { heal: 'heal', buff: 'buff', taunt: 'buff', mdmg: 'magic', dot: 'dot', shield: 'buff', regen: 'heal', revive: 'heal' };
 const BUFF_C = { atk: '#ff8a4a', def: '#7ab8ff', eva: '#e8e2d0', spd: '#ffe08a', matk: '#c89aff', block: '#9aa0a8', counter: '#f0c070', rheal: '#8af08a', shield: '#8ad8ff', regen: '#8af08a', crit: '#ffd060', cdr: '#c0a0ff', guard: '#9ab0c8' };
@@ -604,7 +604,7 @@ function motPick(a, sid, i, k) {
 }
 // 사건 하나(hit·fmiss)에 동작을 붙이고 맞히는(쏘는) 때까지 남은 초를 돌려준다 (동작이 없으면 0)
 function motOn(a, x, t) {
-  if (!a || a.down || !pxsMotOK(a) || x.sid === 'shuri' || x.k === 'pet') return 0;
+  if (!a || a.down || !pxsMotOK(a) || x.sid === 'shuri' || x.sid === 'bolt' || x.k === 'pet') return 0;
   const key = 'a' + a.id, sid = x.sid || (x.ctr ? 'ctr' : '');
   let m = V.mot[key];
   if (x.dot) { if (!m || m.t !== t || !m.dot) return 0; m.lastQ = m.q[0]; return m.q[0].t0 + motToHit(m.q[0]) - t; }   // 지속 피해: skill 사건이 건 동작에 맞춘다
@@ -724,7 +724,7 @@ function events(e, pos, t, team, p) {
       }
       if (sk && !sk.keep) { /* 스킬 효과가 투사체·베기·터짐을 대신한다 */ }
       else if (mel) { /* 활·류트로 친다: 투사체 없음 */ }
-      else if (x.sid === 'shuri') V.fx.push(Object.assign({ k: 'shuri', c: SHURI_C[shuriLook(x.s)] }, P));
+      else if (x.sid === 'shuri') V.fx.push(Object.assign({ k: 'shuri', c: x.el && ELEMS[x.el] ? [ELEMS[x.el].c, SHURI_C[shuriLook(x.s)][1]] : SHURI_C[shuriLook(x.s)] }, P));   // 속성 특별 암기는 그 속성 색 (빌드 65)
       else if (x.k === 'arrow') V.fx.push(Object.assign({ k: 'arrow', c: x.dot ? '#7ad83c' : x.el && ELEMS[x.el] ? ELEMS[x.el].c : c1 }, P));   // 속성 화살은 그 색
       else if (x.k === 'magic' || x.k === 'spell' || x.k === 'note') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, ring: 1, size: 2 }, P));
       else if (x.k === 'fire') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, trail: 1, size: 3 }, P));
@@ -802,7 +802,7 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'combo') {    // 연계: 중첩 수
       const aq = at('a' + x.s); if (aq && (x.c === 3 || x.c === COMBO_MAX)) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, x.c === COMBO_MAX ? '연계 MAX' : `연계 ${x.c}`, '');
     } else if (x.type === 'noammo') {   // 화살이 떨어진 궁수
-      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, x.k === 'shuri' ? '표창 없음!' : '화살 없음!', 'noammo');
+      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, x.k === 'shuri' ? '암기 없음!' : x.k === 'bolt' ? '볼트 없음!' : '화살 없음!', 'noammo');
     } else if (x.type === 'jackpot') {  // 대박
       const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '대박!', 'buff');
     } else if (x.type === 'revive') {   // 부활: 금빛 테

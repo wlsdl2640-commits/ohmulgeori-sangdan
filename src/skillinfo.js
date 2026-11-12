@@ -108,10 +108,13 @@ function basicSpec(a) {
   if (T.aoe) out.push(`다른 적에게도 ${skMul(T.aoe)}`);
   if (T.pet) out.push(`동물 동료가 ${skPct(0.5 + T.pet)}로 함께 문다 (공격력 ${skMul((0.35 + T.pet) * BASIC_MULT)})`);
   out.push(`재사용 ${BASIC_CD}초 ÷ 공격 속도 ${skMul(d.spd)} = <b>${skSec(cd)}</b>`);
-  if (needsArrows(a) && !shootsArrows(a)) out.push('활을 들면 기본 공격이 화살 사격이 된다 (화살 1발씩)');
+  if (needsArrows(a) && !shootsArrows(a)) out.push(meleeHeld(a) ? '정글칼을 들어 기본 공격이 근접 베기 (화살을 쓰지 않는다 · 활을 들면 다시 사격)' : '활을 들면 기본 공격이 화살 사격이 된다 (화살 1발씩)');
   if (shootsArrows(a)) out.push(a.eq.ammo ? `화살 1발씩 · 남은 <b class="${ammoLeft(a.eq.ammo, a) ? '' : 'red-t'}">${ammoTag(a.eq.ammo, a)}</b> (0발이면 기본 공격·화살 스킬을 못 해요)` : '<span class="red-t">화살이 없어 기본 공격을 못 해요</span>');
   if (shootsArrows(a) && arrowEl(a)) { const G = GTYPES[a.eq.ammo.base], St = G.sta && STATUS[G.sta.k]; out.push(`${G.name}: 기본 공격과 속성 없는 화살 스킬이 ${elTag(G.el)} 속성${St ? ` · 맞힐 때 ${Math.round(G.sta.p * 100)}%로 ${St.name} ${G.sta.d}초` : ''}`); }
-  const sh = a.eq && a.eq.off; if (isAmmo(sh) && sh.base === 'shuriken') out.push(`표창: 기본 공격마다 하나를 더 던짐 (공격력 ${skMul(BASIC_MULT * SHURI_MUL)}) · 남은 ${ammoTag(sh, a)}`);
+  const sh = a.eq && a.eq.off, SH = sh && GTYPES[sh.base];
+  if (SH && SH.thrown && isAmmo(sh)) { const St = SH.sta && STATUS[SH.sta.k]; out.push(`암기: 기본 공격마다 하나를 더 던짐 (공격력 ${skMul(BASIC_MULT * SHURI_MUL)}${SH.el && SH.el !== 'none' ? ` · ${elTag(SH.el)} 속성` : ''}${St ? ` · ${Math.round(SH.sta.p * 100)}%로 ${St.name} ${SH.sta.d}초` : ''}${SH.pierce ? ' · 적 둘' : ''}) · 남은 ${ammoTag(sh, a)}`); }
+  if (SH && SH.xbow) out.push(isAmmo(a.eq.bolt) ? `손목 석궁: 기본 공격마다 볼트 한 발을 더 쏨 (공격력 ${skMul(BASIC_MULT * XBOW_MUL)}) · 남은 <b class="${ammoLeft(a.eq.bolt, a) ? '' : 'red-t'}">${ammoTag(a.eq.bolt, a)}</b>` : '<span class="red-t">손목 석궁: 볼트 칸에 볼트가 없어 쏘지 못해요</span>');
+  { const WR = wpnRune(a); if (WR && !shootsArrows(a)) { const St = WR.sta && STATUS[WR.sta.k]; out.push(`룬소드: 맞으면 ${WR.el !== 'none' ? elTag(WR.el) + ' 속성 ' : ''}추가 피해 (기본 공격의 ${Math.round(RUNE_SWORD_MUL * 100)}%)${St ? ` · ${Math.round(WR.sta.p * 100)}%로 ${St.name} ${WR.sta.d}초` : ''}`); } }
   return out;
 }
 // 공격 속도·재사용 감소가 어디서 오는지 (능력치 탭)
@@ -139,7 +142,7 @@ function bookFromText(id) {
 
 /* ───────── 전투 통계 (DPS 미터) ───────── */
 // stats = e.stats(원정 중) 또는 p.last.stats(지난 원정), names = {id: 이름} (떠난 모험가용)
-const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '표창', mast: '숙련', etc: '그 밖' };
+const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '암기', bolt: '손목 석궁', rsw: '룬소드', mast: '숙련', etc: '그 밖' };
 function bstatName(who, names) {
   if (String(who).charAt(0) === 'P') { const pt = petById(+String(who).slice(1)); return pt ? `펫 ${pt.name}` : '펫'; }
   const a = advById(+who); return a ? a.name : (names && names[who]) || '?';

@@ -2,9 +2,10 @@
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
   gladiator: 'gladius', champion: 'gladius', knight: 'sword', paladin: 'sword', berserker: 'great', bloodlord: 'great',   // 빌드 64: 2차 무기는 늪지 단계부터 (weaponOf, data-warr.js)
-  ranger: 'bow', dragoon: 'lance', sniper: 'bow', hawkeye: 'bow', bard: 'lute', maestro: 'lute', coachman: 'club', caravanmaster: 'axe', scout: 'bow', pathfinder: 'bow', mhunter: 'bow', dslayer: 'bow', huntsman: 'bow', kaijuhunter: 'bow', sorcerer: 'staff', archmage: 'staff', elemancer: 'staff', alchemist: 'staff',
-  assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'dagger', masterthief: 'dagger',
-  elementalist: 'staff', elementlord: 'staff', necromancer: 'staff', lich: 'staff', spellblade: 'sword', arcblade: 'sword',
+  // 빌드 65 장비 개편 2단계: 2차 직업 무기(늪지 단계부터 — 그 아래 단계는 WEAPON_LOW의 옛 무기). 정찰가 · 탐험가는 활 그대로(정글칼은 골라 든다) · 용기병은 창 그대로
+  ranger: 'compbow', dragoon: 'lance', sniper: 'longbow', hawkeye: 'longbow', bard: 'lute', maestro: 'lute', coachman: 'whip', caravanmaster: 'whip', scout: 'bow', pathfinder: 'bow', mhunter: 'compound', dslayer: 'compound', huntsman: 'greatbow', kaijuhunter: 'greatbow', sorcerer: 'staff', archmage: 'staff', elemancer: 'orb', alchemist: 'orb',
+  assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'card', masterthief: 'card',
+  elementalist: 'wand', elementlord: 'wand', necromancer: 'necro', lich: 'necro', spellblade: 'sword', arcblade: 'sword',
   priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
 const newField = () => ({ best: 0, cleared: false, found: false, boss: {} });
 
@@ -325,7 +326,8 @@ function reappraise(id) {
 }
 // 대장간: 화살·표창은 재료 없이 돈으로도 산다 (대장간이 만들 수 있는 단계까지)
 function buyAmmoWhy(base, t) {
-  if (!GTYPES[base] || !GTYPES[base].ammo) return '화살·표창만 살 수 있어요';
+  if (!GTYPES[base] || !GTYPES[base].ammo) return '화살 · 암기 · 볼트만 살 수 있어요';
+  if (!GTIERS[t] || !tierOk(base, t)) return '그 단계에는 없는 장비예요';   // 빌드 65: 볼트는 늪지 단계부터
   if (!S.bld.smithy) return '대장간이 필요해요';
   if (!GTIERS[t] || S.bld.smithy < GTIERS[t].smith) return `대장간 Lv${GTIERS[t] ? GTIERS[t].smith : '?'}부터`;
   if (!roomGear()) return '메인 창고에 빈 칸이 없어요';
@@ -1444,7 +1446,7 @@ function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(�
   [...(S.advs || []), ...(S.cands || []), ...opps].forEach(a => { if (a && a.eq) for (const sl of SLOTS65) if (a.eq[sl] === undefined) a.eq[sl] = null; });   // 옛 모험가 · 손님 · 투기장 상대에게 빈 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸
   const n = (S.advs || []).reduce((k, a) => k + plate65(a), 0); [...(S.cands || []), ...opps].forEach(plate65);   // 판금을 못 입게 된 전사 계열의 판금 → 경갑 · 중갑
   if (n) log(`전사 방어구 개편: 판금 갑옷은 이제 마검사 계열 갑옷이다. 기사 · 광전사 계열이 입던 판금 갑옷은 중갑으로, 전사 · 검투사 계열은 경갑으로 바꾸었다 — ${n}명 (단계 · 레어도 · 룬은 그대로).`);
-  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 새 장비 칸 다섯', body: STORY.v65 }); }
+  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 새 장비 칸 · 장비 개편 2단계', body: STORY.v65 }); }
 }
 function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 룬 개편 · 전직 레벨', body: STORY.v64 }); } }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }

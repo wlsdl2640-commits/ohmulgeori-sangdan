@@ -339,6 +339,68 @@ def cards_solid(key):
     return [cut_solid(im, box, labs[i], i == 20) for i, box in enumerate(cards)]
 
 
+# 라운드 실드 판(사용자 11-12 14:15 「라운드 실드는 이걸로 적용해」, ../shield_round65 — 657×576 작은 판: 카드 4 × 4 = Lv1 · 10 · … · 150, 방패 한 변 85~96칸).
+# 「LvN」 글씨가 방패 아래 테를 덮고 있다 → 글씨에 가린 아래쪽은 위쪽을 뒤집어 채운다(둥근 방패는 위아래가 같은 테). Lv150(날개 방패)은 글씨 위에서 끝나 그대로 자른다.
+# 방패 위쪽이 카드 위 테 줄을 넘는 칸이 있어 카드 위 7칸부터 본다.
+RSDIR = os.path.join(HERE, '..', 'shield_round65')
+ROUND = ('라운드실드_Lv1-150.png', [30, 184, 337, 489], [90, 211, 329, 447], 145, 112)
+
+
+def navy(sub):
+    """바탕: 카드 안(남빛) · 카드 테(밝은 남빛 줄) · 카드 사이(어두운 남빛) — 모두 푸른 쪽으로 기운 어두운 색. 검은 테(빛깔 차이 없음)는 아니다"""
+    R, G, B = sub[..., 0], sub[..., 1], sub[..., 2]
+    return (B >= 18) & (B <= 106) & (R <= 58) & (B - R >= 11) & (B - R <= 52) & (G >= R - 1) & (G <= B) & (B - G >= 8)
+
+
+def cut_round(sub, wing=False):
+    H, W, _ = sub.shape
+    R, G, B = sub[..., 0], sub[..., 1], sub[..., 2]
+    white = (R > 205) & (G > 205) & (B > 205)
+    yellow = (R > 190) & (G > 150) & (B < 130) & (R - B > 90)
+    wr = white[:, 20:W - 20].sum(axis=1)
+    nt = next(y for y in range(int(H * 0.76), H) if wr[y] >= 4)                  # 이름 글씨 첫 줄
+    ys, xs = np.nonzero(yellow[nt - 12:nt - 6]); lx0, lx1 = int(xs.min()) - 3, int(xs.max()) + 4   # 「LvN」 글씨 너비(테 포함) — 방패 아래로 나온 글씨 줄에서 잰다
+    ly0 = nt - 20                                                                 # 글씨(테 포함) 첫 줄
+    fg = ~flood(navy(sub), H, W)
+    lab = np.zeros((H, W), bool); lab[ly0:, lx0:lx1] = True                       # 글씨에 가린 자리
+    vis = fg & ~lab; vis[nt - 5:] = False
+    n, cc, st, _ = cv2.connectedComponentsWithStats(vis.astype(np.uint8), 4)
+    vis = cc == 1 + int(np.argmax(st[1:, cv2.CC_STAT_AREA]))
+    vis = ~flood(~vis, H, W) & ~lab
+    if not wing:   # 둥근 방패: 카드 테 줄에 걸려 남은 가는 실선(한두 칸)을 뗀다
+        k3 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        vis &= cv2.dilate(cv2.morphologyEx(vis.astype(np.uint8), cv2.MORPH_OPEN, k3), k3).astype(bool)
+    ys, xs = np.nonzero(vis); yt, xa, xb = int(ys.min()), int(xs.min()), int(xs.max())
+    item = vis.copy(); out = sub.copy()
+    if not wing:
+        yb = yt + (xb - xa)                                                        # 둥근 방패: 높이 = 너비
+        mir = lambda y: yt + (yb - y)
+        # 그늘 맞추기: 글씨 바로 위 · 옆에 보이는 아래 테와 그 짝(위 테)의 밝기 비
+        near = vis.copy(); near[:ly0 - 4] = False
+        ny, nx = np.nonzero(near); ok = (mir(ny) >= 0) & vis[np.clip(mir(ny), 0, H - 1), nx]
+        v0 = sub[ny[ok], nx[ok]].max(axis=1).astype(float); v1 = sub[mir(ny[ok]), nx[ok]].max(axis=1).astype(float)
+        sel = (v1 > 60) & (v0 > 30)
+        f = float(np.clip(np.median(v0[sel] / v1[sel]) if sel.sum() >= 8 else 0.85, 0.55, 1.0))
+        for y in range(ly0, min(H, yb + 1)):
+            for x in range(lx0, lx1):
+                my = mir(y)
+                if 0 <= my < H and vis[my, x]: item[y, x] = True; out[y, x] = np.clip(sub[my, x] * f, 0, 255)
+    item = ~flood(~item, H, W)
+    return rgba(out if not wing else close_edges_at(out, item, ly0 - 1), item)
+
+
+def close_edges_at(sub, item, y):
+    """글씨 위에서 잘린 아래 줄(y)은 검은 테로 닫는다"""
+    sub = sub.copy(); m = np.zeros_like(item); m[y] = item[y]; sub[m] = (2, 1, 2)
+    return sub
+
+
+def cards_round(key):
+    fn, X0, Y0, cw, ch = ROUND
+    im = np.asarray(Image.open(os.path.join(RSDIR, fn)).convert('RGB')).astype(int)
+    return [cut_round(im[Y0[r] - 7:Y0[r] + ch - 3, X0[c] - 3:X0[c] + cw + 3], (r, c) == (3, 3)) for r in range(4) for c in range(4)]
+
+
 def cards_light(key):
     fn, CX, ROWS, HW = LIGHT[key]
     im = np.asarray(Image.open(os.path.join(HVDIR, fn)).convert('RGB'))
@@ -376,7 +438,7 @@ def main(out_js, prev=None):
             thumbs.append(sm)
         data[key] = urls
     for key, cutter in [('hvarmor', cards_light), ('hvpants', cards_light), ('plate', cards_dark), ('ppants', cards_dark), ('cloth', cards_dark), ('cpants', cards_dark), ('pboots', cards_dark), ('lboots', cards_dark), ('cboots', cards_dark),
-                        ('pgloves', cards_grid), ('lgloves', cards_grid), ('cgloves', cards_grid), ('belt', cards_grid), ('ring', cards_solid), ('earring', cards_solid)]:
+                        ('pgloves', cards_grid), ('lgloves', cards_grid), ('cgloves', cards_grid), ('belt', cards_grid), ('ring', cards_solid), ('earring', cards_solid), ('shield', cards_round)]:
         urls = []
         for img in cutter(key):
             sm = shrink(img)
@@ -384,8 +446,8 @@ def main(out_js, prev=None):
             urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
             thumbs.append(sm)
         data[key] = urls
-    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 · 천갑 상의 · 하의 · 신발 셋 · 장갑 셋 · 벨트 · 반지 · 귀걸이). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
-             '   ARMART[종류][단계] = WebP data URL (디자인 Lv1 · 10 · … · 200 = 21개, 게임 단계 t와 같은 차례) */',
+    lines = ['/* 사용자가 준 디자인 그림 (빌드 65) — 그대로 쓴다(경갑 · 중갑 · 판금 · 천갑 상의 · 하의 · 신발 셋 · 장갑 셋 · 벨트 · 반지 · 귀걸이 · 라운드 실드). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
+             '   ARMART[종류][단계] = WebP data URL (디자인 Lv1 · 10 · … · 200 = 21개 · 라운드 실드는 Lv1 ~ 150 = 16개, 게임 단계 t와 같은 차례) */',
              'const ARMART = {']
     for key, urls in data.items():
         lines.append(f'  {key}: [')

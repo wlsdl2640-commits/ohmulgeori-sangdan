@@ -295,7 +295,8 @@ details.card .list { margin-top: 8px; }
 .ico.q-b { outline: 1px solid currentColor; outline-offset: 1px; background: #0e1118; }
 .ico.q-b.q0 { color: #46526a; }
 .ico.empty { display: inline-block; border: 1px dashed var(--line-2); background: #0e1118; }
-.eqs { flex: none; display: grid; grid-template-columns: repeat(5, auto); gap: 4px; align-items: center; justify-items: center; align-content: center; }   /* 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸이 생겨 장비 그림이 9~11개 → 다섯 개씩 두 줄(화살 칸이 있는 직업은 세 줄 — 한 줄이면 이름 칸이 눌린다) */
+.eqs { flex: none; display: grid; grid-template-columns: repeat(5, 30px); grid-auto-rows: 30px; gap: 2px; align-items: center; justify-items: center; align-content: center; }
+.eqs .ico.empty { width: 24px; height: 24px; }   /* 빌드 65: 장비 틀이 30px이 되어 빈 칸도 조금 키운다 */   /* 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸이 생겨 장비 그림이 9~11개 → 다섯 개씩 두 줄(화살 칸이 있는 직업은 세 줄 — 한 줄이면 이름 칸이 눌린다) */
 .advc { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; }
 .advc:active { border-color: var(--gold-d); }
 .li.col { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -333,7 +334,7 @@ details.card .list { margin-top: 8px; }
 
 @keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
-@media (max-width: 360px) { .hv.rent { display: none; } .eqs { gap: 3px; } .spd { min-width: 38px; padding: 0 5px; } .hud { gap: 9px; } .mbtn { width: 50px; min-height: 44px; } .fl { min-width: 33px; } }
+@media (max-width: 360px) { .hv.rent { display: none; } .eqs { gap: 1px; } .spd { min-width: 38px; padding: 0 5px; } .hud { gap: 9px; } .mbtn { width: 50px; min-height: 44px; } .fl { min-width: 33px; } }
 /* 넓은 화면(PC 가로): 본부와 창을 나란히 */
 @media (min-width: 900px) and (min-height: 600px) { #app { max-width: 520px; } }
 
@@ -627,17 +628,17 @@ details.card > .list { margin-top: 8px; }
 /* ───────── 빌드 63: 레어도 칸 = 도트 판 (rarity.js — A안 테 + B안 보석, 영웅부터 홀로그램 빛줄기 12장) · 꼬리표 ───────── */
 .rqt.rq0 { color: #c9c3b8; } .rqt.rq1 { color: var(--ok); } .rqt.rq2 { color: #6ab0ff; } .rqt.rq3 { color: #c07af0; } .rqt.rq4 { color: #f0b43c; } .rqt.rq5 { color: #ff6a5a; } .rqt.rq6 { color: #fff4b0; text-shadow: 1px 1px 0 #3a2c08; } .rqt.rq7 { color: #9c9cff; text-shadow: 1px 1px 0 #14104a; } .rqt.rq8 { color: #ffffff; text-shadow: 1px 1px 0 #6a2a78; }
 .rqa { display: block; flex: none; image-rendering: pixelated; background-repeat: no-repeat; background-position: 0 0; position: relative; }
-/* 빌드 65: 디자인 그림을 그대로 쓰는 장비(경갑) — 칸 안쪽 20/26 자리에 부드럽게 줄여 얹는다 */
-.rqa.hr::after { content: ''; position: absolute; left: 11.54%; top: 11.54%; width: 76.92%; height: 76.92%; background-repeat: no-repeat; background-position: center; background-size: contain; image-rendering: auto; pointer-events: none; }
-.rqa.s2 { width: 52px; height: 52px; background-size: 52px auto; }
-.rqa.s1 { width: 26px; height: 26px; background-size: 26px auto; }
+/* 빌드 65: 디자인 그림을 그대로 쓰는 장비(경갑 …) — 칸 안쪽 20/30 자리에 부드럽게 줄여 얹는다 (틀 30칸: 그림 둘레에 틈 — 테 · 보석을 넘지 않는다) */
+.rqa.hr::after { content: ''; position: absolute; left: 16.667%; top: 16.667%; width: 66.667%; height: 66.667%; background-repeat: no-repeat; background-position: center; background-size: contain; image-rendering: auto; pointer-events: none; }
+.rqa.s2 { width: 60px; height: 60px; background-size: 60px auto; }
+.rqa.s1 { width: 30px; height: 30px; background-size: 30px auto; }
 .rqa.holo.s2 { animation: rqh2 1.8s steps(12) infinite; }
 .rqa.holo.s1 { animation: rqh1 1.8s steps(12) infinite; }
-@keyframes rqh2 { to { background-position: 0 -624px; } }
-@keyframes rqh1 { to { background-position: 0 -312px; } }
+@keyframes rqh2 { to { background-position: 0 -720px; } }
+@keyframes rqh1 { to { background-position: 0 -360px; } }
 @media (prefers-reduced-motion: reduce) { .rqa.holo { animation: none; } }
-.igrid { grid-template-columns: repeat(auto-fill, 52px); justify-content: center; gap: 4px; }
-.igrid .cell, .igrid.herb .cell, .igrid.sup .cell, .igrid.book .cell, .igrid.rune .cell { width: 52px; height: 52px; aspect-ratio: auto; padding: 0; border: 0; background: none; box-shadow: none; }
+.igrid { grid-template-columns: repeat(auto-fill, 60px); justify-content: center; gap: 2px; }
+.igrid .cell, .igrid.herb .cell, .igrid.sup .cell, .igrid.book .cell, .igrid.rune .cell { width: 60px; height: 60px; aspect-ratio: auto; padding: 0; border: 0; background: none; box-shadow: none; }
 .igrid .cell .qty { right: 5px; bottom: 4px; }
 .igrid .cell.on { outline: 2px solid var(--gold); outline-offset: 1px; box-shadow: none; }
 .igrid .cell.pick { outline: 2px dashed var(--gold); outline-offset: 1px; }
@@ -654,7 +655,7 @@ details.card > .list { margin-top: 8px; }
 .whpick .btns { margin-top: 4px; }
 
 /* ───────── 빌드 63: 대장간 합성 ───────── */
-.igrid.fuse { grid-template-columns: repeat(3, 52px); justify-content: center; gap: 5px; padding: 10px; background: #1c1610; border-color: #4a3c28; }
+.igrid.fuse { grid-template-columns: repeat(3, 60px); justify-content: center; gap: 5px; padding: 10px; background: #1c1610; border-color: #4a3c28; }
 .igrid.fuse .cell.fslot .fsn { color: #8a7a58; }
 
 /* ───────── 빌드 63: 고른 칸 정보창 (창 아래에 붙어 바로 보임 · 닫기) · 스킬북 결과 줄 ───────── */

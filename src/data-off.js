@@ -25,7 +25,9 @@ const isShield = g => !!g && SHIELDS.includes(g.base);
 const OFF_IDS = ['shield', 'buckler', 'cross', 'ether', 'quiver', 'tome', 'relic', 'shuriken', 'lantern', 'arrows'];
 GTYPE_IDS.push(...OFF_IDS.filter(b => !SHIELDS.includes(b) || b === 'shield'));   // 떨어뜨리는 표에는 방패 하나만 (나올 때 종류를 고른다 → dropBase)
 // 빌드 64: 단계 t에 있는 종류만 (2차 직업 장비는 늪지 단계부터 → tierOk)
-const dropBase = (t = 99) => { const b = pickOne(GTYPE_IDS.filter(x => tierOk(x, t))); return b === 'shield' ? pickOne(SHIELDS.filter(x => tierOk(x, t))) : b; };
+// 빌드 65: 떨어뜨리는 표에 하나로 들어간 묶음(방패 · 룬소드)은 나올 때 종류를 고른다
+const dropKind = (b, t = 99) => { const L = b === 'shield' ? SHIELDS : b === 'rs_fire' && typeof RUNE_SWORDS !== 'undefined' ? RUNE_SWORDS : null; return L ? pickOne(L.filter(x => tierOk(x, t))) || b : b; };
+const dropBase = (t = 99) => dropKind(pickOne(GTYPE_IDS.filter(x => tierOk(x, t))), t);
 // 처음 받는 방패 종류 (빌드 64): 2차 직업 방패는 그 단계에 있을 때만, 아니면 라운드 실드
 const SHIELD_OF = { gladiator: 'buckler', champion: 'buckler', knight: 'cross', paladin: 'cross', spellblade: 'ether', arcblade: 'ether' };
 const shieldOf = (c, t = 99) => { const b = SHIELD_OF[c]; return b && tierOk(b, t) ? b : 'shield'; };
@@ -52,8 +54,8 @@ const AMMO_CAP = { arrows: [100, 200, 350, 450, 600, 750, 850, 1000, 1150, 1250,
 const isAmmo = g => !!(g && GTYPES[g.base] && GTYPES[g.base].ammo);
 function ammoMax(g, a) {
   if (!isAmmo(g)) return 0;
-  const C = AMMO_CAP[g.base] || AMMO_CAP.arrows, base = C[Math.min(g.t, C.length - 1)] * (GTYPES[g.base].capMul || 1);
-  const off = a && a.eq && a.eq.off, cap = isArrowAmmo(g) && off && GTYPES[off.base] ? GTYPES[off.base].capPct || 0 : 0;
+  const T = GTYPES[g.base], C = AMMO_CAP[g.base] || AMMO_CAP.arrows, base = C[Math.min(g.t, C.length - 1)] * (T.capMul || 1);
+  const cs = T.capSlot || (isArrowAmmo(g) ? 'off' : null), cg = cs && a && a.eq && a.eq[cs], cap = cg && GTYPES[cg.base] ? GTYPES[cg.base].capPct || 0 : 0;   // 화살 = 부장비 칸의 화살통 · 볼트 = 볼트통 칸 (빌드 65)
   return Math.round(base * (1 + 0.1 * (g.q || 0)) * (1 + cap));
 }
 const ammoLeft = (g, a) => (isAmmo(g) ? (g.n == null ? ammoMax(g, a) : Math.max(0, Math.min(g.n, ammoMax(g, a)))) : 0);
@@ -62,7 +64,10 @@ const ammoTag = (g, a) => (isAmmo(g) ? `${fmt(ammoLeft(g, a))}/${fmt(ammoMax(g, 
 // 화살을 쓰는 직업 (화살 칸 · 화살 스킬이 화살을 쓴다): 궁수 계열(용기병 포함) · 정찰가 계열. 음유시인은 음표라서 아님
 const needsArrows = a => !!a && !!CLASSES[a.cls] && (jobBase(a.cls) === 'archer' || chainOf(a.cls).includes('scout'));
 // 기본 공격이 화살: 사격 직업은 늘, 창을 드는 용기병은 활을 들었을 때
-const shootsArrows = a => needsArrows(a) && (CLASSES[a.cls].act === 'arrow' || !!(a.eq && a.eq.weapon && a.eq.weapon.base === 'bow'));
+// 빌드 65: 활 = 단궁 · 복합궁 · 장궁 · 대궁 · 컴파운드 보우(GTYPES bow) · 정글칼(melee)을 들면 사격 직업도 근접으로 벤다
+const isBow = g => !!(g && GTYPES[g.base] && GTYPES[g.base].bow);
+const meleeHeld = a => !!(a && a.eq && a.eq.weapon && GTYPES[a.eq.weapon.base] && GTYPES[a.eq.weapon.base].melee);
+const shootsArrows = a => needsArrows(a) && !meleeHeld(a) && (CLASSES[a.cls].act === 'arrow' || isBow(a.eq && a.eq.weapon));
 const hasAmmoSlot = a => needsArrows(a);
 // 한 번에 n개를 쓴다 (모자라면 false, 아무것도 안 씀)
 function useAmmo(g, a, n = 1) {
@@ -86,8 +91,8 @@ function refillAmmo(a, free) {
 // 파티가 돌아올 때 한 줄로 알린다
 function refillParty(team, pname) {
   const t = { n: 0, cost: 0, short: 0 }; team.forEach(a => { const r = refillAmmo(a); t.n += r.n; t.cost += r.cost; t.short += r.short; });
-  if (t.cost) log(`${pname}: 화살·표창 ${fmt(t.n)}개를 다시 채웠다 (−${fmt(t.cost)}G).`);
-  if (t.short) log(`${pname}: 돈이 모자라 화살·표창 ${fmt(t.short)}개를 못 채웠다.`, 'bad');
+  if (t.cost) log(`${pname}: 화살 · 암기 · 볼트 ${fmt(t.n)}개를 다시 채웠다 (−${fmt(t.cost)}G).`);
+  if (t.short) log(`${pname}: 돈이 모자라 화살 · 암기 · 볼트 ${fmt(t.short)}개를 못 채웠다.`, 'bad');
   return t;
 }
 // 화살 스킬이 쏘는 발 수: 맞히는 적 수 × 연타 수 (모두 노리면 남은 적만큼, 여섯까지)

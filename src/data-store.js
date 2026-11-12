@@ -62,7 +62,7 @@ function itemGrade(k) {
 /* ── 대장간 합성 ── */
 const FUSE = { n: 9, jump: 0.01, fee: [300, 1200, 5000, 20000, 80000, 300000, 1200000, 5000000] };   // 넣는 수 · 두 단계 오를 확률 · 레어도별 비용
 const FUSE_CAT = { weapon: '무기', off: '부장비', armor: '방어구', legs: '하의', gloves: '장갑', boots: '신발', belt: '벨트', acc: '장신구', ear: '귀걸이' };   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이
-const fuseCatOf = g => { const sl = GTYPES[g.base] && GTYPES[g.base].slot; return FUSE_CAT[sl] ? sl : null; };   // 화살 · 가방은 합성하지 않는다
+const fuseCatOf = g => { const sl = GTYPES[g.base] && (GTYPES[g.base].fcat || GTYPES[g.base].slot); return FUSE_CAT[sl] ? sl : null; };   // 화살 · 가방은 합성하지 않는다
 const fuseBases = cat => GTYPE_IDS.filter(b => GTYPES[b].slot === cat && !GTYPES[b].ammo);   // 떨어뜨리는 표와 같은 종류 (방패는 dropBase처럼 고른다 · 표창 · 투기장 장비는 빼고)
 const fuseTier = gs => Math.round(gs.reduce((x, g) => x + g.t, 0) / Math.max(1, gs.length));   // 나오는 장비의 단계(Lv 구간) = 넣은 장비 단계의 평균
 

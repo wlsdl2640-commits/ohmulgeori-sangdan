@@ -1330,7 +1330,7 @@ Object.keys(PX_WSH).forEach(b => {
   const P = typeof WPROF !== 'undefined' && WPROF[b];
   if (P) { PX_OFFSHAPE['wp_' + b] = '\n' + P.rows.map(r => [...r].map(c => PX_WPK[c] || c).join('')).join('\n'); PX_OFFAT.side.shield['wp_' + b] = PX_WSH_AT.side[b]; }
 });
-const pxOffBase = b => (PX_SHIELD_SHAPE[b] ? 'shield' : b);
+const pxOffBase = b => (PX_SHIELD_SHAPE[b] ? 'shield' : GTYPES[b] && GTYPES[b].thrown ? 'shuriken' : b);   // 빌드 65: 속성 특별 암기도 손에 든 암기 그림
 const pxUp = rows => rows.flatMap(r => { const d = [...r].map(c => c + c).join(''); return [d, d]; });
 const pxOffRows = k => pxUp(pxRows(PX_OFFSHAPE[k]));
 // 그릴 부장비: { base, look, shape }
@@ -1585,7 +1585,10 @@ const PXL = {
   inquisitor:  { head: 'widebrim', body: 'coat', ex: ['cape'], c1: '#8a1a1a', c2: '#e0c060', c3: '#e0c060', hc: '#1e1418', cape: '#1e1418', wv: 'hammer', pants: '#2a1a1a' }
 };
 // 무기 모양: 직업 차림(wv)이 바꾸기도 한다
+// 빌드 65: 새 무기(장비 개편 2단계)는 그림 · 동작이 생기기 전까지 가까운 옛 무기 것을 빌린다
+const PX_WALIAS = { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club', machete: 'sword', rs_fire: 'sword', rs_ice: 'sword', rs_light: 'sword', rs_poison: 'sword' };
 function pxWeapon(cls, base) {
+  base = PX_WALIAS[base] || base;
   const L = PXL[cls] || {}, w = L.wv;
   if (base === 'bow') return w === 'long' ? 'long' : 'bow';
   if (w === 'great') return base === 'axe' ? 'gaxe' : base === 'sword' ? 'great' : base;

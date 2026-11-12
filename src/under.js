@@ -73,7 +73,7 @@ function fakeAdv(lv, tier) {
   for (const [slot] of SLOTS) {
     if (slot === 'bag') continue;
     const bases = GTYPE_IDS.filter(b => GTYPES[b].slot === slot && tierOk(b, gt) && gearFits(a, { base: b, t: UNIQ_T0[b] || 0 }));   // 빌드 64: 그 단계에 있는 종류만
-    if (bases.length) { const b = pickOne(bases); a.eq[slot] = makeGear(b === 'shield' ? shieldOf(a.cls, gt) : b, gt, q); }
+    if (bases.length) { const b = pickOne(bases); a.eq[slot] = makeGear(b === 'shield' ? shieldOf(a.cls, gt) : dropKind(b, gt), gt, q); }
   }
   if (twoHand(a.eq.weapon)) a.eq.off = null;   // 대검은 두 손
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;

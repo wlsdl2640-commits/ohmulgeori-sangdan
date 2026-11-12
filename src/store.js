@@ -326,7 +326,7 @@ function fuseDo() {
   for (const g of gs) { const i = S.gear.indexOf(g); if (i >= 0) S.gear.splice(i, 1); }
   const cat = (S.fuseCat || 0) > 0; if (cat) S.fuseCat--;   // 드워프 합성 촉매: 두 단계 위 확률 FUSE_CAT_P
   const jump = q + 2 <= GRADE_MAX && rnd() < (cat ? FUSE_CAT_P : FUSE.jump), nq = Math.min(GRADE_MAX, q + (jump ? 2 : 1)), t = fuseTier(gs);
-  let base = pickOne(fuseBases(F.cat).filter(b => tierOk(b, t))); if (base === 'shield') base = pickOne(SHIELDS.filter(b => tierOk(b, t)));   // 빌드 64: 그 단계에 있는 종류만
+  let base = dropKind(pickOne(fuseBases(F.cat).filter(b => tierOk(b, t))), t);   // 빌드 64: 그 단계에 있는 종류만
   const g = makeGear(base, t, nq);
   const where = stashGear(g); F.ids = [];
   log(`대장간에서 ${QUALITY[q].name} 장비 ${FUSE.n}점을 합성해 ${QUALITY[nq].name} 「${gearName(g)}」을(를) 얻었다.${jump ? ' 대성공 — 두 단계 위!' : ''}`, 'good');

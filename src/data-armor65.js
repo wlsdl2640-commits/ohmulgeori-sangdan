@@ -71,7 +71,7 @@ function plate65(a) {
   g.base = to; return 1;
 }
 // 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸을 쓰는 모험가 (그 칸에 입을 수 있는 장비가 있을 때만 창에 칸이 보인다 — 장갑 · 신발 · 벨트 · 귀걸이는 모든 직업)
-const wearsSlot = (a, s) => !!a && GTYPE_IDS.some(b => GTYPES[b].slot === s && gearFits(a, { base: b, t: 0 }));
+const wearsSlot = (a, s) => !!a && !!CLASSES[a.cls] && GTYPE_IDS.some(b => GTYPES[b].slot === s && clsFits(a, b));   // 계열만 본다(레벨 · 단계와 상관없이 — 볼트통 · 볼트 칸은 늪지 단계 장비뿐이다)
 const hasLegs = a => wearsSlot(a, 'legs');
 const SLOTS65 = ['legs', 'gloves', 'boots', 'belt', 'ear'];   // 빌드 65에 생긴 칸
 const slotShown = (a, s) => (s === 'ammo' ? hasAmmoSlot(a) : !SLOTS65.includes(s) || wearsSlot(a, s) || !!(a.eq && a.eq[s]));
