@@ -1,11 +1,15 @@
-"""전사 경갑 디자인 그림 그대로 → src/data-armart.js (ARMART)
-사용자 11-12 10:50 「다시찍지말고 그대로 사용」 — 다시 그리지 않고, 사용자가 준 시안 판(경갑_상의 · 경갑_하의 Lv1-200.png)에서
+"""전사 방어구 디자인 그림 그대로 → src/data-armart.js (ARMART)
+사용자 11-12 10:50 「다시찍지말고 그대로 사용」 — 다시 그리지 않고, 사용자가 준 시안 판에서
 단계마다 장비 그림만 오려(카드 바탕 · LV 글씨 · Lv200 월계관 빼기) 바탕을 투명하게 하고, 긴 쪽 SIZE px로 줄여 WebP data URL로 넣는다.
+- 경갑 상의 · 하의(이 폴더, 어두운 카드 · 글씨 판 왼쪽 위) → larmor · lpants
+- 중갑 상의 · 하의(../armor_heavy65, 흰 바둑판 바탕 · 글씨 판 그림 아래, 11-12 11:27) → hvarmor · hvpants
+- 판금 상의 · 하의(../armor_plate65, 한 판에 둘 · 어두운 카드 · 글씨 판 카드 아래쪽, 11-12 11:28) → plate · ppants
 python3 export_armart.py <출력 data-armart.js> [미리보기.png]"""
 import base64, io, os, sys
 from collections import deque
 import numpy as np
 from PIL import Image
+import cv2
 HERE = os.path.dirname(os.path.abspath(__file__))
 SIZE = 96
 SHEETS = {'larmor': ('경갑_상의_Lv1-200.png', [13, 329, 634, 924, 1224], [315, 620, 910, 1210, 1523], [94, 271, 448, 626], [259, 435, 613, 792], (13, 805, 431, 995)),
@@ -102,6 +106,128 @@ def shrink(img):
     return img.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
 
 
+# 흰 바둑판 바탕(가짜 투명) 판 — 중갑. 「LV」 글씨 판이 그림 바로 아래라 줄마다 (그림 위 y, 글씨 판 위 y)까지만 본다. 칸 = 가운데 x ± HW
+HVDIR = os.path.join(HERE, '..', 'armor_heavy65')
+LIGHT = {'hvarmor': ('중갑_상의_Lv1-200.png', [132, 384, 636, 887, 1138, 1389, 1643], [(0, 233), (282, 508), (556, 792)], 125),
+         'hvpants': ('중갑_하의_Lv1-200.png', [142, 396, 649, 902, 1157, 1411], [(0, 197), (246, 448), (497, 701), (750, 956)], 125)}
+LIGHT_EXT = {('hvarmor', 20): (803, (1566, 791, 1721, 803))}   # Lv200 상의: 망토 자락이 글씨 판 양옆으로 더 내려온다 → (칸 아래 y, 바탕으로 칠 글씨 판 자리 x0 y0 x1 y1)
+# 어두운 카드 판 — 판금(한 판에 상의 · 하의, 맨 위 제목 줄은 저장할 때 뺐다). 줄마다 (카드 안 위 y, 글씨 판 위 y, [카드 왼쪽 테 x], 카드 너비)
+# 카드 간격이 고르지 않아 테 자리를 판에서 재어 적었다(세로 금빛 테가 띠 높이의 반 넘게 이어지는 줄). 칸 = 테 안쪽 3칸부터
+PLDIR = os.path.join(HERE, '..', 'armor_plate65')
+PLATE_SHEET = '판금_상의하의_Lv1-200.png'
+ROW1 = [42, 188, 335, 481, 628, 773, 918, 1064, 1211, 1358]
+ROW2 = [20, 156, 292, 428, 565, 702, 839, 975, 1109, 1244, 1377]
+CARD2 = {'plate': [(90, 199, ROW1, 137), (253, 368, ROW2, 127)],
+         'ppants': [(530, 640, ROW1, 137), (695, 810, ROW2, 127)]}
+CARD2_W200 = 141   # Lv200 카드(빛나는 테)는 넓다
+
+
+def mid_comp(lab, n, H, W):
+    """가운데를 가장 많이 덮는 덩어리"""
+    cy0, cy1, cx0, cx1 = H // 4, H * 3 // 4, W // 3, W * 2 // 3
+    mid = np.bincount(lab[cy0:cy1, cx0:cx1].reshape(-1), minlength=n + 1); mid[0] = 0
+    return lab == int(mid.argmax())
+
+
+def rgba(sub, item, alpha=None):
+    ys, xs = np.nonzero(item)
+    a, b, c, d = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    rgb = sub[a:b, c:d].astype(np.uint8).copy(); m = item[a:b, c:d]
+    al = (m * 255).astype(np.uint8) if alpha is None else alpha[a:b, c:d].astype(np.uint8)
+    rgb[al == 0] = (2, 1, 2)   # 줄일 때 가장자리가 테 색으로 섞이게
+    return Image.fromarray(np.dstack([rgb, al]), 'RGBA')
+
+
+def close_edges(sub, item, n=2):
+    """칸 가장자리에서 잘린 곳(글씨 판에 가린 아래 · 옆 칸에 닿은 옆)은 검은 테로 닫는다"""
+    sub = sub.copy(); H, W = item.shape
+    for sl in [(slice(0, n), slice(None)), (slice(H - n, H), slice(None)), (slice(None), slice(0, n)), (slice(None), slice(W - n, W))]:
+        m = np.zeros_like(item); m[sl] = True; m &= item
+        sub[m] = (2, 1, 2)
+    return sub
+
+
+def flood_grad(sub, seed, tol=10):
+    """바탕에서 이웃 칸끼리 색이 고르게 이어지는 곳(옆 카드의 빛 번짐)을 따라 더 퍼뜨린다 — 검은 테(합 24 아래) · 밝은 칸(120 넘음)에서 멈춘다"""
+    H, W, _ = sub.shape; seen = seed.copy(); tot = sub.sum(axis=2); mx = sub.max(axis=2)
+    q = deque(zip(*np.nonzero(seed)))
+    while q:
+        y, x = q.popleft()
+        for dy, dx in N4:
+            ny, nx = y + dy, x + dx
+            if 0 <= ny < H and 0 <= nx < W and not seen[ny, nx] and tot[ny, nx] >= 25 and mx[ny, nx] <= 120 and np.abs(sub[ny, nx] - sub[y, x]).sum() <= tol:
+                seen[ny, nx] = True; q.append((ny, nx))
+    return seen
+
+
+def cut_light(im, x0, y0, x1, y1, blank=None):
+    """흰 바둑판 바탕: 밝고 무채색인 칸을 가장자리에서 퍼뜨려 지운다(검은 테에서 멈춘다).
+    테 바깥 두 칸(흰 바탕과 섞인 칸)은 검은 테 색 + 어두운 만큼만 보이게 — 어두운 칸 위에서 흰 테두리가 남지 않게"""
+    sub = im[y0:y1, x0:x1].astype(int); H, W, _ = sub.shape
+    mn, mx = sub.min(axis=2), sub.max(axis=2)
+    ok = (mn >= 200) & (mx - mn <= 30)
+    if blank:
+        bx0, by0, bx1, by1 = blank; ok[max(0, by0 - y0):max(0, by1 - y0), max(0, bx0 - x0):max(0, bx1 - x0)] = True
+    bg = flood(ok, H, W)
+    lab, n = comps(~bg)
+    item = mid_comp(lab, n, H, W)
+    item = ~flood(~item, H, W)   # 안쪽 구멍(다른 덩어리)은 채운다
+    d = cv2.distanceTransform(item.astype(np.uint8), cv2.DIST_L2, 3)
+    edge = item & (d <= 2.2)
+    L = sub.mean(axis=2)
+    al = np.where(item, 255.0, 0.0)
+    al[edge] = np.clip((246.0 - L[edge]) / 206.0, 0, 1) * 255
+    sub = close_edges(sub, item); sub[edge] = (2, 1, 2)
+    return rgba(sub, item, al)
+
+
+def cut_dark(im, x0, y0, x1, y1, glow, spill=False):
+    """어두운 카드 바탕: 카드 안 가장자리 색(거의 (10, 10, 14))에서 ±12인 칸을 퍼뜨려 지운다 — 검은 테(0~3)는 남는다.
+    Lv200(빛나는 바탕 · 월계관)은 GrabCut으로 장비만"""
+    sub = im[y0:y1, x0:x1].astype(int); H, W, _ = sub.shape
+    if glow:
+        S8 = sub.astype(np.uint8)
+        mask = np.zeros((H, W), np.uint8); bgd = np.zeros((1, 65), np.float64); fgd = np.zeros((1, 65), np.float64)
+        cv2.grabCut(cv2.cvtColor(S8, cv2.COLOR_RGB2BGR), mask, (8, 1, W - 16, H - 2), bgd, fgd, 8, cv2.GC_INIT_WITH_RECT)
+        item = (mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD)
+        lab, n = comps(item); cnt = np.bincount(lab.reshape(-1), minlength=n + 1); cnt[0] = 0
+        item = lab == int(cnt.argmax())
+        item = ~flood(~item, H, W)
+        return rgba(sub, item)
+    b0 = np.median(np.concatenate([sub[0], sub[-1], sub[:, 0], sub[:, -1]]), axis=0)
+    ok = np.abs(sub - b0).sum(axis=2) <= 12
+    ok[:3] |= sub[:3].sum(axis=2) <= 36   # 카드 위 테 밑 그늘 줄
+    bg = flood(ok, H, W)
+    if spill: bg = flood_grad(sub, bg)   # Lv190: 옆 Lv200 카드의 빛 번짐
+    lab, n = comps(~bg)
+    item = mid_comp(lab, n, H, W)
+    item = ~flood(~item, H, W)
+    return rgba(close_edges(sub, item), item)
+
+
+def cards_light(key):
+    fn, CX, ROWS, HW = LIGHT[key]
+    im = np.asarray(Image.open(os.path.join(HVDIR, fn)).convert('RGB'))
+    out = []
+    for (ya, yb) in ROWS:
+        for cx in CX:
+            if len(out) >= 21: continue
+            yb2, blank = LIGHT_EXT.get((key, len(out)), (yb - 2, None))
+            out.append(cut_light(im, max(0, cx - HW), ya, min(im.shape[1], cx + HW), yb2, blank))
+    return out
+
+
+def cards_dark(key):
+    im = np.asarray(Image.open(os.path.join(PLDIR, PLATE_SHEET)).convert('RGB'))
+    out = []
+    for (ya, yb, LX, cw) in CARD2[key]:
+        for lx in LX:
+            last = len(out) == 20
+            w = CARD2_W200 if last else cw
+            out.append(cut_dark(im, lx + 3, ya, lx + w - 3, yb - 2, last, len(out) == 19))   # Lv190: 옆 Lv200 카드의 빛 번짐
+    return out
+
+
 def main(out_js, prev=None):
     data, thumbs = {}, []
     for key, (fn, X0, X1, Y0, Y1, last) in SHEETS.items():
@@ -114,7 +240,15 @@ def main(out_js, prev=None):
             urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
             thumbs.append(sm)
         data[key] = urls
-    lines = ['/* 전사 경갑 그림 (빌드 65) — 사용자가 준 디자인 그대로. 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
+    for key, cutter in [('hvarmor', cards_light), ('hvpants', cards_light), ('plate', cards_dark), ('ppants', cards_dark)]:
+        urls = []
+        for img in cutter(key):
+            sm = shrink(img)
+            buf = io.BytesIO(); sm.save(buf, 'WEBP', quality=90, method=6)
+            urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
+            thumbs.append(sm)
+        data[key] = urls
+    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 상의 · 하의). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
              '   ARMART[종류][단계] = WebP data URL (디자인 Lv1 · 10 · … · 200 = 21개, 게임 단계 t와 같은 차례) */',
              'const ARMART = {']
     for key, urls in data.items():
@@ -127,7 +261,8 @@ def main(out_js, prev=None):
     print('ARMART', {k: len(v) for k, v in data.items()}, f'{total / 1024:.0f}KB')
     if prev:
         cols = 21; cw = SIZE + 8
-        sheet = Image.new('RGB', (cols * cw + 8, 2 * (SIZE + 8) + 8), (30, 34, 48))
+        rows = (len(thumbs) + cols - 1) // cols
+        sheet = Image.new('RGB', (cols * cw + 8, rows * (SIZE + 8) + 8), (30, 34, 48))
         for k, t in enumerate(thumbs):
             x, y = 8 + (k % cols) * cw, 8 + (k // cols) * (SIZE + 8)
             sheet.paste(t, (x + (SIZE - t.width) // 2, y + (SIZE - t.height) // 2), t)
