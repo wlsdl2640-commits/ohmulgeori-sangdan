@@ -151,6 +151,27 @@ const SKFX2_OVR = {
   awk_porter: { cast: 'shout', pal: 'gold', big: 1 }, awk2_porter: { cast: 'shout', pal: 'gold', big: 1 }, shout: { cast: 'shout', pal: 'earth' }, shieldbag: { mot: 'guard', cast: 'barrier', pal: 'earth' },
   drumbeat: { cast: 'shout', pal: 'war' }, encore: { cast: 'song', pal: 'music', big: 1 }, grandfinale: { cast: 'song', pal: 'gold', big: 1 }
 };
+// 빌드 65 직업 개편: 새 스킬 · 바뀐 스킬 (암기 · 카드 = 침처럼 날아간다 · 정찰가는 베기 · 용기수는 활). 채찍 · 정글칼 · 카드 동작이 들어오면 mot만 바꾼다
+Object.assign(SKFX2_OVR, {
+  ambush: { mot: 'side', pal: 'earth', hit: 'mark', dash: 1 }, volley: { mot: ['side', 'hack'], pal: 'earth', hit: 'slashes' }, farsight: { mot: 'down', pal: 'earth', hit: 'mark', dash: 1 },
+  summit: { mot: 'pjump', pal: 'earth', hit: 'quake', after: 'dust', shake: 3 }, junglecamo: { cast: 'smoke', pal: 'nature' }, vinetrap: { mot: 'down', pal: 'nature', hit: 'trap' },
+  pioneerwhip: { mot: ['down', 'side'], pal: 'war', hit: 'stun' }, lassowhip: { mot: 'up', pal: 'war', hit: 'mark' }, wagonfort: { mot: 'guard', cast: 'barrier', pal: 'earth' }, rations: { cast: 'heal', pal: 'heal', big: 1 },
+  westward: { mot: 'side', hold: 0.3, pal: 'gold', charge: 'aura', hit: 'quake', big: 1, dash: 1, after: 'dust', shake: 4 }, wagonlash: { mot: ['side', 'down'], pal: 'war', hit: 'slashes' },
+  caravanflag: { cast: 'shout', pal: 'gold', big: 1 }, medkit: { cast: 'heal', pal: 'heal' }, shieldbag: { cast: 'heal', pal: 'heal', big: 1 },
+  cardfan: { mot: 'side', pal: 'coin', hit: 'slashes', proj: 'dart' }, calling: { mot: 'thrust', pal: 'coin', hit: 'mark', proj: 'dart' }, cardtrick: { mot: 'side', pal: 'coin', hit: 'slashes', proj: 'dart', big: 1 },
+  magicshow: { mot: 'up', hold: 0.3, pal: 'coin', charge: 'aura', hit: 'rain', proj: null, big: 1, shake: 3 }, nightking: { mot: 'thrust', pal: 'shadow', hit: 'pierce', dash: 1, big: 1 },
+  bottomdeal: { cast: 'aim', pal: 'coin' }, disguise: { cast: 'smoke', pal: 'shadow' }, thieveshonor: { cast: 'shout', pal: 'coin' },
+  pilfer: { mot: 'thrust', pal: 'coin', hit: 'coins', proj: 'dart' }, goldrush: { mot: 'side', pal: 'coin', hit: 'coins', proj: 'dart', big: 1 }, jackpot: { mot: 'thrust', pal: 'coin', hit: 'coins', proj: 'dart', big: 1 },
+  grandheist: { mot: 'thrust', pal: 'coin', hit: 'coins', proj: 'dart' }, phantom: { mot: 'side', pal: 'dark', hit: 'vortex', proj: 'dart' }, heist: { mot: 'up', hold: 0.3, pal: 'coin', charge: 'aura', hit: 'coins', proj: null, big: 2, shake: 4 },
+  shuriburst: { mot: 'thrust', pal: 'steel', hit: 'star', proj: 'dart' }, spinshuri: { mot: 'side', pal: 'steel', hit: 'slashes', proj: 'dart' }, ambushkill: { mot: 'down', pal: 'shadow', hit: 'pierce', dash: 1 },
+  deflect: { mot: 'parry', cast: 'counter', pal: 'steel' }, shadowshuri: { mot: 'thrust', pal: 'dark', hit: 'vortex', proj: 'dart' }, shadowcut: { mot: 'up', pal: 'dark', hit: 'vortex', dash: 1 },
+  shadowhide: { cast: 'smoke', pal: 'dark' }, phantomshuri: { mot: 'side', pal: 'dark', hit: 'slashes', proj: 'dart' }, spacecut: { mot: 'side', hold: 0.26, pal: 'dark', charge: 'aura', hit: 'slashes', big: 1, shake: 3 },
+  thousandshuri: { mot: 'up', hold: 0.3, pal: 'dark', charge: 'aura', hit: 'rain', proj: null, big: 1, shake: 3 },
+  wristshot: { mot: 'bshot', pal: 'steel', hit: 'pierce', proj: 'arrow' }, holdbreath: { cast: 'aim', pal: 'shadow' }, chaintrap: { mot: 'bswing', pal: 'steel', hit: 'trap', proj: null },
+  trap: { mot: 'braise', pal: 'earth', hit: 'claw', proj: null }, camouflage: { cast: 'shout', pal: 'earth' }, arrowstorm: { mot: 'brapid', hit: 'rain', big: 1, shake: 2 },
+  jump: { mot: 'brapid', pal: 'wind', hit: 'star', proj: 'arrow' }, gale: { mot: 'bfull', pal: 'wind', hit: 'vortex', proj: 'arrow', after: 'feathers' }, dragonscale: { mot: 'bdiag', pal: 'wind', hit: 'mark', proj: null },
+  wyvernfall: { mot: 'bdiag', pal: 'wind', hit: 'claw', proj: null, big: 1, shake: 3 }, dragonfall: { mot: 'bdiag', hold: 0.3, pal: 'fire', charge: 'aura', hit: 'rain', proj: null, big: 1, after: 'embers', shake: 3 }
+});
 // 표 채우기: 빌드 41 표(전사 계열)는 그대로 두고, 없는 스킬만
 for (const [id, s] of Object.entries(SKILLS)) {
   if (SKFX[id] || !s.kind || s.kind === 'passive') continue;

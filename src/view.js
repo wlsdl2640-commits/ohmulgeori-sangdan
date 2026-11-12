@@ -772,7 +772,7 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'miss') {
       const aq = at('a' + x.d);
       if (!fd) V.lunge['f' + x.s] = t + 0.14;
-      if (aq) V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - 21 * zAt(aq[1]) - 12, s: 'MISS', c: '#cfe8ff', t0: t + fd, d: 0.6 });
+      if (aq) V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - 21 * zAt(aq[1]) - 12, s: x.df ? '튕김' : 'MISS', c: x.df ? '#ffe08a' : '#cfe8ff', t0: t + fd, d: 0.6 });   // df = 튕겨내기(닌자)
     } else if (x.type === 'aoe') {
       const q = at('f' + x.s);
       if (fd) fmotAoe(e, x, t, fd, team, at);   // 언데드 광역기: 박쥐 떼 · 죽음의 파동 · 죽음의 회전 · 암흑 강타
@@ -973,7 +973,7 @@ function logEvent(x, e, p) {
   if (x.type === 'sta') { const St = STATUS[x.k]; if (St) add(x.side === 'f' ? `${foe(jo(Fn(x.d), '이', '가'))} ${St.name} 상태가 됐습니다.` : `${ally(jo(A(x.d), '이', '가'))} ${St.name} 상태가 됐습니다!`, x.side === 'f' ? 'sk' : 'warn'); return; }
   if (x.type === 'cure') return add(`${ally(A(x.d))}의 상태이상이 풀렸습니다.`, 'dim');
   if (x.type === 'resist') return add(`${ally(A(x.d))}: 섬광 룬이 ${STATUS[x.k] ? STATUS[x.k].name : '눈멂'}을(를) 막았습니다.`, 'dim');   // 빌드 64 룬 개편
-  if (x.type === 'miss') return add(x.bl ? `${foe(Fn(x.s))}의 공격이 ${ally(A(x.d))}에게 빗나갔습니다. (눈멂)` : `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
+  if (x.type === 'miss') return add(x.df ? `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 튕겨 냈습니다.` : x.bl ? `${foe(Fn(x.s))}의 공격이 ${ally(A(x.d))}에게 빗나갔습니다. (눈멂)` : `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
   if (x.type === 'aoe') { if (!x.ms) add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn'); return; }
   if (x.type === 'fskill') return add(`${foe(Fn(x.s))}의 「${esc(x.name)}」!`, 'warn');
   if (x.type === 'fphase') return add(x.k === 2 ? `<i class="lg-c">마지막 발악!</i> ${foe(jo(Fn(x.s), '이', '가'))} 광역기를 더 자주 쓴다${x.n ? ' · 졸개를 불렀다' : ''}.` : `<i class="lg-c">분노!</i> ${foe(Fn(x.s))}의 공격이 빨라졌다.`, 'warn');

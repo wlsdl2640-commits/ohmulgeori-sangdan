@@ -25,7 +25,7 @@ GTYPES.hvarmor = { name: '중갑', slot: 'armor', cls: ['knight', 'berserker'], 
 GTYPES.hvpants = { name: '중갑 하의', slot: 'legs', cls: ['knight', 'berserker'], st: { def: 1.7, hp: 4 }, w: 3, icon: 'pants', mat: [2, 1, 0], art: 'hvpants', who: '기사 · 광전사 계열',
   desc: '무릎과 허벅지를 쇠판으로 감싼 중갑 계열의 하의.' };
 // 판금: 옛 판금 갑옷(이름 그대로)에 사용자 판금 상의 그림 · 설명 — 「경량화 판금갑옷」이라 옛 민첩 −0.3 · 무게 6을 민첩 감소 없음 · 무게 5로. 입는 직업은 마검사 계열(전사 · 검투사 · 기사 · 광전사 계열은 이제 경갑 · 중갑)
-Object.assign(GTYPES.plate, { cls: ['spellblade', 'dragoon', 'inquisitor'], st: { def: 4.2, hp: 10 }, w: 5, art: 'plate', who: '마검사 계열 · 용기병 · 심판관',
+Object.assign(GTYPES.plate, { cls: ['spellblade', 'dragoon', 'inquisitor'], st: { def: 4.2, hp: 10 }, w: 5, art: 'plate', who: '마검사 계열 · 용기수 · 심판관',
   desc: '핵심 부위만 금속으로 보호하고, 나머지는 가죽과 벨트로 연결한 경량화 판금갑옷.' });
 GTYPES.ppants = { name: '판금 하의', slot: 'legs', cls: ['spellblade'], st: { def: 1.9, hp: 4.5 }, w: 3, icon: 'pants', mat: [2, 1, 0], art: 'ppants', who: '마검사 계열',
   desc: '주요 부위(허리 · 골반 · 대퇴)를 금속으로 보강하고, 가죽과 벨트로 연결한 기동성 높은 하의.' };

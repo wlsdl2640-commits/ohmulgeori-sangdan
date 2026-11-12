@@ -56,13 +56,14 @@ function ammoMax(g, a) {
   if (!isAmmo(g)) return 0;
   const T = GTYPES[g.base], C = AMMO_CAP[g.base] || AMMO_CAP.arrows, base = C[Math.min(g.t, C.length - 1)] * (T.capMul || 1);
   const cs = T.capSlot || (isArrowAmmo(g) ? 'off' : null), cg = cs && a && a.eq && a.eq[cs], cap = cg && GTYPES[cg.base] ? GTYPES[cg.base].capPct || 0 : 0;   // 화살 = 부장비 칸의 화살통 · 볼트 = 볼트통 칸 (빌드 65)
-  return Math.round(base * (1 + 0.1 * (g.q || 0)) * (1 + cap));
+  const th = T.thrown && a && CLASSES[a.cls] ? (TR(a).thrown || 1) * (1 + (passives(a).thrownCap || 0)) : 1;   // 닌자: 암기 세 통 · 표창술 +30% (빌드 65)
+  return Math.round(base * (1 + 0.1 * (g.q || 0)) * (1 + cap) * th);
 }
 const ammoLeft = (g, a) => (isAmmo(g) ? (g.n == null ? ammoMax(g, a) : Math.max(0, Math.min(g.n, ammoMax(g, a)))) : 0);
 const ammoUnit = g => (GTYPES[g.base] && GTYPES[g.base].unit) || '개';
 const ammoTag = (g, a) => (isAmmo(g) ? `${fmt(ammoLeft(g, a))}/${fmt(ammoMax(g, a))}${ammoUnit(g)}` : '');
 // 화살을 쓰는 직업 (화살 칸 · 화살 스킬이 화살을 쓴다): 궁수 계열(용기병 포함) · 정찰가 계열. 음유시인은 음표라서 아님
-const needsArrows = a => !!a && !!CLASSES[a.cls] && (jobBase(a.cls) === 'archer' || chainOf(a.cls).includes('scout'));
+const needsArrows = a => !!a && !!CLASSES[a.cls] && jobBase(a.cls) === 'archer';   // 빌드 65: 정찰가 · 탐험가는 정글칼만 (화살 칸 없음)
 // 기본 공격이 화살: 사격 직업은 늘, 창을 드는 용기병은 활을 들었을 때
 // 빌드 65: 활 = 단궁 · 복합궁 · 장궁 · 대궁 · 컴파운드 보우(GTYPES bow) · 정글칼(melee)을 들면 사격 직업도 근접으로 벤다
 const isBow = g => !!(g && GTYPES[g.base] && GTYPES[g.base].bow);
@@ -98,6 +99,15 @@ function refillParty(team, pname) {
 // 화살 스킬이 쏘는 발 수: 맞히는 적 수 × 연타 수 (모두 노리면 남은 적만큼, 여섯까지)
 const arrowSkill = s => !!s && s.fx === 'arrow' && (s.kind === 'dmg' || s.kind === 'dot');
 const arrowCost = (s, nFoes) => (s.tgt === 'all' ? Math.max(1, Math.min(6, nFoes || 1)) : 1) * (s.kind === 'dmg' ? s.hits || 1 : 1);
+// 스킬이 쓰는 탄(빌드 65): 화살(fx 'arrow') · 암기(thrown — 부장비 칸) · 볼트(bolt — 손목 석궁 + 볼트 칸) → [탄 장비 | null, 쓰는 수, 종류]. 탄을 안 쓰는 스킬이면 null
+function skillAmmo(s, a, nFoes) {
+  if (!s || !a || !a.eq) return null;
+  const n = arrowCost(s, nFoes), o = a.eq.off, OT = o && GTYPES[o.base];
+  if (s.thrown) return [OT && OT.thrown && isAmmo(o) ? o : null, n, 'shuri'];
+  if (s.bolt) return [OT && OT.xbow && isAmmo(a.eq.bolt) ? a.eq.bolt : null, n, 'bolt'];
+  if (arrowSkill(s) && needsArrows(a)) return [a.eq.ammo || null, n, 'arrow'];
+  return null;
+}
 // 레벨에 맞는 화살 단계 (기본 6단계 안에서): 새 모험가·옛 저장
 const arrowTierOf = lv => { let t = 0; for (let i = 0; i < Math.min(6, GTIERS.length); i++) if (lv >= GTIERS[i].lv) t = i; return t; };
 const SHURI_MUL = 0.3;   // 표창 한 개 = 공격력 × 2.5(기본 공격) × 0.3 (빌드 39: 0.55 → 0.3)

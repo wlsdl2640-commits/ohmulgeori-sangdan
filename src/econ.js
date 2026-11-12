@@ -2,9 +2,9 @@
 const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
   gladiator: 'gladius', champion: 'gladius', knight: 'sword', paladin: 'sword', berserker: 'great', bloodlord: 'great',   // 빌드 64: 2차 무기는 늪지 단계부터 (weaponOf, data-warr.js)
-  // 빌드 65 장비 개편 2단계: 2차 직업 무기(늪지 단계부터 — 그 아래 단계는 WEAPON_LOW의 옛 무기). 정찰가 · 탐험가는 활 그대로(정글칼은 골라 든다) · 용기병은 창 그대로
-  ranger: 'compbow', dragoon: 'lance', sniper: 'longbow', hawkeye: 'longbow', bard: 'lute', maestro: 'lute', coachman: 'whip', caravanmaster: 'whip', scout: 'bow', pathfinder: 'bow', mhunter: 'compound', dslayer: 'compound', huntsman: 'greatbow', kaijuhunter: 'greatbow', sorcerer: 'staff', archmage: 'staff', elemancer: 'orb', alchemist: 'orb',
-  assassin: 'dagger', shadowlord: 'dagger', duelist: 'sword', bladedancer: 'sword', treasure: 'card', masterthief: 'card',
+  // 빌드 65 장비 개편 2단계: 2차 직업 무기(늪지 단계부터 — 그 아래 단계는 WEAPON_LOW의 옛 무기). 빌드 65 직업 개편: 정찰가 · 탐험가 = 정글칼 · 용기수 = 복합궁 · 쌍검사 · 검무사 = 단검(+ 보조 단검)
+  ranger: 'compbow', dragoon: 'compbow', sniper: 'longbow', hawkeye: 'longbow', bard: 'lute', maestro: 'lute', coachman: 'whip', conestoga: 'whip', caravanmaster: 'whip', scout: 'machete', pathfinder: 'machete', mhunter: 'compound', dslayer: 'compound', huntsman: 'greatbow', kaijuhunter: 'greatbow', sorcerer: 'staff', archmage: 'staff', elemancer: 'orb', alchemist: 'orb',
+  assassin: 'dagger', shadowlord: 'dagger', duelist: 'dagger', bladedancer: 'dagger', treasure: 'card', phantomthief: 'card', masterthief: 'card', ninja: 'dagger', kageninja: 'dagger',
   elementalist: 'wand', elementlord: 'wand', necromancer: 'necro', lich: 'necro', spellblade: 'sword', arcblade: 'sword',
   priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
 const newField = () => ({ best: 0, cleared: false, found: false, boss: {} });
@@ -866,6 +866,7 @@ function promoWhy(a, cls) {
   if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
   if (S.gold < Q.fee) return '돈이 모자라요';
   if (Q.souls && soulCount() < Q.souls) return `주인의 혼 ${Q.souls}개 필요 (지금 ${soulCount()})`;   // 빌드 64: 3차 전직
+  if (Q.item && (S.inv[Q.item[0]] || 0) < Q.item[1]) return `${ITEMS[Q.item[0]].name} ${Q.item[1]}개 필요`;   // 빌드 65: 4차 전직 (별의 정원 주인의 핵)
   const mv = promoMoves(a, cls); if (mv > whFree(-1)) return `메인 창고에 빈 칸이 ${mv}개 있어야 해요 (새 직업에 안 맞는 장비를 넣을 자리)`;
   return '';
 }
@@ -907,6 +908,7 @@ function promote(aid, cls) {
   const C0 = CLASSES[a.cls], C1 = CLASSES[cls], wasT = a.eq.weapon ? a.eq.weapon.t : 0, Q = JOB_REQ[jobTier(cls)];
   S.gold -= Q.fee;
   if (Q.souls) useSouls(Q.souls);   // 빌드 64: 3차 전직에 주인의 혼
+  if (Q.item) addTo(S.inv, Q.item[0], -Q.item[1]);   // 빌드 65: 4차 전직 재료
   if (C1.req && C1.req.item) addTo(S.inv, C1.req.item[0], -C1.req.item[1]);   // 전직 재료(피눈물 등)
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
   a.cls = cls;
@@ -918,6 +920,7 @@ function promote(aid, cls) {
   if (!needsArrows(a) && a.eq.ammo) { S.gear.push(a.eq.ammo); a.eq.ammo = null; }   // 창을 드는 용기병처럼 활을 안 쏘면 화살은 창고로   // 정찰가처럼 새로 활을 쏘는 직업
   if (!a.eq.weapon) a.eq.weapon = makeGear(weaponOf(cls, wasT), wasT, 0);   // 길드가 새 직업에 맞는 무기를 준다
   dropOffFor(a);   // 빌드 64: 두 손 무기(대검)를 들면 부장비는 창고로
+  offGift65(a, wasT);   // 빌드 65: 쌍검사 = 보조 단검 · 닌자 = 암기 (부장비 칸이 비어 있으면)
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
   clampVitals(a);
   log(`${a.name}이(가) ${C0.name}에서 ${C1.name}(으)로 전직했다!`, 'good');
@@ -1182,7 +1185,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 13;   // 지금 저장 판 (migrate13까지 옮긴 상태)
+const SAVE_V = 14;   // 지금 저장 판 (migrate14까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1199,7 +1202,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); notes65(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1209,6 +1212,7 @@ function loadFrom(v) {
     S.stable = S.stable || { horses: {} };
     const old = S.v;
     if (old < 13) runeRename();   // 빌드 64 룬 개편: 옛 룬 이름 → 합친 룬 (창고 정리보다 먼저)
+    if (old < 14) refit65();      // 빌드 65 직업 개편: 못 끼게 된 무기를 같은 단계 새 무기로 (migrateS의 unfitGear보다 먼저)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
@@ -1236,6 +1240,7 @@ function loadFrom(v) {
     if (old < 11) { migrate11(); saveGame(); }
     if (old < 12) { migrate12(); saveGame(); }
     if (old < 13) { migrate13(); saveGame(); }
+    if (old < 14) { migrate14(); saveGame(); }
     notes39();
     notes40();
     notes41();
@@ -1441,12 +1446,37 @@ function migrate13() {
   if (RUNE_RENAMED) log(`룬 개편: 옛 룬 ${fmt(RUNE_RENAMED)}개를 같은 등급의 합친 룬으로 바꾸었다 (체력 → 강인 · 민첩 → 영민 · 수호 → 공방 · 결계 → 마력 · 내화 · 내한 · 피뢰 → 화염 · 냉기 · 번개 · 정결 → 어둠).`);
   RUNE_RENAMED = 0;
 }
+// 빌드 65 직업 개편: 정찰가 · 탐험가(활 → 정글칼 · 화살은 창고로) · 용기수(창 → 복합궁 + 화살) · 쌍검사 · 검무사(장검 → 단검 + 보조 단검).
+// 못 끼게 된 무기는 창고로 옮기고 같은 단계의 새 무기를 준다. 방패를 든 마부 계열 · 화살통을 든 정찰가의 부장비는 unfitGear가 창고로 옮긴다.
+let REFIT65 = 0;
+function refit65() {
+  const fix = (a, keep) => {
+    if (!a || !a.eq || !CLASSES[a.cls]) return;
+    const ch = chainOf(a.cls), w = a.eq.weapon, aff = ch.includes('scout') || a.cls === 'dragoon' || ch.includes('duelist');
+    if (!aff) return;
+    if (w && !gearFits(a, w)) { const t = w.t || 0; if (keep) S.gear.push(w); a.eq.weapon = makeGear(weaponOf(a.cls, t), t, 0); REFIT65++; }
+    if (ch.includes('scout') && a.eq.ammo) { if (keep) S.gear.push(a.eq.ammo); a.eq.ammo = null; }
+    if (a.cls === 'dragoon' && !a.eq.ammo) a.eq.ammo = makeGear('arrows', arrowTierOf(a.lv), 0);
+    offGift65(a, (a.eq.weapon && a.eq.weapon.t) || 0);
+  };
+  (S.advs || []).forEach(a => fix(a, true)); (S.cands || []).forEach(a => fix(a, false));
+}
+function offGift65(a, t) {
+  if (!a || !a.eq || a.eq.off || twoHand(a.eq.weapon)) return;
+  const ch = chainOf(a.cls), b = ch.includes('duelist') ? 'dagger2' : ch.includes('ninja') ? 'shuriken' : null;
+  if (b && tierOk(b, t)) a.eq.off = makeGear(b, t, 0);
+}
+function migrate14() {
+  S.v = 14;
+  if (REFIT65) log(`직업 개편: 정찰가 · 탐험가 · 용기수 · 쌍검사 · 검무사 ${fmt(REFIT65)}명의 무기를 새 무기로 바꾸었다 (예전 무기는 창고에).`);
+  REFIT65 = 0;
+}
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);
   [...(S.advs || []), ...(S.cands || []), ...opps].forEach(a => { if (a && a.eq) for (const sl of SLOTS65) if (a.eq[sl] === undefined) a.eq[sl] = null; });   // 옛 모험가 · 손님 · 투기장 상대에게 빈 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸
   const n = (S.advs || []).reduce((k, a) => k + plate65(a), 0); [...(S.cands || []), ...opps].forEach(plate65);   // 판금을 못 입게 된 전사 계열의 판금 → 경갑 · 중갑
   if (n) log(`전사 방어구 개편: 판금 갑옷은 이제 마검사 계열 갑옷이다. 기사 · 광전사 계열이 입던 판금 갑옷은 중갑으로, 전사 · 검투사 계열은 경갑으로 바꾸었다 — ${n}명 (단계 · 레어도 · 룬은 그대로).`);
-  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 새 장비 칸 · 장비 개편 2단계', body: STORY.v65 }); }
+  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 새 장비 칸 · 장비 개편 2단계 · 직업 개편', body: STORY.v65 }); }
 }
 function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 룬 개편 · 전직 레벨', body: STORY.v64 }); } }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }

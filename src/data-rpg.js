@@ -80,6 +80,7 @@ const TR = a => (CLASSES[a.cls] && CLASSES[a.cls].tr) || {};
 const CLASS_IDS = Object.keys(CLASSES).filter(k => !CLASSES[k].special);   // 여관에 무작위로 오는 직업
 const ALL_CLASS_IDS = Object.keys(CLASSES);
 const MAX_SKILLS = 4;   // 기본 스킬 칸. LV30·50·70·90·100마다 한 칸씩 늘어난다
+const MAX_LV4 = 200;   // 빌드 65: 4차 전직(대도 · 캐러밴 마스터)은 Lv200까지
 const MAX_LV = 150;   // 빌드 64: 누구나 Lv150 (2차 각성을 없앴다 · 4차 전직이 들어오면 200)
 const RETIRE_LV = 100;   // 명예의 전당 은퇴 (예전 최고 레벨 그대로)
 const SKILL_SLOT_LV = [30, 50, 70, 90, 100];
@@ -486,7 +487,7 @@ const uniqIdx = g => Math.max(0, Math.min(uniqLen(g.base) - 1, (g.t || 0) - (UNI
 // 빌드 65: 한 단계에만 있는 장비(속성 대검 넷 — UNIQ_ONLY[종류] = 레벨) = 그 레벨 이상인 첫 단계에서만 나온다. 그 레벨 단계가 아직 없으면(Lv150 · 200) 어디서도 안 나오고, 단계가 생기면 바로 나온다
 const UNIQ_ONLY = {};
 const uniqOnlyTier = b => GTIERS.findIndex(T => T.lv >= UNIQ_ONLY[b]);
-const tierOk = (b, t) => (UNIQ_ONLY[b] != null ? uniqOnlyTier(b) === t : (UNIQ_T0[b] || 0) <= t);
+const tierOk = (b, t) => (UNIQ_ONLY[b] != null ? uniqOnlyTier(b) === t : (UNIQ_T0[b] || 0) <= t && ((GTYPES[b] && GTYPES[b].tmin) || 0) <= t);   // tmin: 그림은 처음 단계부터 쓰되 그 단계부터 나오는 장비(보조 단검)
 const uniqName = g => { const L = typeof WNAME !== 'undefined' && WNAME[g.base]; return !L ? '' : L.length === 1 ? (UNIQ_ONLY[g.base] != null ? L[0] : `${L[0]} Lv${GTIERS[g.t || 0].lv}`) : L[uniqIdx(g)]; };   // 그림이 하나뿐이면 단계 Lv를 붙인다(「지옥의 업화 Lv52」)
 // 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에만(세트 효과는 빌드 65에서 없앰). 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
 const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc', 'ear'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이도
