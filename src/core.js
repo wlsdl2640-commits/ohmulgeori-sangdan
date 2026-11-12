@@ -790,7 +790,7 @@ function cast(e, a, d, id, team, dm, foes) {
 // 화살이 떨어졌다: 원정마다 한 번 알린다
 function noAmmo(e, a, k) {   // 기록은 원정마다 한 번, 전투 화면 말풍선은 8초마다 · k 'shuri'면 표창
   const key = a.id + (k || ''), nm = k === 'shuri' ? '암기' : k === 'bolt' ? '볼트' : '화살';
-  e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[key]) { e.noAmmo[key] = 1; log(`${a.name}의 ${nm}이 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
+  e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[key]) { e.noAmmo[key] = 1; log(`${a.name}의 ${jo(nm, '이', '가')} 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
   e.noAmmoT = e.noAmmoT || {}; const last = e.noAmmoT[key]; if (last == null || S.t - last >= 8) { e.noAmmoT[key] = S.t; ev(e, 'noammo', k ? { s: a.id, k } : { s: a.id }); }
 }
 function basicAct(e, a, d, team, dm, foes) {
