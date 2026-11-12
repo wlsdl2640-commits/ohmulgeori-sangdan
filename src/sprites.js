@@ -87,7 +87,7 @@ function wicURL(g) {
   return (ICON_URL[k] = keepCv(c));
 }
 function offMini(base, t) {
-  const uq = isUniq({ base, t }), ui = uq ? uniqIdx({ base, t }) : 0;
+  const uq = isUniq({ base, t }), ui = uq ? uniqIdx(LADDER_B[base] && ladderSteps(+t).length ? { base, t: +t, lv: ladderSteps(+t)[0] } : { base, t }) : 0;   // 빌드 67: 진열대 열쇠(종류:단계)의 2차 직업 장비는 그 단계 첫 착용 레벨 그림
   const k = uq ? 'w:' + base + ':' + ui : base + ':' + offLook(t); if (OFF_MINI[k] !== undefined) return OFF_MINI[k];
   const cells = uq ? wicCells(base, ui) : typeof OFFICON !== 'undefined' && OFFICON[base] ? skiCells('o:' + k) : null;
   if (!cells) return (OFF_MINI[k] = null);
@@ -131,7 +131,7 @@ function offIconURL(base, t) {
 const HR_URL = new Set();
 function armArtURL(g) {
   const T = g && GTYPES[g.base], L = T && T.art && ((typeof ARMART !== 'undefined' && ARMART[T.art]) || (typeof HDART !== 'undefined' && HDART[T.art])); if (!L) return null;   // HDART: 화살통 · 마나소드 (data-hdart65.js)
-  const u = L[Math.max(0, Math.min(L.length - 1, LADDER_B[g.base] ? ladderIdx(g) : g.t | 0))]; if (u) HR_URL.add(u);   // 빌드 67: 2차 직업 방어구는 착용 레벨의 그림
+  const u = L[Math.max(0, Math.min(L.length - 1, artIdx(g)))]; if (u) HR_URL.add(u);   // 빌드 67: 2차 직업 장비는 착용 레벨의 그림(artIdx — 옛 장비는 예전 그림)
   return u || null;
 }
 function gearIconURL(g) {

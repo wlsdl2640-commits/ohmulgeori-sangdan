@@ -185,3 +185,7 @@ STORY.v65.push(
   '짐꾼 계열은 방패 · 엄호 없이 늘 맨 뒤에서 돕는 서포터예요(약상자 · 보급품 나눠 주기 · 비상식량). 야영 텐트 효과는 마부 · 코네스토가 · 캐러밴 마스터가 맡아요.',
   '새 스킬 36개 · 바뀐 스킬 35개: 암기를 던지는 스킬(닌자)은 부장비 칸의 암기를, 손목 석궁 스킬은 볼트를 써요. 스킬 그림 · 탈것(늑대 · 와이번) 모습 · 새 숙련은 다음에 넣어요.'
 );
+// 빌드 67 (11-13 00:23 사용자 — 중갑 판의 「LV안」을 다시 보내며 「이 사진속 LV안 처럼 조율해야지」): 2차 직업 장비도 그림 차례대로 착용 레벨 Lv50 · 55 · 60 … 95 · 100 · 110 …
+// (data-rpg.js ARM_LADDER · LADDER_B — 중갑 · 판금과 같은 길). 16장짜리 그림은 Lv50 ~ 150, Lv160 ~ 200은 그림이 생기면. 속성 대검(UNIQ_ONLY)은 그대로 한 단계에만
+const JOB2_LADDER = ['lance', 'lute', 'trident', 'gladius', 'great', 'buckler', 'cross', 'ether', 'card', 'lockpick', 'wand', 'spirit', 'orb', 'necro', 'offer', 'compbow', 'longbow', 'greatbow', 'compound', 'wxbow', 'bcase', 'bolt', 'whip', 'machete', 'manasword', 'dagger2'];
+JOB2_LADDER.forEach(b => { if (GTYPES[b]) LADDER_B[b] = 1; });

@@ -179,7 +179,7 @@ function smithyBox() {
   const B = q >= 3 ? BOSS_RECIPE[q] : null;
   const rowOf = (b, lv) => {   // 빌드 64: 2차 직업 장비는 늪지 단계부터 · 빌드 67: 2차 직업 방어구는 그 단계 칩의 착용 레벨마다 한 줄
     const g = { base: b, t, q, lv }, ok = canSmith(b, t, q, lv);
-    return `<div class="li">${gArt(g, 1)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${gearWho(b)} · Lv${gearReqLv(g)}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}" data-lv="${lv || 0}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" title="${esc(buyAmmoWhy(b, t))}"${buyAmmoWhy(b, t) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t))}G</button>` : ''}</div></div>`;
+    return `<div class="li">${gArt(g, 1)}<div class="grow"><span>${gearName(g)}${q ? ' ' + qTag(g) : ''} <span class="muted">· ${gearWho(b)} · Lv${gearReqLv(g)}+</span></span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)}` : ''}</span><span class="sub">${needStr(smithNeed(b, t, q))} · ${fmt(smithFee(t, q))}G</span></div><div class="btns col"><button type="button" class="btn sm gold" data-act="smith" data-b="${b}" data-t="${t}" data-q="${q}" data-lv="${lv || 0}"${ok ? '' : ' disabled'}>제작</button>${isAmmo(g) && !q ? `<button type="button" class="btn sm" data-act="buyammo" data-b="${b}" data-t="${t}" data-lv="${lv || 0}" title="${esc(buyAmmoWhy(b, t, lv))}"${buyAmmoWhy(b, t, lv) ? ' disabled' : ''}>사기 ${fmt(ammoPrice(b, t, lv))}G</button>` : ''}</div></div>`;
   };
   const rows = CRAFT_IDS.flatMap(b => (LADDER_B[b] ? ladderSteps(t).map(L => rowOf(b, L)) : tierOk(b, t) ? [rowOf(b, 0)] : [])).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. 룬 칸 ${q}개.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
@@ -765,7 +765,7 @@ const ACT = {
   smithTab: d => { UI.smithTab = d.t; const top = winTop(); if (top) top.tab = d.t; renderPanel(true); },
   reapp: d => { const r = gearAnyById(+d.id); if (!r) return; const g = r.g; confirmBox('옵션 재감정', `「${gearName(g)}」의 보너스 옵션(${statLine(g.bonus || {}) || '없음'})을 다시 뽑을까요? ${fmt(REAPPRAISE.fee(g.t))}G${ITEMS['crest_' + g.t] ? `와 ${ITEMS['crest_' + g.t].name} ${REAPPRAISE.crest}개` : ''}가 들고, 더 나빠질 수도 있어요.`, '재감정', () => { say(reappraise(+d.id)); renderPanel(true); saveGame(); }, false); },
   smith: d => { const r = smith(d.b, +d.t, +d.q || 0, +d.lv || 0); if (typeof r === 'string') say(r); else say(`${QUALITY[r.q].name} ${gearName(r)} 완성`); },
-  buyammo: d => { const r = buyAmmo(d.b, +d.t); say(r || `${gearNameOf(d.b, d.t)}을(를) 샀어요`); },
+  buyammo: d => { const r = buyAmmo(d.b, +d.t, +d.lv || 0); say(r || `${+d.lv ? gearName({ base: d.b, t: +d.t, lv: +d.lv }) : gearNameOf(d.b, d.t)}을(를) 샀어요`); },
   smithQ: d => { UI.smithQ = +d.q; },
   kingsell: d => say(kingSell(d.it)),
   raidopen: d => openWin('raid', { r: d.id }),

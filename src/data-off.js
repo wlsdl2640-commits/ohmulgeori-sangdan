@@ -112,9 +112,9 @@ function skillAmmo(s, a, nFoes) {
 const arrowTierOf = lv => { let t = 0; for (let i = 0; i < Math.min(6, GTIERS.length); i++) if (lv >= GTIERS[i].lv) t = i; return t; };
 const SHURI_MUL = 0.3;   // 표창 한 개 = 공격력 × 2.5(기본 공격) × 0.3 (빌드 39: 0.55 → 0.3)
 // 대장간에서 바로 사기 (재료 없이): 값 = 장비 값 × 1.5
-const ammoPrice = (base, t) => Math.round(gearValue({ base, t, q: 0 }) * 4.5 * (GTYPES[base].priceMul || 1) / 10) * 10;   // 빌드 39: 1.5 → 4.5배 (충전 값과 맞춘다)
+const ammoPrice = (base, t, lv) => Math.round(gearValue({ base, t, q: 0, lv: lv || undefined }) * 4.5 * (GTYPES[base].priceMul || 1) / 10) * 10;   // 빌드 67: 볼트는 착용 레벨의 값   // 빌드 39: 1.5 → 4.5배 (충전 값과 맞춘다)
 // 상단에서 다시 채울 때 한 개 값 (빌드 39): 사는 값 ÷ 담는 수 — 쓴 만큼만 낸다
-const ammoUnitPrice = g => ammoPrice(g.base, g.t) / Math.max(1, ammoMax({ base: g.base, t: g.t, q: 0 }));
+const ammoUnitPrice = g => ammoPrice(g.base, g.t, g.lv) / Math.max(1, ammoMax({ base: g.base, t: g.t, q: 0, lv: g.lv }));
 // 끼운 화살의 속성·상태이상 (활을 쏠 때만)
 const arrowEl = a => { const g = a && a.eq && a.eq.ammo; return (g && GTYPES[g.base] && GTYPES[g.base].el) || ''; };
 const arrowSta = a => { const g = a && a.eq && a.eq.ammo; return (g && GTYPES[g.base] && GTYPES[g.base].sta) || null; };

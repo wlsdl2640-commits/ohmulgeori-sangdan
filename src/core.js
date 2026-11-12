@@ -47,7 +47,7 @@ function makeAdv(o = {}) {
   };
   growStats(a, lv - 1);
   if (needsArrows(a)) a.eq.ammo = makeGear('arrows', arrowTierOf(lv), 0);   // 화살을 쓰는 직업은 레벨에 맞는 화살을 들고 온다
-  if (gearFits(a, { base: 'shield', t: 0 })) { const st = arrowTierOf(lv); a.eq.off = makeGear(shieldOf(a.cls, st), st, 0); }   // 전사·마부 계열은 방패를 들고 온다 (빌드 39 · 빌드 64: 그 단계에 있는 직업 방패)
+  if (gearFits(a, { base: 'shield', t: 0 })) { const st = arrowTierOf(lv); a.eq.off = gearFor(shieldOf(a.cls, st), st, 0, lv); }   // 전사·마부 계열은 방패를 들고 온다 (빌드 39 · 빌드 64: 그 단계에 있는 직업 방패)
   const d = derive(a);
   a.hp = d.maxHp; a.mp = d.maxMp;
   return a;
@@ -218,6 +218,8 @@ function rollBonus(t, q) {
   ks.forEach(k => { bonus[k] = Math.max(1, Math.round(B[1] * GTIERS[t].p * (0.8 + rnd() * 0.5))); });   // 같은 등급이라도 조금씩 다르다
   return bonus;
 }
+// 빌드 67: 누군가에게 주는 장비(처음 장비 · 전직 · 옛 저장 바꾸기) — 2차 직업 장비는 그 사람이 낄 수 있는 착용 레벨로 (떨어지는 것은 makeGear가 그 단계에서 무작위)
+function gearFor(base, t, q, lv) { return makeGear(base, t, q, LADDER_B[base] ? ladderFor(lv, t) : 0); }
 function makeGear(base, t, q, lv) {
   const g = { id: nid(), base, t, q: q || 0, bonus: null, runes: [] };
   if (LADDER_B[base]) { g.lv = lv && ARM_LADDER.includes(lv) ? lv : ladderPick(t); g.t = lvTier(g.lv); }   // 빌드 67: 2차 직업 방어구는 착용 레벨(그림) — 떨어지면 그 단계 레벨 대에서 하나

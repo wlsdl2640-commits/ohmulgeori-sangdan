@@ -481,16 +481,10 @@ function ladderP(L) {   // 단계 레벨 · 배율을 레벨 차례로 이은 �
   for (let i = 1; i < P.length; i++) if (L <= P[i][0]) { const [x0, y0] = P[i - 1], [x1, y1] = P[i]; return y0 + (y1 - y0) * (L - x0) / (x1 - x0); }
   return P[P.length - 1][1];
 }
-// 빌드 67 (11-13 사용자 「다른 장비도 LV이 낮아서 못끼거나, 얻을 방법이 없다거나 한게 있나 확인」): 2차 직업만 입는 장비(무기 · 부장비 · 볼트 …)는 처음 나오는 단계(늪지 Lv52)의
-// 착용 레벨을 그 직업이 생기는 레벨(2차 전직 Lv50 — 그림에 적힌 「Lv50」)로. 막 전직한 Lv50 ~ 51도 바로 낀다 (1차 직업은 어차피 못 입으니 잃는 것 없음)
-let WEAR_LV = null;
-const wearLv = b => {   // 그 종류를 입을 수 있는 직업이 처음 생기는 레벨 (1차 Lv1 · 2차 Lv50 · 3차 Lv100 …)
-  if (!WEAR_LV) WEAR_LV = {};
-  if (WEAR_LV[b] == null) { const L = ALL_CLASS_IDS.filter(c => CLASSES[c] && GTYPES[b] && clsFits({ cls: c }, b)).map(c => { const t = jobTier(c); return t <= 1 ? 1 : (JOB_REQ[t] && JOB_REQ[t].lv) || 1; }); WEAR_LV[b] = L.length ? Math.min(...L) : 1; }
-  return WEAR_LV[b];
-};
-const tierReqLv = (b, t) => { const W = wearLv(b), L = GTIERS[t].lv; return W > 1 && L > W && L === Math.min(...GTIERS.map(T => T.lv).filter(x => x >= W)) ? W : L; };
-const gearReqLv = g => (LADDER_B[g.base] && g.lv ? g.lv : tierReqLv(g.base, g.t || 0));   // 착용 레벨
+// 빌드 67 (11-13 00:23 사용자 — 같은 중갑 판을 다시 보내며 「이 사진속 LV안 처럼 조율해야지」): 2차 직업 장비(무기 · 부장비 · 볼트 — LADDER_B에 더함, data-class65.js 끝)도
+// 그림 차례대로 착용 레벨 ARM_LADDER(Lv50 · 55 · 60 … 95 · 100 · 110 …). 사막왕 칩의 Lv50은 만들기만 · 늪지부터 떨어진다. 한 단계에만 있는 속성 대검은 그 레벨(UNIQ_ONLY — 지옥의 업화 Lv50)
+const ladderFor = (lv, t) => ARM_LADDER.filter(x => ladderOn(x) && x <= lv && GTIERS[lvTier(x)].lv <= GTIERS[t].lv).pop();   // 그 레벨로 낄 수 있고 그 단계를 넘지 않는 가장 높은 착용 레벨 (전직 · 처음 장비 · 투기장 상대 — 없으면 undefined)
+const gearReqLv = g => (LADDER_B[g.base] && g.lv ? g.lv : UNIQ_ONLY[g.base] != null ? UNIQ_ONLY[g.base] : GTIERS[g.t || 0].lv);   // 착용 레벨
 const gearP = g => (LADDER_B[g.base] && g.lv ? ladderP(g.lv) : GTIERS[g.t].p);
 const ladderIdx = g => { const L = gearReqLv(g); let i = 0; ARM_LADDER.forEach((x, k) => { if (x <= L) i = k; }); return i; };   // 그림 차례
 const gearTierOk = g => (LADDER_B[g.base] ? (g.lv ? ARM_LADDER.includes(g.lv) && ladderOn(g.lv) : (g.t || 0) >= 5) : tierOk(g.base, g.t));
@@ -512,7 +506,8 @@ function gearStats(g) {
 const UNIQ_T0 = { sword: 0, shield: 0, gladius: 6, great: 6, buckler: 6, cross: 6, ether: 6 };
 const isUniq = g => !!g && UNIQ_T0[g.base] != null;
 const uniqLen = b => (typeof WICON !== 'undefined' && WICON[b] ? WICON[b].length : 16);   // 빌드 65: 그림이 하나뿐인 고유 장비(속성 대검 · 속성 특별 암기)는 1
-const uniqIdx = g => Math.max(0, Math.min(uniqLen(g.base) - 1, (g.t || 0) - (UNIQ_T0[g.base] || 0)));   // 그림 · 이름 차례 (2차 장비는 늪지 = 0번 「Lv50」)
+const uniqIdx = g => Math.max(0, Math.min(uniqLen(g.base) - 1, LADDER_B[g.base] && g.lv ? ladderIdx(g) : (g.t || 0) - (UNIQ_T0[g.base] || 0)));   // 그림 · 이름 차례 (빌드 67: 2차 직업 장비는 착용 레벨 차례 — Lv50 = 0번 · Lv55 = 1번 …, g.lv 없는 옛 장비는 예전대로 늪지 = 0번)
+const artIdx = g => (isUniq(g) ? uniqIdx(g) : LADDER_B[g.base] && g.lv ? ladderIdx(g) : g.t || 0);   // 큰 그림(ARMART · HDART) 차례 — 빌드 67: 마나소드도 늪지 = 0번(예전엔 단계 번호를 그대로 써서 이름과 그림이 어긋났다)
 // 빌드 65: 한 단계에만 있는 장비(속성 대검 넷 — UNIQ_ONLY[종류] = 레벨) = 그 레벨 이상인 첫 단계에서만 나온다. 그 레벨 단계가 아직 없으면(Lv150 · 200) 어디서도 안 나오고, 단계가 생기면 바로 나온다
 const UNIQ_ONLY = {};
 const uniqOnlyTier = b => GTIERS.findIndex(T => T.lv >= UNIQ_ONLY[b]);
@@ -522,7 +517,7 @@ const uniqName = g => { const L = typeof WNAME !== 'undefined' && WNAME[g.base];
 const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc', 'ear'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이도
 const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}${LADDER_B[g.base] ? ' Lv' + gearReqLv(g) : ''}` : `${GTYPES[g.base].name} Lv${gearReqLv(g)}`);   // 빌드 67: 2차 직업 방어구는 착용 레벨도 · 이름의 Lv = 착용 레벨(2차 직업 창 · 류트는 늪지 단계에서 Lv50)
 const gearName = g => gearBaseName(g);
-const gearNameOf = (base, t) => { const L = LADDER_B[base] ? ladderSteps(+t) : []; return L.length ? `${GTIERS[+t].name} ${GTYPES[base].name} Lv${L[0]}${L.length > 1 ? '~' + L[L.length - 1] : ''}` : gearBaseName({ base, t: +t }); };   // 진열대 · 의뢰 열쇠(종류:단계) 이름 — 빌드 67: 중갑 · 판금은 그 단계의 착용 레벨 대(「늪지 중갑 Lv55~60」)
+const gearNameOf = (base, t) => { const L = LADDER_B[base] ? ladderSteps(+t) : []; return L.length ? `${tierNamed(base) ? GTIERS[+t].name + ' ' : ''}${GTYPES[base].name} Lv${L[0]}${L.length > 1 ? '~' + L[L.length - 1] : ''}` : gearBaseName({ base, t: +t }); };   // 진열대 · 의뢰 열쇠(종류:단계) 이름 — 빌드 67: 중갑 · 판금은 그 단계의 착용 레벨 대(「늪지 중갑 Lv55~60」)
 const gearKey = g => `${g.base}:${g.t}`;
 const gearValue = g => Math.round((45 * gearP(g) * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
 const recipeFee = t => Math.round(15 * GTIERS[t].p * GTIERS[t].p);

@@ -19,7 +19,7 @@ const twoHand = g => !!(g && GTYPES[g.base] && GTYPES[g.base].two);
 function dropOffFor(a) { if (a && a.eq && twoHand(a.eq.weapon) && a.eq.off) { S.gear.push(a.eq.off); a.eq.off = null; return 1; } return 0; }
 // 직업이 처음 받는 무기 (그 단계에 없는 2차 무기는 아래 무기로)
 const WEAPON_LOW = { gladius: 'sword', great: 'axe' };
-const weaponOf = (c, t = 0) => { const b = WEAPON_OF[c] || 'sword'; return tierOk(b, t) ? b : WEAPON_LOW[b] || 'sword'; };   // WEAPON_OF는 econ.js (쓸 때는 다 읽힌 뒤)
+const weaponOf = (c, t = 0) => { const b = WEAPON_OF[c] || 'sword'; return (LADDER_B[b] ? ladderFor(MAX_LV, t) : tierOk(b, t)) ? b : WEAPON_LOW[b] || 'sword'; };   // 빌드 67: 2차 직업 무기는 사막왕 단계(Lv50)부터 — 주는 곳에서 gearFor로 착용 레벨을 고른다   // WEAPON_OF는 econ.js (쓸 때는 다 읽힌 뒤)
 // 장비 창 · 대장간에 보이는 한 줄 설명 (고유 장비만)
 const uniqDesc = g => (isUniq(g) && typeof WDESC !== 'undefined' && WDESC[g.base] ? WDESC[g.base][uniqIdx(g)] : '');
 STORY.v64 = [   // 빌드 64 (장비 개편 1단계 · 전직 레벨)

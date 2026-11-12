@@ -73,8 +73,7 @@ function fakeAdv(lv, tier) {
   for (const [slot] of SLOTS) {
     if (slot === 'bag') continue;
     const bases = GTYPE_IDS.filter(b => GTYPES[b].slot === slot && tierOk(b, gt) && clsFits(a, b));   // 빌드 64: 그 단계에 있는 종류만 · 빌드 67: 계열만 본다(예전엔 견습 단계로 재서 늪지부터인 보조 단검 · 중갑 · 판금이 빠졌다)
-    const fitLv = b => (LADDER_B[b] ? ARM_LADDER.filter(x => ladderOn(x) && x <= lv && GTIERS[lvTier(x)].lv <= GTIERS[gt].lv).pop() : 0);   // 빌드 67: 중갑 · 판금은 그 상대가 입을 수 있는 착용 레벨로
-    if (bases.length) { const b = pickOne(bases); a.eq[slot] = makeGear(b === 'shield' ? shieldOf(a.cls, gt) : dropKind(b, gt), gt, q, fitLv(b)); }
+    if (bases.length) { const b0 = pickOne(bases), b = b0 === 'shield' ? shieldOf(a.cls, gt) : dropKind(b0, gt); a.eq[slot] = gearFor(b, gt, q, lv); }   // 빌드 67: 2차 직업 장비는 그 상대가 낄 수 있는 착용 레벨로
   }
   if (twoHand(a.eq.weapon)) a.eq.off = null;   // 대검은 두 손
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
@@ -171,7 +170,7 @@ function arenaWipe(p) {
 // 투기장 상단: 코인으로만 산다
 function arenaShop() {
   const t = arenaTier();
-  const gear = ARENA_GEAR.filter(b => tierOk(b, t)).map(b => ({ kind: 'gear', base: b, t, q: 3, price: GTYPES[b].slot === 'acc' ? 150 : 100 + t * 30 }));   // 빌드 64: 글라디우스는 늪지 단계부터
+  const gear = ARENA_GEAR.filter(b => tierOk(b, t)).map(b => ({ kind: 'gear', base: b, t, q: 3, lv: LADDER_B[b] ? ladderSteps(t).slice(-1)[0] : 0, price: GTYPES[b].slot === 'acc' ? 150 : 100 + t * 30 }));   // 빌드 64: 글라디우스는 늪지 단계부터 · 빌드 67: 글라디우스 · 삼지창은 그 단계의 가장 높은 착용 레벨
   const excl = exclOf('arena').map(id => ({ kind: 'item', id, price: EXCL[id].coins }));   // 빌드 63: 스킬북 대신 투기장 상단 전용 물건 (깃발 · 월계관)
   return gear.concat(excl);   // 마법사의 돌은 빌드 28부터 팔지 않는다 (우두머리·던전 주인·레이드에서만)
 }
@@ -181,7 +180,7 @@ function arenaBuy(kind, id) {
   if (U.coins < o.price) return `투기장 코인이 모자라요 (${o.price} 필요).`;
   if (kind === 'gear' ? !roomGear() : !roomItem(kind === 'item' ? o.id : 'book_' + o.id)) return WH_FULL;
   U.coins -= o.price;
-  if (kind === 'gear') { const g = makeGear(o.base, o.t, o.q); S.gear.push(g); log(`투기장 상단에서 ${gearName(g)}을(를) 샀다. (코인 ${o.price})`); return `${gearName(g)}을(를) 창고에 넣었어요.`; }
+  if (kind === 'gear') { const g = makeGear(o.base, o.t, o.q, o.lv); S.gear.push(g); log(`투기장 상단에서 ${gearName(g)}을(를) 샀다. (코인 ${o.price})`); return `${gearName(g)}을(를) 창고에 넣었어요.`; }
   const it = kind === 'item' ? o.id : 'book_' + o.id;
   addTo(S.inv, it, 1); log(`투기장 상단에서 ${ITEMS[it].name}을(를) 샀다. (코인 ${o.price})`);
   return `${ITEMS[it].name}을(를) 창고에 넣었어요.`;
@@ -321,7 +320,7 @@ PANELS.arshop = () => {
   const rows = list.map(o => o.kind === 'item'
     ? `<div class="li">${iconImg(o.id)}<div class="grow stack"><span>${ITEMS[o.id].name}${(S.inv[o.id] || 0) ? ` <span class="tag ok-t">${S.inv[o.id]}</span>` : ''}</span><span class="sub">${ITEMS[o.id].desc}${EXCL[o.id] ? `<br><span class="gold-t">전용 · ${exclEffText(o.id)}</span>` : ''}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="item" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
     : o.kind === 'gear'
-    ? `<div class="li">${gArt({ base: o.base, t: o.t, q: o.q, runes: [] }, 1)}<div class="grow stack"><span>${gearNameOf(o.base, o.t)} <span class="tag" style="color:${QUALITY[o.q].c}">${QUALITY[o.q].name}</span></span><span class="sub">${statLine(gearStats({ base: o.base, t: o.t, q: o.q, runes: [] }))} · ${GTYPES[o.base].cls.includes('all') ? '누구나' : GTYPES[o.base].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="gear" data-id="${o.base}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
+    ? `<div class="li">${gArt({ base: o.base, t: o.t, q: o.q, lv: o.lv || undefined, runes: [] }, 1)}<div class="grow stack"><span>${o.lv ? gearName({ base: o.base, t: o.t, lv: o.lv }) : gearNameOf(o.base, o.t)} <span class="tag" style="color:${QUALITY[o.q].c}">${QUALITY[o.q].name}</span></span><span class="sub">${statLine(gearStats({ base: o.base, t: o.t, q: o.q, lv: o.lv || undefined, runes: [] }))} · ${GTYPES[o.base].cls.includes('all') ? '누구나' : GTYPES[o.base].cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="gear" data-id="${o.base}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`
     : `<div class="li">${iconImg('book_' + o.id)}<div class="grow stack"><span>${ITEMS['book_' + o.id].name} <span class="muted">· Lv${SKILLS[o.id].lv} · ${SKILLS[o.id].cls.map(c => CLASSES[c] ? CLASSES[c].name : '누구나').join('·')}</span></span><span class="sub">${SKILLS[o.id].desc}<br>${skillSpecLine(o.id)}</span></div><button type="button" class="btn sm gold" data-act="arbuy" data-k="book" data-id="${o.id}"${A.coins >= o.price ? '' : ' disabled'}>${o.price} 코인</button></div>`).join('');
   return `<div class="card hl"><div class="h">투기장 상단</div><div class="sub">투기장 코인으로만 거래해요. 가진 코인 ${coinTag(A.coins)}. 여기 장비와 깃발 · 월계관은 어디서도 떨어지지 않아요. 스킬북은 몬스터에게서만 나와요.</div></div><div class="list">${rows}</div>`;
 };

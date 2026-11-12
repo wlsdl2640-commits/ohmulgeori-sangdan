@@ -190,7 +190,7 @@ function makeCand() {
   const a = makeAdv({ lv });
   if (spn('guild') >= 3) a.salary = Math.round(a.salary * 0.9 / 5) * 5;
   a.fee = a.salary; a.cond = cond;
-  if (rnd() < 0.35) { const t = Math.max(0, GTIERS.reduce((m, T, i) => (a.lv >= T.lv ? i : m), 0) - 1); a.eq.weapon = makeGear(weaponOf(a.cls, t), t, 0); if (twoHand(a.eq.weapon)) a.eq.off = null; }
+  if (rnd() < 0.35) { const t = Math.max(0, GTIERS.reduce((m, T, i) => (a.lv >= T.lv ? i : m), 0) - 1); a.eq.weapon = gearFor(weaponOf(a.cls, t), t, 0, a.lv); if (twoHand(a.eq.weapon)) a.eq.off = null; }
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
   return a;
 }
@@ -326,18 +326,18 @@ function reappraise(id) {
   return '';
 }
 // 대장간: 화살·표창은 재료 없이 돈으로도 산다 (대장간이 만들 수 있는 단계까지)
-function buyAmmoWhy(base, t) {
+function buyAmmoWhy(base, t, lv = 0) {
   if (!GTYPES[base] || !GTYPES[base].ammo) return '화살 · 암기 · 볼트만 살 수 있어요';
-  if (!GTIERS[t] || !tierOk(base, t)) return '그 단계에는 없는 장비예요';   // 빌드 65: 볼트는 늪지 단계부터
+  if (!GTIERS[t] || !smithTierOk(base, t, lv)) return '그 단계에는 없는 장비예요';   // 빌드 65: 볼트는 늪지 단계부터 · 빌드 67: 볼트는 착용 레벨마다(사막왕 칩 = Lv50)
   if (!S.bld.smithy) return '대장간이 필요해요';
   if (!GTIERS[t] || S.bld.smithy < GTIERS[t].smith) return `대장간 Lv${GTIERS[t] ? GTIERS[t].smith : '?'}부터`;
   if (!roomGear()) return '메인 창고에 빈 칸이 없어요';
-  if (S.gold < ammoPrice(base, t)) return `${fmt(ammoPrice(base, t))}G가 필요해요`;
+  if (S.gold < ammoPrice(base, t, lv)) return `${fmt(ammoPrice(base, t, lv))}G가 필요해요`;
   return '';
 }
-function buyAmmo(base, t) {
-  const why = buyAmmoWhy(base, t); if (why) return why + '.';
-  const fee = ammoPrice(base, t), g = makeGear(base, t, 0);
+function buyAmmo(base, t, lv = 0) {
+  const why = buyAmmoWhy(base, t, lv); if (why) return why + '.';
+  const fee = ammoPrice(base, t, lv), g = makeGear(base, t, 0, lv);
   S.gold -= fee; S.stats.spent = (S.stats.spent || 0) + fee; S.gear.push(g);
   log(`대장간에서 ${gearName(g)}(${fmt(ammoMax(g))}${ammoUnit(g)})을(를) ${fmt(fee)}G에 샀다.`, 'good');
   changed();
@@ -929,7 +929,7 @@ function promote(aid, cls) {
   SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } });
   if (needsArrows(a) && !a.eq.ammo) { a.eq.ammo = makeGear('arrows', arrowTierOf(a.lv), 0); log(`${a.name}이(가) 활을 쏘게 되어 화살을 받았다.`); }
   if (!needsArrows(a) && a.eq.ammo) { S.gear.push(a.eq.ammo); a.eq.ammo = null; }   // 창을 드는 용기병처럼 활을 안 쏘면 화살은 창고로   // 정찰가처럼 새로 활을 쏘는 직업
-  if (!a.eq.weapon) a.eq.weapon = makeGear(weaponOf(cls, wasT), wasT, 0);   // 길드가 새 직업에 맞는 무기를 준다
+  if (!a.eq.weapon) a.eq.weapon = gearFor(weaponOf(cls, wasT), wasT, 0, a.lv);   // 길드가 새 직업에 맞는 무기를 준다 (빌드 67: 2차 직업 무기는 낄 수 있는 착용 레벨로)
   dropOffFor(a);   // 빌드 64: 두 손 무기(대검)를 들면 부장비는 창고로
   offGift65(a, wasT);   // 빌드 65: 쌍검사 = 보조 단검 · 닌자 = 암기 (부장비 칸이 비어 있으면)
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
@@ -1342,7 +1342,7 @@ function migrate10() {
   all.forEach(a => {
     if (!a || !a.eq || a.eq.off || !CLASSES[a.cls] || !gearFits(a, { base: 'shield', t: 0 })) return;
     const t = a.eq.weapon ? Math.min(a.eq.weapon.t, arrowTierOf(a.lv)) : arrowTierOf(a.lv);
-    a.eq.off = makeGear(shieldOf(a.cls, t), t, 0); if ((S.advs || []).includes(a)) n++;
+    a.eq.off = gearFor(shieldOf(a.cls, t), t, 0, a.lv); if ((S.advs || []).includes(a)) n++;   // 빌드 67: 2차 직업 방패는 낄 수 있는 착용 레벨로
   });
   S.v = 10;
   if (n) log(`방패가 네 종류(원형·히터·카이트·탑)가 되었다. 방패가 없던 전사·마부 계열 ${n}명에게 방패를 나눠 주었다.`);
@@ -1471,7 +1471,7 @@ function refit65() {
     const ch = chainOf(a.cls), w = a.eq.weapon, aff = ch.includes('scout') || a.cls === 'dragoon' || ch.includes('duelist');
     if (ch.includes('spellblade') && w && w.base === 'sword' && tierOk('manasword', w.t || 0)) { w.base = 'manasword'; if (keep) MANA65++; }   // 마검사 · 마검성의 무기 = 마나소드 (늪지 단계부터 — 같은 단계 · 레어도 · 룬 · 옵션 그대로)
     if (!aff) return;
-    if (w && !gearFits(a, w)) { const t = w.t || 0; if (keep) S.gear.push(w); a.eq.weapon = makeGear(weaponOf(a.cls, t), t, 0); REFIT65++; }
+    if (w && !gearFits(a, w)) { const t = w.t || 0; if (keep) S.gear.push(w); a.eq.weapon = gearFor(weaponOf(a.cls, t), t, 0, a.lv); REFIT65++; }
     if (ch.includes('scout') && a.eq.ammo) { if (keep) S.gear.push(a.eq.ammo); a.eq.ammo = null; }
     if (a.cls === 'dragoon' && !a.eq.ammo) a.eq.ammo = makeGear('arrows', arrowTierOf(a.lv), 0);
     offGift65(a, (a.eq.weapon && a.eq.weapon.t) || 0);
@@ -1481,7 +1481,7 @@ function refit65() {
 function offGift65(a, t) {
   if (!a || !a.eq || a.eq.off || twoHand(a.eq.weapon)) return;
   const ch = chainOf(a.cls), b = ch.includes('duelist') ? 'dagger2' : ch.includes('ninja') ? 'shuriken' : null;
-  if (b && tierOk(b, t)) a.eq.off = makeGear(b, t, 0);
+  if (b && (LADDER_B[b] ? ladderFor(a.lv, t) : tierOk(b, t))) a.eq.off = gearFor(b, t, 0, a.lv);   // 빌드 67: 보조 단검은 Lv50부터(막 전직한 쌍검사도)
 }
 function migrate14() {
   S.v = 14;
@@ -1517,7 +1517,7 @@ function lowJob66() {
   [...(S.advs || []).map(a => [a, 1]), ...(S.cands || []).map(a => [a, 0])].forEach(([a, mine]) => {
     const w = a && a.eq && a.eq.weapon; if (!w || w.base !== 'trident' || !CLASSES[a.cls] || clsFits(a, 'trident')) return;
     if (mine) { fix(w); (S.gear = S.gear || []).push(w); TRI67++; }
-    a.eq.weapon = makeGear(weaponOf(a.cls, w.t || 0), w.t || 0, 0);
+    a.eq.weapon = gearFor(weaponOf(a.cls, w.t || 0), w.t || 0, 0, a.lv);
   });
   [...(S.advs || []), ...(S.cands || [])].forEach(a => {
     if (!a || !a.eq || !CLASSES[a.cls]) return;
@@ -1530,7 +1530,7 @@ function lowJob66() {
 }
 function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
   S.v = 16;
-  log(`장비 점검: 2차 직업만 입는 장비는 이제 2차 전직 레벨(Lv50)부터 낀다 — 중갑 · 판금(상의 · 하의)은 그림마다 착용 레벨 Lv50 · 55 · 60 …(대장간 사막왕 단계에서 Lv50부터 만들고, 늪지대부터 떨어진다), 다른 2차 직업 무기 · 부장비 · 볼트(창 · 류트 · 투기장 삼지창 포함)는 늪지대 단계부터 나오고 Lv50부터 낀다. 삼지창은 이제 검투사 · 기사 계열만 낀다(랑기수 · 용기수는 활 직업).${TRI67 ? ` 삼지창을 들던 랑기수 · 용기수 ${fmt(TRI67)}명은 삼지창을 창고에 넣고 같은 단계 활을 받았다.` : ''}${LOW66 ? ` 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).` : ''}`);   // 빌드 67: 바꾼 것이 없어도 한 줄
+  log(`장비 점검: 2차 직업만 입는 장비(중갑 · 판금 상의 · 하의와 무기 · 부장비 · 볼트 — 창 · 류트 · 투기장 삼지창 포함)는 이제 그림마다 착용 레벨이 Lv50 · 55 · 60 … 95 · 100 · 110 …이다. Lv50은 대장간 사막왕 단계에서 만들고, 늪지대부터는 떨어진다. 갖고 있던 것은 예전 레벨 그대로. 삼지창은 이제 검투사 · 기사 계열만 낀다(랑기수 · 용기수는 활 직업).${TRI67 ? ` 삼지창을 들던 랑기수 · 용기수 ${fmt(TRI67)}명은 삼지창을 창고에 넣고 같은 단계 활을 받았다.` : ''}${LOW66 ? ` 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).` : ''}`);   // 빌드 67: 바꾼 것이 없어도 한 줄
   LOW66 = 0; TRI67 = 0;
 }
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
