@@ -1499,7 +1499,7 @@ function migrate15() {   // 빌드 65 넷째 묶음: 펫 만렙 30 · 레어도(
 }
 // 빌드 66: 2차 직업만 입는 장비(data-armor65.js JOB2_LOW — 중갑 · 중갑 하의 · 판금 · 판금 하의 · 창 · 류트)는 늪지대 단계부터. 그 아래 단계로 갖고 있던 것은
 // 같은 단계 · 레어도 · 룬 · 옵션 그대로 1차 장비로 (loadFrom에서 migrateS의 unfitGear보다 먼저 — 끼고 있던 것은 그 모험가가 입을 수 있는 같은 칸 장비로)
-let LOW66 = 0;
+let LOW66 = 0, TRI67 = 0;
 function lowJob66() {
   const low = g => !!g && !!JOB2_LOW[g.base] && (LADDER_B[g.base] ? (g.t || 0) < 5 : !tierOk(g.base, g.t));   // 빌드 67: 중갑 · 판금은 사막왕 단계(Lv50 그림)부터 쓴다
   const fix = g => { if (low(g)) { g.base = JOB2_LOW[g.base]; LOW66++; } };
@@ -1513,6 +1513,12 @@ function lowJob66() {
   const key = (b, t) => `${JOB2_LOW[b] && (LADDER_B[b] ? +t < 5 : !tierOk(b, +t)) ? JOB2_LOW[b] : b}:${t}`;
   ((S.shop && S.shop.slots) || []).forEach(sl => { if (sl && typeof sl.item === 'string' && sl.item.startsWith('g:')) { const [, b, t] = sl.item.split(':'); sl.item = 'g:' + key(b, t); } });
   (S.reqs || []).forEach(r => { if (r && r.gear) { const [b, t] = r.gear.split(':'); r.gear = key(b, t); } });
+  // 빌드 67: 삼지창(투기장)을 든 랑기수 · 용기수(이제 활 직업) — 삼지창은 창고로(낮은 단계면 장검으로), 같은 단계 직업 무기를 준다(refit65와 같은 길 · 후보는 바꾸기만)
+  [...(S.advs || []).map(a => [a, 1]), ...(S.cands || []).map(a => [a, 0])].forEach(([a, mine]) => {
+    const w = a && a.eq && a.eq.weapon; if (!w || w.base !== 'trident' || !CLASSES[a.cls] || clsFits(a, 'trident')) return;
+    if (mine) { fix(w); (S.gear = S.gear || []).push(w); TRI67++; }
+    a.eq.weapon = makeGear(weaponOf(a.cls, w.t || 0), w.t || 0, 0);
+  });
   [...(S.advs || []), ...(S.cands || [])].forEach(a => {
     if (!a || !a.eq || !CLASSES[a.cls]) return;
     for (const sl of Object.keys(a.eq)) {
@@ -1524,8 +1530,8 @@ function lowJob66() {
 }
 function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
   S.v = 16;
-  log(`장비 점검: 2차 직업만 입는 장비는 이제 2차 전직 레벨부터 — 중갑 · 판금(상의 · 하의)은 그림마다 착용 레벨 Lv50 · 55 · 60 …(대장간 사막왕 단계에서 Lv50부터 만들고, 늪지대부터 떨어진다), 창 · 류트는 늪지대 단계(Lv52)부터.${LOW66 ? ` 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).` : ''}`);   // 빌드 67: 바꾼 것이 없어도 한 줄
-  LOW66 = 0;
+  log(`장비 점검: 2차 직업만 입는 장비는 이제 2차 전직 레벨(Lv50)부터 낀다 — 중갑 · 판금(상의 · 하의)은 그림마다 착용 레벨 Lv50 · 55 · 60 …(대장간 사막왕 단계에서 Lv50부터 만들고, 늪지대부터 떨어진다), 다른 2차 직업 무기 · 부장비 · 볼트(창 · 류트 · 투기장 삼지창 포함)는 늪지대 단계부터 나오고 Lv50부터 낀다. 삼지창은 이제 검투사 · 기사 계열만 낀다(랑기수 · 용기수는 활 직업).${TRI67 ? ` 삼지창을 들던 랑기수 · 용기수 ${fmt(TRI67)}명은 삼지창을 창고에 넣고 같은 단계 활을 받았다.` : ''}${LOW66 ? ` 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).` : ''}`);   // 빌드 67: 바꾼 것이 없어도 한 줄
+  LOW66 = 0; TRI67 = 0;
 }
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸

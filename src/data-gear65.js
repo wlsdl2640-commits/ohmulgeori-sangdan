@@ -111,6 +111,7 @@ const XBOW_MUL = 0.3;   // 손목 석궁 한 발 = 공격력 × 2.5(기본 공�
 }
 // 직업이 처음 받는 무기가 그 단계에 없을 때 드는 무기 (data-warr.js WEAPON_LOW · econ.js WEAPON_OF)
 Object.assign(WEAPON_LOW, { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club', manasword: 'sword' });
+Object.assign(WEAPON_LOW, { lute: 'club', lance: 'sword', machete: 'club' });   // 빌드 67: 늪지 아래 단계에서 무기 없이 전직하면 — 예전엔 음유시인에게 못 드는 장검을 줬다
 // 숙련: 궁술 = 모든 활 · 검술 = 속성 대검까지 (채찍 · 정글칼 · 카드 · 완드 · 오브 · 금서 숙련은 스킬 개편 때)
 Object.assign(MASTERY.bow, { w: ['bow', 'compbow', 'longbow', 'greatbow', 'compound'], wn: '활', desc: '단궁 · 복합궁 · 장궁 · 대궁 · 컴파운드 보우 — 활이면 무엇이든.' });
 MASTERY.sword.w = MASTERY.sword.w.concat(ELEM_SWORDS, ['manasword']);

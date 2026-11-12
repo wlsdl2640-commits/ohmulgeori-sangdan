@@ -165,6 +165,7 @@ SK65('firstarrow', { name: '첫 화살', cls: ['sniper'], lv: 92, passive: { fir
 // ── 장비: 낄 수 있는 직업
 GTYPES.sword.cls = GTYPES.sword.cls.filter(c => c !== 'duelist');                    // 쌍검사 · 검무사 = 쌍단검
 GTYPES.lance.cls = GTYPES.lance.cls.filter(c => c !== 'ranger');                     // 용기수 = 복합궁 (창은 기사만)
+GTYPES.trident.cls = GTYPES.trident.cls.filter(c => c !== 'ranger' && c !== 'dragoon');   // 빌드 67: 삼지창(투기장)도 — 랑기수 · 용기수는 활 직업 (창은 나중 창 직업으로)
 GTYPES.bow.cls = ['archer'];                                                          // 정찰가 · 탐험가 = 정글칼
 for (const b of ['quiver', 'arrows', 'firearrows', 'icearrows', 'boltarrows']) if (GTYPES[b]) GTYPES[b].cls = ['archer'];
 GTYPES.shield.cls = GTYPES.shield.cls.filter(c => c !== 'coachman');                 // 짐꾼 계열은 방패 없음
