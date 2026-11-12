@@ -387,13 +387,13 @@
 - 배포(11-11 사용자 「1차 APK」): wip-63을 main에 올려 자동 빌드 — 안드로이드 run 번호가 62라 **APK · 게임 안 빌드 번호는 62**(가지 이름 wip-62 · wip-63의 본부 장면 + 빌드 63 묶음 모두). README 「빌드 62부터」 절. 시험은 안 돌림(사용자 규칙).
 - 확인 그림: `scratchpad/v63/shot63c.py`(창고 · 스킬북 · 룬 · 전용 물건 · 여러 개 고르기 · 끌어 놓기 · 도서관) · `shot_menu.py` · `shot_places.py <폴더> <하루 몫>`(본부 장소 전부). 시험은 시킬 때.
 
-## 세트 효과 없앰 · 새 방어구(경갑 · 중갑 · 판금 · 천갑) · 하의 칸 (빌드 65, 11-12 10:29~ — wip-65, 아직 APK 아님)
+## 세트 효과 없앰 · 새 방어구(경갑 · 중갑 · 판금 · 천갑) · 하의 · 신발 칸 (빌드 65, 11-12 10:29~ — wip-65, 아직 APK 아님)
 - 사용자: 「전사 경갑 디자인이야 이걸 그대로 게임에 넣어서 레어도넣고 적용할거니까 저장해둬. 이제 세트효과는 삭제야」(ChatGPT와 만든 시안 두 장: 경갑 상의 · 경갑 하의, Lv1 · 10 · … · 200 각 21개).
 - **세트 효과 없앰(넣음)**: data-gear.js SET_SLOTS · SET_MIN · SET_BONUS · setInfo · setBonusText 지움 · data-fight.js TIER_RES · setRes(세트 속성 저항) 지움 · core.js deriveBase의 세트 몫 줄 · panels.js 장비 탭 「세트 효과」 칸. 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에 그대로(tierNamed · gearBaseName). 저장은 바꿀 것 없음(세트는 계산만 했다). STORY.v65(data-warr.js) · notes65(econ.js) · flags.v65.
   - 같이 고친 것: 장비 탭 아래 안내 글이 빌드 64에서 없앤 강화 · 창고 재감정을 말하던 것 → 「합성은 대장간에서, 룬 새기기 · 희귀 이상 장비의 옵션 재감정은 마탑에서」.
 - **전사 경갑 확정 디자인**: `tools/saved/armor_light65/`(경갑_상의_Lv1-200.png · 경갑_하의_Lv1-200.png · README.md · export_armart.py). 꼴만 따르는 참고 그림이 아니라 사용자가 「그대로」 쓰라고 한 확정 디자인이라 저장소에 둔다(참고 그림 규칙의 예외 — 사용자 「저장해둬」).
 - **경갑 · 하의 칸 넣음**(사용자 10:35 「나중에 200까지 늘릴거니까 다 넣어두고 몬스터가 더 늘어나면 그때 바로 추가하면되」 · 10:50 「취소, 다시찍지말고 그대로 사용」 — 20×20으로 다시 찍지 않는다):
-  - 그림 `src/data-armart.js` `ARMART = { larmor, lpants, hvarmor, hvpants, plate, ppants, cloth, cpants: [21씩] }`(WebP data URL, 긴 쪽 96px) = `tools/saved/armor_light65/export_armart.py <출력> [미리보기.png]`로 뽑는다(손으로 고치지 말 것). 시안 판에서 카드마다 바탕(남빛 (20, 18, 25) ±22를 가장자리에서 퍼뜨림 — 검은 테는 남음) · 「LV.n」 글씨 판(카드 왼쪽 위 119×43) · Lv200 빛 바탕 · 월계관(OpenCV GrabCut)을 빼고 오린다. 디자인 차례 = 게임 단계 t(지금 16단계에 앞 16개, Lv160~200 다섯은 단계가 늘면 그대로 쓰인다 — armArtURL이 t로 고른다).
+  - 그림 `src/data-armart.js` `ARMART = { larmor, lpants, hvarmor, hvpants, plate, ppants, cloth, cpants, pboots, lboots, cboots: [21씩] }`(WebP data URL, 긴 쪽 96px) = `tools/saved/armor_light65/export_armart.py <출력> [미리보기.png]`로 뽑는다(손으로 고치지 말 것). 시안 판에서 카드마다 바탕(남빛 (20, 18, 25) ±22를 가장자리에서 퍼뜨림 — 검은 테는 남음) · 「LV.n」 글씨 판(카드 왼쪽 위 119×43) · Lv200 빛 바탕 · 월계관(OpenCV GrabCut)을 빼고 오린다. 디자인 차례 = 게임 단계 t(지금 16단계에 앞 16개, Lv160~200 다섯은 단계가 늘면 그대로 쓰인다 — armArtURL이 t로 고른다).
   - `src/data-armor65.js`(data-warr.js 다음): SLOTS에 `['legs', '하의']`(방어구 다음) · GTYPES `larmor`(경갑, slot armor, def 3.2 · hp 7 · agi 0.4 · w4 · mat [1, 3, 0]) · `lpants`(경갑 하의, slot legs, def 1.4 · hp 3 · agi 0.3 · w2 · mat [1, 2, 0]) — 둘 다 `cls ['warrior']` · `cx` 기사 · 광전사 · 마검사(그 3차까지, gearFits가 chainOf로 뺀다) · `who` 「전사 · 검투사 계열」(gearWho, 대장간 · 창고 정보 · 도감) · `desc`(사용자 시안 글, 창고 정보창에 보임) · `art`. GTYPE_IDS · CRAFT_IDS에 가죽 갑옷 다음으로 · `hasLegs(a)`(입을 하의가 있으면 하의 칸을 보인다 — 장비 탭 · 모험가 목록 eqIcons).
   - 하의 칸: makeAdv eq.legs · notes65가 옛 모험가 · 손님에게 `eq.legs = null` · tierNamed에 legs(「성좌 경갑 하의」) · FUSE_CAT legs 「하의」(합성 갈래, 안내 글은 FUSE_CAT에서) · 룬은 막는 쪽(runeSide). 칸을 도는 곳(gearSum · runeSum · autoEquip · unfitGear · 전직 · 은퇴 · 투기장 상대 · 도감)은 SLOTS를 돌아서 그대로 된다.
   - 그림 그리기: sprites.js `HR_URL` · `armArtURL(g)`(gearIconURL이 맨 먼저) → rarity.js rqClass는 이 그림을 칸에 굽지 않고(rqIconPx 건너뜀) `.rqa.hr::after`(칸 안쪽 3/26 ~ 23/26, 부드럽게 줄임 · `hN` 규칙마다 그림 하나)로 얹는다 · panels.js gImg는 `<img class="ico hr">`(image-rendering auto · object-fit contain). 진열대 10×10 작은 그림 · 원정 줍기 그림은 다른 갑옷처럼 공용 조끼 그림.
@@ -405,6 +405,14 @@
   - 하의 칸이 보이는 직업: 전사 계열 전부 · 궁수 계열 · 마법사 계열(성직자 · 도적 · 짐꾼 · 심판관은 없음). 가죽 갑옷(전사 · 궁수 · 도적 · 짐꾼 · 마검사) · 로브(마법사 · 성직자 · 음유시인)는 그대로 — 궁수는 가죽과 천갑, 마법사는 로브와 천갑을 고른다.
   - 옛 저장: `plate65(a)`(cls만 보는 `clsFits`) — 이제 판금을 못 입는 전사 계열이 입던 판금 → 기사 · 광전사 계열은 중갑, 전사 · 검투사 계열은 경갑(단계 · 레어도 · 룬 · 옵션 그대로). notes65가 모험가 · 손님 · 투기장 상대에게 늘 부른다(바뀐 모험가가 있으면 소식 한 줄). 창고의 판금은 그대로.
   - 확인 그림: `scratchpad/v65/shot65c.py [DPR]`(옛 판금 바꾸기 · 직업별 입는 것 · 숙련 글 · 대장간 차례 · 성기사 · 마검성 · 신궁 · 대마도사 장비 탭 · 창고 중갑 · 판금 · 천갑 32점 · 정보창 · 대장간) · 오리기 점검 `v65/hv/edgechk.py`(칸 가장자리에 닿는 장비) · `zoomcut.py <출력> 종류:번호 …`(오린 것 크게).
+- **신발 칸 · 신발 셋 넣음**(사용자 11-12 12:24 「가죽신발은, 궁수, 도적 계열신발, 천은 법사, 사제, 계열, 철신발을 판금신발로 바꾸고 전사, 짐꾼 계열로 설정해서 넣어」 — 판 셋: 전사 신발 세트(가죽신발) · 전사 철신발 세트(금속신발) · 천 신발 세트(천화)):
+  - 판: `tools/saved/boots65/`(판금신발 — 받은 판 이름은 철신발 · 가죽신발 · 천신발, 제목 줄(제작자 이름)은 빼고 저장 · README.md). 판마다 3줄 × 7 = 21(Lv1 ~ 200).
+  - export_armart.py `DARK['pboots' · 'lboots' · 'cboots']`(카드마다 (왼쪽 테, 오른쪽 테) 짝 — 세로 금빛 테를 재어 적음). **신발 판 Lv200**은 바탕이 금빛이 아니라 어두운 갈색 (13, 7, 1)이라 `glow == 2`: 금 · 주황 퍼뜨리기 뒤에 「밝은 칸(V ≥ 50)에서 3칸 넘게 떨어진 어두운 칸」을 더 퍼뜨려 지운다(테는 장비 바로 옆이라 남는다). 해 본 것: 밝기 문턱을 12로 내리면 테로 새서 장비가 조각나고, 「밝은 칸만 장비」는 어두운 부분이 있는 장비가 조각난다. **cut_dark의 `if glow:`는 옛 cut()에도 같은 글이 있으니 고칠 때 `def cut_dark(` 뒤에서 찾을 것**(한 번 앞의 것을 잡아 파일 가운데를 지웠다 — git checkout으로 되살림).
+  - data-armor65.js: SLOTS에 `['boots', '신발']`(하의 다음) · `pboots`(판금신발, def 1.3 · hp 3 · w2, cls warrior · porter) · `lboots`(가죽신발, def 0.9 · hp 2 · agi 0.3 · w1, archer · rogue) · `cboots`(천신발, def 0.6 · mp 2 · int 0.25 · w1, mage · cleric) — 여섯 계열을 다 덮어 **모든 직업에 신발 칸**. 설명은 판 글에서 「전사 전용」 · 「전사용」 · 「전용」만 뺌(입는 직업을 사용자가 다시 정해서). `wearsSlot(a, s)` · `slotShown(a, s)`(화살 · 하의 · 신발 칸 보이기 — panels.js eqIcons · 장비 탭) · ARMOR65 끝에 신발 셋. tierNamed · FUSE_CAT(신발 갈래) · makeAdv eq.boots · notes65(옛 모험가 · 손님 · 투기장 상대에게 빈 하의 · 신발 칸) · 도감 룬 글.
+  - 진열대 작은 그림(10×10): sprites.js ICON_PX `boot` · `pants`(하의 넷도 조끼 대신 바지 그림).
+  - 모험가 목록 장비 그림 줄(`.eqs`): 그림이 6 ~ 8개가 되어 한 줄이면 이름 칸이 눌린다 → 네 개씩 두 줄(grid).
+  - **드랍 몫이 바뀜(사용자에게 알림 · 정하기 전)**: 떨어뜨리는 종류가 24 → 34종이라, 장비 한 점이 무기일 몫이 46% → 33%(부장비 18% · 방어구 18% · 하의 12% · 신발 9% · 장신구 6%). 장비가 떨어질 확률(GEAR_DROP)은 그대로 두었다.
+  - 확인(시험 묶음 아님): `scratchpad/v65/chk65e.py`(진열대 그림 · 합성 갈래 · 드랍 몫 · 옛 저장 칸 · 자동 장착) · shot65c.py(신발 창고 48점 · 장비 탭) · shot65b.py(모험가 목록 여덟 칸).
 - 확인: node --check · 묶음 eslint(no-dupe-keys 5개뿐) · 화면 확인(장비 탭 · 창 전부, 오류 없음). 시험은 안 돌림(사용자 규칙).
 
 ## 전사 계열 장비 개편 1단계 · 방패 왼손 · 전직 레벨 · 각성 없애기 (빌드 64, 11-11 18:20 사용자 「3 작업 ㄱㄱ」 — wip-64 → main, 3차 APK 빌드 64)

@@ -252,7 +252,7 @@ PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
 PANELS.b = w => bldCard(w.b, true);
 
 /* 모험가 */
-function eqIcons(a) { return SLOTS.filter(([s]) => (s !== 'ammo' || hasAmmoSlot(a)) && (s !== 'legs' || hasLegs(a) || a.eq.legs)).map(([s, n]) => (a.eq[s] ? gArt(a.eq[s], 1) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
+function eqIcons(a) { return SLOTS.filter(([s]) => slotShown(a, s)).map(([s, n]) => (a.eq[s] ? gArt(a.eq[s], 1) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
 function advState(a, p) {
   if (a.status === 'away') return `<span class="warn">${esc(p ? p.name : '')} 원정 중</span>`;
   if (a.inj) return `<span class="red-t">${INJ[a.inj.sev].name} · ${S.bld.temple ? '신전에서' : '여관 방에서'} 치료 중</span>`;
@@ -348,7 +348,7 @@ function advDetail(a) {
     .concat(runeDerived(a, d))   // 빌드 64 룬 개편: 룬으로 붙은 새 능력치 (있을 때만)
     .map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('');
   const spdB = speedBreakdown(a);
-  const slots = SLOTS.filter(([s]) => (s !== 'ammo' || hasAmmoSlot(a)) && (s !== 'legs' || hasLegs(a) || a.eq.legs)).map(([s, n]) => {   // 빌드 65: 하의 칸은 입을 하의가 있는 직업만
+  const slots = SLOTS.filter(([s]) => slotShown(a, s)).map(([s, n]) => {   // 빌드 65: 하의 · 신발 칸은 입을 장비가 있는 직업만 (data-armor65.js slotShown)
     const g = a.eq[s], two = s === 'off' && twoHand(a.eq.weapon);   // 빌드 64: 대검(두 손)을 들면 부장비 칸은 쓸 수 없다
     const pool = two ? [] : S.gear.filter(x => GTYPES[x.base].slot === s && gearFits(a, x) && (!g || gearScore(x) >= gearScore(g))).sort((x, y) => gearScore(y) - gearScore(x)).slice(0, 4);
     return `<div class="li col"><div class="row">${g ? gArt(g, 1) : '<span class="ico empty"></span>'}<div class="grow stack"><span>${n} · ${g ? gearName(g) + ' ' + qTag(g) : `<span class="${s === 'ammo' && needsArrows(a) ? 'red-t' : 'muted'}">비어 있음${s === 'ammo' && needsArrows(a) ? ' · 화살이 없으면 기본 공격을 못 해요' : two ? ` · ${jo(GTYPES[a.eq.weapon.base].name, '을', '를')} 두 손으로 들어요` : ''}</span>`}</span>${g ? `<span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · <b class="${ammoLeft(g, a) ? '' : 'red-t'}">${ammoTag(g, a)}</b>` : ''}</span>` : ''}</div>${g && idle ? `<button type="button" class="btn sm" data-mact="uneq" data-s="${s}">빼기</button>` : ''}</div>
