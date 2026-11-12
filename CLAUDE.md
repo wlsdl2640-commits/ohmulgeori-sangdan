@@ -480,6 +480,15 @@
 - 마차 칸(사용자 11-11 00:34 「마차는 마부 계열 전용 · 그냥 짐꾼은 손수레뿐 · 짐꾼 계열 장비 칸에 마차 칸 · 캐러밴마스터는 마차 칸 둘」): core.js `wagonWhy` — 말이 끄는 마차는 마부 계열(`coachLine` · `coachLineOf`)이 있어야(손수레는 아무나) · 둘째 마차 `p.wagon2 · p.horse2 · p.wagonPlus2`는 캐러밴 마스터(`caravanOf`)가 있을 때만 — 파티처럼 보이는 그림자 객체 `rig2(p)`(r2)로 첫째와 같은 셈 · `rig2Live`(첫째가 굴러가고 · 하늘로 가면 둘째도 날아야) · `rigCap/rigSpd`(한 대) → `wagonCap` = 둘의 합 · `wagonSpd` = 느린 쪽 · `rig2Name`. world30.js `RIG_F/rigAt` · hitch/unhitch/enhanceWagon(…, sl) · horseUsed · stableHorses · 마구간 창 `stableRig(sp, sl)`(캐러밴 마스터가 있으면 둘째 마차 카드 — 말이 끄는 몸체만) · econ.js buyWagon(…, sl) · data-pet.js petHitched · hq.js 마구간 · 비행장 · ACT wagon/hitch/unhitch/wplus의 `data-s="2"`. 모험가 창 장비 탭 끝 panels.js `wagonSlotRows(a)`(짐꾼 계열: 마차 · 캐러밴 마스터는 마차 2 — 그 파티 마차의 짐 · 이동 · 끄는 말 · 못 끄는 까닭, 「마구간 ›」). 그리기: 필드 · 교역 · 방어전 뒤따름(mx(-12)) · 상단 앞 · 야영 둘째 마차.
 - 확인(시험 묶음 아님): `scratchpad/v67/` wolfchk.js(늑대 펫 전직) · ridesheet.js(모습 여덟 × 서 있기 · 달리기 · 쏘기 · 앞모습 · 자기) · shotride.py(전투 · 걷기 [DPR] [모습]) · shotfront.py(상단 앞 · 영웅 창) · camp/campshot.js(야영 셋 × 시간 — 바깥 파이썬이 장면 표를 채운다) · shotwagon.py(마차 칸 · 둘째 마차 · 마구간) · shothq.py(마구간 탈것 · 두 마차 걷기). node --check · 묶음 eslint(no-dupe-keys 5개 · 빌드가 넣는 BUILD_NO/REPO뿐) · smoke63 화면 오류 없음.
 
+## 창고 고르기 · 모험가 누르기 · 배속 · 걷는 빠르기 · 지도 시안 (빌드 66, 11-12 21:47 사용자 — wip-66, 아직 APK 아님)
+- 사용자(동영상 셋 + 지도 화면): 「아이템 눌러도 설명도 안 나오고, 사용도 안 되잖아 · 스킬북은 어케 얻으라고」 · 「지도도 너무 그림판 그림이야 새롭게 그려」 · 「여기서 모험가를 눌러도 정보가 안 나오잖아 · 원정대에서 눌러도 바로 가야지」 · 「1배속 이동속도를 더 올려줘 이동속도만」 · 「배속에 2배, 3배도 넣어줘. 10배, 20배는 빼고 설정 안에 10배속, 20배속 켬 · 끔」.
+- 창고: 동영상에서는 「여러 개 고르기」(UI.whMulti)가 켜진 채라 칸을 누르면 ✓만 바뀌고 정보창(whPop)이 안 나왔다. ui.js showWin이 창고 창(inv)이 쌓인 창에 없으면 끈다 · 켜져 있으면 단추가 금빛 「✓ 고르기 끝내기」 · 고르기 막대(whPickBar)에 안내 줄과 「마지막에 누른 칸: … · 이 칸 정보 보기」(UI.whLast · ACT whinfo). 스킬북 단계 책은 정보창의 「낱개로 펼치기」(tierBookBox · openTierBook)로 연다(그대로).
+- 모험가 누르기: panels.js memberRow(원정대 창 파티원 · 대기 중 모험가 줄)에 `data-act="advopen"`(빼기 · 넣기 단추는 그대로 먼저) · 「정보 ›」 글 · CSS `.mrow.tap`. 전투 창 그림 #bcv를 누르면 view.js가 그리는 때마다 남기는 `V.hitA`([id, x, y, 탈것 높이] — fieldScene · townScene)로 그 모험가 창(openAdv).
+- 배속: data.js `SPEEDS` [1, 2, 3, 5, 10, 20] · `SPEED_OPT` [10, 20] · `speedList()`(10 · 20은 `S.spdOn[n]`이 켜졌을 때만) — 배속 단추 · setSpeed · main loop · loadFrom 검사가 이것을 본다. 설정 창(co_set) 「배속」 줄 · ACT spdopt(끄면서 그 배속이면 5배로).
+- 걷는 빠르기: data.js `WALK_MUL` 2 → core.js moveOf(원정 · 레이드 · 방어전 · 투기장 걷기 · 원정대 창 「이동속도」 글) 두 배. 전투 · 시간 흐름은 그대로. art.js 걷는 그림 8 → 11장/초.
+- 지도 시안 `tools/saved/map66/`(README): A 양피지 고지도 · B 도트 지형 — 노드 자리 그대로, 게임에는 안 넣음(사용자가 고르면 data-mapart.js로 넣고 하늘 지도도 같은 결로).
+- 확인(시험 묶음 아님): `scratchpad/v70/` t1.py(배속 차례 · 설정 켬/끔 · 창고 고르기 끄기 · 정보창 · 원정대 줄 · 빼기 단추 · 전투 창 누르기 · 걷는 빠르기) · inv1.py(창고 칸 정보창). node --check · 묶음 eslint(no-dupe-keys 5개 · BUILD_NO/REPO뿐) · smoke63 화면 오류 없음.
+
 ## 펫 · 알 · 재배소 · 식재료 · 요리 · 항구 (빌드 65 넷째 묶음 — 11-12 18:55 시안 → 20:34 사용자 「최소 가장싼 식재료 가격을 300원으로 그애 맞게 다 올리자 … 가격 조정하고 다 넣어 그 후에 APK 작업」)
 - 규칙 · 수치 · 레시피 26 · 물어볼 것 5: Claude 문서 「펫 · 알 · 재배소 · 식재료 · 요리 개편 시안」 https://claude.ai/artifact/DVH2ZBaAATBTuhGv9Vkb9R (그림도 문서 안에). 시안 원본 `tools/saved/draft68/`(README).
 - 문서 「물어볼 것」 답(11-12 19:57, 사용자가 문서에 적음 — 다시 묻지 말 것):
