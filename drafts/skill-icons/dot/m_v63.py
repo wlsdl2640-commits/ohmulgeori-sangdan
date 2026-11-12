@@ -50,9 +50,9 @@ def g_tome(a, dy=0):   # 금서 해독: 검은 살가죽 표지 · 피의 고리
     closed_tome(a, dy, '#4a2a2a', '#2e1818', '#1a0c0c', '#c8c0a8', '#7a7262', ring=RING_BLOOD, rz='#e83a3a', rw='#ff9a8a', ribbon='#8a1a1a', rx='#e83a3a')
 MAST63 = [
   ('whip', '채찍술', 'sky', g_whip), ('wagon', '마차 몰기', 'earth', g_wagon), ('machete', '정글칼술', 'green', g_machete), ('cards', '카드술', 'royal', g_cards),
-  ('lockpick', '따개 솜씨', 'purple', g_lockpick), ('shuriken', '암기술', 'shadow', g_shuri), ('twin', '쌍수술', 'dark', g_twin), ('gladius', '글라디우스술', 'blood', g_gladius),
+  ('lockpick', '따개 솜씨', 'purple', g_lockpick), ('shuriken', '암기술', 'shadow', g_shuri), ('twin', '쌍수술', 'dark', g_twin), ('gladius', '투기장식검술', 'blood', g_gladius),
   ('great', '대검술', 'ember', g_great), ('ether', '마력 방패술', 'arcane', g_ether), ('xbow', '석궁술', 'steelb', g_xbow), ('wand', '완드술', 'wind', g_wand),
-  ('orb', '구슬술', 'thunder', g_orb), ('tome', '금서 해독', 'evil', g_tome), ('ride', '기승술', 'teal', g_ride)]
+  ('orb', '오브술', 'thunder', g_orb), ('tome', '금서 해독', 'evil', g_tome), ('ride', '기마술', 'teal', g_ride)]
 # 달인(4차, 제안): 틀 백금 · 점 셋 금빛 흰색 · 점 위 작은 별
 FRAME4 = ('#f4f8ff', '#a8b8d8', '#5a6a8a')
 def art63(k, lit):
