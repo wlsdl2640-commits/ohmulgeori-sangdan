@@ -1,7 +1,7 @@
 S.bld.kitchen = 1; S.modals = []; { const m = document.querySelector('#modal'); if (m) m.style.display = 'none'; }
 const ICO = window.__ICO68;
 openWin('b', { b: 'kitchen' }); document.querySelector('#win-title').textContent = '항구';
-const sea = [['sea_mackerel', 72, 8], ['sea_shrimp', 64, 10], ['sea_clam', 60, 6], ['sea_crab', 90, 4], ['sea_squid', 70, 6], ['sea_kelp', 60, 12]];
+const sea = [['sea_mackerel', 216, 8], ['sea_shrimp', 192, 10], ['sea_clam', 180, 6], ['sea_crab', 270, 4], ['sea_squid', 210, 6], ['sea_kelp', 180, 12]];   // 11-12 20:26 사용자 「식재료들 가격 3배」
 const cell = (k, g) => `<span class="cell rq${g}" style="width:60px;height:60px;flex:none">${rqArt(ICO[k].url, g, 2)}</span>`;
 const rows = sea.map(([k, p, n]) => `<div class="li">${cell(k, ICO[k].grade)}<div class="grow stack"><span>${ICO[k].name} <span class="muted">해산물 · 희귀</span></span><span class="sub">${ICO[k].desc}</span><span class="sub gold-t">${p}G · 남은 수 ${n}</span></div><div class="stack" style="gap:3px"><button type="button" class="btn sm gold">사기</button><button type="button" class="btn sm">×5</button></div></div>`).join('');
 const recs = [['해물 수프', '은빛 고등어 · 붉은 새우 · 가리비 · 하르겐 양파', 0], ['해상왕의 만찬', '꽃게 · 붉은 새우 · 가리비 · 은빛 고등어 · 오징어 · 향신료', 0], ['다시마 국', '다시마 2 · 가리비 · 무정란', 1], ['꽃게 찜', '꽃게 2 · 바위 마늘 · 모래 고추', 0]];

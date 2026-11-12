@@ -68,7 +68,7 @@ Object.assign(ITEMS, {
   spice:    { name: '향신료',   v: 34, w: 1, icon: 'leaf',   c: '#d8642a', food: 1, desc: '음식에 불을 지핀다. 주방에서 판다. 사라크에서 싸게 들여온다.' },
   honey:    { name: '야생 꿀',  v: 26, w: 1, icon: 'blob',   c: '#f0b43c', food: 1, desc: '달콤한 꿀. 주방에서 판다. 엘프 왕국에서 싸게 들여온다.' }
 });
-const KITCHEN_BUY = { raw_meat: 40, flour: 15, spice: 36, honey: 28 };   // 주방에서 사는 값 (날고기는 사냥이 훨씬 싸다)
+const KITCHEN_BUY = { raw_meat: 120, flour: 45, spice: 108, honey: 84 };   // 주방에서 사는 값 — 11-12 20:26 사용자 「식재료들 가격 3배로」 (예전 40 · 15 · 36 · 28, 날고기는 사냥이 훨씬 싸다)
 // 짐승 타입 몬스터는 날고기를 떨어뜨린다
 Object.keys(MONS).forEach(id => { const m = MONS[id]; if (m.plan === 'pet' || m.boss || !(m.ty || []).includes('beast')) return; m.drops = (m.drops || []).concat([['raw_meat', 0.3]]); });
 // fx: atk·matk·def·hp(%) · move(%) · crit(p) · regen(초당 HP 비율) · fat(피로가 덜 쌓임) · sleep(숙면 피로가 덜 쌓임) · exp · luck(전리품) · carry(짐) · sta(상태이상 저항) · coldRes·hotRes(날씨)
