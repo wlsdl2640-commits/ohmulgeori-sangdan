@@ -76,7 +76,6 @@ function passives(a) {
 function derive(a) { return expMods(deriveBase(a), a); }
 function deriveBase(a) {
   const C = CLASSES[a.cls], jb = jobBase(a.cls), G = gearSum(a), P = passives(a), L = a.lv, T = {};
-  const SB = setInfo(a).bonus; if (SB) for (const k in SB) if (typeof SB[k] === 'number') P[k] = (P[k] || 0) + SB[k];   // 세트 효과
   for (const [k] of STATS) T[k] = Math.max(0, a.st[k] + a.tr[k] + (G[k] || 0));
   let atk = jb === 'archer' ? T.str * 0.5 + T.agi * 0.75 : jb === 'rogue' ? T.str * 0.8 + T.agi * 0.45 : T.str * 1.1;
   atk += L * 0.4 + (G.atk || 0);

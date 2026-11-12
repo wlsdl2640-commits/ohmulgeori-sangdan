@@ -405,11 +405,10 @@ function advDetail(a) {
     ${ownRows ? `<details class="card"><summary>${CLASSES[a.cls].name} 계열 고유 스킬 · 스킬북 ${owns.length}권이 더 있어요</summary><div class="sub muted">2차 · 3차 고유 스킬도 이제 스킬북으로 배워요. 빛바랜 · 신비한 스킬북을 창고에서 펼치면 그 차수 스킬북 하나가 나와요.</div><div class="list">${ownRows}</div></details>` : ''}
     ${learnable ? `<div class="sec"><b>배울 수 있는 스킬북</b><span>${S.bld.training ? '훈련소에서 배워요' : '훈련소가 필요해요'}</span></div><div class="list">${learnable}</div>` : ''}
     <details class="card"><summary>${CLASSES[a.cls].name}이(가) 배울 수 있는 스킬 전체</summary><div class="log">${table}</div></details>${notes}`;
-  else if (tab === 'gear') { const SI = setInfo(a); body = `
+  else if (tab === 'gear') { body = `
     <div class="sec" style="margin-top:0"><b>장비</b>${idle ? '<button type="button" class="btn sm" data-mact="autoeq">가장 좋은 장비 끼우기</button>' : ''}</div>
-    <div class="card${SI.bonus ? ' hl' : ''}"><div class="sub">세트 효과: ${SI.bonus ? `<b>${GTIERS[SI.t].name} ${SI.bonus.name}</b> (방어구 · 장신구 ${SI.n}점) · ${setBonusText(SI.bonus)}` : `같은 단계 방어구와 장신구를 함께 끼면 공격·마법·방어 +5%${SI.n > 0 ? ` (지금 ${GTIERS[SI.t].name} ${SI.n}점)` : ''}`} <span class="muted">· 무기 · 부장비 · 가방은 세트에 세지 않아요</span></div></div>
     <div class="list">${slots}</div>
-    <div class="sub muted">강화는 대장간 창의 「강화」나 창고의 장비 탭에서, 희귀 이상 장비의 보너스 옵션 재감정은 창고의 장비 탭(마탑 필요)에서 해요.</div>${notes}`; }
+    <div class="sub muted">합성은 대장간에서, 룬 새기기 · 희귀 이상 장비의 옵션 재감정은 마탑에서 해요.</div>${notes}`; }
   else body = `
     ${post ? `<div class="sec" style="margin-top:0"><b>신전</b><span>치유사 배치</span></div><div class="list">${post}</div>` : ''}
     <div class="sec"><b>이력</b><span>${CLASSES[a.cls].name} Lv${a.lv}</span></div>

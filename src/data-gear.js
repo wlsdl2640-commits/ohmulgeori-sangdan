@@ -69,22 +69,8 @@ const runeStat = (rid, side) => { const R = ITEMS[rid] && ITEMS[rid].rune, F = R
 // 룬으로 쌓는 새 능력치의 상한 (장비 전체 합, d = 속성 피해 하나마다). 기존 능력치(회피 · 치명 · 저항 · 재사용)는 원래 상한을 쓴다
 const RUNE_CAP = { hit: 0.3, bblock: 0.6, ccRes: 0.6, blindHit: 0.3, blindRes: 0.9, healPow: 1, rheal: 1, lifesteal: 0.3, mpRegen: 2, mpPct: 1, d: 1 };
 const RUNE_BLIND = 4;   // 섬광 룬(무기)이 거는 눈멂 초 (우두머리는 절반)
-/* ───────── 세트 효과: 같은 단계 방어구 · 장신구 ─────────
-   빌드 64 (사용자 11-11 19:28 「숲지기, 서리 등등의 세트효과와 명은 방어구, 장신구에만」): 무기 · 부장비 · 가방 · 화살은 세지 않는다.
-   지금은 방어구 · 장신구가 한 칸씩이라 둘이 같은 단계면 세트(2점 = 예전 3점 효과). 방어구 · 장신구 개편 때 칸이 늘면 3 · 4점을 다시 쓴다 */
-const SET_SLOTS = ['armor', 'acc'], SET_MIN = 2;
-const SET_BONUS = { 2: { name: '세트', atkPct: 0.05, matkPct: 0.05, defPct: 0.05 }, 3: { name: '3점 세트', atkPct: 0.05, matkPct: 0.05, defPct: 0.05 }, 4: { name: '4점 세트', atkPct: 0.08, matkPct: 0.08, defPct: 0.08, hpPct: 0.06 } };
-// 끼고 있는 장비 가운데 가장 많은 같은 단계: { t, n, bonus }
-function setInfo(a) {
-  const cnt = {};
-  for (const sl of SET_SLOTS) { const g = a.eq && a.eq[sl]; if (g && GTYPES[g.base] && tierNamed(g.base)) cnt[g.t] = (cnt[g.t] || 0) + 1; }   // 빌드 64: 방어구 · 장신구만
-  let best = null;
-  for (const t in cnt) if (!best || cnt[t] > best.n || (cnt[t] === best.n && +t > best.t)) best = { t: +t, n: cnt[t] };
-  if (!best) return { t: -1, n: 0, bonus: null };
-  const B = best.n >= 4 ? SET_BONUS[4] : best.n >= 3 ? SET_BONUS[3] : best.n >= SET_MIN ? SET_BONUS[2] : null, R = B && typeof setRes === 'function' ? setRes(best.t, best.n) : null;   // 빌드 63: 그 단계 땅에 많은 속성 저항
-  return { t: best.t, n: best.n, bonus: R ? Object.assign({}, B, R) : B };
-}
-const setBonusText = B => B ? Object.entries(B).filter(([k]) => k !== 'name').map(([k, v]) => k.startsWith('r_') ? `${STAT_NAMES[k] || k} ${Math.round(v * 100)}%` : `${{ atkPct: '공격력', matkPct: '마법 공격력', defPct: '방어력', hpPct: '최대 HP' }[k] || k} +${Math.round(v * 100)}%`).join(' · ') : '';
+/* 세트 효과는 없앴다 (빌드 65, 사용자 11-12 10:29 「이제 세트효과는 삭제야」) — 같은 단계 방어구 · 장신구를 함께 껴도 아무 효과 없음.
+   단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에 그대로 (tierNamed · gearBaseName, data-rpg.js). */
 /* ───────── 옵션 재감정: 희귀 이상 장비의 보너스 능력치를 마탑에서 다시 뽑는다 ───────── */
 const REAPPRAISE = { fee: t => Math.round(150 * GTIERS[t].p), crest: 1 };
 const RUNE_FUSE = { n: 3, fee: [600, 2500, 10000] };     // 같은 룬 3개 → 한 단계 위 (마탑, 빌드 64: 상급 3 → 최상급)

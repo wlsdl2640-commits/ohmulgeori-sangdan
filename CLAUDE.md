@@ -65,7 +65,7 @@
 - 자동 사용: `a.skoff[id]`(pickSkill이 건너뜀), `a.skpri[id]`(pr +3). 모험가 창 스킬 탭 단추 `data-mact="skup|skoff|skpri"`. 잊으면 sl/skoff/skpri도 지운다.
 - 전투 통계: core.js `ev()`가 `bstat(e, who, k, v, sid)`로 `e.stats[who] = {dealt, taken, healed, kills, sk}`를 쌓는다. 출처는 hit 사건의 `sid`(스킬 id) 또는 `b`(basic)/`ctr`/`pet`/`k:'pet'`(companion)/`dot`; 지속 피해·상태이상 틱은 `by/sid`를 들고 다닌다(f.dot.by, f.sta[k].by, inflictFoe의 by/sid 인자). 처치는 `e.lastHit[uid]`. 그리기는 skillinfo.js `bstatRows(stats, names)`; 전투 창 `#bw-stats`(V.bstats, renderBattle이 `box.dataset.h`로 기록/통계를 바꿔 그린다), 원정대 카드는 `p.last.stats/names`(arrive가 넣는다).
 - 업적 `src/achv.js`: `ACHV`(id·cat·need·get()·rw{gold,fame,item}), `achvTick()`(arrive·onNewDay·panels 클릭 핸들러에서 부른다), `S.achv[id] = 날짜+1`, PANELS.achv, 상단 창 subBtn('achv'). 카운터 `S.stats.bosses`(kill)·`S.stats.raids`(stepRaid)·`S.stats.waves`(waveEnd).
-- 세트 효과: data-gear.js `SET_BONUS`·`setInfo(a)`·`setBonusText`; core.js derive가 `P`에 더한다. 재감정: `REAPPRAISE`, core.js `rollBonus(t, q)`(makeGear도 쓴다, ×0.8~1.3 무작위), econ.js `reappraiseWhy/reappraise`, 창고 장비 설명 ACT `reapp`.
+- 세트 효과(빌드 65에서 없앰): data-gear.js `SET_BONUS`·`setInfo(a)`·`setBonusText`; core.js derive가 `P`에 더했다. 재감정: `REAPPRAISE`, core.js `rollBonus(t, q)`(makeGear도 쓴다, ×0.8~1.3 무작위), econ.js `reappraiseWhy/reappraise`, 창고 장비 설명 ACT `reapp`.
 - 같은 이름 스킬: taunt '도발 1', provoke '도발 2', ar_cheer '관중의 응원', awk_cleric '신의 기적'. 새 스킬 이름은 `scratchpad/datamod2.js` 방식으로 겹침 확인.
 - 시험: `scratchpad/skills/sk2test.py`(논리), `scratchpad/skills/ui23.py`(화면·캡처).
 
@@ -245,7 +245,7 @@
   - 광전사: 방패 없음 · 대검(두 손). 마검사: 에테르 실드(작은 오브에 마나를 보내 막을 펼침) + 룬소드(검마다 속성 하나 → 그 속성 버프).
   - 방패 종류마다 단계별 생김새 · 문양이 다르다. 참고 그림에서 사용자가 X 친 꼴(13 · 14 · 16 · 17 · 18)은 피한다.
 - 무기: 맵(필드)마다의 세트에서 빼고, 무기마다 고유한 이름 · 고유한 디자인. 같은 종류라도 모양이 다르다.
-- 방어구만 세트로 남긴다. 그 뒤 세트 디자인을 다시 한다.
+- 방어구만 세트로 남긴다. 그 뒤 세트 디자인을 다시 한다. → **11-12 10:29 사용자 「이제 세트효과는 삭제야」 — 세트 효과는 빌드 65에서 없앴다**(방어구 · 장신구의 단계 이름은 그대로).
   - 예: 숲지기 세트의 갑옷을 경갑(기본 · 검투사) · 천(궁수) · 중갑(광전사 · 기사) · 판금(마검사) · 가죽(도적)으로 나눈다.
   - 마법사는 로브 그대로, 궁수에게는 방어구 「후드」를 더한다.
 - 망토: 지금은 다 달려 있다 → 직업마다 유지 · 삭제를 정한다(기사 = 유지, 로브가 있는 마법사 = 삭제처럼). 실제로 걸리적거릴 직업은 뺀다.
@@ -386,6 +386,14 @@
 - 원정 미리보기 창(pip): 시안 `tools/saved/pipart63/`(pipdraft.py · pip_drafts.png — 지금 1.17배 / A 캔버스 1칸 = 기기 1픽셀 / B 그림 한 칸 = 기기 3픽셀 / C 지금 크기 · 3픽셀 · 가운데)을 보였으나 **11-11 14:50 사용자 「미리보기 나오는 이벤트창은 그대로」 → 바꾸지 않는다**(시안은 보관만).
 - 배포(11-11 사용자 「1차 APK」): wip-63을 main에 올려 자동 빌드 — 안드로이드 run 번호가 62라 **APK · 게임 안 빌드 번호는 62**(가지 이름 wip-62 · wip-63의 본부 장면 + 빌드 63 묶음 모두). README 「빌드 62부터」 절. 시험은 안 돌림(사용자 규칙).
 - 확인 그림: `scratchpad/v63/shot63c.py`(창고 · 스킬북 · 룬 · 전용 물건 · 여러 개 고르기 · 끌어 놓기 · 도서관) · `shot_menu.py` · `shot_places.py <폴더> <하루 몫>`(본부 장소 전부). 시험은 시킬 때.
+
+## 세트 효과 없앰 · 전사 경갑 확정 디자인 (빌드 65, 11-12 10:29 — wip-65, 아직 APK 아님)
+- 사용자: 「전사 경갑 디자인이야 이걸 그대로 게임에 넣어서 레어도넣고 적용할거니까 저장해둬. 이제 세트효과는 삭제야」(ChatGPT와 만든 시안 두 장: 경갑 상의 · 경갑 하의, Lv1 · 10 · … · 200 각 21개).
+- **세트 효과 없앰(넣음)**: data-gear.js SET_SLOTS · SET_MIN · SET_BONUS · setInfo · setBonusText 지움 · data-fight.js TIER_RES · setRes(세트 속성 저항) 지움 · core.js deriveBase의 세트 몫 줄 · panels.js 장비 탭 「세트 효과」 칸. 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에 그대로(tierNamed · gearBaseName). 저장은 바꿀 것 없음(세트는 계산만 했다). STORY.v65(data-warr.js) · notes65(econ.js) · flags.v65.
+  - 같이 고친 것: 장비 탭 아래 안내 글이 빌드 64에서 없앤 강화 · 창고 재감정을 말하던 것 → 「합성은 대장간에서, 룬 새기기 · 희귀 이상 장비의 옵션 재감정은 마탑에서」.
+- **전사 경갑 확정 디자인(저장만 · 게임에 아직 안 넣음)**: `tools/saved/armor_light65/`(경갑_상의_Lv1-200.png · 경갑_하의_Lv1-200.png · README.md). 꼴만 따르는 참고 그림이 아니라 사용자가 「그대로」 쓰라고 한 확정 디자인이라 저장소에 둔다(참고 그림 규칙의 예외 — 사용자 「저장해둬」).
+  - 넣을 때(사용자가 시키면): 그림을 그대로 20×20 장비 그림으로 옮김 · 레어도 넣기 · **하의 칸 새로**(지금 방어구는 한 칸) · 단계가 Lv200까지 21개(지금 게임 단계 16개 · 상한 150) · 입는 직업 = 전사 · 검투사 계열(11-10 구분: 경갑 = 기본 전사 · 검투사 / 중갑 = 광전사 · 기사 / 판금 = 마검사, 3차는 2차를 따른다고 봄 — 사용자 확인 전).
+- 확인: node --check · 묶음 eslint(no-dupe-keys 5개뿐) · 화면 확인(장비 탭 · 창 전부, 오류 없음). 시험은 안 돌림(사용자 규칙).
 
 ## 전사 계열 장비 개편 1단계 · 방패 왼손 · 전직 레벨 · 각성 없애기 (빌드 64, 11-11 18:20 사용자 「3 작업 ㄱㄱ」 — wip-64 → main, 3차 APK 빌드 64)
 - 결정 출처: equip-draft 가지 `drafts/equip/DECISIONS.md`(전사 쪽 · 11-10 21:31~21:40 전직 표). 시안 16단계 그림은 사용자가 고른 것 그대로.

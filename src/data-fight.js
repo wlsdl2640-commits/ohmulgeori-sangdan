@@ -240,19 +240,7 @@ const mresJob = a => (MRES_CLS[a.cls] || 0) + (MRES_JOB[jobBase(a.cls)] || 0);
 // 장비: 로브 · 마법서 · 성표에 마법 저항 (단계 힘을 곱하고 한 점에 12%까지)
 GTYPES.robe.st.mres = 0.004; GTYPES.tome.st.mres = 0.002; GTYPES.relic.st.mres = 0.003;
 // 룬: 빌드 63의 결계 · 내화 · 내한 · 피뢰 · 정결은 빌드 64 룬 개편에서 마력 · 화염 · 냉기 · 번개 · 어둠으로 합쳤다 (data-gear.js RUNES · migrate13)
-// 세트: 같은 단계 3 · 4점이면 그 단계 땅에 많은 속성 저항 10% · 20%
-const TIER_RES = (() => {
-  const out = {};
-  for (const fid of TIER_FIELDS) {
-    const F = FIELDS[fid]; if (!F || F.tier == null || out[F.tier]) continue;
-    const ids = (F.mons || []).concat(F.dungeon ? (F.dungeon.mons || []).concat(F.dungeon.boss ? [F.dungeon.boss] : []) : []), cnt = {};
-    ids.forEach(id => (MONS[id] && MONS[id].el || []).forEach(el => { const fm = elFam(el); if (fm !== 'none') cnt[fm] = (cnt[fm] || 0) + 1; }));
-    const best = Object.entries(cnt).sort((x, y) => y[1] - x[1])[0];
-    if (best && best[1] >= 2) out[F.tier] = best[0];
-  }
-  return out;
-})();
-function setRes(t, n) { return TIER_RES[t] && n >= SET_MIN ? { ['r_' + TIER_RES[t]]: n >= 4 ? 0.2 : 0.1 } : null; }   // 빌드 64: 방어구 · 장신구 2점부터   // data-gear.js setInfo가 부른다
+// 세트 속성 저항(같은 단계 장비 → 그 땅에 많은 속성 저항)은 세트 효과와 함께 없앴다 (빌드 65)
 // 도시락: 뜨거운 수프 → 물·빙결 피해 −10%, 얼음 빙수 → 불·화염 피해 −10%
 ['hotsoup', 'shaveice'].forEach((id, i) => { const t = i ? ' 불·화염 피해 -10%.' : ' 물·빙결 피해 -10%.'; FOODS[id].desc += t; if (ITEMS['food_' + id]) ITEMS['food_' + id].desc += t; });
 const FOOD_RES = { coldRes: 'water', hotRes: 'fire' };
