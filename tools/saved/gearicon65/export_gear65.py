@@ -5,7 +5,7 @@ python3 export_gear65.py <출력 src/data-wicon65.js> [미리보기.png]   (손�
 - WICON[게임 id] = n × '팔레트(6자리 이어 붙임)|칸 400' (20×20, 칸 글자 = WICON_ALPH 차례, '.' = 빈칸) · WNAME · WDESC · WLV
 - 16단계 종류(n = 16): 단검 · 트럼프 카드 · 스태프 · 완드 · 오브 · 네크로노미콘 · 단궁 · 복합궁 · 장궁 · 대궁 · 컴파운드 보우 · 채찍 · 정글칼 /
   암기 · 락핀 · 마법 두루마리 · 공물 · 정령 · 손목 석궁 · 볼트통 · 볼트 · 화살
-- 그림 하나뿐인 종류(n = 1): 룬소드 넷(rs_*) · 속성 특별 암기 여섯(sk_*) — 단계와 상관없이 같은 그림 · 이름"""
+- 그림 하나뿐인 종류(n = 1): 시안의 룬소드 넷(rs_* — 게임에서는 광전사 계열 속성 대검, 한 단계에 하나씩) · 속성 특별 암기 여섯(sk_*)"""
 import sys, os, json, re, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.abspath(sys.argv[1]); PREV = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else None
@@ -31,7 +31,7 @@ TYPES = [('dagger', 'R_dagger.png', 0), ('card', 'R_card.png', 1), ('staff', 'M_
          ('shuriken', 'R_shuriken.png', 1), ('lockpick', 'R_lockpick.png', 0), ('tome', 'M_scroll.png', 0), ('offer', 'M_offer.png', 0), ('spirit', 'M_spirit.png', 0),
          ('wxbow', 'A_xbow16.png', 0), ('bcase', 'A_bcase16.png', 0), ('bolt', 'A_bolt16.png', 0), ('arrows', 'A_arrow16.png', 2)]
 SPECIAL = ['sk_ice', 'sk_fire', 'sk_bolt', 'sk_poison', 'sk_wind', 'sk_dark']   # 속성 특별 암기 (판 R_shuriken 구역 2 차례: 고드름 · 불씨 쿠나이 · 벼락 침 · 독침 · 바람 표창 · 그림자 쿠나이)
-RUNES = ['rs_fire', 'rs_ice', 'rs_light', 'rs_poison']                          # 룬소드 (rs4.R 차례: 지옥의 업화 · 혹한의 결정 · 광휘의 여명 · 극독의 어금니)
+RUNES = ['rs_fire', 'rs_ice', 'rs_light', 'rs_poison']                          # 시안의 룬소드 넷 (rs4.R 차례: 지옥의 업화 · 혹한의 결정 · 광휘의 여명 · 극독의 어금니) — 게임에서는 광전사 계열 속성 대검(Lv50 · 100 · 150 · 200 단계에 하나씩)
 ALPH = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,-/:;<=>?@[]^_{|}~'
 def hx(c): return c if isinstance(c, str) else tohex(tuple(c[:3]))
 def enc(img):
@@ -57,8 +57,8 @@ for gid, path, sec in TYPES:
 sp = CAP['R_shuriken.png'][2]; assert len(sp) == len(SPECIAL)
 for gid, it in zip(SPECIAL, sp): put(gid, [it], [1])
 assert len(rs4.R) == len(RUNES)
-for gid, d in zip(RUNES, rs4.R):
-    s, pal, fx = d['fn'](); put(gid, [(s.icon(pal, fx=fx).render(), '', d['name'], d['desc'])], [50])
+for (gid, lv), d in zip(zip(RUNES, (50, 100, 150, 200)), rs4.R):
+    s, pal, fx = d['fn'](); put(gid, [(s.icon(pal, fx=fx).render(), '', d['name'], d['desc'])], [lv])
 js = ['/* 도적 · 마법사 · 궁수 · 짐꾼 계열 무기 · 부장비 그림 (빌드 65) — tools/saved/gearicon65/export_gear65.py로 뽑는다. 손으로 고치지 말 것. data-wicon.js(전사 계열)에 더한다 */']
 for k in ('WICON', 'WNAME', 'WDESC', 'WLV'):
     js.append(f'Object.assign({k}, ' + json.dumps(out[k], ensure_ascii=False, separators=(',', ':')) + ');')

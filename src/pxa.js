@@ -1586,7 +1586,7 @@ const PXL = {
 };
 // 무기 모양: 직업 차림(wv)이 바꾸기도 한다
 // 빌드 65: 새 무기(장비 개편 2단계)는 그림 · 동작이 생기기 전까지 가까운 옛 무기 것을 빌린다
-const PX_WALIAS = { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club', machete: 'sword', rs_fire: 'sword', rs_ice: 'sword', rs_light: 'sword', rs_poison: 'sword' };
+const PX_WALIAS = { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club', machete: 'sword', rs_fire: 'great', rs_ice: 'great', rs_light: 'great', rs_poison: 'great' };
 function pxWeapon(cls, base) {
   base = PX_WALIAS[base] || base;
   const L = PXL[cls] || {}, w = L.wv;

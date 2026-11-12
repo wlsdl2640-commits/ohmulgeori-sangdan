@@ -6,7 +6,7 @@
      트럼프 카드 · 락핀(보물 사냥꾼 · 대도) · 완드 · 정령(정령술사 · 정령왕) · 오브(원소술사 · 연금술사) · 네크로노미콘 · 공물(네크로맨서 · 리치)
      복합궁(레인저 · 용기병) · 장궁(저격수 · 신궁) · 대궁(사냥꾼 · 괴수사냥꾼) · 컴파운드 보우 · 손목 석궁 · 볼트통 · 볼트(괴물사냥꾼 · 드래곤 슬레이어)
      채찍(마부 · 캐러밴 마스터) · 정글칼(정찰가 · 탐험가).
-   - 그림이 하나뿐인 것(단계와 상관없이 같은 그림 · 이름): 룬소드 넷(마검사 · 마검성, 늪지부터) · 속성 특별 암기 여섯(도적 계열, 대장간에서).
+   - 그림이 하나뿐인 것: 속성 대검 넷(시안의 룬소드 — 광전사 · 피의 군주의 두 손 대검, Lv50 · 100 · 150 · 200 단계에 하나씩) · 속성 특별 암기 여섯(도적 계열, 대장간에서 — 단계와 상관없이 같은 그림 · 이름).
    새 직업(괴도 · 닌자 · 카게닌자 · 코네스토가) · 직업 이름 바꾸기(소매치기 · 트래커 · 스토커 · 랑기수 · 용기수) · 새 스킬 · 쌍단검 · 무기마다 공격 동작은 직업 개편 때 —
    그때까지 손에 든 모습 · 동작은 가까운 옛 무기 그림을 빌린다(pxa.js PX_WALIAS: 채찍 = 몽둥이 · 정글칼 = 장검 · 카드 = 단검 · 완드 · 오브 · 네크로노미콘 = 지팡이 · 새 활 = 활). */
 
@@ -38,16 +38,19 @@ Object.assign(GTYPES, {
   whip:     { name: '채찍', slot: 'weapon', cls: ['coachman'], st: { atk: 4.0, agi: 0.8 }, w: 2, icon: 'club', mat: [0, 3, 1], who: '마부 · 캐러밴 마스터', desc: '마부의 채찍. 가죽 · 쇠사슬 · 가시까지.' },
   machete:  { name: '정글칼', slot: 'weapon', cls: ['scout'], st: { atk: 4.3, str: 0.4, agi: 0.6 }, w: 2, icon: 'sword', mat: [3, 1, 0], melee: 1, who: '정찰가 · 탐험가', desc: '덤불을 쳐내는 넓은 칼 — 정글칼 · 쿠크리 · 볼로. 이 칼을 들면 기본 공격이 근접 베기가 된다.' }
 });
-// 룬소드 넷 (마검사 · 마검성): 검마다 속성 하나 — 기본 공격이 맞으면 그 속성 추가 피해(공격력 × RUNE_SWORD_MUL)와 낮은 확률의 상태이상. 독은 속성 표에 없어 무속성 + 중독
-const RUNE_SWORD_MUL = 0.2;
-const RUNE_SWORDS = ['rs_fire', 'rs_ice', 'rs_light', 'rs_poison'];
-const _rs = (el, sta, txt) => ({ name: '룬소드', slot: 'weapon', cls: ['spellblade'], st: { atk: 4.6, matk: 1.6, vit: 0.4 }, w: 3, icon: 'sword', mat: [3, 0, 2], rune: { el, sta }, who: '마검사 · 마검성', desc: `룬을 새긴 마검 — ${txt}` });
+// 속성 대검 넷 (사용자 11-12 15:26 「룬소드 전부 전사 대검 계열로 옮기고. 룬소드가 아닌 대검으로 변경하고 속성부여는 일단 그대로 둬. LV은 50 100 150 200으로 설정」):
+// 시안의 룬소드 넷을 광전사 · 피의 군주의 두 손 대검으로 — 능력치는 대검과 같고, 검마다 속성 하나(기본 공격이 맞으면 그 속성 추가 피해 = 공격력 × ELEM_SWORD_MUL + 낮은 확률의 상태이상. 독은 속성 표에 없어 무속성 + 중독).
+// 검마다 한 단계에만 있다(UNIQ_ONLY): 지옥의 업화 Lv50 · 혹한의 결정 Lv100 · 광휘의 여명 Lv150 · 극독의 어금니 Lv200 — Lv150 · 200 단계는 아직 없어 단계가 생기면 나온다. id rs_*는 그대로
+const ELEM_SWORD_MUL = 0.2;
+const ELEM_SWORDS = ['rs_fire', 'rs_ice', 'rs_light', 'rs_poison'];
+const _rs = (el, sta, txt) => ({ name: '대검', slot: 'weapon', cls: ['berserker', 'bloodlord'], st: { atk: 5.6, str: 1.0, agi: -0.4 }, w: 5, icon: 'sword', mat: [4, 1, 1], two: 1, rune: { el, sta }, who: '광전사 · 피의 군주', desc: `속성이 깃든 대검(두 손) — ${txt}` });
 Object.assign(GTYPES, {
   rs_fire:   _rs('fire', { k: 'burn', p: 0.12, d: 6, m: 0.2 }, '기본 공격이 맞으면 불 속성 추가 피해 · 12%로 화상.'),
   rs_ice:    _rs('ice', { k: 'chill', p: 0.12, d: 3 }, '기본 공격이 맞으면 빙결 속성 추가 피해 · 12%로 냉기.'),
   rs_light:  _rs('light', { k: 'blind', p: 0.1, d: 4 }, '기본 공격이 맞으면 빛 속성 추가 피해 · 10%로 눈멂.'),
   rs_poison: _rs('none', { k: 'poison', p: 0.15, d: 8, m: 0.25 }, '기본 공격이 맞으면 추가 피해 · 15%로 중독.')
 });
+Object.assign(UNIQ_ONLY, { rs_fire: 50, rs_ice: 100, rs_light: 150, rs_poison: 200 });
 const wpnRune = a => { const g = a && a.eq && a.eq.weapon; return (g && GTYPES[g.base] && GTYPES[g.base].rune) || null; };
 
 // 새 부장비 · 새 칸 둘(볼트통 · 볼트 — 괴물사냥꾼 계열에게만 보인다)
@@ -76,17 +79,17 @@ const SPECIAL_THROWN = ['sk_ice', 'sk_fire', 'sk_bolt', 'sk_poison', 'sk_wind', 
 // 단계마다 고유 이름 · 그림 (data-rpg.js UNIQ_T0 — 0 = 견습부터, 6 = 늪지부터)
 Object.assign(UNIQ_T0, { dagger: 0, staff: 0, bow: 0, shuriken: 0, tome: 0, arrows: 0,
   card: 6, wand: 6, orb: 6, necro: 6, compbow: 6, longbow: 6, greatbow: 6, compound: 6, whip: 6, machete: 6, lockpick: 6, offer: 6, spirit: 6, wxbow: 6, bcase: 6, bolt: 6,
-  rs_fire: 6, rs_ice: 6, rs_light: 6, rs_poison: 6, sk_ice: 0, sk_fire: 0, sk_bolt: 0, sk_poison: 0, sk_wind: 0, sk_dark: 0 });
+  rs_fire: 6, rs_ice: 6, rs_light: 6, rs_poison: 6 /* 고유 그림 표시만 — 나오는 단계는 UNIQ_ONLY */, sk_ice: 0, sk_fire: 0, sk_bolt: 0, sk_poison: 0, sk_wind: 0, sk_dark: 0 });
 // 담는 수: 볼트 · 특별 암기는 암기와 같은 표 (특별 암기는 capMul 0.6)
 AMMO_CAP.bolt = AMMO_CAP.shuriken; for (const b of SPECIAL_THROWN) AMMO_CAP[b] = AMMO_CAP.shuriken;
 const XBOW_MUL = 0.3;   // 손목 석궁 한 발 = 공격력 × 2.5(기본 공격) × 0.3 (암기와 같다)
 
-// 떨어뜨리는 표 · 대장간 목록: 짝이 되는 옛 종류 다음에. 룬소드는 떨어뜨리는 표에 하나(rs_fire)만 넣고 나올 때 넷 가운데 고른다(dropKind) · 특별 암기는 대장간에만
+// 떨어뜨리는 표 · 대장간 목록: 짝이 되는 옛 종류 다음에. 속성 대검은 제 단계에서만 걸린다(tierOk) · 특별 암기는 대장간에만
 {
   const ins = (L, after, ...ids) => L.splice(L.indexOf(after) + 1, 0, ...ids.filter(b => !L.includes(b)));
   for (const L of [GTYPE_IDS, CRAFT_IDS]) {
     const craft = L === CRAFT_IDS;
-    ins(L, 'great', ...(craft ? RUNE_SWORDS : ['rs_fire']));
+    ins(L, 'great', ...ELEM_SWORDS);
     ins(L, 'bow', 'compbow', 'longbow', 'greatbow', 'compound');
     ins(L, 'staff', 'wand', 'orb', 'necro');
     ins(L, 'dagger', 'card');
@@ -99,9 +102,9 @@ const XBOW_MUL = 0.3;   // 손목 석궁 한 발 = 공격력 × 2.5(기본 공�
 }
 // 직업이 처음 받는 무기가 그 단계에 없을 때 드는 무기 (data-warr.js WEAPON_LOW · econ.js WEAPON_OF)
 Object.assign(WEAPON_LOW, { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club' });
-// 숙련: 궁술 = 모든 활 · 검술 = 룬소드까지 (채찍 · 정글칼 · 카드 · 완드 · 오브 · 금서 숙련은 스킬 개편 때)
+// 숙련: 궁술 = 모든 활 · 검술 = 속성 대검까지 (채찍 · 정글칼 · 카드 · 완드 · 오브 · 금서 숙련은 스킬 개편 때)
 Object.assign(MASTERY.bow, { w: ['bow', 'compbow', 'longbow', 'greatbow', 'compound'], wn: '활', desc: '단궁 · 복합궁 · 장궁 · 대궁 · 컴파운드 보우 — 활이면 무엇이든.' });
-MASTERY.sword.w = MASTERY.sword.w.concat(RUNE_SWORDS);
+MASTERY.sword.w = MASTERY.sword.w.concat(ELEM_SWORDS);
 
 /* 부장비가 쏘는 한 발 (core.js basicAct 끝에서 부른다 — 직업 특성은 안 탄다):
    암기(도적 계열 · thrown) = 부장비 칸의 암기를 하나 던진다 / 손목 석궁(xbow) = 볼트 칸의 볼트를 한 발 쏜다. 남은 적 중 가장 약한 적에게.
@@ -127,6 +130,6 @@ STORY.v65.push(
   '2차 직업 장비(늪지 Lv52 단계부터 — 몬스터 · 대장간 · 합성에서 얻는다): 보물 사냥꾼 · 대도 = 트럼프 카드 + 락핀 / 정령술사 · 정령왕 = 완드 + 정령 / 원소술사 · 연금술사 = 오브 / 네크로맨서 · 리치 = 네크로노미콘 + 공물 / 레인저 · 용기병 = 복합궁 / 저격수 · 신궁 = 장궁 / 사냥꾼 · 괴수사냥꾼 = 대궁 / 괴물사냥꾼 · 드래곤 슬레이어 = 컴파운드 보우 / 마부 · 캐러밴 마스터 = 채찍 / 정찰가 · 탐험가 = 정글칼. 예전 무기도 그대로 쓸 수 있다.',
   '괴물사냥꾼 · 드래곤 슬레이어에게는 장비 칸이 둘 더 있다 — 「볼트통」과 「볼트」. 부장비 칸에 손목 석궁을 차고 볼트를 끼우면 기본 공격마다 볼트 한 발을 더 쏜다(암기와 같다). 볼트는 화살처럼 쓴 만큼 상단에서 다시 채운다.',
   '정글칼을 든 정찰가 · 탐험가는 기본 공격이 근접 베기가 된다(화살을 쓰지 않는다 · 화살 스킬은 그대로). 궁술 숙련은 모든 활에 켜진다.',
-  '룬소드 넷(마검사 · 마검성, 늪지 단계부터): 지옥의 업화(불 · 화상) · 혹한의 결정(빙결 · 냉기) · 광휘의 여명(빛 · 눈멂) · 극독의 어금니(중독) — 기본 공격이 맞으면 그 속성 추가 피해가 붙는다. 속성 특별 암기 여섯(고드름 · 불씨 쿠나이 · 벼락 침 · 독침 · 바람 표창 · 그림자 쿠나이)은 대장간에서 만들거나 산다.',
+  '속성 대검 넷(광전사 · 피의 군주 · 두 손): 지옥의 업화(불 · 화상, Lv50 단계) · 혹한의 결정(빙결 · 냉기, Lv100 단계) · 광휘의 여명(빛 · 눈멂, Lv150) · 극독의 어금니(중독, Lv200) — 기본 공격이 맞으면 그 속성 추가 피해가 붙는다. 제 단계에서만 나오고, Lv150 · 200 단계는 아직 없다. 속성 특별 암기 여섯(고드름 · 불씨 쿠나이 · 벼락 침 · 독침 · 바람 표창 · 그림자 쿠나이)은 대장간에서 만들거나 산다.',
   '라운드 실드가 새 그림이 되었다(이름 · 능력치는 그대로). 장비 · 물건 칸의 틀이 조금 커져서 그림이 틀을 넘지 않는다.'
 );

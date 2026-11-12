@@ -812,7 +812,7 @@ function basicAct(e, a, d, team, dm, foes) {
   }
   const f = act === 'arrow' ? lowAwake(foes) : frontFoe(foes);   // 잠든 · 돌이 된 · 홀린 적은 되도록 건드리지 않는다
   const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
-  const bow = shootsArrows(a), WR = bow ? null : wpnRune(a);   // WR = 룬소드(빌드 65): 그 속성 추가 피해 · 상태이상
+  const bow = shootsArrows(a), WR = bow ? null : wpnRune(a);   // WR = 속성 대검(빌드 65): 그 속성 추가 피해 · 상태이상
   if (bow && ammoLeft(a.eq.ammo, a) <= 0) { noAmmo(e, a); return; }   // 화살이 없으면 기본 공격을 못 한다
   const swings = 1 + (rnd() < (T.double || 0) + (d.double || 0) ? 1 : 0);
   for (let i = 0; i < swings; i++) {
@@ -823,7 +823,7 @@ function basicAct(e, a, d, team, dm, foes) {
     const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1) * (act === 'melee' && isFly(f) ? FIGHT.fly : 1);   // 날아다니는 적: 근접 기본 공격 ×0.7   // 5초에 한 번, 그만큼 세게 (숙련 처형)
     const bel = bow ? arrowEl(a) || 'none' : 'none';   // 속성 화살 (빌드 39)
     const v0 = hitFoe(e, f, atk, crit, false, a, bel), tag0 = hitTag();
-    const vx = WR && f.hp > 0 ? hitFoe(e, f, atk * RUNE_SWORD_MUL, false, true, a, WR.el) : 0, v = v0 + vx;   // 룬소드: 한 번 벨 때 그 속성 피해가 덧붙는다(면역이면 0 — 본 피해는 그대로)
+    const vx = WR && f.hp > 0 ? hitFoe(e, f, atk * ELEM_SWORD_MUL, false, true, a, WR.el) : 0, v = v0 + vx;   // 속성 대검: 한 번 벨 때 그 속성 피해가 덧붙는다(면역이면 0 — 본 피해는 그대로)
     ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: T.hybrid ? 'spell' : k, b: 1 }, bel !== 'none' ? { el: bel } : {}, v0 || !vx ? tag0 : hitTag()));
     if (!v) continue;
     if (WR && WR.sta && f.hp > 0 && rnd() < WR.sta.p) inflictFoe(e, f, WR.sta, d.atk * buffMul(e, a.id, 'atk'), a.id, 'rsw');

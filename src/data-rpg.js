@@ -481,10 +481,13 @@ function gearStats(g) {
 // 1차부터 쓰는 장검 · 라운드 실드는 견습 단계부터, 2차 직업 장비는 늪지(Lv52) 단계부터만 있다 — 그 아래로는 나오지도, 만들지도 않는다
 const UNIQ_T0 = { sword: 0, shield: 0, gladius: 6, great: 6, buckler: 6, cross: 6, ether: 6 };
 const isUniq = g => !!g && UNIQ_T0[g.base] != null;
-const uniqLen = b => (typeof WICON !== 'undefined' && WICON[b] ? WICON[b].length : 16);   // 빌드 65: 그림이 하나뿐인 고유 장비(룬소드 · 속성 특별 암기)는 1
+const uniqLen = b => (typeof WICON !== 'undefined' && WICON[b] ? WICON[b].length : 16);   // 빌드 65: 그림이 하나뿐인 고유 장비(속성 대검 · 속성 특별 암기)는 1
 const uniqIdx = g => Math.max(0, Math.min(uniqLen(g.base) - 1, (g.t || 0) - (UNIQ_T0[g.base] || 0)));   // 그림 · 이름 차례 (2차 장비는 늪지 = 0번 「Lv50」)
-const tierOk = (b, t) => (UNIQ_T0[b] || 0) <= t;
-const uniqName = g => { const L = typeof WNAME !== 'undefined' && WNAME[g.base]; return !L ? '' : L.length === 1 ? `${L[0]} Lv${GTIERS[g.t || 0].lv}` : L[uniqIdx(g)]; };   // 그림이 하나뿐이면 단계 Lv를 붙인다(「지옥의 업화 Lv52」)
+// 빌드 65: 한 단계에만 있는 장비(속성 대검 넷 — UNIQ_ONLY[종류] = 레벨) = 그 레벨 이상인 첫 단계에서만 나온다. 그 레벨 단계가 아직 없으면(Lv150 · 200) 어디서도 안 나오고, 단계가 생기면 바로 나온다
+const UNIQ_ONLY = {};
+const uniqOnlyTier = b => GTIERS.findIndex(T => T.lv >= UNIQ_ONLY[b]);
+const tierOk = (b, t) => (UNIQ_ONLY[b] != null ? uniqOnlyTier(b) === t : (UNIQ_T0[b] || 0) <= t);
+const uniqName = g => { const L = typeof WNAME !== 'undefined' && WNAME[g.base]; return !L ? '' : L.length === 1 ? (UNIQ_ONLY[g.base] != null ? L[0] : `${L[0]} Lv${GTIERS[g.t || 0].lv}`) : L[uniqIdx(g)]; };   // 그림이 하나뿐이면 단계 Lv를 붙인다(「지옥의 업화 Lv52」)
 // 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에만(세트 효과는 빌드 65에서 없앰). 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
 const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc', 'ear'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이도
 const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}` : `${GTYPES[g.base].name} Lv${GTIERS[g.t].lv}`);

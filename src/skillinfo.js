@@ -114,7 +114,7 @@ function basicSpec(a) {
   const sh = a.eq && a.eq.off, SH = sh && GTYPES[sh.base];
   if (SH && SH.thrown && isAmmo(sh)) { const St = SH.sta && STATUS[SH.sta.k]; out.push(`암기: 기본 공격마다 하나를 더 던짐 (공격력 ${skMul(BASIC_MULT * SHURI_MUL)}${SH.el && SH.el !== 'none' ? ` · ${elTag(SH.el)} 속성` : ''}${St ? ` · ${Math.round(SH.sta.p * 100)}%로 ${St.name} ${SH.sta.d}초` : ''}${SH.pierce ? ' · 적 둘' : ''}) · 남은 ${ammoTag(sh, a)}`); }
   if (SH && SH.xbow) out.push(isAmmo(a.eq.bolt) ? `손목 석궁: 기본 공격마다 볼트 한 발을 더 쏨 (공격력 ${skMul(BASIC_MULT * XBOW_MUL)}) · 남은 <b class="${ammoLeft(a.eq.bolt, a) ? '' : 'red-t'}">${ammoTag(a.eq.bolt, a)}</b>` : '<span class="red-t">손목 석궁: 볼트 칸에 볼트가 없어 쏘지 못해요</span>');
-  { const WR = wpnRune(a); if (WR && !shootsArrows(a)) { const St = WR.sta && STATUS[WR.sta.k]; out.push(`룬소드: 맞으면 ${WR.el !== 'none' ? elTag(WR.el) + ' 속성 ' : ''}추가 피해 (기본 공격의 ${Math.round(RUNE_SWORD_MUL * 100)}%)${St ? ` · ${Math.round(WR.sta.p * 100)}%로 ${St.name} ${WR.sta.d}초` : ''}`); } }
+  { const WR = wpnRune(a); if (WR && !shootsArrows(a)) { const St = WR.sta && STATUS[WR.sta.k]; out.push(`속성 대검: 맞으면 ${WR.el !== 'none' ? elTag(WR.el) + ' 속성 ' : ''}추가 피해 (기본 공격의 ${Math.round(ELEM_SWORD_MUL * 100)}%)${St ? ` · ${Math.round(WR.sta.p * 100)}%로 ${St.name} ${WR.sta.d}초` : ''}`); } }
   return out;
 }
 // 공격 속도·재사용 감소가 어디서 오는지 (능력치 탭)
@@ -142,7 +142,7 @@ function bookFromText(id) {
 
 /* ───────── 전투 통계 (DPS 미터) ───────── */
 // stats = e.stats(원정 중) 또는 p.last.stats(지난 원정), names = {id: 이름} (떠난 모험가용)
-const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '암기', bolt: '손목 석궁', rsw: '룬소드', mast: '숙련', etc: '그 밖' };
+const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '암기', bolt: '손목 석궁', rsw: '속성 대검', mast: '숙련', etc: '그 밖' };
 function bstatName(who, names) {
   if (String(who).charAt(0) === 'P') { const pt = petById(+String(who).slice(1)); return pt ? `펫 ${pt.name}` : '펫'; }
   const a = advById(+who); return a ? a.name : (names && names[who]) || '?';

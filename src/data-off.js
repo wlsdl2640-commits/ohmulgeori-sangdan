@@ -25,8 +25,8 @@ const isShield = g => !!g && SHIELDS.includes(g.base);
 const OFF_IDS = ['shield', 'buckler', 'cross', 'ether', 'quiver', 'tome', 'relic', 'shuriken', 'lantern', 'arrows'];
 GTYPE_IDS.push(...OFF_IDS.filter(b => !SHIELDS.includes(b) || b === 'shield'));   // 떨어뜨리는 표에는 방패 하나만 (나올 때 종류를 고른다 → dropBase)
 // 빌드 64: 단계 t에 있는 종류만 (2차 직업 장비는 늪지 단계부터 → tierOk)
-// 빌드 65: 떨어뜨리는 표에 하나로 들어간 묶음(방패 · 룬소드)은 나올 때 종류를 고른다
-const dropKind = (b, t = 99) => { const L = b === 'shield' ? SHIELDS : b === 'rs_fire' && typeof RUNE_SWORDS !== 'undefined' ? RUNE_SWORDS : null; return L ? pickOne(L.filter(x => tierOk(x, t))) || b : b; };
+// 빌드 65: 떨어뜨리는 표에 하나로 들어간 묶음(방패)은 나올 때 종류를 고른다
+const dropKind = (b, t = 99) => (b === 'shield' ? pickOne(SHIELDS.filter(x => tierOk(x, t))) || b : b);
 const dropBase = (t = 99) => dropKind(pickOne(GTYPE_IDS.filter(x => tierOk(x, t))), t);
 // 처음 받는 방패 종류 (빌드 64): 2차 직업 방패는 그 단계에 있을 때만, 아니면 라운드 실드
 const SHIELD_OF = { gladiator: 'buckler', champion: 'buckler', knight: 'cross', paladin: 'cross', spellblade: 'ether', arcblade: 'ether' };
