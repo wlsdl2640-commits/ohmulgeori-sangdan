@@ -42,7 +42,7 @@ function loop(now) {
     dt = 0; UI.dirty = true;
   }
   // 배속: 시뮬레이션과 그림이 함께 빨라진다 (자리를 비운 동안의 보상은 그대로 실제 시간 기준)
-  const sp = SPEEDS.includes(S.speed) ? S.speed : 1, gdt = Math.min(dt, 0.5) * sp;
+  const sp = speedList().includes(S.speed) ? S.speed : 1, gdt = Math.min(dt, 0.5) * sp;
   acc += gdt; vt += gdt;
   let n = 0;
   while (acc >= 0.1 && n < 60) { step(0.1); acc -= 0.1; n++; }

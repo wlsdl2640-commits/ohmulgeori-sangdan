@@ -260,6 +260,7 @@ function townScene(w, t, p, lights, post, dark) {
   if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6);
   list = list.slice(0, 6);
   const slots = frontSlots(list.length);
+  V.hitA = list.map((a, i) => [a.id, slots[i][0], slots[i][1], 0]);   // 빌드 66: 전투 창에서 모험가를 누르면 그 모험가 창
   list.forEach((a, i) => {
     const [x, y] = slots[i], z = zq(y > 185 ? ZS : ZS * 0.92);
     shadowAt(w, x, y, 9 * z / ZS);
@@ -301,6 +302,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   if (pet) pos['aP' + pet.id] = n > 6 ? [mx(8), 199] : [mx(34), 197];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   Object.assign(V.last, pos);
+  V.hitA = team.map(a => { const q = pos['a' + a.id]; return [a.id, q[0], q[1], q.ru || 0]; });   // 빌드 66: 누르는 자리 (전투 창)
   events(e, pos, t, team, p);
 
   // 던전 입구: 1-50 끝에서 길 끝에 서 있다

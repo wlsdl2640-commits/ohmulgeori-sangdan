@@ -116,7 +116,7 @@ PANELS.inv = () => {
 // 고른 칸의 정보창: 창 아래에 붙어 바로 보이고 「닫기」로 접는다 (사용자 11-11 「장비 선택시 정보창 바로 보이게 · 닫기 버튼」)
 const whPop = (html, key) => (UI.invPop === key ? `<div class="ipop" role="dialog" aria-label="고른 칸 정보"><div class="ipop-h"><b>고른 칸</b><button type="button" class="btn sm" data-act="invpop">닫기 ✕</button></div>${html}</div>` : '');
 const whCapLine = i => { const u = whUsed(i), c = whCap(i); return `<span class="${u > c ? 'red-t' : u >= c ? 'warn' : ''}">${whName(i)} ${u}/${c}칸${u > c ? ' · 넘침 — 새 물건은 다른 창고로 가요' : ''}</span>`; };
-const whSortBtn = i => `<button type="button" class="btn sm${UI.whMulti ? ' on' : ''}" data-act="whmulti">여러 개 고르기</button><button type="button" class="btn sm" data-act="whsort" data-i="${i}">창고 정리 (레어도순)</button>`;
+const whSortBtn = i => `<button type="button" class="btn sm${UI.whMulti ? ' gold' : ''}" data-act="whmulti">${UI.whMulti ? '✓ 고르기 끝내기' : '여러 개 고르기'}</button><button type="button" class="btn sm" data-act="whsort" data-i="${i}">창고 정리 (레어도순)</button>`;
 function whTabs(tab, count, withStand) {
   return `<div class="tabs inv">${(withStand ? [['stand', '진열대']] : []).concat(INV_CATS).map(([id, n]) => `<button type="button" class="tab${tab === id ? ' on' : ''}" data-act="invtab" data-id="${id}">${n}${count[id] ? `<small>${count[id]}</small>` : ''}</button>`).join('')}</div>`;
 }
@@ -144,7 +144,8 @@ function whPickBar(from, keys) {
   const pick = (UI.whPick || []).filter(k => keys.includes(k)), open = whOpenN(), dests = [-1].concat(Array.from({ length: open }, (_, i) => i)).filter(i => i !== from);
   const to = dests.includes(UI.whTo) ? UI.whTo : dests[0];
   const chips = dests.map(i => `<button type="button" class="btn sm${i === to ? ' on' : ''}" data-act="whto" data-i="${i}">${i < 0 ? '메인' : i + 1}<small>${whFree(i)}</small></button>`).join('');
-  return `<div class="card hl whpick"><div class="row sub"><span class="grow">고른 칸 <b>${pick.length}</b> / ${keys.length} · 칸을 눌러 고르거나 빼요</span><button type="button" class="btn sm" data-act="whpickall" data-f="${from}">${pick.length === keys.length && keys.length ? '모두 빼기' : '모두 고르기'}</button></div>
+  const last = UI.whLast && keys.includes(UI.whLast) ? UI.whLast : null, lastName = last ? (last[0] === 'g' && /^g\d+$/.test(last) ? (() => { const g = S.gear.concat(...whState().map(W => W.gear)).find(x => 'g' + x.id === last); return g ? gearName(g) : ''; })() : ITEMS[last] ? ITEMS[last].name : '') : '';
+  return `<div class="card hl whpick"><div class="sub gold-t">여러 개 고르기 중 — 칸을 누르면 골라요. 물건 정보 · 쓰기(펼치기 등)는 「✓ 고르기 끝내기」를 누른 뒤 칸을 눌러요.</div>${lastName ? `<div class="sub">마지막에 누른 칸: <b>${esc(lastName)}</b> <button type="button" class="btn sm" data-act="whinfo" data-id="${last}">이 칸 정보 보기</button></div>` : ''}<div class="row sub"><span class="grow">고른 칸 <b>${pick.length}</b> / ${keys.length} · 칸을 눌러 고르거나 빼요</span><button type="button" class="btn sm" data-act="whpickall" data-f="${from}">${pick.length === keys.length && keys.length ? '모두 빼기' : '모두 고르기'}</button></div>
     ${dests.length ? `<div class="btns whto">${chips}</div><div class="btns"><button type="button" class="btn sm gold" data-act="whmvsel" data-f="${from}" data-t="${to}"${pick.length ? '' : ' disabled'}>고른 ${pick.length}칸을 ${whName(to)}로 옮기기</button></div>` : '<div class="sub muted">옮길 다른 창고가 아직 없어요.</div>'}
     <div class="sub muted">칸을 꾹 눌러(마우스는 끌어서) 왼쪽 창고 번호에 놓아도 옮겨져요.</div></div>`;
 }
@@ -352,10 +353,11 @@ function fuseBox() {
 Object.assign(ACT, {
   invsel: d => {
     if (Date.now() - (UI.dragEnd || 0) < 350) return;   // 끌어 놓은 바로 뒤의 누름은 무시
-    if (UI.whMulti) { const P = UI.whPick || (UI.whPick = []), i = P.indexOf(d.id); if (i >= 0) P.splice(i, 1); else P.push(d.id); renderPanel(true); return; }
+    if (UI.whMulti) { const P = UI.whPick || (UI.whPick = []), i = P.indexOf(d.id); if (i >= 0) P.splice(i, 1); else P.push(d.id); UI.whLast = d.id; renderPanel(true); return; }
     UI.invSel = d.id; UI.invPop = UI.invPop === d.id ? null : d.id; renderPanel(true);
   },   // 같은 칸을 다시 누르면 닫힌다
-  whmulti: () => { UI.whMulti = !UI.whMulti; UI.whPick = []; UI.invPop = null; renderPanel(true); },
+  whmulti: () => { UI.whMulti = !UI.whMulti; UI.whPick = []; UI.invPop = null; UI.whLast = null; renderPanel(true); },
+  whinfo: d => { UI.whMulti = false; UI.whPick = []; UI.invSel = d.id; UI.invPop = d.id; renderPanel(true); },   // 빌드 66: 고르는 중에 누른 칸의 정보로 바로
   whpickall: d => {
     const from = +d.f, keys = [...document.querySelectorAll('.igrid .cell[data-id]')].map(e => e.dataset.id);
     UI.whPick = (UI.whPick || []).length === keys.length ? [] : keys; renderPanel(true);

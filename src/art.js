@@ -39,7 +39,7 @@ function advPoseOf(t, o) {
   if (o.sit) return ['sit', 0];
   if (o.mot) return ['m:' + o.mot.mk, o.mot.f];   // 공격 동작 여러 장 (빌드 40, 옆모습 칼)
   if (o.atk) return ['atk', o.atkF != null ? o.atkF : 1];
-  if (o.walk) return ['walk', Math.floor(t * 8 + (o.ph || 0) * 2) % 4];
+  if (o.walk) return ['walk', Math.floor(t * 11 + (o.ph || 0) * 2) % 4];   // 빌드 66: 걷는 빠르기 두 배에 맞춰 발걸음도 조금 빠르게
   return ['idle', Math.floor(t * 1.6 + (o.ph || 0)) % 2];
 }
 // 논리 좌표 화면에 그린다. o.side 옆모습 · o.z 배율 · 탈것 직업(빌드 65 pxride65.js)은 탈것에 탄 그림 — 앉기 · 눕기 · 쓰러짐은 내려서, o.noRide면 내려서

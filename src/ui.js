@@ -214,6 +214,7 @@ window.addEventListener('popstate', e => {
 });
 function showWin(scroll) {
   const top = winTop(), el = $('win'), bt = !!top && top.id === 'battle';
+  if (UI.whMulti && !UI.stack.some(w => w.id === 'inv')) { UI.whMulti = false; UI.whPick = []; }   // 빌드 66: 창고를 닫으면 「여러 개 고르기」도 끈다 (켜 둔 채 잊으면 칸을 눌러도 정보가 안 나왔다)
   $('stage').classList.toggle('win-open', !!top);
   document.querySelectorAll('.mtile').forEach(b => b.classList.toggle('on', !!top && UI.stack[0].id === b.dataset.open));
   $('menu-btn').classList.toggle('on', !!top && !bt);
@@ -279,7 +280,7 @@ function renderSpeed() {
   b.setAttribute('aria-label', `게임 속도 ${cur}배. 누르면 바꿔요`);
 }
 function setSpeed(n) {
-  if (!S || !SPEEDS.includes(n)) return;
+  if (!S || !speedList().includes(n)) return;
   S.speed = n;
   renderSpeed(); saveGame();
 }

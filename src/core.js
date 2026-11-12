@@ -190,7 +190,7 @@ const tentOf = p => Math.max(1, ...teamOf(p).filter(a => !a.down).map(a => TR(a)
 function capOf(p) { const all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + wagonCap(p)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
 function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) + wOf(p.exp.cargo || {}) : wOf(p.sup); }
 // 파티 이동속도 = 가장 빠른(민첩한) 모험가의 속도 × 피로 × 마차
-function moveOf(p) { const all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4; return ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * wagonSpd(p) * (1 + scoutMove(p)) * (st.length < all.length ? 0.8 : 1) * (1 + petHome('move')); }
+function moveOf(p) { const all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4 * WALK_MUL; return WALK_MUL * ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * wagonSpd(p) * (1 + scoutMove(p)) * (st.length < all.length ? 0.8 : 1) * (1 + petHome('move')); }
 const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v * (v > 0 ? 1 - traitSum(a, 'fatigue') : 1))); });
 function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete bag[k]; }
 

@@ -160,6 +160,9 @@ PANELS.co_set = () => `<div class="card"><div class="sub">진행 상황은 이 �
     <div class="sec"><b>백업 슬롯</b><span>이 기기에 ${SLOT_N}개</span></div>
     <div class="sub">지금 진행 상황을 슬롯에 넣어 두고, 잘못됐을 때 되돌릴 수 있어요. 자동 저장과는 따로예요.</div>
     <div class="list">${slotRows()}</div>
+    <div class="sec"><b>배속</b><span>위 「1×」 단추로 1 · 2 · 3 · 5배</span></div>
+    <div class="btns">${SPEED_OPT.map(n => `<button type="button" class="btn sm${S.spdOn && S.spdOn[n] ? ' on' : ''}" data-act="spdopt" data-n="${n}">${n}배속 ${S.spdOn && S.spdOn[n] ? '켬' : '끔'}</button>`).join('')}</div>
+    <div class="sub muted">켜 두면 배속 단추에 ${SPEED_OPT.map(n => n + '배').join(' · ')}도 들어가요. 빠를수록 기기가 뜨거워지고 배터리를 많이 써요.</div>
     <div class="sec"><b>소리</b><span>효과음과 배경음</span></div>
     <div class="btns"><button type="button" class="btn sm${AU.sfx ? ' on' : ''}" data-act="ausfx">효과음 ${AU.sfx ? '켬' : '끔'}</button><button type="button" class="btn sm${AU.bgm ? ' on' : ''}" data-act="aubgm">배경음 ${AU.bgm ? '켬' : '끔'}</button><span class="step"><button type="button" class="btn sm" data-act="auvol" data-d="-0.1">−</button><span>음량 ${Math.round(AU.vol * 100)}%</span><button type="button" class="btn sm" data-act="auvol" data-d="0.1">+</button></span></div>
     <div class="sub muted">배경음은 상단 앞·필드·던전·보스·투기장·마계마다 달라요. 소리는 화면을 한 번 누른 뒤부터 나요.</div>
@@ -482,7 +485,7 @@ function ammoBrief(a) {
 }
 function memberRow(a, btns) {
   const d = derive(a), why = cantGo(a) ? (a.inj ? INJ[a.inj.sev].name : a.post ? '신전 근무' : (a.sleep || 0) >= SLEEP.block ? '자는 중' : '') : '';
-  return `<div class="li mrow"><img class="por" src="${portrait(a)}" alt=""><div class="grow stack"><span>${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}</span>${why ? ` <span class="red-t">${why}</span>` : ''}</span><span class="sub">HP ${pct(a.hp, d.maxHp)}% · MP ${pct(a.mp, d.maxMp)}%${(a.fat || 0) > 0 ? ` · 피로 ${Math.round(a.fat)}` : ''}${ammoBrief(a)}</span></div><div class="btns">${btns}</div></div>`;
+  return `<div class="li mrow tap" data-act="advopen" data-id="${a.id}" role="button" tabindex="0" aria-label="${esc(a.name)} 정보"><img class="por" src="${portrait(a)}" alt=""><div class="grow stack"><span>${esc(a.name)} <span class="muted">${CLASSES[a.cls].name} Lv${a.lv}</span> <span class="mrow-i" aria-hidden="true">정보 ›</span>${why ? ` <span class="red-t">${why}</span>` : ''}</span><span class="sub">HP ${pct(a.hp, d.maxHp)}% · MP ${pct(a.mp, d.maxMp)}%${(a.fat || 0) > 0 ? ` · 피로 ${Math.round(a.fat)}` : ''}${ammoBrief(a)}</span></div><div class="btns">${btns}</div></div>`;
 }
 // 어느 파티에도 없는 모험가: 파티에 넣는 단추가 파티마다 하나씩
 function freeList(forP) {
@@ -828,6 +831,7 @@ const ACT = {
   slotsave: d => { const i = +d.i; if (slotInfo(i)) confirmBox('슬롯 덮어쓰기', `슬롯 ${i}의 저장을 지금 진행 상황으로 바꿀까요?`, '저장', () => { say(slotSave(i) || `슬롯 ${i}에 저장했어요`); renderPanel(true); }, false); else say(slotSave(i) || `슬롯 ${i}에 저장했어요`); },
   slotload: d => { const i = +d.i, o = slotInfo(i); if (!o) return; confirmBox('슬롯 불러오기', `지금 진행 상황을 슬롯 ${i}(${o.sum})으로 바꿀까요? 되돌릴 수 없어요.`, '불러오기', () => { const r = slotLoad(i); if (r) say(r); renderPanel(true); renderChips(); updateHud(); }, true); },
   slotclear: d => { const i = +d.i; confirmBox('슬롯 비우기', `슬롯 ${i}을(를) 비울까요?`, '비우기', () => { slotClear(i); renderPanel(true); }, true); },
+  spdopt: d => { const n = +d.n; S.spdOn = S.spdOn || {}; S.spdOn[n] = S.spdOn[n] ? 0 : 1; if (!speedList().includes(S.speed)) S.speed = 5; renderSpeed(); saveGame(); },
   update: () => checkUpdate(true),
   reset: () => confirmBox('처음부터 다시', '저장된 진행 상황이 모두 지워져요. 되돌릴 수 없어요.', '모두 지우기', () => { closeWins(); resetGame(); showTitle(); }, true)
 };
@@ -876,6 +880,17 @@ function bindUI() {
   $('bw-back').addEventListener('click', backWin);
   $('bw-x').addEventListener('click', backWin);
   $('bw-close').addEventListener('click', backWin);
+  // 빌드 66 (사용자 「여기서 모험가를 눌러도 정보가 안 나오잖아」): 전투 창 그림에서 모험가를 누르면 그 모험가 창
+  $('bcv').addEventListener('click', e => {
+    if (!S || !V.hitA) return;
+    const r = $('bcv').getBoundingClientRect(), x = (e.clientX - r.left) / r.width * AW, y = (e.clientY - r.top) / r.height * AH;
+    let best = null, bd = 1e9;
+    for (const [id, ax, ay, ru] of V.hitA) {
+      if (x < ax - 14 || x > ax + 14 || y < ay - 38 + ru || y > ay + 6) continue;
+      const d = Math.abs(x - ax) + Math.abs(y - (ay - 15 + ru / 2)); if (d < bd) { bd = d; best = id; }
+    }
+    if (best != null && advById(best)) { sfx('open'); openAdv(best); }
+  });
   $('bw-stats').addEventListener('click', () => { V.bstats = !V.bstats; $('bw-stats').classList.toggle('on', V.bstats); $('bw-stats').textContent = V.bstats ? '기록' : '통계'; renderBattle(); });
   $('bwin').addEventListener('click', e => {
     const b = e.target.closest('[data-act]');
@@ -907,7 +922,7 @@ function bindUI() {
     if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && S && !UI.modal && !winTop() && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) { hqStep(e.key === 'ArrowRight' ? 1 : -1); renderFloors(); return; }   // PC: 화살표 키로 장소 넘기기
     if (e.key !== 'Escape') return; if (UI.modal) { if ($('m-btns').children.length === 1) closeModal(); } else if (winTop()) backWin();
   });
-  $('speed').addEventListener('click', () => { if (!S) return; const i = SPEEDS.indexOf(S.speed); setSpeed(SPEEDS[(i + 1) % SPEEDS.length]); });
+  $('speed').addEventListener('click', () => { if (!S) return; const L = speedList(), i = L.indexOf(S.speed); setSpeed(L[(i + 1) % L.length]); });
   $('t-import').addEventListener('click', () => openImport(() => { $('title-scr').hidden = true; cancelAnimationFrame(titleRaf); startGame(); }));
   $('t-form').addEventListener('submit', e => {
     e.preventDefault();

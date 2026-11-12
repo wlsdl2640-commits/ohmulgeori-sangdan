@@ -21,7 +21,10 @@ const PHASES = [
   { id: 'night', name: '밤',   more: 1.0 }
 ];
 const HOUR0 = 4;
-const SPEEDS = [1, 5, 10, 20];
+const SPEEDS = [1, 2, 3, 5, 10, 20];   // 빌드 66: 1 · 2 · 3 · 5배 + 설정에서 켜는 10 · 20배 (사용자 11-12 21:47)
+const SPEED_OPT = [10, 20];
+const speedList = () => SPEEDS.filter(n => !SPEED_OPT.includes(n) || !!(typeof S !== 'undefined' && S && S.spdOn && S.spdOn[n]));
+const WALK_MUL = 2;   // 빌드 66 (사용자 「1배속 이동속도를 더 올려줘 이동속도만」): 원정 · 레이드 · 방어전 · 투기장에서 걷는 빠르기만 두 배
 const phaseOf = t => Math.floor(((t % DAY_SEC) + DAY_SEC) % DAY_SEC / (DAY_SEC / 4));
 const phaseFrac = t => (((t % DAY_SEC) + DAY_SEC) % DAY_SEC) / (DAY_SEC / 4) % 1;
 // 게임 속 시계 (자정을 넘겨도 날짜는 새벽 4시에 바뀐다)

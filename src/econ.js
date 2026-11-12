@@ -95,7 +95,7 @@ function migrate3() {
   });
   if (!S.flags.v03) { S.flags.v03 = 1; S.modals.push({ title: 'v0.3 업데이트', body: STORY.v03 }); }
   if (!S.flags.v04) { S.flags.v04 = 1; S.modals.push({ title: 'v0.4 업데이트', body: STORY.v04 }); }
-  if (!SPEEDS.includes(S.speed)) S.speed = 1;
+  if (!speedList().includes(S.speed)) S.speed = 1;
 }
 // v0.4 → v0.5: 죽음 대신 부상, 필드 보스와 거점, 상단 랭크, 라이선스, 전직, 숙면 피로
 function migrate4() {
@@ -150,7 +150,7 @@ function migrate4() {
 function migrate5() {
   if (S.v >= 5) return;
   S.v = 5;
-  if (!SPEEDS.includes(S.speed)) S.speed = S.speed > 1 ? 5 : 1;
+  if (!speedList().includes(S.speed)) S.speed = S.speed > 1 ? 5 : 1;
   S.relics = TIER_FIELDS.filter(f => S.fields[f] && S.fields[f].cleared);
   S.king = { favor: {}, visit: null, next: today() + 2 };
   S.raid = null;

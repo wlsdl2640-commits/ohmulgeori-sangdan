@@ -694,3 +694,8 @@ details.card > .list { margin-top: 8px; }
 .hqx-sign{position:absolute;transform:translate(-50%,-50%);font-weight:bold;color:#4a2a10;white-space:nowrap;text-align:center;line-height:1.2}
 .farm-chips .pchip small{color:var(--ink-3);font-size:11px}
 .farm-chips .pchip{padding:4px 8px;font-size:12px;gap:4px}
+/* 빌드 66: 원정대 창 모험가 줄을 누르면 모험가 창 · 전투 창 그림의 모험가도 */
+.mrow.tap { cursor: pointer; }
+.mrow.tap:active { background: var(--panel-2); }
+.mrow-i { font-size: 11px; color: var(--gold); white-space: nowrap; }
+#bcv { cursor: pointer; }
