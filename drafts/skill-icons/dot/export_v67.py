@@ -1,5 +1,5 @@
 """빌드 65 시안 v67 합격분 → 게임 데이터 (11-12 19:57 사용자 「스킬시안은 용기수의 하늘의 눈 빼고 다 합격」)
-- 스킬: 지금 SKICON 307개(export_game.py · final_snap) + v67 53개(하늘의 눈 dragonscale은 빼고 옛 그림 그대로).
+- 스킬: 지금 SKICON 307개(export_game.py · final_snap) + v67 53개 + 하늘의 눈(dragonscale)은 skyeye68.py D안 「과녁 무늬 와이번 눈」(11-12 20:26).
   v67의 같은 id(짐 방패 · 매복 · 하늘 사격 …)는 새 그림으로 바뀐다. 확정 그림 final_snap_v67/{id}.png
 - 숙련: 27개 × 다섯 단계 [안 배움, 초급, 중급, 상급, 달인] — 지금 12개는 0~3 그대로 + 달인, 새 15개는 m_v63.art63.
   확정 그림 final_snap_mast/{id}_{단계}.png (지금 12개 0~3은 그 자리 그림과 같아야 한다)
@@ -10,7 +10,7 @@ import catalog, cell, mast, m_v63   # v67icons는 반짝이 그리기를 바꿔 
 from PIL import Image
 A = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_'
 OUT_S, OUT_M = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
-SKIP = {'dragonscale'}
+SKIP = {'dragonscale'}   # 하늘의 눈은 v67 시안 대신 skyeye68 D안 (11-12 20:26 사용자 「D안으로」)
 def enc(art):
     seen = {}
     for (x, y) in cell.MASK: c = art.c[y][x]; seen[c] = seen.get(c, 0) + 1
@@ -34,9 +34,11 @@ for _, keys in V.GROUPS:
         if gid in SKIP: continue
         art, im, kind = V.skill_img(gid); im.save(SNAP / f'{gid}.png')
         (rep if gid in rows else new).append(gid); rows[gid] = enc(art)
+import skyeye68
+art = skyeye68.v_d(); im = art.img('dmg'); im.save(SNAP / 'dragonscale.png'); rows['dragonscale'] = enc(art); rep.append('dragonscale(D안)')
 js = ['/* 스킬 아이콘 (뭉툭 도트): 육각 틀 안쪽 16×20칸의 색.',
       '   "팔레트(6자리 색 이어 붙임)|칸 글자 320개" — 팔레트가 64색을 넘으면 칸마다 두 글자.',
-      '   만든 곳: 시안 저장소 drafts/skill-icons/dot/export_v67.py (export_game.py 307개 + 빌드 65 시안 v67 53개) — 손으로 고치지 않는다 */',
+      '   만든 곳: 시안 저장소 drafts/skill-icons/dot/export_v67.py (export_game.py 307개 + 빌드 65 시안 v67 53개 + 하늘의 눈 skyeye68 D안) — 손으로 고치지 않는다 */',
       'const SKICON = {'] + [f'  {k}: {json.dumps(v)},' for k, v in rows.items()]
 js[-1] = js[-1].rstrip(','); js += ['};', '']
 OUT_S.write_text('\n'.join(js), encoding='utf-8')
