@@ -1,9 +1,10 @@
-/* ───────── 방어구 개편(경갑 · 중갑 · 판금 · 천갑) · 하의 · 장갑 · 신발 · 벨트 칸 (빌드 65) ─────────
+/* ───────── 방어구 개편(경갑 · 중갑 · 판금 · 천갑) · 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸 · 반지 그림 (빌드 65) ─────────
    사용자 11-12 10:29 「전사 경갑 디자인이야 이걸 그대로 게임에 넣어서 레어도넣고 적용할거니까」 · 10:35 「나중에 200까지 늘릴거니까 다 넣어두고
    몬스터가 더 늘어나면 그때 바로 추가하면되」 · 10:50 「다시찍지말고 그대로 사용」 · 11:27 「이번엔 중갑 넣어」 · 11:28 「이건 판금」
    · 12:04 「판금 다 삭제, 첫 이미지로 판금 대체, 두번째는 천갑 상, 하의야 추가해」(새 판금 판 — 주요 직업 마검사 · 천갑 판 — 주요 직업 검객 · 레인저 · 마법사)
    · 12:24 「가죽신발은, 궁수, 도적 계열신발, 천은 법사, 사제, 계열, 철신발을 판금신발로 바꾸고 전사, 짐꾼 계열로 설정해서 넣어」(신발 판 셋 — 새 신발 칸)
-   · 12:54 「이번엔 장갑이야. 천장갑은 마법사, 사제. 판금장갑은 전사, 짐꾼, 가죽은 궁수, 도적용」 · 「이건 벨트인데 전직업 공용이야」(장갑 판 셋 · 벨트 판 — 새 장갑 칸 · 벨트 칸).
+   · 12:54 「이번엔 장갑이야. 천장갑은 마법사, 사제. 판금장갑은 전사, 짐꾼, 가죽은 궁수, 도적용」 · 「이건 벨트인데 전직업 공용이야」(장갑 판 셋 · 벨트 판 — 새 장갑 칸 · 벨트 칸)
+   · 13:25 「이번엔 반지, 귀걸이야.」(반지 판 · 귀걸이 판, 둘 다 공용 장비 — 반지는 원래 있던 반지(장신구 칸)에 그림을 얹고, 귀걸이는 새 귀걸이 칸).
    - 11-10 사용자 구분: 경갑 = 기본 전사 · 검투사 / 중갑 = 광전사 · 기사 / 판금 = 마검사(3차는 2차를 따른다).
      경갑(상의, 방어구 칸) · 경갑 하의(새 하의 칸): 전사 · 검투사 · 챔피언 — 기사 · 광전사 · 마검사 계열은 뺀다(cx).
      중갑 · 중갑 하의: 기사 · 성기사 · 광전사 · 피의 군주.
@@ -12,7 +13,8 @@
    - 그림은 사용자가 준 디자인 그대로(ARMART, data-armart.js ← tools/saved/armor_light65/export_armart.py) — 칸에 도트로 굽지 않고 위에 얹는다(sprites.js armArtURL · rarity.js).
    - 디자인 Lv1 · 10 · … · 200 = 21개를 게임 단계 차례대로: 지금 단계 16개(견습 ~ 성좌)에 앞 16개, 나머지 5개는 단계가 늘면 바로 쓴다.
    - 레어도 · 룬 칸 · 합성 · 대장간 · 드랍은 다른 방어구와 같다. 가죽 갑옷 · 로브는 그대로(가죽은 전사 · 궁수 계열도, 로브는 마법사 계열도 입는다). */
-SLOTS.splice(SLOTS.findIndex(s => s[0] === 'armor') + 1, 0, ['legs', '하의'], ['gloves', '장갑'], ['boots', '신발'], ['belt', '벨트']);   // 방어구 → 하의 → 장갑 → 신발 → 벨트 → 장신구 → 가방
+SLOTS.splice(SLOTS.findIndex(s => s[0] === 'armor') + 1, 0, ['legs', '하의'], ['gloves', '장갑'], ['boots', '신발'], ['belt', '벨트']);
+SLOTS.splice(SLOTS.findIndex(s => s[0] === 'acc') + 1, 0, ['ear', '귀걸이']);   // 방어구 → 하의 → 장갑 → 신발 → 벨트 → 장신구(반지 · 부적) → 귀걸이 → 가방
 const LARMOR_CX = ['knight', 'berserker', 'spellblade'];   // 이 직업과 그 3차(성기사 · 피의 군주 · 마검성)는 못 입는다
 GTYPES.larmor = { name: '경갑', slot: 'armor', cls: ['warrior'], cx: LARMOR_CX, st: { def: 3.2, hp: 7, agi: 0.4 }, w: 4, icon: 'vest', mat: [1, 3, 0], art: 'larmor', who: '전사 · 검투사 계열',
   desc: '민첩성을 중시한 가벼운 갑옷. 전사 · 검투사 계열의 기본 방어구.' };
@@ -50,6 +52,12 @@ GTYPES.cgloves = { name: '천장갑', slot: 'gloves', cls: ['mage', 'cleric'], s
 // 벨트(새 벨트 칸): 모든 직업 공용
 GTYPES.belt = { name: '벨트', slot: 'belt', cls: ['all'], st: { def: 0.6, hp: 3 }, w: 1, icon: 'belt', mat: [1, 2, 0], art: 'belt',
   desc: '가죽, 천, 금속 등 다양한 재질로 제작된 공용 벨트. 모든 직업이 착용 가능.' };
+// 반지: 원래 있던 반지(장신구 칸 · 능력치 · 이름 그대로)에 사용자 반지 그림 · 판 글. 부적 · 투기장 챔피언의 반지는 그대로(같은 장신구 칸)
+Object.assign(GTYPES.ring, { art: 'ring', desc: '다양한 재료로 제작되는 공용 반지. 능력치 강화, 속성 부여, 특수 효과를 지닌다.' });
+// 귀걸이(새 귀걸이 칸): 모든 직업 공용 — 네 능력치를 고르게(반지 = 힘 · 민첩 · 치명 / 부적 = 지능 · 체력 · 회피와 겹치지 않게)
+GTYPES.earring = { name: '귀걸이', slot: 'ear', cls: ['all'], st: { str: 0.35, vit: 0.35, agi: 0.35, int: 0.35 }, w: 1, icon: 'earring', mat: [1, 0, 2], art: 'earring',
+  desc: '다양한 재료로 제작되는 공용 귀걸이. 능력치 강화, 속성 부여, 특수 효과를 지닌다.' };
+for (const L of [GTYPE_IDS, CRAFT_IDS]) L.splice(L.indexOf('amulet') + 1, 0, 'earring');   // 대장간 · 떨어뜨리는 표: 부적 다음
 // 대장간 · 떨어뜨리는 표: 판금 갑옷 자리에 새 방어구를 차례로 (경갑 · 중갑 · 판금 · 가죽 · 천갑, 상의 다음 하의 · 장갑 셋 · 신발 셋 · 벨트)
 const ARMOR65 = ['larmor', 'lpants', 'hvarmor', 'hvpants', 'plate', 'ppants', 'leather', 'cloth', 'cpants', 'pgloves', 'lgloves', 'cgloves', 'pboots', 'lboots', 'cboots', 'belt'];
 for (const L of [GTYPE_IDS, CRAFT_IDS]) { const at = L.indexOf('plate'); for (const b of ARMOR65) { const i = L.indexOf(b); if (i >= 0) L.splice(i, 1); } L.splice(Math.min(at, L.length), 0, ...ARMOR65); }
@@ -62,8 +70,8 @@ function plate65(a) {
   const to = ['hvarmor', 'larmor'].find(b => clsFits(a, b)); if (!to) return 0;
   g.base = to; return 1;
 }
-// 하의 · 장갑 · 신발 · 벨트 칸을 쓰는 모험가 (그 칸에 입을 수 있는 장비가 있을 때만 창에 칸이 보인다 — 장갑 · 신발 · 벨트는 모든 직업)
+// 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸을 쓰는 모험가 (그 칸에 입을 수 있는 장비가 있을 때만 창에 칸이 보인다 — 장갑 · 신발 · 벨트 · 귀걸이는 모든 직업)
 const wearsSlot = (a, s) => !!a && GTYPE_IDS.some(b => GTYPES[b].slot === s && gearFits(a, { base: b, t: 0 }));
 const hasLegs = a => wearsSlot(a, 'legs');
-const SLOTS65 = ['legs', 'gloves', 'boots', 'belt'];   // 빌드 65에 생긴 칸
+const SLOTS65 = ['legs', 'gloves', 'boots', 'belt', 'ear'];   // 빌드 65에 생긴 칸
 const slotShown = (a, s) => (s === 'ammo' ? hasAmmoSlot(a) : !SLOTS65.includes(s) || wearsSlot(a, s) || !!(a.eq && a.eq[s]));

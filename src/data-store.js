@@ -2,7 +2,7 @@
    · 창고: 메인 창고에 칸 제한(WH_MAIN_CAP) + 창고 1~10(기본 1개, 나머지는 상단 랭크로 열림 WH_OPEN). 물건 한 종류 = 한 칸, 장비 한 점 = 한 칸.
      창고 1~10은 보관용 — 팔거나 재료로 쓰려면 메인 창고로 옮긴다.
    · 등급(레어도): 장비는 품질(q), 물건은 제작에 어디 들어가는지로 itemGrade(k) 0~GRADE_MAX (일반 · 고급 · 희귀 · 영웅 · 전설 · 신화 · 신성 · 우주 · 창조)
-   · 합성: 같은 레어도 · 같은 갈래(무기 · 부장비 · 방어구 · 하의 · 장갑 · 신발 · 벨트(빌드 65) · 장신구) 장비 9개 → 다음 레어도 무작위 장비 하나, 아주 가끔 두 단계
+   · 합성: 같은 레어도 · 같은 갈래(무기 · 부장비 · 방어구 · 하의 · 장갑 · 신발 · 벨트 · 장신구 · 귀걸이 — 하의부터는 빌드 65) 장비 9개 → 다음 레어도 무작위 장비 하나, 아주 가끔 두 단계
    · 스킬북: 찢어진(공용) · 낡은(1차) · 빛바랜(2차) · 신비한(3차) · 고대의(4차) · 신화 속(5차) 스킬북을 펼치면 그 차수 스킬북 하나가 뽑힌다 */
 
 /* ── 창고 ── */
@@ -61,7 +61,7 @@ function itemGrade(k) {
 
 /* ── 대장간 합성 ── */
 const FUSE = { n: 9, jump: 0.01, fee: [300, 1200, 5000, 20000, 80000, 300000, 1200000, 5000000] };   // 넣는 수 · 두 단계 오를 확률 · 레어도별 비용
-const FUSE_CAT = { weapon: '무기', off: '부장비', armor: '방어구', legs: '하의', gloves: '장갑', boots: '신발', belt: '벨트', acc: '장신구' };   // 빌드 65: 하의 · 장갑 · 신발 · 벨트
+const FUSE_CAT = { weapon: '무기', off: '부장비', armor: '방어구', legs: '하의', gloves: '장갑', boots: '신발', belt: '벨트', acc: '장신구', ear: '귀걸이' };   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이
 const fuseCatOf = g => { const sl = GTYPES[g.base] && GTYPES[g.base].slot; return FUSE_CAT[sl] ? sl : null; };   // 화살 · 가방은 합성하지 않는다
 const fuseBases = cat => GTYPE_IDS.filter(b => GTYPES[b].slot === cat && !GTYPES[b].ammo);   // 떨어뜨리는 표와 같은 종류 (방패는 dropBase처럼 고른다 · 표창 · 투기장 장비는 빼고)
 const fuseTier = gs => Math.round(gs.reduce((x, g) => x + g.t, 0) / Math.max(1, gs.length));   // 나오는 장비의 단계(Lv 구간) = 넣은 장비 단계의 평균

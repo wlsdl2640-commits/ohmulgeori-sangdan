@@ -485,7 +485,7 @@ const uniqIdx = g => Math.max(0, Math.min(15, (g.t || 0) - (UNIQ_T0[g.base] || 0
 const tierOk = (b, t) => (UNIQ_T0[b] || 0) <= t;
 const uniqName = g => (typeof WNAME !== 'undefined' && WNAME[g.base] ? WNAME[g.base][uniqIdx(g)] : '');
 // 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에만(세트 효과는 빌드 65에서 없앰). 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
-const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트도
+const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc', 'ear'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이도
 const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}` : `${GTYPES[g.base].name} Lv${GTIERS[g.t].lv}`);
 const gearName = g => gearBaseName(g);
 const gearNameOf = (base, t) => gearBaseName({ base, t: +t });

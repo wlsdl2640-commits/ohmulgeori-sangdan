@@ -7,6 +7,7 @@
 - 천갑 상의 · 하의(../armor_cloth65, 판금과 같은 꼴의 판, 11-12 12:07) → cloth · cpants
 - 신발 셋(../boots65, 판마다 3줄 × 7, 11-12 12:24) → pboots(판금신발 — 받은 판 이름은 철신발) · lboots(가죽신발) · cboots(천신발)
 - 장갑 셋(../gloves65) · 벨트(../belt65) — 경갑 판과 같은 꼴(5 × 4 + Lv200), 11-12 12:54 → pgloves · lgloves · cgloves · belt
+- 반지 · 귀걸이(../acc65, 검은 바탕 카드 · 줄마다 카드 수가 다름), 11-12 13:25 → ring · earring
 python3 export_armart.py <출력 data-armart.js> [미리보기.png]"""
 import base64, io, os, sys
 from collections import deque
@@ -159,15 +160,15 @@ def close_edges(sub, item, n=2):
     return sub
 
 
-def flood_grad(sub, seed, tol=10, vmin=0):
-    """바탕에서 이웃 칸끼리 색이 고르게 이어지는 곳(옆 카드의 빛 번짐)을 따라 더 퍼뜨린다 — 검은 테(합 24 아래) · 밝은 칸(120 넘음)에서 멈춘다"""
+def flood_grad(sub, seed, tol=10, vmin=0, tmin=25, vmax=120):
+    """바탕에서 이웃 칸끼리 색이 고르게 이어지는 곳(빛 번짐)을 따라 더 퍼뜨린다 — 검은 테(빛깔 합 tmin 아래) · 밝은 칸(vmax 넘음) · 색이 tol 넘게 뛰는 곳에서 멈춘다"""
     H, W, _ = sub.shape; seen = seed.copy(); tot = sub.sum(axis=2); mx = sub.max(axis=2)
     q = deque(zip(*np.nonzero(seed)))
     while q:
         y, x = q.popleft()
         for dy, dx in N4:
             ny, nx = y + dy, x + dx
-            if 0 <= ny < H and 0 <= nx < W and not seen[ny, nx] and tot[ny, nx] >= 25 and vmin <= mx[ny, nx] <= 120 and np.abs(sub[ny, nx] - sub[y, x]).sum() <= tol:
+            if 0 <= ny < H and 0 <= nx < W and not seen[ny, nx] and tot[ny, nx] >= tmin and vmin <= mx[ny, nx] <= vmax and np.abs(sub[ny, nx] - sub[y, x]).sum() <= tol:
                 seen[ny, nx] = True; q.append((ny, nx))
     return seen
 
@@ -273,6 +274,71 @@ def cards_grid(key):
     return [cut_grid(im, box, GRID_LAB[i], i == 20) for i, box in enumerate(cards)]
 
 
+# 반지 · 귀걸이 판(사용자 11-12 13:25, ../acc65 — 맨 위 제목 줄(제작자 이름)은 빼고 저장해서 y는 받은 판보다 88 작다).
+# 카드 크기가 줄마다 달라 카드 상자 (x0, y0, x1, y1)와 글씨 판 크기 (너비, 높이 — 카드 왼쪽 위에서)를 하나씩 적었다(재는 길: scratchpad/v65/acc/boxes.py).
+# 바탕이 거의 검정((8, 6, 10) · 귀걸이 판은 (1, 0, 3))이라 그림의 검은 테와 색으로 못 가른다 → cut_solid
+ACDIR = os.path.join(HERE, '..', 'acc65')
+def _row(y0, y1, xs): return [(a, y0, b, y1) for a, b in xs]
+SOLID = {
+    # 반지: 6 · 6 · 6 · 2 + Lv200 큰 카드. 받은 판의 글씨는 다섯째가 「LV.30」(두 번째) · 여섯째가 「LV.40」이고 「LV.50」이 없다 — 21장을 차례대로 Lv1 · 10 · … · 200으로 쓴다
+    'ring': (ACDIR, '반지_Lv1-200.png',
+             _row(12, 174, [(385, 567), (576, 758), (767, 950), (958, 1141), (1149, 1332), (1341, 1528)]) +
+             _row(187, 347, [(386, 568), (577, 758), (768, 950), (959, 1142), (1150, 1333), (1342, 1529)]) +
+             _row(359, 522, [(387, 570), (578, 760), (768, 951), (959, 1142), (1151, 1334), (1343, 1530)]) +
+             [(388, 539, 592, 706), (601, 539, 810, 706), (825, 539, 1527, 751)],
+             [(81, 37), (89, 37), (90, 37), (90, 37), (90, 37), (90, 37), (92, 36), (91, 37), (91, 36), (90, 36), (103, 37), (102, 37),
+              (103, 35), (102, 35), (103, 35), (103, 36), (104, 36), (101, 35), (104, 34), (105, 34), (148, 50)]),
+    # 귀걸이: 7 · 7 · 6 + Lv200 큰 카드(왼쪽에 한 쌍, 오른쪽 x 833부터는 특징 글 칸이라 뺀다)
+    'earring': (ACDIR, '귀걸이_Lv1-200.png',
+                _row(12, 191, [(394, 549), (560, 715), (725, 878), (889, 1043), (1054, 1206), (1217, 1371), (1381, 1531)]) +
+                _row(209, 387, [(394, 549), (560, 715), (725, 878), (889, 1043), (1054, 1206), (1217, 1371), (1381, 1531)]) +
+                _row(405, 589, [(394, 562), (574, 733), (745, 908), (919, 1090), (1101, 1285), (1297, 1529)]) +
+                [(396, 612, 833, 892)],
+                [(84, 38), (90, 38), (90, 38), (89, 38), (90, 38), (90, 38), (88, 38), (92, 36), (92, 36), (91, 36), (99, 36), (98, 36), (101, 36), (98, 36),
+                 (107, 36), (101, 36), (104, 36), (104, 36), (107, 36), (110, 36), (155, 52)]),
+}
+
+
+def lab_mask(H, W, lw, lh, R=16):
+    """글씨 판 자리(카드 왼쪽 위 네모, 오른쪽 아래 모서리만 둥글다)"""
+    yy, xx = np.mgrid[0:H, 0:W]
+    return (xx <= lw) & (yy <= lh) & ~((xx > lw - R) & (yy > lh - R) & ((xx - (lw - R)) ** 2 + (yy - (lh - R)) ** 2 > R * R))
+
+
+def cut_solid(im, card, labwh, glow=False, T=24, rim=2):
+    """검은 바탕 카드: ① 가장자리의 어두운 칸에서 시작해 색이 고르게 이어지는 빛 번짐(귀걸이 둘레 갈색 빛 · Lv200 금빛)을 지운다
+    ② 남은 것 가운데 어둡지 않은 칸(가장 밝은 빛깔 값 ≥ T)을 장비로 잡는다 → 글씨 판 빼기 → 큰 덩어리들(가장 큰 것의 6% 넘음, 8방향)만
+    ③ 안쪽 어두운 칸(선 · 그늘 · 반지 안쪽)은 채움 → 바깥으로 rim칸 넓혀 검은 테(원래 그림의 테 · 검은 바탕 자리)를 두른다.
+    glow(Lv200): 빛 번짐을 밝기 끝까지 따라가고, 가는 반짝이를 떼고, 금빛뿐인 덩어리(월계관 · 반짝이)는 버린다"""
+    x0, y0, x1, y1 = card; P = 6
+    sub = im[y0 + P:y1 - P, x0 + P:x1 - P].astype(int); H, W, _ = sub.shape
+    labm = lab_mask(H, W, labwh[0] + 4 - P, labwh[1] + 4 - P)
+    mx = sub.max(axis=2)
+    bg = flood((mx < 12) | labm, H, W)
+    bg = flood_grad(sub, bg, 10, 0, 0, 255 if glow else 100)
+    solid = ~bg & (mx >= T) & ~labm
+    if glow: solid = cv2.morphologyEx(solid.astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)).astype(bool)
+    n, lab, st, _ = cv2.connectedComponentsWithStats(solid.astype(np.uint8), 8)
+    area = st[:, cv2.CC_STAT_AREA].astype(float); area[0] = 0
+    if glow:   # 금빛뿐인 덩어리 = 월계관 · 반짝이
+        hsv = cv2.cvtColor(sub.astype(np.uint8), cv2.COLOR_RGB2HSV).astype(int)
+        warm = (hsv[..., 0] >= 8) & (hsv[..., 0] <= 32) & (hsv[..., 1] >= 110) & (hsv[..., 2] >= 90)
+        wf = np.bincount(lab[warm].reshape(-1), minlength=n) / np.maximum(1, st[:, cv2.CC_STAT_AREA])
+        area[wf >= 0.75] = 0
+    keep = [k for k in range(1, n) if area[k] > 0 and area[k] >= 0.06 * area.max()]
+    item = np.isin(lab, keep)
+    item = ~flood(~item, H, W)
+    full = cv2.dilate(item.astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * rim + 1, 2 * rim + 1))).astype(bool) & ~labm
+    sub = sub.copy(); sub[full & ~item] = (2, 1, 2)
+    return rgba(sub, full)
+
+
+def cards_solid(key):
+    d, fn, cards, labs = SOLID[key]
+    im = np.asarray(Image.open(os.path.join(d, fn)).convert('RGB'))
+    return [cut_solid(im, box, labs[i], i == 20) for i, box in enumerate(cards)]
+
+
 def cards_light(key):
     fn, CX, ROWS, HW = LIGHT[key]
     im = np.asarray(Image.open(os.path.join(HVDIR, fn)).convert('RGB'))
@@ -310,7 +376,7 @@ def main(out_js, prev=None):
             thumbs.append(sm)
         data[key] = urls
     for key, cutter in [('hvarmor', cards_light), ('hvpants', cards_light), ('plate', cards_dark), ('ppants', cards_dark), ('cloth', cards_dark), ('cpants', cards_dark), ('pboots', cards_dark), ('lboots', cards_dark), ('cboots', cards_dark),
-                        ('pgloves', cards_grid), ('lgloves', cards_grid), ('cgloves', cards_grid), ('belt', cards_grid)]:
+                        ('pgloves', cards_grid), ('lgloves', cards_grid), ('cgloves', cards_grid), ('belt', cards_grid), ('ring', cards_solid), ('earring', cards_solid)]:
         urls = []
         for img in cutter(key):
             sm = shrink(img)
@@ -318,7 +384,7 @@ def main(out_js, prev=None):
             urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
             thumbs.append(sm)
         data[key] = urls
-    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 · 천갑 상의 · 하의 · 신발 셋 · 장갑 셋 · 벨트). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
+    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 · 천갑 상의 · 하의 · 신발 셋 · 장갑 셋 · 벨트 · 반지 · 귀걸이). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
              '   ARMART[종류][단계] = WebP data URL (디자인 Lv1 · 10 · … · 200 = 21개, 게임 단계 t와 같은 차례) */',
              'const ARMART = {']
     for key, urls in data.items():
