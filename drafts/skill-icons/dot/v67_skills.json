@@ -1,0 +1,326 @@
+{
+"cargoshield": {
+"n": "여행 채비",
+"k": "none",
+"c": "마부",
+"has": true
+},
+"medkit": {
+"n": "약상자",
+"k": "heal",
+"c": "짐꾼",
+"has": false
+},
+"shieldbag": {
+"n": "보급품 나눠 주기",
+"k": "heal",
+"c": "짐꾼",
+"has": true
+},
+"pioneerwhip": {
+"n": "개척자의 채찍",
+"k": "dmg",
+"c": "코네스토가",
+"has": false
+},
+"wagonfort": {
+"n": "포장마차 진지",
+"k": "buff",
+"c": "코네스토가",
+"has": false
+},
+"rations": {
+"n": "비상식량",
+"k": "regen",
+"c": "코네스토가",
+"has": false
+},
+"lassowhip": {
+"n": "올가미 채찍",
+"k": "dmg",
+"c": "코네스토가",
+"has": false
+},
+"pioneerwit": {
+"n": "개척민의 지혜",
+"k": "none",
+"c": "코네스토가",
+"has": false
+},
+"westward": {
+"n": "서부로!",
+"k": "dmg",
+"c": "코네스토가",
+"has": false
+},
+"wagonlash": {
+"n": "행렬 채찍",
+"k": "dmg",
+"c": "캐러밴 마스터",
+"has": false
+},
+"caravanflag": {
+"n": "대상단의 깃발",
+"k": "buff",
+"c": "캐러밴 마스터",
+"has": false
+},
+"ambush": {
+"n": "기습 베기",
+"k": "dmg",
+"c": "정찰가",
+"has": true
+},
+"volley": {
+"n": "덤불 쓸기",
+"k": "dmg",
+"c": "정찰가",
+"has": true
+},
+"farsight": {
+"n": "급소 가르기",
+"k": "dmg",
+"c": "탐험가",
+"has": true
+},
+"junglecamo": {
+"n": "밀림 위장",
+"k": "buff",
+"c": "탐험가",
+"has": false
+},
+"vinetrap": {
+"n": "덩굴 덫",
+"k": "dmg",
+"c": "탐험가",
+"has": false
+},
+"summit": {
+"n": "절벽 낙하",
+"k": "dmg",
+"c": "탐험가",
+"has": true
+},
+"cardfan": {
+"n": "카드 부채",
+"k": "dmg",
+"c": "소매치기",
+"has": false
+},
+"bottomdeal": {
+"n": "밑장 빼기",
+"k": "buff",
+"c": "소매치기",
+"has": false
+},
+"calling": {
+"n": "예고장",
+"k": "dmg",
+"c": "괴도",
+"has": false
+},
+"disguise": {
+"n": "변장",
+"k": "buff",
+"c": "괴도",
+"has": false
+},
+"cardtrick": {
+"n": "카드 마술",
+"k": "dmg",
+"c": "괴도",
+"has": false
+},
+"magicshow": {
+"n": "세기의 마술쇼",
+"k": "dmg",
+"c": "괴도",
+"has": false
+},
+"safecrack": {
+"n": "금고털이",
+"k": "none",
+"c": "대도",
+"has": false
+},
+"thieveshonor": {
+"n": "도둑의 의리",
+"k": "buff",
+"c": "대도",
+"has": false
+},
+"nightking": {
+"n": "밤의 왕",
+"k": "dmg",
+"c": "대도",
+"has": false
+},
+"shuriburst": {
+"n": "표창 연발",
+"k": "dmg",
+"c": "닌자",
+"has": false
+},
+"ambushkill": {
+"n": "암습",
+"k": "dmg",
+"c": "닌자",
+"has": false
+},
+"logswap": {
+"n": "통나무 바꾸기",
+"k": "none",
+"c": "닌자",
+"has": false
+},
+"spinshuri": {
+"n": "회전 표창",
+"k": "dmg",
+"c": "닌자",
+"has": false
+},
+"deflect": {
+"n": "튕겨내기",
+"k": "buff",
+"c": "닌자",
+"has": false
+},
+"shurimastery": {
+"n": "표창술",
+"k": "none",
+"c": "닌자",
+"has": false
+},
+"shadowshuri": {
+"n": "그림자 표창",
+"k": "dmg",
+"c": "카게닌자",
+"has": false
+},
+"shadowcut": {
+"n": "그림자 가르기",
+"k": "dmg",
+"c": "카게닌자",
+"has": false
+},
+"shadowhide": {
+"n": "그림자 숨기",
+"k": "buff",
+"c": "카게닌자",
+"has": false
+},
+"phantomshuri": {
+"n": "환영 표창",
+"k": "dmg",
+"c": "카게닌자",
+"has": false
+},
+"spacecut": {
+"n": "공간 가르기",
+"k": "dmg",
+"c": "카게닌자",
+"has": false
+},
+"thousandshuri": {
+"n": "천 개의 그림자 표창",
+"k": "dmg",
+"c": "카게닌자",
+"has": false
+},
+"wristshot": {
+"n": "손목 석궁",
+"k": "dmg",
+"c": "트래커",
+"has": false
+},
+"dragonpierce": {
+"n": "급소 관통",
+"k": "dmg",
+"c": "스토커",
+"has": true
+},
+"holdbreath": {
+"n": "숨죽이기",
+"k": "buff",
+"c": "스토커",
+"has": false
+},
+"wyrmbane": {
+"n": "사냥감의 눈",
+"k": "none",
+"c": "스토커",
+"has": true
+},
+"slayrain": {
+"n": "볼트 소나기",
+"k": "dmg",
+"c": "스토커",
+"has": true
+},
+"chaintrap": {
+"n": "사슬 덫",
+"k": "dmg",
+"c": "스토커",
+"has": false
+},
+"firstarrow": {
+"n": "첫 화살",
+"k": "none",
+"c": "저격수",
+"has": false
+},
+"beastshot": {
+"n": "질주 사격",
+"k": "dmg",
+"c": "랑기수",
+"has": true
+},
+"trap": {
+"n": "늑대 돌진",
+"k": "dmg",
+"c": "랑기수",
+"has": true
+},
+"camouflage": {
+"n": "울부짖음",
+"k": "buff",
+"c": "랑기수",
+"has": true
+},
+"arrowstorm": {
+"n": "달빛 사냥",
+"k": "dmg",
+"c": "랑기수",
+"has": true
+},
+"jump": {
+"n": "하늘 사격",
+"k": "dmg",
+"c": "용기수",
+"has": true
+},
+"gale": {
+"n": "돌풍 화살",
+"k": "dmg",
+"c": "용기수",
+"has": true
+},
+"dragonscale": {
+"n": "하늘의 눈",
+"k": "dmg",
+"c": "용기수",
+"has": true
+},
+"dragonblood": {
+"n": "하늘의 주인",
+"k": "none",
+"c": "용기수",
+"has": true
+},
+"dragonfall": {
+"n": "불타는 하늘",
+"k": "dmg",
+"c": "용기수",
+"has": true
+}
+}
