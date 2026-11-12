@@ -295,7 +295,7 @@ details.card .list { margin-top: 8px; }
 .ico.q-b { outline: 1px solid currentColor; outline-offset: 1px; background: #0e1118; }
 .ico.q-b.q0 { color: #46526a; }
 .ico.empty { display: inline-block; border: 1px dashed var(--line-2); background: #0e1118; }
-.eqs { flex: none; display: grid; grid-template-columns: repeat(4, auto); gap: 4px 5px; align-items: center; justify-items: center; align-content: center; }   /* 빌드 65: 하의 · 신발 칸이 생겨 장비 그림이 6~8개 → 네 개씩 두 줄 (한 줄이면 이름 칸이 눌린다) */
+.eqs { flex: none; display: grid; grid-template-columns: repeat(5, auto); gap: 4px; align-items: center; justify-items: center; align-content: center; }   /* 빌드 65: 하의 · 장갑 · 신발 · 벨트 칸이 생겨 장비 그림이 8~10개 → 다섯 개씩 두 줄 (한 줄이면 이름 칸이 눌린다) */
 .advc { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; }
 .advc:active { border-color: var(--gold-d); }
 .li.col { flex-direction: column; align-items: stretch; gap: 6px; }

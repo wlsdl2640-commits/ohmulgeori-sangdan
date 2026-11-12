@@ -1441,10 +1441,10 @@ function migrate13() {
 }
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);
-  [...(S.advs || []), ...(S.cands || []), ...opps].forEach(a => { if (a && a.eq) for (const sl of ['legs', 'boots']) if (a.eq[sl] === undefined) a.eq[sl] = null; });   // 옛 모험가 · 손님 · 투기장 상대에게 빈 하의 · 신발 칸
+  [...(S.advs || []), ...(S.cands || []), ...opps].forEach(a => { if (a && a.eq) for (const sl of SLOTS65) if (a.eq[sl] === undefined) a.eq[sl] = null; });   // 옛 모험가 · 손님 · 투기장 상대에게 빈 하의 · 장갑 · 신발 · 벨트 칸
   const n = (S.advs || []).reduce((k, a) => k + plate65(a), 0); [...(S.cands || []), ...opps].forEach(plate65);   // 판금을 못 입게 된 전사 계열의 판금 → 경갑 · 중갑
   if (n) log(`전사 방어구 개편: 판금 갑옷은 이제 마검사 계열 갑옷이다. 기사 · 광전사 계열이 입던 판금 갑옷은 중갑으로, 전사 · 검투사 계열은 경갑으로 바꾸었다 — ${n}명 (단계 · 레어도 · 룬은 그대로).`);
-  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 하의 · 신발 칸', body: STORY.v65 }); }
+  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 새 장비 칸 넷', body: STORY.v65 }); }
 }
 function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 룬 개편 · 전직 레벨', body: STORY.v64 }); } }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }

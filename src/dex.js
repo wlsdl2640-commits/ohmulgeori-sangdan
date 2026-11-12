@@ -185,7 +185,7 @@ function dexMats() {
 function dexPots() {
   const ids = SUPPLY_IDS;
   const rows = ids.map(it => { const I = ITEMS[it], r = RECIPES.find(x => x.out === it); return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.buy ? `사는 값 ${I.buy}G` : `${I.v}G`}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${I.heal ? `HP ${Math.round(potionHeal(it))} 회복 (기본 ${I.heal})` : I.mana ? `MP ${I.mana} 회복` : `${cureName(I.cure)} 치료 · ${I.desc || ''}`} · 보급품으로 가져가면 저절로 써요</span>${r ? `<span class="sub muted">조제: ${Object.entries(r.need).map(([m, n]) => `${ITEMS[m].name} ${n}`).join(' · ')} · ${r.fee}G${r.lv > 1 ? ' · 공방 2단계' : ''}</span>` : ''}</div></div>`; }).join('');
-  const runes = RUNE_IDS.map(k => `<div class="li">${iconImg(runeId(k, RUNE_TOP))}<div class="grow stack"><span>${RUNES[k].name}의 룬 <span class="muted">· ${RUNE_LV.join('·')}</span></span><span class="sub">무기: ${runeLine(k, 'w')}</span><span class="sub">부장비 · 방어구 · 하의 · 신발 · 장신구 · 가방: ${runeLine(k, 'a')}</span></div></div>`).join('');   // 빌드 64: 한 룬에 두 효과
+  const runes = RUNE_IDS.map(k => `<div class="li">${iconImg(runeId(k, RUNE_TOP))}<div class="grow stack"><span>${RUNES[k].name}의 룬 <span class="muted">· ${RUNE_LV.join('·')}</span></span><span class="sub">무기: ${runeLine(k, 'w')}</span><span class="sub">부장비 · 방어구 · 하의 · 장갑 · 신발 · 벨트 · 장신구 · 가방: ${runeLine(k, 'a')}</span></div></div>`).join('');   // 빌드 64: 한 룬에 두 효과
   return `<div class="list">${rows}</div><div class="sec"><b>룬</b><span>마탑에서 장비에 새기고 합쳐요 (상급 셋 → 최상급)</span></div><div class="list">${runes}</div>`;
 }
 

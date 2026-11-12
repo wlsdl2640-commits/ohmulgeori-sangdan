@@ -6,6 +6,7 @@
 - 판금 상의 · 하의(../armor_plate65, 한 판에 둘 · 어두운 카드 · 글씨 판 카드 아래쪽, 11-12 12:04 새 판 — 11:28 판은 지움) → plate · ppants
 - 천갑 상의 · 하의(../armor_cloth65, 판금과 같은 꼴의 판, 11-12 12:07) → cloth · cpants
 - 신발 셋(../boots65, 판마다 3줄 × 7, 11-12 12:24) → pboots(판금신발 — 받은 판 이름은 철신발) · lboots(가죽신발) · cboots(천신발)
+- 장갑 셋(../gloves65) · 벨트(../belt65) — 경갑 판과 같은 꼴(5 × 4 + Lv200), 11-12 12:54 → pgloves · lgloves · cgloves · belt
 python3 export_armart.py <출력 data-armart.js> [미리보기.png]"""
 import base64, io, os, sys
 from collections import deque
@@ -158,7 +159,7 @@ def close_edges(sub, item, n=2):
     return sub
 
 
-def flood_grad(sub, seed, tol=10):
+def flood_grad(sub, seed, tol=10, vmin=0):
     """바탕에서 이웃 칸끼리 색이 고르게 이어지는 곳(옆 카드의 빛 번짐)을 따라 더 퍼뜨린다 — 검은 테(합 24 아래) · 밝은 칸(120 넘음)에서 멈춘다"""
     H, W, _ = sub.shape; seen = seed.copy(); tot = sub.sum(axis=2); mx = sub.max(axis=2)
     q = deque(zip(*np.nonzero(seed)))
@@ -166,7 +167,7 @@ def flood_grad(sub, seed, tol=10):
         y, x = q.popleft()
         for dy, dx in N4:
             ny, nx = y + dy, x + dx
-            if 0 <= ny < H and 0 <= nx < W and not seen[ny, nx] and tot[ny, nx] >= 25 and mx[ny, nx] <= 120 and np.abs(sub[ny, nx] - sub[y, x]).sum() <= tol:
+            if 0 <= ny < H and 0 <= nx < W and not seen[ny, nx] and tot[ny, nx] >= 25 and vmin <= mx[ny, nx] <= 120 and np.abs(sub[ny, nx] - sub[y, x]).sum() <= tol:
                 seen[ny, nx] = True; q.append((ny, nx))
     return seen
 
@@ -223,6 +224,55 @@ def cut_dark(im, x0, y0, x1, y1, glow, spill=False):
     return rgba(close_edges(sub, item), item)
 
 
+# 장갑 · 벨트 판(사용자 11-12 12:54 — 경갑 판과 같은 꼴: 어두운 카드 5 × 4 + Lv200 한 장, 「LV.n」 글씨 판이 카드 왼쪽 위 모서리). 장갑은 한 카드에 두 짝이라 덩어리를 여럿 남긴다
+GLDIR = os.path.join(HERE, '..', 'gloves65'); BEDIR = os.path.join(HERE, '..', 'belt65')
+GX0 = [12, 328, 634, 924, 1223]; GX1 = [315, 620, 910, 1210, 1523]
+GRID = {'cgloves': (GLDIR, '천장갑_Lv1-200.png', [94, 271, 447, 624], [260, 436, 613, 791], (12, 804, 430, 996)),
+        'pgloves': (GLDIR, '판금장갑_Lv1-200.png', [95, 272, 448, 626], [260, 436, 614, 792], (12, 805, 431, 997)),
+        'lgloves': (GLDIR, '가죽장갑_Lv1-200.png', [93, 271, 447, 623], [260, 435, 611, 791], (13, 805, 434, 998)),
+        'belt': (BEDIR, '벨트_Lv1-200.png', [94, 270, 435, 596], [259, 423, 584, 764], (12, 778, 482, 999))}
+GRID_LAB = [(107, 44)] + [(113, 44)] * 9 + [(126, 44)] * 10 + [(149, 54)]   # 글씨 판 크기(카드 왼쪽 위에서, 한 자리 · 두 자리 · 세 자리 · Lv200) — 오른쪽 아래 모서리는 둥글다
+
+
+def cut_grid(im, card, labwh, glow):
+    """카드 안(테 안쪽 6칸)에서 바탕을 지우고, 글씨 판(둥근 판)을 빼고, 남은 덩어리 가운데 큰 것들(가장 큰 것의 6% 넘음)을 모두 남긴다"""
+    x0, y0, x1, y1 = card; P = 6
+    sub = im[y0 + P:y1 - P, x0 + P:x1 - P].astype(int); H, W, _ = sub.shape
+    lw, lh = labwh[0] - P, labwh[1] - P; R = 18
+    yy, xx = np.mgrid[0:H, 0:W]
+    labm = (xx <= lw) & (yy <= lh) & ~((xx > lw - R) & (yy > lh - R) & ((xx - (lw - R)) ** 2 + (yy - (lh - R)) ** 2 > R * R))
+    b0 = np.median(np.concatenate([sub[-1], sub[H // 2:, 0], sub[H // 2:, -1]]), axis=0)   # 글씨 판이 없는 아래 · 옆 가장자리 색
+    near = np.abs(sub - b0).sum(axis=2) <= 12
+    if glow:   # Lv200: 금빛 · 월계관 · 반짝이 — cut_dark의 신발 판 길과 같다
+        hsv = cv2.cvtColor(sub.astype(np.uint8), cv2.COLOR_RGB2HSV).astype(int)
+        Hh, Ss, Vv = hsv[..., 0], hsv[..., 1], hsv[..., 2]
+        warm = (Hh >= 8) & (Hh <= 30) & (Ss >= 120) & (Vv >= 40)
+        bg = flood(warm | near | labm, H, W)
+        solid = (~bg & (Vv >= 50)).astype(np.uint8)
+        far = cv2.distanceTransform(1 - solid, cv2.DIST_L2, 3) > 3.2
+        bg = flood(bg | ((Vv < 50) & far) | labm, H, W)
+        bg = flood_grad(sub, bg, 10, 32)   # 두 짝 사이에 남는 흐린 갈색 빛(채도가 낮아 위에서 안 지워진 것)은 고르게 이어지는 색을 따라 지운다 — 밝기 32 아래(어두운 갈색 테 · 어두운 가죽)로는 안 들어간다
+        m = cv2.morphologyEx((~bg).astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)).astype(bool)
+    else:
+        bg = flood(near | labm, H, W)
+        m = ~bg
+    m &= ~labm
+    lab, n = comps(m)
+    cnt = np.bincount(lab.reshape(-1), minlength=n + 1); cnt[0] = 0
+    keep = [k for k in range(1, n + 1) if cnt[k] >= 0.06 * cnt.max()]
+    item = np.isin(lab, keep)
+    if glow: item = cv2.morphologyEx(item.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))).astype(bool) & ~labm
+    item = ~flood(~item, H, W)
+    return rgba(close_edges(sub, item), item)
+
+
+def cards_grid(key):
+    d, fn, Y0, Y1, last = GRID[key]
+    im = np.asarray(Image.open(os.path.join(d, fn)).convert('RGB'))
+    cards = [(GX0[c], Y0[r], GX1[c], Y1[r]) for r in range(4) for c in range(5)] + [last]
+    return [cut_grid(im, box, GRID_LAB[i], i == 20) for i, box in enumerate(cards)]
+
+
 def cards_light(key):
     fn, CX, ROWS, HW = LIGHT[key]
     im = np.asarray(Image.open(os.path.join(HVDIR, fn)).convert('RGB'))
@@ -259,7 +309,8 @@ def main(out_js, prev=None):
             urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
             thumbs.append(sm)
         data[key] = urls
-    for key, cutter in [('hvarmor', cards_light), ('hvpants', cards_light), ('plate', cards_dark), ('ppants', cards_dark), ('cloth', cards_dark), ('cpants', cards_dark), ('pboots', cards_dark), ('lboots', cards_dark), ('cboots', cards_dark)]:
+    for key, cutter in [('hvarmor', cards_light), ('hvpants', cards_light), ('plate', cards_dark), ('ppants', cards_dark), ('cloth', cards_dark), ('cpants', cards_dark), ('pboots', cards_dark), ('lboots', cards_dark), ('cboots', cards_dark),
+                        ('pgloves', cards_grid), ('lgloves', cards_grid), ('cgloves', cards_grid), ('belt', cards_grid)]:
         urls = []
         for img in cutter(key):
             sm = shrink(img)
@@ -267,7 +318,7 @@ def main(out_js, prev=None):
             urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
             thumbs.append(sm)
         data[key] = urls
-    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 · 천갑 상의 · 하의 · 신발 셋). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
+    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 · 천갑 상의 · 하의 · 신발 셋 · 장갑 셋 · 벨트). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
              '   ARMART[종류][단계] = WebP data URL (디자인 Lv1 · 10 · … · 200 = 21개, 게임 단계 t와 같은 차례) */',
              'const ARMART = {']
     for key, urls in data.items():
