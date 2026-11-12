@@ -875,7 +875,7 @@ function pxsAdvGrid(a, pose, fr, Lx) {
   if (bow) { const B = PXS_BOW[wk]; pxPut(g, pxRows(atk === 0 ? B.draw : B.g), SX + B.x, SY + B.y + sd); }
   else if (lute) { const W = pxRows(PX_WPN.lute), [ax, ay] = pxFind(W, '@'); pxPut(g, W, SX + 8 - ax, SY + 4 - ay + (atk === 1 ? 1 : 0) + sd, 'K'); }
   else if (!sit) {
-    const pole = ['staff', 'skull', 'crozier', 'lance', 'trident'].includes(wk), up = pxRows(PX_WPN[wk] || PX_WPN.sword);
+    const pole = ['staff', 'skull', 'crozier', 'lance', 'trident'].includes(wk), up = pxRows(PXS_WPN_SIDE[wk] || PX_WPN[wk] || PX_WPN.sword);   // 빌드 65: 채찍 · 카드 · 오브 · 책은 옆 그림을 따로 (pxs-wpn65.js)
     const rows = arm === 'out' || (arm === 'rest' && !pole) ? pxRot(up) : up, [ax, ay] = pxFind(rows, '@'), [hx, hy] = arm === 'rest' && !pole ? [11, 4] : PXS_HAND[arm];
     pxPut(g, rows, SX + hx - ax, SY + hy - ay, 'v');
     if (arm === 'rest') pxPut(g, ['S', 's'], SX + hx - 1, SY + hy);
@@ -993,7 +993,7 @@ const PXS_MOT_HIT = 4;
    단검·둔기는 칼 동작(down·up·side·thrust…)을 그 무기로 그리고, 갈래마다 새 동작을 더한다. 한 장은 칼 동작과 같은 꼴에 더해:
      g 손 뒤로 나온 자루 칸(창·지팡이) · pull 시위를 당긴 칸 · ar 화살을 메김 · bend 활이 휜 정도 · la 류트 목 방향 · lp 류트 몸통 자리 · h2·a2 먼 손 칼(쌍수)
    fx: arc 끝 자취(both = 자루 끝도) · streak 찌르기 번쩍 · snap 화살이 떠남 · glint 끝 빛 · cast 지팡이 끝 터짐 · gather 빛이 모임 · notes 음표 · dust 땅 먼지 */
-const PXS_FAMW = { sword: 'sword', great: 'sword', gladius: 'sword', dagger: 'dagger', axe: 'heavy', gaxe: 'heavy', club: 'heavy', mace: 'heavy', hammer: 'heavy',
+const PXS_FAMW = { sword: 'sword', msword: 'sword', great: 'sword', gladius: 'sword', dagger: 'dagger', axe: 'heavy', gaxe: 'heavy', club: 'heavy', mace: 'heavy', hammer: 'heavy',
   lance: 'pole', trident: 'pole', staff: 'staff', skull: 'staff', crozier: 'staff', bow: 'bow', long: 'bow', lute: 'lute' };
 const PXS_MOTW = {
   hack: [   // 난도질: 짧게 네 번 (단검·칼)
@@ -1309,6 +1309,8 @@ function pxsMSword(F, great) {
 // 칼이 아닌 무기 (빌드 42): 손에서 방향 a로 (옆 s + = 방향을 시계로 90°). { cells, hand2 (활 시위를 당기는 손) }
 const PXS_POLE_LF = { lance: 4, trident: 4, staff: 4, skull: 4, crozier: 4.5 };   // 손 앞 자루 칸 (머리는 그 끝에)
 function pxsMWpn(F, wk) {
+  if (PXS_WPN_FN[wk]) return { cells: PXS_WPN_FN[wk](F) };   // 빌드 65: 채찍 · 정글칼 · 카드 · 완드 · 오브 · 네크로노미콘 (pxs-wpn65.js)
+  if (wk === 'msword') return { cells: pxsMSword(F, false).map(([x, y, c]) => [x, y, c === 'G' ? 'G' : c === 'M' ? 'i' : 'y']).concat([[pxsMHand(F)[0] + pxsDir(F.a)[0] * (1 + Math.max(1, Math.round(4 * F.k))), pxsMHand(F)[1] + pxsDir(F.a)[1] * (1 + Math.max(1, Math.round(4 * F.k))), 'x']]) };   // 빌드 65 마나소드: 빛 날 · 끝 흰 빛
   if (!PXS_FAMW[wk] || PXS_FAMW[wk] === 'sword') {
     const cells = pxsMSword(F, wk === 'great');
     if (wk !== 'great') return { cells };
@@ -1353,6 +1355,7 @@ function pxsMWpn(F, wk) {
 }
 // 효과용: 무기 끝 축 { o 손 자리 · u 단위 방향 · L0..L1 자취를 남기는 구간 · b 자루 끝 (창 돌리기) }
 function pxsMAxis(P, wk) {
+  if (PXS_AXIS_FN[wk]) return PXS_AXIS_FN[wk](P, wk);   // 빌드 65 (pxs-wpn65.js)
   const fam = PXS_FAMW[wk] || 'sword', hx = PXS_SH[0] + P.lean + P.h[0], hy = PXS_SH[1] + P.cr + P.h[1], [dx, dy] = pxsDir(P.a || 0), k = Math.max(0.5, P.k);
   if (fam === 'bow') { const Lh = wk === 'long' ? 5 : 4; return { o: [hx, hy], u: [-dy, dx], L0: Lh - 1.4, L1: Lh, b: null, fwd: [dx, dy] }; }
   const ms = PXS_G.ms, L = fam === 'sword' ? 1 + Math.max(1, (wk === 'great' ? 5 : 4) * P.k) : fam === 'dagger' ? 1 + Math.max(1, 2 * P.k) : fam === 'heavy' ? ({ axe: 4.5, gaxe: 5.5, mace: 5.5, club: 5, hammer: 5 }[wk] || 5) * k
@@ -1374,7 +1377,9 @@ function pxsMOver(c, cells, ring, keep) {
   for (const [x, y, ch] of R) pxsMSet(c, x, y, ch);
 }
 // 한 장 (작업판 격자를 돌려준다, g.mfx = 효과 칸)
+let PXS_MK = null;   // 빌드 65: 지금 그리는 동작 (정글칼 올려베기는 날이 위로)
 function pxsMotGrid(a, mk, f, Lx) {
+  PXS_MK = mk;
   const cls = PXL[a.cls] ? a.cls : PXL[jobBase(a.cls)] ? jobBase(a.cls) : 'warrior', L0 = Lx || PXL[cls], [L, Q] = pxOffLook(a, L0);
   const ex = L.ex || [], g = pxGrid(PXW, PXH), robe = L.body === 'robe', coat = L.body === 'coat', F = pxsMotFr(mk, f);
   const wk = pxsWk(a), twinK = wk === 'sword' || wk === 'great' || wk === 'gladius' ? 'sword' : 'dagger';
@@ -1434,6 +1439,7 @@ function pxsMLerp(A, B, s) {
 function pxsMDust(put, x, r) { const G = PXS_G.gy; for (let j = 1; j <= r + 1; j++) { put(x + j, G, j > r ? 2 : 1); put(x - j, G, 2); } put(x + 1, G - 1, 2); if (r > 1) { put(x - 1, G - 1, 2); put(x + 2, G - 2, 2); } }
 function pxsMotFx(mk, f, c, sh, wk) {
   wk = wk === true ? 'great' : wk || 'sword';
+  if (wk === 'whip') return w62Fx(mk, f, c);   // 빌드 65: 채찍 끈 자취 · 터짐 (pxs-wpn65.js)
   const F = pxsMotFr(mk, f), fx = F.fx, back = [], front = [], fam = PXS_FAMW[wk] || 'sword';
   if (!fx) return null;
   const put = (x, y, ci) => { if (Math.round(y) <= PXS_G.gy) front.push([Math.round(x), Math.round(y), ci]); };

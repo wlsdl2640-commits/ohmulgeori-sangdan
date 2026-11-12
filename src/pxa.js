@@ -58,7 +58,7 @@ const PX_LINE = { 2: 1, 3: 1, 4: 1, 5: 1, 7: 1, 8: 1, 9: 1, 11: 1, 12: 1, 18: 1 
 /* 뭉툭 도트: 격자를 반으로 줄여 굽고 2배로 키운다 (픽셀이 굵어진다). 0이면 끈다 */
 let PX_CHUNK = 2;
 // 2×2 칸을 하나로. 눈·입·쇠·나무(무기)·금은 작아도 살린다
-const PX_PRI = { k: 3.2, w: 3.0, p: 1.6, m: 1.6, x: 1.6, M: 1.35, N: 1.3, O: 1.4, v: 1.3, K: 1.25, G: 1.3, g: 1.2, X: 1.5, Z: 1.2, R: 1.15 };
+const PX_PRI = { k: 3.2, w: 3.0, p: 1.6, m: 1.6, x: 1.6, M: 1.35, N: 1.3, O: 1.4, v: 1.3, K: 1.25, G: 1.3, g: 1.2, X: 1.5, Z: 1.2, R: 1.15, y: 1.5, i: 1.4 };   // 빌드 65: 마나소드 날도 줄일 때 살린다
 function pxChunk(g) {
   const H = g.length, W = g[0].length, out = [];
   for (let y = 0; y < H; y += 2) {
@@ -756,6 +756,21 @@ function pxBackSword(g, dy) {
 
 /* 무기: '@' = 손잡이 (손 옆). up = 세워 들기, sw = 휘두르기(오른쪽 아래로 비스듬히) */
 const PX_WPN = {
+  msword: `
+.x
+xy
+xy
+xy
+xy
+xy
+xi
+xi
+xi
+.GG
+.@.
+.v.
+.G.
+`,
   sword: `
 .x
 xM
@@ -1586,7 +1601,7 @@ const PXL = {
 };
 // 무기 모양: 직업 차림(wv)이 바꾸기도 한다
 // 빌드 65: 새 무기(장비 개편 2단계)는 그림 · 동작이 생기기 전까지 가까운 옛 무기 것을 빌린다
-const PX_WALIAS = { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club', machete: 'sword', rs_fire: 'great', rs_ice: 'great', rs_light: 'great', rs_poison: 'great' };
+const PX_WALIAS = { manasword: 'msword', card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club', machete: 'sword', rs_fire: 'great', rs_ice: 'great', rs_light: 'great', rs_poison: 'great' };
 function pxWeapon(cls, base) {
   base = PX_WALIAS[base] || base;
   const L = PXL[cls] || {}, w = L.wv;
@@ -1609,7 +1624,9 @@ function pxPal(L, look) {
     C: c1.b, c: c1.s, Q: c1.l, d: c1.d, A: c2.b, a: c2.s, F: c3.b, f: c3.s,
     M: mt.l, N: mt.b, n: mt.s, x: '#ffffff', G: gd.b, g: gd.s, o: gd.d,
     J: hc.b, j: hc.s, I: hc.l, R: fe.b, r: fe.s, W: lt.b, V: lt.s, U: pn.b, u: pn.s, B: bt.b, b: bt.s,
-    X: gm.b, Z: '#f4f0e6', z: '#c4bca8', K: '#2a2632', O: '#b8864e', v: '#6a4428', P: cp.b, q: cp.s
+    X: gm.b, Z: '#f4f0e6', z: '#c4bca8', K: '#2a2632', O: '#b8864e', v: '#6a4428', P: cp.b, q: cp.s,
+    y: '#8ef0ff', i: '#38a8ec',   // 빌드 65: 마나소드 날 (밝은 몸 · 짙은 가장자리 — 가운데 심은 x)
+    D: '#6a1620', E: '#3a0a12', e: '#e8d8bc', T: '#d0302a', Y: '#d8a040'   // 빌드 65: 네크로노미콘 표지 · 그늘 · 책장 · 카드 붉은 무늬 · 책 금 장식 (pxs-wpn65.js)
   };
 }
 // 망토 색은 깃털 색과 따로: 망토 덮개는 P/q로 바꿔 칠한다

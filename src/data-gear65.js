@@ -8,7 +8,7 @@
      채찍(마부 · 캐러밴 마스터) · 정글칼(정찰가 · 탐험가).
    - 그림이 하나뿐인 것: 속성 대검 넷(시안의 룬소드 — 광전사 · 피의 군주의 두 손 대검, Lv50 · 100 · 150 · 200 단계에 하나씩) · 속성 특별 암기 여섯(도적 계열, 대장간에서 — 단계와 상관없이 같은 그림 · 이름).
    새 직업(괴도 · 닌자 · 카게닌자 · 코네스토가) · 직업 이름 바꾸기(소매치기 · 트래커 · 스토커 · 랑기수 · 용기수) · 새 스킬 · 쌍단검 · 무기마다 공격 동작은 직업 개편 때 —
-   그때까지 손에 든 모습 · 동작은 가까운 옛 무기 그림을 빌린다(pxa.js PX_WALIAS: 채찍 = 몽둥이 · 정글칼 = 장검 · 카드 = 단검 · 완드 · 오브 · 네크로노미콘 = 지팡이 · 새 활 = 활). */
+   손에 든 모습 · 동작: 채찍 · 정글칼 · 카드 · 완드 · 오브 · 네크로노미콘은 제 그림과 동작(pxs-wpn65.js — 11-12 17:23 넣음), 새 활 · 속성 대검은 가까운 옛 무기 그림을 빌린다(pxa.js PX_WALIAS). */
 
 // 라운드 실드: 사용자가 준 새 그림(tools/saved/shield_round65 → ARMART.shield 16장). 이름은 그대로, 생김새 설명만 새 그림에 맞춘다
 GTYPES.shield.art = 'shield';
@@ -52,6 +52,13 @@ Object.assign(GTYPES, {
 });
 Object.assign(UNIQ_ONLY, { rs_fire: 50, rs_ice: 100, rs_light: 150, rs_poison: 200 });
 const wpnRune = a => { const g = a && a.eq && a.eq.weapon; return (g && GTYPES[g.base] && GTYPES[g.base].rune) || null; };
+// 마나소드 (사용자 11-12 15:26 「마검사 무기를 룬소드에서 마나오러, 빛등이 사출되는 광선검으로 변경한다. 이름은 마나소드」 · 17:23 「3개안건 전부 넣는데」):
+// 마검사 · 마검성의 한 손 검 — 작은 자루에서 마나 날이 뿜어 나온다. 그림 16개(Lv50 ~ 200, 늪지부터 — 지금 단계에는 앞 10개)는 큰 도트(data-hdart65.js HDART.manasword).
+// 능력치: 장검(공격 4.2)보다 공격은 조금 위, 마력을 함께 싣는다(마검사의 기본 공격 = 공격 + 마법 공격 × 혼합). 검술 숙련이 켜진다
+GTYPES.manasword = { name: '마나소드', slot: 'weapon', cls: ['spellblade'], st: { atk: 4.6, matk: 1.6, int: 0.4 }, w: 2, icon: 'sword', mat: [2, 0, 3], art: 'manasword', who: '마검사 · 마검성', desc: '작은 자루에서 마나 날이 뿜어 나오는 빛의 검. 날마다 빛깔 · 꼴이 다르다.' };
+// 화살통: 16단계 큰 도트 그림 · 고유 이름(data-hdart65.js HDART.quiver · WNAME.quiver) — 견습 단계부터
+GTYPES.quiver.art = 'quiver';
+Object.assign(GTYPES.quiver, { desc: '궁수 계열이 함께 쓰는 화살통. 화살을 25% 더 담는다.' });
 
 // 새 부장비 · 새 칸 둘(볼트통 · 볼트 — 괴물사냥꾼 계열에게만 보인다)
 SLOTS.splice(SLOTS.findIndex(s => s[0] === 'ammo') + 1, 0, ['bcase', '볼트통'], ['bolt', '볼트']);
@@ -79,7 +86,8 @@ const SPECIAL_THROWN = ['sk_ice', 'sk_fire', 'sk_bolt', 'sk_poison', 'sk_wind', 
 // 단계마다 고유 이름 · 그림 (data-rpg.js UNIQ_T0 — 0 = 견습부터, 6 = 늪지부터)
 Object.assign(UNIQ_T0, { dagger: 0, staff: 0, bow: 0, shuriken: 0, tome: 0, arrows: 0,
   card: 6, wand: 6, orb: 6, necro: 6, compbow: 6, longbow: 6, greatbow: 6, compound: 6, whip: 6, machete: 6, lockpick: 6, offer: 6, spirit: 6, wxbow: 6, bcase: 6, bolt: 6,
-  rs_fire: 6, rs_ice: 6, rs_light: 6, rs_poison: 6 /* 고유 그림 표시만 — 나오는 단계는 UNIQ_ONLY */, sk_ice: 0, sk_fire: 0, sk_bolt: 0, sk_poison: 0, sk_wind: 0, sk_dark: 0 });
+  rs_fire: 6, rs_ice: 6, rs_light: 6, rs_poison: 6 /* 고유 그림 표시만 — 나오는 단계는 UNIQ_ONLY */, sk_ice: 0, sk_fire: 0, sk_bolt: 0, sk_poison: 0, sk_wind: 0, sk_dark: 0,
+  manasword: 6, quiver: 0 });
 // 담는 수: 볼트 · 특별 암기는 암기와 같은 표 (특별 암기는 capMul 0.6)
 AMMO_CAP.bolt = AMMO_CAP.shuriken; for (const b of SPECIAL_THROWN) AMMO_CAP[b] = AMMO_CAP.shuriken;
 const XBOW_MUL = 0.3;   // 손목 석궁 한 발 = 공격력 × 2.5(기본 공격) × 0.3 (암기와 같다)
@@ -90,6 +98,7 @@ const XBOW_MUL = 0.3;   // 손목 석궁 한 발 = 공격력 × 2.5(기본 공�
   for (const L of [GTYPE_IDS, CRAFT_IDS]) {
     const craft = L === CRAFT_IDS;
     ins(L, 'great', ...ELEM_SWORDS);
+    ins(L, 'sword', 'manasword');
     ins(L, 'bow', 'compbow', 'longbow', 'greatbow', 'compound');
     ins(L, 'staff', 'wand', 'orb', 'necro');
     ins(L, 'dagger', 'card');
@@ -101,10 +110,10 @@ const XBOW_MUL = 0.3;   // 손목 석궁 한 발 = 공격력 × 2.5(기본 공�
   }
 }
 // 직업이 처음 받는 무기가 그 단계에 없을 때 드는 무기 (data-warr.js WEAPON_LOW · econ.js WEAPON_OF)
-Object.assign(WEAPON_LOW, { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club' });
+Object.assign(WEAPON_LOW, { card: 'dagger', wand: 'staff', orb: 'staff', necro: 'staff', compbow: 'bow', longbow: 'bow', greatbow: 'bow', compound: 'bow', whip: 'club', manasword: 'sword' });
 // 숙련: 궁술 = 모든 활 · 검술 = 속성 대검까지 (채찍 · 정글칼 · 카드 · 완드 · 오브 · 금서 숙련은 스킬 개편 때)
 Object.assign(MASTERY.bow, { w: ['bow', 'compbow', 'longbow', 'greatbow', 'compound'], wn: '활', desc: '단궁 · 복합궁 · 장궁 · 대궁 · 컴파운드 보우 — 활이면 무엇이든.' });
-MASTERY.sword.w = MASTERY.sword.w.concat(ELEM_SWORDS);
+MASTERY.sword.w = MASTERY.sword.w.concat(ELEM_SWORDS, ['manasword']);
 
 /* 부장비가 쏘는 한 발 (core.js basicAct 끝에서 부른다 — 직업 특성은 안 탄다):
    암기(도적 계열 · thrown) = 부장비 칸의 암기를 하나 던진다 / 손목 석궁(xbow) = 볼트 칸의 볼트를 한 발 쏜다. 남은 적 중 가장 약한 적에게.
@@ -131,5 +140,7 @@ STORY.v65.push(
   '트래커 · 스토커에게는 장비 칸이 둘 더 있다 — 「볼트통」과 「볼트」. 부장비 칸에 손목 석궁을 차고 볼트를 끼우면 기본 공격마다 볼트 한 발을 더 쏜다(암기와 같다). 볼트는 화살처럼 쓴 만큼 상단에서 다시 채운다.',
   '정찰가 · 탐험가는 정글칼로 벤다(활 · 화살을 쓰지 않는다). 궁술 숙련은 모든 활에 켜진다.',
   '속성 대검 넷(광전사 · 피의 군주 · 두 손): 지옥의 업화(불 · 화상, Lv50 단계) · 혹한의 결정(빙결 · 냉기, Lv100 단계) · 광휘의 여명(빛 · 눈멂, Lv150) · 극독의 어금니(중독, Lv200) — 기본 공격이 맞으면 그 속성 추가 피해가 붙는다. 제 단계에서만 나오고, Lv150 · 200 단계는 아직 없다. 속성 특별 암기 여섯(고드름 · 불씨 쿠나이 · 벼락 침 · 독침 · 바람 표창 · 그림자 쿠나이)은 대장간에서 만들거나 산다.',
-  '라운드 실드가 새 그림이 되었다(이름 · 능력치는 그대로). 장비 · 물건 칸의 틀이 조금 커져서 그림이 틀을 넘지 않는다.'
+  '라운드 실드가 새 그림이 되었다(이름 · 능력치는 그대로). 장비 · 물건 칸의 틀이 조금 커져서 그림이 틀을 넘지 않는다.',
+  '마검사 · 마검성의 무기는 「마나소드」 — 작은 자루에서 마나 날이 뿜어 나오는 빛의 검(늪지 단계부터, 단계마다 이름 · 그림이 다르다). 들고 있던 늪지 단계 이상 장검은 같은 단계의 마나소드로 바뀌었다. 화살통도 단계마다 새 그림 · 이름이 생겼다.',
+  '채찍 · 정글칼 · 트럼프 카드 · 완드 · 오브 · 네크로노미콘을 든 모습과 공격 동작이 새로 생겼다 — 카드는 손끝에 한 장을 사선으로 들고, 펼치면 세 장(가운데 한 장 + 왼쪽 · 오른쪽 사선)을 펼쳤다 접었다 한다. 던진 카드는 적에게 날아간다.'
 );

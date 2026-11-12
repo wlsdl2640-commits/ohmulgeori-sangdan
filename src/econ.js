@@ -5,7 +5,7 @@ const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mac
   // 빌드 65 장비 개편 2단계: 2차 직업 무기(늪지 단계부터 — 그 아래 단계는 WEAPON_LOW의 옛 무기). 빌드 65 직업 개편: 정찰가 · 탐험가 = 정글칼 · 용기수 = 복합궁 · 쌍검사 · 검무사 = 단검(+ 보조 단검)
   ranger: 'compbow', dragoon: 'compbow', sniper: 'longbow', hawkeye: 'longbow', bard: 'lute', maestro: 'lute', coachman: 'whip', conestoga: 'whip', caravanmaster: 'whip', scout: 'machete', pathfinder: 'machete', mhunter: 'compound', dslayer: 'compound', huntsman: 'greatbow', kaijuhunter: 'greatbow', sorcerer: 'staff', archmage: 'staff', elemancer: 'orb', alchemist: 'orb',
   assassin: 'dagger', shadowlord: 'dagger', duelist: 'dagger', bladedancer: 'dagger', treasure: 'card', phantomthief: 'card', masterthief: 'card', ninja: 'dagger', kageninja: 'dagger',
-  elementalist: 'wand', elementlord: 'wand', necromancer: 'necro', lich: 'necro', spellblade: 'sword', arcblade: 'sword',
+  elementalist: 'wand', elementlord: 'wand', necromancer: 'necro', lich: 'necro', spellblade: 'manasword', arcblade: 'manasword',
   priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
 const newField = () => ({ best: 0, cleared: false, found: false, boss: {} });
 
@@ -1448,11 +1448,12 @@ function migrate13() {
 }
 // 빌드 65 직업 개편: 정찰가 · 탐험가(활 → 정글칼 · 화살은 창고로) · 용기수(창 → 복합궁 + 화살) · 쌍검사 · 검무사(장검 → 단검 + 보조 단검).
 // 못 끼게 된 무기는 창고로 옮기고 같은 단계의 새 무기를 준다. 방패를 든 마부 계열 · 화살통을 든 정찰가의 부장비는 unfitGear가 창고로 옮긴다.
-let REFIT65 = 0;
+let REFIT65 = 0, MANA65 = 0;
 function refit65() {
   const fix = (a, keep) => {
     if (!a || !a.eq || !CLASSES[a.cls]) return;
     const ch = chainOf(a.cls), w = a.eq.weapon, aff = ch.includes('scout') || a.cls === 'dragoon' || ch.includes('duelist');
+    if (ch.includes('spellblade') && w && w.base === 'sword' && tierOk('manasword', w.t || 0)) { w.base = 'manasword'; if (keep) MANA65++; }   // 마검사 · 마검성의 무기 = 마나소드 (늪지 단계부터 — 같은 단계 · 레어도 · 룬 · 옵션 그대로)
     if (!aff) return;
     if (w && !gearFits(a, w)) { const t = w.t || 0; if (keep) S.gear.push(w); a.eq.weapon = makeGear(weaponOf(a.cls, t), t, 0); REFIT65++; }
     if (ch.includes('scout') && a.eq.ammo) { if (keep) S.gear.push(a.eq.ammo); a.eq.ammo = null; }
@@ -1469,7 +1470,8 @@ function offGift65(a, t) {
 function migrate14() {
   S.v = 14;
   if (REFIT65) log(`직업 개편: 정찰가 · 탐험가 · 용기수 · 쌍검사 · 검무사 ${fmt(REFIT65)}명의 무기를 새 무기로 바꾸었다 (예전 무기는 창고에).`);
-  REFIT65 = 0;
+  if (MANA65) log(`마검사 · 마검성 ${fmt(MANA65)}명이 들던 장검을 같은 단계의 마나소드로 바꾸었다 (레어도 · 룬 · 옵션은 그대로).`);
+  REFIT65 = 0; MANA65 = 0;
 }
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);

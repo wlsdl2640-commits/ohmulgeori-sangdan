@@ -130,7 +130,7 @@ function offIconURL(base, t) {
 // 빌드 65: 사용자가 준 디자인 그림을 그대로 쓰는 장비(ARMART — 경갑 · 경갑 하의). 도트 칸에 굽지 않고 칸 위에 얹는다(rarity.js rqClass · panels.js gImg)
 const HR_URL = new Set();
 function armArtURL(g) {
-  const T = g && GTYPES[g.base], L = T && T.art && typeof ARMART !== 'undefined' && ARMART[T.art]; if (!L) return null;
+  const T = g && GTYPES[g.base], L = T && T.art && ((typeof ARMART !== 'undefined' && ARMART[T.art]) || (typeof HDART !== 'undefined' && HDART[T.art])); if (!L) return null;   // HDART: 화살통 · 마나소드 (data-hdart65.js)
   const u = L[Math.max(0, Math.min(L.length - 1, g.t | 0))]; if (u) HR_URL.add(u);
   return u || null;
 }

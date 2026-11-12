@@ -891,7 +891,7 @@ function q4Bed(g, x, yb, len, a, blanket, t, ph) {   // 홑침대 (신전 환자
   qF(g, x, yb - 1, len, 3, '#f4f0e8');
   q3BedSlot(g, x + 1, yb, len - 2, a, blanket, t, ph);
 }
-const Q4MOT = { sword: 'down', dagger: 'hack', heavy: 'smash', pole: 'pthrust', staff: 'spush', bow: 'bshot', lute: 'lstrum' };   // 무기 갈래 → 훈련 동작
+const Q4MOT = { sword: 'down', dagger: 'hack', heavy: 'smash', pole: 'pthrust', staff: 'spush', bow: 'bshot', lute: 'lstrum', whip: 'wcrack', machete: 'mchop', card: 'cflick', wand: 'vflick', orb: 'opush', book: 'bkcast' };   // 빌드 65 새 무기   // 무기 갈래 → 훈련 동작
 const hqFam = a => { try { return pxsFam(a); } catch (_) { return 'sword'; } };
 
 /* ═══ 연금술 공방: 초록 솥 · 약병 선반 · 증류기 · 걸린 약초 ═══ */

@@ -560,7 +560,10 @@ const motT = (mk, hold) => pxsMotT(mk).map((v, f) => v + (f === 2 ? hold || 0 : 
    찌르기 stab · 난도질 flurry · 내려찍기 slam · 쏘기 shoot · 모아 쏘기 cast · 치켜들기 raise) */
 const MOT_POOL = {
   sword: ['down', 'up', 'side', 'thrust'], dagger: ['down', 'up', 'side', 'thrust', 'hack'], heavy: ['down', 'up', 'side', 'smash'],
-  pole: ['pthrust', 'pup', 'plow', 'pswing'], staff: ['spush', 'sjab', 'sswing'], bow: ['bshot', 'bshot', 'bshot', 'bdiag', 'bdiag', 'bswing'], lute: ['lstrum', 'lstrum', 'lstrum', 'lswing']
+  pole: ['pthrust', 'pup', 'plow', 'pswing'], staff: ['spush', 'sjab', 'sswing'], bow: ['bshot', 'bshot', 'bshot', 'bdiag', 'bdiag', 'bswing'], lute: ['lstrum', 'lstrum', 'lstrum', 'lswing'],
+  // 빌드 65 새 무기 (pxs-wpn65.js): 채찍 · 정글칼 · 트럼프 카드 · 완드 · 오브 · 네크로노미콘
+  whip: ['wcrack', 'wcrack', 'wside', 'wflick'], machete: ['down', 'up', 'side', 'hack', 'mchop'], card: ['cflick', 'cflick', 'cflick', 'cfan'],
+  wand: ['vflick', 'vflick', 'vflick', 'vswirl'], orb: ['opush', 'opush', 'opush', 'olift'], book: ['bkcast', 'bkcast', 'bkcast', 'bkshut']
 };
 const MOT_REPEAT = { bshot: 1, lstrum: 1 };   // 잇달아 나와도 되는 자세 (보통 쏘기·켜기)
 const MOT_POOL_K = { staff: { melee: ['sjab', 'sswing'] }, heavy: { magic: ['spush', 'spushup'], spell: ['spush', 'spushup'] }, lute: { melee: ['lswing'] } };
@@ -568,11 +571,15 @@ const MOT_SWORDISH = ['down', 'up', 'side', 'thrust', 'hack', 'bash', 'block', '
 const MOT_OWN = {
   sword: MOT_SWORDISH, dagger: MOT_SWORDISH, heavy: MOT_SWORDISH.filter(k => k !== 'thrust' && k !== 'hack').concat(['smash', 'spush', 'spushup']),
   pole: ['pthrust', 'pup', 'plow', 'pswing', 'pjump', 'pspin', 'praise'], staff: ['spush', 'sjab', 'spushup', 'sswing', 'scharge', 'sraise'],
-  bow: ['bshot', 'bfull', 'bdiag', 'brapid', 'bswing', 'braise'], lute: ['lstrum', 'lraise', 'lswing']
+  bow: ['bshot', 'bfull', 'bdiag', 'brapid', 'bswing', 'braise'], lute: ['lstrum', 'lraise', 'lswing'],
+  whip: ['wcrack', 'wside', 'wflick', 'wtwirl', 'wraise'], machete: MOT_SWORDISH.concat(['mchop']), card: ['cflick', 'cfan', 'cshow'],
+  wand: ['vflick', 'vswirl', 'vraise'], orb: ['opush', 'olift', 'ospin'], book: ['bkcast', 'bkraise', 'bkshut']
 };
 const MOT_ROLE = { down: 'cut', up: 'rise', side: 'sweep', thrust: 'stab', hack: 'flurry', smash: 'slam', bash: 'stab', block: 'raise', raise: 'raise', guard: 'raise', salute: 'raise', taunt: 'raise', parry: 'raise', ready: 'raise', toss: 'rise',
   pthrust: 'stab', pup: 'rise', plow: 'stab', pswing: 'cut', pjump: 'slam', pspin: 'sweep', praise: 'raise', spush: 'shoot', sjab: 'stab', spushup: 'rise', sswing: 'cut', scharge: 'cast', sraise: 'raise',
-  bshot: 'shoot', bfull: 'cast', bdiag: 'rise', brapid: 'flurry', bswing: 'cut', braise: 'raise', lstrum: 'shoot', lraise: 'raise', lswing: 'cut' };
+  bshot: 'shoot', bfull: 'cast', bdiag: 'rise', brapid: 'flurry', bswing: 'cut', braise: 'raise', lstrum: 'shoot', lraise: 'raise', lswing: 'cut',
+  wcrack: 'cut', wside: 'sweep', wflick: 'rise', wtwirl: 'flurry', wraise: 'raise', mchop: 'slam', cflick: 'shoot', cfan: 'flurry', cshow: 'raise',
+  vflick: 'shoot', vswirl: 'cast', vraise: 'raise', opush: 'shoot', olift: 'cast', ospin: 'raise', bkcast: 'shoot', bkraise: 'cast', bkshut: 'slam' };
 const MOT_FAMR = {
   sword:  { cut: 'down', rise: 'up', sweep: 'side', stab: 'thrust', flurry: 'hack', slam: 'down', shoot: 'thrust', cast: 'raise', raise: 'raise' },
   dagger: { cut: 'down', rise: 'up', sweep: 'side', stab: 'thrust', flurry: 'hack', slam: 'down', shoot: 'thrust', cast: 'raise', raise: 'raise' },
@@ -580,8 +587,21 @@ const MOT_FAMR = {
   pole:   { cut: 'pswing', rise: 'pup', sweep: 'pspin', stab: 'pthrust', flurry: 'pthrust', slam: 'pjump', shoot: 'pthrust', cast: 'praise', raise: 'praise' },
   staff:  { cut: 'sswing', rise: 'spushup', sweep: 'sswing', stab: 'sjab', flurry: 'sjab', slam: 'sswing', shoot: 'spush', cast: 'scharge', raise: 'sraise' },
   bow:    { cut: 'bswing', rise: 'bdiag', sweep: 'bswing', stab: 'bshot', flurry: 'brapid', slam: 'bswing', shoot: 'bshot', cast: 'bfull', raise: 'braise' },
-  lute:   { cut: 'lswing', rise: 'lswing', sweep: 'lswing', stab: 'lstrum', flurry: 'lstrum', slam: 'lswing', shoot: 'lstrum', cast: 'lraise', raise: 'lraise' }
+  lute:   { cut: 'lswing', rise: 'lswing', sweep: 'lswing', stab: 'lstrum', flurry: 'lstrum', slam: 'lswing', shoot: 'lstrum', cast: 'lraise', raise: 'lraise' },
+  whip:    { cut: 'wcrack', rise: 'wflick', sweep: 'wside', stab: 'wcrack', flurry: 'wtwirl', slam: 'wcrack', shoot: 'wcrack', cast: 'wraise', raise: 'wraise' },
+  machete: { cut: 'down', rise: 'up', sweep: 'side', stab: 'thrust', flurry: 'hack', slam: 'mchop', shoot: 'thrust', cast: 'raise', raise: 'raise' },
+  card:    { cut: 'cflick', rise: 'cflick', sweep: 'cfan', stab: 'cflick', flurry: 'cfan', slam: 'cfan', shoot: 'cflick', cast: 'cshow', raise: 'cshow' },
+  wand:    { cut: 'vflick', rise: 'vflick', sweep: 'vswirl', stab: 'vflick', flurry: 'vflick', slam: 'vswirl', shoot: 'vflick', cast: 'vswirl', raise: 'vraise' },
+  orb:     { cut: 'opush', rise: 'olift', sweep: 'opush', stab: 'opush', flurry: 'opush', slam: 'olift', shoot: 'opush', cast: 'olift', raise: 'ospin' },
+  book:    { cut: 'bkshut', rise: 'bkraise', sweep: 'bkshut', stab: 'bkcast', flurry: 'bkcast', slam: 'bkshut', shoot: 'bkcast', cast: 'bkraise', raise: 'bkraise' }
 };
+const MOT_THROW = { cflick: 1, cfan: 3 };
+const CARD_FR = [['ZZ', 'ZT', 'ZZ'], ['.ZZ', 'ZTZ', 'ZZ.'], ['ZZZ', 'ZTZ'], ['ZZ.', 'ZTZ', '.ZZ']].map(rows => {   // 돌며 나는 카드 넉 장: 세움 · 사선 · 눕힘 · 사선 (흰 면 · 붉은 무늬 · 짙은 테)
+  const px = [], own = new Set(), oy = Math.floor(rows.length / 2), ox = Math.floor(rows[0].length / 2);
+  rows.forEach((r, y) => [...r].forEach((ch, x) => { if (ch !== '.') { px.push([x - ox, y - oy, ch === 'T' ? '#d0302a' : '#f4f0e6']); own.add((x - ox) + ',' + (y - oy)); } }));
+  const out = []; for (const [x, y] of px) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const q = (x + dx) + ',' + (y + dy); if (!own.has(q)) { own.add(q); out.push([x + dx, y + dy]); } }
+  return { px, out };
+});   // 빌드 65: 카드를 던지는 동작 — 근접 기본 공격이라도 카드가 날아간다 (장 수)
 // 이 모험가가 쓸 동작: 그 갈래에 있으면 그대로, 없으면 역할이 같은 동작
 function motFam(a, mk) {
   const fam = pxsFam(a);
@@ -698,11 +718,12 @@ function events(e, pos, t, team, p) {
       if (x.k === 'jump' && !(mq && pxsMotFr(mq.mk, 3).jy)) V.jump['a' + x.s] = t + Math.max(0, md - 0.2);   // 동작이 뛰지 않으면 예전처럼 뛴다
       // 스킬 효과 (빌드 41): 초승달·땅 금은 적마다 늦게 닿는다 · (빌드 42) 지속 피해 스킬은 skill 사건이 건 동작의 스킬
       const am0 = V.mot['a' + x.s], sid = x.sid || (x.dot && mq && am0 && am0.dot ? am0.sid : null), sk = sid ? SKFX[sid] : null, dirv = V.dir || 1;
-      const aq0 = at('a' + x.s), src = mq && aq0 && (PROJ[x.k] || (sk && sk.proj)) ? motTip(advOf(x.s), mq.mk, aq0, zAt(aq0[1])) : am;   // 화살·마법은 무기 끝에서
+      const thr = !!(mq && MOT_THROW[mq.mk] && !x.dot && !PROJ[x.k] && !(sk && sk.proj));   // 빌드 65: 카드 던지기 — 근접 기본 공격이라도 카드가 날아간다
+      const aq0 = at('a' + x.s), src = mq && aq0 && (PROJ[x.k] || (sk && sk.proj) || thr) ? motTip(advOf(x.s), mq.mk, aq0, zAt(aq0[1])) : am;   // 화살·마법은 무기 끝에서
       let tw = 0, x0w = 0;
       if (sk && (sk.hit === 'wave' || sk.hit === 'quake')) { x0w = am[0] + (sk.hit === 'wave' ? 26 : 30) * dirv; tw = Math.abs(fm[0] - x0w) / (sk.hit === 'wave' ? SK_WAVE : SK_QUAKE); }
       const mel = mq && PXS_MOT_MELEE[mq.mk], arcK = mq && mq.mk === 'bdiag' ? 1.6 : 1, pre = (sk && SK_PRE[sk.hit]) || 0;
-      const t1 = t + md + tw, delay = mel ? 0 : Math.max(pre, ((sk && sk.proj ? SK_PROJ_T[sk.proj] : PROJ[x.k]) || 0) * arcK), [c1, c2] = HIT_C[mel ? 'melee' : x.k] || HIT_C.melee;   // 사선 화살은 더 오래 난다 · 활·류트로 치면 바로
+      const t1 = t + md + tw, delay = mel ? 0 : thr ? Math.max(pre, 0.17) : Math.max(pre, ((sk && sk.proj ? SK_PROJ_T[sk.proj] : PROJ[x.k]) || 0) * arcK), [c1, c2] = HIT_C[mel ? 'melee' : x.k] || HIT_C.melee;   // 사선 화살은 더 오래 난다 · 활·류트로 치면 바로
       if (!x.dot && x.v) sfxAt(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k], t1 + delay - t);
       if (sk) {
         const act = V.mot['a' + x.s], nth = act && act.sid === sid && act.lastN ? act.lastN : 1, last = nth >= ((SKILLS[sid] && SKILLS[sid].hits) || 1), fq = at('f' + x.d);
@@ -724,6 +745,7 @@ function events(e, pos, t, team, p) {
       }
       if (sk && !sk.keep) { /* 스킬 효과가 투사체·베기·터짐을 대신한다 */ }
       else if (mel) { /* 활·류트로 친다: 투사체 없음 */ }
+      else if (thr) for (let j = 0; j < MOT_THROW[mq.mk]; j++) V.fx.push(Object.assign({ k: 'card', fr0: j }, P, { y1: P.y1 + (j - (MOT_THROW[mq.mk] - 1) / 2) * 5, t0: P.t0 + j * 0.03 }));   // 카드 (부채는 세 장)
       else if (x.sid === 'shuri') V.fx.push(Object.assign({ k: 'shuri', c: x.el && ELEMS[x.el] ? [ELEMS[x.el].c, SHURI_C[shuriLook(x.s)][1]] : SHURI_C[shuriLook(x.s)] }, P));   // 속성 특별 암기는 그 속성 색 (빌드 65)
       else if (x.k === 'arrow') V.fx.push(Object.assign({ k: 'arrow', c: x.dot ? '#7ad83c' : x.el && ELEMS[x.el] ? ELEMS[x.el].c : c1 }, P));   // 속성 화살은 그 색
       else if (x.k === 'magic' || x.k === 'spell' || x.k === 'note') V.fx.push(Object.assign({ k: 'orb', c: c1, c2, ring: 1, size: 2 }, P));
@@ -733,7 +755,7 @@ function events(e, pos, t, team, p) {
       else if (x.k === 'wind') V.fx.push(Object.assign({ k: 'gust', c: c1, c2 }, P));
       else if (x.k === 'bolt') V.fx.push({ k: 'bolt', x: fm[0], y: fm[1] + 8, t0: t1, d: 0.22 });
       else if (x.k === 'holy') V.fx.push({ k: 'pillar', x: fm[0], y: fm[1] + 10, t0: t1, d: 0.45, c: c1, c2 });
-      if (!sk && (x.k === 'melee' || x.k === 'jump' || x.k === 'pet' || mel)) V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: V.dir || 1 });
+      if (!sk && !thr && (x.k === 'melee' || x.k === 'jump' || x.k === 'pet' || mel)) V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.22, c: x.c ? '#fff2a0' : '#ffffff', big: x.c || x.k === 'jump', dir: V.dir || 1 });
       if (!sk) V.fx.push({ k: 'burst', x: fm[0], y: fm[1], t0: t1 + delay, d: x.c ? 0.4 : 0.28, c: c1, c2, big: x.c });
       V.flash['f' + x.d] = t1 + delay + 0.09; V.flash0['f' + x.d] = t1 + delay;
       if (x.dot) V.fx.push({ k: 'spark', x: fm[0], y: fm[1], t0: t1 + delay, d: 0.5, c: '#7ad83c' });
@@ -882,6 +904,11 @@ function fx(g, t) {
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * AH : 0;
     if (f.k === 'arrow' && f.x1 != null) { const tx = f.x1 - f.x0, ty = (f.y1 - f.y0) - Math.PI * Math.cos(k * Math.PI) * AH, tl = Math.hypot(tx, ty) || 1; ux = tx / tl; uy = ty / tl; }   // 화살은 날아가는 방향을 본다
     if (f.k === 'num') { if (f.big) { drawNum(g, f.x - 0.5, Math.round(f.y - k * 12) - 0.5, f.s, f.c); drawNum(g, f.x + 0.5, Math.round(f.y - k * 12), f.s, f.c); } drawNum(g, f.x, Math.round(f.y - k * 12), f.s, f.c); }
+    else if (f.k === 'card') {   // 빌드 65: 날아가는 트럼프 카드 (돌며 난다 — 넉 장)
+      const fr = (Math.floor(t * 20) + (f.fr0 || 0)) % 4, cx = Math.round(f.x0 + (f.x1 - f.x0) * k), cy = Math.round(f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * 3), F = CARD_FR[fr];
+      for (const [x, y] of F.out) R(g, cx + x, cy + y, 1, 1, '#1a1414');
+      for (const [x, y, c] of F.px) R(g, cx + x, cy + y, 1, 1, c);
+    }
     else if (f.k === 'shuri') {
       const fr = Math.floor(t * 24) % 4, at = kk => [Math.round(f.x0 + (f.x1 - f.x0) * kk), Math.round(f.y0 + (f.y1 - f.y0) * kk - Math.sin(kk * Math.PI) * 4)];
       const draw = (q, F, al, line) => { const [cx, cy] = q; g.save(); g.globalAlpha = al; if (line) for (const [x, y] of F.out) R(g, cx + x, cy + y, 1, 1, '#1a1414'); for (const [x, y, c] of F.star) R(g, cx + x, cy + y, 1, 1, c ? f.c[1] : f.c[0]); g.restore(); };
