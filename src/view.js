@@ -255,7 +255,7 @@ function townScene(w, t, p, lights, post, dark) {
   });
   const coach = coachState(t);   // 왕국 상단의 마차 (파티 뒤)
   if (coach) drawCoach(w, coach.x, 181, t, KINGDOMS[coach.k], coach.moving, lights, dark);
-  if (p && p.wagon) drawRig(w, 30, 182, t, p, false, 1);   // 상단 앞에 세워 둔 이 파티의 마차
+  if (p && p.wagon) { const q2 = rig2Live(p); if (q2) drawRig(w, -6, 178, t, q2, false, 1); drawRig(w, 30, 182, t, p, false, 1); }   // 상단 앞에 세워 둔 이 파티의 마차 (빌드 65: 둘째 마차는 그 뒤)
   let list = p ? teamOf(p) : [];
   if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6);
   list = list.slice(0, 6);
@@ -296,7 +296,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   for (const f of e.foes.concat(e.next || [])) V.fname[f.uid] = f.name || MONS[f.id].name;
   const pos = {}, n = team.length, draws = [], dir = e.mode === 'return' ? -1 : 1, mx = x => (dir > 0 ? x : AW - x);
   V.dir = dir;
-  team.forEach((a, i) => { const [x, y] = SLOT_P[Math.min(SLOT_P.length - 1, i)]; pos['a' + a.id] = [mx(x), y]; });
+  team.forEach((a, i) => { const [x, y] = SLOT_P[Math.min(SLOT_P.length - 1, i)], q = pos['a' + a.id] = [mx(x), y], ru = a.down ? 0 : -rideTop(a); if (ru) q.ru = ru; });   // 탈것 (빌드 65): 숫자 · 알림은 기수 머리 위에
   const pet = petOfParty(p);
   if (pet) pos['aP' + pet.id] = n > 6 ? [mx(8), 199] : [mx(34), 197];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
@@ -310,27 +310,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     w.save(); w.translate(190 + k * 120, GY + BG_OY); w.scale(1.25, 1.25); drawGate(w, F.dungeon.bg, fs.cleared ? 1 : fs.found ? 0 : 2); w.restore();
   }
 
-  // 야영: 모닥불을 둘러앉는다
-  if (camping) {
-    const cx = AW / 2, cy = GL + 16, sleep = e.camp.t > 1.5, tent = !!e.camp.tent;
-    if (tent) {   // 정찰가의 텐트: 모닥불 대신 큰 텐트를 치고 그 옆에 나란히 눕는다
-      w.save(); w.translate(cx - 62, GL + 2); w.scale(1.7, 1.7); drawTentHi(w); w.restore();
-    } else { w.save(); w.translate(cx + 78, GL + 4); drawTentHi(w); w.restore(); }
-    team.forEach((a, i) => {
-      const side = i % 2 ? 1 : -1, k = Math.floor(i / 2), zz = sleep && (a.fat || 0) > 4;
-      const x = tent ? cx - 14 + i * 20 : cx + side * (zz ? 26 + k * 24 : 18 + k * 17), y = tent ? cy + 2 : cy;
-      pos['a' + a.id] = [x, y];
-      shadowAt(w, x, y, zz ? 14 : 8);
-      w.save(); w.translate(x, y); w.scale(tent ? 1 : side > 0 ? -1 : 1, 1); drawAdv(w, a, t, { sit: !zz, sleep: zz, z: ZS, side: 1 }); w.restore();
-      if (zz) post.push(g => drawZ(g, x + (tent ? 8 : -side * 8), y - 14, t, i * 0.3));
-    });
-    const cw = wxNow(e);
-    if (tent) { const lx = cx - 14 + team.length * 20 + 6; post.push(g => lanternHi(g, lx, cy - 2, t)); lights.push({ x: lx, y: cy - 8, r: 80, c: '#f0c060', glow: 1, flick: 1 }); }
-    else if (campWet(p, cw)) { post.push(g => { R(g, cx - 5, cy - 2, 11, 1, '#5e3c22'); R(g, cx - 4, cy - 3, 3, 1, '#4a3020'); R(g, cx + 2, cy - 3, 3, 1, '#4a3020'); for (let i = 0; i < 4; i++) { const k = ((t * 0.5 + i * 0.25) % 1); R(g, cx + Math.round(Math.sin(i * 5 + t) * 2), cy - 6 - Math.round(k * 16), 1, 1, `rgba(170,170,180,${(0.6 * (1 - k)).toFixed(2)})`); } }); }   // 비: 꺼진 장작에서 연기만
-    else { const windy = campWindy(p, cw); post.push(g => fireHi(g, cx + (windy ? Math.round(Math.sin(t * 9)) : 0), cy, t)); lights.push({ x: cx, y: cy - 6, r: windy ? 55 : 90, c: '#f09040', glow: 1, flick: 1 }); }
-    if (p.wagon && !bg.under) drawRig(w, tent ? 214 : 26, GL + 10, t, p, false, tent ? -1 : 1);
-    return;
-  }
+  // 야영 (빌드 65 camp65.js): 모닥불 · 마부 텐트 · 코네스토가 웨건 · 불침번 교대 · 탈것은 내려서
+  if (camping) { campScene(w, t, p, e, team, pos, lights, post, dark, bg); return; }
 
   // 쓰러지는 적: 뒤로 넘어지며 사라진다
   V.ghosts = V.ghosts.filter(gh => t - gh.t0 < 0.9);
@@ -394,7 +375,10 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     } });
   }
   // 마차: 파티 뒤를 따라온다 (던전·레이드·투기장에는 두고 온다)
-  if (p.wagon && !bg.under && (e.area === 'field' || e.area === 'trade' || e.area === 'wave')) draws.push({ y: 160, f: g => drawRig(g, mx(20), 170, t, p, walking, dir) });
+  if (p.wagon && !bg.under && (e.area === 'field' || e.area === 'trade' || e.area === 'wave')) {
+    draws.push({ y: 160, f: g => drawRig(g, mx(20), 170, t, p, walking, dir) });
+    const q2 = rig2Live(p); if (q2) draws.push({ y: 158, f: g => drawRig(g, mx(-12), 166, t + 0.37, q2, walking, dir) });   // 빌드 65: 캐러밴 마스터의 둘째 마차가 뒤따른다
+  }
   // 파티
   team.forEach((a, i) => {
     const [x0, y0] = pos['a' + a.id], z = zAt(y0);
@@ -406,13 +390,14 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const at = V.atk['a' + a.id], lunging = at && t - at < 0.26, atkF = lunging ? (t - at < 0.08 ? 0 : 1) : 0;
     const melee = CLASSES[a.cls].act === 'melee';
     const jt = V.jump['a' + a.id], jy = jt && t >= jt && t - jt < 0.4 ? -Math.round(Math.sin((t - jt) / 0.4 * Math.PI) * 14) : 0;
-    const mo = !a.down && !falling ? motNow(a, t) : null, mF = mo && pxsMotFr(mo.mk, mo.f);   // 공격 동작 (빌드 40)
+    const rk = rideKind(a);   // 탈것 (빌드 65): 탄 채 쏘고 휘두른다 — 몸이 나가거나 뛰지 않는다 (pxs.js PXS_RIDE)
+    const mo = !a.down && !falling ? motNow(a, t) : null, mF = mo && (rk ? rideDo(a, () => pxsMotFr(mo.mk, mo.f)) : pxsMotFr(mo.mk, mo.f));   // 공격 동작 (빌드 40)
     const msk = mo && mo.sk && SKFX[mo.sk], dashK = msk && msk.dash && mo.f >= 3 && mo.f <= 6 ? 1.8 : 1;   // 스킬 효과 (빌드 41): 돌진은 더 멀리
-    const mjy = mo ? Math.round(motJy(mo) * 2 * z) : 0;   // 도약 찌르기 (빌드 42): 동작이 뛰는 높이를 정한다
+    const mjy = mo && !rk ? Math.round(motJy(mo) * 2 * z) : 0;   // 도약 찌르기 (빌드 42): 동작이 뛰는 높이를 정한다
     const dx = ((mo ? mF.dx * 2 * z * dashK : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy + mjy;
     if (mo) post.push(g => motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t));
     draws.push({ y: y0, f: g => {
-      shadowAt(g, x0 + dx, y0, (jy || mjy < -4 ? 7 : SHADOW_R) * z / ZS);
+      shadowAt(g, x0 + dx, y0, (rk ? rideShadow(a) : jy || mjy < -4 ? 7 : SHADOW_R) * z / ZS);
       if (msk) skGhosts(g, a, mo, msk, x0 + dx, y, z, dir, t);
       g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
       if (falling) { const k = Math.max(0, Math.min(1, (t - ft) / 0.3)); g.rotate(-k * k * Math.PI / 2); }
@@ -428,7 +413,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       const shp = e.buffs.reduce((s2, b) => s2 + (b.stat === 'shield' && b.to === a.id ? Math.max(0, b.hp) : 0), 0); if (shp) bar(g, x0, y0 + 1.5, 22, Math.min(1, shp / d.maxHp), '#8ad8ff', 1);   // 보호막
       if ((a.fat || 0) >= 60) R(g, x0 + 12.5, y0 + 3, 1.5, 1.5, a.fat >= 85 ? '#e0503f' : '#f0b43c');
       staDots(g, e.sta && e.sta[a.id], x0 - 11, y0);
-      if (e.taunt && e.taunt.aid === a.id) drawNum(g, x0, y - 21 * z - 6, '!', '#ff5a4a');
+      if (e.taunt && e.taunt.aid === a.id) drawNum(g, x0, y - (21 - rideTop(a)) * z - 6, '!', '#ff5a4a');
     });
   });
   // 뒤에 선 것부터 그린다
@@ -657,22 +642,27 @@ function motNow(a, t) {
 const motJy = mo => { const A = pxsMotFr(mo.mk, mo.f).jy || 0, B = mo.f < 7 ? pxsMotFr(mo.mk, mo.f + 1).jy || 0 : 0; return A + (B - A) * (mo.p || 0); };
 // 맞히는(쏘는) 장의 무기 끝 → 화면 자리: 화살·마법·음표가 여기서 떠난다
 function motTip(a, mk, q, z) {
-  const F = pxsMotFr(mk, pxsMotHit(mk)), wk = pxsWk(a), fam = PXS_FAMW[wk] || 'sword', A = pxsMAxis(F, wk);
-  let X, Y;
-  if (fam === 'bow') { X = A.o[0] + A.fwd[0] * 2.5; Y = A.o[1] + A.fwd[1] * 2.5; }
-  else if (fam === 'lute' && F.la != null) { const lp = F.lp || [1, 3]; X = PXS_SH[0] + F.lean + lp[0] + 2; Y = PXS_SH[1] + F.cr + lp[1] - 1; }
-  else { X = A.o[0] + A.u[0] * (A.L1 - 0.6); Y = A.o[1] + A.u[1] * (A.L1 - 0.6); }
-  const dir = V.dir || 1;
-  return [q[0] + (2 * (X + F.dx) - 19 + 1) * z * dir, q[1] + (2 * Y - 47 + 1 + 2 * (F.jy || 0)) * z];
+  return rideDo(a, ro => {   // 탈것 (빌드 65): 탄 기수의 무기 끝
+    const F = pxsMotFr(mk, pxsMotHit(mk)), wk = pxsWk(a), fam = PXS_FAMW[wk] || 'sword', A = pxsMAxis(F, wk);
+    let X, Y;
+    if (fam === 'bow') { X = A.o[0] + A.fwd[0] * 2.5; Y = A.o[1] + A.fwd[1] * 2.5; }
+    else if (fam === 'lute' && F.la != null) { const lp = F.lp || [1, 3]; X = PXS_SH[0] + F.lean + lp[0] + 2; Y = PXS_SH[1] + F.cr + lp[1] - 1; }
+    else { X = A.o[0] + A.u[0] * (A.L1 - 0.6); Y = A.o[1] + A.u[1] * (A.L1 - 0.6); }
+    const dir = V.dir || 1, [ox, oy] = ro || [0, 0];
+    return [q[0] + (2 * (X + F.dx) - 19 + 1 + ox) * z * dir, q[1] + (2 * Y - 47 + 1 + 2 * (F.jy || 0) + oy) * z];
+  });
 }
 // 칼끝 자취·찌르기 번쩍임·방패 충격·막기 불꽃: 그림과 같은 칸(뭉툭 칸 = 2×2 논리 픽셀), 어둠 위에
 function motFx(g, a, mo, x0, y, z, dir, t) {
   const sk = mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast ? SKFX[mo.sk] : null;
   g.save(); g.translate(x0, y); g.scale(dir * z, z);
-  if (!(sk && skAdvFx(g, a, mo, sk, t || 0))) {
-    const s = pxsAdvSprite(a, 'm:' + mo.mk, mo.f), F = s.mfx, pal = MOT_PAL[mo.c ? 1 : 0];
-    if (F) for (const L of [F.back, F.front]) for (const [X, Y, ci] of L) R(g, 2 * X - 19, 2 * Y - 47, 2, 2, pal[ci]);
-  }
+  rideDo(a, ro => {   // 탈것 (빌드 65): 탄 기수 자리로 옮겨 그린다
+    if (ro) g.translate(ro[0], ro[1]);
+    if (!(sk && skAdvFx(g, a, mo, sk, t || 0))) {
+      const s = advMotSpr(a, mo.mk, mo.f), F = s.mfx, pal = MOT_PAL[mo.c ? 1 : 0];
+      if (F) for (const L of [F.back, F.front]) for (const [X, Y, ci] of L) R(g, 2 * X - 19, 2 * Y - 47, 2, 2, pal[ci]);
+    }
+  });
   g.restore();
 }
 function events(e, pos, t, team, p) {
@@ -682,8 +672,8 @@ function events(e, pos, t, team, p) {
   const fz = (f, y) => (f && f.giant ? giantZ(f) : zAt(y));
   const fmid = uid => { const f = foe(uid), q = at('f' + uid); return q ? [q[0], q[1] - (f ? Math.min(60, monH(f.id, f.sc) * fz(f, q[1])) : 12) * 0.5] : null; };
   const ftop = uid => { const f = foe(uid), q = at('f' + uid); return q ? [q[0], q[1] - (f ? Math.min(90, monH(f.id, f.sc) * fz(f, q[1])) : 16) - 4] : null; };
-  const amid = id => { const q = at('a' + id); return q ? [q[0] + 4 * (V.dir || 1), q[1] - 12 * zAt(q[1])] : null; };
-  const atop = id => { const q = at('a' + id); return q ? [q[0], q[1] - 21 * zAt(q[1]) - 6] : null; };
+  const amid = id => { const q = at('a' + id); return q ? [q[0] + 4 * (V.dir || 1), q[1] - (12 + (q.ru || 0)) * zAt(q[1])] : null; };   // q.ru = 탈것에 탄 기수가 올라간 높이 (빌드 65)
+  const atop = id => { const q = at('a' + id); return q ? [q[0], q[1] - (21 + (q.ru || 0)) * zAt(q[1]) - 6] : null; };
   const advOf = id => team.find(a => a.id === id);
   const sfxAt = (k, d) => (d > 0.02 ? setTimeout(() => sfx(k), d * 1000) : sfx(k));
   for (let xi = 0; xi < e.ev.length; xi++) {
@@ -769,10 +759,10 @@ function events(e, pos, t, team, p) {
       if (ft) V.fx.push({ k: 'num', x: ft[0] + 2, y: ft[1] - 4, s: 'MISS', c: '#a9b0bd', t0: t + md, d: 0.6 });
     } else if (x.type === 'hurt' && x.dot) {
       const aq = at('a' + x.d);
-      if (aq) { V.fx.push({ k: 'num', x: aq[0] + jx(), y: aq[1] - 21 * zAt(aq[1]) - 6, s: String(x.v), c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a', t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: aq[0], y: aq[1] - 10, t0: t, d: 0.5, c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a' }); }
+      if (aq) { V.fx.push({ k: 'num', x: aq[0] + jx(), y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6, s: String(x.v), c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a', t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: aq[0], y: aq[1] - 10, t0: t, d: 0.5, c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a' }); }
     } else if (x.type === 'sta') {
       const q = at((x.side === 'f' ? 'f' : 'a') + x.d), St = STATUS[x.k], dl = x.side !== 'f' ? Math.max(0, (V.fhit['a' + x.d] || 0) - t) : 0;
-      if (q && St) { const cy = q[1] - 21 * zAt(q[1]) - 10; if (dl > 0.02) setTimeout(() => callout(q[0], cy, St.name + '!', 'dot'), dl * 1000); else callout(q[0], cy, St.name + '!', 'dot'); V.fx.push({ k: 'buff', x: q[0], y: q[1], t0: t + dl, d: 0.6, c: St.c }); }
+      if (q && St) { const cy = q[1] - (21 + (q.ru || 0)) * zAt(q[1]) - 10; if (dl > 0.02) setTimeout(() => callout(q[0], cy, St.name + '!', 'dot'), dl * 1000); else callout(q[0], cy, St.name + '!', 'dot'); V.fx.push({ k: 'buff', x: q[0], y: q[1], t0: t + dl, d: 0.6, c: St.c }); }
     } else if (x.type === 'cure') {
       const aq = at('a' + x.d);
       if (aq) V.fx.push({ k: 'heal', x: aq[0], y: aq[1], t0: t, d: 0.6, c: '#c8f0ff' });
@@ -781,7 +771,7 @@ function events(e, pos, t, team, p) {
       if (!am) continue;
       const T1 = t + fd;   // 맞는 때 (언데드는 동작이 닿는 때 · 그 밖은 바로)
       if (!fd) V.lunge['f' + x.s] = t + 0.14;
-      if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - 21 * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: T1, d: 0.6 }); motCast(advOf(x.d), 'block', T1 - 0.1, 1); }
+      if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: T1, d: 0.6 }); motCast(advOf(x.d), 'block', T1 - 0.1, 1); }
       V.flash['a' + x.d] = T1 + 0.1; V.flash0['a' + x.d] = T1; V.fhit['a' + x.d] = T1;
       const fm = fmid(x.s);
       if (fd) fmotHitFx(e, x, t, fd, am, aq, at);   // 언데드: 갈래 효과 (투사체 · 맞히기)
@@ -790,11 +780,11 @@ function events(e, pos, t, team, p) {
         V.fx.push({ k: 'slash', x: am[0], y: am[1], t0: t, d: 0.18, c: '#ff8a7a', dir: -(V.dir || 1) });
         V.fx.push({ k: 'burst', x: am[0], y: am[1], t0: t, d: 0.25, c: '#ff6a5a', c2: '#ffd0c0' });
       }
-      V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 6, s: String(x.v), c: x.c ? '#ff9a3a' : '#ff6a5a', t0: T1, d: 0.7 });
+      V.fx.push({ k: 'num', x: aq[0], y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6, s: String(x.v), c: x.c ? '#ff9a3a' : '#ff6a5a', t0: T1, d: 0.7 });
     } else if (x.type === 'miss') {
       const aq = at('a' + x.d);
       if (!fd) V.lunge['f' + x.s] = t + 0.14;
-      if (aq) V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - 21 * zAt(aq[1]) - 12, s: x.df ? '튕김' : 'MISS', c: x.df ? '#ffe08a' : '#cfe8ff', t0: t + fd, d: 0.6 });   // df = 튕겨내기(닌자)
+      if (aq) V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12, s: x.df ? '튕김' : 'MISS', c: x.df ? '#ffe08a' : '#cfe8ff', t0: t + fd, d: 0.6 });   // df = 튕겨내기(닌자)
     } else if (x.type === 'aoe') {
       const q = at('f' + x.s);
       if (fd) fmotAoe(e, x, t, fd, team, at);   // 언데드 광역기: 박쥐 떼 · 죽음의 파동 · 죽음의 회전 · 암흑 강타
@@ -803,11 +793,11 @@ function events(e, pos, t, team, p) {
       const aq = at('a' + x.d);
       if (!aq) continue;
       const blue = x.type === 'mana';
-      V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 6, s: '+' + x.v, c: blue ? '#7ab8ff' : '#7bd36a', t0: t, d: 0.8 });
+      V.fx.push({ k: 'num', x: aq[0], y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6, s: '+' + x.v, c: blue ? '#7ab8ff' : '#7bd36a', t0: t, d: 0.8 });
       V.fx.push({ k: 'heal', x: aq[0], y: aq[1], t0: t, d: 0.7, c: x.type === 'pot' ? '#ff7a8a' : blue ? '#8ac8ff' : '#8af08a' });
     } else if (x.type === 'skill') {
       const aq = at('a' + x.s), s = SKILLS[x.id], sk = SKFX[x.id], ma = advOf(x.s), mot = ma && pxsMotOK(ma), cast = s && !['dmg', 'mdmg', 'dot'].includes(s.kind);
-      if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); if (!sk || (!sk.cast && !mot)) V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
+      if (aq && s) { callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); if (!sk || (!sk.cast && !mot)) V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
       if (cast && mot) motCast(ma, sk && sk.mot ? sk.mot : (s.kind === 'buff' && ['def', 'block', 'guard'].includes(s.stat)) || s.kind === 'shield' ? 'guard' : 'raise', t, 0, sk ? x.id : null);
       else if (s && s.kind === 'dot' && mot && !x.pet) { const mk = motPick(ma, x.id, 0, s.fx || (s.magic ? 'magic' : 'melee')), sk2 = sk && sk.mot ? x.id : null; V.mot['a' + ma.id] = { t, sid: x.id, dot: 1, n: {}, q: [{ mk, t0: t, f0: 0, sk: sk2, T: motT(mk, sk2 && sk.hold) }] }; }   // 지속 피해 스킬도 동작 (빌드 42)
       else if (s && !mot && (s.kind === 'mdmg' || s.kind === 'heal')) V.atk['a' + x.s] = t;
@@ -820,15 +810,15 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'shield') {   // 보호막이 생기거나 깎일 때: 하늘색 테
       const aq = at('a' + x.d); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t + fd, d: x.on ? 0.7 : 0.35, c: '#8ad8ff' });
     } else if (x.type === 'cover') {    // 엄호: 탱커 위에 방패 글자
-      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '엄호!', 'buff');
+      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, '엄호!', 'buff');
     } else if (x.type === 'combo') {    // 연계: 중첩 수
-      const aq = at('a' + x.s); if (aq && (x.c === 3 || x.c === COMBO_MAX)) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, x.c === COMBO_MAX ? '연계 MAX' : `연계 ${x.c}`, '');
+      const aq = at('a' + x.s); if (aq && (x.c === 3 || x.c === COMBO_MAX)) callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, x.c === COMBO_MAX ? '연계 MAX' : `연계 ${x.c}`, '');
     } else if (x.type === 'noammo') {   // 화살이 떨어진 궁수
-      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, x.k === 'shuri' ? '암기 없음!' : x.k === 'bolt' ? '볼트 없음!' : '화살 없음!', 'noammo');
+      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, x.k === 'shuri' ? '암기 없음!' : x.k === 'bolt' ? '볼트 없음!' : '화살 없음!', 'noammo');
     } else if (x.type === 'jackpot') {  // 대박
-      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '대박!', 'buff');
+      const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, '대박!', 'buff');
     } else if (x.type === 'revive') {   // 부활: 금빛 테
-      const aq = at('a' + x.d); if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 1.0, c: '#ffe08a' }); callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '부활!', 'buff'); }
+      const aq = at('a' + x.d); if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 1.0, c: '#ffe08a' }); callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, '부활!', 'buff'); }
     } else if (x.type === 'kill') {
       const q = at('f' + x.d);
       if (q) V.ghosts.push({ id: pxuDead(x.id, x.d), adv: x.adv || null, x: q[0], y: q[1], t0: t, sc: x.sc || 0, face: -(V.dir || 1), z: zAt(q[1]) });   // 쓰러질 때도 그 적의 모습 그대로 (빌드 46: 모습 넷 · 찢어진 망토)
@@ -837,11 +827,11 @@ function events(e, pos, t, team, p) {
       V.fx.push({ k: 'icon', id: x.type === 'gear' ? gearKeyIcon('g:' + x.base + ':' + x.t) : x.id, x: q[0] + (x.type === 'gear' ? 6 : 0), y: q[1] - 10, t0: t + 0.3, d: x.type === 'gear' ? 1.4 : 0.9 });
     } else if (x.type === 'down') {
       const aq = at('a' + x.d), dl = Math.max(0, (V.fhit['a' + x.d] || 0) - t);   // 몬스터 동작이 닿는 때에 쓰러진다 (빌드 43)
-      if (aq) { V.fall['a' + x.d] = t + dl; V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 12, s: 'DOWN', c: '#ff6a5a', t0: t + dl, d: 1.4 }); V.fx.push({ k: 'burst', x: aq[0], y: aq[1] - 10, t0: t + dl, d: 0.4, c: '#ff6a5a', c2: '#ffffff', big: 1 }); }
+      if (aq) { V.fall['a' + x.d] = t + dl; V.fx.push({ k: 'num', x: aq[0], y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12, s: 'DOWN', c: '#ff6a5a', t0: t + dl, d: 1.4 }); V.fx.push({ k: 'burst', x: aq[0], y: aq[1] - 10, t0: t + dl, d: 0.4, c: '#ff6a5a', c2: '#ffffff', big: 1 }); }
       if (dl > 0.02) V.fx.push({ k: 'shk', id: 'bash', n: 4, t0: t + dl, d: 0.1 }); else V.shake = 4;
     } else if (x.type === 'lvl') {
       const aq = at('a' + x.d);
-      if (aq) { V.fx.push({ k: 'levelup', x: aq[0], y: aq[1], t0: t, d: 1.4 }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 14, s: 'LEVEL UP', c: '#ffd84a', t0: t + 0.1, d: 1.3, big: 1 }); }
+      if (aq) { V.fx.push({ k: 'levelup', x: aq[0], y: aq[1], t0: t, d: 1.4 }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 14, s: 'LEVEL UP', c: '#ffd84a', t0: t + 0.1, d: 1.3, big: 1 }); }
     } else if (x.type === 'petlvl') {
       const aq = at('aP' + x.pet);
       if (aq) V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 16, s: 'LEVEL UP', c: '#ffd84a', t0: t + 0.1, d: 1.1 });
@@ -862,13 +852,13 @@ function events(e, pos, t, team, p) {
       V.lunge['f' + x.s] = t + 0.14;
     } else if (x.type === 'ahit') {     // 홀린 모험가가 같은 편을 친다
       const am = amid(x.d), aq = at('a' + x.d);
-      if (am && aq) { V.fx.push({ k: 'slash', x: am[0], y: am[1], t0: t + 0.1, d: 0.2, c: '#ff8ad0', dir: -(V.dir || 1) }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - 21 * zAt(aq[1]) - 6, s: String(x.v), c: '#ffb0e0', t0: t + 0.1, d: 0.7 }); }
+      if (am && aq) { V.fx.push({ k: 'slash', x: am[0], y: am[1], t0: t + 0.1, d: 0.2, c: '#ff8ad0', dir: -(V.dir || 1) }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6, s: String(x.v), c: '#ffb0e0', t0: t + 0.1, d: 0.7 }); }
       V.atk['a' + x.s] = t;
     } else if (x.type === 'stoff') {    // 수면에서 깸 · 빙결이 깨짐 · 매혹 · 혼란이 풀림
       const q = x.side === 'f' ? ftop(x.d) : atop(x.d);
       if (q) callout(q[0], q[1] - 4, x.k === 'sleep' ? '깨어남' : x.k === 'freeze' ? '얼음이 깨졌다!' : '정신이 듦', x.k === 'freeze' ? 'buff' : 'dot');
     } else if (x.type === 'subst') {    // 쓰러질 한 방을 한 번 피한다
-      const aq = at('a' + x.d); if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.8, c: '#c8b48a' }); callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 4, '바꿔치기!', 'buff'); }
+      const aq = at('a' + x.d); if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.8, c: '#c8b48a' }); callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, '바꿔치기!', 'buff'); }
     } else if (x.type === 'fheal') {
       const fq = at('f' + x.d);
       if (fq) { V.fx.push({ k: 'heal', x: fq[0], y: fq[1], t0: t, d: 0.7, c: '#8af08a' }); V.fx.push({ k: 'num', x: fq[0], y: fq[1] - 24, s: '+' + x.v, c: '#8af08a', t0: t, d: 0.8 }); }
@@ -878,7 +868,7 @@ function events(e, pos, t, team, p) {
       if (x.win) V.shake = 3;
     } else if (x.type === 'mastery') {
       const aq = at('a' + x.s), s = SKILLS[x.id];
-      if (aq && s) { callout(aq[0], aq[1] - 21 * zAt(aq[1]) - 14, `${s.name} 숙련 ${x.lv}`, 'mast'); V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t + 0.2, d: 0.8, c: '#8af0c0' }); }
+      if (aq && s) { callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 14, `${s.name} 숙련 ${x.lv}`, 'mast'); V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t + 0.2, d: 0.8, c: '#8af0c0' }); }
     } else if (x.type === 'spawn' && (x.boss || x.amb)) {
       V.shake = x.boss ? 6 : 4;
       if (x.name) callout(170, 120, x.name, 'boss');

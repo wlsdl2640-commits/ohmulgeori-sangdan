@@ -1,0 +1,248 @@
+{
+ "wyvA": {
+  "frames": {
+   "idle0": "\n.\n.........d\n..........fd\n.......Fcffffd\n.......FFcccfffd\n.......FFFFFccffddZ\n......FFFFFFFFFccZd\n......FFFFFFcccccCdd\n.....FccccccFFFcCCCd..........ZZZ\n.....cFFFFFFFFcFFCCd..........zZZZ\n......FFFFFFFcFFFCCd...........zZZQQQ\n......fFFFFccFFFFCCd...........QCCcccQQ\n.......FFFcFFFFFFCCC..........QCACKeCCCQK\n.......FFcFFFFFFFFCC..........CCCaCCCCCc\n......fccFFFFFFFFFCCd........QCCACcccKKKK\n........ffFFFFFFFFCCd........CCCac.....w\n..........ffFFFFFFFCC.......QCCAA\n............FFFFFFFCC.V....VVCCaC\n............fFFFFFFCC.VWWWWVCCAAc\n.............FFFfffCCQRWWWWWRCac\n.............fff.QQQCCRRRRRRRUC\n................QCCCCCRRRRRRRUU\n...............QCCCCCCRRRRRGGc\n..............QCCCCCCCGGGGGCC\nQQ..........QQCCCCCCCCCCCCCCC\nccQQ......QQCCCCCCCCCCCCCCCCc\n..cCQQQQQQCCCCCCAAAAAAAAAAAA\n...cCCCCCCCCCCCccaaaaaaaaaa\n....cccccCCCcccddccCCAA\n.........ccc......dccC\n...................ddCQ\n...................ddcCQ\n....................ddcCc\n....................zzzc\n.......................ZZZ\n",
+   "idle1": "\n.\n.\n.\n.\n.\n.\n.\n.\n.............................zZZZ\n...............................zZZQQ\n...............................QzZccc\n...............................CCCKeCQQQK\n..............................QCACCCCCccc\n.............................QCCCacCCKKKK\n.............................CCCAC.ccccw\n............................QCCaac\n......................V....VVCCAC\n......................VWWWWVCCCac\n...................QQQRWWWWWRCAC\n.................QQCCCRRRRRRRUCc\n................QCCCCCRRRRRRRUU\n...............QCCCCCCRRRRRGGc\n..............QCCCCCCCGGGGGCC\n............QQCCCCCCCCCCCCCCC\nQ..........QCCCCCCCCCCCCCCCCc\ncQQQ....QQQCCCCCaaaaaaaaaaaa\n.ccCQQQQCCCCCCCccAAAAAAAAAA\n...cCCCCCCCCCccddccCCaa\n....cccccccccFFcccdccC\n.........fffFccFff.ddCQ\n............cFFff..ddcCQ\n.............ff.....ddcCc\n....................zzzc\n.......................ZZZ\n.\n",
+   "run0": "\n...........d\n........c..ffd\n.........ccfffd\n.........FFccfffd\n........FFFFFccffd.dZ\n........FFFFFFFFcfZdd\n.......FFFFFFFFFccCdd\n.....fccccccccccFcCCd\n......fFFFFFFFFFcFCCd\n.......FFFFFFFccFFCCd.........ZZZ\n.......fFFFFFcFFFFCCd.........zzZZZ\n........FFFccFFFFFCCd...........zZZQQ\n........FFcFFFFFFFCCC...........QzCcccQ\n.......fccFFFFFFFFFCC..........QCaCKeCCQQK\n.........ffFFFFFFFFCC.........QCCACCCCCCc\n...........fFFFFFFFCC.........CCCacCCcKKKK\n............fFFFFFFCCdV......QCCCA.cc...w\n.............FFFFFFCCdVV....VCCCaC\n.............FFFFFFFCCVVWWWWVCCCAc\n.............fffffffCCRWWWWWCCCac\n.................QQQCCRRRRRRRCAC\nQ...............QCCCCCRRRRRRRUUc\ncQQ............QCCCCCCRRRRRRRCU\n.cCQQ.......QQQCCCCCCCGGGGGGGc\n..cCCQQQQQQQCCCCCCCCCCCCCCCCC\n...cCCCCCCCCCCCCCCCCCCCCCCCCc\n....cccCCCCCCCCCAAAAAAAAAAAA\n.......cccccccccdaaaaaaaaaa\n................dccCCAA\n..................dcCC\n..................ddcCQ\n...................ddcC\n....................d.CQ\n....................zzcc\n......................ZZZ\n",
+   "run1": "\n.\n.\n.\n.\n.\n.\n...........d\n...........fddd\n........ccccfffddd\n........FFFFccccffddddZ.......zZZZ\n........FFFFFFFFFcccZdd........zZZZQ\n.......FFFFFFFFcccccCdd.........zZZccc\n......FFFccccccFFccCCd..........CCCKeCQQ.K\n.....ccccFFFFFFFccFFCC.........QCaCCCCCCc\n......fFFFFFFFccFFFFCC........QCCACCCCCC\n.......FFFFFFcFFFFFFCC........CCCaccccKKKK\n.......FFFFccFFFFFFFCCVV....VQCAAC......w\n.......ffccfFFFFFFFFCCVV....VCCCac\n............fFFFFFFfCCVVWWWWCCCAC\n.............FFffffQCCRWWWWWRCaCc\n.............ff.QQCCCCRRRRRRRUAc\nQ..............QCCCCCCRRRRRRRaU\nCQ...........QQCCCCCCCGGGGGGGc\nccQQ.......QQCCCCCCCCCCCCCCCC\n..cCQQQQQQQCCCCCCCCCCCCCCCCCc\n...cCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCCCcccAAAAAAAAAA\n.......ccccccc.ddcCaaaaaa\n.................dccCC\n..................ddcC\n...................ddCQ\n...................ddcCQ\n....................z.cc\n.....................zZZZ\n.\n",
+   "run2": "\n.\n.\n.\n.\n.\n.\n.\n.\n...............................ZZ\n..............................zZZZZ\n...............................zzZZQQ\n................................QzCccc\n...............................QACCKeCQQQK\n...............................CCaCCCCCCc\n..............................QCCAcCCCKKKK\n......................V......QCCCa.cccc.w\n......................VV....VCCCAC\n......................VVWWWWVCCCac\n...................QQQRWWWWWRCCAc\n.................QQCCCRRRRRRRCac\n................QCCCCCRRRRRRRUU\n...............QCCCCCCRRRRRRRCU\nQ...........QQQCCCCCCCGGGGGGGc\nccQQ......QQCCCCCCCCCCCCCCCCC\n..cCQQQQQQCCCCCAAAAAAAAAAAAAA\n...cCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCccccdCAAAAAAAA\n.......cccccFFFcccccCC\n.........fffccccffddCC\n............fFfff.ddcCQ\n.............f.....ddcC\n....................d.cc\n....................zzZ.Z\n.......................Z\n.\n",
+   "run3": "\n.\n.\n.\n.\n.\n.\n...........d\n...........fddd\n........ccccfffddd\n........FFFFccccffddddZ.......zZZZ\n........FFFFFFFFFcccZdd........zZZZQ\n.......FFFFFFFFcccccCdd.........zZZccc\n......FFFccccccFFccCCd..........CCCKeCQQ.K\n.....ccccFFFFFFFccFFCC.........QCaCCCCCCc\n......fFFFFFFFccFFFFCC........QCCACCCCCC\n.......FFFFFFcFFFFFFCC........CCCaccccKKKK\n.......FFFFccFFFFFFFCCVV....VQCAAC......w\n.......ffccfFFFFFFFFCCVV....VCCCac\n............fFFFFFFfCCVVWWWWCCCAC\n.............FFffffQCCRWWWWWRCaCc\n.............ff.QQCCCCRRRRRRRUAc\nQ..............QCCCCCCRRRRRRRaU\nCQ...........QQCCCCCCCGGGGGGGc\nccQQ.......QQCCCCCCCCCCCCCCCC\n..cCQQQQQQQCCCCCCCCCCCCCCCCCc\n...cCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCCCcccAAAAAAAAAA\n.......ccccccc.ddcCaaaaaa\n.................dccCC\n..................ddcC\n...................ddCQ\n...................ddcCQ\n....................z.cc\n.....................zZZZ\n.\n"
+  },
+  "pal": {
+   "C": "#6a7a40",
+   "Q": "#93a35e",
+   "c": "#4a5a2c",
+   "d": "#3a4622",
+   "A": "#d8c890",
+   "a": "#b8a46c",
+   "F": "#a0563a",
+   "f": "#6e3626",
+   "Z": "#efe6cc",
+   "z": "#b8ac8e",
+   "e": "#e8d040",
+   "K": "#1a1610",
+   "w": "#f4f0e4",
+   "R": "#3a5a8a",
+   "G": "#d8a838",
+   "W": "#6a4228",
+   "V": "#4a2c1a",
+   "U": "#3a2a1e"
+  },
+  "ax": 22,
+  "seat": {
+   "idle0": [
+    25,
+    18
+   ],
+   "idle1": [
+    25,
+    17
+   ],
+   "run0": [
+    26,
+    18
+   ],
+   "run1": [
+    26,
+    18
+   ],
+   "run2": [
+    26,
+    17
+   ],
+   "run3": [
+    26,
+    18
+   ]
+  },
+  "label": "A 올리브 뿔 와이번",
+  "desc": "뒤로 휜 뿔 둘 · 붉은 갈색 날개막 · 스페이드 꼬리",
+  "rider": "wA",
+  "float": 7
+ },
+ "wyvB": {
+  "frames": {
+   "idle0": "\n.\n.\n.......ffd\n.....c.ffffd\n.....FFccffffd\n....FFFFFFcfffd\n...FFFFFFFFFccffZdZ\n..FFFFFFFFFFFFccCdd.........J.zZZ\n.cccccccccccccccCCd..........JJzZZ\n..FFFFFFFFFccccFCCd............JzZQQQ\n..FFFFFFcccFFcFFCCd.........JJJJJCcccQQ\n..FFFFFccFFFcFFFFCCd..........QCACKeCCCQK\n.FFFcccFFFFcFFFFFCCd.........jJJJaCCCCCc\n.cccFFFFFFcFFFFFFCCC........JJCCACcccKKKK\n...fFFFFFcFFFFFFFFCC.........CCCac.....w\n....fFFFcFFFFFFFFFCCd......jJCCAA\n.....fccFFFFFFFFFFCCC.V....VVCCaC\n........fffFFFFFFFFCC.VWWWWVCCAAc\n...........ffFFFfffCCQRWWWWWRCac\n.............fff.QQQCCRRRRRRRUC\n................QCCCCCRRRRRRRUU\n...............QCCCCCCRRRRRWWc\n..............QCCCCCCCWWWWWCC\n............QQCCCCCCCCCCCCCCC\n...........QCCCCCCCCCCCCCCCCc\nJQ.......QQCCCCCAAAAAAAAAAAA\ncCQQQQQQQCCCCCCccaaaaaaaaaa\n.ccCCCCCCCCCCccddccCCAA\n...cccccccccc.....dccC\n...................ddCQ\n...................ddcCQ\n....................ddcCc\n....................zzzc\n.......................ZZZ\n",
+   "idle1": "\n.\n.\n.\n.\n.\n.\n...............................Z\n............................JJzZZ\n..............................JzZZQQ\n...............................JzZccc\n.............................JJJJCKeCQQQK\n.............................jJJACCCCCccc\n.............................JJJCacCCKKKK\n.............................CCCAC.ccccw\n...........................jJCCaac\n......................V....VVCCAC\n......................VWWWWVCCCac\n...................QQQRWWWWWRCAC\n.................QQCCCRRRRRRRUCc\n................QCCCCCRRRRRRRUU\n...............QCCCCCCRRRRRWWc\n..............QCCCCCCCWWWWWCC\n........ffd.dQCCCCCCCCCCCCCCC\n.....ccccccQQCCCCCCCCCCCCCCCc\n.....FFFFFQCCCCCaaaaaaaaaaaa\n....FFFQQQCCCCCCcAAAAAAAAAA\nJQQQQQQCCCCCCCccdccCCaa\n.ccCCCCCCCCccccff.dccC\n...cccccccccFFff...ddCQ\n........ccFFFf.....ddcCQ\n..........fff.......ddcCc\n....................zzzc\n.......................ZZZ\n.\n",
+   "run0": "\n.........d\n.........fd\n......Fcffffd\n......FFFcfffd\n.....FFFFFFcfffd\n....FFFFFFFFFcfffddZ\n..ccccFFFFFFFFFcdZdd\n...FFFccccccccccccCd\n...FFFFFFFFFFcccFcCd............ZZ\n...FFFFFFFcccFFccCCd.........JJzzZZ\n..FFFFFcccFFFFcFFCCd...........JzZZQQ\n..fccccFFFFFFcFFFFCCd.......JJJJJJCcccQ\n...ffFFFFFFccFFFFFCCd..........QJaCKeCCQQK\n.....FFFFFcFFFFFFFCCd........jJJJACCCCCCc\n.....fFFFcFFFFFFFFFCC........JJCCacCCcKKKK\n......fccFFFFFFFFFFCC.V.....jJCCCA.cc...w\n.........ffFFFFFFFFCC.VV....VCCCaC\n...........ffFFFFFFCCdVVWWWWVCCCAc\n.............fffffffCCRWWWWWCCCac\n.................QQQCCRRRRRRRCAC\n................QCCCCCRRRRRRRUUc\n...............QCCCCCCRRRRRRRCU\nQ............QQCCCCCCCWWWWWWWc\ncQQ........QQCCCCCCCCCCCCCCCC\n.cCQQQQQQQQCCCCCCCCCCCCCCCCCc\n..cCCCCCCCCCCCCCAAAAAAAAAAAA\n...ccccCCCCCCcccdaaaaaaaaaa\n.......cccccc...dccCCAA\n..................dcCC\n..................ddcCQ\n...................ddcC\n....................d.CQ\n....................zzcc\n......................ZZZ\n",
+   "run1": "\n.\n.\n.\n.\n.\n.\n.\n.\n.........dddd................J.zZZ\n......Fcccffffddd....Z........JJzZZQ\n.....FFFFFccccccfddCZd..........JzZccc\n....FFFFFFFFFFFcccccCd......JJJJJJCKeCQQ.K\n.ccccccccccccccFccccCd.........QJaCCCCCCc\n..FFFFFFFFFFccccccFCCd.......jJJJACCCCCC\n..FFFFFFccccFFFcFFFCCd.......JCCCaccccKKKK\n..fFFcccFFFFFccFFFFCCdVV....VJCAAC......w\n...ccFFFFFFccFFFFFFCCCVV....VCCCac\n.....fFFFccFFFFFFFFfCCVVWWWWCCCAC\n......ffc.fffFfffffQCCRWWWWWRCaCc\n.............f..QQCCCCRRRRRRRUAc\n...............QCCCCCCRRRRRRRaU\n..............QCCCCCCCWWWWWWWc\n............QQCCCCCCCCCCCCCCC\nJQ........QQCCCCCCCCCCCCCCCCc\nccQQQQQQQQCCCCCCaaaaaaaaaaaa\n..cCCCCCCCCCCCCccAAAAAAAAAA\n...ccccCCCCccccddcCaaaaaa\n.......cccc......dccCC\n..................ddcC\n...................ddCQ\n...................ddcCQ\n....................z.cc\n.....................zZZZ\n.\n",
+   "run2": "\n.\n.\n.\n.\n.\n.\n.\n................................Z\n.............................JJzZZ\n...............................JzZZQQ\n............................JJJJJzCccc\n..............................JJAJCKeCQQQK\n.............................jJJJaCCCCCCc\n.............................JJJCAcCCCKKKK\n......................V.....jJCCCa.cccc.w\n......................VV....VCCCAC\n......................VVWWWWVCCCac\n...................QQQRWWWWWRCCAc\n.................QQCCCRRRRRRRCac\n................QCCCCCRRRRRRRUU\n........d......QCCCCCCRRRRRRRCU\n.....c..fffddQQCCCCCCCWWWWWWWc\n.....FFccccQQCCCCCCCCCCCCCCCC\nQ...FFFFFQQCCCCAAAAAAAAAAAAAA\ncQQQQQQQQCCCCCCCaaaaaaaaaaaa\n.ccCCCCCCCCCCcccdCAAAAAAAA\n...cccccCCCcccccfcccCC\n.....fffccccFff...ddCC\n.........fFFff....ddcCQ\n..........ff.......ddcC\n....................d.cc\n....................zzZ.Z\n.......................Z\n.\n",
+   "run3": "\n.\n.\n.\n.\n.\n.\n.\n.\n.........dddd................J.zZZ\n......Fcccffffddd....Z........JJzZZQ\n.....FFFFFccccccfddCZd..........JzZccc\n....FFFFFFFFFFFcccccCd......JJJJJJCKeCQQ.K\n.ccccccccccccccFccccCd.........QJaCCCCCCc\n..FFFFFFFFFFccccccFCCd.......jJJJACCCCCC\n..FFFFFFccccFFFcFFFCCd.......JCCCaccccKKKK\n..fFFcccFFFFFccFFFFCCdVV....VJCAAC......w\n...ccFFFFFFccFFFFFFCCCVV....VCCCac\n.....fFFFccFFFFFFFFfCCVVWWWWCCCAC\n......ffc.fffFfffffQCCRWWWWWRCaCc\n.............f..QQCCCCRRRRRRRUAc\n...............QCCCCCCRRRRRRRaU\n..............QCCCCCCCWWWWWWWc\n............QQCCCCCCCCCCCCCCC\nJQ........QQCCCCCCCCCCCCCCCCc\nccQQQQQQQQCCCCCCaaaaaaaaaaaa\n..cCCCCCCCCCCCCccAAAAAAAAAA\n...ccccCCCCccccddcCaaaaaa\n.......cccc......dccCC\n..................ddcC\n...................ddCQ\n...................ddcCQ\n....................z.cc\n.....................zZZZ\n.\n"
+  },
+  "pal": {
+   "C": "#c8a040",
+   "Q": "#ecd078",
+   "c": "#94722a",
+   "d": "#6e521c",
+   "A": "#f4e8c4",
+   "a": "#d8c898",
+   "F": "#e08c3a",
+   "f": "#a85e24",
+   "Z": "#f6f0e0",
+   "z": "#c8bc9c",
+   "e": "#5ac8f0",
+   "K": "#1a1408",
+   "w": "#ffffff",
+   "J": "#3aa8a0",
+   "j": "#22706c",
+   "R": "#8a2a3a",
+   "G": "#f0d070",
+   "W": "#5a3420",
+   "V": "#3e2214",
+   "U": "#3e2a1a"
+  },
+  "ax": 22,
+  "seat": {
+   "idle0": [
+    25,
+    17
+   ],
+   "idle1": [
+    25,
+    16
+   ],
+   "run0": [
+    26,
+    17
+   ],
+   "run1": [
+    26,
+    17
+   ],
+   "run2": [
+    26,
+    16
+   ],
+   "run3": [
+    26,
+    17
+   ]
+  },
+  "label": "B 황금 와이번",
+  "desc": "머리 뒤 청록 지느러미 볏 · 넓은 돛 날개 · 꼬리 지느러미",
+  "rider": "wB",
+  "float": 7
+ },
+ "wyvC": {
+  "frames": {
+   "idle0": "\n.\n.........d\n..........fd\n.......Fc.fffd\n.......FFcccfffd................Z\n.......FFFF.ccffddZ............zZZ\n.......FFFFFFFFccZd............zzZ\n......FFFFFFcccccCdd............zZZ\n.....FccccccFFFcCCCd............zZZQ\n.....cFFFF..FFcFFCCd............QCCccc\n......fFFFFFFcFFFCCd...........QACCKeQQQK\n.......FFFFccFFFFCCd..........QCCaCCCCCCc\n.......FFFcFFFFFFCCC.........zZCCAcccKKKK\n.......FFcFFFFFFFFCC..........CCaC.....w\n.......ccFFFFFFFFFCCd.......zQCCAC\n.........ffFFFFFFFCCd........ZCaac\n...........fFFFFFFFCC......zQZCAA\n............FFFFFFFCC.V....VVCCac\n............fFFFFFFCC.VWWWWVCCAC\n.............FFFffZCCQRWWWWWRCac\n.............fffZQQQCCRRRRRRRUC\n................QCCCCCRRRRRRRUU\n...............QCCCCCCRRRRRZZc\nzZ............QCCCCCCCZZZZZCC\nZc..........QQCCCCCCCCCCCCCCC\nZZQQz....zZQCCCCCCCCCCCCCCCCc\nZ.cCQZQQQQCCCCCCAAAAAAAAAAAA\n...cCCCCCCCCCCCccaaaaaaaaaa\n....cccccCCCcccddccCCAA\n.........ccc......dccC\n...................ddCQ\n...................ddcCQ\n....................ddcCc\n....................zzzc\n.......................ZZZ\n",
+   "idle1": "\n.\n.\n.\n................................Z\n...............................zZZ\n...............................zZZ\n...............................zzZ\n................................zZZ\n................................zZZccc\n................................CCCKeQQ.K\n...............................QCACCCCCcc\n.............................zQCCacCCCC\n..............................ZCCA.ccKKwK\n..............................CCaC\n............................zZCCAc\n...........................zQZCaa\n......................V....VVCCAC\n......................VWWWWVCCCac\n..................ZQQQRWWWWWRCAc\n................ZQQCCCRRRRRRRUC\n................QCCCCCRRRRRRRUU\n...............QCCCCCCRRRRRZZc\n..............QCCCCCCCZZZZZCC\nz...........QQCCCCCCCCCCCCCCC\n.Z.......z.QCCCCCCCCCCCCCCCCc\nZZQQz...QQZCCCCCaaaaaaaaaaaa\nZccCQZQQCCCCCCCccAAAAAAAAAA\n...cCCCCCCCCCccddccCCaa\n....cccccccccFFcccdccC\n.........ffffccFff.ddCQ\n.............F..f..ddcCQ\n.............ff.....ddcCc\n....................zzzc\n.......................ZZZ\n.\n",
+   "run0": "\n...........d\n........c..ffd\n.........ccfffd\n.........FFccfffd\n........FFFFFccffd.dZ\n........FFFFF..FcfZdd............Z\n.......FFFFFFFFFccCdd...........zZZ\n.....fccccccccccFcCCd...........zZZ\n......fFFFF..FFFcFCCd............zZZ\n.......fFFFFFFccFFCCd............zZZQ\n........FFFFFcFFFFCCd............zZCccc\n........FFFccFFFFFCCd...........QCCCKeQQQK\n........FFcFFFFFFFCCC..........QCCACCCCCCc\n.......fccFFFFFFFFFCC.........zZCCacCCKKKK\n.........ffFFFFFFFFCC.........QCCAC.cc..w\n...........fFFFFFFFCC........zZCCac\n............fFFFFFFCCdV.....zQCCAC\n.............FFFFFFCCdVV....VZCCaC\n.............fFFFFFZCCVVWWWWVCCCAc\n..............ffZfffCCRWWWWWCCCac\nz................QQQCCRRRRRRRCAc\nZZ..............QCCCCCRRRRRRRUU\nZZQ............QCCCCCCRRRRRRRCU\nZcCQz....z..QQQCCCCCCCZZZZZZZc\n..cCCZQQQQZQCCCCCCCCCCCCCCCCC\n...cCCCCCCCCCCCCCCCCCCCCCCCCc\n....cccCCCCCCCCCAAAAAAAAAAAA\n.......cccccccccdaaaaaaaaaa\n................dccCCAA\n..................dcCC\n..................ddcCQ\n...................ddcC\n....................d.CQ\n....................zzcc\n......................ZZZ\n",
+   "run1": "\n.\n.\n.\n.\n.................................Z\n.................................Z\n...........d....................zZZ\n...........fddd.................zzZ\n........ccccfffddd...............zZZ\n........FFFFccccffddddZ..........zZZQQ\n........FFFFF..FFcccZdd..........CCCccc\n.......FFFFFFFFcccccCdd.........QaCCKeCQQK\n......FFFccccccFFccCCd........zQCCACCCCCcc\n.....ccccFF..FFFccFFCC.........ZCaCcccKKKK\n......fFFFFFFFccFFFFCC........QCCAc.....w\n.......FFFFFFcFFFFFFCC.......zZCCa\n.......FFFFccFFFFFFFCCVV....VZCCAC\n.......ffccfFFFFFFFFCCVV....VCCCac\n............fFFFFFFZCCVVWWWWCCCAc\n.............fFfZffQCCRWWWWWRCaC\nz.............f.QQCCCCRRRRRRRUCc\n.Z.............QCCCCCCRRRRRRRCU\nZc...........QQCCCCCCCZZZZZZZc\nZZQQz....z.QQCCCCCCCCCCCCCCCC\nZ.cCQZQQQQZCCCCCCCCCCCCCCCCCc\n...cCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCCCcccAAAAAAAAAA\n.......ccccccc.ddcCaaaaaa\n.................dccCC\n..................ddcC\n...................ddCQ\n...................ddcCQ\n....................z.cc\n.....................zZZZ\n.\n",
+   "run2": "\n.\n.\n.\n.\n.................................Z\n................................zZZ\n................................zZZ\n................................zzZ\n.................................zZZ\n.................................zZZccc\n.................................CCCKeQQ.K\n................................QaCCCCCccc\n..............................zZCCAcCCKKKK\n...............................CCaC.ccccw\n.............................zZCCAc\n......................V.....zQCCaC\n......................VV....VZCCAC\n...................Z..VVWWWWVCCCac\n................Z..QQQRWWWWWRCCAc\n.................QQCCCRRRRRRRCac\n................QCCCCCRRRRRRRUU\nz..............QCCCCCCRRRRRRRc\nZZ..........QQQCCCCCCCZZZZZZZ\nZZQQz....zQQCCCCCCCCCCCCCCCCC\nZ.cCQZQQQQZCCCCAAAAAAAAAAAAAA\n...cCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCccccdCAAAAAAAA\n.......cccccFFFcccccCC\n.........fffccccffddCC\n............f..ff.ddcCQ\n.............f.....ddcC\n....................d.cc\n....................zzZ.Z\n.......................Z\n.\n",
+   "run3": "\n.\n.\n.\n.\n.................................Z\n.................................Z\n...........d....................zZZ\n...........fddd.................zzZ\n........ccccfffddd...............zZZ\n........FFFFccccffddddZ..........zZZQQ\n........FFFFF..FFcccZdd..........CCCccc\n.......FFFFFFFFcccccCdd.........QaCCKeCQQK\n......FFFccccccFFccCCd........zQCCACCCCCcc\n.....ccccFF..FFFccFFCC.........ZCaCcccKKKK\n......fFFFFFFFccFFFFCC........QCCAc.....w\n.......FFFFFFcFFFFFFCC.......zZCCa\n.......FFFFccFFFFFFFCCVV....VZCCAC\n.......ffccfFFFFFFFFCCVV....VCCCac\n............fFFFFFFZCCVVWWWWCCCAc\n.............fFfZffQCCRWWWWWRCaC\nz.............f.QQCCCCRRRRRRRUCc\n.Z.............QCCCCCCRRRRRRRCU\nZc...........QQCCCCCCCZZZZZZZc\nZZQQz....z.QQCCCCCCCCCCCCCCCC\nZ.cCQZQQQQZCCCCCCCCCCCCCCCCCc\n...cCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCCCcccAAAAAAAAAA\n.......ccccccc.ddcCaaaaaa\n.................dccCC\n..................ddcC\n...................ddCQ\n...................ddcCQ\n....................z.cc\n.....................zZZZ\n.\n"
+  },
+  "pal": {
+   "C": "#3e404c",
+   "Q": "#62667a",
+   "c": "#2a2c36",
+   "d": "#20222a",
+   "A": "#7c8090",
+   "a": "#5e6272",
+   "F": "#6a2a3a",
+   "f": "#4a1a26",
+   "Z": "#e8e2d4",
+   "z": "#a8a294",
+   "e": "#ff6a3a",
+   "K": "#0e0e14",
+   "w": "#f4f0e4",
+   "R": "#8a1e2a",
+   "W": "#4a3428",
+   "V": "#2e2018",
+   "U": "#2a2018"
+  },
+  "ax": 22,
+  "seat": {
+   "idle0": [
+    25,
+    18
+   ],
+   "idle1": [
+    25,
+    17
+   ],
+   "run0": [
+    26,
+    18
+   ],
+   "run1": [
+    26,
+    18
+   ],
+   "run2": [
+    26,
+    17
+   ],
+   "run3": [
+    26,
+    18
+   ]
+  },
+  "label": "C 먹빛 와이번",
+  "desc": "목 · 꼬리 뼈 가시 · 찢어진 날개막 · 위로 솟은 긴 뿔 · 붉은 눈",
+  "rider": "wC",
+  "float": 7
+ },
+ "wyvD": {
+  "frames": {
+   "idle0": "\n.\n................................Z\n...............................zZZ\n................................zZZZ\n.................................zZZQQ\n...............................JJJzZCccc\n..............................JJJJjCCKeQQQQK\n..............................QjjjJCCCCCCcc\n..............................JJJCCCCCCKKKK\n..................jj.........QJCCCCAcccccc\n................j.ffjjj......CCCCCCc\n................Fjjjjjjj....QCCCCCA\n......DD........FFjjjjffj.D.CCCCCCc\n.....DDD.......jjjFFjFjfVVDQCCVCCA\n......DDD.....j.FFjjFFjfVVWWWWVCCc\n.....QQc.........FjFFFFjVVWWWWCCA\n...QQcA..........j.FFFFjRWWWWRRc\n..QCc.............DQFFCCjRRRRRR\n.QCC............QQQCCCCCRRRRRc\nDCCA...........QCCCCCCCCCACAc\nQCC..........QQCCCCCCCAcAcA\nCCC.........QCCCCCAcAca\ncCAQ.....D.QCCCCCAa\n.ACCD.D.DQQCCCCcA\n.AACQQQQQCCCCCA\n.cACCCCCCCCCAc\n..acACCCCAcA\n.....AcAc\n.\n",
+   "idle1": "\n................................Z\n...............................zZZ\n...............................zzZZ\n................................zzZZ\n................................JJzZQQQ\n..............................JJJJJCCcccQ\n...............................CjjjCCKeCCQQK\n..............................QjJJCCCCCCCCc\n..................jjj.........JJCCCCcccKKKK\n................jjjffjj......QCCCCCA\n.....DDD........FFjjjfjj.....CCCCCAc\n.....DDD.......FjjjFjjfj..D.QCCCCCc\n......DDD.....jjFFFjFjffVVDQCCVCCA\n.....QQc.........FjFFFjfVVWWWWVCCc\n...QQcA..........FjFFFjfVVWWWWCCA\n..QCc............jDFFFFjRWWWWRRc\n..CC..............QQFFFjjRRRRRR\nDQCA............QQCCCCCCRRRRRc\n.CCc...........QCCCCCCCCCACAc\nQCC.........D.QCCCCCAcAcAAc\nCCC.........DQCCCCCAc\ncCA.........QCCCCAa\n.ACQ.......QCCCCA\n.CCCD....DQCCCCc\n.AACQ.D.QQCCCCA\n.cCCCQQQCCCCAc\n..ACCCCCCCCAc\n...cAACCCAc\n.....AcAc\n",
+   "run0": "\n.\n................................ZZ\n...............................zzZZ\n................................zZZZ\n................................JzZZQQ\n..............................JJJJJCCcccQ\n..............................JQCjjCCKeCCQQK\n..............................QjjJJCCCCCCCc\n..............................JJJCCCCCcKKKK\n..................jjj........QCCCCCAac\n................jjjfjjj......CCCCCCc\n................FFjjjfjj..D.QCCCCCA\n....DDDD........Fjjjjjffj.DQCCCCCAc\n.....DDD......jjjFFjFFjfVVQCCCVCCc\n......QQ.........FjFFFjfVVWWWWVCA\n....QQcc.........FjFFFFjRWWWWWACa\n..QQCc...........jDFFFFjRRRRRRRA\n..CCA.............QQFCCCjRRRRRR\nDQCA...........QQQCCCCCCCCCCCc\n.CC..........DQCCCCCCCCCCAcAc\nQCC..........QCCCCCCCCAcAc\ncCA......D..QCCCCAAcAc\n.ACQD....DQQCCCCAc\n.ACCQDD.QQCCCCCc\n.AACCQQQCCCCCcA\n..ACCCCCCCCAA\n...cAACCcAc\n......cA\n.\n",
+   "run1": "\n................................Z\n...............................zZZ\n................................zZZ\n.................................zZZQ\n...............................JJJzZCccc\n..............................JJJJjCCKeQQQ.K\n..............................QCjjJCCCCCCCc\n..................j...........CjJJCCCCCKKKK\n..................fjj........QJJCCCCcccccc\n................jjjfjjj......CCCCCCA\n.....DDD........FFFjjfjj..D.QCCCCCAc\n.....DDD.......jjjjFjjfjj.D.CCCCCCc\n......QQ......j.FFFjFjffVVDQCCVCCA\n....QQCc.........FjFFFjfVVWWWWVCCc\n..QQCcA..........FjFFFjjVWWWWWCCA\n..CCc............jDFFFFjRWRRRRRc\n..CC..............QQFFFCjRRRRRR\nDQCA............QQCCCCCCRCCCCc\n.CC...........QQCCCCCCCCAAcAc\nQCC.........DQCCCCCCAcAcA\nCCA.........DCCCCAcAc\ncCa.........QCCCCc\n.ACQD......QCCCCA\n.CCC....DQQCCCAc\n.AACQDD.QCCCCCc\n.cCCCQQQCCCCAc\n..AcCCCCCCcA\n....AACCcA\n......aA\n",
+   "run2": "\n................................Z\n...............................zZZ\n...............................zzZZ\n................................zzZZ\n................................JJzZQQQ\n..............................JJJJJCCcccQ\n...............................CjjjCCKeCCQQK\n..............................QjJJCCCCCCCCc\n..............................JJCCCCcccKKKK\n..................jjj........QCCCCCA\n................jjjfjjj......CCCCCAc\n.....DDD........FFjjjfjj....QCCCCCc\n.....DDD.......FjjjFjjffVV.QCCVCCA\n...QQQQQ......jjFFFjFFjfVVWWWWVCCc\n..QCcccc.........FjFFFjfRWWWWWCAc\n..CA.............FjFFFFjRRRRRRRc\nDQCA.............jDFFFFjjRRRRRR\n.CC..............DQCCCCCCCCCCc\nQCC.............QQCCCCCCCAcAc\nCCA............QCCCCCCAcAc\ncCC.........D.QCCCCCAc\n.ACQD.......DQCCCCCAc\n.CCC........QCCCCAc\n.AACQ....D.QCCCCc\n.cCCCQDD.DQCCCCc\n..ACCCQQQQCCCCA\n...cACCCCCCCCc\n....cACCCCcAA\n.....AcAcA\n",
+   "run3": "\n.\n................................ZZ\n...............................zzZZ\n................................zZZZ\n................................JzZZQQ\n..............................JJJJJCCcccQ\n..............................JQCjjCCKeCCQQK\n..............................QjjJJCCCCCCCc\n..............................JJJCCCCCcKKKK\n..................jjj........QCCCCCAac\n................jjjfjjj......CCCCCCc\n................FFjjjfjj..D.QCCCCCA\n......DD........FjjjjjffV.DQCCVCCAc\n.....DDD......jjjFFjFFjfVVQCCCVCCc\n......DD.........FjFFFjfVVWWWWCCA\n..QQQQQc.........FjFFFFjRWWWWWRca\n..CCcAA..........j.FFFFjRRRRRRR\nDQCA..............D.FQCCjRRRRR\nQCC...............QQCCCCCCCAc\nCCC.............QQCCCCCCCAcc\ncCA..........D.QCCCCCCAcA\n.ACQDD.......QQCCCCCAcc\n.CAC........QCCCCCCAc\n.ACCQQD..DQQCCCCCAc\n..ACCCQQQQCCCCCAc\n...cACCCCCCCCCA\n....cACCCCAcAc\n......aAcAc\n.\n"
+  },
+  "pal": {
+   "C": "#3a7ac0",
+   "Q": "#6aa8e0",
+   "c": "#2a5890",
+   "d": "#1e4068",
+   "A": "#eef0e6",
+   "a": "#c8ccc0",
+   "F": "#5ab4d8",
+   "f": "#3a88b0",
+   "J": "#f2f6f8",
+   "j": "#a8c8d8",
+   "Z": "#f2cc64",
+   "z": "#b08a34",
+   "e": "#f0c040",
+   "K": "#10182a",
+   "w": "#ffffff",
+   "D": "#1e3e6e",
+   "R": "#c8402e",
+   "W": "#5a3a22",
+   "V": "#3e2616"
+  },
+  "ax": 20,
+  "seat": {
+   "idle0": [
+    27,
+    14
+   ],
+   "idle1": [
+    27,
+    13
+   ],
+   "run0": [
+    27,
+    14
+   ],
+   "run1": [
+    27,
+    13
+   ],
+   "run2": [
+    27,
+    13
+   ],
+   "run3": [
+    27,
+    14
+   ]
+  },
+  "label": "D 푸른 하늘뱀 용",
+  "desc": "와이번이 아닌 긴 몸 용(그림 6 계열) · S자로 떠 있다 · 흰 갈기 · 금빛 뿔 · 남빛 등줄기 · 작은 지느러미 날개",
+  "rider": "wD",
+  "float": 6
+ }
+}

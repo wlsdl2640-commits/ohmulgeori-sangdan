@@ -12,11 +12,11 @@ const C65 = (id, o) => Object.assign(CLASSES[id], o);
 C65('treasure', { name: '소매치기', desc: '혼합. 카드로 눈을 돌리고 지갑을 턴다. 연막으로 파티를 지키고 보물 상자를 잘 연다. 전리품 +15%.' });
 C65('mhunter', { name: '트래커', desc: '우두머리 사냥(한방). 표식을 남기고 컴파운드 보우와 손목 석궁으로 쫓는다. 보스 피해 ×1.3, 전리품 +25%.' });
 C65('dslayer', { name: '스토커', desc: '숨죽여 쫓는 사냥의 정점. 보스 피해 ×1.6, 방어 20% 무시, 다음 한 발을 두 배로.' });
-// 랑기수 전직: 늑대 펫 Lv30 하나를 보낸다 — 그 늑대가 탈것이 된다 (scratchpad/ride/DECISIONS.md · 사용자 11-12 17:23 「랑기수 전직 때 늑대 펫 보내기」)
+// 랑기수 전직: 늑대 펫 Lv30 하나를 보낸다 — 그 늑대가 탈것이 된다 (tools/saved/ride65/DECISIONS.md · 사용자 11-12 17:23 「랑기수 전직 때 늑대 펫 보내기」) · 탈것 직업은 전투 대형 맨 뒷줄(row 2 — 늑대 · 와이번이 크다)
 CLASSES.ranger.req = Object.assign(CLASSES.ranger.req || {}, { petWolf: PET_EVO_LV });
 const wolfMount = lv => (typeof S !== 'undefined' && S && S.pets ? petsAtHome().filter(x => x.kind === 'wolf' && x.lv >= lv).sort((x, y) => x.lv - y.lv)[0] : null) || null;   // 가장 낮은 레벨부터 (파티 · 마차에 맨 펫은 빼고)
-C65('ranger', { name: '랑기수', desc: '늑대를 탄 지속 딜러. 달리며 쏘고, 늑대가 함께 문다(연계 +6%).' });
-C65('dragoon', { name: '용기수', act: 'arrow', tr: { pet: 0.5, combo: 0.08, baImm: 1 }, desc: '와이번을 타고 하늘에서 복합궁으로 내리쏜다. 동료가 서 있는 동안 기본 공격에 맞지 않는다(와이번 강하 때 2초는 맞는다). 연계 +8%.' });
+C65('ranger', { name: '랑기수', row: 2, desc: '늑대를 탄 지속 딜러. 달리며 쏘고, 늑대가 함께 문다(연계 +6%).' });
+C65('dragoon', { name: '용기수', row: 2, act: 'arrow', tr: { pet: 0.5, combo: 0.08, baImm: 1 }, desc: '와이번을 타고 하늘에서 복합궁으로 내리쏜다. 동료가 서 있는 동안 기본 공격에 맞지 않는다(와이번 강하 때 2초는 맞는다). 연계 +8%.' });
 // ── 짐꾼 계열: 방패 · 탱킹을 빼고 서포터로 (늘 맨 뒤). 텐트 효과는 정찰가 → 마부 · 코네스토가
 C65('coachman', { tr: { wagon: 0.25, wagonSpd: 0.05, tent: 1.5 }, desc: '서포터. 마차를 끌고(짐 +25% · 속도 +5%), 짐칸 보호막과 전속력으로 파티를 돕는다. 야영 때 텐트를 쳐 피로가 1.5배 빨리 풀린다.' });
 C65('caravanmaster', { tier: 4, from: 'conestoga', carry: 40, base: { str: 13, vit: 13, agi: 8, int: 4 }, grow: { str: 2.4, vit: 2.3, agi: 1.2, int: 0.5 }, spd: 0.82, crit: 0.07, salary: 380,

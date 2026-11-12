@@ -1280,10 +1280,13 @@ function pxsHz(F) {
   return Object.assign({}, F, { h: [Math.round(hx), Math.round(hy)], a: Math.atan2(ty - hy, tx - hx) * 180 / Math.PI, k: Math.max(0, (dist - 1) / 4), wu: F.wu != null ? F.wu : s < -0.2 });
 }
 const pxsMF = F => pxsHz(Object.assign({ k: 1, lean: 0, cr: 0, dx: 0, legs: null }, F));
+// 탈것에 탄 기수 (빌드 65 pxride65.js): 내딛기 · 웅크림 · 몸 나감 · 뛰기를 빼고 그린다 — 기수 그림을 굽는 동안 · 그 효과 칸을 셀 때만 1
+let PXS_RIDE = 0;
 function pxsMotFr(mk, f) {
   const o = PXS_MOT_OF[mk] || PXS_MOTW[mk] || (typeof PXU_MOT !== 'undefined' && PXU_MOT[mk]);
   const F = pxsMF((o || PXS_MOT[mk] || PXS_MOT.down)[Math.max(0, Math.min(7, f))]);
-  return PXS_G.ms !== 1 ? pxsMScale(F, PXS_G.ms) : F;
+  const F2 = PXS_G.ms !== 1 ? pxsMScale(F, PXS_G.ms) : F;
+  return PXS_RIDE ? Object.assign({}, F2, { cr: 0, legs: null, dx: 0, jy: 0 }) : F2;
 }
 // 큰 몬스터: 손 자리·칼 길이·자루·내딛기·숙임을 s배로
 function pxsMScale(F, s) {
@@ -1436,7 +1439,7 @@ function pxsMLerp(A, B, s) {
   return { h: [L(A.h[0], B.h[0]), L(A.h[1], B.h[1])], a: L(A.a, B.a), k: L(A.k, B.k), lean: L(A.lean, B.lean), cr: L(A.cr, B.cr), dx: L(A.dx, B.dx) };
 }
 // 땅 먼지 (뭉툭 칸 21~23줄): 무기 끝 앞뒤로
-function pxsMDust(put, x, r) { const G = PXS_G.gy; for (let j = 1; j <= r + 1; j++) { put(x + j, G, j > r ? 2 : 1); put(x - j, G, 2); } put(x + 1, G - 1, 2); if (r > 1) { put(x - 1, G - 1, 2); put(x + 2, G - 2, 2); } }
+function pxsMDust(put, x, r) { if (PXS_RIDE) return; const G = PXS_G.gy; for (let j = 1; j <= r + 1; j++) { put(x + j, G, j > r ? 2 : 1); put(x - j, G, 2); } put(x + 1, G - 1, 2); if (r > 1) { put(x - 1, G - 1, 2); put(x + 2, G - 2, 2); } }
 function pxsMotFx(mk, f, c, sh, wk) {
   wk = wk === true ? 'great' : wk || 'sword';
   if (wk === 'whip') return w62Fx(mk, f, c);   // 빌드 65: 채찍 끈 자취 · 터짐 (pxs-wpn65.js)

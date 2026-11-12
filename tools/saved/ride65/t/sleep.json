@@ -1,0 +1,299 @@
+{
+ "sleepWA": {
+  "frames": {
+   "sleep0": "\n.......................d.Q\n............QQQQQ......d.CQ\n.........QQdCCCCCQQQQQQddCC\n........QCCCdCCCCCCCCCCdcCCQQ\n........CCCCdCCCCCCCCCCcCCCCC\n........CCCdCCCCCCCCCCCcCCCKKQ\n........CCCdCCCCCCCCCCCcCCCCCCAA\n.......QCCCdCCCCCCCCCCCCAAAAAAAKA\n.......CCCCCdddCCCCCCCCdddAAAAAAA\n.......cCCCCCCCddddddddCCAAAAAAA\n........cccCCCCCCCCCCCCCCAAAAAA\n...........ccCCCCCCCCCCCCcAAA\n.............cccccccccccc\n",
+   "sleep1": "\n............QQQQQ......d.Q\n.........QdQCCCCCQQQQ..d.CQ\n........QCCdCCCCCCCCCQQddcC\n........CCCCdCCCCCCCCCCccCCQQ\n........CCCdCCCCCCCCCCCcCCCCCQ\n........CCCdCCCCCCCCCCCcCCCKKC\n........CCCdCCCCCCCCCCCcCCCCCCAK\n.......QCCCdCCCCCCCCCCCCAAAAAAAAA\n.......CCCCCdddCCCCCCCCdddAAAAAAA\n.......cCCCCCCCddddddddCCAAAAAAA\n........cccCCCCCCCCCCCCCCAAAAAA\n...........ccCCCCCCCCCCCCcAAA\n.............cccccccccccc\n"
+  },
+  "pal": {
+   "C": "#9aa0aa",
+   "Q": "#cdd1d8",
+   "c": "#6c7280",
+   "d": "#525866",
+   "A": "#e6e4de",
+   "e": "#f0b030",
+   "K": "#1a1820",
+   "w": "#f4f0e4",
+   "R": "#3f6e3a",
+   "G": "#d8a838",
+   "W": "#7a4e2e",
+   "V": "#5a3820",
+   "U": "#4a3424"
+  },
+  "ax": 20,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "A 은빛 늑대"
+ },
+ "sleepWB": {
+  "frames": {
+   "sleep0": "\n.\n...................Q..Q\n.................Q.CQQc.Q\n............QQQQQCQCCCdccQ\n........QQQdCCCCCCCCCCQddcQQ\n........CCCCdCCCCCCCCCCccCCCQ\n........CCCCdCCCCCCCCCCcCCCCCQ\n........CCCCdCCCCCCCCCcCCCCKKC\n.......QCCCdCCCCCCCCCCCcCCCCCCcc\n.......CCCCCdCCCCCCCCCCccccccccKc\n.......CCCCCCddddddCCCddddccccccc\n.......cCCCCCCCCCCCdddCCCccccccc\n........ccCCCCCCCCCCCCCCCcccccc\n..........cccCCCCCCCCCCCCCccc\n.............ccccccccccccc\n",
+   "sleep1": "\n...................Q..Q\n.................Q.CQQC\n............QQQQQCQCCCCcQ\n.........QQdCCCCCCCCCCCdCQ\n........QCCCdCCCCCCCCCCdccQQ\n........CCCCdCCCCCCCCCCcCCCCQ\n........CCCCdCCCCCCCCCcCCCCCCQ\n........CCCCdCCCCCCCCCcCCCCKKC\n.......QCCCdCCCCCCCCCCCcCCCCCCcK\n.......CCCCCdCCCCCCCCCCCccccccccc\n.......CCCCCCddddddCCCddddccccccc\n.......cCCCCCCCCCCCdddCCCccccccc\n........ccCCCCCCCCCCCCCCCcccccc\n..........cccCCCCCCCCCCCCCccc\n.............ccccccccccccc\n"
+  },
+  "pal": {
+   "C": "#58565f",
+   "Q": "#807e8a",
+   "c": "#3c3a44",
+   "d": "#2a2830",
+   "A": "#a29ea8",
+   "e": "#f0d040",
+   "K": "#121016",
+   "w": "#f4f0e4",
+   "F": "#2a2830",
+   "f": "#1c1a20",
+   "O": "#a08060",
+   "o": "#7a5c40",
+   "W": "#3a2c24",
+   "V": "#2a1e18",
+   "M": "#b0b4c0",
+   "N": "#7a7e8a"
+  },
+  "ax": 20,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "B 검은 다이어울프"
+ },
+ "sleepWC": {
+  "frames": {
+   "sleep0": "\n.......................d.Q\n............QQQQQ......d.CQ\n.........QQdCCCCCQQQQQQddCC\n........QCCCdCCCCCCCCCCdcCCQQ\n........CCCCdCCCCCCCCCCcCCCCC\n........CCCdCCCCCCCCCCCcCCCKKQ\n........CCCdCCCCCCCCCCCRGCCCCCdd\n.......QCCCdCCCCCCCCCCRRAAAZZddKd\n.......CCCCCdddCCCCCCZCRddddddddd\n.......cCCCCCCCddddddddZCddddddd\n........cccCCCCCCCCCCCCCCdddddd\n...........ccCCCCCCCCCCCCcddd\n.............cccccccccccc\n",
+   "sleep1": "\n............QQQQQ......d.Q\n.........QdQCCCCCQQQQ..d.CQ\n........QCCdCCCCCCCCCQQddcC\n........CCCCdCCCCCCCCCCccCCQQ\n........CCCdCCCCCCCCCCCcCCCCCQ\n........CCCdCCCCCCCCCCCcGCCKKC\n........CCCdCCCCCCCCCCRRRCCZCCdK\n.......QCCCdCCCCCCCCCZRRAAAAZdddd\n.......CCCCCdddCCCCCCCCZddddddddd\n.......cCCCCCCCddddddddCCddddddd\n........cccCCCCCCCCCCCCCCdddddd\n...........ccCCCCCCCCCCCCcddd\n.............cccccccccccc\n"
+  },
+  "pal": {
+   "C": "#76583e",
+   "Q": "#9c7a58",
+   "c": "#523c2a",
+   "d": "#3a2a1e",
+   "A": "#dccdae",
+   "e": "#e8c040",
+   "K": "#1c1410",
+   "w": "#f4f0e4",
+   "R": "#b8402e",
+   "r": "#7a2418",
+   "Z": "#f0e8d4",
+   "G": "#40a0b0",
+   "W": "#5a3a22",
+   "V": "#3e2616",
+   "J": "#4a6e3a",
+   "j": "#2e4a24",
+   "U": "#7a5a3a"
+  },
+  "ax": 20,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "C 갈색 늑대"
+ },
+ "sleepWD": {
+  "frames": {
+   "sleep0": "\n.......................d.Q\n............QQQQQ.NMMMMd.CQM\n.........QQdCCCCCQQNNNNMMCCx\n........QCCCdCCCCCCCCCCNNxxxQ\n........CCCCdCCCCCCCCCCnMMMMx\n........CCCdCCCCCCCCCCCcnnnKKx\n........CCCdCCCCCCCCCCCcCCCCCnnA\n.......QCCCdCCCCCCCCCCCCAAAAAAAKA\n.......CCCCCdddCCCCCCCCdddAAAAAAA\n.......cCCCCCCCddddddddCCAAAAAAA\n........cccCCCCCCCCCCCCCCAAAAAA\n...........ccCCCCCCCCCCCCcAAA\n.............cccccccccccc\n",
+   "sleep1": "\n............QQQQQ.NMMMMd.Q\n.........QdQCCCCCQQNNNNMMCQM\n........QCCdCCCCCCCCCQQNNcxx\n........CCCCdCCCCCCCCCCcxxMxx\n........CCCdCCCCCCCCCCCnMMMMMx\n........CCCdCCCCCCCCCCCcnnnKKn\n........CCCdCCCCCCCCCCCcCCCCCCnK\n.......QCCCdCCCCCCCCCCCCAAAAAAAAA\n.......CCCCCdddCCCCCCCCdddAAAAAAA\n.......cCCCCCCCddddddddCCAAAAAAA\n........cccCCCCCCCCCCCCCCAAAAAA\n...........ccCCCCCCCCCCCCcAAA\n.............cccccccccccc\n"
+  },
+  "pal": {
+   "C": "#8a7c6c",
+   "Q": "#aea08e",
+   "c": "#62574a",
+   "d": "#4a4036",
+   "A": "#d6cebe",
+   "e": "#f0b030",
+   "K": "#16141a",
+   "w": "#f4f0e4",
+   "M": "#c4cad6",
+   "N": "#8a90a0",
+   "n": "#5a6070",
+   "x": "#f0f4fa",
+   "J": "#2f4e94",
+   "j": "#1e3466",
+   "G": "#e0b040",
+   "W": "#5a3a22",
+   "V": "#3e2616"
+  },
+  "ax": 20,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "D 갑주 늑대"
+ },
+ "sleepYA": {
+  "frames": {
+   "sleep0": "\n.\n.......................QQQQQ\n....................QQQCCCCCQQQ\n...................QCCCCCCCCCCCQ\n...............QQZZZzCCCaaaCCCCCQ\n.............QQCCZzCaaaadfdaACCCC\n..........QKQCCKKCCaFCCfCffd.CCCCQ\n...........aCCCCCCaFCFffFCfd.ACCCC\n............aaaaaaCCFffFFCffd.CCCCQ\n...............fFCFffffFFFCfdcCCCC\n..............FCCFfFFfFFFFFC.CCCCA\n......QQ.....CCFFfFFfFFFFFfCcCCCC\n.....QCCc...CFFFfFFFfFFFFFCCCCCCA\n....QCCc.....fffffffffffffCCaCCA\n....CCC.....QQQCCCCCCCCCCCCCCaa\n....CCCQQQQQCCCCCCCCCCCCCCCCCCc\n....CCCCCCCCCCCCaaaaaaaaaaaaaa\n....cccCCCCCCCcccccAAAAAAAA\n.......ccccccc......ZZZ\n",
+   "sleep1": "\n.......................QQQQQ\n....................QQQCCCCCQQQ\n...................QCCCCCCCCCCCQ\n...............QQZZZzCCCaaaCCCCCQ\n.............QQCCZzCaaaadfdaACCCC\n..........QKQCCKKCCafFCfCffd.CCCCQ\n...........aCCCCCCaFCCffFCfd.ACCCC\n............aaaaaaFCFffFFCffd.CCCCQ\n................FCCFfFfFFFCfdcCCCC\n..............fFCFFffffFFFFC.CCCCA\n.............FCCFFfFFfFFFFFCcCCCC\n......QQ....CCFFFfFFfFFFFFfCCCCCA\n.....QCCc....fFFfFFFfFFFFFCCaCCC\n....QCCc......ffffffffffffCCCaaA\n....CCC.....QQQCCCCCCCCCCCCCCCc\n....CCCQQQQQCCCCCCCCCCCCCCCCCc\n....CCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCCCccccc..AAAA\n.......ccccccc......ZZZ\n"
+  },
+  "pal": {
+   "C": "#6a7a40",
+   "Q": "#93a35e",
+   "c": "#4a5a2c",
+   "d": "#3a4622",
+   "A": "#d8c890",
+   "a": "#b8a46c",
+   "F": "#a0563a",
+   "f": "#6e3626",
+   "Z": "#efe6cc",
+   "z": "#b8ac8e",
+   "e": "#e8d040",
+   "K": "#1a1610",
+   "w": "#f4f0e4",
+   "R": "#3a5a8a",
+   "G": "#d8a838",
+   "W": "#6a4228",
+   "V": "#4a2c1a",
+   "U": "#3a2a1e"
+  },
+  "ax": 22,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "A 올리브 뿔 와이번"
+ },
+ "sleepYB": {
+  "frames": {
+   "sleep0": "\n.\n.......................QQQQQ\n....................QQQCCCCCQQQ\n...................QCJCCCCCCCCCQ\n...............QQZZzJCCCaaaCCCCCQ\n.............QQCCZzCaaaadfdaACCCC\n..........QKQCCKKCJaJCCfCffd.CCCCQ\n...........aCCCCCCaFCFffFCfd.ACCCC\n............aaaaaaCCFffFFCffd.CCCCQ\n...............fFCFffffFFFCfdcCCCC\n.....JJ.......FCCFfFFfFFFFFC.CCCCA\n....JJJJ.....CCFFfFFfFFFFFfCcCCCC\n.....JJJJ...CFFFfFFFfFFFFFCCCCCCA\n....QJJc.....fffffffffffffCCaCCA\n....CQQ.....QQQCCCCCCCCCCCCCCaa\n....CCCQQQQQCCCCCCCCCCCCCCCCCCc\n....CCCCCCCCCCCCaaaaaaaaaaaaaa\n....cccCCCCCCCcccccAAAAAAAA\n.......ccccccc......ZZZ\n",
+   "sleep1": "\n.......................QQQQQ\n....................QQQCCCCCQQQ\n...................QCJCCCCCCCCCQ\n...............QQZZzJCCCaaaCCCCCQ\n.............QQCCZzCaaaadfdaACCCC\n..........QKQCCKKCJaJFCfCffd.CCCCQ\n...........aCCCCCCaFCCffFCfd.ACCCC\n............aaaaaaFCFffFFCffd.CCCCQ\n................FCCFfFfFFFCfdcCCCC\n..............fFCFFffffFFFFC.CCCCA\n.....JJ......FCCFFfFFfFFFFFCcCCCC\n....JJJJ....CCFFFfFFfFFFFFfCCCCCA\n.....JJJJ....fFFfFFFfFFFFFCCaCCC\n....QJJc......ffffffffffffCCCaaA\n....CQQ.....QQQCCCCCCCCCCCCCCCc\n....CCCQQQQQCCCCCCCCCCCCCCCCCc\n....CCCCCCCCCCCCCaaaaaaaaaaaa\n....cccCCCCCCCccccc..AAAA\n.......ccccccc......ZZZ\n"
+  },
+  "pal": {
+   "C": "#c8a040",
+   "Q": "#ecd078",
+   "c": "#94722a",
+   "d": "#6e521c",
+   "A": "#f4e8c4",
+   "a": "#d8c898",
+   "F": "#e08c3a",
+   "f": "#a85e24",
+   "Z": "#f6f0e0",
+   "z": "#c8bc9c",
+   "e": "#5ac8f0",
+   "K": "#1a1408",
+   "w": "#ffffff",
+   "J": "#3aa8a0",
+   "j": "#22706c",
+   "R": "#8a2a3a",
+   "G": "#f0d070",
+   "W": "#5a3420",
+   "V": "#3e2214",
+   "U": "#3e2a1a"
+  },
+  "ax": 22,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "B 황금 와이번"
+ },
+ "sleepYC": {
+  "frames": {
+   "sleep0": "\n.\n.......................QQQQQ\n..................Z.QQQCCCCCQQQ\n.................ZZzCCCCCCCCCCCQ\n...............QZZzCCCCCaaaCCCCCQ\n..............QCZZzCaaaadfdaACCCC\n...........KQQCKKCCaFCZfCffd.CCCCQ\n..........QaCCCCCCZFCFffFCfd.ACCCC\n............aaZaaaCCFffFFCffd.CCCCQ\n...............fFCFffffFFFCfdcCCCC\n..............FCCFfFFfFFFFFC.CCCCA\n......Z......CCFFfFFfFFFFFfCcCCCC\n.....QcZZ...CFFFfFFFfFFFFFCCCCCCA\n....QCZZZ....fffffffffffffCCaCCA\n....CCQZ....QQQCCCCCCCCCCCCCCaa\n....CCZQQQQQCCCCCCCCCCCCCCCCCCc\n....CCCCCCZCCCCCaaaaaaaaaaaaaa\n....cccCCCCCCCcccccAAAAAAAA\n.......ccccccc......ZZZ\n",
+   "sleep1": "\n.......................QQQQQ\n..................Z.QQQCCCCCQQQ\n.................ZZzCCCCCCCCCCCQ\n...............QZZzCCCCCaaaCCCCCQ\n..............QCZZzCaaaadfdaACCCC\n...........KQQCKKCCafFZfCffd.CCCCQ\n..........QaCCCCCCZFCCffFCfd.ACCCC\n............aaZaaaFCFffFFCffd.CCCCQ\n................FCCFfFfFFFCfdcCCCC\n..............fFCFFffffFFFFC.CCCCA\n.............FCCFFfFFfFFFFFCcCCCC\n......Z.....CCFFFfFFfFFFFFfCCCCCA\n.....QcZZ....fFFfFFFfFFFFFCCaCCC\n....QCZZZ.....ffffffffffffCCCaaA\n....CCQZ....QQQCCCCCCCCCCCCCCCc\n....CCZQQQQQCCCCCCCCCCCCCCCCCc\n....CCCCCCZCCCCCCaaaaaaaaaaaa\n....cccCCCCCCCccccc..AAAA\n.......ccccccc......ZZZ\n"
+  },
+  "pal": {
+   "C": "#3e404c",
+   "Q": "#62667a",
+   "c": "#2a2c36",
+   "d": "#20222a",
+   "A": "#7c8090",
+   "a": "#5e6272",
+   "F": "#6a2a3a",
+   "f": "#4a1a26",
+   "Z": "#e8e2d4",
+   "z": "#a8a294",
+   "e": "#ff6a3a",
+   "K": "#0e0e14",
+   "w": "#f4f0e4",
+   "R": "#8a1e2a",
+   "W": "#4a3428",
+   "V": "#2e2018",
+   "U": "#2a2018"
+  },
+  "ax": 22,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "C 먹빛 와이번"
+ },
+ "sleepYD": {
+  "frames": {
+   "sleep0": "\n.\n......................Z\n.....................ZZz\n....................ZZzQQQQQ\n...................ZZzCCCCCCQ\n.................QQZzJJCCCCCCQ\n............KQQQQCCCJJJJJcCCCCQ\n............QCCCCKKCJJj...CCCCC\n.............KKKCCCFFJDj.QCCCCc\n.............CCCCCCFFFFFjCCCCc\n............ACCCCCCCCCCCCjCCC\n............dAAACCCCCCCCCCCCA\n..........QQQdddddddddddddCddQQ......D\n.........QCCCCCCCCCCCCCCCCCCCCCQ.....DDD\n.........CCCCCCCCCCCCCCCCCCCCCCCA.....DD\n.........AAAACCCCCCCCCCCCCCCCAAAd....CC\n.......QQdddddddddddddddddddddddQQ..CC\n......QCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\n......CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\n......AAAACCCCCCCCCCCCCCCCCCCCCCCCCC\n......ddddddddddddddddddddddddddCCd\n",
+   "sleep1": "\n......................Z\n.....................ZZz\n....................ZZzQQQQQ\n...................ZZzCCCCCCQ\n.................QQZzJJCCCCCCQ\n............KQQQQCCCJJJJJcCCCCQ\n............QCCCCKKCJJj...CCCCC\n.............KKKCCCFFJDj.QCCCCc\n.............CCCCCCFFFFFjCCCCc\n............ACCCCCCCCCCCCjCCC\n............dAAACCCCCCCCCCCCA\n.............dddddddddddddCdd\n.........QQQQQQQQQQQQQQQQQQQQQQQ.....D\n.........CCCCCCCCCCCCCCCCCCCCCCCA....DDD\n.........ACCCCCCCCCCCCCCCCCCCCCAd.....DD\n.........dAAACCCCCCCCCCCCCCCCAAd.....CC\n.......QQQdddddddddddddddddddddQQQ..CC\n......QCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\n......CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\n......AAAACCCCCCCCCCCCCCCCCCCCCCCCCC\n......ddddddddddddddddddddddddddCCd\n"
+  },
+  "pal": {
+   "C": "#3a7ac0",
+   "Q": "#6aa8e0",
+   "c": "#2a5890",
+   "d": "#1e4068",
+   "A": "#eef0e6",
+   "a": "#c8ccc0",
+   "F": "#5ab4d8",
+   "f": "#3a88b0",
+   "J": "#f2f6f8",
+   "j": "#a8c8d8",
+   "Z": "#f2cc64",
+   "z": "#b08a34",
+   "e": "#f0c040",
+   "K": "#10182a",
+   "w": "#ffffff",
+   "D": "#1e3e6e",
+   "R": "#c8402e",
+   "W": "#5a3a22",
+   "V": "#3e2616"
+  },
+  "ax": 22,
+  "seat": {
+   "sleep0": [
+    0,
+    0
+   ],
+   "sleep1": [
+    0,
+    0
+   ]
+  },
+  "label": "D 푸른 하늘뱀 용"
+ }
+}

@@ -82,7 +82,7 @@ function portrait(a) {
   if (POR[key]) return POR[key];
   const [c, x] = mkCanvas(POR_W, POR_H);
   x.translate(POR_W / 2, POR_H - 2); x.scale(2, 2);
-  drawAdvHi(x, a, 0, {});
+  drawAdvHi(x, a, 0, { noRide: 1 });   // 탈것 직업도 초상은 내려서 (빌드 65)
   return (POR[key] = c.toDataURL());
 }
 const iconImg = (id, cls = 'ico') => `<img class="${cls}" src="${iconURL(id)}" alt="">`;

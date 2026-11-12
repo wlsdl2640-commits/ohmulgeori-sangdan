@@ -1,0 +1,387 @@
+{
+ "frontWA": {
+  "frames": {
+   "front0": "\n.\n.\n................QQWWWWWWWWQQ\n...............RRRVVVVVVVVRRR\n...............RRRCCCCCCCCRRRQ\n...............RRRCCCCCCCCRRRCQ\n...............RRRCCCCCCCCRRRCC\n...............RRRCCCCCCCCRRRCCQ\n...............RRRCCCCCCCCRRRcAAA\n...............GGGCCCCCCCCGGG.AAA\n...............CCCCCCCCCCCCCC.AAA\n...............CCCCCCCCCCCCCC.AAA\n...............cCCCCCCCCCCCCc..AA\n................cccccccccccc...AA\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n...............dddd.......dddd\n",
+   "front1": "\n.\n................QQWWWWWWWWQQ\n...............RRRVVVVVVVVRRR\n...............RRRCCCCCCCCRRRQ\n...............RRRCCCCCCCCRRRCQ\n...............RRRCCCCCCCCRRRCC\n...............RRRCCCCCCCCRRRCCQ\n...............RRRCCCCCCCCRRRCCC\n...............RRRCCCCCCCCRRRcAAA\n...............GGGCCCCCCCCGGG.AAA\n...............CCCCCCCCCCCCCC.AAA\n...............CCCCCCCCCCCCCC.AAA\n...............cCCCCCCCCCCCCc..AA\n................cccccccccccc...AA\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n...............dddd.......dddd\n",
+   "front0_f": "\n..................C......C\n..................CC....CC\n..................CAC..CAC\n.................cCACQQCACc\n.................cCCCQQCCCc\n.................CKeCCCCeKC\n.................CCCAAAACCC\n.................AACAAAACAA\n..................AAAKKAAA\n...................AAAAAA\n..................cAAAAAAc\n.................cCAAAAAACc\n.................cCCAAAACCc\n..................cCCCCCCc\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................Cc..cC\n..................AAA..AAA\n",
+   "front1_f": "\n..................C......C\n..................CC....CC\n..................CAC..CAC\n.................cCACQQCACc\n.................cCCCQQCCCc\n.................CKeCCCCeKC\n.................CCCAAAACCC\n.................AACAAAACAA\n..................AAAKKAAA\n...................AAAAAA\n..................cAAAAAAc\n.................cCAAAAAACc\n.................cCCAAAACCc\n..................cCCCCCCc\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................Cc..cC\n..................AAA..AAA\n"
+  },
+  "pal": {
+   "C": "#9aa0aa",
+   "Q": "#cdd1d8",
+   "c": "#6c7280",
+   "d": "#525866",
+   "A": "#e6e4de",
+   "e": "#f0b030",
+   "K": "#1a1820",
+   "w": "#f4f0e4",
+   "R": "#3f6e3a",
+   "G": "#d8a838",
+   "W": "#7a4e2e",
+   "V": "#5a3820",
+   "U": "#4a3424"
+  },
+  "ax": 22,
+  "seat": {
+   "front0": [
+    22,
+    2
+   ],
+   "front1": [
+    22,
+    1
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "A 은빛 늑대",
+  "rider": "rA"
+ },
+ "frontWB": {
+  "frames": {
+   "front0": "\n.\n.\n...............QQQWWWWWWWWQQQ\n..............OOOCVVVVVVVVCOOO\n..............OOOCCCCCCCCCCOOOQ\n..............OOOCCCCCCCCCCOOOCQ\n..............OOOCCCCCCCCCCOOOCCQ\n..............OOOCCCCCCCCCCOOOCCC\n..............OOOCCCCCCCCCCOOOcccc\n..............OOOCCCCCCCCCCOOO.ccc\n..............oCoCCCCCCCCCCoCo.ccc\n..............CoCCCCCCCCCCCCoC.ccc\n..............cCCCCCCCCCCCCCCc..cc\n...............cccccccccccccc...cc\n...............dd...........dd\n...............dd...........dd\n...............dd...........dd\n...............dd...........dd\n...............dd...........dd\n..............dddd.........dddd\n",
+   "front1": "\n.\n...............QQQWWWWWWWWQQQ\n..............QCCCVVVVVVVVCCCQ\n..............OOOCCCCCCCCCCOOOQ\n..............OOOCCCCCCCCCCOOOCQ\n..............OOOCCCCCCCCCCOOOCC\n..............OOOCCCCCCCCCCOOOCCQ\n..............OOOCCCCCCCCCCOOOCCC\n..............OOOCCCCCCCCCCOOOcccc\n..............OOOCCCCCCCCCCOOO.ccc\n..............oCoCCCCCCCCCCoCo.ccc\n..............CoCCCCCCCCCCCCoC.ccc\n..............cCCCCCCCCCCCCCCc..cc\n...............cccccccccccccc...cc\n...............dd...........dd\n...............dd...........dd\n...............dd...........dd\n...............dd...........dd\n...............dd...........dd\n..............dddd.........dddd\n",
+   "front0_f": "\n.................F..F.....F\n.................FFdF..F.FdF\n................FFdCdFFFFdCdF\n................FCCCCQQQQCCCF\n................FCCCCQQQQCCCF\n................FCKKeCCCCeKKCF\n................FCCCCCCCCCCCF\n.................FCCCQQQQCCF\n.................FCCwQKKQwCF\n..................FCCCQQCCF\n...................FcccccF\n.................cCCQQQQCCc\n................cCCCCQQCCCCc\n................cCCCCCCCCCCc\n.................cCCCCCCCCc\n..................CCC..CCC\n..................CCC..CCC\n..................CCC..CCC\n..................CCc..cCC\n.................cccc..cccc\n",
+   "front1_f": "\n.................F..F.....F\n.................FFdF..F.FdF\n................FFdCdFFFFdCdF\n................FCCCCQQQQCCCF\n................FCCCCQQQQCCCF\n................FCKKeCCCCeKKCF\n................FCCCCCCCCCCCF\n.................FCCCQQQQCCF\n.................FCCwQKKQwCF\n..................FCCCQQCCF\n...................FcccccF\n.................cCCQQQQCCc\n................cCCCCQQCCCCc\n................cCCCCCCCCCCc\n.................cCCCCCCCCc\n..................CCC..CCC\n..................CCC..CCC\n..................CCC..CCC\n..................CCc..cCC\n.................cccc..cccc\n"
+  },
+  "pal": {
+   "C": "#58565f",
+   "Q": "#807e8a",
+   "c": "#3c3a44",
+   "d": "#2a2830",
+   "A": "#a29ea8",
+   "e": "#f0d040",
+   "K": "#121016",
+   "w": "#f4f0e4",
+   "F": "#2a2830",
+   "f": "#1c1a20",
+   "O": "#a08060",
+   "o": "#7a5c40",
+   "W": "#3a2c24",
+   "V": "#2a1e18",
+   "M": "#b0b4c0",
+   "N": "#7a7e8a"
+  },
+  "ax": 22,
+  "seat": {
+   "front0": [
+    22,
+    2
+   ],
+   "front1": [
+    22,
+    1
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "B 검은 다이어울프",
+  "rider": "rB"
+ },
+ "frontWC": {
+  "frames": {
+   "front0": "\n.\n.\n................QQWWWWWWWWQQ\n...............RRRVVVVVVVVRRR\n...............RRRCCCCCCCCRRRQ\n...............RRRCCCCCCCCRRRCQ\n...............RRRCCCCCCCCRRRCC\n...............RZRCCCCCCCCRZRCCQ\n...............ZRZCCCCCCCCZRZcddd\n...............RRRCCCCCCCCRRR.ddd\n...............rrrCCCCCCCCrrr.ddd\n...............CCCCCCCCCCCCCC.ddd\n...............cCCCCCCCCCCCCc..dd\n................cccccccccccc...dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n...............dddd.......dddd\n",
+   "front1": "\n.\n................QQWWWWWWWWQQ\n...............RRRVVVVVVVVRRR\n...............RRRCCCCCCCCRRRQ\n...............RRRCCCCCCCCRRRCQ\n...............RRRCCCCCCCCRRRCC\n...............RRRCCCCCCCCRRRCCQ\n...............RZRCCCCCCCCRZRCCC\n...............ZRZCCCCCCCCZRZcddd\n...............RRRCCCCCCCCRRR.ddd\n...............rrrCCCCCCCCrrr.ddd\n...............CCCCCCCCCCCCCC.ddd\n...............cCCCCCCCCCCCCc..dd\n................cccccccccccc...dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n................dd.........dd\n...............dddd.......dddd\n",
+   "front0_f": "\n..................C......C\n..................CC....CC\n..................CAC..CAC\n................RGCACQQCACGR\n................RcCCCQQCCCcR\n................RCKeCCCCeKCR\n................RCCCAAAACCCR\n................ZAZCAAAACZAZ\n..................AAAKKAAA\n...................AAAAAA\n..................cAAAAAAc\n.................cCAAAAAACc\n.................cCCAAAACCc\n..................cCCCCCCc\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................Cc..cC\n..................AAA..AAA\n",
+   "front1_f": "\n..................C......C\n..................CC....CC\n..................CAC..CAC\n................RGCACQQCACGR\n................RcCCCQQCCCcR\n................RCKeCCCCeKCR\n................RCCCAAAACCCR\n................ZAZCAAAACZAZ\n..................AAAKKAAA\n...................AAAAAA\n..................cAAAAAAc\n.................cCAAAAAACc\n.................cCCAAAACCc\n..................cCCCCCCc\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................Cc..cC\n..................AAA..AAA\n"
+  },
+  "pal": {
+   "C": "#76583e",
+   "Q": "#9c7a58",
+   "c": "#523c2a",
+   "d": "#3a2a1e",
+   "A": "#dccdae",
+   "e": "#e8c040",
+   "K": "#1c1410",
+   "w": "#f4f0e4",
+   "R": "#b8402e",
+   "r": "#7a2418",
+   "Z": "#f0e8d4",
+   "G": "#40a0b0",
+   "W": "#5a3a22",
+   "V": "#3e2616",
+   "J": "#4a6e3a",
+   "j": "#2e4a24",
+   "U": "#7a5a3a"
+  },
+  "ax": 22,
+  "seat": {
+   "front0": [
+    22,
+    2
+   ],
+   "front1": [
+    22,
+    1
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "C 갈색 늑대",
+  "rider": "rC"
+ },
+ "frontWD": {
+  "frames": {
+   "front0": "\n.\n.\n................QQWWWWWWWWQQ\n...............JJJVVVVVVVVJJJ\n...............JJJCCCCCCCCJJJQ\n...............JJJCCCCCCCCJJJCQ\n...............JJJCCCCCCCCJJJCC\n...............JJJCCCCCCCCJJJCCQ\n...............JJJCCCCCCCCJJJcAAA\n...............JJJCCCCCCCCJJJ.AAA\n...............JJJCCCCCCCCJJJ.AAA\n...............JJJCCCCCCCCJJJ.AAA\n...............JJJCCCCCCCCJJJ..AA\n...............JJJccccccccJJJ..AA\n...............JJJ........JJJ\n...............GGG........GGG\n................dd.........dd\n................dd.........dd\n................dd.........dd\n...............dddd.......dddd\n",
+   "front1": "\n.\n................QQWWWWWWWWQQ\n...............JJJVVVVVVVVJJJ\n...............JJJCCCCCCCCJJJQ\n...............JJJCCCCCCCCJJJCQ\n...............JJJCCCCCCCCJJJCC\n...............JJJCCCCCCCCJJJCCQ\n...............JJJCCCCCCCCJJJCCC\n...............JJJCCCCCCCCJJJcAAA\n...............JJJCCCCCCCCJJJ.AAA\n...............JJJCCCCCCCCJJJ.AAA\n...............JJJCCCCCCCCJJJ.AAA\n...............JJJCCCCCCCCJJJ..AA\n...............JJJccccccccJJJ..AA\n...............JJJ........JJJ\n...............GGG........GGG\n................dd.........dd\n................dd.........dd\n................dd.........dd\n...............dddd.......dddd\n",
+   "front0_f": "\n..................C..M...C\n..................CC.x..CC\n..................CACxMCAC\n.................cCAMxMNACc\n.................cCCMxMNCCc\n.................CKeCxMCeKC\n.................CCCAxMACCC\n.................AACAxNACAA\n..................AAAKKAAA\n...................AAAAAA\n..................cAAAAAAc\n.................cCAMGNNACc\n.................cCCMMNNCCc\n..................cCCCCCCc\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................Cc..cC\n..................AAA..AAA\n",
+   "front1_f": "\n..................C..M...C\n..................CC.x..CC\n..................CACxMCAC\n.................cCAMxMNACc\n.................cCCMxMNCCc\n.................CKeCxMCeKC\n.................CCCAxMACCC\n.................AACAxNACAA\n..................AAAKKAAA\n...................AAAAAA\n..................cAAAAAAc\n.................cCAMGNNACc\n.................cCCMMNNCCc\n..................cCCCCCCc\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................CC..CC\n...................Cc..cC\n..................AAA..AAA\n"
+  },
+  "pal": {
+   "C": "#8a7c6c",
+   "Q": "#aea08e",
+   "c": "#62574a",
+   "d": "#4a4036",
+   "A": "#d6cebe",
+   "e": "#f0b030",
+   "K": "#16141a",
+   "w": "#f4f0e4",
+   "M": "#c4cad6",
+   "N": "#8a90a0",
+   "n": "#5a6070",
+   "x": "#f0f4fa",
+   "J": "#2f4e94",
+   "j": "#1e3466",
+   "G": "#e0b040",
+   "W": "#5a3a22",
+   "V": "#3e2616"
+  },
+  "ax": 22,
+  "seat": {
+   "front0": [
+    22,
+    2
+   ],
+   "front1": [
+    22,
+    1
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "D 갑주 늑대",
+  "rider": "rD"
+ },
+ "frontYA": {
+  "frames": {
+   "front0": "\n..........c................................c\n..........FFcc..........................cccF\n..........FFFFcccZQ................QQZcccFFF\n..........FFFFFFcQC................CCccFFFFF\n..........FFFcccFcCQ..............QCccFcccFF\n.........FFccFFFcFcCQ............QCcFFcFFFccF\n........cccFFFFFcFFCC............CCFFFcFFFFFcc\n..........fFFFFcFFFcCQ..........QCcFFFFcFFFf\n...........fFFFcFFFFcCQ........QCcFFFFFcFFf\n............FFcFFFFFFcC........CcFFFFFFFcF\n............FFcFFFFFFFCQ......QCFFFFFFFFcF\n............fcfffFFFFFcWWWWWWWWcFFFFFffffc\n.................ffFFFFWWWWWWWWFFFFff\n...................ffFRRCCCCCCRRFff\n.....................fRRCCCCCCRRf\n.....................RRRCCCCCCRRR\n.....................RRGCCCCCCGRR\n.....................GGCCCCCCCCGG\n.....................CCCAAAAAAACC\n.....................CCCaaaaaaaCC\n.....................cCCc.AACcCCc\n......................CC..CCC.CC\n......................CC..cCC.CC\n......................Cc...CC.cC\n......................c....cCQ.c\n......................ZZZ...CCZZZ\n...........................QCC\n..........................ccCcc\n............................c\n",
+   "front1": "\n.\n.\n.\n.\n..........ccccc.cZQ................QQZ.ccccc\n..........FFFFFFccCQ..............QCcccFFFFF\n..........FFFFFccccCQ............QCcFcccFFFF\n..........FFFFcFcFFcCQ..........QCcFFFcFcFFF\n..........FFccFFcFFFcCQ........QCcFFFFcFFccF\n.........FccFFFcFFFFFcCQ......QCcFFFFFFcFFFcc\n.........cfFFFFcFFFFFFcWWWWWWWWcFFFFFFFcFFFff\n...........fFFcFFFFFFFFWWWWWWWWFFFFFFFFFcFf\n............FFcFfffFFFRRCCCCCCRRFFFfffFFcF\n............Fcff...fffRRCCCCCCRRfff...fffc\n............f........RRRCCCCCCRRR........c\n.....................RRGCCCCCCGRR\n.....................GGCCCCCCCCGG\n.....................CCCaaaaaaaCC\n.....................CCCAAAAAAACC\n.....................cCCc.aaCcCCc\n......................CC..CCC.CC\n......................CC..CCC.CC\n......................Cc..cCC.cC\n......................c....CC..c\n......................ZZZ..cCQZZZ\n............................CC\n...........................QCC\n..........................ccCcc\n............................c\n",
+   "front0_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................CC\n.........................cCCc\n..........................CC\n......................Z...CC...Z\n......................zZ..CC..Zz\n.......................zCC..CCz\n.......................CCQQQQCC\n......................CKeCCCCeKC\n......................CCCCCCCCCC\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n",
+   "front1_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................CC\n.........................cCCc\n..........................CC\n......................Z...CC...Z\n......................zZ..CC..Zz\n.......................zCC..CCz\n.......................CCQQQQCC\n......................CKeCCCCeKC\n......................CCCCCCCCCC\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n.\n"
+  },
+  "pal": {
+   "C": "#6a7a40",
+   "Q": "#93a35e",
+   "c": "#4a5a2c",
+   "d": "#3a4622",
+   "A": "#d8c890",
+   "a": "#b8a46c",
+   "F": "#a0563a",
+   "f": "#6e3626",
+   "Z": "#efe6cc",
+   "z": "#b8ac8e",
+   "e": "#e8d040",
+   "K": "#1a1610",
+   "w": "#f4f0e4",
+   "R": "#3a5a8a",
+   "G": "#d8a838",
+   "W": "#6a4228",
+   "V": "#4a2c1a",
+   "U": "#3a2a1e"
+  },
+  "ax": 27,
+  "seat": {
+   "front0": [
+    27,
+    12
+   ],
+   "front1": [
+    27,
+    11
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "A 올리브 뿔 와이번",
+  "rider": "wA"
+ },
+ "frontYB": {
+  "frames": {
+   "front0": "\n..........c................................c\n..........FFcc..........................cccF\n..........FFFFcccZQ................QQZcccFFF\n..........FFFFFFcQC................CCccFFFFF\n.........FFFFcccFcCQ..............QCccFcccFFF\n.........FFccFFFcccCQ............QCcFccFFFccF\n........cccFFFFFccFCC............CCFFccFFFFFcc\n.........fFFFFFcFcFcCQ..........QCcFFcFcFFFFf\n..........fFFFFcFcFFcCQ........QCcFFFcFcFFFf\n...........fFFcFcFFFFcC........CcFFFFFcFcFf\n............FFcFcFFFFFCQ......QCFFFFFFcFcF\n............FcFFcFFFFFcWWWWWWWWcFFFFFFcFFc\n............fcFFcFFFFFFWWWWWWWWFFFFFFFcFfc\n..............fFcFFFFFRRCCCCCCRRFFFFFFcf\n...............FcfffffRRCCCCCCRRffffffc\n...............f.....RRRCCCCCCRRR.....c\n.....................RRGCCCCCCGRR\n.....................GGCCCCCCCCGG\n.....................CCCAAAAAAACC\n.....................CCCaaaaaaaCC\n.....................cCCc.AACcCCc\n......................CC..CCC.CC\n......................CC..cCC.CC\n......................Cc...cC.cC\n......................c....JcQ.c\n......................ZZZ..JJcZZZ\n..........................JJJJ\n..........................JJJJc\n..........................JJJ\n",
+   "front1": "\n.\n.\n.\n.\n..........ccccc.cZQ................QQZ.ccccc\n..........FFFFFFccCQ..............QCcccFFFFF\n..........FFFFFccccCQ............QCcFcccFFFF\n..........FFFFcFccFcCQ..........QCcFFccFcFFF\n.........FFFccFFccFFcCQ........QCcFFFccFFccFF\n.........FccFFFcFcFFFcCQ......QCcFFFFcFcFFFcc\n........ccFFFFFcFcFFFFcWWWWWWWWcFFFFFcFcFFFFfc\n..........fFFFcFcFFFFFFWWWWWWWWFFFFFFFcFcFFf\n...........FFFcFcFFFFFRRCCCCCCRRFFFFFFcFcFF\n...........fFcFFcFFFffRRCCCCCCRRffFFFFcFFcf\n............FcFFcFff.RRRCCCCCCRRR.ffFFcFFc\n............cffFcf...RRGCCCCCCGRR...fFcfff\n...............Fc....GGCCCCCCCCGG....fc\n...............f.....CCCaaaaaaaCC.....c\n.....................CCCAAAAAAACC\n.....................cCCc.aaCcCCc\n......................CC..CCC.CC\n......................CC..CCC.CC\n......................Cc..cCC.cC\n......................c....cC..c\n......................ZZZ..JcQZZZ\n...........................JJc\n..........................JJJJ\n..........................JJJJc\n..........................JJJ\n",
+   "front0_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................CC\n.........................cCCc\n..........................CC\n..........................CC\n......................J.z.CC.z.J\n......................JJCC..CCJJ\n......................JCCQQQQCCJ\n......................CKeCCCCeKC\n......................JCCCCCCCCJ\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n",
+   "front1_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................CC\n.........................cCCc\n..........................CC\n..........................CC\n......................J.z.CC.z.J\n......................JJCC..CCJJ\n......................JCCQQQQCCJ\n......................CKeCCCCeKC\n......................JCCCCCCCCJ\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n.\n"
+  },
+  "pal": {
+   "C": "#c8a040",
+   "Q": "#ecd078",
+   "c": "#94722a",
+   "d": "#6e521c",
+   "A": "#f4e8c4",
+   "a": "#d8c898",
+   "F": "#e08c3a",
+   "f": "#a85e24",
+   "Z": "#f6f0e0",
+   "z": "#c8bc9c",
+   "e": "#5ac8f0",
+   "K": "#1a1408",
+   "w": "#ffffff",
+   "J": "#3aa8a0",
+   "j": "#22706c",
+   "R": "#8a2a3a",
+   "G": "#f0d070",
+   "W": "#5a3420",
+   "V": "#3e2214",
+   "U": "#3e2a1a"
+  },
+  "ax": 27,
+  "seat": {
+   "front0": [
+    27,
+    12
+   ],
+   "front1": [
+    27,
+    11
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "B 황금 와이번",
+  "rider": "wB"
+ },
+ "frontYC": {
+  "frames": {
+   "front0": "\n..........c................................c\n..........fFcc..........................cccf\n...........FF.cccZQ................QQZccc.F\n...........FFFFFcQC................CCccFFFF\n..........FFFcccFcCQ..............QCccFcccFF\n.........FFccFFFcFcCQ............QCcFFcFFFccF\n.........ccF.FFFcFFCC............CCFFFcFFF.fc\n...........FFFFcFFFcCQ..........QCcFFFFcFFF\n...........fFFFcFFFFcCQ........QCcFFFFFcFFf\n............FFcFFFFFFcC........CcFFFFFFFcF\n............FFcFFFFFFFCQ......QCFFFFFFFFcF\n............fcffffFFFFcWWWWWWWWcFFFFfffffc\n..................ffFFFWWWWWWWWFFFff\n....................fFRRCCCCCCRRFf\n.....................fRRCCCCCCRRf\n.....................RRRCCCCCCRRR\n.....................RRZCCCCCCZRR\n.....................ZZCCCCCCCCZZ\n.....................CCCAAAAAAACC\n.....................CCCaaaaaaaCC\n.....................cCCc.AACcCCc\n......................CC..CCC.CC\n......................CC..cCC.CC\n......................Cc...CC.cC\n......................c....cCQ.c\n......................ZZZ...cCZZZ\n............................Zc\n.............................ZZ\n...........................ZZZ\n............................Z\n",
+   "front1": "\n.\n.\n.\n.\n..........ccccc.cZQ................QQZ.ccccc\n..........fFFFFFccCQ..............QCcccFFFFf\n...........FF.FccccCQ............QCcFcccF.F\n...........FFFcFcFFcCQ..........QCcFFFcFcFF\n..........FFccFFcFFFcCQ........QCcFFFFcFFccF\n..........cc.FFcFFFFFcCQ......QCcFFFFFFcFF.c\n.........cfFFFFcFFFFFFcWWWWWWWWcFFFFFFFcFFFff\n...........fFFcFFFFFFFFWWWWWWWWFFFFFFFFFcFf\n............FFcfffffFFRRCCCCCCRRFFfffffFcF\n............Fcf.....ffRRCCCCCCRRff.....ffc\n............f........RRRCCCCCCRRR........c\n.....................RRZCCCCCCZRR\n.....................ZZCCCCCCCCZZ\n.....................CCCaaaaaaaCC\n.....................CCCAAAAAAACC\n.....................cCCc.aaCcCCc\n......................CC..CCC.CC\n......................CC..CCC.CC\n......................Cc..cCC.cC\n......................c....CC..c\n......................ZZZ..cCQZZZ\n............................cC\n............................Zc\n.............................ZZ\n...........................ZZZ\n............................Z\n",
+   "front0_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................z\n..........................Z\n..........................CC\n.........................cCCc\n..........................CC\n.....................Z....CC....Z\n......................Z...CC...Z\n......................zZ......Zz\n.......................zCC..CCz\n.......................CCQQQQCC\n......................CeKCCCCKeC\n......................CCCCCCCCCC\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n",
+   "front1_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................z\n..........................Z\n..........................CC\n.........................cCCc\n..........................CC\n.....................Z....CC....Z\n......................Z...CC...Z\n......................zZ......Zz\n.......................zCC..CCz\n.......................CCQQQQCC\n......................CeKCCCCKeC\n......................CCCCCCCCCC\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n.\n"
+  },
+  "pal": {
+   "C": "#3e404c",
+   "Q": "#62667a",
+   "c": "#2a2c36",
+   "d": "#20222a",
+   "A": "#7c8090",
+   "a": "#5e6272",
+   "F": "#6a2a3a",
+   "f": "#4a1a26",
+   "Z": "#e8e2d4",
+   "z": "#a8a294",
+   "e": "#ff6a3a",
+   "K": "#0e0e14",
+   "w": "#f4f0e4",
+   "R": "#8a1e2a",
+   "W": "#4a3428",
+   "V": "#2e2018",
+   "U": "#2a2018"
+  },
+  "ax": 27,
+  "seat": {
+   "front0": [
+    27,
+    12
+   ],
+   "front1": [
+    27,
+    11
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "C 먹빛 와이번",
+  "rider": "wC"
+ },
+ "frontYD": {
+  "frames": {
+   "front0": "\n.\n..............j........................Fj\n...............jjjj................Fjjjj\n...............Fjjjj...............jjjj\n..............FjFFjFj.............jFjFFj\n.............jjFFFjFj............FjFjFFFjj\n................FjFFFj...........jFFFj\n................FjFFFFj.........jFFFFj\n................Fj.FDFDRWWWWWWRFDFD..j\n................j....RRRccccccRRR.....j\n...................QQRRR......RRRQQ\n..................QCCRRR......RRRCCQ\n..................cCCRRR......RRRCCC\n...................ccCCCQQQQQQCCCCCCQ\n.....................AAAAAAAAAAAACCCC\n.........................AAAA....cCCC\n..................................CCC\n..................................cCCQ\n...................................CCc\n...................................CC\n..................................QCc\n..................................CC\n..................................cc\n..................................DD\n.................................DDD\n",
+   "front1": "\n.................Fj................Fj\n..............jjjjjj...............jjjjjj\n...............FFjjFj.............jFjjF\n...............FjFjFj.............jFjFj\n..............FjFFjFFj...........jFFjFFj\n.............jjFFjFFFj..........FjFFFjFFjj\n................FjFFFFj.........jFFFFj\n................FjFFDFDRWWWWWWRFDFDFFj\n................Fj..FRRRccccccRRRF...j\n................j..QQRRR......RRRQQ...j\n..................QCCRRR......RRRCCQ\n..................cCCRRR......RRRCCC\n...................ccCCCQQQQQQCCCCCC\n.....................AAAAAAAAAAAACCCQ\n.........................AAAA....CCCC\n.................................cCCC\n..................................CCC\n..................................cCCQ\n...................................CCc\n...................................CC\n..................................QCc\n..................................CC\n..................................cc\n..................................DD\n.................................DDD\n",
+   "front0_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................CC\n..........................CC\n..........................CC\n.....................J....CC....J\n.....................JJ.Z.CC.Z.JJ\n......................JJZC..CZJJ\n......................JCCQQQQCCJ\n.....................JCeKCCCCKeCJ\n......................JCCCCCCCCJ\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n",
+   "front1_f": "\n.\n.\n.\n.\n.\n.\n.\n.\n.\n..........................CC\n..........................CC\n..........................CC\n.....................J....CC....J\n.....................JJ.Z.CC.Z.JJ\n......................JJZC..CZJJ\n......................JCCQQQQCCJ\n.....................JCeKCCCCKeCJ\n......................JCCCCCCCCJ\n.......................CCAAAACC\n.......................CCKAAKCC\n........................CAAAAC\n.........................cccc\n.\n.\n.\n"
+  },
+  "pal": {
+   "C": "#3a7ac0",
+   "Q": "#6aa8e0",
+   "c": "#2a5890",
+   "d": "#1e4068",
+   "A": "#eef0e6",
+   "a": "#c8ccc0",
+   "F": "#5ab4d8",
+   "f": "#3a88b0",
+   "J": "#f2f6f8",
+   "j": "#a8c8d8",
+   "Z": "#f2cc64",
+   "z": "#b08a34",
+   "e": "#f0c040",
+   "K": "#10182a",
+   "w": "#ffffff",
+   "D": "#1e3e6e",
+   "R": "#c8402e",
+   "W": "#5a3a22",
+   "V": "#3e2616"
+  },
+  "ax": 27,
+  "seat": {
+   "front0": [
+    27,
+    8
+   ],
+   "front1": [
+    27,
+    7
+   ],
+   "front0_f": [
+    0,
+    0
+   ],
+   "front1_f": [
+    0,
+    0
+   ]
+  },
+  "label": "D 푸른 하늘뱀 용",
+  "rider": "wD"
+ }
+}

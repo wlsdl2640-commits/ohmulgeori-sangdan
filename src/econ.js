@@ -654,18 +654,21 @@ const wagonOpen = w => (!WAGONS[w].need || spn(WAGONS[w].need) >= WAGONS[w].tier
 const wagonOpenWhy = w => (WAGONS[w].need && spn(WAGONS[w].need) < WAGONS[w].tier ? '드워프 광산 조합 후원 2단계가 필요해요' : WAGONS[w].bld && !(S.bld[WAGONS[w].bld] || 0) ? `${BUILDINGS[WAGONS[w].bld].name}이(가) 있어야 만들어요` : '');
 // 마차 되팔기: 몸값의 절반 + 강화에 든 돈의 절반
 const wagonBack = p => (p.wagon && WAGONS[p.wagon] ? Math.round(WAGONS[p.wagon].cost * 0.5) + Math.round(Array.from({ length: p.wagonPlus || 0 }, (_, i) => wagonPlusCost(p.wagon, i).gold).reduce((a, b) => a + b, 0) * 0.5) : 0);
-function buyWagon(pid, w) {
+function buyWagon(pid, w, sl) {
   const p = S.parties.find(x => x.id === pid), W = WAGONS[w];
   if (!p || !W) return '';
   if (p.exp) return '원정 중에는 마차를 바꿀 수 없어요.';
   if (!wagonOpen(w)) return wagonOpenWhy(w) + '.';
-  if (p.wagon === w) return '이미 이 마차를 쓰고 있어요.';
-  const back = wagonBack(p);
+  const RF = RIG_F(sl), q = rigAt(p, sl);   // 빌드 65: sl 2 = 둘째 마차 (캐러밴 마스터 · 말이 끄는 마차만)
+  if (sl === 2 && !caravanOf(p)) return '둘째 마차는 캐러밴 마스터가 있는 파티만 끌어요.';
+  if (sl === 2 && !W.horse) return '둘째 마차는 말이 끄는 마차로 골라요.';
+  if (q.wagon === w) return '이미 이 마차를 쓰고 있어요.';
+  const back = wagonBack(q);
   if (S.gold + back < W.cost) return '돈이 모자라요.';
   S.gold += back - W.cost; S.stats.spent = (S.stats.spent || 0) + W.cost;
-  log(`${p.name}에게 ${W.name}을(를) 마련했다.${back ? ` 쓰던 ${rigName(p)}은(는) ${g$(back)}에 넘겼다.` : ''}`, 'good');
-  p.wagon = w; p.wagonPlus = 0;
-  if (!W.horse && p.horse) unhitch(p);
+  log(`${p.name}에게 ${sl === 2 ? '둘째 마차로 ' : ''}${W.name}을(를) 마련했다.${back ? ` 쓰던 ${rigName(q)}은(는) ${g$(back)}에 넘겼다.` : ''}`, 'good');
+  p[RF.w] = w; p[RF.n] = 0;
+  if (!W.horse && p[RF.h]) unhitch(p, sl);
   changed();
   return '';
 }
@@ -911,9 +914,10 @@ function promote(aid, cls) {
   if (Q.item) addTo(S.inv, Q.item[0], -Q.item[1]);   // 빌드 65: 4차 전직 재료
   if (C1.req && C1.req.item) addTo(S.inv, C1.req.item[0], -C1.req.item[1]);   // 전직 재료(피눈물 등)
   let wolf = null;
-  if (C1.req && C1.req.petWolf) { wolf = wolfMount(C1.req.petWolf); if (wolf) { S.pets = S.pets.filter(x => x !== wolf); a.mount = { kind: 'wolf', look: 'A', name: wolf.name, lv: wolf.lv }; } }   // 빌드 65: 랑기수 = 늑대 펫을 탈것으로 데려간다
+  if (C1.req && C1.req.petWolf) { wolf = wolfMount(C1.req.petWolf); if (wolf) { S.pets = S.pets.filter(x => x !== wolf); a.ride = Object.assign(a.ride || {}, { wolf: { look: 'A', name: wolf.name, lv: wolf.lv } }); } }   // 빌드 65: 랑기수 = 늑대 펫을 탈것으로 데려간다 (pxride65.js — 모습 A가 기본)
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
   a.cls = cls;
+  rideEnsure(a);   // 빌드 65: 용기수가 되면 와이번 (모습 A)
   const jt = jobTraitOf(cls); if (jt) { a.traits = (a.traits || []).filter(t => !(TRAITS[t] && TRAITS[t].job && jobTier(TRAITS[t].job) === jobTier(cls))); a.traits.push(jt); }   // 직업 특성
   a.skills = [C1.innate, ...a.skills.filter(id => id !== C1.innate)].slice(0, skillSlots(a));
   if (a.post && !isHealer(cls)) a.post = null;
@@ -1483,7 +1487,7 @@ function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(�
   const nm = (S.advs || []).reduce((k, a) => k + mast65(a), 0); (S.cands || []).forEach(mast65);   // 새 숙련: 이미 배운 검술 · 방패술 단계를 글라디우스술 · 대검술 · 마력 방패술로
   if (nm) log(`숙련 개편: 검투사 · 광전사 · 마검사 계열 ${fmt(nm)}명이 배운 검술 · 방패술 단계를 글라디우스술 · 대검술 · 마력 방패술로도 옮겼다.`);   // 판금을 못 입게 된 전사 계열의 판금 → 경갑 · 중갑
   if (n) log(`전사 방어구 개편: 판금 갑옷은 이제 마검사 계열 갑옷이다. 기사 · 광전사 계열이 입던 판금 갑옷은 중갑으로, 전사 · 검투사 계열은 경갑으로 바꾸었다 — ${n}명 (단계 · 레어도 · 룬은 그대로).`);
-  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 새 장비 칸 · 장비 개편 2단계 · 직업 개편', body: STORY.v65 }); }
+  if (!S.flags.v65) { S.flags.v65 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '세트 효과 없앰 · 새 방어구 · 장비 개편 2단계 · 직업 개편 · 새 숙련 · 탈것 · 야영', body: STORY.v65 }); }
 }
 function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 룬 개편 · 전직 레벨', body: STORY.v64 }); } }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }

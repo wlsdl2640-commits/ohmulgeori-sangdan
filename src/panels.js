@@ -342,6 +342,26 @@ function mastRows(a, idle) {
   }).join('');
 }
 /* 모험가 상세 창 */
+// 마차 칸 (빌드 65, 사용자 11-11 00:34 「짐꾼 계열 장비 칸에 마차 칸 · 캐러밴마스터는 마차 칸 둘」): 짐꾼 계열이 끌고 가는 그 파티의 마차.
+// 마차 · 말 · 강화는 마구간에서 파티마다 고르고(p.wagon · p.wagon2), 말이 끄는 마차는 마부 계열만 — 그냥 짐꾼 · 음유시인 · 정찰가는 손수레만
+function wagonSlotRows(a) {
+  if (!isPorter(a)) return '';
+  const p = partyOf(a.id), cl = chainOf(a.cls).includes('coachman'), cm = chainOf(a.cls).includes('caravanmaster');
+  const btn = p && S.bld.stable ? `<button type="button" class="btn sm" data-act="bopen" data-id="stable" data-p="${p.id}">마구간 ›</button>` : '';
+  const row = (n, q, live, note) => `<div class="li col"><div class="row"><span class="ico empty"></span><div class="grow stack"><span>${n} · ${q && q.wagon ? rigName(q) : '<span class="muted">비어 있음</span>'}</span><span class="sub">${note}</span></div>${btn}</div></div>`;
+  if (!p) return row('마차', null, 0, '<span class="muted">파티에 넣으면 그 파티의 마차를 몰아요.' + (cl ? '' : ' 말이 끄는 마차는 마부 계열(마부 · 코네스토가 · 캐러밴 마스터)만 — 지금은 손수레만.') + '</span>');
+  const W1 = p.wagon && WAGONS[p.wagon], why1 = W1 ? wagonWhy(p) : '';
+  let note1 = W1 ? `짐 +${rigCap(p) || 0} · 이동 ×${rigSpd(p).toFixed(2)}${horseOf(p) ? ` · 끄는 ${horseOf(p).petName ? `펫 ${esc(horseOf(p).petName)}` : horseOf(p).name}` : ''}` : '마구간에서 마차를 마련해요.';
+  if (W1 && W1.horse && !cl) note1 += ' · <span class="red-t">말이 끄는 마차는 마부 계열이 몰아요 — 그냥 짐꾼은 손수레만</span>';
+  else if (why1) note1 += ` · <span class="red-t">${why1}</span>`;
+  let out = row('마차', p, !why1, note1);
+  if (cm || p.wagon2) {
+    const q = rig2(p), why2 = q.wagon ? wagonWhy(q) : '';
+    const note2 = q.wagon ? `짐 +${rigCap(q) || 0} · 이동 ×${rigSpd(q).toFixed(2)}${horseOf(q) ? ` · 끄는 ${horseOf(q).petName ? `펫 ${esc(horseOf(q).petName)}` : horseOf(q).name}` : ''} · 짐은 더하고 행렬은 느린 마차에 맞춘다${why2 ? ` · <span class="red-t">${why2}</span>` : rig2Live(p) ? '' : ' · <span class="red-t">첫째 마차가 굴러가야 함께 가요</span>'}` : '캐러밴 마스터는 마차를 두 대까지 — 마구간에서 둘째 마차를 마련해요.';
+    out += row('마차 2', q, !why2, note2);
+  }
+  return out;
+}
 function advDetail(a) {
   const d = derive(a), G = gearSum(a), idle = a.status === 'idle', canTr = S.bld.training && idle && trainedTotal(a) < trainCap(a);
   const stats = STATS.map(([k, n]) => `<div class="li flat"><span class="grow">${n} <b class="num">${d.T[k]}</b> <span class="sub muted">· 기본 ${a.st[k]}${a.tr[k] ? ` · 훈련 +${a.tr[k]}` : ''}${G[k] ? ` · 장비 ${G[k] > 0 ? '+' : ''}${G[k]}` : ''}</span></span>${S.bld.training ? `<button type="button" class="btn sm" data-mact="train" data-k="${k}"${canTr && S.gold >= trainCost(a) ? '' : ' disabled'}>+1 · ${fmt(trainCost(a))}G</button>` : ''}</div>`).join('');
@@ -386,6 +406,7 @@ function advDetail(a) {
     <div class="sec"><b>특성</b><span>타고난 ${innateTraits(a).length}/${TRAIT_MAX}${(S.inv.wizstone || 0) ? ` · 마법사의 돌 ${S.inv.wizstone}개` : ''}${(S.inv.bloomstone || 0) ? ` · 개화석 ${S.inv.bloomstone}개` : ''}</span></div>
     <div class="traits">${traitChips(a, idle && (S.inv.wizstone || 0) > 0)}${emptyTraitChips(a, idle && (S.inv.bloomstone || 0) > 0)}</div>
     ${a.wxt ? `<div class="sec"><b>날씨 특성</b><span>모험가마다 하나 · 타고난 특성과 따로</span></div><div class="traits">${wxtChip(a)}</div>` : ''}
+    ${rideKind(a) ? `<div class="sec"><b>탈것</b><span>${esc(rideName(a))}</span></div><div class="sub muted">${esc(rideData(a).desc)} · 전투에서는 맨 뒷줄에서 ${rideKind(a) === 'wyv' ? '떠 있는 와이번 위에서' : '늑대를 타고'} 쏜다.</div>` : ''}
     <div class="sub muted">마법사의 돌은 타고난 특성 하나를 다른 것으로 바꾸고, 개화석은 빈 자리에 새 특성을 피워요. 둘 다 필드의 우두머리·주인, 던전 주인, 레이드 등수 보상에서 나와요.</div>
     ${notes}
     <div class="sec"><b>모험가 라이선스</b><span>지금 ${L.name}${L.mul > 1 ? ` · 능력 ×${L.mul}` : ''}</span></div>
@@ -409,7 +430,7 @@ function advDetail(a) {
     <details class="card"><summary>${CLASSES[a.cls].name}이(가) 배울 수 있는 스킬 전체</summary><div class="log">${table}</div></details>${notes}`;
   else if (tab === 'gear') { body = `
     <div class="sec" style="margin-top:0"><b>장비</b>${idle ? '<button type="button" class="btn sm" data-mact="autoeq">가장 좋은 장비 끼우기</button>' : ''}</div>
-    <div class="list">${slots}</div>
+    <div class="list">${slots}${wagonSlotRows(a)}</div>
     <div class="sub muted">합성은 대장간에서, 룬 새기기 · 희귀 이상 장비의 옵션 재감정은 마탑에서 해요.</div>${notes}`; }
   else body = `
     ${post ? `<div class="sec" style="margin-top:0"><b>신전</b><span>치유사 배치</span></div><div class="list">${post}</div>` : ''}
@@ -532,7 +553,7 @@ function partyCard(p) {
     <div class="sub">짐 한도 ${cap} · 물약이 ${supW} 차지${fast ? ` · 이동속도 ${(moveOf(p)).toFixed(1)} (가장 민첩한 ${esc(fast.name)} 기준${wagonOf(p) ? ', 마차 포함' : ''}${scoutMove(p) ? `, 정찰가 +${Math.round(scoutMove(p) * 100)}%` : ''})` : ''}${tentOf(p) > 1 ? ` · 야영은 텐트 (피로 회복 ×${tentOf(p)})` : ''}</div>
     ${wagonWhy(p) ? `<div class="sub red-t">${rigName(p)}: ${wagonWhy(p)}.</div>` : coachOf(p) && wagonOf(p) ? `<div class="sub ok-t">마부 ${esc(coachOf(p).name)}이(가) ${rigName(p)}을(를) 몰아요 · 마차 짐 +${Math.round((TR(coachOf(p)).wagon || 0) * 100)}%${TR(coachOf(p)).wagonSpd ? ` · 마차 속도 +${Math.round(TR(coachOf(p)).wagonSpd * 100)}%` : ''}</div>` : ''}
     ${portersOf(p).length > 1 ? '<div class="sub red-t">짐꾼 계열은 파티당 한 명만 넣을 수 있어요. 한 명을 빼야 출발해요.</div>' : ''}
-    ${p.raidOnly ? '' : `<div class="row sub"><span class="grow">마차 · ${p.wagon ? `${rigName(p)} (짐 +${wagonCap(p) || WAGONS[p.wagon].cap} · 이동 ×${wagonSpd(p).toFixed(2)}${wagonWhy(p) ? ', 못 끎' : ''})${horseOf(p) ? ` · 끄는 ${horseOf(p).petName ? `펫 ${esc(horseOf(p).petName)}(${horseOf(p).name})` : horseOf(p).name}` : ''}` : '없음'}</span>${S.bld.stable ? `<button type="button" class="btn sm" data-act="bopen" data-id="stable" data-p="${p.id}">마구간 ›</button>` : ''}</div>`}
+    ${p.raidOnly ? '' : `<div class="row sub"><span class="grow">마차 · ${p.wagon ? `${rigName(p)} (짐 +${wagonCap(p) || WAGONS[p.wagon].cap} · 이동 ×${wagonSpd(p).toFixed(2)}${wagonWhy(p) ? ', 못 끎' : ''})${horseOf(p) ? ` · 끄는 ${horseOf(p).petName ? `펫 ${esc(horseOf(p).petName)}(${horseOf(p).name})` : horseOf(p).name}` : ''}` : '없음'}${rig2Name(p) ? ` · 둘째 ${rig2Name(p)}${rig2Live(p) ? '' : ' (못 끎)'}` : ''}</span>${S.bld.stable ? `<button type="button" class="btn sm" data-act="bopen" data-id="stable" data-p="${p.id}">마구간 ›</button>` : ''}</div>`}
     ${S.bld.stable || p.raidOnly ? '' : `<details class="card"><summary>마차 · 손수레만 살 수 있어요 · 말이 끄는 마차는 마구간에서</summary><div class="sub muted">손수레는 파티가 직접 끌어요. 짐수레부터는 마구간을 짓고 말을 매야 하고, 짐꾼 계열이 파티에 있어야 끌어요.</div><div class="list">${wagonList}</div></details>`}
     ${hurt ? '<div class="sub red-t">다친 모험가가 있어요. 상단에 두면 체력이 서서히 차요.</div>' : ''}
     ${tired.length ? `<div class="sub warn">${tired.map(a => esc(a.name)).join(', ')}이(가) 지쳐 있어요. 상단에서 쉬면 피로가 풀려요.</div>` : ''}
@@ -764,7 +785,7 @@ const ACT = {
   raidgo: d => { const p = findP(d.id); if (!p || p.exp) return; p.dest = d.f; const m = startExp(p, d.f); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 레이드 출발!`); } },
   recall: d => { const p = findP(d.id); if (p) recall(p, 'order'); },
   gate: d => { const p = findP(d.id); if (p) { gateChoice(p, d.c); S.view = p.id; } },
-  wagon: d => say(buyWagon(+d.id, d.w)),
+  wagon: d => say(buyWagon(+d.id, d.w, +d.s || 1)),
   camp: d => { const p = findP(d.id); if (p) p.campNight = p.campNight === false; },
   dmode: d => { const p = findP(d.id); if (p) p.dmode = { ask: 'enter', enter: 'skip', skip: 'ask' }[p.dmode || 'ask']; },
   rankup: () => say(rankUp()),

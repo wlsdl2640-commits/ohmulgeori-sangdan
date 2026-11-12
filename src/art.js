@@ -42,11 +42,13 @@ function advPoseOf(t, o) {
   if (o.walk) return ['walk', Math.floor(t * 8 + (o.ph || 0) * 2) % 4];
   return ['idle', Math.floor(t * 1.6 + (o.ph || 0)) % 2];
 }
-// 논리 좌표 화면에 그린다. o.side 옆모습 · o.z 배율
+// 논리 좌표 화면에 그린다. o.side 옆모습 · o.z 배율 · 탈것 직업(빌드 65 pxride65.js)은 탈것에 탄 그림 — 앉기 · 눕기 · 쓰러짐은 내려서, o.noRide면 내려서
+const rideOn = (a, pose, o) => !o.noRide && pose !== 'sit' && pose !== 'sleep' && pose !== 'down' && !!rideKind(a);
 function drawAdv(ctx, a, t, o = {}) {
-  const [pose, fr] = advPoseOf(t, o), s = o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr), z = o.z || 1;
-  if (z === 1) { pxBlit(ctx, s); return; }
-  ctx.save(); ctx.scale(z, z); pxBlit(ctx, s); ctx.restore();
+  const [pose, fr] = advPoseOf(t, o), rs = rideOn(a, pose, o) ? rideComp(a, pose, fr, !!o.side) : null;
+  const s = rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = o.z || 1, lift = rs ? rs.lift : 0;
+  if (z === 1 && !lift) { pxBlit(ctx, s); return; }
+  ctx.save(); ctx.scale(z, z); if (lift) ctx.translate(0, -lift); pxBlit(ctx, s); ctx.restore();
 }
 function drawAdvHi(ctx, a, t, o = {}) { drawAdv(ctx, a, t, o); }
 

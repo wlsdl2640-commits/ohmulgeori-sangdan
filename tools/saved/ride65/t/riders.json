@@ -1,0 +1,192 @@
+{
+ "rA": {
+  "key": "rA",
+  "L": {
+   "head": "pelt",
+   "body": "leather",
+   "ex": [
+    "quiver",
+    "cape"
+   ],
+   "c1": "#4a6a3a",
+   "c2": "#c9a04a",
+   "hc": "#8c919c",
+   "cape": "#6e7380",
+   "pants": "#5a4a36",
+   "boots": "#4a3424"
+  },
+  "heads": {
+   "pelt": {
+    "top": 6,
+    "g": "\n....jj...JJ......\n...jjjj.JJJJ.....\n...jIjj.JIJJ.....\n..jjjjjJJIJJj....\n..jjjjJJJJJJjj...\n...JJJJJJJJJJjj..\n..JIJJJJJJJJJJJ..\n.JIJJJJJJJJJJJJJ.\n.JJJJJJJJJJJJJJKK\n.JJJJJJJJJJJJJJj.\nJJJJJJJKKwKKwjjj.\nJJJJJJJK...Kjjj..\nJJJJJJJJ.........\nJJJJJJJj.........\nJjJJJJJj.........\njjJJJJJj.........\nJJjJJJJjj........\n.JJJJJJjjjj......\n"
+   }
+  },
+  "headsF": {
+   "pelt": {
+    "top": 6,
+    "g": "\n.jj..........JJ.\n.jjj........JJJ.\n.jIj........JIJ.\n.jjjJ......JJJj.\n..jjJJJJJJJJJjj.\n...JJJJJJJJJjj..\n..JIKJJJJJJKJj..\n.JIJJJJIIJJJJjj.\n.JJJJJIIIIJJJJj.\n.JJJJJJKKJJJJJj.\nJJJJKwKwwKwKjjjj\nJJK..........Kjj\nJJ............jj\nJJ............jj\nJj............jj\njj............jj\nJJj..........jjj\n.JJJj......jjjj.\n"
+   }
+  }
+ },
+ "rB": {
+  "key": "rB",
+  "L": {
+   "head": "hoodup",
+   "body": "leather",
+   "ex": [
+    "quiver",
+    "fur",
+    "scarf"
+   ],
+   "c1": "#3e3c46",
+   "c2": "#8a6a4a",
+   "c3": "#8a2a2a",
+   "hc": "#2e2c34",
+   "pants": "#2c2a30",
+   "boots": "#1e1c22",
+   "leather": "#7a6a58"
+  }
+ },
+ "rC": {
+  "key": "rC",
+  "L": {
+   "head": "tribal",
+   "hair": "long",
+   "body": "leather",
+   "ex": [
+    "quiver",
+    "scarf"
+   ],
+   "c1": "#a8743e",
+   "c2": "#e0c080",
+   "c3": "#c0392b",
+   "feather": "#d8503a",
+   "pants": "#6a4a2e",
+   "boots": "#4a3420"
+  },
+  "heads": {
+   "tribal": {
+    "top": 7,
+    "g": "\nRR.............\nRRr............\nRRr..RR........\n.RRr.RRr.......\n.RRr.RRr.......\n..RRr.RRr......\n..RRr.RRr......\n...rr..rr......\n...rr..rr......\n...............\n...............\n.FFFFFFFFFFFFf.\nFF.............\nF..............\n"
+   }
+  },
+  "headsF": {
+   "tribal": {
+    "top": 7,
+    "g": "\n...........RR...\n...........RRr..\n.........RRRr...\n.........RRrr...\n..........Rr....\n..........rr....\n..........r.....\n................\n................\n................\n................\n.FFFFFFFFFFFFff.\nF.............fF\nF...............\n"
+   }
+  }
+ },
+ "rD": {
+  "key": "rD",
+  "L": {
+   "head": "helm",
+   "body": "chain",
+   "ex": [
+    "quiver",
+    "pauldron",
+    "tabard",
+    "cape"
+   ],
+   "c1": "#2f4e94",
+   "c2": "#e0b040",
+   "cape": "#2f4e94",
+   "feather": "#e0b040",
+   "pants": "#3a3a48",
+   "boots": "#4a4a56"
+  }
+ },
+ "wA": {
+  "key": "wA",
+  "cls": "dragoon",
+  "wpn": "bow",
+  "L": {
+   "head": "dragon",
+   "body": "scale",
+   "ex": [
+    "quiver",
+    "pauldron",
+    "cape"
+   ],
+   "c1": "#2f6a7a",
+   "c2": "#e8c060",
+   "metal": "#5a9aaa",
+   "cape": "#2a3a5a",
+   "gem": "#7ad8c8",
+   "pants": "#2a3a4a"
+  }
+ },
+ "wB": {
+  "key": "wB",
+  "cls": "dragoon",
+  "wpn": "bow",
+  "L": {
+   "head": "aviator",
+   "body": "leather",
+   "ex": [
+    "quiver",
+    "scarf"
+   ],
+   "c1": "#8a5a32",
+   "c2": "#c9a04a",
+   "c3": "#ece6d6",
+   "hc": "#6a4228",
+   "gem": "#8ad8ff",
+   "pants": "#4a3a2a",
+   "boots": "#3a2a1a",
+   "leather": "#6a4228"
+  },
+  "heads": {
+   "aviator": {
+    "top": 2,
+    "g": "\n....JJJJJJ.....\n..JJIJJJJJJj...\n.JIJJJJJJJJJj..\nJJIJJJJJJJJJjj.\nJJJJJJJJJKXXXK.\nJJJJJJJJJKXwXK.\nJJJJJjj..KKKK..\nJJJJJj.........\nJJJJJj.........\n.jjjj..........\n"
+   }
+  },
+  "headsF": {
+   "aviator": {
+    "top": 2,
+    "g": "\n....JJJJJJJj....\n..JJIJJJJJJJjj..\n.JIJJJJJJJJJJjj.\n.JJJJJJJJJJJJJj.\nJJKKKKJJJJKKKKjj\nJKXXwKKKKKXXwKjj\nJJKKKKJJJJKKKKjj\nJJ............jj\nJJ............jj\nJj............jj\n.j............j.\n"
+   }
+  }
+ },
+ "wC": {
+  "key": "wC",
+  "cls": "dragoon",
+  "wpn": "bow",
+  "L": {
+   "head": "cowl",
+   "body": "coat",
+   "ex": [
+    "quiver",
+    "cape"
+   ],
+   "c1": "#4e4a5e",
+   "c2": "#8a1e2a",
+   "c3": "#8a1e2a",
+   "hc": "#3a3448",
+   "cape": "#7a2430",
+   "pants": "#2e2a38",
+   "boots": "#16121c"
+  }
+ },
+ "wD": {
+  "key": "wD",
+  "cls": "dragoon",
+  "wpn": "bow",
+  "L": {
+   "head": "circlet",
+   "hair": "long",
+   "body": "coat",
+   "ex": [
+    "quiver",
+    "stole"
+   ],
+   "c1": "#e8eef4",
+   "c2": "#3a78c0",
+   "c3": "#3a78c0",
+   "gem": "#5ac8f0",
+   "pants": "#2e4a7a",
+   "boots": "#22385e"
+  }
+ }
+}

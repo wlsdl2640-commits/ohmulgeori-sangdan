@@ -600,9 +600,11 @@ function heroDraw(cv, a, now) {
     for (let j = -ry; j <= ry; j++) { const hw = Math.max(1, Math.round(rx * Math.sqrt(Math.max(0, 1 - (j / (ry + 0.5)) ** 2)))); g.fillRect(cx - hw * Z, Math.round(cy + j * Z - Z / 2), hw * 2 * Z, Z); } }
   let pose = 'idle', fr = Math.floor(t * 1.6) % 2;
   if (cyc > 4.3 && cyc < 5.0) { pose = 'atk'; fr = cyc < 4.5 ? 0 : 1; }
-  const s = pxAdvSprite(heroAdv(a), pose, fr);
+  const ride = rideKind(a) ? rideComp(heroAdv(a), pose, fr, false) : null, s = ride || pxAdvSprite(heroAdv(a), pose, fr);   // 탈것 직업 (빌드 65): 앞모습 탈것에 탄 그림
+  // 탈것에 탄 그림은 크니 창에 맞게 줄인다 (기기 픽셀 정수배 — 칸이 고르게)
+  const Zs = ride ? Math.max(1 / dpr, Math.floor(Math.min(Z, (W / 2 - 3) / Math.max(s.ax, s.w - s.ax), (gy - 3) / s.ay) * dpr) / dpr) : Z;
   // 휘두를 때 하얀 호
-  if (pose === 'atk' && fr === 1) {   // 빌드 63: 매끈한 호 대신 Z칸 네모를 호를 따라 (투명도도 계단)
+  if (pose === 'atk' && fr === 1 && !ride) {   // 빌드 63: 매끈한 호 대신 Z칸 네모를 호를 따라 (투명도도 계단)
     const mi = pxWSh(a.eq && a.eq.off) ? -1 : 1;   // 빌드 64: 방패를 들면 무기가 오른손(보는 사람 왼쪽) → 호도 왼쪽으로
     const k = (cyc - 4.5) / 0.5, al = Math.ceil((1 - k) * 4) / 4 * 0.8, r = 30 + Math.floor(k * 3) * 4, cx = W / 2 + 26 * mi, cy = gy - 40, seen = new Set();
     g.fillStyle = `rgba(255,255,255,${al})`;
@@ -611,7 +613,7 @@ function heroDraw(cv, a, now) {
       if (!seen.has(key)) { seen.add(key); g.fillRect(x, y, Z, Z); }
     }
   }
-  g.save(); g.translate(Math.round(W / 2), gy); g.scale(Z, Z); pxBlit(g, s); g.restore();
+  g.save(); g.translate(Math.round(W / 2), gy); g.scale(Zs, Zs); pxBlit(g, s); g.restore();
 }
 function heroTick(now) {
   HERO.raf = 0;

@@ -154,9 +154,17 @@ function horseOf(p) {
   const pet = petById(+p.horse.slice(2)); if (!pet || !pet.stage) return null;
   const k = horseOfPet(pet.kind); return k ? Object.assign({ id: k, petId: pet.id, petName: pet.name }, HORSES[k]) : null;
 }
+// 빌드 65 (사용자 11-11 00:34 「마차는 마부 계열 전용 · 그냥 짐꾼은 손수레뿐 · 짐꾼 계열 장비 칸에 마차 칸 · 캐러밴마스터는 마차 칸 둘」):
+// 말이 끄는 마차는 마부 계열(마부 · 코네스토가 · 캐러밴 마스터)이 몬다. 둘째 마차 p.wagon2 · p.horse2 · p.wagonPlus2는 캐러밴 마스터가 있을 때만 —
+// 첫째 마차와 같은 셈을 쓰려고 파티처럼 보이는 그림자 객체 rig2(p)로 넘긴다(r2 표시)
+const coachLine = a => !!a && !a.down && chainOf(a.cls).includes('coachman');
+const coachLineOf = p => teamOf(p).find(coachLine) || null;
+const caravanOf = p => teamOf(p).find(a => !a.down && chainOf(a.cls).includes('caravanmaster')) || null;
+const rig2 = p => (p && !p.r2 ? { id: p.id, name: p.name, members: p.members, exp: p.exp, wagon: p.wagon2 || null, horse: p.horse2 || null, wagonPlus: p.wagonPlus2 || 0, r2: 1 } : null);
 function wagonWhy(p) {
   const w = wagonOwned(p); if (!w || !w.horse) return '';
-  if (!porterOf(p)) return '짐꾼 계열이 파티에 있어야 끌 수 있어요';
+  if (p.r2 && !caravanOf(p)) return '둘째 마차는 캐러밴 마스터가 있어야 몰아요';
+  if (!coachLineOf(p)) return '말이 끄는 마차는 마부 계열(마부 · 코네스토가 · 캐러밴 마스터)이 몰아요';
   const h = horseOf(p);
   if (!h) return p.horse && p.horse.startsWith('p:') ? '맨 펫이 없거나 아직 다 자라지 않았어요' : w.horse === 'fly' ? '마구간에서 그리폰·와이번·페가수스(다 자란 펫)를 매어야 해요' : w.horse === 'goat' ? '마구간에서 고산지대 산양(다 자란 펫)을 매어야 해요' : '마구간에서 말을 매어야 해요';
   if (w.horse === 'goat' && !h.steel) return '고산지대 산양이 끌어야 해요';
@@ -165,11 +173,16 @@ function wagonWhy(p) {
 }
 const wagonOf = p => { const w = wagonOwned(p); return w && !wagonWhy(p) ? w : null; };
 const wagonPlus = p => Math.max(0, Math.min(WAGON_PLUS_MAX, p.wagonPlus || 0));
-const wagonCap = p => { const w = wagonOf(p); if (!w) return 0; const c = coachOf(p), h = horseOf(p); return Math.round(w.cap * (h ? h.cap : 1) * (1 + wagonPlus(p) * WAGON_PLUS.cap) * (1 + (c ? TR(c).wagon || 0 : 0)) * (1 + (c ? passives(c).wagonCap || 0 : 0)) * (w.fly && (S.bld.airfield || 0) >= 2 ? 1.2 : 1)); };   // 마차 몰기 숙련
-const wagonSpd = p => { const w = wagonOf(p); if (!w) return 1; const c = coachOf(p), h = horseOf(p); return w.spd * (h ? h.spd : 1) * (1 + wagonPlus(p) * WAGON_PLUS.spd) * (1 + (c ? TR(c).wagonSpd || 0 : 0)) * (1 + (c ? passives(c).wagonSpd || 0 : 0)); };   // 마차 몰기 숙련
+const rigCap = p => { const w = wagonOf(p); if (!w) return 0; const c = coachOf(p), h = horseOf(p); return Math.round(w.cap * (h ? h.cap : 1) * (1 + wagonPlus(p) * WAGON_PLUS.cap) * (1 + (c ? TR(c).wagon || 0 : 0)) * (1 + (c ? passives(c).wagonCap || 0 : 0)) * (w.fly && (S.bld.airfield || 0) >= 2 ? 1.2 : 1)); };   // 마차 몰기 숙련
+const rigSpd = p => { const w = wagonOf(p); if (!w) return 1; const c = coachOf(p), h = horseOf(p); return w.spd * (h ? h.spd : 1) * (1 + wagonPlus(p) * WAGON_PLUS.spd) * (1 + (c ? TR(c).wagonSpd || 0 : 0)) * (1 + (c ? passives(c).wagonSpd || 0 : 0)); };   // 마차 몰기 숙련
+// 둘째 마차가 함께 가는가: 첫째 마차가 굴러가고 · 캐러밴 마스터 · 맨 말이 맞고 · 하늘로 가면 둘째도 날아야 한다
+const rig2Live = p => { const q = rig2(p); if (!q || !q.wagon || !wagonOf(p) || !wagonOf(q)) return null; const F = p.exp && FIELDS[p.exp.field]; return F && F.region === 'sky' && !wagonFly(q) ? null : q; };
+const wagonCap = p => { const q = rig2Live(p); return rigCap(p) + (q ? rigCap(q) : 0); };   // 둘째 마차는 짐을 더 싣고
+const wagonSpd = p => { const q = rig2Live(p); return q ? Math.min(rigSpd(p), rigSpd(q)) : rigSpd(p); };   // 행렬은 느린 마차에 맞춘다
 const wagonFly = p => { const w = wagonOf(p), h = horseOf(p); return !!(w && w.fly && h && h.fly); };
 // 마차 이름: 비행 마차에 그리폰을 매면 그리폰 마차
 function rigName(p) { const w = wagonOwned(p); if (!w) return ''; const h = horseOf(p); return (w.fly && h && h.fly ? `${h.name} 마차` : w.name) + (wagonPlus(p) ? ` +${wagonPlus(p)}` : ''); }
+const rig2Name = p => { const q = rig2(p); return q && q.wagon ? rigName(q) : ''; };
 // 정찰가: 파티 이동 속도와 텐트(야영 피로 회복 배율)
 const scoutMove = p => Math.max(0, ...teamOf(p).filter(a => !a.down).map(a => TR(a).scout || 0));
 const tentOf = p => Math.max(1, ...teamOf(p).filter(a => !a.down).map(a => TR(a).tent || 1));

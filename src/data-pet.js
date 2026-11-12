@@ -42,7 +42,7 @@ const petOfParty = p => (p && p.pet ? petById(p.pet) : null);
 // 펫 그림: 새끼는 pet_종류, 다 자라면 adult 그림(없으면 그 몬스터)
 const petLook = pet => (pet.stage ? PETS[pet.kind].adult || PETS[pet.kind].mon : 'pet_' + pet.kind);
 // 마차에 맨 펫(마구간): 파티 p.horse = 'p:펫id'. 맨 펫은 싸우지도, 상단에 힘을 주지도 않는다
-const petHitched = id => !!(S && S.parties.some(p => p.horse === 'p:' + id));
+const petHitched = id => !!(S && S.parties.some(p => p.horse === 'p:' + id || p.horse2 === 'p:' + id));   // 빌드 65: 둘째 마차(캐러밴 마스터)도
 const petsAtHome = () => (S && S.pets ? S.pets.filter(x => !S.parties.some(p => p.pet === x.id) && !petHitched(x.id)) : []);
 // 상단에 남은 펫의 효과 합
 const petHome = k => petsAtHome().reduce((s, x) => s + (PETS[x.kind].home[0] === k ? PETS[x.kind].home[1] * (x.stage ? 1.5 : 1) : 0), 0);

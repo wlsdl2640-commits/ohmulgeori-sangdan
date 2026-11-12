@@ -152,7 +152,7 @@ function skAdvFx(g, a, mo, sk, t) {
   }
   // ② 자취: 동작 자취를 스킬 색으로 + 바깥 한두 칸 (몸 뒤 자취의 둘레는 그림을 덮지 않는다)
   if (!sk.trail) return mo.mk === 'raise' || mo.mk === 'guard' || mo.mk === 'sraise' || mo.mk === 'praise' || mo.mk === 'braise' || mo.mk === 'lraise';
-  const s = pxsAdvSprite(a, 'm:' + mo.mk, mo.f), F = s.mfx; if (!F) return true;
+  const s = advMotSpr(a, mo.mk, mo.f), F = s.mfx; if (!F) return true;   // 탈것에 타면 기수 그림 (빌드 65)
   const dx = pxsMotFr(mo.mk, mo.f).dx, occ = F.occ || [], hid = (x, y) => occ[y] && occ[y][x - dx] && occ[y][x - dx] !== '.';
   const cells = [], all = F.back.concat(F.front), own = new Set(all.map(([x, y]) => x + ',' + y)), front = new Set(F.front.map(([x, y]) => x + ',' + y));
   let ring = [];

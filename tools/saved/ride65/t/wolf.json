@@ -1,0 +1,233 @@
+{
+ "wolfA": {
+  "frames": {
+   "idle0": "\n...............................Q\n.............................d.C\n............................QddCQ\n...........................Q.QQCCQQ\n.....................V...QQQQCCCCCC\n..............VV....WV..QQCCCCCCCKeQQ\n..............VVWWWWWW.QQCCCCCCCCCCCCQK\n........QQQQ...WWWWWWWRCCCCCCCCCcAAAKK\n.......QCCCCQQRRRRRRRRRCCCCCCAAA\n.......CCCCCCCRRRRRRRRRCCCCCAAAA\n......QCCCCCCCRRRRGGGGGCCCCCAAA\n.....QACCCCCCCGGGGGGCCCCCCCCAA\n.....AAAAccCCCCCCCCCCCCCCCCCAA\n.....AAAA..ccCCCccccccCCCCCC\n.....AAAA..ddAAA......AAAAAA\n.....AAA..ddQAAA.......ddAAA\n....AAAA.ddQAAA........ddAAA\n.....AAA.ddAAA.........ddAAA\n.........ddAAA.........ddAAA\n.........dd.AA.........dd.AA\n.........dddAA.........dd.AA\n..........ddAAAA.......dddAAAA\n..........d..A.K........d..A.K\n",
+   "idle1": "\n.\n.............................d.Q\n............................Qd.CQ\n...........................Q.dQCCQ\n.....................V...QQQQQCCCCQ\n..............VV....WV..QQCCCCCCCKe\n..............VVWWWWWW.QQCCCCCCCCCCQQQ\n........QQQQ...WWWWWWWRCCCCCCCCCCCccccK\n.......QCCCCQQRRRRRRRRRCCCCCCAAAAA..KK\n......QCCCCCCCRRRRRRRRRCCCCCAAAA\n......CCCCCCCCRRRRGGGGGCCCCCAAA\n.....AACCcCCCCGGGGGGCCCCCCCCAA\n....QAAAC.cCCCCCCCCCCCCCCCCCAA\n....AAAAc..ccCCCccccccCCCCCC\n....AAAA...ddAAA......AAAAAA\n....AAAA..ddQAAA.......ddAAA\n....AAA..ddQAAA........ddAAA\n....AAA..ddAAA.........ddAAA\n.........ddAAA.........ddAAA\n.........dd.AA.........dd.AA\n.........dddAA.........dd.AA\n..........ddAAAA.......dddAAAA\n..........d..A.K........d..A.K\n",
+   "run0": "\n............................Q\n...........................Q.d.cQ\n.........................Q.QQQddCQQ\n..............VV.....V..QQQCCCQQCCCQ\n..............VVWWWWWV..QCCCCCCCCCKeQ\n.....QQQQQQQ...WWWWWWWQQCCCCCCCCCCCCCQQ\n..AAACCCCCCCQQRWRRRRRRRCCCCCCCCCCCCccccK\nAAAAAACCCCCCCCRRRRRRRRRCCCCCAAAAAAA...w\nAAAAAACccCCCCCRRRRRRRRRCCCCCAAAA...AKKK\nAAAAAcc..CCCCCGGGGGGGGGCCCCCAAA\nAAA......cCCCCCCCCCCCCCCCCCCAA\n.........dCCCCCccccCCCCCCCCCCA\n........QQAAAAA....AAAAAAAAAAQQ\n......QQAAAAA............dddAAAQQQ\n.....dAAAA................ddddAAAA\n.....ddd....................dddd\n.\n.\n.\n.\n.\n.\n.\n",
+   "run1": "\n.\n.\n............................Q\n...........................Q.ccQQ\n..............VV.....V...QQQQddCCQQ\n..............VVWWWWWVV.QQCCCQQCCCCQ\n.......QQQQQ...WWWWWWW.QQCCCCCCCCCCCQ\n....QQQCCCCCQQRWWRRRRRRCCCCCCCCCCCKeCQQ\n..AAAACCCCCCCCRRRRRRRRRCCCCCCAAAAACCCCCK\n.AAAAACCCCCCCCRRRRRRRRRCCCCCAAAAAAAAAAw\nAAAAAAcccCCCCCGGGGGGGGGCCCCCAAA...AAKKK\nAAAAA....cCCCCCCCCCCCCCCCCCCAAA\nAAA......dCCCCCcccCCCCCCCCCCAA\n........ddAAAAA...AAAAAAAAAA\n......dddQAAAA.........AAAAA\n.....dddQAAAA............AAAd\n.....d.AAAA..............AAAdd\n........A.................AAddd\n..........................AA\n..........................AA\n..........................AAQ\n...........................AAA\n...........................A.K\n",
+   "run2": "\n..............................c\n............................Qd.QQ\n...........................QQdQCCQQ\n.....................V...QQCCQCCCCCQ\n..............V.....WV..QCCCCCCCCKeCQ\n..............VVWWWWWW.QCCCCCCCCCCCCCQc\n.....QQQQQQQ...WWWWWWRQCCCCCCCCCcAAAAAK\n..AAACCCCCCCQQRRRRRRRRRCCCCCAAAA.A.KKw\nAAAAAACCCCCCCCRRRRRRRRRCCCCCAAA\nAAAAAACcccCCCCRRRRRGGGGCCCCCAAA\nAAAAAcc...CCCCGGGGGGCCCCCCCCAA\nAAA.......CCCCCCCCCCCCCCCCCCcA\n..........ccCCCCCCcccccCCCCc\n............AAAAAA.....AAAA\n............dddAAA.....AAA\n.............dddAAQ...dAAA\n.............dddAAAQ..QAA\n..............dddAAAA.AAA\n...............dd.....AAd\n.\n.\n.\n.\n",
+   "run3": "\n.\n.\n............................Q..Q\n...........................QQddCQQ\n..............V......V...QQQCQQCCCQQ\n..............VV..WWWV..QQCCCCCCCCCC\n.........QQ...VVWWWWWW.QCCCCCCCCCCKeQQ\n......QQQCCQ...WWWWWWRRCCCCCCCCCCCCCCCQK\n...AAQCCCCCCQQRRRRRRRRRCCCCCAAAAAAAAAAA\n..AAAACCCCCCCCRRRRRRRRRCCCCCAAAA.AA.KKw\nAAAAAACccCCCCCRGGGGGGGGCCCCCAAA\nAAAAAAc..cCCCCGGGCCCCCCCCCCCAA\nAAAA......cCCCCCCCCCCCCCCCCCCAA\nAAA........cCCCccccccccCCcCCC\n............AAA........AA.AAAQ\n............AAA.......ddd..AAA\n...........QAAd.......dd....AAQ\n...........AAAdd......dd.....AAQA\n............AAddd....ddd......AA\n............AA.......ddd\n............AA\n............AAAA\n.............A.K\n"
+  },
+  "pal": {
+   "C": "#9aa0aa",
+   "Q": "#cdd1d8",
+   "c": "#6c7280",
+   "d": "#525866",
+   "A": "#e6e4de",
+   "e": "#f0b030",
+   "K": "#1a1820",
+   "w": "#f4f0e4",
+   "R": "#3f6e3a",
+   "G": "#d8a838",
+   "W": "#7a4e2e",
+   "V": "#5a3820",
+   "U": "#4a3424"
+  },
+  "ax": 19,
+  "seat": {
+   "idle0": [
+    18,
+    6
+   ],
+   "idle1": [
+    18,
+    6
+   ],
+   "run0": [
+    18,
+    4
+   ],
+   "run1": [
+    18,
+    6
+   ],
+   "run2": [
+    18,
+    5
+   ],
+   "run3": [
+    18,
+    6
+   ]
+  },
+  "label": "A 은빛 늑대",
+  "desc": "늑대 펫이 다 자란 은빛 늑대 · 날렵 · 꼬리를 늘어뜨린다 · 초록 안장 천",
+  "rider": "rA"
+ },
+ "wolfB": {
+  "frames": {
+   "idle0": "\n.\n.............................Q\n........................Q.QQ.CQQ\n........................CQCCcCcC\n..............V......VQ.CCcCcCcCQ\n..............V.....WVCQCcCcCcCCCQQQQ\n..............VVWWWWWVCCcCCCCCCCCCCACQ\n..........QQ.OOWWWWWWWCCCCCCCCCCCCCKKC\n......QQQQCCQOOOOOOOOOCCCCCCCCCCCCCKeCQ\n.....QCCCCCCCOOOOOOOOOMCCCCCCCCCCCCCCCCQK\n...ccccCCCCCCOoOOoOOoONCCCCCCAAAcCCCcccc\n..cccccCCCCCCoCooCooCoCCCCCCCAAC.ccA..KK\n.ccccccCccCCCCCCCCCCCCCCCCCCCAAA......w\n.ccccccc..cCCCCCCCCCCCCCCCCCCAA\n.ccccc.....cCCCCCcccCCCCCCCCCAA\n.cccc.....ddCCCCc...ccccccCCC\n.........ddQCCCc.......dddCCC\n.........ddcCCC........dddCCC\n.........dddCCC........dddCCC\n..........ddCCC.........ddCCC\n..........ddCCC.........ddcCC\n..........ddcCCc........dddCCcc\n..........dd.ccK........dd.cc.K\n",
+   "idle1": "\n.\n.............................Q\n........................Q.QQ.CQQ\n........................CQCCcCcC\n..............V......VQ.CCcCcCcCQ\n..............V.....WVCQCcCcCcCCCQQ\n..............VVWWWWWVCCcCCCCCCCCCCQQ\n..........QQ.OOWWWWWWWCCCCCCCCCCCCCAKQ\n.......QQQCCQOOOOOOOOOCCCCCCCCCCCCCKeC\n.....QQCCCCCCOOOOOOOOOMCCCCCCCCCCCCCCCQQ\n....ccCCCCCCCOoOOoOOoONCCCCCCAAACCCCCCCCK\n...ccccCCCCCCoCooCooCoCCCCCCCAACcccAAAAA\n..cccccCccCCCCCCCCCCCCCCCCCCCAAA......wK\n.ccccccc..cCCCCCCCCCCCCCCCCCCAA\n.cccccc....cCCCCCcccCCCCCCCCCAA\n.ccccc....ddCCCCc...ccccccCCC\n..ccc....ddQCCCc.......dddCCC\n.........ddcCCC........dddCCC\n.........dddCCC........dddCCC\n..........ddCCC.........ddCCC\n..........ddCCC.........ddcCC\n..........ddcCCc........dddCCcc\n..........dd.ccK........dd.cc.K\n",
+   "run0": "\n..........................Q.Q\n........................Q.CQCQQ\n........................CQCCcCc\n..............V......VQQCcccccCQ\n..............VVWWWWWVCCcCCCCCCc.QQQ\n..............WWWWWWWWCCCCCCCCCddCCCQQ\n..cccQQQQQQQQOOWWWOOOOCCCCCCCCCQQCCCAKQ\nccccccCCCCCCCOOOOOOOOOMCCCCCCCCCCCCCKeC\nccccccCCCCCCCOoOOoOOOONCCCCCCACCCCCCCCCQQQ\nccccccCCCCCCCoCooCooooCCCCCCCAACcCCCCCCCCK\nccccccccccCCCCCCCCCCCCCCCCCCCAAC.cccAAAAAA\ncc........CCCCCCCCCCCCCCCCCCCAAc....c..KwK\n.........QCCCCCCcccCCCCCCCCCCAA\n.......QQCCCCccc...ccccCCcccCCCQQ\n......dcCcccc..........AA.ddccCCCcc\n......ddcd.................dddccc\n.............................d\n.\n.\n.\n.\n.\n.\n",
+   "run1": "\n.\n.............................Q\n........................Q..Q.C\n........................CQQCQcQc\n..............VV.....VQ.CCcCcCcC\n..............VVWWWWWVCQCcCcCCcC\n..........Q....WWWWWWWCCCCCCCCCcc\n.....QQQQQCQQOOWWWWWWWCCCCCCCCCddQQQQQ\n..cccCCCCCCCCOOOOOOOOOCCCCCCCCCQQCCCACQ\nccccccCCCCCCCOoOOOOOOOMCCCCCCCCCCCCCKKC\nccccccCCCCCCCoCoooOooONCCCCCCAACCCCCKeCQ\nccccccccccCCCCCCCCoCCoCCCCCCCAACCCCCCCCCQK\ncccccc...dcCCCCCCCCCCCCCCCCCCAAAcccCCccccc\ncc......dddCCCCCccCCCCCCCCCCCA.....cA...w\n......dddQQCCCCc..cccCCCCCCCCAA......cKKK\n.....dddQCCCccc......cccccCCC\n......ddCCcc..............CCCd\n........cc................CCCddd\n..........................CCCd\n..........................cCC\n...........................CC\n...........................CCcc\n...........................cc.K\n",
+   "run2": "\n..........................Q.Q\n..........................C.C.Q\n.......................QQQCQcQc\n.............V.......VQCCcCcCcCc\n.............VV.....WVCCccCcCCCdQQQQQ\n..............VWWWWWWCCCCCCCCCCQCCCACQ\n..............WWWWWWWOCCCCCCCCCCCCCKKCQ\n..cccQQQQQQQ.OOOOOOOOOCCCCCCCCCCCCCKeCCQ\nccccccCCCCCCQOOOOOOOOOMCCCCCCACCCCCCCCCCK\nccccccCCCCCCCOoOOoOOoONCCCCCCAACccCCCcccc\nccccccCCCCCCCoCooCooCoCCCCCCCAAA..cAA..w\nccccccccccCCCCCCCCCCCCCCCCCCCAAc....ccKKK\ncc........cCCCCCCCCCCCCCCCCCCAA\n...........cCCCCCCcccCCCCCCCcA\n............cccCCC...cccCCCc\n.............ddcCCQ....dCCC\n.............dddcCCQ...QCCC\n..............dddcCcc.dCCCc\n...............dd.c...dccc\n.\n.\n.\n.\n",
+   "run3": "\n.\n..........................Q\n........................Q.C.QQ\n........................C.CQcCc\n..............V......VQ.CQcCcccQ\n..............V...WWWVCQccCcCCCcc\n..............VVWWWWWWCCCCCCCCCddQQQQQ\n........QQQQ.OOWWWWWWWCCCCCCCCCQQCCCACQ\n....QQQQCCCCQOOOOOOOOOCCCCCCCCCCCCCCKKC\n.cccccCCCCCCCOOOOOOOOOMCCCCCCCCCCCCCKeCQ\nccccccCCCCCCCooOOoOooONCCCCCCAACCCCCCCCCQK\nccccccCCCCCCCCCooCoCCoCCCCCCCAACccCCCcccc\nccccccccccCCCCCCCCCCCCCCCCCCCAAc..ccA...w\ncccc......ccCCCCCCCCCCCCCCCCCAA......cKKK\n...........dCCCCcccccCCCCCCCCA\n............CCCc.....cccccccCCQ\n............CCCd.......ddd..cCCQ\n............CCCdd.....ddd....cCCc\n............CCCdd.....dddd....cc\n............CCC.......ddd\n............CCC\n............cCCcc\n.............ccK\n"
+  },
+  "pal": {
+   "C": "#58565f",
+   "Q": "#807e8a",
+   "c": "#3c3a44",
+   "d": "#2a2830",
+   "A": "#a29ea8",
+   "e": "#f0d040",
+   "K": "#121016",
+   "w": "#f4f0e4",
+   "F": "#2a2830",
+   "f": "#1c1a20",
+   "O": "#a08060",
+   "o": "#7a5c40",
+   "W": "#3a2c24",
+   "V": "#2a1e18",
+   "M": "#b0b4c0",
+   "N": "#7a7e8a"
+  },
+  "ax": 19,
+  "seat": {
+   "idle0": [
+    17,
+    6
+   ],
+   "idle1": [
+    17,
+    6
+   ],
+   "run0": [
+    17,
+    5
+   ],
+   "run1": [
+    18,
+    6
+   ],
+   "run2": [
+    17,
+    5
+   ],
+   "run3": [
+    17,
+    6
+   ]
+  },
+  "label": "B 검은 다이어울프",
+  "desc": "어깨 혹 · 등 갈기 · 머리를 낮춘 큰 늑대 · 송곳니 · 털가죽 받침",
+  "rider": "rB"
+ },
+ "wolfC": {
+  "frames": {
+   "idle0": "\n...............................Q\n.............................d.Cd\n.............................ddCC\n.............................ddCCQQ\n...........................QQQQCCCC\n..........................QQCCCCCKeQ\n...........JJJ.......V...QCCCCGCCCCCQQQ\n.ddd.......JJUj.....WV..QCCCCRRCCZZcccK\nddddddQQQQQjjU.WWWWWWW.QCCCCRRRCcA..KK\ndddddddCCCCCQU.WWWWWWWRCCCCZCRCC\n.ddddddCCCCCCQRRRRRRRRRCCCCCCZAA\n...dddccccCCCCRRRRRRRRRCCCCCAAAA\n..........CCCCRRRRRRRRRCCCCCAAA\n.........cCCCCZZZZrrrrrCCCCCAA\n..........cCCCrrrrrrrCCCCCCCAA\n...........ccCCCccccccCCCCCC\n...........ddAAA......AAAAAA\n..........ddQAAA.......ddAAA\n.........ddQAAA........ddAAA\n.........ddAAA.........ddAAA\n.........ddAAA.........ddAAA\n.........dd.AA.........dd.AA\n.........dddAA.........dd.AA\n..........ddAAAA.......dddAAAA\n..........d..A.K........d..A.K\n",
+   "idle1": "\n...............................Q\n.............................d.Cd\n.............................d.CQ\n.............................ddCC\n...........................QQddCCQQ\n..........................QQCQQCCCCQ\n...........JJJ.......V...QCCCCCCCKeCQ\n...........JJUj.....WV..QCCCCCGCCCCCCQc\n.ddddQQQQQQjjU.WWWWWWW.QCCCCCRRCcZZAAAK\ndddddddCCCCCQU.WWWWWWWRCCCCZRRRC....KK\ndddddddCCCCCCQRRRRRRRRRCCCCCCZAA\n.ddddddcccCCCCRRRRRRRRRCCCCCAAAA\n....dd....CCCCRRRRRRRRRCCCCCAAA\n.........cCCCCZZZZrrrrrCCCCCAA\n..........cCCCrrrrrrrCCCCCCCAA\n...........ccCCCccccccCCCCCC\n...........ddAAA......AAAAAA\n..........ddQAAA.......ddAAA\n.........ddQAAA........ddAAA\n.........ddAAA.........ddAAA\n.........ddAAA.........ddAAA\n.........dd.AA.........dd.AA\n.........dddAA.........dd.AA\n..........ddAAAA.......dddAAAA\n..........d..A.K........d..A.K\n",
+   "run0": "\n...............................c\n.............................d..Q\n...........................Q.QddCQ\n..........................QQQCddCCQQ\n............JJ............QCCCQQCCCCQ\n...........JJUJ......V..QQCCCCCCCCKeCQ\n..dddQQQQQ.jJUjWWWWWWV..QCCCCRRGCCCCCCQQ\nddddddCCCCQQjU.WWWWWWWRQCCCZRRRCccZZAAAK\nddddddCCCCCCCRRWRRRRRRRCCCCCCZCC..A..KwK\nddddddccCCCCCCRRRRRRRRRCCCCCAAAA\n.d......cCCCCCRRRRRRRRRCCCCCAAA\n.........CCCCCZRZRZRZRZCCCCCAAA\n.........cCCCCrrrrrrrrrCCCCCAA\n.........dCCCCCccccCCCCCCCCCCA\n........QQAAAAA....AAAAAAAAAAQQ\n......QQAAAAA............dddAAAQQQ\n.....dAAAA................ddddAAAA\n.....ddd....................dddd\n.\n.\n.\n.\n.\n.\n.\n",
+   "run1": "\n.\n.\n.\n.............................d..Q\n...........................Q.QddCQ\n............JJ............QQQCddCCQQ\n...........JJUJ......V...QCCCCQQCCCCQ\n......QQQQQjJUjWWWWWWVV.QCCCCCCCCCKeC\n.dddddCCCCCCjU.WWWWWWW.QCCCCCCCGCCCCCQQQ\nddddddCCCCCCCQRWWRRRRRRCCCCZRRRRcCZZcccK\nddddddCCCCCCCCRRRRRRRRRCCCCCCZAA.AA...w\nddddddcccCCCCCRRRRRRRRRCCCCCAAAA....AKKK\n.........CCCCCZRZRZRZRZCCCCCAAA\n.........cCCCCrrrrrrrrrCCCCCAA\n.........dCCCCCcccCCCCCCCCCCAA\n........ddAAAAA...AAAAAAAAAA\n......dddQAAAA.........AAAAA\n.....dddQAAAA............AAAd\n.....d.AAAA..............AAAdd\n........A.................AAddd\n..........................AA\n..........................AA\n..........................AAQ\n...........................AAA\n...........................A.K\n",
+   "run2": "\n..............................c\n.............................ddQQ\n.............................ddCCQQ\n...........................QQQQCCCCQ\n.........................QQCCCCCCCCC\n...........JJ........V...CCCCCCCCKeCQQ\n..........jJUJ......WV..QCCRRRGCCZCCccK\n..dddQQQQQ.jUjWWWWWWWW.QCCZCZCCCcAZA.w\nddddddCCCCQQU..WWWWWWRRCCCCCCCCC..AAKKK\nddddddCCCCCCQRRRRRRRRRRCCCCCAAAA\nddddddccCCCCCCRRRRRRRRRCCCCCAAA\ndd......ccCCCCRRRRRRRRZCCCCCAAA\n..........CCCCZRZZZrrrrCCCCCAA\n..........CCCCrrrrrrCCCCCCCCcA\n..........ccCCCCCCcccccCCCCc\n............AAAAAA.....AAAA\n............dddAAA.....AAA\n.............dddAAQ...dAAA\n.............dddAAAQ..QAA\n..............dddAAAA.AAA\n...............dd.....AAd\n.\n.\n.\n.\n",
+   "run3": "\n.\n.\n...............................c\n.............................d.dQ\n...........................QQQddCQQQ\n..........................QQCCQQCCCC\n...........JJU.......V...QCCCCCCCCKeQ\n...........JJUj...WWWV..QCCCCCCGCCCCCQQQ\n...ddQQQQQQjjU.WWWWWWW.QCCCZRRRCCCZZcccK\nddddddCCCCCCQ..WWWWWWRRCCCCCZRCCccA...w\nddddddCCCCCCCQRRRRRRRRRCCCCCAAAA...AKKK\nddddddccccCCCCRRRRRRRRRCCCCCAAAA\ndddd......CCCCZRZRZRZRZCCCCCAAA\n.........cCCCCRrrrrrrrrCCCCCAA\n..........cCCCrrrrCCCCCCCCCCCAA\n...........cCCCccccccccCCcCCC\n............AAA........AA.AAAQ\n............AAA.......ddd..AAA\n...........QAAd.......dd....AAQ\n...........AAAdd......dd.....AAQA\n............AAddd....ddd......AA\n............AA.......ddd\n............AA\n............AAAA\n.............A.K\n"
+  },
+  "pal": {
+   "C": "#76583e",
+   "Q": "#9c7a58",
+   "c": "#523c2a",
+   "d": "#3a2a1e",
+   "A": "#dccdae",
+   "e": "#e8c040",
+   "K": "#1c1410",
+   "w": "#f4f0e4",
+   "R": "#b8402e",
+   "r": "#7a2418",
+   "Z": "#f0e8d4",
+   "G": "#40a0b0",
+   "W": "#5a3a22",
+   "V": "#3e2616",
+   "J": "#4a6e3a",
+   "j": "#2e4a24",
+   "U": "#7a5a3a"
+  },
+  "ax": 19,
+  "seat": {
+   "idle0": [
+    18,
+    8
+   ],
+   "idle1": [
+    18,
+    8
+   ],
+   "run0": [
+    18,
+    6
+   ],
+   "run1": [
+    18,
+    8
+   ],
+   "run2": [
+    18,
+    7
+   ],
+   "run3": [
+    18,
+    8
+   ]
+  },
+  "label": "C 갈색 늑대",
+  "desc": "꼬리를 뒤로 곧게 · 깃털 굴레 · 볼 무늬 · 무늬 담요 · 말아 묶은 깔개",
+  "rider": "rC"
+ },
+ "wolfD": {
+  "frames": {
+   "idle0": "\n...............................Q\n.............................MMC.M\n...........................MMMNxxx\n.........................MMNNNxMMxx\n..............V......V..MNNQQMMMMMMxx\n..............V.....WV.MMNCCCnMnnnKenn\n..............VVWWWWWWjNNCCCCCnCCCCCCQK\n........QQQQ.JJWWWWWWWJjCCCCCCCCcAAAKK\n......QQCCCCJJJJJJJJJJJjCCCCCAAA\n......CCCCCCJJJJJJJJJJJjCCCCMNAA\n.....AACCCCCJJJJJJJJJJJjCCCCMNA\n....AAAACcCCJJJJJJGJJJJjCCCCMG\n....AAAAc.cCJJJJJGJGJJJjCCCCNN\n....AAAA...cJJJJJJGJJJJjCCCC\n....AAAA...dJJJJJJJJJJJjAAAA\n...AAAA...ddGJJJJJJJJJJGdAAA\n....AAA..ddQAGGGGGGGGGGddAAA\n.........ddAAA.........ddAAA\n.........ddAAA.........ddAAA\n.........dd.AA.........dd.AA\n.........dddAA.........dd.AA\n..........ddAAAA.......dddAAAA\n..........d..A.K........d..A.K\n",
+   "idle1": "\n.\n.............................MMQ.M\n...........................MMMNC.x\n.........................MMNNNxxxx\n..............V......V..MNNQQMMMMMxx\n..............V.....WV.MMNCCCnMMMnKex\n..............VVWWWWWWjNNCCCCCnnnCCQnn\n........QQQQ.JJWWWWWWWJjCCCCCCCCCCccccK\n......QQCCCCJJJJJJJJJJJjCCCCCAAAAA..KK\n.....QCCCCCCJJJJJJJJJJJjCCCCMNAA\n....QAACCCCCJJJJJJJJJJJjCCCCMNA\n....AAACccCCJJJJJJGJJJJjCCCCMG\n...AAAAA..cCJJJJJGJGJJJjCCCCNN\n...AAAA....cJJJJJJGJJJJjCCCC\n...AAAA....dJJJJJJJJJJJjAAAA\n...AAA....ddGJJJJJJJJJJGdAAA\n...AAA...ddQAGGGGGGGGGGddAAA\n.........ddAAA.........ddAAA\n.........ddAAA.........ddAAA\n.........dd.AA.........dd.AA\n.........dddAA.........dd.AA\n..........ddAAAA.......dddAAAA\n..........d..A.K........d..A.K\n",
+   "run0": "\n............................MMM...M\n..........................MMNNNcQ.x\n.........................NNNQQdxxxx\n..............V......V.MMNQCCCQMMMMxx\n..............VVWWWWWV.MNCCCCCnMMMnKen\n.....QQQQQQQ..WWWWWWWWjNCCCCCCCnnnCCCQn\n..AAACCCCCCCJJJWJJJJJJJjCCCCCCCCCCCccccK\nAAAAAACCCCCCJJJJJJJJJJJjCCCCMNAAAAA...w\nAAAAAACccCCCJJJJJJJJJJJjCCCCMNAA...AKKK\nAAAAAcc..CCCJJJJJJGJJJJjCCCNMGA\nAAA......cCCJJJJJGJGJJJjCCCCMN\n.........dCCJJJJJJGJJJJjCCCCN\n........QQAAGJJJJJJJJJJjAAAAAQQ\n......QQAAAAAGGGGGGGGGGG.dddAAAQQQ\n.....dAAAA................ddddAAAA\n.....ddd....................dddd\n.\n.\n.\n.\n.\n.\n.\n",
+   "run1": "\n.\n.\n...........................MMMMN\n.........................MMMNNNQ..M\n..............VV.....V..MMNNQCdxxxx\n..............VVWWWWWVVMMNCCCCQMMMMxx\n.......QQQQQ...WWWWWWWJjNCCCCCxMMMMMMx\n....QQQCCCCCJJJWWJJJJJJjCCCCCCnnnnnKenn\n..AAAACCCCCCJJJJJJJJJJJjCCCCCAAAAACCCCCK\n.AAAAACCCCCCJJJJJJJJJJJjCCCCMNAAAAAAAAw\nAAAAAAcccCCCJJJJJJGJJJJjCCCNMNA...AAKKK\nAAAAA....cCCJJJJJGJGJJJjCCCCMGA\nAAA......dCCJJJJJJGJJJJjCCCCNN\n........ddAAGJJJJJJJJJJjAAAA\n......dddQAAAGGGGGGGGGGGAAAA\n.....dddQAAAA............AAAd\n.....d.AAAA..............AAAdd\n........A.................AAddd\n..........................AA\n..........................AA\n..........................AAQ\n...........................AAA\n...........................A.K\n",
+   "run2": "\n...........................MMMM..M\n..........................MNNNNQxx\n.........................MNNQdxxMxx\n.....................V..MNQCCQMMMMMxx\n.............VV.....WV.MNCCCCCnMnnKenn\n..............VWWWWWWWjNCCCCCCCnCCCCCQc\n.....QQQQQQQ..WWWWWWWJjCCCCCCCCCcAAAAAK\n..AAACCCCCCCJJJJJJJJJJJjCCCCMNAA.A.KKw\nAAAAAACCCCCCJJJJJJJJJJJjCCCCMNA\nAAAAAACcccCCJJJJJJJJJJJjCCCNMGA\nAAAAAcc...CCJJJJJJGJJJJjCCCCNN\nAAA.......CCJJJJJGJGJJJjCCCCc\n..........ccJJJJJJGJJJJjCCCc\n............GJJJJGGGGGGGGAA\n............dGGGGA.....AAA\n.............dddAAQ...dAAA\n.............dddAAAQ..QAA\n..............dddAAAA.AAA\n...............dd.....AAd\n.\n.\n.\n.\n",
+   "run3": "\n.\n............................MMM\n..........................MMNNNQ..M\n.........................MMNNddCxxx\n..............V......V..MNNQCQxxMMxx\n..............V...WWWV.MMNCCCCMMMMMMxx\n.........QQ...VVWWWWWWjNNCCCCCnMnnnKenn\n......QQQCCQJJJWWWWWWJJjCCCCCCCnCCCCCCQK\n...AAQCCCCCCJJJJJJJJJJJjCCCCNAAAAAAAAAA\n..AAAACCCCCCJJJJJJJJJJJjCCCCMNAA.AA.KKw\nAAAAAACccCCCJJJJJJJJJJJjCCCNMGA\nAAAAAAc..cCCJJJJJJGJJJJjCCCCMN\nAAAA......cCJJJJJGJGJJJjCCCCNN\nAAA........cJJJJJJGJJJJjCcCCC\n............GGGGGGGGGGGGA.AAAQ\n............AAA.......ddd..AAA\n...........QAAd.......dd....AAQ\n...........AAAdd......dd.....AAQA\n............AAddd....ddd......AA\n............AA.......ddd\n............AA\n............AAAA\n.............A.K\n"
+  },
+  "pal": {
+   "C": "#8a7c6c",
+   "Q": "#aea08e",
+   "c": "#62574a",
+   "d": "#4a4036",
+   "A": "#d6cebe",
+   "e": "#f0b030",
+   "K": "#16141a",
+   "w": "#f4f0e4",
+   "M": "#c4cad6",
+   "N": "#8a90a0",
+   "n": "#5a6070",
+   "x": "#f0f4fa",
+   "J": "#2f4e94",
+   "j": "#1e3466",
+   "G": "#e0b040",
+   "W": "#5a3a22",
+   "V": "#3e2616"
+  },
+  "ax": 19,
+  "seat": {
+   "idle0": [
+    18,
+    6
+   ],
+   "idle1": [
+    18,
+    6
+   ],
+   "run0": [
+    18,
+    4
+   ],
+   "run1": [
+    18,
+    6
+   ],
+   "run2": [
+    18,
+    5
+   ],
+   "run3": [
+    18,
+    6
+   ]
+  },
+  "label": "D 갑주 늑대",
+  "desc": "쇠 투구 · 목 판 · 가슴 판 · 무릎까지 늘어진 푸른 마의",
+  "rider": "rD"
+ }
+}

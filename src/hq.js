@@ -202,15 +202,24 @@ const hqHome = p => !p.exp;   // 원정에 안 나간 파티
 // 마구간 짐승: 산 말(원정 나간 파티가 맨 말은 빼고) + 집에 있는 파티가 맨 땅짐승 펫. 날개 달린 짐승은 비행장으로
 function hqStableAnimals() {
   const out = [], H = (S.stable && S.stable.horses) || {};
-  for (const k of HORSE_BUY) { const n = (H[k] || 0) - S.parties.filter(p => p.horse === 'h:' + k && !hqHome(p)).length; for (let i = 0; i < n; i++) out.push({ id: 'horse_' + k }); }
-  for (const p of S.parties) {
-    if (!p.horse || !p.horse.startsWith('p:') || !hqHome(p)) continue;
-    const pet = petById(+p.horse.slice(2)), k = pet && horseOfPet(pet.kind);
+  for (const k of HORSE_BUY) { const n = (H[k] || 0) - S.parties.reduce((c, p) => c + (!hqHome(p) && p.horse === 'h:' + k ? 1 : 0) + (!hqHome(p) && p.horse2 === 'h:' + k ? 1 : 0), 0); for (let i = 0; i < n; i++) out.push({ id: 'horse_' + k }); }
+  for (const p of S.parties) for (const hk of [p.horse, p.horse2]) {   // 빌드 65: 둘째 마차에 맨 펫도
+    if (!hk || !hk.startsWith('p:') || !hqHome(p)) continue;
+    const pet = petById(+hk.slice(2)), k = pet && horseOfPet(pet.kind);
     if (pet && !(k && HORSES[k].fly)) out.push({ id: petLook(pet), pet: pet.id });
   }
+  // 빌드 65: 상단에 있는 랑기수 · 용기수의 탈것 (늑대 · 와이번) — 낮에는 서 있고 밤에는 웅크려 잔다
+  for (const a of S.advs) if (a.status !== 'away' && rideKind(a)) out.push({ ride: a.id });
   return out;
 }
-const hqFlyers = () => S.parties.filter(p => hqHome(p) && p.horse && p.horse.startsWith('p:')).map(p => petById(+p.horse.slice(2))).filter(pet => { const k = pet && horseOfPet(pet.kind); return k && HORSES[k].fly; });
+// 마구간의 탈것 한 마리 (기수 없이): 낮 = 옆모습 서 있기 · 밤 = 자는 모습, 너비 w 안으로
+function hqRide(g, aid, x, y, t, w, flip, night, ph) {
+  const a = advById(aid), k = a && rideKind(a); if (!k) return 0;
+  const fr = Math.floor(t * 1.2 + (ph || 0)) % 2, s = night ? rideSleepSpr(a, fr) : rideMSpr(k, rideLook(a, k), 'side', 'idle' + fr), z = Math.min(1, w / s.w);
+  g.save(); g.translate(Math.round(x), Math.round(y)); if (flip) g.scale(-1, 1); g.scale(z, z); pxBlit(g, s); g.restore();
+  return Math.round(s.ay * z);
+}
+const hqFlyers = () => S.parties.filter(hqHome).flatMap(p => [p.horse, p.horse2]).filter(hk => hk && hk.startsWith('p:')).map(hk => petById(+hk.slice(2))).filter(pet => { const k = pet && horseOfPet(pet.kind); return k && HORSES[k].fly; });
 const hqShips = () => S.parties.filter(p => hqHome(p) && p.wagon && WAGONS[p.wagon] && WAGONS[p.wagon].fly);
 
 /* ───────── 바탕 · 가구 조각 ───────── */
@@ -768,6 +777,7 @@ const A3_STABLE = {
     L.slice(0, 3 + STALL_FLOOR.length).forEach((m, i) => {
       const [x, y] = i < 3 ? [33 + i * 66, FB - 2] : [STALL_FLOOR[i - 3][0], FB + STALL_FLOOR[i - 3][1]];
       if (!groom && y > gy) { groom = true; qPeo('groom', g, true, 'walk', Math.floor(t * 6) % 4, gx, gy, k >= 1); }
+      if (m.ride) { const h = hqRide(g, m.ride, x, y, t, i < 3 ? 60 : 54, i % 2 === 0, nt > 0.5, i); if (nt > 0.5) qZ(g, x - 6, y - h - 4, t, i * 0.3); hqHitAdd(K, x - 26, y - 44, 52, 46, { win: 'b:stable' }); return; }   // 빌드 65: 탈것
       const z = hqFit(m.id, i < 3 ? 56 : 50);
       hqMon(g, m.id, x, y, nt > 0.5 ? t * 0.3 : t, z, i % 2 === 0, i);
       if (nt > 0.5) qZ(g, x - 6, y - Math.round(monH(m.id) * z) - 4, t, i * 0.3);

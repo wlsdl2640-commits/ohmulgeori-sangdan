@@ -13,10 +13,10 @@ const stableState = () => { if (!S.stable) S.stable = { horses: {} }; if (!S.sta
 function stableHorses() {
   const out = [], H = stableState().horses;
   for (const k of HORSE_BUY) for (let i = 0; i < (H[k] || 0); i++) out.push({ kind: k });
-  for (const p of S.parties) if (p.horse && p.horse.startsWith('p:')) out.push({ kind: 'pet', pet: +p.horse.slice(2) });
+  for (const p of S.parties) for (const hk of [p.horse, p.horse2]) if (hk && hk.startsWith('p:')) out.push({ kind: 'pet', pet: +hk.slice(2) });   // 빌드 65: 둘째 마차에 맨 것도
   return out;
 }
-const horseUsed = k => S.parties.filter(p => p.horse === 'h:' + k).length;
+const horseUsed = k => S.parties.reduce((n, p) => n + (p.horse === 'h:' + k ? 1 : 0) + (p.horse2 === 'h:' + k ? 1 : 0), 0);
 const horseFree = k => Math.max(0, (stableState().horses[k] || 0) - horseUsed(k));
 const horseOpen = k => (HORSES[k].lv || 1) <= (S.bld.stable || 0);
 function buyHorse(k) {
@@ -41,39 +41,41 @@ function sellHorse(k) {
   changed();
   return '';
 }
-// 말을 맨다: 'h:종류' 또는 'p:펫id'. 맨 펫은 그 파티의 전투 펫 자리에서 빠진다
-function hitch(pid, key) {
+// 말을 맨다: 'h:종류' 또는 'p:펫id'. 맨 펫은 그 파티의 전투 펫 자리에서 빠진다 · sl 2 = 둘째 마차(빌드 65 캐러밴 마스터)
+const RIG_F = sl => (sl === 2 ? { w: 'wagon2', h: 'horse2', n: 'wagonPlus2' } : { w: 'wagon', h: 'horse', n: 'wagonPlus' });
+const rigAt = (p, sl) => (sl === 2 ? rig2(p) : p);
+function hitch(pid, key, sl) {
   const p = findP(pid); if (!p) return '';
   if (p.exp) return '원정 중에는 말을 바꿀 수 없어요.';
-  const w = wagonOwned(p); if (!w || !w.horse) return '말이 끄는 마차가 있어야 매요.';
+  const RF = RIG_F(sl), q = rigAt(p, sl), w = wagonOwned(q); if (!w || !w.horse) return '말이 끄는 마차가 있어야 매요.';
   const fits = H => (w.horse === 'goat' ? !!H.steel : w.horse === 'fly' ? !!H.fly : true);
   if (key.startsWith('h:')) {
     const k = key.slice(2), H = HORSES[k]; if (!H || H.pet) return '';
     if (!fits(H)) return `${w.name}은(는) ${w.horse === 'goat' ? '고산지대 산양' : '그리폰·와이번·페가수스'}만 끌 수 있어요.`;
-    if (p.horse !== key && horseFree(k) < 1) return `남는 ${H.name}이(가) 없어요.`;
+    if (p[RF.h] !== key && horseFree(k) < 1) return `남는 ${H.name}이(가) 없어요.`;
   } else {
     const pet = petById(+key.slice(2)); if (!pet) return '';
     const hk = horseOfPet(pet.kind); if (!hk) return `${PETS[pet.kind].name}은(는) 마차를 끌 수 없어요.`;
     if (!fits(HORSES[hk])) return `${w.name}은(는) ${w.horse === 'goat' ? '고산지대 산양' : '그리폰·와이번·페가수스'}만 끌 수 있어요.`;
     if (!pet.stage) return `${pet.name}은(는) 아직 망아지예요. Lv${PET_EVO_LV}에 진화하면 끌 수 있어요.`;
-    const other = S.parties.find(x => x.horse === key && x.id !== p.id), fighter = S.parties.find(x => x.pet === pet.id);
+    const other = S.parties.find(x => (x.horse === key || x.horse2 === key) && !(x.id === p.id && x[RF.h] === key)), fighter = S.parties.find(x => x.pet === pet.id);
     if (other && other.exp) return `${pet.name}은(는) ${other.name}의 마차를 끌고 원정 중이에요.`;
     if (fighter && fighter.exp) return `${pet.name}은(는) ${fighter.name}과 원정 중이에요.`;
-    if (other) other.horse = null;
+    if (other) { if (other.horse === key) other.horse = null; if (other.horse2 === key) other.horse2 = null; }
     if (fighter) fighter.pet = null;   // 마차를 끄는 펫은 싸우지 않는다
   }
-  p.horse = key;
-  const h = horseOf(p);
-  log(`${p.name}의 ${w.name}에 ${h ? (h.petName ? `펫 ${h.petName}(${h.name})` : h.name) : '말'}을(를) 맸다.`);
+  p[RF.h] = key;
+  const h = horseOf(rigAt(p, sl));
+  log(`${p.name}의 ${sl === 2 ? '둘째 마차 ' : ''}${w.name}에 ${h ? (h.petName ? `펫 ${h.petName}(${h.name})` : h.name) : '말'}을(를) 맸다.`);
   changed();
   return '';
 }
-function unhitch(p) { if (!p || !p.horse) return ''; if (p.exp) return '원정 중에는 풀 수 없어요.'; p.horse = null; changed(); return ''; }
+function unhitch(p, sl) { const F = RIG_F(sl); if (!p || !p[F.h]) return ''; if (p.exp) return '원정 중에는 풀 수 없어요.'; p[F.h] = null; changed(); return ''; }
 // 마차 강화: 돈 + 강철 편자 + 철광석. 마구간 단계가 상한을 정한다
 const wagonPlusMax = () => Math.min(WAGON_PLUS_MAX, (S.bld.stable || 0) + 2);
-function enhanceWagon(pid) {
-  const p = findP(pid); if (!p || !p.wagon) return '';
-  if (p.exp) return '원정 중에는 강화할 수 없어요.';
+function enhanceWagon(pid, sl) {
+  const p0 = findP(pid), RF = RIG_F(sl), p = p0 && rigAt(p0, sl); if (!p || !p.wagon) return '';
+  if (p0.exp) return '원정 중에는 강화할 수 없어요.';
   const n = wagonPlus(p);
   if (n >= wagonPlusMax()) return n >= WAGON_PLUS_MAX ? '더 강화할 수 없어요.' : `마구간을 넓혀야 +${n + 1}로 강화해요.`;
   const c = wagonPlusCost(p.wagon, n);
@@ -81,8 +83,8 @@ function enhanceWagon(pid) {
   if ((S.inv.horseshoe || 0) < c.shoe) return `강철 편자 ${c.shoe}개가 필요해요.`;
   if ((S.inv.iron_ore || 0) < c.ore) return `철광석 ${c.ore}개가 필요해요.`;
   S.gold -= c.gold; S.stats.spent = (S.stats.spent || 0) + c.gold; addTo(S.inv, 'horseshoe', -c.shoe); addTo(S.inv, 'iron_ore', -c.ore);
-  p.wagonPlus = n + 1;
-  log(`${p.name}의 ${WAGONS[p.wagon].name}을(를) +${p.wagonPlus}로 강화했다. 짐 +${Math.round(WAGON_PLUS.cap * p.wagonPlus * 100)}%, 속도 +${Math.round(WAGON_PLUS.spd * p.wagonPlus * 100)}%`, 'good');
+  p0[RF.n] = n + 1;
+  log(`${p0.name}의 ${sl === 2 ? '둘째 마차 ' : ''}${WAGONS[p.wagon].name}을(를) +${n + 1}로 강화했다. 짐 +${Math.round(WAGON_PLUS.cap * (n + 1) * 100)}%, 속도 +${Math.round(WAGON_PLUS.spd * (n + 1) * 100)}%`, 'good');
   changed();
   return '';
 }
@@ -96,31 +98,33 @@ function buyShoe(n) {
 }
 const horseLine = k => { const H = HORSES[k]; return `짐 ×${H.cap} · 속도 ×${H.spd}${H.fly ? ' · 비행' : ''}${H.steel ? ' · 강철 마차' : ''}`; };
 BLD_SUM.stable = () => `<div class="sub">말 ${stableHorses().length}/${stableCap()}마리 · 마차 ${S.parties.filter(p => p.wagon).length}대 · 강화 +${wagonPlusMax()}까지</div>`;
+function stableRig(sp, sl) {
+    const q = rigAt(sp, sl), w = wagonOwned(q), h = horseOf(q), why = wagonWhy(q), busy = !!sp.exp, S2 = sl === 2 ? ' data-s="2"' : '', hk = sl === 2 ? sp.horse2 : sp.horse, two = sl === 2;
+    const bodies = WAGON_IDS.filter(k => !two || WAGONS[k].horse).map(k => { const W = WAGONS[k], own = q.wagon === k, open = wagonOpen(k), back = wagonBack(q);
+      return `<div class="li${own ? ' on' : ''}"><div class="grow stack"><span>${W.name} <span class="muted">짐 +${W.cap} · 이동 ×${W.spd}${W.horse === 'goat' ? ' · 산양' : W.horse === 'fly' ? ' · 날개 달린 펫' : W.horse ? ' · 말 필요' : ''}</span></span><span class="sub muted">${W.desc}${open ? '' : ` ${wagonOpenWhy(k)}.`}</span></div>${own ? '<span class="tag gold-t">쓰는 중</span>' : `<button type="button" class="btn sm" data-act="wagon" data-id="${sp.id}" data-w="${k}"${S2}${open && !busy && (!two || caravanOf(sp)) && S.gold + back >= W.cost ? '' : ' disabled'}>${fmt(Math.max(0, W.cost - back))}G</button>`}</div>`; }).join('');
+    const horses = w && w.horse ? HORSE_BUY.filter(k => (stableState().horses[k] || 0) > 0).map(k => { const H = HORSES[k], on = hk === 'h:' + k, ok = on || horseFree(k) > 0;
+      return `<div class="li${on ? ' on' : ''}"><img class="peti" src="${monIconURL('horse_' + k)}" alt=""><div class="grow stack"><span>${H.name} <span class="muted">· ${stableState().horses[k]}마리 (남음 ${horseFree(k)})</span></span><span class="sub">${horseLine(k)}${w.horse === 'goat' ? ' · <span class="red-t">강철 마차는 산양만</span>' : w.horse === 'fly' ? ' · <span class="red-t">비행 마차는 날개 달린 펫만</span>' : ''}</span></div>${on ? `<button type="button" class="btn sm" data-act="unhitch" data-id="${sp.id}"${S2}${busy ? ' disabled' : ''}>풀기</button>` : `<button type="button" class="btn sm gold" data-act="hitch" data-id="${sp.id}" data-h="h:${k}"${S2}${ok && !busy && w.horse === 1 ? '' : ' disabled'}>매기</button>`}</div>`; }).join('') : '';
+    const petRows = w && w.horse ? S.pets.filter(x => horseOfPet(x.kind)).map(x => { const k = horseOfPet(x.kind), H = HORSES[k], on = hk === 'p:' + x.id, fit = w.horse === 1 || (w.horse === 'goat' && H.steel) || (w.horse === 'fly' && H.fly), used = S.parties.find(o => (o.horse === 'p:' + x.id || o.horse2 === 'p:' + x.id) && !(o.id === sp.id && (sl === 2 ? o.horse2 : o.horse) === 'p:' + x.id)), inParty = S.parties.find(q => q.pet === x.id);
+      return `<div class="li${on ? ' on' : ''}">${petIcon(x)}<div class="grow stack"><span>${esc(x.name)} <span class="muted">· ${x.stage ? PETS[x.kind].evo : PETS[x.kind].name} Lv${x.lv}</span></span><span class="sub">${H.name}: ${horseLine(k)}${!x.stage ? ` · <span class="red-t">Lv${PET_EVO_LV} 진화 후</span>` : !fit ? ' · <span class="red-t">이 마차는 못 끌어요</span>' : ''}${used ? ` · ${esc(used.name)}의 마차를 끄는 중` : inParty ? ` · ${esc(inParty.name)}과 싸우는 중(매면 빠져요)` : ''}</span></div>${on ? `<button type="button" class="btn sm" data-act="unhitch" data-id="${sp.id}"${S2}${busy ? ' disabled' : ''}>풀기</button>` : `<button type="button" class="btn sm gold" data-act="hitch" data-id="${sp.id}" data-h="p:${x.id}"${S2}${x.stage && fit && !busy ? '' : ' disabled'}>매기</button>`}</div>`; }).join('') : '';
+    const n = wagonPlus(q), c = q.wagon ? wagonPlusCost(q.wagon, n) : null, canPlus = q.wagon && n < wagonPlusMax();
+    const drv = sl === 2 ? caravanOf(sp) : coachLineOf(sp) || porterOf(sp);
+    let rig = `<div class="card hl"><div class="h">${esc(sp.name)} · ${two ? '둘째 마차 · ' : ''}${q.wagon ? rigName(q) : '마차 없음'}</div>
+      <div class="sub">${q.wagon ? `짐 +${(sl === 2 ? rigCap(q) : rigCap(sp)) || 0} · 이동 ×${(sl === 2 ? rigSpd(q) : rigSpd(sp)).toFixed(2)}${h ? ` · 끄는 ${h.petName ? `펫 ${esc(h.petName)}(${h.name})` : h.name}` : ''}${why ? ` · <span class="red-t">${why}</span>` : ''}` : two ? '캐러밴 마스터는 마차를 두 대까지 몰아요 — 짐은 더하고, 행렬은 느린 마차에 맞춰 움직여요.' : '아래에서 마차를 고르고, 말을 매요.'}${drv ? ` · ${two ? '캐러밴 마스터' : coachLine(drv) ? '마부' : '짐꾼'} ${esc(drv.name)}` : q.wagon && q.wagon !== 'cart' ? ' · <span class="red-t">마부 계열 없음</span>' : ''}${busy ? ' · <span class="muted">원정 중</span>' : ''}</div>
+      ${q.wagon && q.wagon !== 'cart' ? `<div class="row sub"><span class="grow">강화 +${n}/${wagonPlusMax()} <span class="muted">· 단계마다 짐 +${Math.round(WAGON_PLUS.cap * 100)}%, 속도 +${Math.round(WAGON_PLUS.spd * 100)}%${c && canPlus ? ` · 다음: ${fmt(c.gold)}G · 강철 편자 ${c.shoe}(창고 ${S.inv.horseshoe || 0}) · 철광석 ${c.ore}(창고 ${S.inv.iron_ore || 0})` : ''}</span></span><button type="button" class="btn sm gold" data-act="wplus" data-id="${sp.id}"${S2}${canPlus && !busy && S.gold >= c.gold && (S.inv.horseshoe || 0) >= c.shoe && (S.inv.iron_ore || 0) >= c.ore ? '' : ' disabled'}>${n >= WAGON_PLUS_MAX ? '최대' : n >= wagonPlusMax() ? '마구간 확장 필요' : `+${n + 1} 강화`}</button></div>` : ''}</div>
+      <div class="sec"><b>${two ? '둘째 마차 몸체' : '마차 몸체'}</b><span>바꾸면 쓰던 마차는 반값에 넘기고 강화는 사라져요</span></div><div class="list">${bodies}</div>
+      ${w && w.horse ? `<div class="sec"><b>맬 말</b><span>${w.horse === 'goat' ? '고산지대 산양' : w.horse === 'fly' ? '그리폰·와이번·페가수스' : '마구간의 말 또는 다 자란 펫'}</span></div><div class="list">${horses}${petRows}${horses || petRows ? '' : '<div class="sub muted">맬 말이 없어요. 아래에서 말을 사거나, 사육장에서 적토마·켈피·페가수스·산양·그리폰·와이번을 키워요.</div>'}</div>` : ''}`;
+  return rig;
+}
 BLD_BOX.stable = () => {
   const parties = S.parties.filter(p => !p.raidOnly), sp = parties.find(p => p.id === UI.stableP) || parties[0];
   const picker = parties.length ? `<div class="btns">${parties.map(p => `<button type="button" class="btn sm${sp && sp.id === p.id ? ' on' : ''}" data-act="stablep" data-id="${p.id}">${esc(p.name)}<span class="muted"> · ${p.wagon ? rigName(p) : '마차 없음'}</span></button>`).join('')}</div>` : '<div class="sub muted">파티가 없어요.</div>';
-  // 1) 고른 파티의 마차
-  let rig = '';
-  if (sp) {
-    const w = wagonOwned(sp), h = horseOf(sp), why = wagonWhy(sp), busy = !!sp.exp;
-    const bodies = WAGON_IDS.map(k => { const W = WAGONS[k], own = sp.wagon === k, open = wagonOpen(k), back = wagonBack(sp);
-      return `<div class="li${own ? ' on' : ''}"><div class="grow stack"><span>${W.name} <span class="muted">짐 +${W.cap} · 이동 ×${W.spd}${W.horse === 'goat' ? ' · 산양' : W.horse === 'fly' ? ' · 날개 달린 펫' : W.horse ? ' · 말 필요' : ''}</span></span><span class="sub muted">${W.desc}${open ? '' : ` ${wagonOpenWhy(k)}.`}</span></div>${own ? '<span class="tag gold-t">쓰는 중</span>' : `<button type="button" class="btn sm" data-act="wagon" data-id="${sp.id}" data-w="${k}"${open && !busy && S.gold + back >= W.cost ? '' : ' disabled'}>${fmt(Math.max(0, W.cost - back))}G</button>`}</div>`; }).join('');
-    const horses = w && w.horse ? HORSE_BUY.filter(k => (stableState().horses[k] || 0) > 0).map(k => { const H = HORSES[k], on = sp.horse === 'h:' + k, ok = on || horseFree(k) > 0;
-      return `<div class="li${on ? ' on' : ''}"><img class="peti" src="${monIconURL('horse_' + k)}" alt=""><div class="grow stack"><span>${H.name} <span class="muted">· ${stableState().horses[k]}마리 (남음 ${horseFree(k)})</span></span><span class="sub">${horseLine(k)}${w.horse === 'goat' ? ' · <span class="red-t">강철 마차는 산양만</span>' : w.horse === 'fly' ? ' · <span class="red-t">비행 마차는 날개 달린 펫만</span>' : ''}</span></div>${on ? `<button type="button" class="btn sm" data-act="unhitch" data-id="${sp.id}"${busy ? ' disabled' : ''}>풀기</button>` : `<button type="button" class="btn sm gold" data-act="hitch" data-id="${sp.id}" data-h="h:${k}"${ok && !busy && w.horse === 1 ? '' : ' disabled'}>매기</button>`}</div>`; }).join('') : '';
-    const petRows = w && w.horse ? S.pets.filter(x => horseOfPet(x.kind)).map(x => { const k = horseOfPet(x.kind), H = HORSES[k], on = sp.horse === 'p:' + x.id, fit = w.horse === 1 || (w.horse === 'goat' && H.steel) || (w.horse === 'fly' && H.fly), used = S.parties.find(q => q.horse === 'p:' + x.id && q.id !== sp.id), inParty = S.parties.find(q => q.pet === x.id);
-      return `<div class="li${on ? ' on' : ''}">${petIcon(x)}<div class="grow stack"><span>${esc(x.name)} <span class="muted">· ${x.stage ? PETS[x.kind].evo : PETS[x.kind].name} Lv${x.lv}</span></span><span class="sub">${H.name}: ${horseLine(k)}${!x.stage ? ` · <span class="red-t">Lv${PET_EVO_LV} 진화 후</span>` : !fit ? ' · <span class="red-t">이 마차는 못 끌어요</span>' : ''}${used ? ` · ${esc(used.name)}의 마차를 끄는 중` : inParty ? ` · ${esc(inParty.name)}과 싸우는 중(매면 빠져요)` : ''}</span></div>${on ? `<button type="button" class="btn sm" data-act="unhitch" data-id="${sp.id}"${busy ? ' disabled' : ''}>풀기</button>` : `<button type="button" class="btn sm gold" data-act="hitch" data-id="${sp.id}" data-h="p:${x.id}"${x.stage && fit && !busy ? '' : ' disabled'}>매기</button>`}</div>`; }).join('') : '';
-    const n = wagonPlus(sp), c = sp.wagon ? wagonPlusCost(sp.wagon, n) : null, canPlus = sp.wagon && n < wagonPlusMax();
-    rig = `<div class="card hl"><div class="h">${esc(sp.name)} · ${sp.wagon ? rigName(sp) : '마차 없음'}</div>
-      <div class="sub">${sp.wagon ? `짐 +${wagonCap(sp) || 0} · 이동 ×${wagonSpd(sp).toFixed(2)}${h ? ` · 끄는 ${h.petName ? `펫 ${esc(h.petName)}(${h.name})` : h.name}` : ''}${why ? ` · <span class="red-t">${why}</span>` : ''}` : '아래에서 마차를 고르고, 말을 매요.'}${porterOf(sp) ? ` · 짐꾼 ${esc(porterOf(sp).name)}` : sp.wagon && sp.wagon !== 'cart' ? ' · <span class="red-t">짐꾼 계열 없음</span>' : ''}${busy ? ' · <span class="muted">원정 중</span>' : ''}</div>
-      ${sp.wagon && sp.wagon !== 'cart' ? `<div class="row sub"><span class="grow">강화 +${n}/${wagonPlusMax()} <span class="muted">· 단계마다 짐 +${Math.round(WAGON_PLUS.cap * 100)}%, 속도 +${Math.round(WAGON_PLUS.spd * 100)}%${c && canPlus ? ` · 다음: ${fmt(c.gold)}G · 강철 편자 ${c.shoe}(창고 ${S.inv.horseshoe || 0}) · 철광석 ${c.ore}(창고 ${S.inv.iron_ore || 0})` : ''}</span></span><button type="button" class="btn sm gold" data-act="wplus" data-id="${sp.id}"${canPlus && !busy && S.gold >= c.gold && (S.inv.horseshoe || 0) >= c.shoe && (S.inv.iron_ore || 0) >= c.ore ? '' : ' disabled'}>${n >= WAGON_PLUS_MAX ? '최대' : n >= wagonPlusMax() ? '마구간 확장 필요' : `+${n + 1} 강화`}</button></div>` : ''}</div>
-      <div class="sec"><b>마차 몸체</b><span>바꾸면 쓰던 마차는 반값에 넘기고 강화는 사라져요</span></div><div class="list">${bodies}</div>
-      ${w && w.horse ? `<div class="sec"><b>맬 말</b><span>${w.horse === 'goat' ? '고산지대 산양' : w.horse === 'fly' ? '그리폰·와이번·페가수스' : '마구간의 말 또는 다 자란 펫'}</span></div><div class="list">${horses}${petRows}${horses || petRows ? '' : '<div class="sub muted">맬 말이 없어요. 아래에서 말을 사거나, 사육장에서 적토마·켈피·페가수스·산양·그리폰·와이번을 키워요.</div>'}</div>` : ''}`;
-  }
+  // 1) 고른 파티의 마차 (빌드 65: 캐러밴 마스터가 있으면 둘째 마차도)
+  let rig = sp ? stableRig(sp, 1) + (caravanOf(sp) || sp.wagon2 ? stableRig(sp, 2) : '') : '';
   // 2) 말 사고팔기
   const shop = HORSE_BUY.map(k => { const H = HORSES[k], own = stableState().horses[k] || 0, open = horseOpen(k);
     return `<div class="li${own ? ' on' : ''}"><img class="peti" src="${monIconURL('horse_' + k, !open)}" alt=""><div class="grow stack"><span>${H.name}${own ? ` <span class="tag ok-t">${own}마리</span>` : ''} <span class="muted">· ${horseLine(k)}</span></span><span class="sub">${H.desc}${open ? '' : ` <span class="red-t">마구간 ${H.lv}단계</span>`}</span></div><span class="btns"><button type="button" class="btn sm gold" data-act="buyhorse" data-k="${k}"${open && S.gold >= H.cost && stableHorses().length < stableCap() ? '' : ' disabled'}>${fmt(H.cost)}G</button>${own ? `<button type="button" class="btn sm" data-act="sellhorse" data-k="${k}"${horseFree(k) ? '' : ' disabled'}>팔기 ${fmt(Math.round(H.cost * 0.5))}G</button>` : ''}</span></div>`; }).join('');
   const petHorses = HORSE_IDS.filter(k => HORSES[k].pet).map(k => `<span class="tag">${HORSES[k].name} ${horseLine(k)}</span>`).join(' ');
-  return `<div class="sub">말은 마차 몸체의 짐과 속도에 배율로 곱해요. 손수레 말고는 짐꾼 계열(짐꾼·음유시인·마부·정찰가…)이 파티에 있어야 끌고, 짐꾼 계열은 파티당 한 명만 넣어요. 마부가 몰면 짐과 속도 보너스가 더 붙어요.</div>
+  return `<div class="sub">말은 마차 몸체의 짐과 속도에 배율로 곱해요. 손수레는 아무나 끌지만, 말이 끄는 마차는 마부 계열(마부 · 코네스토가 · 캐러밴 마스터)이 몰아요 — 그냥 짐꾼 · 음유시인 · 정찰가는 손수레만. 짐꾼 계열은 파티당 한 명, 마부 계열이 몰면 짐과 속도 보너스가 더 붙고, 캐러밴 마스터는 마차를 두 대까지 몰아요.</div>
     <div class="sec"><b>파티 고르기</b><span>마차·말·강화는 파티마다</span></div>${picker}${rig}
     <div class="sec"><b>말 사기</b><span>마구간 ${stableHorses().length}/${stableCap()}마리</span></div><div class="list">${shop}</div>
     <div class="row sub"><span class="grow">강철 편자 <b class="num">${S.inv.horseshoe || 0}</b> <span class="muted">· 마차 강화 재료 · 하나 ${ITEMS.horseshoe.buy}G</span></span><button type="button" class="btn sm" data-act="buyshoe" data-n="1"${S.gold >= ITEMS.horseshoe.buy ? '' : ' disabled'}>1개</button><button type="button" class="btn sm" data-act="buyshoe" data-n="5"${S.gold >= ITEMS.horseshoe.buy * 5 ? '' : ' disabled'}>5개</button></div>
@@ -314,9 +318,9 @@ Object.assign(ACT, {
   stablep: d => { UI.stableP = +d.id; renderPanel(true); },
   buyhorse: d => say(buyHorse(d.k)),
   sellhorse: d => say(sellHorse(d.k)),
-  hitch: d => say(hitch(+d.id, d.h)),
-  unhitch: d => say(unhitch(findP(d.id))),
-  wplus: d => say(enhanceWagon(+d.id)),
+  hitch: d => say(hitch(+d.id, d.h, +d.s || 1)),
+  unhitch: d => say(unhitch(findP(d.id), +d.s || 1)),
+  wplus: d => say(enhanceWagon(+d.id, +d.s || 1)),
   buyshoe: d => say(buyShoe(+d.n)),
   libtab: d => { UI.libTab = d.t; renderPanel(true); },
   libbuy: d => say(buyLibMat(d.k, +d.n)),
