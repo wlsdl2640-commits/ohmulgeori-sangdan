@@ -3,7 +3,8 @@
 단계마다 장비 그림만 오려(카드 바탕 · LV 글씨 · Lv200 월계관 빼기) 바탕을 투명하게 하고, 긴 쪽 SIZE px로 줄여 WebP data URL로 넣는다.
 - 경갑 상의 · 하의(이 폴더, 어두운 카드 · 글씨 판 왼쪽 위) → larmor · lpants
 - 중갑 상의 · 하의(../armor_heavy65, 흰 바둑판 바탕 · 글씨 판 그림 아래, 11-12 11:27) → hvarmor · hvpants
-- 판금 상의 · 하의(../armor_plate65, 한 판에 둘 · 어두운 카드 · 글씨 판 카드 아래쪽, 11-12 11:28) → plate · ppants
+- 판금 상의 · 하의(../armor_plate65, 한 판에 둘 · 어두운 카드 · 글씨 판 카드 아래쪽, 11-12 12:04 새 판 — 11:28 판은 지움) → plate · ppants
+- 천갑 상의 · 하의(../armor_cloth65, 판금과 같은 꼴의 판, 11-12 12:07) → cloth · cpants
 python3 export_armart.py <출력 data-armart.js> [미리보기.png]"""
 import base64, io, os, sys
 from collections import deque
@@ -111,15 +112,17 @@ HVDIR = os.path.join(HERE, '..', 'armor_heavy65')
 LIGHT = {'hvarmor': ('중갑_상의_Lv1-200.png', [132, 384, 636, 887, 1138, 1389, 1643], [(0, 233), (282, 508), (556, 792)], 125),
          'hvpants': ('중갑_하의_Lv1-200.png', [142, 396, 649, 902, 1157, 1411], [(0, 197), (246, 448), (497, 701), (750, 956)], 125)}
 LIGHT_EXT = {('hvarmor', 20): (803, (1566, 791, 1721, 803))}   # Lv200 상의: 망토 자락이 글씨 판 양옆으로 더 내려온다 → (칸 아래 y, 바탕으로 칠 글씨 판 자리 x0 y0 x1 y1)
-# 어두운 카드 판 — 판금(한 판에 상의 · 하의, 맨 위 제목 줄은 저장할 때 뺐다). 줄마다 (카드 안 위 y, 글씨 판 위 y, [카드 왼쪽 테 x], 카드 너비)
-# 카드 간격이 고르지 않아 테 자리를 판에서 재어 적었다(세로 금빛 테가 띠 높이의 반 넘게 이어지는 줄). 칸 = 테 안쪽 3칸부터
-PLDIR = os.path.join(HERE, '..', 'armor_plate65')
-PLATE_SHEET = '판금_상의하의_Lv1-200.png'
-ROW1 = [42, 188, 335, 481, 628, 773, 918, 1064, 1211, 1358]
-ROW2 = [20, 156, 292, 428, 565, 702, 839, 975, 1109, 1244, 1377]
-CARD2 = {'plate': [(90, 199, ROW1, 137), (253, 368, ROW2, 127)],
-         'ppants': [(530, 640, ROW1, 137), (695, 810, ROW2, 127)]}
-CARD2_W200 = 141   # Lv200 카드(빛나는 테)는 넓다
+# 어두운 카드 판 — 판금(사용자 11-12 12:04 새 판 「판금 다 삭제, 첫 이미지로 판금 대체」) · 천갑(12:07 「두번째는 천갑 상, 하의야 추가해」).
+# 한 판에 상의 · 하의, 맨 위 제목 줄(제작자 이름)은 저장할 때 뺐다. 종류 → (폴더, 판, 줄마다 (카드 안 위 y, 글씨 판 위 y, [카드 왼쪽 테 x], 카드 너비)).
+# 카드 간격이 고르지 않아 테 자리를 판에서 재어 적었다(카드 위 테 줄이 끊기는 자리 · 세로 테). 칸 = 테 안쪽 4칸부터
+PLDIR = os.path.join(HERE, '..', 'armor_plate65'); CLDIR = os.path.join(HERE, '..', 'armor_cloth65')
+PL7 = [505, 650, 795, 940, 1085, 1229, 1373]; CL7 = [502, 649, 794, 938, 1083, 1227, 1373]
+DARK = {'plate': (PLDIR, '판금_상의하의_Lv1-200.png', [(84, 178, PL7, 134), (225, 320, PL7, 134), (367, 465, PL7, 134)]),
+        'ppants': (PLDIR, '판금_상의하의_Lv1-200.png', [(596, 694, [31, 167, 302, 436, 571, 705, 840, 975, 1109, 1243, 1378], 124),
+                                                      (746, 852, [31, 175, 322, 468, 613, 758, 904, 1050, 1197, 1345], 132)]),
+        'cloth': (CLDIR, '천갑_상의하의_Lv1-200.png', [(73, 160, CL7, 134), (207, 295, CL7, 134), (342, 440, CL7, 134)]),
+        'cpants': (CLDIR, '천갑_상의하의_Lv1-200.png', [(577, 679, [30, 167, 303, 437, 573, 707, 842, 978, 1112, 1246, 1382], 124),
+                                                      (732, 849, [31, 181, 329, 477, 621, 769, 915, 1062, 1209, 1355], 134)])}
 
 
 def mid_comp(lab, n, H, W):
@@ -185,15 +188,16 @@ def cut_dark(im, x0, y0, x1, y1, glow, spill=False):
     """어두운 카드 바탕: 카드 안 가장자리 색(거의 (10, 10, 14))에서 ±12인 칸을 퍼뜨려 지운다 — 검은 테(0~3)는 남는다.
     Lv200(빛나는 바탕 · 월계관)은 GrabCut으로 장비만"""
     sub = im[y0:y1, x0:x1].astype(int); H, W, _ = sub.shape
-    if glow:
-        S8 = sub.astype(np.uint8)
-        mask = np.zeros((H, W), np.uint8); bgd = np.zeros((1, 65), np.float64); fgd = np.zeros((1, 65), np.float64)
-        cv2.grabCut(cv2.cvtColor(S8, cv2.COLOR_RGB2BGR), mask, (8, 1, W - 16, H - 2), bgd, fgd, 8, cv2.GC_INIT_WITH_RECT)
-        item = (mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD)
-        lab, n = comps(item); cnt = np.bincount(lab.reshape(-1), minlength=n + 1); cnt[0] = 0
-        item = lab == int(cnt.argmax())
+    if glow:   # Lv200: 빛나는 금빛 바탕 · 월계관을 가장자리에서 퍼뜨려 지운다 — 금 · 주황 빛깔(채도 높음)만 지나간다, 검은 테 · 은빛 · 푸른 천에서 멈춘다
+        hsv = cv2.cvtColor(sub.astype(np.uint8), cv2.COLOR_RGB2HSV).astype(int)   # H 0~179 · S · V 0~255
+        warm = (hsv[..., 0] >= 8) & (hsv[..., 0] <= 30) & (hsv[..., 1] >= 120) & (hsv[..., 2] >= 40)
+        bg = flood(warm | (np.abs(sub - np.median(np.concatenate([sub[0], sub[-1]]), axis=0)).sum(axis=2) <= 12), H, W)
+        m = cv2.morphologyEx((~bg).astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))   # 월계관 줄기 같은 가는 부스러기 떼기
+        lab, n = comps(m.astype(bool))
+        item = mid_comp(lab, n, H, W)
+        item = cv2.morphologyEx(item.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))).astype(bool)   # 금 장식이 바탕 빛과 붙어 파인 자리 메우기
         item = ~flood(~item, H, W)
-        return rgba(sub, item)
+        return rgba(close_edges(sub, item), item)
     b0 = np.median(np.concatenate([sub[0], sub[-1], sub[:, 0], sub[:, -1]]), axis=0)
     ok = np.abs(sub - b0).sum(axis=2) <= 12
     ok[:3] |= sub[:3].sum(axis=2) <= 36   # 카드 위 테 밑 그늘 줄
@@ -218,13 +222,12 @@ def cards_light(key):
 
 
 def cards_dark(key):
-    im = np.asarray(Image.open(os.path.join(PLDIR, PLATE_SHEET)).convert('RGB'))
+    d, fn, ROWS = DARK[key]
+    im = np.asarray(Image.open(os.path.join(d, fn)).convert('RGB'))
     out = []
-    for (ya, yb, LX, cw) in CARD2[key]:
+    for (ya, yb, LX, cw) in ROWS:
         for lx in LX:
-            last = len(out) == 20
-            w = CARD2_W200 if last else cw
-            out.append(cut_dark(im, lx + 3, ya, lx + w - 3, yb - 2, last, len(out) == 19))   # Lv190: 옆 Lv200 카드의 빛 번짐
+            out.append(cut_dark(im, lx + 4, ya, lx + cw - 4, yb - 2, len(out) == 20, len(out) == 19))   # Lv200 빛나는 카드 · Lv190은 그 빛 번짐
     return out
 
 
@@ -240,7 +243,7 @@ def main(out_js, prev=None):
             urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
             thumbs.append(sm)
         data[key] = urls
-    for key, cutter in [('hvarmor', cards_light), ('hvpants', cards_light), ('plate', cards_dark), ('ppants', cards_dark)]:
+    for key, cutter in [('hvarmor', cards_light), ('hvpants', cards_light), ('plate', cards_dark), ('ppants', cards_dark), ('cloth', cards_dark), ('cpants', cards_dark)]:
         urls = []
         for img in cutter(key):
             sm = shrink(img)
@@ -248,7 +251,7 @@ def main(out_js, prev=None):
             urls.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
             thumbs.append(sm)
         data[key] = urls
-    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 상의 · 하의). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
+    lines = ['/* 전사 방어구 그림 (빌드 65) — 사용자가 준 디자인 그대로(경갑 · 중갑 · 판금 · 천갑 상의 · 하의). 손으로 고치지 말고 tools/saved/armor_light65/export_armart.py로 다시 뽑는다.',
              '   ARMART[종류][단계] = WebP data URL (디자인 Lv1 · 10 · … · 200 = 21개, 게임 단계 t와 같은 차례) */',
              'const ARMART = {']
     for key, urls in data.items():
