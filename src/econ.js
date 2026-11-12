@@ -910,6 +910,8 @@ function promote(aid, cls) {
   if (Q.souls) useSouls(Q.souls);   // 빌드 64: 3차 전직에 주인의 혼
   if (Q.item) addTo(S.inv, Q.item[0], -Q.item[1]);   // 빌드 65: 4차 전직 재료
   if (C1.req && C1.req.item) addTo(S.inv, C1.req.item[0], -C1.req.item[1]);   // 전직 재료(피눈물 등)
+  let wolf = null;
+  if (C1.req && C1.req.petWolf) { wolf = wolfMount(C1.req.petWolf); if (wolf) { S.pets = S.pets.filter(x => x !== wolf); a.mount = { kind: 'wolf', look: 'A', name: wolf.name, lv: wolf.lv }; } }   // 빌드 65: 랑기수 = 늑대 펫을 탈것으로 데려간다
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
   a.cls = cls;
   const jt = jobTraitOf(cls); if (jt) { a.traits = (a.traits || []).filter(t => !(TRAITS[t] && TRAITS[t].job && jobTier(TRAITS[t].job) === jobTier(cls))); a.traits.push(jt); }   // 직업 특성
@@ -924,7 +926,8 @@ function promote(aid, cls) {
   a.salary = Math.round(a.salary * 1.3 / 5) * 5;
   clampVitals(a);
   log(`${a.name}이(가) ${C0.name}에서 ${C1.name}(으)로 전직했다!`, 'good');
-  queueModal({ title: `${jobTier(cls)}차 전직 · ${C1.name}`, adv: a.id, body: [`${a.name}이(가) 훈련소에서 ${C1.name}(으)로 다시 태어났다.`, C1.desc, `기본 스킬 「${SKILLS[C1.innate].name}」을(를) 익혔고, 배워 둔 스킬은 그대로 남았다. 새 직업에 맞지 않는 장비는 창고로 옮겼다.`].concat(jt ? [`직업 특성 「${TRAITS[jt].name}」(${TRAITS[jt].desc})이 생겼다. 직업 특성은 마법사의 돌로 바꿀 수 없다.`] : []) });
+  if (wolf) log(`${a.name}이(가) 늑대 「${wolf.name}」(Lv${wolf.lv})을(를) 타고 길을 나선다. 늑대는 이제 ${a.name}의 탈것이다.`, 'good');
+  queueModal({ title: `${jobTier(cls)}차 전직 · ${C1.name}`, adv: a.id, body: [`${a.name}이(가) 훈련소에서 ${C1.name}(으)로 다시 태어났다.`, C1.desc, `기본 스킬 「${SKILLS[C1.innate].name}」을(를) 익혔고, 배워 둔 스킬은 그대로 남았다. 새 직업에 맞지 않는 장비는 창고로 옮겼다.`].concat(wolf ? [`늑대 펫 「${wolf.name}」(Lv${wolf.lv})이(가) ${a.name}의 탈것이 되었다 — 사육장에서는 떠난다.`] : []).concat(jt ? [`직업 특성 「${TRAITS[jt].name}」(${TRAITS[jt].desc})이 생겼다. 직업 특성은 마법사의 돌로 바꿀 수 없다.`] : []) });
   changed();
   return '';
 }
