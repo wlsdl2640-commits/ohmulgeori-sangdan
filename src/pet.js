@@ -14,30 +14,50 @@ function hatchWhy(kind) {
 function hatch(kind) {
   const why = hatchWhy(kind); if (why) return why;
   addTo(S.inv, 'egg_' + kind, -1);
-  petState().inc.push({ kind, done: today() + PET_HATCH_DAYS });
-  log(`사육장에서 ${ITEMS['egg_' + kind].name}을(를) 품기 시작했다. ${PET_HATCH_DAYS}일 뒤에 태어난다.`);
+  const P = petState(); P.lucky = P.lucky || {}; const lucky = (P.lucky[kind] || 0) > 0; if (lucky) P.lucky[kind]--;   // 우두머리 · 둥지 알: 레어도를 두 번 굴린다
+  P.inc.push({ kind, done: today() + PET_HATCH_DAYS, lucky: lucky ? 1 : 0 });
+  log(`사육장에서 ${MONS[PETS[kind].mon].name} 알을 품기 시작했다. ${PET_HATCH_DAYS}일 뒤에 유정란인지 판정한다.`);
   changed();
   return '';
 }
 const PET_NAMES = ['콩이', '모모', '두두', '보리', '초코', '구름', '방울', '우유', '달이', '별이', '감자', '찹쌀', '호두', '단비', '솜이', '뭉치'];
 function newPet(kind) {
   const used = new Set(S.pets.map(x => x.name)), pool = PET_NAMES.filter(n => !used.has(n));
-  return { id: nid(), kind, name: pool.length ? pickOne(pool) : PETS[kind].name, lv: 1, exp: 0, aff: 0, stage: 0, trait: null, fed: -1, kills: 0, born: today() };
+  return { id: nid(), kind, name: pool.length ? pickOne(pool) : PETS[kind].name, lv: 1, exp: 0, aff: 0, stage: 0, trait: null, fed: -1, kills: 0, born: today(), q: 0 };
 }
-// 날마다: 부화
+// 날마다: 부화 (빌드 65: 유정란 50% · 유정란의 부화 확률 30 ~ 70%(사육장 레벨) · 실패하면 무정란 — 같은 새벽에 여럿이면 알림 하나로)
 function penDay(k) {
   const P = petState();
   const born = P.inc.filter(x => k >= x.done);
   P.inc = P.inc.filter(x => k < x.done);
-  for (const x of born) {
-    const pet = newPet(x.kind); S.pets.push(pet);
+  if (!born.length) return;
+  const res = born.map(x => {
+    const egg = MONS[PETS[x.kind].mon].name + ' 알', fertile = rnd() < PEN_FERTILE, ok = fertile && rnd() < penHatch();
+    if (!ok) {
+      stashItem('egg_none', 1);
+      log(`사육장의 ${egg}은(는) ${fertile ? '부화에 실패했다' : '무정란이었다'}. 요리 재료 「무정란」을 창고에 넣었다.`);
+      return { egg, fertile, pet: null };
+    }
+    const pet = newPet(x.kind); pet.q = rollPetQ(x.lucky); S.pets.push(pet);
     if (S.dex) { S.dex.pets = S.dex.pets || {}; S.dex.pets[x.kind] = 1; }
-    log(`사육장에서 ${PETS[x.kind].name} 「${pet.name}」이(가) 태어났다!`, 'good');
-    queueModal({ title: '펫이 태어났어요', pet: pet.id, body: [`${ITEMS['egg_' + x.kind].name}이(가) 갈라지고 ${PETS[x.kind].name} 「${pet.name}」이(가) 나왔다.`, PETS[x.kind].desc, '원정대 창에서 파티에 넣으면 함께 싸우고, 상단에 두면 ' + petHomeText(x.kind) + '.'] });
+    log(`사육장에서 ${QUALITY[pet.q].name} ${PETS[x.kind].name} 「${pet.name}」이(가) 태어났다!`, 'good');
+    return { egg, fertile, pet };
+  });
+  const rate = `사육장 Lv${S.bld.pen} 부화 확률 ${Math.round(penHatch() * 100)}% (유정란일 때) · 강화하면 Lv5에서 70%`;
+  const bornTxt = r => { const pet = r.pet, qn = QUALITY[pet.q].name; return `${r.egg}이(가) 갈라지고 ${qn} ${PETS[pet.kind].name} 「${pet.name}」이(가) 나왔다 — 힘과 상단 효과 ×${petQMul(pet)}`; };
+  const failTxt = r => `${r.egg}은(는) ${r.fertile ? '유정란이었지만 깨어나지 못했다' : '무정란이었다'} → 요리 재료 「무정란」`;
+  if (res.length === 1) {
+    const r = res[0];
+    if (!r.pet) queueModal({ title: r.fertile ? '부화에 실패했어요' : '무정란이었어요…', body: [`${r.egg}은(는) ${r.fertile ? '유정란이었지만 깨어나지 못했다' : '깨어나지 않았다'}. 요리 재료 「무정란」 1개를 창고에 넣었다.`, rate] });
+    else queueModal({ title: '유정란이었어요!', pet: r.pet.id, body: [bornTxt(r), PETS[r.pet.kind].desc, '원정대 창에서 파티에 넣으면 함께 싸우고, 상단에 두면 ' + petHomeText(r.pet.kind, r.pet) + '.'] });
+    return;
   }
+  const pets = res.filter(r => r.pet), fails = res.filter(r => !r.pet);
+  queueModal({ title: pets.length ? `알 ${res.length}개 판정 · ${pets.length}마리 태어났어요!` : `알 ${res.length}개 판정 · 모두 깨어나지 않았어요`, pet: pets.length ? pets[0].pet.id : undefined,
+    body: pets.map(bornTxt).concat(fails.map(failTxt), [fails.length ? `무정란 ${fails.length}개를 창고에 넣었다. ${rate}` : rate]) });
 }
-const PET_HOME_TXT = { rest: '숙면 회복', traffic: '상점 손님', herb: '약초 줍기', exp: '원정 경험치', luck: '전리품', move: '이동 속도', craft: '조제 덤 확률' };
-const petHomeText = kind => `${PET_HOME_TXT[PETS[kind].home[0]]} +${Math.round(PETS[kind].home[1] * 100)}%`;
+const PET_HOME_TXT = { rest: '숙면 회복', traffic: '상점 손님', herb: '재배소 수확', exp: '원정 경험치', luck: '전리품', move: '이동 속도', craft: '조제 덤 확률' };
+const petHomeText = (kind, pet) => `${PET_HOME_TXT[PETS[kind].home[0]]} +${Math.round(PETS[kind].home[1] * (pet ? petQMul(pet) * (pet.stage ? 1.5 : 1) : 1) * 100)}%`;
 // 먹이: 하루 한 번, 좋아하는 부속품 하나
 function feedWhy(pet, it) {
   if (!pet) return '';
@@ -109,8 +129,8 @@ function petKill(p, e, f, xp) {
   if (pet) { pet.kills = (pet.kills || 0) + 1; if (petExp(pet, Math.round(xp * 0.5))) ev(e, 'petlvl', { pet: pet.id }); }
   if (f.pvp || f.giant) return;
   const kinds = petsOfField(e.field); if (!kinds.length) return;
-  const ch = f.fb >= 5 ? 0.25 : f.fb ? 0.08 + 0.02 * f.fb : f.boss ? 0.35 : 0.004;
-  if (rnd() < ch) loot(p, e, 'egg_' + pickOne(kinds), 1);
+  const ch = f.fb >= 5 ? 0.06 : f.fb ? 0.02 + 0.005 * f.fb : f.boss ? 0.08 : 0.001;   // 빌드 65: 약 4분의 1 (예전 25% · 10~16% · 35% · 0.4%)
+  if (rnd() < ch) { const kind = pickOne(kinds); loot(p, e, 'egg_' + kind, 1); if (f.fb || f.boss) { const P = petState(); P.lucky = P.lucky || {}; P.lucky[kind] = (P.lucky[kind] || 0) + 1; } }
 }
 // 파티에 넣기·빼기
 function setPartyPet(pid, petId) {

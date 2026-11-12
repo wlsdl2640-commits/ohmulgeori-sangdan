@@ -157,6 +157,7 @@ function artCanvas(key) {
 }
 function itemArtKey(id) {
   const I = ITEMS[id]; if (!I) return null;
+  if (typeof ITEMART !== 'undefined') { if (ITEMART['f_' + id]) return 'f_' + id; if (I.recipe && ITEMART.f_recipe) return 'f_recipe'; }   // 빌드 65: 식재료 · 요리 · 레시피 그림 (data-foodart.js)
   if (I.btier != null) return BOOK_TIERS[I.btier] ? BOOK_TIERS[I.btier].id : null;
   if (I.book && SKILLS[I.book]) {
     const s = SKILLS[I.book], c0 = (s.cls || [])[0], fam = !c0 || c0 === 'all' || !CLASSES[c0] ? 'all' : jobBase(c0);

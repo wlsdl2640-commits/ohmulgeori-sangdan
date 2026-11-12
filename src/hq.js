@@ -9,12 +9,14 @@ const FLOOR_INFO = {
   smithy:   { name: '대장간', win: 'b:smithy', under: 1 },
   shop:     { name: '상점 · 본부', win: 'inv' },
   tavern:   { name: '선술집', win: 'guest' },
+  port:     { name: '항구', win: 'port' },   // 빌드 65: 처음부터 열린 시설 (port68.js)
   alchemy:  { name: '연금술 공방', win: 'b:alchemy' },
   kitchen:  { name: '주방', win: 'b:kitchen' },
   training: { name: '훈련소', win: 'adv' },
   temple:   { name: '신전', win: 'b:temple' },
   inn:      { name: '여관', win: 'adv' },
   pen:      { name: '사육장', win: 'b:pen' },
+  farm:     { name: '재배소', win: 'b:farm' },   // 빌드 65: 비닐하우스 (farm68.js)
   stable:   { name: '마구간', win: 'b:stable' },
   library:  { name: '도서관', win: 'b:library' },
   tower:    { name: '마탑', win: 'b:tower' },
@@ -27,7 +29,7 @@ function hqPlaces() {
   const b = S.bld, out = [];
   if (b.salvage) out.push({ id: 'salvage' });
   if (b.smithy) out.push({ id: 'smithy' });
-  out.push({ id: 'shop' }, { id: 'tavern' });
+  out.push({ id: 'shop' }, { id: 'tavern' }, { id: 'port' });
   if (b.alchemy) out.push({ id: 'alchemy' });
   if (b.kitchen) out.push({ id: 'kitchen' });
   if (b.training) out.push({ id: 'training' });
@@ -35,6 +37,7 @@ function hqPlaces() {
   const nInn = Math.max(1, Math.ceil(beds() / SEATS));
   for (let i = 0; i < nInn; i++) out.push({ id: 'inn', i });
   if (b.pen) out.push({ id: 'pen' });
+  if (b.farm) out.push({ id: 'farm' });
   if (b.stable) out.push({ id: 'stable' });
   if (b.library) out.push({ id: 'library' });
   if (b.tower) out.push({ id: 'tower' });

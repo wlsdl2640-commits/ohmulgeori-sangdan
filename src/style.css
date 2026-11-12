@@ -669,3 +669,28 @@ details.card > .list { margin-top: 8px; }
 
 .nw { white-space: nowrap; }   /* 큰 값이 줄 사이에서 끊기지 않게 (합성 단추 5,000,000G) */
 .col2 { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }   /* 단추 안 두 줄: 합성하기 / 값 */
+/* 빌드 65 넷째 묶음: 사육장 부화 계단 · 요리 화면 · 재배소 · 항구 */
+.pen-ladder{display:flex;gap:3px;margin:6px 0 2px}
+.pen-lad{flex:1;text-align:center;padding:3px 0;border:2px solid #4a3a2a;background:#1e1814;color:#a89a88;font-size:12px;line-height:1.25}
+.pen-lad.on{border-color:#e8c040;color:#ffe9a0;background:#3a2c14}.pen-lad.past{color:#d8ccb8}
+.ckscene{position:relative;margin:0 auto 4px;width:100%;max-width:392px;border:2px solid #2a1a10;box-shadow:0 2px 0 #00000055}
+.ckscene canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+#ck-fx{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.ckpop{position:absolute;transform:translate(-50%,-50%);font:bold 16px Galmuri11,sans-serif;color:#fff;text-shadow:2px 0 0 #3a1a0a,-2px 0 0 #3a1a0a,0 2px 0 #3a1a0a,0 -2px 0 #3a1a0a,2px 2px 0 #3a1a0a;white-space:nowrap}
+.ckbtns{gap:6px;margin:4px 0}.ckbtns .btn{flex:1}
+.ckfly{position:fixed;left:0;top:0;width:40px;height:40px;image-rendering:pixelated;pointer-events:none;z-index:99;transform:translate(-50%,-50%)}
+.ckres{text-align:center;padding:8px 8px 10px;margin:0 0 6px;box-shadow:0 4px 0 #00000088}
+.ckres .rib{display:inline-block;background:#a8322a;color:#fff4d8;padding:2px 12px;border:2px solid #4a120c;font-weight:bold;margin-bottom:4px}
+.ckres .rib.gray{background:#5a5a66;border-color:#2a2a34}
+.ckquick summary{cursor:pointer;margin:4px 0}
+.farm-chips{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0 2px}
+.farm-chips .pchip.lock{opacity:.72;border-style:dashed}
+.farm-bar{display:block;height:6px;margin-top:3px;background:#1a1410;border:1px solid #4a3a2a}.farm-bar i{display:block;height:100%;background:#5aa83a}.farm-bar i.ok{background:#e8c040}
+.hqx{position:absolute;inset:0;z-index:3;pointer-events:none}
+.stage.win-open .hqx{visibility:hidden}
+.hqx-chips{position:absolute;left:0;right:0;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0 8px}
+.hqx-chips .pchip{pointer-events:auto;box-shadow:0 2px 0 rgba(0,0,0,.5)}
+.hqx-chips .pchip.lock{opacity:.72;border-style:dashed}
+.hqx-sign{position:absolute;transform:translate(-50%,-50%);font-weight:bold;color:#4a2a10;white-space:nowrap;text-align:center;line-height:1.2}
+.farm-chips .pchip small{color:var(--ink-3);font-size:11px}
+.farm-chips .pchip{padding:4px 8px;font-size:12px;gap:4px}

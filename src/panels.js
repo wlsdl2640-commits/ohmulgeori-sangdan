@@ -112,7 +112,7 @@ PANELS.co_king = () => {
     return `<div class="card hl" style="--kc:${D.c}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} 상단</div><div class="sub">${D.desc}</div></div></div>
       <div class="sub gold-t">${festOf(v.k) ? '🎉 축제 중: 사 가는 값 두 배, 파는 물건 30% 할인 · ' : ''}${dayLabel(v.until)}까지 머물러요 (D-${v.until - today()}) · 기준가의 ${Math.round(v.m * 100 * festSellMul(v.k))}% · 지금까지 ${fmt(v.earned)}G${v.full ? ' · <span class="ok-t">주문 완료</span>' : ''}</div>
       <div class="list">${rows}</div>
-      ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>그 나라 상단 전용 물건도 가져와요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${EXCL[o.it] ? `${ITEMS[o.it].desc}<br><span class="gold-t">전용 · ${exclEffText(o.it)}</span>` : `창고 ${S.inv[o.it] || 0}`}</span></div><button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button></div>`).join('')}</div>` : ''}</div>`;
+      ${v.goods && v.goods.length ? `<div class="sec"><b>가져온 물건</b><span>그 나라 상단 전용 물건도 가져와요</span></div><div class="list">${v.goods.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${EXCL[o.it] ? `${ITEMS[o.it].desc}<br><span class="gold-t">전용 · ${exclEffText(o.it)}</span>` : ITEMS[o.it].recipe ? `${needTxt(FOODS[ITEMS[o.it].recipe].need)}<br><span class="gold-t">레시피 · 사면 도감 「요리」에 적혀요</span>` : `${ITEMS[o.it].veg ? '특산 채소 · 재배소에 심을 수 있어요 · ' : ''}창고 ${S.inv[o.it] || 0}`}</span></div>${ITEMS[o.it].recipe && knows(ITEMS[o.it].recipe) ? '<button type="button" class="btn sm" disabled>앎</button>' : `<button type="button" class="btn sm gold" data-act="kingbuy" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${o.n > 0 ? fmt(o.price) + 'G' : '다 팔림'}</button>`}${ITEMS[o.it].veg && o.n > 1 ? `<button type="button" class="btn sm" data-act="kingbuy" data-i="${i}" data-q="5"${o.n > 0 && S.gold >= o.price * Math.min(5, o.n) ? '' : ' disabled'}>×${Math.min(5, o.n)}</button>` : ''}</div>`).join('')}</div>` : ''}</div>`;
   })() : `<div class="card"><div class="sub">지금은 찾아온 왕국 상단이 없어요. ${S.king ? `${dayLabel(S.king.next)}쯤 다음 상단이 올 거예요.` : ''}</div></div>`;
   const list = KINGDOM_IDS.map(k => { const D = KINGDOMS[k], open = kingOpen(k), f = favorOf(k), t = favorTier(f), nx = FAVOR[t + 1];
     return `<div class="card${open ? '' : ' dim'}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} <small>${FAVOR[t].name}</small></div><div class="sub">${open ? `호감 ${Math.floor(f)}${nx ? `/${nx.at}` : ''} · 값 ${Math.round(FAVOR[t].m * 100)}%` : `${FIELDS[D.need].name}에 가 보면 교역을 시작해요`}</div></div></div>
@@ -232,7 +232,8 @@ const BLD_BOX = {}, BLD_SUM = {};   // 새 시설의 안쪽 창·요약 (world30
 function bldCard(id, full) {
   const B = BUILDINGS[id], lv = S.bld[id], max = lv >= B.max, c = B.cost[lv], need = BUILD_RANK[id] || 0;
   if (!lv && (S.rank || 0) < need) return `<div class="card dim"><div class="row"><div class="grow"><div class="h">${B.name} <small>잠김</small></div><div class="sub">${B.desc}</div></div><span class="sub muted">${RANKS[need].name}랭크에 열림</span></div></div>`;
-  const btn = max ? '<span class="sub muted">최고 단계</span>' : `<button type="button" class="btn sm${lv ? '' : ' gold'}" data-act="build" data-id="${id}"${S.gold < c ? ' disabled' : ''}>${lv ? '확장' : '건설'} ${fmt(c)}G</button>`;
+  const fr = id === 'farm' && lv && !max ? FARM.rank[lv] : 0;   // 빌드 65: 재배소는 한 동씩 (2동 C랭크 · 3동 A랭크)
+  const btn = max ? '<span class="sub muted">최고 단계</span>' : fr && (S.rank || 0) < fr ? `<span class="sub muted">${lv + 1}동: ${RANKS[fr].name}랭크에 열림</span>` : `<button type="button" class="btn sm${lv ? '' : ' gold'}" data-act="build" data-id="${id}"${S.gold < c ? ' disabled' : ''}>${id === 'farm' && lv ? `${lv + 1}동 짓기` : lv ? '확장' : '건설'} ${fmt(c)}G</button>`;
   let body = '';
   if (full && lv && id === 'smithy') body = smithyBox();
   if (full && lv && id === 'alchemy') body = `<div class="list">${RECIPES.map((r, i) => `<div class="li">${iconImg(r.out)}<div class="grow"><span>${ITEMS[r.out].name} <span class="muted">창고 ${S.inv[r.out] || 0}</span></span><span class="sub">${S.bld.alchemy >= r.lv ? needStr(r.need) + ` · ${craftFee(r)}G` : '공방 2단계 필요'}</span></div><button type="button" class="btn sm gold" data-act="craft" data-i="${i}"${canCraft(r) ? '' : ' disabled'}>만들기</button></div>`).join('')}</div>`;
@@ -247,7 +248,7 @@ function bldCard(id, full) {
   if (id === 'inn' && lv) body = `<div class="sub">방 ${living().length}/${beds()} · 모험가는 자기 방에서 자며 숙면 피로를 풀어요. 하루 ${Math.round(SLEEP.rest(lv) * DAY_SEC)}씩, 밤에는 더 빨리.</div><div class="btns"><button type="button" class="btn sm gold" data-act="advguest">선술집 손님 ${S.cands.length}명 보기 ›</button></div>`;
   const open = !full && lv && BLD_INNER[id] ? `<button type="button" class="btn sm gold" data-act="bopen" data-id="${id}">${BLD_INNER[id]} ›</button>` : '';
   const sum = !full && lv && id === 'temple' && patients().length ? `<span class="sub red-t">환자 ${patients().length}명</span>` : '';
-  return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? 'Lv' + lv : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}${open || sum ? `<div class="row">${sum}<span class="grow"></span>${open}</div>` : ''}</div>`;
+  return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? (id === 'farm' ? lv + '동' : 'Lv' + lv) : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}${open || sum ? `<div class="row">${sum}<span class="grow"></span>${open}</div>` : ''}</div>`;
 }
 PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
 PANELS.b = w => bldCard(w.b, true);
@@ -920,20 +921,32 @@ function bindUI() {
 
 /* ───────── 펫: 사육장 창과 파티 칸 ───────── */
 const petIcon = pet => `<img class="peti" src="${monIconURL(petLook(pet))}" alt="">`;
+const PETQ_URL = {};
+function petQURL(pet) {   // 빌드 65: 펫 레어도 칸에 넣을 20×20 그림 (새끼 모습)
+  const k = pet.kind; if (PETQ_URL[k]) return PETQ_URL[k];
+  const id = petLook({ kind: k, stage: 0 }), s = PXU[id] ? pxuSprite(id, 'idle', 0) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', 0), [c, x] = mkCanvas(20, 20);
+  const z = Math.min(1, 20 / s.w, 20 / s.h); x.imageSmoothingEnabled = false;
+  x.drawImage(s.cv, Math.round((20 - s.w * z) / 2), Math.round(20 - s.h * z - (s.h * z < 19 ? 1 : 0)), Math.round(s.w * z), Math.round(s.h * z));
+  return (PETQ_URL[k] = keepCv(c));
+}
+const petQCell = pet => { const q = pet.q || 0; return `<span class="cell rq${q}" style="width:60px;height:60px;flex:none">${rqArt(petQURL(pet), q, 2)}</span>`; };
+const petQName = pet => { const q = pet.q || 0; return `<b style="color:${QUALITY[q].c}">${QUALITY[q].name}</b>`; };
 function petCard(pet, inParty) {
   const K = PETS[pet.kind], party = S.parties.find(x => x.pet === pet.id), need = petNeed(pet.lv), fedToday = pet.fed === today();
   const feeds = K.likes.map(it => `<button type="button" class="btn sm" data-act="feed" data-id="${pet.id}" data-it="${it}"${fedToday || !(S.inv[it] || 0) ? ' disabled' : ''}>${ITEMS[it].name} <span class="muted">${S.inv[it] || 0}</span></button>`).join('');
-  return `<div class="card petc"><div class="row">${petIcon(pet)}<div class="grow stack"><span>${esc(pet.name)} <span class="muted">· ${pet.stage ? K.evo : K.name} Lv${pet.lv}${pet.lv >= PET_MAX_LV ? ' (최고)' : ''}</span>${pet.trait ? ` <span class="tag gold-t" title="${PET_TRAITS[pet.trait].desc}">${PET_TRAITS[pet.trait].name}</span>` : ''}</span><span class="sub">${PET_ACT_NAME[K.act]} · ${K.desc}${pet.stage ? '' : ` · Lv${PET_EVO_LV}에 ${K.evo}(으)로 진화`}</span><span class="sub muted">${party ? `${esc(party.name)}과 함께${party.exp ? ' 원정 중' : ''}` : `상단에서 ${petHomeText(pet.kind)}`} · 처치 ${fmt(pet.kills || 0)}</span></div></div>
+  return `<div class="card petc"><div class="row">${petQCell(pet)}<div class="grow stack"><span>${petQName(pet)} ${esc(pet.name)} <span class="muted">· ${pet.stage ? K.evo : K.name} Lv${pet.lv}/${PET_MAX_LV}${pet.lv >= PET_MAX_LV ? ' (최고)' : ''}</span>${pet.trait ? ` <span class="tag gold-t" title="${PET_TRAITS[pet.trait].desc}">${PET_TRAITS[pet.trait].name}</span>` : ''}</span><span class="sub">${PET_ACT_NAME[K.act]} · ${K.desc}${pet.stage ? '' : ` · Lv${PET_EVO_LV}에 ${K.evo}(으)로 진화`}</span><span class="sub muted">${party ? `${esc(party.name)}과 함께${party.exp ? ' 원정 중' : ''}` : `상단에서 ${petHomeText(pet.kind, pet)}`} · 처치 ${fmt(pet.kills || 0)}</span></div></div>
     <div class="row sub"><span style="width:4em">경험치</span><div class="bar grow"><i style="width:${pet.lv >= PET_MAX_LV ? 100 : Math.round(pet.exp / need * 100)}%"></i></div><span class="num">${pet.lv >= PET_MAX_LV ? '—' : `${fmt(pet.exp)}/${fmt(need)}`}</span></div>
     <div class="row sub"><span style="width:4em">호감도</span><div class="bar grow aff"><i style="width:${Math.round((pet.aff || 0) / PET_AFF_MAX * 100)}%"></i></div><span class="num">${pet.aff || 0}/${PET_AFF_MAX}${pet.trait ? '' : ' · 가득 차면 특성'}</span></div>
     <div class="row wrap"><span class="sub muted">먹이${fedToday ? ' (오늘은 먹었어요)' : ' · 하루 한 번'}:</span>${feeds}${party && party.exp ? '' : `<button type="button" class="btn sm" data-act="release" data-id="${pet.id}">놓아주기</button>`}</div></div>`;
 }
 function penBox() {
   const P = petState(), eggs = Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].egg && S.inv[k] > 0);
-  const inc = P.inc.map(x => `<div class="li">${iconImg('egg_' + x.kind)}<div class="grow stack"><span>${ITEMS['egg_' + x.kind].name}</span><span class="sub">${x.done - today() <= 0 ? '곧 태어나요' : `D-${x.done - today()} · 새벽에 태어나요`}</span></div></div>`).join('');
+  const inc = P.inc.map(x => `<div class="li">${iconImg('egg_' + x.kind)}<div class="grow stack"><span>${ITEMS['egg_' + x.kind].name}${x.lucky ? ' <span class="gold-t">우두머리 알</span>' : ''}</span><span class="sub">${x.done - today() <= 0 ? '곧 판정해요' : `D-${x.done - today()} · 새벽에 판정 (유정란이면 태어나요)`}</span></div></div>`).join('');
+  const lad = PEN_HATCH.map((h, i) => `<span class="pen-lad${i + 1 === S.bld.pen ? ' on' : i + 1 < S.bld.pen ? ' past' : ''}">Lv${i + 1}<br>${Math.round(h * 100)}%</span>`).join('');
   const eggRows = eggs.map(k => { const why = hatchWhy(ITEMS[k].egg); return `<div class="li">${iconImg(k)}<div class="grow stack"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${PETS[ITEMS[k].egg].desc}</span>${why ? `<span class="sub red-t">${why}</span>` : ''}</div><button type="button" class="btn sm gold" data-act="hatch" data-k="${ITEMS[k].egg}"${why ? ' disabled' : ''}>품기</button></div>`; }).join('');
   const home = petsAtHome();
-  return `<div class="sub">펫 ${S.pets.length}/${penCap()}마리 · 한 번에 ${S.bld.pen}개 품기 · ${PET_HATCH_DAYS}일이면 태어나요. 알은 필드 우두머리와 던전 주인이 가끔 남겨요.</div>
+  return `<div class="sub">펫 ${S.pets.length}/${penCap()}마리 · 한 번에 ${S.bld.pen}개 품기 · ${PET_HATCH_DAYS}일 뒤 판정. 알은 필드 우두머리와 던전 주인이 드물게 남겨요.</div>
+    <div class="pen-ladder">${lad}</div><div class="sub muted">유정란일 확률 ${Math.round(PEN_FERTILE * 100)}% · 유정란이 깨어날 확률 = 위 부화 확률(사육장 레벨) · 무정란이거나 실패하면 요리 재료 「무정란」 · 태어날 때 레어도가 정해져요 (우두머리 · 둥지 알은 두 번 굴려 좋은 쪽)</div>
     <div class="sec"><b>품는 알</b><span>${P.inc.length}/${S.bld.pen}</span></div><div class="list">${inc || '<div class="sub muted">품고 있는 알이 없어요.</div>'}</div>
     <div class="sec"><b>창고의 알</b><span>${eggs.length}종</span></div><div class="list">${eggRows || '<div class="sub muted">알이 없어요. 필드 보스를 잡아 보세요.</div>'}</div>
     <div class="sec"><b>펫</b><span>상단에 남은 ${home.length}마리는 ${home.length ? home.map(x => petHomeText(x.kind)).filter((v, i, a) => a.indexOf(v) === i).join(', ') : '효과 없음'}</span></div>

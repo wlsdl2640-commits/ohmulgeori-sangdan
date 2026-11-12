@@ -13,6 +13,7 @@ const foodFx = e => {   // 도시락 효과 + 상단 전용 원정 휴대품(e.b
 const cookFee = F => Math.round(F.fee * (1 - Math.max(0, (S.bld.kitchen || 0) - 1) * 0.1));
 function cookWhy(id) {
   const F = FOODS[id]; if (!F) return '없는 요리예요.';
+  if (typeof knows === 'function' && !knows(id)) return '아직 모르는 레시피예요.';   // 빌드 65: 찾은(산) 레시피만
   if (!S.bld.kitchen) return '주방이 필요해요.';
   if (S.bld.kitchen < F.lv) return `주방 ${F.lv}단계가 필요해요.`;
   const miss = Object.entries(F.need).find(([k, q]) => (S.inv[k] || 0) < q);
@@ -34,7 +35,7 @@ function cookFood(id, quiet) {
   return '';
 }
 function buyFoodMat(k, n) {
-  if (!S.bld.kitchen) return '주방이 필요해요.';
+  if (!S.bld.kitchen && !S.bld.farm) return '주방이나 재배소가 필요해요.';   // 하르겐 시장 (빌드 65: 재배소 모종도)
   const price = KITCHEN_BUY[k]; if (!price) return '';
   n = Math.max(1, n || 1);
   if (S.gold < price * n) return '돈이 모자라요.';

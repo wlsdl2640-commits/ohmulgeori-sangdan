@@ -19,9 +19,10 @@ const PETS = {
 };
 const PET_IDS = Object.keys(PETS);
 const PET_ACT_NAME = { bite: '물기', heal: '보듬기', song: '노래', guard: '돌벽', web: '거미줄', frost: '얼음 조각', ember: '불씨', splash: '물보라', drain: '흡혈' };
-const PET_EVO_LV = 30, PET_MAX_LV = 60, PET_HATCH_DAYS = 2, PET_FEED_AFF = 12, PET_AFF_MAX = 100;
+const PET_EVO_LV = 30, PET_MAX_LV = 30,   // 빌드 65: 만렙 60 → 30 (진화도 만렙에), Lv30 힘 = 예전 Lv60
+  PET_MAX_LV_OLD = 60, PET_HATCH_DAYS = 2, PET_FEED_AFF = 12, PET_AFF_MAX = 100;
 const petNeed = lv => Math.round(30 * Math.pow(lv, 1.6));
-const petPow = pet => (10 + 3 * pet.lv) * (pet.stage ? 1.8 : 1) * PETS[pet.kind].pow * (pet.trait === 'fierce' ? 1.2 : 1);
+const petPow = pet => (10 + 6 * pet.lv) * (pet.stage ? 1.8 : 1) * PETS[pet.kind].pow * (pet.trait === 'fierce' ? 1.2 : 1) * petQMul(pet);   // 빌드 65: 레벨마다 6 (만렙 30) · 레어도 배율
 const PET_TRAITS = {
   fierce: { name: '사나움',   desc: '행동 힘 +20%' },
   swift:  { name: '잽쌈',     desc: '행동 간격 -20%' },
@@ -33,7 +34,7 @@ const PET_TRAITS = {
 PET_IDS.forEach(k => { const P = PETS[k]; ITEMS['egg_' + k] = { name: `${MONS[P.mon].name} 알`, v: 1200 + (FIELDS[P.field] ? FIELDS[P.field].lv * 60 : 600), w: 2, icon: 'egg', c: P.c, egg: k, use: 'egg', desc: `사육장에서 ${PET_HATCH_DAYS}일 품으면 ${P.name}이(가) 태어난다. ${P.desc}` }; });
 const petsOfField = fid => PET_IDS.filter(k => PETS[k].field === fid);
 // 사육장
-BUILDINGS.pen = { name: '사육장', max: 3, cost: [1500, 5000, 12000], desc: '알을 부화시키고 펫을 기른다. 펫은 파티마다 한 마리 데려가고, 남은 펫은 상단에 힘을 준다.', eff: lv => `펫 ${2 + lv * 2}마리 · 한 번에 ${lv}개 부화` };
+BUILDINGS.pen = { name: '사육장', max: 5, cost: [1500, 5000, 12000, 30000, 80000], desc: '알을 부화시키고 펫을 기른다. 펫은 파티마다 한 마리 데려가고, 남은 펫은 상단에 힘을 준다.', eff: lv => `펫 ${2 + lv * 2}마리 · 한 번에 ${lv}개 품기 · 부화 ${Math.round(PEN_HATCH[Math.max(0, lv - 1)] * 100)}%` };
 BUILD_RANK.pen = 1;
 BUILD_ORDER.splice(BUILD_ORDER.indexOf('inn') + 1, 0, 'pen');
 const penCap = () => 2 + (S.bld.pen || 0) * 2;
@@ -45,4 +46,4 @@ const petLook = pet => (pet.stage ? PETS[pet.kind].adult || PETS[pet.kind].mon :
 const petHitched = id => !!(S && S.parties.some(p => p.horse === 'p:' + id || p.horse2 === 'p:' + id));   // 빌드 65: 둘째 마차(캐러밴 마스터)도
 const petsAtHome = () => (S && S.pets ? S.pets.filter(x => !S.parties.some(p => p.pet === x.id) && !petHitched(x.id)) : []);
 // 상단에 남은 펫의 효과 합
-const petHome = k => petsAtHome().reduce((s, x) => s + (PETS[x.kind].home[0] === k ? PETS[x.kind].home[1] * (x.stage ? 1.5 : 1) : 0), 0);
+const petHome = k => petsAtHome().reduce((s, x) => s + (PETS[x.kind].home[0] === k ? PETS[x.kind].home[1] * (x.stage ? 1.5 : 1) * petQMul(x) : 0), 0);   // 빌드 65: 레어도 배율

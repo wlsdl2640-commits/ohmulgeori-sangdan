@@ -14,7 +14,9 @@ C65('mhunter', { name: '트래커', desc: '우두머리 사냥(한방). 표식�
 C65('dslayer', { name: '스토커', desc: '숨죽여 쫓는 사냥의 정점. 보스 피해 ×1.6, 방어 20% 무시, 다음 한 발을 두 배로.' });
 // 랑기수 전직: 늑대 펫 Lv30 하나를 보낸다 — 그 늑대가 탈것이 된다 (tools/saved/ride65/DECISIONS.md · 사용자 11-12 17:23 「랑기수 전직 때 늑대 펫 보내기」) · 탈것 직업은 전투 대형 맨 뒷줄(row 2 — 늑대 · 와이번이 크다)
 CLASSES.ranger.req = Object.assign(CLASSES.ranger.req || {}, { petWolf: PET_EVO_LV });
+CLASSES.dragoon.req = Object.assign(CLASSES.dragoon.req || {}, { petWyv: PET_EVO_LV });   // 빌드 65 넷째 묶음: 용기수 = 와이번 펫 Lv30 (그 와이번이 탈것)
 const wolfMount = lv => (typeof S !== 'undefined' && S && S.pets ? petsAtHome().filter(x => x.kind === 'wolf' && x.lv >= lv).sort((x, y) => x.lv - y.lv)[0] : null) || null;   // 가장 낮은 레벨부터 (파티 · 마차에 맨 펫은 빼고)
+const wyvMount = lv => (typeof S !== 'undefined' && S && S.pets ? petsAtHome().filter(x => x.kind === 'wyvern' && x.lv >= lv).sort((x, y) => x.lv - y.lv)[0] : null) || null;
 C65('ranger', { name: '랑기수', row: 2, desc: '늑대를 탄 지속 딜러. 달리며 쏘고, 늑대가 함께 문다(연계 +6%).' });
 C65('dragoon', { name: '용기수', row: 2, act: 'arrow', tr: { pet: 0.5, combo: 0.08, baImm: 1 }, desc: '와이번을 타고 하늘에서 복합궁으로 내리쏜다. 동료가 서 있는 동안 기본 공격에 맞지 않는다(와이번 강하 때 2초는 맞는다). 연계 +8%.' });
 // ── 짐꾼 계열: 방패 · 탱킹을 빼고 서포터로 (늘 맨 뒤). 텐트 효과는 정찰가 → 마부 · 코네스토가

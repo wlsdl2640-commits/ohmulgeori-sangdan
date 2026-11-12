@@ -258,6 +258,7 @@ function renderFloors() {
   const dots = L.map((f, j) => `<i class="${f.under ? 'u' : ''}${j === i ? ' on' : ''}"></i>`).join('');
   const html = nav(prev, 'prev') + `<button type="button" class="ptab${cur.under ? ' ug' : ''}" data-pwin="${cur.id}" aria-label="${esc(cur.name)} 창 열기"><span class="pnm">${esc(cur.name)}</span><small>${esc(floorInfo(cur))}</small><span class="pdots" aria-hidden="true">${dots}</span></button>` + nav(next, 'next');
   if (html !== UI.pbar) { $('placebar').innerHTML = html; UI.pbar = html; }
+  if (typeof hqExtra === 'function') hqExtra(cur);   // 빌드 65: 장소 위 덧그림 (재배소 동 단추 · 항구 표판 글씨)
 }
 // 본부 화면을 눌렀을 때: 가구·사람 → 창
 function hqOpen(h) {

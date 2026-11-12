@@ -19,13 +19,14 @@ function blankState(company) {
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
-    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0, salvage: 0 },
+    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0, salvage: 0, farm: 0 },
     stable: { horses: {} }, league: null, presets: [], wx: { seed: Math.floor(Math.random() * 1e9) },
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v68: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
+    cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
     view: null
   };
@@ -744,6 +745,7 @@ function upgrade(bid) {
   const B = BUILDINGS[bid], lv = S.bld[bid];
   if (lv >= B.max) return '더 올릴 수 없어요.';
   if (!lv && (S.rank || 0) < (BUILD_RANK[bid] || 0)) return `상단이 ${RANKS[BUILD_RANK[bid]].name}랭크가 되어야 지을 수 있어요.`;
+  if (bid === 'farm' && lv && (S.rank || 0) < FARM.rank[lv]) return `상단이 ${RANKS[FARM.rank[lv]].name}랭크가 되어야 재배소 ${lv + 1}동을 지을 수 있어요.`;
   const cost = B.cost[lv];
   if (S.gold < cost) return '돈이 모자라요.';
   S.gold -= cost; S.bld[bid] = lv + 1;
@@ -753,7 +755,8 @@ function upgrade(bid) {
   if (bid === 'library' && lv === 0) queueModal({ title: '도서관', body: STORY.library });
   if (bid === 'kitchen' && lv === 0) queueModal({ title: '주방', body: STORY.kitchen });
   if (bid === 'salvage' && lv === 0) queueModal({ title: '던전 수거소', body: STORY.salvage });
-  log(`${B.name}을(를) ${lv ? 'Lv' + (lv + 1) + '로 넓혔다' : '지었다'}.`, 'good');
+  if (bid === 'farm') { farmState(); if (lv === 0) queueModal({ title: '재배소', body: STORY.farm }); }
+  log(bid === 'farm' ? `재배소 ${lv + 1}동(비닐하우스)을 지었다.` : `${B.name}을(를) ${lv ? 'Lv' + (lv + 1) + '로 넓혔다' : '지었다'}.`, 'good');
   changed();
   return '';
 }
@@ -915,6 +918,7 @@ function promote(aid, cls) {
   if (C1.req && C1.req.item) addTo(S.inv, C1.req.item[0], -C1.req.item[1]);   // 전직 재료(피눈물 등)
   let wolf = null;
   if (C1.req && C1.req.petWolf) { wolf = wolfMount(C1.req.petWolf); if (wolf) { S.pets = S.pets.filter(x => x !== wolf); a.ride = Object.assign(a.ride || {}, { wolf: { look: 'A', name: wolf.name, lv: wolf.lv } }); } }   // 빌드 65: 랑기수 = 늑대 펫을 탈것으로 데려간다 (pxride65.js — 모습 A가 기본)
+  if (C1.req && C1.req.petWyv) { const wy = wyvMount(C1.req.petWyv); if (wy) { S.pets = S.pets.filter(x => x !== wy); a.ride = Object.assign(a.ride || {}, { wyv: { look: 'A', name: wy.name, lv: wy.lv } }); log(`${a.name}이(가) 와이번 펫 「${wy.name}」을(를) 타고 용기수가 되었다.`, 'good'); } }   // 빌드 65 넷째 묶음
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
   a.cls = cls;
   rideEnsure(a);   // 빌드 65: 용기수가 되면 와이번 (모습 A)
@@ -1135,6 +1139,7 @@ function onNewDay(k) {
   researchDay(k);
   raidDay();
   kingDay(k);
+  portDay(k);   // 빌드 65: 해상왕국 배 (항구)
   underTick();
   penDay(k);
   eventsDay(k);
@@ -1192,7 +1197,7 @@ function catchUp(sec) {
 
 /* ───────── 저장 ───────── */
 const SAVE_KEY = 'paros-sangdan:v1';
-const SAVE_V = 14;   // 지금 저장 판 (migrate14까지 옮긴 상태)
+const SAVE_V = 15;   // 지금 저장 판 (migrate15까지 옮긴 상태)
 function saveGame() {
   if (!S) return;
   S.lastSeen = Date.now();
@@ -1209,13 +1214,13 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); notes68(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
     S.research = S.research || { lv: {}, cur: null }; S.spons = S.spons || {};
     ALL_FIELDS.forEach(f => { S.fields[f] = S.fields[f] || newField(); });
-    ['smithy', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen', 'salvage'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
+    ['smithy', 'tower', 'temple', 'stable', 'library', 'airfield', 'kitchen', 'salvage', 'farm'].forEach(b => { S.bld[b] = S.bld[b] || 0; });
     S.stable = S.stable || { horses: {} };
     const old = S.v;
     if (old < 13) runeRename();   // 빌드 64 룬 개편: 옛 룬 이름 → 합친 룬 (창고 정리보다 먼저)
@@ -1248,6 +1253,7 @@ function loadFrom(v) {
     if (old < 12) { migrate12(); saveGame(); }
     if (old < 13) { migrate13(); saveGame(); }
     if (old < 14) { migrate14(); saveGame(); }
+    if (old < 15) { migrate15(); saveGame(); }
     notes39();
     notes40();
     notes41();
@@ -1273,7 +1279,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65();
+    notes64(); notes65(); notes68();
     return true;
   } catch (_) { return false; }
 }
@@ -1480,6 +1486,15 @@ function migrate14() {
   if (MANA65) log(`마검사 · 마검성 ${fmt(MANA65)}명이 들던 장검을 같은 단계의 마나소드로 바꾸었다 (레어도 · 룬 · 옵션은 그대로).`);
   REFIT65 = 0; MANA65 = 0;
 }
+function migrate15() {   // 빌드 65 넷째 묶음: 펫 만렙 30 · 레어도(옛 펫은 일반) · 옛 요리 14가지는 레시피를 아는 것으로 · 재배소 · 항구
+  S.v = 15;
+  (S.pets || []).forEach(p => { if (p.lv > PET_MAX_LV) { p.lv = PET_MAX_LV; p.exp = 0; } if (p.lv >= PET_EVO_LV && !p.stage) p.stage = 1; if (p.q == null) p.q = 0; });
+  const C = cookState(); OLD_FOODS.forEach(id => { if (!C.known[id]) C.known[id] = 1; });
+  petState().lucky = petState().lucky || {};
+  S.bld.farm = S.bld.farm || 0;
+  if (!S.port) S.port = { next: today() + 1, ship: null };
+}
+function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);
   [...(S.advs || []), ...(S.cands || []), ...opps].forEach(a => { if (a && a.eq) for (const sl of SLOTS65) if (a.eq[sl] === undefined) a.eq[sl] = null; });   // 옛 모험가 · 손님 · 투기장 상대에게 빈 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸

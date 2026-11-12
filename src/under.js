@@ -257,19 +257,27 @@ function kingGoods(D) {
   const goods = (D.sells || []).filter(it => ITEMS[it]).sort(() => rnd() - 0.5).slice(0, 2).map(it => ({ it, n: ri(6, 12), price: Math.round(ITEMS[it].v * 1.3) }));
   const kid = KINGDOM_IDS.find(x => KINGDOMS[x] === D);
   exclOf(kid).forEach(it => goods.push({ it, n: ri(1, 3), price: exclPrice(it) }));   // 빌드 63: 스킬북 대신 그 나라 상단 전용 물건 스킬북 한 권 — 아주 비싸게
+  // 빌드 65: 그 나라 특산 채소 둘 (재배소 모종도 된다) · 그 나라 재료가 들어가는 요리 레시피 (하나에 100,000G · 사면 도감에 바로)
+  Object.keys(VEG_FROM).filter(it => VEG_FROM[it] === kid).forEach(it => goods.push({ it, n: ri(8, 16), price: FOOD_PRICE[it] }));
+  recipeGoods(recipesOfKing(kid)).forEach(o => goods.push(o));
   return goods;
 }
-function kingBuy(i) {
+function kingBuy(i, q) {
   const v = S.king && S.king.visit, o = v && v.goods && v.goods[i];
   if (!o) return '';
   if (o.n <= 0) return '다 팔렸어요.';
+  const rc = ITEMS[o.it] && ITEMS[o.it].recipe;   // 빌드 65: 레시피는 창고에 넣지 않고 도감에 적는다
+  if (rc && knows(rc)) { o.n = 0; changed(); return '이미 아는 레시피예요.'; }
+  q = rc ? 1 : Math.max(1, Math.min(q || 1, o.n, Math.floor(S.gold / o.price)));
   if (S.gold < o.price) return '돈이 모자라요.';
-  if (!roomItem(o.it)) return WH_FULL;
-  S.gold -= o.price; o.n--; addTo(S.inv, o.it, 1); S.stats.spent = (S.stats.spent || 0) + o.price;
-  S.king.favor[v.k] = favorOf(v.k) + o.price / 800;
-  log(`${KINGDOMS[v.k].name} 상단에서 ${ITEMS[o.it].name}을(를) ${fmt(o.price)}G에 샀다.`);
+  if (!rc && !roomItem(o.it)) return WH_FULL;
+  const cost = o.price * q;
+  S.gold -= cost; o.n -= q; S.stats.spent = (S.stats.spent || 0) + cost;
+  if (rc) buyRecipe(o.it); else addTo(S.inv, o.it, q);
+  S.king.favor[v.k] = favorOf(v.k) + (rc || ITEMS[o.it].veg ? Math.min(cost, 2000) : cost) / 800;   // 레시피 · 채소로 호감을 사지는 못하게
+  log(`${KINGDOMS[v.k].name} 상단에서 ${ITEMS[o.it].name}${q > 1 ? ` ${q}개를` : '을(를)'} ${fmt(cost)}G에 샀다.`);
   changed();
-  return `${ITEMS[o.it].name}을(를) 창고에 넣었어요.`;
+  return rc ? `${FOODS[rc].name} 레시피를 도감 「요리」에 적었어요.` : `${ITEMS[o.it].name}${q > 1 ? ` ${q}개를` : '을(를)'} 창고에 넣었어요.`;
 }
 
 /* ───────── 화면 ───────── */
@@ -344,5 +352,5 @@ Object.assign(ACT, {
   arbuy: d => say(arenaBuy(d.k, d.id)),
   bmbuy: d => say(bmBuy(+d.i)),
   aubid: () => say(auBid()),
-  kingbuy: d => say(kingBuy(+d.i))
+  kingbuy: d => say(kingBuy(+d.i, +d.q || 1))
 });
