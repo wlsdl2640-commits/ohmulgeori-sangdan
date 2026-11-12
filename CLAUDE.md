@@ -387,7 +387,7 @@
 - 배포(11-11 사용자 「1차 APK」): wip-63을 main에 올려 자동 빌드 — 안드로이드 run 번호가 62라 **APK · 게임 안 빌드 번호는 62**(가지 이름 wip-62 · wip-63의 본부 장면 + 빌드 63 묶음 모두). README 「빌드 62부터」 절. 시험은 안 돌림(사용자 규칙).
 - 확인 그림: `scratchpad/v63/shot63c.py`(창고 · 스킬북 · 룬 · 전용 물건 · 여러 개 고르기 · 끌어 놓기 · 도서관) · `shot_menu.py` · `shot_places.py <폴더> <하루 몫>`(본부 장소 전부). 시험은 시킬 때.
 
-## 세트 효과 없앰 · 새 방어구(경갑 · 중갑 · 판금 · 천갑) · 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸 · 반지 그림 · 장비 틀 30칸 · 라운드 실드 새 그림 · 장비 개편 2단계 (빌드 65, 11-12 10:29~ — wip-65, 아직 APK 아님)
+## 세트 효과 없앰 · 새 방어구(경갑 · 중갑 · 판금 · 천갑) · 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸 · 반지 그림 · 장비 틀 30칸 · 라운드 실드 새 그림 · 장비 개편 2단계 (빌드 65, 11-12 10:29~ — wip-65 → main, 4차 APK 빌드 65)
 - 사용자: 「전사 경갑 디자인이야 이걸 그대로 게임에 넣어서 레어도넣고 적용할거니까 저장해둬. 이제 세트효과는 삭제야」(ChatGPT와 만든 시안 두 장: 경갑 상의 · 경갑 하의, Lv1 · 10 · … · 200 각 21개).
 - **세트 효과 없앰(넣음)**: data-gear.js SET_SLOTS · SET_MIN · SET_BONUS · setInfo · setBonusText 지움 · data-fight.js TIER_RES · setRes(세트 속성 저항) 지움 · core.js deriveBase의 세트 몫 줄 · panels.js 장비 탭 「세트 효과」 칸. 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에 그대로(tierNamed · gearBaseName). 저장은 바꿀 것 없음(세트는 계산만 했다). STORY.v65(data-warr.js) · notes65(econ.js) · flags.v65.
   - 같이 고친 것: 장비 탭 아래 안내 글이 빌드 64에서 없앤 강화 · 창고 재감정을 말하던 것 → 「합성은 대장간에서, 룬 새기기 · 희귀 이상 장비의 옵션 재감정은 마탑에서」.
@@ -454,7 +454,7 @@
   - 확인(시험 묶음 아님): `scratchpad/v66/` ev.py + chk66a.js(그림 408장 · 이름 · 설명 · 직업마다 낄 수 있는 것 · 보이는 칸 · 목록 · 떨어뜨리기 몫) · chk66b.js(암살자 + 불씨 쿠나이 · 괴물사냥꾼 + 손목 석궁 · 마검사 + 룬소드 · 정찰가 + 정글칼을 늪지대에 — 암기 · 볼트 사건 · 화상 · 정찰가 근접 · 화살 안 씀) · chk66c.js(옛 저장 불러오기 · 자동 장착 · 대장간 사기) · shot66.py(창고 · 대장간 · 장비 탭 · 전투 화면).
 - 확인: node --check · 묶음 eslint(no-dupe-keys 5개뿐) · 화면 확인(장비 탭 · 창 전부, 오류 없음). 시험은 안 돌림(사용자 규칙).
 
-## 직업 개편 — 새 직업 넷 · 4차 전직 · 새 스킬 (빌드 65, 11-12 15:26 사용자 「이거 다 넣고」 · 「이건 화살스킬 제거」 — wip-65 7027170, 아직 APK 아님)
+## 직업 개편 — 새 직업 넷 · 4차 전직 · 새 스킬 (빌드 65, 11-12 15:26 사용자 「이거 다 넣고」 · 「이건 화살스킬 제거」 — wip-65 7027170 → main, 4차 APK 빌드 65)
 - 근거: 스킬 시안 문서 https://claude.ai/artifact/CkT7NRCB67kicG99rRS4QR 의 표 그대로(직업 16 · 스킬 87). 문서 읽기: Claude_Docs read(ref node) → 결과 JSON의 data.xml을 ElementTree로 풀어 글로(scratchpad/v66/cls/doc.txt).
 - `src/data-class65.js`(build.py에서 data-job64 뒤 · data-store 앞 — 스킬북 표가 새 스킬을 보게): `JOB_REQ[4]`(lv 150 · rank 4 백금 · fee 3,000,000 · souls 4 · item core_15 별의 정원 주인의 핵) · 이름 바꾸기 C65(treasure 소매치기 · mhunter 트래커 · dslayer 스토커 · ranger 랑기수 · dragoon 용기수 — act 'arrow' · tr.baImm) · 새 직업 `phantomthief` 괴도(3차) · `ninja`(2차, tr.thrown 3) · `kageninja`(3차) · `conestoga`(3차) · masterthief · caravanmaster는 tier 4(from 괴도 · 코네스토가) · JOB_TREE/JOB_PARENT 다시 만듦 · ALL_CLASS_IDS · JOB_TRAITS · TRAITS j_ · BIOS.
   - 스킬 `SK65(id, o)`(있으면 덮어쓰고 undefined 키는 지움, 레벨 → lv0 `LV65` 표 · own 1). 짐꾼: ironskin · dw_grit에서 porter 뺌 · 약상자 medkit(Lv14) · 짐 방패 → 보급품 나눠 주기. 정찰가 · 탐험가 화살 스킬 → 베기(fx 지움). 저격수 deadeye는 cls [](나중 거너) → firstarrow 첫 화살. 용기병 skyfall cls [](창 직업으로).
@@ -466,7 +466,7 @@
 - 확인(시험 묶음 아님): `scratchpad/v66/cls/chk1.js`(직업 길 · 차수 · 처음 장비 · 배울 스킬 · 그림 · 스킬북 · 스킬 설명 · 낄 수 있는 것) · `chk2.js`(새 직업 파티 전투 — 사건 · 상태이상 · 암기 · 볼트 · 튕겨내기 · 통나무) · `chk3.js`(v13 저장 불러오기 · 괴도 → 대도 4차 전직 · 닌자 · 쌍검사 부장비) · `shotb.py`(실제 전투 창, 화면 오류 없음).
 - 남은 것은 아래 「빌드 65 셋째 묶음」에서 넣었다(새 숙련 · 탈것 · 늑대 펫 · 마차 칸 · 야영 웨건 · 새 무기 동작 · 마나소드 · 화살통). 아직: 새 스킬 54 · 숙련 27 그림 시안을 사용자가 고르는 중.
 
-## 빌드 65 셋째 묶음: 화살통 · 마나소드 그림 · 새 무기 동작 · 새 숙련 15 · 달인 · 탈것 · 늑대 펫 · 야영 · 마차 칸 (11-12 17:23 사용자 「3개안건 전부 넣는데 … 다 추가 ㄱㄱㄱ」 — wip-65, 아직 APK 아님)
+## 빌드 65 셋째 묶음: 화살통 · 마나소드 그림 · 새 무기 동작 · 새 숙련 15 · 달인 · 탈것 · 늑대 펫 · 야영 · 마차 칸 (11-12 17:23 사용자 「3개안건 전부 넣는데 … 다 추가 ㄱㄱㄱ」 — wip-65 → main, 4차 APK 빌드 65)
 - 화살통 · 마나소드 16단계 큰 도트(f93cdbd): `src/data-hdart65.js` `HDART = { quiver, manasword }`(webp 16장씩) + WNAME · WDESC · WLV = `tools/saved/gearhd65/export_hd.py <출력> [미리보기]`(quiver16.SPECS · msword16.SPECS — 손으로 고치지 말 것). sprites.js armArtURL이 ARMART 다음에 HDART를 본다.
   - data-gear65.js `GTYPES.manasword`(마검사 · 마검성 · UNIQ_T0 6 · atk 4.6 · matk 1.6 · int 0.4 · w 2) · WEAPON_LOW manasword → sword · 검술 = 장검 · 마나소드. econ.js WEAPON_OF spellblade/arcblade → manasword, `refit65`가 마검사 계열의 늪지 이상 장검을 마나소드로(같은 단계 · 레어도).
   - 손에 든 마나소드: pxa.js `PX_WPN.msword`(PX_WALIAS manasword → msword) · 팔레트 y 밝은 날 · i 짙은 가장자리(PX_PRI로 줄일 때 살린다) · pxs.js PXS_FAMW msword → sword.
@@ -501,6 +501,7 @@
   - 펫(data-pet.js · pet.js · panels.js): PET_MAX_LV 30 · petPow × petQMul · 사육장 max 5 · hatch가 P.lucky(우두머리 · 둥지 알 수)를 쓴다 · penDay(유정란 · 부화 판정 — 같은 새벽에 여럿이면 알림 하나) · petKill 알 드랍 · 펫 칸 레어도 틀 petQCell(새끼 모습 20×20) · 이름 색 petQName · 「Lv x/30」 · 사육장 창 부화 계단 pen-ladder. 용기수 전직 data-class65.js req.petWyv · wyvMount · econ.js promote(와이번을 S.pets에서 빼고 a.ride.wyv).
   - 약초(core.js 처치): 줍기 = 그 필드 F.herbs를 등급마다 HERB_PICK × (우두머리 · 주인 HERB_BOSS) · 몬스터 drops의 약초는 HERB_DROP_MUL. events.js 떠돌이 상인은 하급 약초만 · 알은 30%에 하나(값 ×3).
   - 옛 저장 SAVE_V 15 `migrate15`(펫 Lv30으로 · exp 0 · q 0 · 옛 요리 14가지 known · pen.lucky · bld.farm · S.port) · `notes68`(STORY.v68 알림 · flags.v68). 새 게임 blankState에 cook · farm · port(next 3) · bld.farm · flags.v68.
+- 배포(11-12 20:34 사용자 「그 후에 APK 작업 ㄱㄱ」): wip-65를 main에 올려 자동 빌드 → **APK · 게임 안 빌드 번호 65**(4차 APK — 빌드 65 묶음 넷: 장비 개편 2단계 · 직업 개편 · 셋째 묶음(그림 · 숙련 · 탈것 · 야영 · 마차 칸) · 넷째 묶음(펫 · 알 · 재배소 · 식재료 · 요리 · 항구)). README 「빌드 65부터」 절 둘. 시험은 안 돌림(사용자 규칙).
 - 확인(시험 묶음 아님): `scratchpad/v69/` t1.py(새 게임 · 재배소 · 동 강화 · 항구 · 왕국 상단 · 요리 · 알 판정 · 옛 저장 옮기기를 식으로) · t2.py · t3.py(재배소 낮 · 밤 · 세 동 · 재배소 창 · 항구 배 있음/없음 · 항구 창 · 주방 · 요리 화면 · 결과 카드 · 도감 요리 · 사육장 · 왕국 상단 · 시설 창). node --check · 묶음 eslint(no-dupe-keys 5개 · BUILD_NO/REPO뿐) · smoke63 화면 오류 없음.
 
 ## 전사 계열 장비 개편 1단계 · 방패 왼손 · 전직 레벨 · 각성 없애기 (빌드 64, 11-11 18:20 사용자 「3 작업 ㄱㄱ」 — wip-64 → main, 3차 APK 빌드 64)
