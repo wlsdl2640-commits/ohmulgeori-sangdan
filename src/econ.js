@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -1201,7 +1201,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1213,6 +1213,7 @@ function loadFrom(v) {
     if (old < 13) runeRename();   // 빌드 64 룬 개편: 옛 룬 이름 → 합친 룬 (창고 정리보다 먼저)
     if (old < 14) refit65();      // 빌드 65 직업 개편: 못 끼게 된 무기를 같은 단계 새 무기로 (migrateS의 unfitGear보다 먼저)
     if (old < 16) lowJob66();     // 빌드 66: 늪지대 아래 단계의 2차 직업 전용 장비 → 같은 단계 1차 장비 (migrateS의 unfitGear보다 먼저)
+    cut69();                      // 빌드 69: 왕국 · 투기장 스킬 빼기 — 배운 모험가 · 스킬북 정리 (불러올 때마다, 남은 게 없으면 아무것도 안 함)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
@@ -1268,7 +1269,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68(); notes67(); notes68b();
+    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69();
     return true;
   } catch (_) { return false; }
 }
@@ -1521,6 +1522,70 @@ function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
 }
 function notes67() { if (!S.flags.v67) { S.flags.v67 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '장비 착용 레벨 · 무기 그림 · 룬 합성', body: STORY.v67 }); } }   // 빌드 67
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
+// 빌드 69: 왕국 · 투기장 스킬 빼기 (data-cut69.js CUT_SK) — 불러올 때마다 (남은 게 없으면 아무것도 안 한다)
+//  배운 모험가에게서 지우고 배울 때 쓴 책 1권 + 스킬 단계마다 1권을 같은 차수 스킬북 단계(찢어진 · 낡은 · 빛바랜)로, 수업료 · 단계 올린 값은 돈으로 돌려준다.
+//  고용 후보 · 그 밖에 모험가 꼴을 든 곳(명예의 전당 · 투기장 상대 …)에서는 그냥 지운다.
+//  그 스킬북은 어디에 있든(창고 · 창고 1~10 · 진열대 · 원정 짐 · 의뢰 · 암시장 …) 같은 차수 스킬북 단계로 바꾼다 (runeRename과 같은 길 — 열쇠 · 값, 겹치면 개수를 더함)
+let CUT69 = null;   // 불러올 때 정리한 것 (notes69가 알림으로 내보내고 비운다)
+function cut69() {
+  if (!S || typeof CUT_SK === 'undefined' || !CUT_SK.length) return;
+  const cut = new Set(CUT_SK), tb = id => TIER_BOOK_IDS[CUT_SK_TIER[id]];
+  const R = { who: [], books: {}, gold: 0, conv: 0 };
+  const strip = (a, refund) => {
+    if (!a || !Array.isArray(a.skills) || !a.skills.some(id => cut.has(id))) return;
+    const gone = a.skills.filter(id => cut.has(id));
+    a.skills = a.skills.filter(id => !cut.has(id));
+    for (const id of gone) {
+      const lv = Math.max(1, (a.sl && a.sl[id]) || 1);
+      if (refund) {
+        R.books[tb(id)] = (R.books[tb(id)] || 0) + lv;
+        R.gold += learnFee(SKILLS[id]); for (let l = 2; l <= lv; l++) R.gold += skillUpCost(id, l);
+        R.who.push(`${a.name} 「${SKILLS[id].name}」${lv > 1 ? ` Lv${lv}` : ''}`);
+      }
+      ['sl', 'skoff', 'skpri', 'sm'].forEach(k => { if (a[k] && typeof a[k] === 'object') delete a[k][id]; });
+    }
+  };
+  (S.advs || []).forEach(a => strip(a, true));
+  const walkA = o => { if (Array.isArray(o)) { o.forEach(walkA); return; } if (!o || typeof o !== 'object') return; if (Array.isArray(o.skills) && o.cls) strip(o, false); for (const k of Object.keys(o)) { const v = o[k]; if (v && typeof v === 'object') walkA(v); } };
+  walkA(S);
+  // 스킬북 → 같은 차수 스킬북 단계
+  const map = x => (typeof x === 'string' && x.startsWith('book_') && cut.has(x.slice(5)) ? tb(x.slice(5)) : x);
+  const cnt = inv => Object.keys(inv || {}).reduce((n, k) => n + (map(k) !== k && typeof inv[k] === 'number' ? inv[k] : 0), 0);
+  R.conv = cnt(S.inv) + (Array.isArray(S.wh) ? S.wh.reduce((n, W) => n + cnt(W && W.inv), 0) : 0);
+  const walk = o => {
+    if (Array.isArray(o)) { for (let i = 0; i < o.length; i++) { const v = o[i]; if (typeof v === 'string') o[i] = map(v); else if (v && typeof v === 'object') walk(v); } return; }
+    for (const k of Object.keys(o)) {
+      let v = o[k];
+      if (typeof v === 'string') o[k] = v = map(v); else if (v && typeof v === 'object') walk(v);
+      const nk = map(k);
+      if (nk !== k) { if (typeof o[nk] === 'number' && typeof v === 'number') o[nk] += v; else if (o[nk] === undefined) o[nk] = v; delete o[k]; }
+    }
+  };
+  walk(S);
+  // 돌려주기 (메인 창고 — 스킬북 단계는 쌓인다)
+  for (const k in R.books) addTo(S.inv, k, R.books[k]);
+  S.gold += R.gold;
+  if (R.who.length || R.conv) {
+    const C = CUT69 || (CUT69 = { who: [], books: {}, gold: 0, conv: 0 });
+    C.who.push(...R.who); for (const k in R.books) C.books[k] = (C.books[k] || 0) + R.books[k]; C.gold += R.gold; C.conv += R.conv;
+  }
+}
+// 정리한 것 알림 (빌드 69 알림과 함께 — 이미 본 저장이면 정리한 것만)
+function notes69() {
+  const R = CUT69; CUT69 = null;
+  const lines = [];
+  if (R) {
+    const cut = L => (L.length > 8 ? `${L.slice(0, 8).join(' · ')} 외 ${L.length - 8}개` : L.join(' · '));
+    if (R.who.length) lines.push(`배운 스킬을 지웠다(그만큼 스킬 칸이 빈다): ${cut(R.who)}.`);
+    const back = Object.entries(R.books).map(([k, n]) => `${ITEMS[k].name} ${n}권`).concat(R.gold ? [`${fmt(R.gold)}G`] : []);
+    if (back.length) lines.push(`돌려받은 것: ${back.join(' · ')} — 배울 때 쓴 스킬북 · 수업료와 스킬 단계를 올린 책 · 값.`);
+    if (R.conv) lines.push(`창고에 있던 그 스킬북 ${fmt(R.conv)}권은 같은 차수 스킬북 단계로 바꿨다 — 펼치면 다른 스킬북이 나온다.`);
+    if (lines.length) log(`왕국 · 투기장 스킬 정리: ${R.who.length ? `배운 스킬 ${R.who.length}개를 지우고 ` : ''}${back.length ? `${back.join(' · ')}를 돌려받았다` : ''}${R.conv ? `${back.length ? ' · ' : ''}스킬북 ${fmt(R.conv)}권을 스킬북 단계로 바꿨다` : ''}.`, 'good');
+  }
+  const first = !S.flags.v69; S.flags.v69 = 1;
+  if (first && (lines.length || today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '왕국 · 투기장 스킬을 뺐어요', body: STORY.v69.concat(lines) });
+  else if (lines.length) S.modals.push({ title: '왕국 · 투기장 스킬 정리', body: lines });
+}
 function notes68b() { if (!S.flags.v68b) { S.flags.v68b = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬북 계열 · 직업 표시 · 스킬 칸 나누기', body: STORY.v68b }); } }   // 빌드 68 (data-skjob68.js)
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);

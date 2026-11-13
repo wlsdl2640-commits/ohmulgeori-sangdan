@@ -62,11 +62,11 @@ function envoyBust(id) {
 
 /* ───────── 왕국 의뢰 ───────── */
 const KQUEST = {
-  inglisia: [{ id: 'in1', type: 'deliver', it: 'wolf_pelt', n: 15, gold: 1200 }, { id: 'in2', type: 'hunt', mon: 'kobold', n: 25, gold: 2600 }, { id: 'in3', type: 'deliver', it: 'golem_core', n: 4, gold: 5000, book: 'kn_wall' }],
-  frama:    [{ id: 'fr1', type: 'deliver', it: 'spider_silk', n: 12, gold: 1300 }, { id: 'fr2', type: 'hunt', mon: 'harpy', n: 20, gold: 2800 }, { id: 'fr3', type: 'deliver', it: 'worm_pearl', n: 2, gold: 6000, book: 'fr_song' }],
-  elves:    [{ id: 'el1', type: 'deliver', it: 'herb', n: 20, gold: 1000 }, { id: 'el2', type: 'hunt', mon: 'spider', n: 25, gold: 2200 }, { id: 'el3', type: 'deliver', it: 'elder_heart', n: 1, gold: 5500, book: 'el_breath' }],
-  dwarves:  [{ id: 'dw1', type: 'deliver', it: 'iron_ore', n: 15, gold: 1400 }, { id: 'dw2', type: 'hunt', mon: 'golem', n: 15, gold: 3200 }, { id: 'dw3', type: 'deliver', it: 'frost_crystal', n: 3, gold: 6500, book: 'dw_smash' }],
-  sarak:    [{ id: 'sa1', type: 'deliver', it: 'scorpion_stinger', n: 10, gold: 1600 }, { id: 'sa2', type: 'hunt', mon: 'antlion', n: 15, gold: 3400 }, { id: 'sa3', type: 'deliver', it: 'sandworm_hide', n: 4, gold: 7000, book: 'sa_mirage' }]
+  inglisia: [{ id: 'in1', type: 'deliver', it: 'wolf_pelt', n: 15, gold: 1200 }, { id: 'in2', type: 'hunt', mon: 'kobold', n: 25, gold: 2600 }, { id: 'in3', type: 'deliver', it: 'golem_core', n: 4, gold: 5000 }],
+  frama:    [{ id: 'fr1', type: 'deliver', it: 'spider_silk', n: 12, gold: 1300 }, { id: 'fr2', type: 'hunt', mon: 'harpy', n: 20, gold: 2800 }, { id: 'fr3', type: 'deliver', it: 'worm_pearl', n: 2, gold: 6000 }],
+  elves:    [{ id: 'el1', type: 'deliver', it: 'herb', n: 20, gold: 1000 }, { id: 'el2', type: 'hunt', mon: 'spider', n: 25, gold: 2200 }, { id: 'el3', type: 'deliver', it: 'elder_heart', n: 1, gold: 5500 }],
+  dwarves:  [{ id: 'dw1', type: 'deliver', it: 'iron_ore', n: 15, gold: 1400 }, { id: 'dw2', type: 'hunt', mon: 'golem', n: 15, gold: 3200 }, { id: 'dw3', type: 'deliver', it: 'frost_crystal', n: 3, gold: 6500 }],
+  sarak:    [{ id: 'sa1', type: 'deliver', it: 'scorpion_stinger', n: 10, gold: 1600 }, { id: 'sa2', type: 'hunt', mon: 'antlion', n: 15, gold: 3400 }, { id: 'sa3', type: 'deliver', it: 'sandworm_hide', n: 4, gold: 7000 }]
 };
 const kqState = k => { S.kq = S.kq || {}; return S.kq[k] || (S.kq[k] = { cur: null, got: 0, done: [] }); };
 const kqNext = k => (KQUEST[k] || []).find(q => !kqState(k).done.includes(q.id)) || null;

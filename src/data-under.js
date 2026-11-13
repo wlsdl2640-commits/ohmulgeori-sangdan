@@ -3,14 +3,15 @@
    그리고 왕국 상단이 팔러 오는 물건과 왕국 전용 스킬북. */
 const UNDER_RANK = 2;   // 상단 D랭크부터 지하수로 입구가 열린다
 
-// 왕국 상단이 가져와 파는 것 (sells)과 그 왕국에서만 파는 스킬북 (books)
-Object.assign(KINGDOMS.inglisia, { sells: ['iron_ore', 'wolf_pelt', 'lizard_scale'], books: ['kn_charge', 'kn_wall'] });
-Object.assign(KINGDOMS.frama,    { sells: ['spider_silk', 'sand_silk', 'harpy_feather'], books: ['fr_wit', 'fr_song'] });
-Object.assign(KINGDOMS.elves,    { sells: ['herb', 'treant_sap', 'elder_heart'], books: ['el_arrow', 'el_breath'] });
-Object.assign(KINGDOMS.dwarves,  { sells: ['iron_ore', 'golem_core', 'frost_crystal'], books: ['dw_smash', 'dw_grit'] });
-Object.assign(KINGDOMS.sarak,    { sells: ['scorpion_stinger', 'sand_silk', 'worm_pearl'], books: ['sa_mirage', 'sa_curse'] });
+// 왕국 상단이 가져와 파는 것 (sells) — 그 왕국에서만 팔던 스킬북(books)은 빌드 69에 뺐다
+Object.assign(KINGDOMS.inglisia, { sells: ['iron_ore', 'wolf_pelt', 'lizard_scale'] });
+Object.assign(KINGDOMS.frama,    { sells: ['spider_silk', 'sand_silk', 'harpy_feather'] });
+Object.assign(KINGDOMS.elves,    { sells: ['herb', 'treant_sap', 'elder_heart'] });
+Object.assign(KINGDOMS.dwarves,  { sells: ['iron_ore', 'golem_core', 'frost_crystal'] });
+Object.assign(KINGDOMS.sarak,    { sells: ['scorpion_stinger', 'sand_silk', 'worm_pearl'] });
 
 // 드랍으로는 얻을 수 없는 스킬: 왕국 상단(kingdom)과 투기장 상단(arena)에서만 판다
+// 빌드 69: 게임에서 뺐다(사용자 11-13 15:07 · 15:08) — data-cut69.js가 아무도 못 배우게(cls []) 하고 스킬북 뽑기 · 목록 · 도감에서 뺀다. 정의는 옛 저장(원정 중 지속 피해 · 강화 · 전투 통계)이 깨지지 않게 남긴다
 const UNDER_SKILLS = {
   // 왕국 상단 스킬북: 비싸고 2차 전직 뒤에만 배운다. 같은 레벨대 고유 스킬보다 한 수 위
   kn_charge: { name: '기사단 돌격',  cls: ['warrior'],          lv: 24, tier: 2, cost: { mp: 14 }, cd: 9,  kind: 'dmg',  mult: 3.4, tgt: 'front', crit: 0.15, boss: 1.2, sta: { k: 'stun', p: 0.25, d: 1.5, m: 0 }, desc: '잉그리시아 기사단의 돌격. 앞의 적을 꿰뚫고 잠시 비틀거리게 한다.', kingdom: 'inglisia' },

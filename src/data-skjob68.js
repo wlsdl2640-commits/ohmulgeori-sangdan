@@ -80,7 +80,7 @@ function skSecs(a, ids) {
 const skSecHead = (a, sec, mode, more) => { const [n, sub] = skSecName(a, sec, mode); return `<div class="sksec t${sec.t}"><b>${n}</b><span>${sub}${more ? ` · ${more}` : ''}</span></div>`; };
 
 // 빌드 65 직업 개편(SK65)에서 생긴 스킬 36개가 SKILL_IDS에 없어 스킬 탭 「배울 수 있는 스킬 전체」 · 도감에 안 나왔다 (닌자 · 카게닌자 · 코네스토가 · 괴도 …)
-Object.keys(SKILLS).forEach(id => { if (!SKILL_IDS.includes(id)) SKILL_IDS.push(id); });
+Object.keys(SKILLS).forEach(id => { if (!SKILL_IDS.includes(id) && !SKILLS[id].cut) SKILL_IDS.push(id); });   // 빌드 69: 뺀 왕국 · 투기장 스킬(cut — data-cut69.js)은 다시 넣지 않는다
 // 스킬북 이름에 꼬리표 (모든 스킬북 — 예전 저장의 책도 같은 물건 id라 그대로 바뀐다)
 for (const k of Object.keys(ITEMS)) { const I = ITEMS[k]; if (I.book && SKILLS[I.book]) I.name = `스킬북: ${SKILLS[I.book].name} (${skTag(I.book)})`; }
 
