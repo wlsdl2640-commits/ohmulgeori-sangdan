@@ -101,7 +101,7 @@ Object.keys(SKILLS).forEach(id => {
   if (!(s.cls || []).length && !s.awk && !ITEMS['book_' + id]) ITEMS['book_' + id] = { name: `스킬북: ${s.name}`, v: 60 + (s.lv0 || s.lv) * 35, w: 1, icon: 'book', c: '#4a8ac8', book: id };
 });
 /* 뽑기 확률: 직업(공용은 공용끼리)마다 배우는 레벨 순서로 등급을 매기고 무게로 나눈다
-   앞 35% 흔함 4 · 60%까지 보통 2.5 · 85%까지 드묾 1.5 · 나머지 희귀 1 · Lv90 이상 전설 0.4 · 패시브는 한 칸 드물게 · 왕국 · 투기장 스킬은 드묾부터.
+   앞 35% 흔함 4 · 60%까지 보통 2.5 · 85%까지 드묾 1.5 · 나머지 희귀 1 · Lv90 이상 전설 0.4 · 패시브는 한 칸 드물게 · 회복 스킬(HEAL_BOOK)도 한 칸 드물게, 전설이면 무게 0.25 (빌드 69).
    표는 사용자에게 시트로 보냈다 (빌드 63) — 손으로 바꾼 무게는 BOOK_W_SET에.
    확률 = 무게 ÷ 그 책 전체 무게 합. 손으로 정할 스킬은 BOOK_W_SET에 무게를 적는다 */
 const BOOK_BAND = [{ n: '흔함', w: 4 }, { n: '보통', w: 2.5 }, { n: '드묾', w: 1.5 }, { n: '희귀', w: 1 }, { n: '전설', w: 0.4 }];
@@ -117,8 +117,10 @@ BOOK_POOL.forEach((L, t) => {
       let b = f < 0.35 ? 0 : f < 0.6 ? 1 : f < 0.85 ? 2 : 3;
       if (s.passive) b = Math.min(3, b + 1);
       if (s.kingdom || s.arena) b = Math.max(2, b);
+      if (HEAL_BOOK.has(id)) b = Math.min(4, b + 1);   // 빌드 69 회복 개편: 회복 스킬북은 한 칸 드물게 (data-heal69.js)
       if ((s.lv0 || s.lv) >= 90) b = 4;   // 빌드 64: 예전 배우는 레벨로 (2차 · 3차 스킬 레벨을 옮기기 전과 같은 등급)
       BOOK_BAND_OF[id] = b; BOOK_W[id] = BOOK_W_SET[id] != null ? BOOK_W_SET[id] : BOOK_BAND[b].w;
+      if (BOOK_W_SET[id] == null && HEAL_BOOK.has(id) && (s.lv0 || s.lv) >= 90) BOOK_W[id] = HEAL_LEGEND_W;   // 빌드 69: 원래 전설(Lv90 이상)인 회복 스킬(창세의 빛 · 불사의 영약 · 재기)은 한 칸 내릴 수 없어 무게를 0.4 → 0.25로
     });
   });
   const sum = L.reduce((x, id) => x + BOOK_W[id], 0);

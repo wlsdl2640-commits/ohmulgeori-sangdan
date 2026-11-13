@@ -34,6 +34,7 @@ function runeDerived(a, d) {
   if (d.blindHit) out.push(['기본 공격 눈멂', pc(d.blindHit)]);
   if (d.blindRes) out.push(['눈멂 저항', pc(d.blindRes)]);
   if (d.lifesteal) out.push(['흡혈', pc(d.lifesteal)]);
+  if (d.hpRegen) out.push(['초당 HP 재생', pc(d.hpRegen)]);   // 빌드 69: 신성력 숙련 · 건강함 · 직업 특성 · 도시락
   const ed = RES_FAMS.map(f => [f, runeSum(a, 'd_' + f)]).filter(([, v]) => v > 0);
   if (ed.length) out.push(['속성 피해', ed.map(([f, v]) => `${RES_NAME[f]} +${Math.round(v * 100)}%`).join(' · ')]);
   return out;
