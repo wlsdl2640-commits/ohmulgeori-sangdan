@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v68: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -418,21 +418,7 @@ function runeOut(gid, i) {
   changed();
   return '';
 }
-// 마탑: 같은 룬 셋을 합쳐 한 단계 위로, 우두머리의 증표 둘로 하급 룬 새기기
-function runeFuse(rid) {
-  const R = ITEMS[rid] && ITEMS[rid].rune;
-  if (!S.bld.tower) return '마탑이 필요해요.';
-  if (!R || R[1] >= RUNE_TOP) return '더 합칠 수 없는 룬이에요 (최상급).';
-  if ((S.inv[rid] || 0) < RUNE_FUSE.n) return `같은 룬이 ${RUNE_FUSE.n}개 있어야 해요.`;
-  const fee = RUNE_FUSE.fee[R[1]];
-  if (S.gold < fee) return '돈이 모자라요.';
-  if (!roomItem(runeId(R[0], R[1] + 1), (S.inv[rid] || 0) === RUNE_FUSE.n ? 1 : 0)) return WH_FULL;
-  S.gold -= fee; addTo(S.inv, rid, -RUNE_FUSE.n);
-  const out = runeId(R[0], R[1] + 1); addTo(S.inv, out, 1);
-  log(`마탑에서 룬을 합쳐 ${ITEMS[out].name}을(를) 만들었다.`, 'good');
-  changed();
-  return '';
-}
+// 마탑: 우두머리의 증표 둘로 하급 룬 새기기 (룬 합성은 빌드 67부터 9칸 — store.js rfDo)
 function runeCarve(t) {
   if (!S.bld.tower) return '마탑이 필요해요.';
   const k = 'crest_' + t;
@@ -1282,7 +1268,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68();
+    notes64(); notes65(); notes68(); notes67();
     return true;
   } catch (_) { return false; }
 }
@@ -1533,6 +1519,7 @@ function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
   log(`장비 점검: 2차 직업만 입는 장비(중갑 · 판금 상의 · 하의와 무기 · 부장비 · 볼트 — 창 · 류트 · 투기장 삼지창 포함)는 이제 그림마다 착용 레벨이 Lv50 · 55 · 60 … 95 · 100 · 110 …이다. Lv50은 대장간 사막왕 단계에서 만들고, 늪지대부터는 떨어진다. 갖고 있던 것은 예전 레벨 그대로. 삼지창은 이제 검투사 · 기사 계열만 낀다(랑기수 · 용기수는 활 직업).${TRI67 ? ` 삼지창을 들던 랑기수 · 용기수 ${fmt(TRI67)}명은 삼지창을 창고에 넣고 같은 단계 활을 받았다.` : ''}${LOW66 ? ` 그보다 낮은 단계로 갖고 있던 ${fmt(LOW66)}점은 같은 단계 · 레어도 · 룬 · 옵션 그대로 경갑 · 경갑 하의 · 장검 · 몽둥이로 바꾸었다(기사 · 마검사 계열이 입던 갑옷은 가죽 갑옷).` : ''}`);   // 빌드 67: 바꾼 것이 없어도 한 줄
   LOW66 = 0; TRI67 = 0;
 }
+function notes67() { if (!S.flags.v67) { S.flags.v67 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '장비 착용 레벨 · 무기 그림 · 룬 합성', body: STORY.v67 }); } }   // 빌드 67
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);

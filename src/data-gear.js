@@ -73,7 +73,7 @@ const RUNE_BLIND = 4;   // 섬광 룬(무기)이 거는 눈멂 초 (우두머리
    단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에 그대로 (tierNamed · gearBaseName, data-rpg.js). */
 /* ───────── 옵션 재감정: 희귀 이상 장비의 보너스 능력치를 마탑에서 다시 뽑는다 ───────── */
 const REAPPRAISE = { fee: t => Math.round(150 * GTIERS[t].p), crest: 1 };
-const RUNE_FUSE = { n: 3, fee: [600, 2500, 10000] };     // 같은 룬 3개 → 한 단계 위 (마탑, 빌드 64: 상급 3 → 최상급)
+const RUNE_FUSE = { n: 9, fee: [600, 2500, 10000] };     // 마탑 룬 합성: 같은 단계 룬 9개(종류는 섞어도 됨) → 한 단계 위 하나 (빌드 67 · store.js rf* — 예전엔 같은 룬 3개)
 const RUNE_CARVE = { crest: 2, fee: 300 };               // 증표 2개 + 300G → 하급 룬 (마탑)
 
 /* ───────── 유물: 던전 주인을 쓰러뜨리면 하나씩 (상단 전체에 효과) ───────── */

@@ -286,6 +286,62 @@ function lfDo() {
   openModal(jump ? '스킬북 합성 대성공!' : '스킬북 합성', `<div class="list"><div class="li bkres rq${ng}">${iArt('book_' + id, 1)}<div class="grow stack"><span>${SKILLS[id].name} ${gradeTag(ng)}</span><span class="sub muted">${clsList(SKILLS[id].cls)} Lv${SKILLS[id].lv} · ${BOOK_BAND[BOOK_BAND_OF[id]].n}</span></div></div></div><p class="sub muted">${gradeName(g)} 스킬북 ${LIB_FUSE.n}권이 하나로 묶였어요.${jump ? ` 아주 드물게(${Math.round(LIB_FUSE.jump * 100)}%) 두 단계 위가 나왔어요!` : ''}</p>`, [{ label: '확인', cls: 'gold' }]);
   changed(); return '';
 }
+/* ── 마탑: 룬 합성 (빌드 67, 사용자 11-13 13:05 「룬 합성해서 다음단계 룬으로 만드는거 만들어서 마탑안에 넣어주고, 9칸으로 9개 넣게해」) ──
+   같은 단계 룬 아홉(종류는 섞어도 된다) + 값(RUNE_FUSE.fee) → 한 단계 위 룬 하나. 나오는 종류는 넣은 룬 가운데에서 넣은 개수만큼의 몫으로 뽑는다(아홉이 모두 같은 종류면 그 종류).
+   예전 「같은 룬 셋 합치기」(빌드 64 · econ.js runeFuse)를 대신한다. 두 단계 위 · 드워프 합성 촉매는 없다 */
+const rfState = () => (UI.rfuse = UI.rfuse || { l: 0, ids: [] });
+const rfCands = l => Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].rune && ITEMS[k].rune[1] === l && S.inv[k] > 0);
+const rfUsed = (F, k) => F.ids.filter(x => x === k).length;
+function rfClean() {
+  const F = rfState(), cnt = {};
+  if (!(F.l >= 0 && F.l < RUNE_TOP)) F.l = 0;
+  F.ids = F.ids.filter(k => { const R = ITEMS[k] && ITEMS[k].rune; if (!R || R[1] !== F.l) return false; cnt[k] = (cnt[k] || 0) + 1; return cnt[k] <= (S.inv[k] || 0); }).slice(0, RUNE_FUSE.n);
+  return F;
+}
+function rfAuto() {   // 많이 가진 룬부터 — 한 종류로 아홉을 채우면 그 종류가 나온다
+  const F = rfClean(), left = k => (S.inv[k] || 0) - rfUsed(F, k);
+  const C = rfCands(F.l).sort((x, y) => left(y) - left(x) || x.localeCompare(y));
+  for (const k of C) while (F.ids.length < RUNE_FUSE.n && left(k) > 0) F.ids.push(k);
+}
+const rfCount = F => { const cnt = {}; F.ids.forEach(k => { cnt[k] = (cnt[k] || 0) + 1; }); return cnt; };
+function rfWhy() {
+  const F = rfClean();
+  if (!S.bld.tower) return '마탑이 필요해요';
+  if (F.ids.length < RUNE_FUSE.n) return `${RUNE_FUSE.n - F.ids.length}개 더 넣어요`;
+  if (S.gold < RUNE_FUSE.fee[F.l]) return `${fmt(RUNE_FUSE.fee[F.l])}G가 필요해요`;
+  const cnt = rfCount(F), outs = Object.keys(cnt).map(k => runeId(ITEMS[k].rune[0], F.l + 1));
+  if (!outs.every(o => (S.inv[o] || 0) > 0) && whFree(-1) + freedBy(cnt) <= 0) return '메인 창고에 빈 칸이 없어요';   // 나올 룬이 모두 창고에 있으면 그 칸에 쌓인다
+  return '';
+}
+function rfDo() {
+  const why = rfWhy(); if (why) return why;
+  const F = rfState(), l = F.l, fee = RUNE_FUSE.fee[l], cnt = rfCount(F), kinds = Object.keys(cnt).length;
+  S.gold -= fee; S.stats.spent = (S.stats.spent || 0) + fee;
+  let r = rnd() * F.ids.length, pick = F.ids[0];
+  for (const [k, n] of Object.entries(cnt)) { r -= n; if (r < 0) { pick = k; break; } }
+  F.ids.forEach(k => addTo(S.inv, k, -1));
+  const out = runeId(ITEMS[pick].rune[0], l + 1); addTo(S.inv, out, 1); F.ids = [];
+  S.stats.runeFuse = (S.stats.runeFuse || 0) + 1;
+  if (S.dex) { S.dex.items = S.dex.items || {}; S.dex.items[out] = 1; }
+  log(`마탑에서 ${RUNE_LV[l]} 룬 ${RUNE_FUSE.n}개를 합성해 ${ITEMS[out].name}을(를) 만들었다.`, 'good');
+  openModal('룬 합성', `<div class="list"><div class="li bkres${rq(itemGrade(out))}">${iArt(out, 1)}<div class="grow stack"><span>${ITEMS[out].name} ${gradeTag(itemGrade(out))}</span><span class="sub">${runeBoth(out)}</span></div></div></div><p class="sub muted">${RUNE_LV[l]} 룬 ${RUNE_FUSE.n}개가 하나로 묶였어요.${kinds > 1 ? ` 넣은 ${kinds}종류 가운데에서 넣은 개수만큼의 몫으로 종류가 정해졌어요.` : ''}</p>`, [{ label: '확인', cls: 'gold' }]);
+  changed(); return '';
+}
+function rfBox() {   // panels.js towerBox의 「룬 공방」 안
+  const F = rfClean(), why = rfWhy(), l = F.l, cnt = rfCount(F), G = i => itemGrade(runeId(RUNE_IDS[0], i));
+  const chips = RUNE_LV.slice(0, RUNE_TOP).map((n, i) => { const c = rfCands(i).reduce((x, k) => x + (S.inv[k] || 0), 0); return `<button type="button" class="btn sm q${G(i)}${l === i ? ' on' : ''}" data-act="rfl" data-l="${i}">${n} → ${RUNE_LV[i + 1]} <small>${c}</small></button>`; }).join('');
+  const slots = Array.from({ length: RUNE_FUSE.n }, (_, i) => { const k = F.ids[i]; return k ? `<button type="button" class="cell${rq(itemGrade(k))}" data-act="rfrm" data-i="${i}" title="빼기 · ${esc(ITEMS[k].name)}">${iArt(k, 2)}</button>` : `<span class="cell empty fslot">${rqEmpty(2)}<b class="fsn">${i + 1}</b></span>`; }).join('');
+  const rest = rfCands(l).sort((x, y) => RUNE_IDS.indexOf(ITEMS[x].rune[0]) - RUNE_IDS.indexOf(ITEMS[y].rune[0])).map(k => { const left = (S.inv[k] || 0) - rfUsed(F, k); return left > 0 ? `<button type="button" class="cell${rq(itemGrade(k))}" data-act="rfadd" data-k="${k}" title="${esc(ITEMS[k].name)}">${iArt(k, 2)}<b class="qty">${left}</b></button>` : ''; }).filter(Boolean);
+  const odds = Object.entries(cnt).map(([k, n]) => `${RUNES[ITEMS[k].rune[0]].name} ${Math.round(n / F.ids.length * 100)}%`).join(' · ');
+  return `<div class="sec"><b>룬 합성</b><span>같은 단계 ${RUNE_FUSE.n}개 → 한 단계 위</span></div>
+    <div class="sub muted">같은 단계 룬 ${RUNE_FUSE.n}개를 넣으면 <b class="q${G(l + 1)}">${RUNE_LV[l + 1]}</b> 룬 하나가 나와요. 종류를 섞어 넣으면 넣은 룬 가운데에서 넣은 개수만큼의 몫으로 정해지고, ${RUNE_FUSE.n}개가 모두 같은 종류면 그 종류가 나와요.</div>
+    <div class="btns">${chips}</div>
+    <div class="igrid fuse">${slots}</div>
+    ${F.ids.length ? `<div class="sub">나올 룬(${RUNE_LV[l + 1]}): ${odds}</div>` : ''}
+    <div class="btns"><button type="button" class="btn sm" data-act="rfauto"${F.ids.length < RUNE_FUSE.n && rest.length ? '' : ' disabled'}>많이 가진 룬부터 자동으로 넣기</button><button type="button" class="btn sm" data-act="rfclr"${F.ids.length ? '' : ' disabled'}>비우기</button><button type="button" class="btn gold grow" data-act="rfgo"${why ? ' disabled' : ''}>${why || `<span class="col2"><span class="nw">합성하기</span><span class="nw">${fmt(RUNE_FUSE.fee[l])}G</span></span>`}</button></div>
+    <div class="sec"><b>넣을 수 있는 룬</b><span>${RUNE_LV[l]} · 메인 창고</span></div>
+    ${rest.length ? '' : '<div class="sub muted">이 단계 룬이 메인 창고에 없어요. 룬은 필드 보스 · 던전 · 레이드에서 얻거나 위에서 증표로 새겨요.</div>'}<div class="igrid rune">${whPad(rest, 5).join('')}</div>`;
+}
 BLD_SUM.library = () => { const n = Object.keys(S.inv).filter(isBookItem).reduce((x, k) => x + (S.inv[k] || 0), 0); return `<div class="sub">창고 스킬북 ${n}권 · 같은 레어도 ${LIB_FUSE.n}권을 합성해요</div>`; };
 BLD_BOX.library = () => {
   const F = lfClean(), why = lfWhy(), lib = S.bld.library || 0;
@@ -370,6 +426,12 @@ Object.assign(ACT, {
   lfauto: () => { lfAuto(); renderPanel(true); },
   lfclr: () => { lfState().ids = []; renderPanel(true); },
   lfgo: () => { say(lfDo()); renderPanel(true); },
+  rfl: d => { const F = rfState(); F.l = +d.l; F.ids = []; renderPanel(true); },   // 빌드 67 마탑 룬 합성
+  rfadd: d => { const F = rfClean(); if (F.ids.length < RUNE_FUSE.n && rfUsed(F, d.k) < (S.inv[d.k] || 0)) F.ids.push(d.k); renderPanel(true); },
+  rfrm: d => { const F = rfState(); F.ids.splice(+d.i, 1); renderPanel(true); },
+  rfauto: () => { rfAuto(); renderPanel(true); },
+  rfclr: () => { rfState().ids = []; renderPanel(true); },
+  rfgo: () => { say(rfDo()); renderPanel(true); },
   whsel: d => { const i = +d.i; if (i >= whOpenN()) { say(`${whName(i)}는 ${RANKS[whOpenAt(i)] ? RANKS[whOpenAt(i)].name : 'S'}랭크에 열려요.`); return; } UI.wh = i; UI.invSel = null; UI.whPick = []; if (i >= 0 && UI.invTab === 'stand') UI.invTab = 'mat'; const top = winTop(); if (top) top.tab = 'wh' + i; renderPanel(true); },
   whto: d => { UI.whTo = +d.i; renderPanel(true); },
   whmv: d => { say(whMoveItem(d.k, +d.q, +d.f, +d.t)); renderPanel(true); },
@@ -386,7 +448,7 @@ Object.assign(ACT, {
   fuseclr: () => { fuseState().ids = []; renderPanel(true); },
   fusego: () => { say(fuseDo()); renderPanel(true); }
 });
-ACT_SFX.bkopen = 'loot'; ACT_SFX.fusego = 'lvl'; ACT_SFX.lfgo = 'lvl';
+ACT_SFX.bkopen = 'loot'; ACT_SFX.fusego = 'lvl'; ACT_SFX.lfgo = 'lvl'; ACT_SFX.rfgo = 'lvl';
 
 // 옛 저장: 창고 1~10을 만들고 메인 창고를 한 번 레어도 순서로 정리해 둔다 (예전엔 창이 값 순서로 보여 줬다) · 알림
 function notes63b() {

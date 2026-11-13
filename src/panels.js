@@ -216,8 +216,6 @@ function towerBox() {
     const lv = rlv(k), c = researchCost(k);
     return `<div class="li"><div class="grow"><span>${Rr.name} <small class="gold-t">${dots(lv, Rr.max)}</small></span><span class="sub">${lv ? '지금: ' + Rr.desc(lv) + ' · ' : ''}${c ? '다음: ' + Rr.desc(lv + 1) : '최고 단계'}</span>${c ? `<span class="sub">${fmt(c[0])}G · ${needStr(c[1])} · ${Rr.days[lv]}일</span>` : ''}</div>${c ? `<button type="button" class="btn sm gold" data-act="research" data-id="${k}"${canResearch(k) ? '' : ' disabled'}>연구</button>` : ''}</div>`;
   }).join('');
-  const runes = Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].rune && S.inv[k] > 0).sort();
-  const fuse = runes.map(k => { const R = ITEMS[k].rune, nx = R[1] < RUNE_TOP ? runeId(R[0], R[1] + 1) : null; return `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${runeBoth(k)}${nx ? ` · ${RUNE_FUSE.n}개 → ${ITEMS[nx].name} (${fmt(RUNE_FUSE.fee[R[1]])}G)` : ' · 최상급'}</span></div>${nx ? `<button type="button" class="btn sm" data-act="fuse" data-it="${k}"${S.inv[k] >= RUNE_FUSE.n && S.gold >= RUNE_FUSE.fee[R[1]] ? '' : ' disabled'}>합치기</button>` : ''}</div>`; }).join('');
   const crests = TIER_FIELDS.map((f, t) => 'crest_' + t).filter(k => (S.inv[k] || 0) > 0);
   const carve = crests.map(k => `<div class="li">${iconImg(k)}<div class="grow"><span>${ITEMS[k].name} <b class="num">×${S.inv[k]}</b></span><span class="sub">${RUNE_CARVE.crest}개와 ${RUNE_CARVE.fee}G로 무작위 하급 룬을 새겨요</span></div><button type="button" class="btn sm" data-act="carve" data-t="${k.split('_')[1]}"${S.inv[k] >= RUNE_CARVE.crest && S.gold >= RUNE_CARVE.fee ? '' : ' disabled'}>새기기</button></div>`).join('');
   // 빌드 64 (사용자 11-11 19:28 「각 시설에서만」): 창고 정보창에서 뺀 룬 새기기 · 옵션 재감정을 마탑으로 — 창고 · 모험가가 든 장비를 레어도 높은 것부터
@@ -226,8 +224,9 @@ function towerBox() {
   const runeG = all.filter(x => runeSlots(x.g)).map(x => gRow(x, `룬 ${(x.g.runes || []).length}/${runeSlots(x.g)}칸`, `<button type="button" class="btn sm" data-act="runewin" data-g="${x.g.id}">룬 새기기</button>`));
   const reapG = all.filter(x => (x.g.q || 0) >= 2).map(x => { const why = reappraiseWhy(x.g); return gRow(x, `보너스 ${statLine(x.g.bonus || {}) || '없음'} · ${fmt(REAPPRAISE.fee(x.g.t))}G${ITEMS['crest_' + x.g.t] ? ` + ${ITEMS['crest_' + x.g.t].name} ${REAPPRAISE.crest}` : ''}${why ? ` · <span class="red-t">${why}</span>` : ''}`, `<button type="button" class="btn sm" data-act="reapp" data-id="${x.g.id}"${why ? ' disabled' : ''}>재감정</button>`); });
   return `${cur ? `<div class="sub gold-t">연구 중: ${RESEARCH[cur.k].name} ${rlv(cur.k) + 1}단계 · ${dayLabel(cur.done)} 완료</div>` : '<div class="sub">한 번에 하나씩 연구할 수 있어요. 연구 기간은 게임 속 날짜로 셉니다.</div>'}<div class="list">${rows}</div>
-    <div class="sec"><b>룬 공방</b><span>새기고 합치기</span></div>
-    <div class="list">${carve || '<div class="li"><span class="sub">필드 보스가 떨어뜨리는 「우두머리의 증표」로 룬을 새길 수 있어요.</span></div>'}${fuse}</div>
+    <div class="sec"><b>룬 공방</b><span>증표로 새기기</span></div>
+    <div class="list">${carve || '<div class="li"><span class="sub">필드 보스가 떨어뜨리는 「우두머리의 증표」로 룬을 새길 수 있어요.</span></div>'}</div>
+    ${rfBox()}
     <details class="card"><summary><b>장비에 룬 새기기</b> <span class="muted">· ${runeG.length}점 (고급부터 등급마다 한 칸)</span></summary><div class="list">${runeG.join('') || '<div class="li"><span class="sub">룬 칸이 있는 장비가 없어요.</span></div>'}</div></details>
     <details class="card"><summary><b>옵션 재감정</b> <span class="muted">· ${reapG.length}점 (희귀부터 보너스 옵션을 다시 뽑아요)</span></summary><div class="list">${reapG.join('') || '<div class="li"><span class="sub">희귀 이상 장비가 없어요.</span></div>'}</div></details>`;
 }
@@ -612,7 +611,7 @@ PANELS.rune = w => {
   return `<div class="card hl"><div class="row">${gArt(g, 2)}<div class="grow"><div class="h">${gearName(g)} ${qTag(g)}</div><div class="sub">${statLine(gearStats(g))}</div><div class="sub">${f.a ? `${esc(f.a.name)}이(가) 쓰는 중` : '창고에 보관 중'} · 룬 ${(g.runes || []).length}/${n}${runeDots(g)}</div><div class="sub muted">${side === 'w' ? '무기라 룬의 「무기」 효과(때리는 쪽)가 붙어요.' : '무기가 아니라 룬의 「방어구」 효과(막는 쪽)가 붙어요.'}</div></div></div></div>
     ${n ? '' : '<div class="sub red-t">일반 장비에는 룬 칸이 없어요. 고급부터 등급마다 한 칸씩 열려요.</div>'}
     <div class="sec"><b>끼운 룬</b><span>빼면 창고로 돌아와요</span></div><div class="list">${cur || '<div class="li"><span class="sub">끼운 룬이 없어요.</span></div>'}</div>
-    <div class="sec"><b>창고의 룬</b><span>마탑에서 새기고 합쳐요</span></div><div class="list">${add || '<div class="li"><span class="sub">룬이 없어요. 필드 보스와 던전, 레이드에서 얻거나 마탑에서 새겨요.</span></div>'}</div>`;
+    <div class="sec"><b>창고의 룬</b><span>마탑에서 새기고 합성해요</span></div><div class="list">${add || '<div class="li"><span class="sub">룬이 없어요. 필드 보스와 던전, 레이드에서 얻거나 마탑에서 새겨요.</span></div>'}</div>`;
 };
 PANELS.exp = () => {
   raidPartyEnsure();
@@ -684,7 +683,7 @@ function invDetail(k, rate) {
   } else if (cat === 'book') {
     const s = SKILLS[I.book];
     desc = `${s.desc} · ${clsList(s.cls)} · Lv${s.lv}+ · ${costStr(s)}<br>${skillSpecLine(I.book)}`; extra = `${bookFromText(I.book)} · 모험가 창 → 스킬에서 배워요 (수업료 ${learnFee(s)}G)`;
-  } else if (cat === 'rune') extra = `${runeBoth(k)} · 마탑에서 장비에 새기고, 같은 룬 셋을 합쳐 한 단계 위로${I.rune[1] >= RUNE_TOP ? ' (최상급)' : ''}`;   // 빌드 64 룬 개편: 무기 · 방어구 두 효과
+  } else if (cat === 'rune') extra = `${runeBoth(k)} · 마탑에서 장비에 새기고, 같은 단계 룬 ${RUNE_FUSE.n}개를 합성해 한 단계 위로${I.rune[1] >= RUNE_TOP ? ' (최상급)' : ''}`;   // 빌드 64 룬 개편: 무기 · 방어구 두 효과
   else if (cat === 'food' && I.dish) { const F = FOODS[I.dish]; desc = `${F.desc} · ${foodFxText(F.fx)}`; extra = `원정대 창에서 파티 도시락으로 골라요 · 주방 ${F.lv}단계: ${needStr(F.need)}`; if (S.bld.kitchen) btns += `<button type="button" class="btn sm" data-act="bopen" data-id="kitchen">주방에서 만들기</button>`; }
   else if (cat === 'food') { const uses = FOOD_IDS.filter(id => FOODS[id].need[k]).map(id => FOODS[id].name); extra = uses.length ? `들어가는 요리: ${uses.join(', ')}` : ''; if (KITCHEN_BUY[k] && S.bld.kitchen) btns += `<button type="button" class="btn sm gold" data-act="fbuy" data-k="${k}" data-n="5"${S.gold < KITCHEN_BUY[k] * 5 ? ' disabled' : ''}>주방에서 5개 ${KITCHEN_BUY[k] * 5}G</button>`; }
   if (I.trade) extra = `${KINGDOMS[I.trade].name} 특산물(교역품) · 그 나라에서 ${g$(tradeBuyPrice(I.trade, k))}에 산다${extra ? ' · ' + extra : ''}`;
@@ -772,7 +771,6 @@ const ACT = {
   runewin: d => openWin('rune', { gid: +d.g }),
   runein: d => say(runeIn(+d.g, d.it)),
   runeout: d => say(runeOut(+d.g, +d.i)),
-  fuse: d => say(runeFuse(d.it)),
   carve: d => { const r = runeCarve(+d.t); say(r && ITEMS[r] ? `${ITEMS[r].name}을(를) 새겼어요` : r); },
   craft: d => say(craft(+d.i) || '물약을 만들었어요'),
   research: d => say(startResearch(d.id)),

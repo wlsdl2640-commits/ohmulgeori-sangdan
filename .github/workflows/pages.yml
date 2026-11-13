@@ -1,8 +1,7 @@
 name: 웹 배포
 
+# 사용자 11-13 13:05 「APK 작업 웹버전 만들지 말고」 — main에 올려도 웹 배포는 돌지 않는다. 시킬 때만 Actions에서 손으로 돌린다(workflow_dispatch)
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
