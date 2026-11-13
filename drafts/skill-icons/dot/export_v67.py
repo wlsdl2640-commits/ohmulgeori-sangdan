@@ -1,5 +1,6 @@
 """빌드 65 시안 v67 합격분 → 게임 데이터 (11-12 19:57 사용자 「스킬시안은 용기수의 하늘의 눈 빼고 다 합격」)
 - 스킬: 지금 SKICON 307개(export_game.py · final_snap) + v67 53개 + 하늘의 눈(dragonscale)은 skyeye68.py D안 「과녁 무늬 와이번 눈」(11-12 20:26).
+  빌드 69: 물통 돌리기(medkit) · 웨건 보급(rations) · 개척민의 지혜(pioneerwit)는 c_v69.py A안 (11-13 17:41).
   v67의 같은 id(짐 방패 · 매복 · 하늘 사격 …)는 새 그림으로 바뀐다. 확정 그림 final_snap_v67/{id}.png
 - 숙련: 27개 × 다섯 단계 [안 배움, 초급, 중급, 상급, 달인] — 지금 12개는 0~3 그대로 + 달인, 새 15개는 m_v63.art63.
   확정 그림 final_snap_mast/{id}_{단계}.png (지금 12개 0~3은 그 자리 그림과 같아야 한다)
@@ -36,6 +37,9 @@ for _, keys in V.GROUPS:
         (rep if gid in rows else new).append(gid); rows[gid] = enc(art)
 import skyeye68
 art = skyeye68.v_d(); im = art.img('dmg'); im.save(SNAP / 'dragonscale.png'); rows['dragonscale'] = enc(art); rep.append('dragonscale(D안)')
+import c_v69   # 빌드 69 확정 (11-13 17:41 사용자 「물통 돌리기 A · 웨건보급 A · 개척민의지혜 A로 확정」) — 짐꾼 · 코네스토가 회복 스킬 자리의 새 스킬
+for gid, fn in (('medkit', c_v69.canteen_a), ('rations', c_v69.supply_a), ('pioneerwit', c_v69.camp_a)):
+    art, _ = fn(); im = art.img(c_v69.ICONS[gid + '_a'][1]); im.save(SNAP / f'{gid}.png'); rows[gid] = enc(art); rep.append(gid + '(v69 A안)')
 js = ['/* 스킬 아이콘 (뭉툭 도트): 육각 틀 안쪽 16×20칸의 색.',
       '   "팔레트(6자리 색 이어 붙임)|칸 글자 320개" — 팔레트가 64색을 넘으면 칸마다 두 글자.',
       '   만든 곳: 시안 저장소 drafts/skill-icons/dot/export_v67.py (export_game.py 307개 + 빌드 65 시안 v67 53개 + 하늘의 눈 skyeye68 D안) — 손으로 고치지 않는다 */',
