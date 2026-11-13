@@ -86,6 +86,7 @@ MASTERY.plate.fx = [{ hpPct: 0.03 }, { hpPct: 0.05, defPct: 0.03 }, { hpPct: 0.0
 MASTERY.holy.fx = [{ healPow: 0.03 }, { healPow: 0.06 }, { healPow: 0.09 }, { healPow: 0.12 }];
 MASTERY.tome.fx = MASTERY.tome.fx.map((f, i) => (f.mdrain ? Object.assign({}, f, { mdrain: [0, 0.02, 0.04, 0.06][i] }) : f));
 // 새 숙련 「신성력」: 사제계열 · 성기사 — 싸우는 동안에도 자기 HP가 조금씩 차오른다 (초당 최대 HP의 0.2 · 0.4 · 0.6 · 0.8%, core.js deriveBase hpRegen)
+// 그림: data-masticon.js MASTICON.divine = 시안 저장소 dot/m_v69c.py B안 「세 색 빛살」(11-13 19:40 사용자 「B로」) — icon은 그림이 없을 때 쓰는 임시 물건 그림
 MASTERY.divine = { name: '신성력', job: ['cleric', 'paladin'], icon: 'amulet', fx: [{ hpRegen: 0.002 }, { hpRegen: 0.004 }, { hpRegen: 0.006 }, { hpRegen: 0.008 }], desc: '몸에 깃든 신성한 힘. 싸우는 동안에도 자기 HP가 조금씩 차오른다.' };
 MAST_IDS.push('divine');
 // 회복 스킬북은 뽑기 등급이 한 칸 드물다 (data-store.js — 흔함 → 보통 → 드묾 → 희귀 → 전설)
