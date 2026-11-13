@@ -18,6 +18,11 @@ Object.assign(RAIDS.behemoth, { bg: 'sky', sky: 1, desc: '구름섬 위 하늘�
 Object.assign(FIELDS.raid_behemoth, { bg: 'sky', skyRaid: 1, desc: RAIDS.behemoth.desc });
 FIELDS.raid_behemoth.dungeon.bg = 'sky';
 const raidSky = id => !!(RAIDS[id] && RAIDS[id].sky);
+// 킹슬라임 새 그림 (11-14 00:42 사용자 「킹슬라임B안」): 평원 초록 슬라임을 키운 꼴 + 머리 위 작은 왕관 + 몸속에 삼킨 장검 · 보물 상자 · 금화
+//   그림은 pxraid.js PXRAID.kingslime(= tools/saved/raid69/kingslime.py B, 32×24 반 해상도 → 64×48). 색 · 설명도 초록 슬라임에 맞춘다.
+Object.assign(RAIDS.kingslime, { c: '#5fbf5a', desc: '평원의 초록 슬라임이 모두 모여 하나가 된 괴물. 머리에 작은 왕관을 얹었고, 투명한 몸속에 삼킨 장검 · 보물 상자 · 금화가 비친다.' });
+Object.assign(FIELDS.raid_kingslime, { desc: RAIDS.kingslime.desc });
+Object.assign(MONS.kingslime, { W: 64, H: 48, body: '#5fbf5a', dark: '#3f8f3c' });
 // 레이드 HP · 세기 (빌드 69 측정 scratchpad/v88/rhp88.js — 레이드 레벨 파티 넷(3차 Lv150 ~ 190 · 스킬 3단계 · 숙련도 3 · 고급 장비)이 한 번 도전(90초)에
 //   예전 식 raidHp(Lv)의 97% · 69% · 63% · 45% · 41%를 깎고 아무도 안 쓰러졌다 → HP를 따로 정하고(한 번에 8% ~ 4%) 한 방 세기도 올린다)
 //   다시 잰 값(DIFF.hp 1.22 포함): 레이드 레벨 파티 넷이 한 번에 킹슬라임 6.5% · 카이샤르 5.0% · 대그리핀 4.9% · 템페스트 3.8% · 베히모스 3.7%, 한 방 ×2.0이면 90초에 최대 HP의 12 ~ 26%를 맞는다

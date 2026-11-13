@@ -178,7 +178,7 @@ function renderChips() {
 }
 
 /* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
-const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '룬', battle: '전투' };
+const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '장비 칸', battle: '전투' };
 const winTop = () => UI.stack[UI.stack.length - 1] || null;
 function winTitle(w) {
   if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';

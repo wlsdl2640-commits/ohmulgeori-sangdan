@@ -327,7 +327,26 @@ function staDots(g, st, x, y) {
 }
 /* ───────── 원정 (옆모습): 파티는 왼쪽, 적은 오른쪽. 앞줄이 크고 뒷줄이 작다 ───────── */
 const ORBIT = { elementalist: ['#7ae0a0', '#f0a040'], necromancer: ['#b88aff', '#6a4aa8'] };
-const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168], [36, 196], [26, 184], [44, 172], [16, 176]];   // 7번째부터는 레이드대(짐꾼 포함 10명)
+const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168], [36, 196], [26, 184], [44, 172], [16, 176]];   // 적 자리(거울로) — 모험가는 빌드 69부터 formSlots
+// 대형 자리 (빌드 69, 사용자 11-13 21:22 대형 · 11-14 00:42 「모험가들 너무 가까워 거리를 살짝 더줘」): core.js formRank 줄마다 x(앞 → 뒤),
+//   줄 안에서는 가까이(아래) → 멀리(위)로 비스듬히. 근접이 넷 이상이면 넷째부터 가운데 줄 맨 앞, 탈것은 그 줄 먼 칸, 들것은 맨 뒤 줄, 빈 줄은 앞으로 당긴다.
+//   줄 사이는 시안의 26 → 34(줄이 넷 이상이면 화면에 들게 좁힌다), 줄 안 깊이도 시안보다 조금 넓게.
+const FORM_X0 = 124, FORM_GAP = 34, FORM_XMIN = 32, FORM_SKEW = 0.9;   // 줄 넷(짐꾼까지 찬 파티)이면 줄 사이 30.7 — 맨 뒤 짐꾼의 등짐이 화면 밖으로 나가지 않게
+const FORM_Y = { 1: [192], 2: [198, 184], 3: [199, 187, 175], 4: [199, 191, 183, 175], 5: [199, 193, 187, 181, 175] };
+function formSlots(team) {
+  const cols = [[], [], [], [], []];
+  team.forEach((a, i) => { let r = a.down ? 4 : formRank(a.cls), o = 1; if (r === 0 && cols[0].length >= 3) { r = 1; o = 0; } cols[r].push([i, o, rideKind(a) ? 1 : 0]); });
+  cols.forEach(L => L.sort((p, q) => p[2] - q[2] || p[1] - q[1] || p[0] - q[0]));   // 탈것은 그 줄 먼 칸 · 넘친 근접은 그 줄 맨 앞
+  const used = cols.filter(L => L.length).length, gap = used > 1 ? Math.min(FORM_GAP, (FORM_X0 - FORM_XMIN) / (used - 1)) : FORM_GAP;
+  const out = []; let ci = 0, last = FORM_X0;
+  for (const L of cols) {
+    if (!L.length) continue;
+    const x0 = last = FORM_X0 - gap * ci++, ys = FORM_Y[Math.min(5, L.length)];
+    L.forEach(([ti], k) => { const y = ys[Math.min(k, ys.length - 1)]; out[ti] = [Math.round(x0 - (199 - y) * FORM_SKEW), y]; });
+  }
+  out.petX = Math.max(8, Math.round(last - 24));   // 펫은 맨 뒤 줄 뒤
+  return out;
+}
 const ZS = 1.25;   // 옆모습 배율
 const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
 const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, (y - 166) / 32))));
@@ -346,11 +365,12 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const appr = fighting ? 0 : Math.max(0, Math.min(1, gap / 30));
   V.giant = foes.some(f => f.giant);
   for (const f of e.foes.concat(e.next || [])) V.fname[f.uid] = f.name || MONS[f.id].name;
-  const pos = {}, n = team.length, draws = [], dir = e.mode === 'return' ? -1 : 1, mx = x => (dir > 0 ? x : AW - x);
+  const pos = {}, draws = [], dir = e.mode === 'return' ? -1 : 1, mx = x => (dir > 0 ? x : AW - x);
   V.dir = dir;
-  team.forEach((a, i) => { const [x, y] = SLOT_P[Math.min(SLOT_P.length - 1, i)], q = pos['a' + a.id] = [mx(x), y], ru = a.down ? 0 : -rideTop(a); if (ru) q.ru = ru; });   // 탈것 (빌드 65): 숫자 · 알림은 기수 머리 위에
+  const FS = formSlots(team);
+  team.forEach((a, i) => { const [x, y] = FS[i], q = pos['a' + a.id] = [mx(x), y], ru = a.down ? 0 : -rideTop(a); if (ru) q.ru = ru; });   // 탈것 (빌드 65): 숫자 · 알림은 기수 머리 위에
   const pet = petOfParty(p);
-  if (pet) pos['aP' + pet.id] = n > 6 ? [mx(8), 199] : [mx(34), 197];
+  if (pet) pos['aP' + pet.id] = [mx(FS.petX), 199];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   Object.assign(V.last, pos);
   V.hitA = team.map(a => { const q = pos['a' + a.id]; return [a.id, q[0], q[1], q.ru || 0]; });   // 빌드 66: 누르는 자리 (전투 창)
@@ -737,7 +757,7 @@ function events(e, pos, t, team, p) {
     if (x.type === 'hit') { /* 소리는 맞는 때에 (아래 hit) */ }
     else if (x.type === 'hurt' && !x.dot) sfxAt('hurt', fd);
     else if (x.type === 'heal' || x.type === 'pot' || x.type === 'fheal') sfx(x.type === 'pot' ? 'pot' : 'heal');
-    else if (x.type === 'buff' || x.type === 'revive' || (x.type === 'shield' && x.on)) sfx('buff');
+    else if (x.type === 'buff' || x.type === 'revive' || (x.type === 'shield' && x.on && !x.ms)) sfx('buff');   // 빌드 69: 마석 보호막(싸움 시작)은 소리 없이
     else if (x.type === 'kill') sfx('kill');
     else if (x.type === 'lvl' || x.type === 'petlvl') sfx('lvl');
     else if (x.type === 'down') sfx('down');
@@ -753,6 +773,7 @@ function events(e, pos, t, team, p) {
     if (x.type === 'hit') {
       const fm = fmid(x.d), ft = ftop(x.d);
       if (!fm) { if (!x.dot && x.v) sfx(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k]); continue; }
+      if (x.k === 'reflect') { const tr = Math.max(t, (V.fhit && V.fhit['a' + x.by]) || t) + 0.08; V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: '#dcd0ff', t0: tr, d: 0.7 }); V.fx.push({ k: 'bubble', x: fm[0], y: fm[1], t0: tr, d: 0.4, c: '#efe8ff' }); continue; }   // 빌드 69 거울 마법의 오팔: 맞은 뒤에 되돌린 피해
       if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') { const cc = x.k === 'curse' ? '#c89aff' : x.k === 'burn' ? '#ff8a2a' : x.k === 'bleed' ? '#ff4a4a' : '#9ae86a'; V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: cc, t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: fm[0], y: fm[1], t0: t, d: 0.5, c: cc }); continue; }
       const am = amid(x.s);
       if (!am) { if (!x.dot && x.v) sfxAt(x.c ? 'crit' : HIT_SFX[x.k] === undefined ? 'hit' : HIT_SFX[x.k], md); continue; }
@@ -862,6 +883,7 @@ function events(e, pos, t, team, p) {
       list.forEach(id => { const aq = at('a' + id); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.7, c: col }); });
     } else if (x.type === 'shield') {   // 보호막이 생기거나 깎일 때: 하늘색 테
       const aq = at('a' + x.d); if (aq) V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t + fd, d: x.on ? 0.7 : 0.35, c: '#8ad8ff' });
+      if (!x.on) V.fhit['a' + x.d] = t + fd;   // 빌드 69: 보호막이 다 막은 한 방도 맞는 때 (오팔 반사 숫자가 그때 뜬다)
     } else if (x.type === 'cover') {    // 엄호: 탱커 위에 방패 글자
       const aq = at('a' + x.s); if (aq) callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, '엄호!', 'buff');
     } else if (x.type === 'combo') {    // 연계: 중첩 수
@@ -912,6 +934,9 @@ function events(e, pos, t, team, p) {
       if (q) callout(q[0], q[1] - 4, x.k === 'sleep' ? '깨어남' : x.k === 'freeze' ? '얼음이 깨졌다!' : '정신이 듦', x.k === 'freeze' ? 'buff' : 'dot');
     } else if (x.type === 'subst') {    // 쓰러질 한 방을 한 번 피한다
       const aq = at('a' + x.d); if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t, d: 0.8, c: '#c8b48a' }); callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, '바꿔치기!', 'buff'); }
+    } else if (x.type === 'endure') {   // 빌드 69 불멸의 호박: 쓰러질 한 방을 HP 1로
+      const aq = at('a' + x.d), t2 = Math.max(t, (V.fhit && V.fhit['a' + x.d]) || t);
+      if (aq) { V.fx.push({ k: 'buff', x: aq[0], y: aq[1], t0: t2, d: 0.9, c: '#ffc24a' }); callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, '버텼다!', 'buff'); }
     } else if (x.type === 'fheal') {
       const fq = at('f' + x.d);
       if (fq) { V.fx.push({ k: 'heal', x: fq[0], y: fq[1], t0: t, d: 0.7, c: '#8af08a' }); V.fx.push({ k: 'num', x: fq[0], y: fq[1] - 24, s: '+' + x.v, c: '#8af08a', t0: t, d: 0.8 }); }
@@ -1031,6 +1056,7 @@ function logEvent(x, e, p) {
   const add = (h, c) => { V.log.push({ n: ++V.logN, h, c: c || '' }); if (V.log.length > LOG_MAX) V.log.shift(); };
   if (x.type === 'hit') {
     if (x.dot && !x.v) return;
+    if (x.k === 'reflect') return add(`${ally(A(x.by))}의 오팔이 ${foe(Fn(x.d))}에게 ${num(x.v)} 피해를 되돌렸습니다.`, 'dim');   // 빌드 69 마석 반사
     if (x.k === 'poison' || x.k === 'curse' || x.k === 'burn' || x.k === 'bleed') return add(`${foe(jo(Fn(x.d), '이', '가'))} ${x.k === 'curse' ? '저주' : x.k === 'burn' ? '화상' : x.k === 'bleed' ? '출혈' : '독'}(으)로 ${num(x.v)} 피해를 입었습니다.`, 'dim');
     if (x.pet) return add(`펫 ${ally(A(x.s))}의 ${PET_ACT_NAME[PETS[(petById(+String(x.s).slice(1)) || { kind: 'wolf' }).kind].act] || '공격'}! ${foe(Fn(x.d))}에게 ${num(x.v)} 피해.`);
     if (x.k === 'pet') return add(`${ally(A(x.s))}의 동료 짐승이 ${foe(Fn(x.d))}에게 ${num(x.v)} 피해!`);
@@ -1053,10 +1079,11 @@ function logEvent(x, e, p) {
   if (x.type === 'ahit') return add(`${ally(jo(A(x.s), '이', '가'))} 홀려서 ${ally(A(x.d))}을(를) 쳤다! (${num(x.v, 'r')})`, 'warn');
   if (x.type === 'stoff') { const St = STATUS[x.k], who = x.side === 'f' ? foe(Fn(x.d)) : ally(A(x.d)); return add(x.k === 'sleep' ? `${who}: 맞고 잠에서 깼다.` : x.k === 'freeze' ? `${who}: 얼음이 불에 깨졌다! (그 한 방 ×${FIGHT.thaw})` : `${who}: ${St ? St.name : ''}이(가) 풀렸다.`, 'dim'); }
   if (x.type === 'subst') return add(`${ally(jo(A(x.d), '이', '가'))} 쓰러질 한 방을 피했다!`, 'lvl');
+  if (x.type === 'endure') return add(`${ally(jo(A(x.d), '이', '가'))} 불멸의 호박으로 쓰러질 한 방을 HP 1로 버텼다!`, 'lvl');   // 빌드 69 마석
   if (x.type === 'heal' && typeof x.s === 'string') { const pt = petById(+x.s.slice(1)); return add(`펫 ${ally(pt ? pt.name : '펫')}의 ${pt ? PET_ACT_NAME[PETS[pt.kind].act] : '회복'}! ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 회복.`); }
   if (x.type === 'heal' && x.rg) return add(`${ally(jo(A(x.d), '이', '가'))} 재생으로 HP를 ${num(x.v, 'g')} 회복했습니다.`, 'dim');
   if (x.type === 'heal') return add(x.s === x.d ? `${ally(jo(A(x.d), '이', '가'))} HP를 ${num(x.v, 'g')} 회복했습니다.` : `${ally(jo(A(x.s), '이', '가'))} ${ally(A(x.d))}의 HP를 ${num(x.v, 'g')} 치유했습니다.`);
-  if (x.type === 'shield') return add(x.on ? `${ally(A(x.d))}에게 보호막 ${num(x.v, 'b')}이 생겼습니다.` : `${ally(A(x.d))}의 보호막이 ${num(x.v, 'b')}을(를) 막아냈습니다.`, 'dim');
+  if (x.type === 'shield') return add(x.on ? `${ally(A(x.d))}에게 ${x.ms ? '방벽의 아쿠아마린 ' : ''}보호막 ${num(x.v, 'b')}이 생겼습니다.` : `${ally(A(x.d))}의 보호막이 ${num(x.v, 'b')}을(를) 막아냈습니다.`, 'dim');
   if (x.type === 'cover') return add(`${ally(jo(A(x.s), '이', '가'))} ${ally(A(x.d))}을(를) 감싸 대신 맞았습니다!`, 'sk');
   if (x.type === 'combo') { if (x.c === 3 || x.c === COMBO_MAX) add(`${ally(A(x.s))}의 연계 ${x.c}중첩! (피해 +${Math.round((TR(advById(x.s) || { cls: 'warrior' }).combo || 0) * x.c * 100)}%)`, 'dim'); return; }
   if (x.type === 'jackpot') return add(`<i class="lg-c">대박!</i> ${ally(A(x.s))}의 한 방이 크게 터졌습니다.`, 'lvl');

@@ -165,6 +165,7 @@ function itemArtKey(id) {
     return `jb_${['warrior', 'archer', 'mage', 'cleric', 'rogue', 'porter'].includes(fam) ? fam : 'all'}_${Math.max(0, Math.min(5, bookGrade(I.book)))}`;
   }
   if (I.rune) return `rn_${I.rune[0]}_${I.rune[1]}`;
+  if (I.maseok) return 'ms_' + I.maseok;   // 빌드 69: 마석 (data-maseokart.js)
   return null;
 }
 function iconURL(id) {

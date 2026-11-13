@@ -176,7 +176,7 @@ function matRow(it) {
   return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.v}G · 무게 ${I.w}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${itemFrom(it).join(', ') || (I.boss === 1 ? '우두머리(필드 보스)' : I.boss === 2 ? '필드의 주인' : I.boss === 3 ? '던전 주인·주인을 다시 잡을 때' : I.raid ? '레이드 등수 보상' : '')}</span>${mats.length || wants.length ? `<span class="sub muted">${mats.length ? `장비 재료(${mats.join('·')})` : ''}${mats.length && wants.length ? ' · ' : ''}${wants.length ? `사는 왕국: ${wants.join(', ')}` : ''}</span>` : ''}</div></div>`;
 }
 function dexMats() {
-  const ids = Object.keys(ITEMS).filter(it => { const I = ITEMS[it]; return !I.book && I.btier == null && !I.potion && !I.heal && !I.mana && !I.sup && !I.herb && !it.startsWith('rune_') && !I.runeKind; });   // 스킬북 단계(빌드 63)는 부속품 도감에서 뺀다
+  const ids = Object.keys(ITEMS).filter(it => { const I = ITEMS[it]; return !I.book && I.btier == null && !I.potion && !I.heal && !I.mana && !I.sup && !I.herb && !it.startsWith('rune_') && !I.runeKind && !I.maseok; });   // 스킬북 단계(빌드 63)는 부속품 도감에서 뺀다 · 마석(빌드 69)은 소모품 탭 룬 밑에
   const g1 = ids.filter(it => !ITEMS[it].boss && !ITEMS[it].raid), g2 = ids.filter(it => ITEMS[it].boss), g3 = ids.filter(it => ITEMS[it].raid);
   const known = ids.filter(it => dexState().items[it] || (S.inv[it] || 0) > 0).length;
   const herbs = HERB_IDS.map(it => { const I = ITEMS[it], known = !!dexState().items[it] || (S.inv[it] || 0) > 0, uses = RECIPES.filter(r => r.need[it]).map(r => ITEMS[r.out].name);
@@ -187,7 +187,9 @@ function dexPots() {
   const ids = SUPPLY_IDS;
   const rows = ids.map(it => { const I = ITEMS[it], r = RECIPES.find(x => x.out === it); return `<div class="li">${iconImg(it)}<div class="grow stack"><span>${I.name} <span class="muted">· ${I.buy ? `사는 값 ${I.buy}G` : `${I.v}G`}</span>${(S.inv[it] || 0) ? ` <span class="tag ok-t">${S.inv[it]}</span>` : ''}</span><span class="sub">${I.heal ? `HP ${Math.round(potionHeal(it))} 회복 (기본 ${I.heal})` : I.mana ? `MP ${I.mana} 회복` : `${cureName(I.cure)} 치료 · ${I.desc || ''}`} · 보급품으로 가져가면 저절로 써요</span>${r ? `<span class="sub muted">조제: ${Object.entries(r.need).map(([m, n]) => `${ITEMS[m].name} ${n}`).join(' · ')} · ${r.fee}G${r.lv > 1 ? ' · 공방 2단계' : ''}</span>` : ''}</div></div>`; }).join('');
   const runes = RUNE_IDS.map(k => `<div class="li">${iconImg(runeId(k, RUNE_TOP))}<div class="grow stack"><span>${RUNES[k].name}의 룬 <span class="muted">· ${RUNE_LV.join('·')}</span></span><span class="sub">무기: ${runeLine(k, 'w')}</span><span class="sub">부장비 · 방어구 · 하의 · 장갑 · 신발 · 벨트 · 장신구 · 귀걸이 · 가방: ${runeLine(k, 'a')}</span></div></div>`).join('');   // 빌드 64: 한 룬에 두 효과
-  return `<div class="list">${rows}</div><div class="sec"><b>룬</b><span>마탑에서 장비에 새기고 합성해요 (같은 단계 아홉 → 한 단계 위)</span></div><div class="list">${runes}</div>`;
+  const mss = MASEOK_IDS.map(k => { const id = 'ms_' + k, M = MASEOK[k]; return `<div class="li">${iconImg(id)}<div class="grow stack"><span>${M.name} <span class="muted">· ${M.kind} · 영웅</span>${(S.inv[id] || 0) ? ` <span class="tag ok-t">${S.inv[id]}</span>` : ''}</span><span class="sub">${M.eff} · 합쳐서 ${M.capT}까지</span></div></div>`; }).join('');   // 빌드 69
+  return `<div class="list">${rows}</div><div class="sec"><b>룬</b><span>마탑에서 장비에 새기고 합성해요 (같은 단계 아홉 → 한 단계 위)</span></div><div class="list">${runes}</div>
+    <div class="sec"><b>마석</b><span>영웅 이상 장비의 마석 칸에 끼워요 · 효과마다 여섯 개 몫까지</span></div><div class="list">${mss}</div>`;
 }
 
 /* ───────── 장비 ───────── */

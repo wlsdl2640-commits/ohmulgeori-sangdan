@@ -747,3 +747,16 @@ details.skl summary b { color: var(--ink); }
 .rsend .rchk.on { color: #1a1410; background: var(--gold); }
 .rsend.on { background: rgba(240, 194, 74, .08); }
 .tabs.exp .tab.raidt { flex: 0 0 auto; padding: 6px 7px; }   /* 레이드 탭은 줄어들지 않게 */
+/* 빌드 69: 장비 9칸 — 점(룬 마름모 · 마석 네모 · 원천물 봉인) · 장비 칸 창의 9칸 줄 */
+.runes b { width: 2px; }
+.runes i.ms { transform: none; width: 7px; height: 7px; border-color: #6a5a7a; }
+.runes i.ms.on { border-color: #000; box-shadow: inset -1px -1px 0 rgba(0, 0, 0, .35), inset 1px 1px 0 rgba(255, 255, 255, .45); }
+.runes i.src { transform: none; width: 7px; height: 7px; border-color: #6a5a30; background: #3a3220; box-shadow: inset 0 0 0 2px #0e0c08; }
+.slot9 { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 8px; }
+.slot9 .s9g { display: flex; flex-direction: column; gap: 2px; }
+.slot9 .s9h { font-size: 11px; color: var(--muted, #a9b0bd); }
+.slot9 .s9g.m .s9h { color: #c07af0; } .slot9 .s9g.s .s9h { color: #fff4b0; }
+.slot9 .s9c { display: flex; gap: 2px; }
+.slot9 .s9 { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+.slot9 .s9.lock { background: #15121a; border: 2px solid #2e2a36; box-sizing: border-box; }
+.slot9 .s9.lock small { font-size: 9px; line-height: 1; color: var(--c); opacity: .85; }

@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1 , v69c: 1}, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1, v69c: 1, v69d: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -396,7 +396,7 @@ function runeIn(gid, rid) {
   if (!f) return '장비를 찾을 수 없어요.';
   if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
   const g = f.g; g.runes = g.runes || [];
-  if (!runeSlots(g)) return '일반 장비에는 룬 칸이 없어요. 고급부터 등급마다 한 칸씩 열려요.';
+  if (!runeSlots(g)) return '화살 · 표창에는 룬 칸이 없어요.';
   if (g.runes.length >= runeSlots(g)) return '룬 칸이 꽉 찼어요.';
   if (!ITEMS[rid] || !ITEMS[rid].rune || !(S.inv[rid] > 0)) return '그 룬이 없어요.';
   addTo(S.inv, rid, -1); g.runes.push(rid);
@@ -413,6 +413,33 @@ function runeOut(gid, i) {
   if (S.gold < fee) return `룬을 빼려면 ${g$(fee)}이 들어요.`;
   if (!roomItem(rid)) return WH_FULL;
   S.gold -= fee; f.g.runes.splice(i, 1); addTo(S.inv, rid, 1);
+  if (f.a) clampVitals(f.a);
+  changed();
+  return '';
+}
+// 빌드 69 마석: 영웅 이상 장비의 마석 칸(영웅 1 · 전설 2 · 신화부터 3칸)에 끼운다 — 같은 마석을 여럿 껴도 되지만 효과는 모험가마다 여섯 개 몫까지 (data-maseok69.js)
+function msIn(gid, iid) {
+  const f = findGear(gid);
+  if (!f) return '장비를 찾을 수 없어요.';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  const g = f.g; g.ms = g.ms || [];
+  if (!msSlots(g)) return '마석 칸은 영웅 장비부터 열려요 (영웅 1 · 전설 2 · 신화부터 3칸).';
+  if (g.ms.length >= msSlots(g)) return '마석 칸이 꽉 찼어요.';
+  if (!ITEMS[iid] || !ITEMS[iid].maseok || !(S.inv[iid] > 0)) return '그 마석이 없어요.';
+  addTo(S.inv, iid, -1); g.ms.push(iid);
+  if (f.a) clampVitals(f.a);
+  log(`${gearName(g)}에 마석 「${ITEMS[iid].name}」을(를) 끼웠다.`);
+  changed();
+  return '';
+}
+function msOut(gid, i) {
+  const f = findGear(gid);
+  if (!f || !f.g.ms || !f.g.ms[i]) return '';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  const iid = f.g.ms[i];
+  if (S.gold < MASEOK_OUT) return `마석을 빼려면 ${g$(MASEOK_OUT)}이 들어요.`;
+  if (!roomItem(iid)) return WH_FULL;
+  S.gold -= MASEOK_OUT; f.g.ms.splice(i, 1); addTo(S.inv, iid, 1);
   if (f.a) clampVitals(f.a);
   changed();
   return '';
@@ -1007,6 +1034,8 @@ function raidReward(rec, i, half) {
   const ri4 = Math.min(i, 3), bn = STONE_DROP.bloomstone.raidN[ri4], bq = half ? Math.floor(bn / 2) : bn;
   if (bq > 0) { stashItem('bloomstone', bq); got.push(`개화석 ${bq}개`); }
   if (rnd() < STONE_DROP.wizstone.raidP[ri4] * k) { stashItem('wizstone', 1); got.push('마법사의 돌'); }
+  const mn = half ? Math.floor(MASEOK_DROP.raidN[ri4] / 2) : MASEOK_DROP.raidN[ri4];   // 빌드 69: 마석 (몬스터가 떠나면 절반)
+  for (let j = 0; j < mn; j++) { const id = msItem(); stashItem(id, 1); got.push(`마석 「${ITEMS[id].name}」`); }
   return `우리 상단 ${i + 1}위! 보상: ${got.join(', ')}`;
 }
 function raidEnd(rec, how) {
@@ -1200,7 +1229,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1216,6 +1245,7 @@ function loadFrom(v) {
     heal69();                     // 빌드 69 회복 개편: 이제 못 배우는 응급 처치 · 치유의 찬가 · 재기를 지우고 스킬북 · 수업료를 돌려준다 (불러올 때마다)
     raid69();                     // 빌드 69 레이드 개편: 레이드대를 풀고(원정 중이면 돌아온 뒤) 레이드를 목적지로 둔 파티는 평원으로 (불러올 때마다)
     sal69();                      // 빌드 69: 봉급을 지금 레벨 · 차수 · 라이선스로 다시 매긴다 (불러올 때마다)
+    slot69();                     // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
@@ -1271,7 +1301,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c();
+    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d();
     return true;
   } catch (_) { return false; }
 }
@@ -1665,6 +1695,32 @@ function notes69c() {
   const first = !S.flags.v69c; S.flags.v69c = 1;
   if (first && (lines.length || today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '누구나 Lv200 · 레이드 개편 · 봉급', body: STORY.v69c.concat(lines) });
   else if (R && R.n) S.modals.push({ title: '레이드대 정리', body: lines });
+}
+// 빌드 69 장비 9칸 (data-rpg.js runeSlots · msSlots): 룬은 레어도마다 3칸까지(예전엔 0 ~ 8칸) — 넘친 룬 · 마석을 빼서 메인 창고로 (불러올 때마다).
+//  우리 것(창고 · 창고 1~10 · 원정 짐 · 모험가)은 돌려주고, 고용 후보 · 암시장 · 경매 · 투기장 상대의 장비는 그냥 줄인다.
+let SLOT69 = null;
+function slot69() {
+  if (!S) return;
+  let n = 0, gn = 0;
+  const cut = (g, k, max, mine) => { if (!g[k] || g[k].length <= max) return 0; const out = g[k].splice(max); if (mine) out.forEach(id => { if (ITEMS[id]) { addTo(S.inv, id, 1); n++; } }); return 1; };
+  const fix = (g, mine) => { if (!g || typeof g !== 'object' || !g.base) return; const a = cut(g, 'runes', runeSlots(g), mine), b = cut(g, 'ms', msSlots(g), mine); if (mine && (a || b)) gn++; };
+  (S.gear || []).forEach(g => fix(g, 1));
+  (S.wh || []).forEach(w => ((w && w.gear) || []).forEach(g => fix(g, 1)));
+  (S.parties || []).forEach(q => { if (q.exp && q.exp.gbag) q.exp.gbag.forEach(g => fix(g, 1)); });
+  (S.advs || []).forEach(a => { if (a && a.eq) Object.values(a.eq).forEach(g => fix(g, 1)); });
+  (S.cands || []).forEach(a => { if (a && a.eq) Object.values(a.eq).forEach(g => fix(g, 0)); });
+  const U = S.under || {};
+  if (U.bm && U.bm.stock) U.bm.stock.forEach(o => { if (o && o.kind === 'gear') fix(o.g, 0); });
+  if (U.au && U.au.g) fix(U.au.g, 0);
+  if (U.arena && U.arena.opps) U.arena.opps.forEach(o => ((o && o.members) || []).forEach(x => { if (x && x.eq) Object.values(x.eq).forEach(g => fix(g, 0)); }));
+  if (n) { SLOT69 = SLOT69 || { n: 0, g: 0 }; SLOT69.n += n; SLOT69.g += gn; log(`장비 9칸: 룬은 레어도마다 3칸까지라 장비 ${gn}점에서 넘친 룬 ${n}개를 빼서 창고에 넣었다.`); }
+}
+function notes69d() {
+  const R = SLOT69; SLOT69 = null;
+  const lines = R && R.n ? [`룬을 넷 이상 새긴 장비 ${R.g}점에서 넘친 룬 ${R.n}개를 빼서 창고에 넣었다.`] : [];
+  const first = !S.flags.v69d; S.flags.v69d = 1;
+  if (first && (lines.length || today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '장비 9칸 · 마석 · 대형', body: STORY.v69d.concat(lines) });
+  else if (lines.length) S.modals.push({ title: '룬 칸 정리', body: lines });
 }
 function notes68b() { if (!S.flags.v68b) { S.flags.v68b = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬북 계열 · 직업 표시 · 스킬 칸 나누기', body: STORY.v68b }); } }   // 빌드 68 (data-skjob68.js)
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸

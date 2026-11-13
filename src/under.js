@@ -336,7 +336,7 @@ PANELS.au = () => {
   if (!A.g) return `<div class="card"><div class="sub">오늘 경매는 끝났어요. 새벽 4시에 새 경매품이 올라와요.</div></div>`;
   const g = A.g, next = auBidNext(A), mine = A.top === 'me';
   return `<div class="card hl"><div class="h">오늘의 경매품</div>
-    <div class="row">${gArt(g, 1)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}</span><span class="sub">${statLine(gearStats(g))}${g.bonus ? ' · 보너스 ' + Object.entries(g.bonus).map(([k, v]) => `${STAT_NAMES[k]} +${v}`).join(', ') : ''}</span><span class="sub muted">룬 칸 ${runeSlots(g)}개 · 시작가 ${fmt(A.start)}G</span></div></div>
+    <div class="row">${gArt(g, 1)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}</span><span class="sub">${statLine(gearStats(g))}${g.bonus ? ' · 보너스 ' + Object.entries(g.bonus).map(([k, v]) => `${STAT_NAMES[k]} +${v}`).join(', ') : ''}</span><span class="sub muted">${runeSlots(g) ? '장비 칸 ' + slot9Txt(g.q || 0) : '장비 칸 없음'} · 시작가 ${fmt(A.start)}G</span></div></div>
     <div class="stats boxed"><span>지금 값 <b class="gold-t">${fmt(A.price)}G</b></span><span>최고 입찰 <b>${A.top === 'me' ? '우리 상단' : A.top === 'npc' ? esc(A.npc) : '아직 없음'}</b></span><span>입찰 ${A.bids}번</span></div>
     <div class="sub">${mine ? (A.out ? `<span class="ok-t">${esc(A.npc)}이(가) 물러섰어요.</span> 새벽 4시에 낙찰돼요.` : '지금은 우리가 최고 입찰자예요. 새벽 4시까지 아무도 더 부르지 않으면 낙찰돼요. 다른 상단이 더 부르면 돈은 돌려받아요.') : `다음 입찰은 ${fmt(next)}G. 돈은 입찰할 때 맡겨 두고, 밀리면 돌려받아요.`}</div>
     <button type="button" class="btn gold block" data-act="aubid"${!mine && S.gold >= next ? '' : ' disabled'}>${mine ? '최고 입찰 중' : `${fmt(next)}G 부르기`}</button></div>

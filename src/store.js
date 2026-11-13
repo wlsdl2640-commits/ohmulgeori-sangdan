@@ -177,7 +177,8 @@ function whMoveKeys(keys, from, to) {
   return `${moved}칸을 ${whName(to)}로 옮겼어요.${left ? ` (${left}칸은 자리가 없어 그대로)` : ''}`;
 }
 function whGearDetail(g, from) {
-  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''}${uniqDesc(g) ? ` — ${esc(uniqDesc(g))}` : ''}</span>` : ''}${GTYPES[g.base].desc ? `<span class="sub">${GTYPES[g.base].desc}</span>` : ''}<span class="sub muted">${gearWho(g.base)} · Lv${gearReqLv(g)}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
+  const msL = (g.ms || []).filter(id => ITEMS[id]).map(id => `${ITEMS[id].name}(${MASEOK[msKey(id)].kind})`).join(' · ');   // 빌드 69: 끼운 마석 · 장비 칸
+  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${runeSlots(g) ? `<span class="sub">장비 칸 ${slotCnt(g)}${msL ? ` · 마석 ${msL}` : ''} <span class="muted">· 끼우기는 마탑 「장비 칸」 · 모험가 창</span></span>` : ''}${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''}${uniqDesc(g) ? ` — ${esc(uniqDesc(g))}` : ''}</span>` : ''}${GTYPES[g.base].desc ? `<span class="sub">${GTYPES[g.base].desc}</span>` : ''}<span class="sub muted">${gearWho(g.base)} · Lv${gearReqLv(g)}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
   if (from >= 0) return `<div class="card hl idet">${top}${whMoveRow(from, 'gear', g.id)}</div>`;
   // 빌드 64 (사용자 11-11 19:28 그림): 강화 · 합성 · 재감정 · 룬 새기기는 창고에서 빼고 각 시설에서만 — 팔기는 옮기기 단추 옆으로
   const bonus = (g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 재감정은 마탑에서</span></div>` : '';
@@ -205,7 +206,7 @@ function whMainBody() {
     cells = list.map(x => whCell(x, iArt(x, 2), S.inv[x] || 0, x === k, itemGrade(x), tab === 'book' ? bkBadge(x) : ''));
     detail = k ? whPop(invDetail(k, rate) + ((S.inv[k] || 0) > 0 ? `<div class="card idet">${whMoveRow(-1, 'item', k, S.inv[k])}</div>` : ''), k) : list.length ? '' : `<div class="card"><div class="sub">${{ mat: '창고가 비어 있어요. 원정을 보내 부속품을 모아 오세요.', herb: '아직 약초가 없어요. 필드에서 싸운 뒤 가끔 주워 와요.', book: keys('book').length ? '이 계열 스킬북이 없어요. 위 칩에서 다른 계열을 골라 보세요.' : '스킬북이 없어요. 몬스터와 원정 보물 상자에서 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 · 고대의)를 얻어 펼쳐요.', rune: '룬이 없어요. 필드 보스와 던전에서 떨어져요.', food: '도시락이 없어요. 주방을 지으면 재료로 만들 수 있어요.', trade: '교역품이 없어요. 교역로로 이웃 나라에 가면 특산물을 싸게 사 와요.' }[tab] || ''}</div></div>`;
   }
-  const info = { mat: `부속품 ${count.mat}종 · 기준가 ${fmt(keys('mat').reduce((t, k) => t + ITEMS[k].v * S.inv[k], 0))}G어치 · 길드는 ${Math.round(rate * 100)}%에 사요 · 테두리 색 = 레어도(제작에 들어가는 곳)`, herb: `약초 ${count.herb}종 · 처치와 연금술 공방 조제에 써요`, sup: '물약·치료 소모품 · 원정 보급품으로 가져가면 저절로 써요', book: `스킬북 ${count.book}종 · 칸 왼쪽 아래 = 배우는 차수(공용 · 1차 · 2차 …), 이름 끝 = 계열 · 직업 · 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 …)를 펼치면 그 차수 스킬북 하나가 나와요 · 모험가 창 → 스킬에서 배워요`, rune: `룬 ${count.rune}종 · 장비의 룬 칸에 새겨요`, gear: `장비 ${count.gear}점 · 같은 레어도 9점을 대장간에서 합성하면 다음 레어도로`, food: '도시락과 요리 재료 · 주방에서 만들고 원정대 창에서 골라요', trade: `교역품 ${count.trade}종 · 상점에 진열하거나 원하는 나라에 팔면 남아요` }[tab];
+  const info = { mat: `부속품 ${count.mat}종 · 기준가 ${fmt(keys('mat').reduce((t, k) => t + ITEMS[k].v * S.inv[k], 0))}G어치 · 길드는 ${Math.round(rate * 100)}%에 사요 · 테두리 색 = 레어도(제작에 들어가는 곳)`, herb: `약초 ${count.herb}종 · 처치와 연금술 공방 조제에 써요`, sup: '물약·치료 소모품 · 원정 보급품으로 가져가면 저절로 써요', book: `스킬북 ${count.book}종 · 칸 왼쪽 아래 = 배우는 차수(공용 · 1차 · 2차 …), 이름 끝 = 계열 · 직업 · 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 …)를 펼치면 그 차수 스킬북 하나가 나와요 · 모험가 창 → 스킬에서 배워요`, rune: `룬 ${keys('rune').filter(k => !ITEMS[k].maseok).length}종 · 마석 ${keys('rune').filter(k => ITEMS[k].maseok).length}종 — 룬은 장비의 룬 칸(레어도마다 3칸까지)에, 마석은 영웅 이상 장비의 마석 칸에 끼워요 (마탑 「장비 칸」 · 모험가 창)`, gear: `장비 ${count.gear}점 · 같은 레어도 9점을 대장간에서 합성하면 다음 레어도로`, food: '도시락과 요리 재료 · 주방에서 만들고 원정대 창에서 골라요', trade: `교역품 ${count.trade}종 · 상점에 진열하거나 원하는 나라에 팔면 남아요` }[tab];
   const bulk = tab === 'mat' && bulkMats().length ? `<div class="btns"><button type="button" class="btn sm" data-act="sellallmat">부속품 모두 팔기 · 약 ${g$(bulkMatValue())}</button></div>` : tab === 'gear' && bulkGears().length ? `<div class="btns"><button type="button" class="btn sm" data-act="selllowgear">일반·고급 장비 ${bulkGears().length}점 모두 팔기</button><button type="button" class="btn sm" data-act="autoeqall">모두 자동 장착</button></div>` : '';
   if (UI.whMulti) detail = whPickBar(-1, tab === 'gear' ? S.gear.filter(g => gearInJob(g, UI.invJob || 'all')).map(g => 'g' + g.id) : (tab === 'sup' ? SUPPLY_IDS.concat(keys('sup').filter(k => !SUPPLY_IDS.includes(k))) : tab === 'book' ? keys('book').filter(k => bookInJob(k, UI.invJob || 'all')) : keys(tab)).filter(k => (S.inv[k] || 0) > 0));
   return `${head}${whTabs(tab, count, true)}<div class="sub muted">${info || ''}</div>${bulk}${jobs}<div class="igrid ${tab}" data-wh="-1">${whPad(cells).join('')}</div>${detail}`;
@@ -382,7 +383,7 @@ function fuseClean() {
   return F;
 }
 function fuseAuto() {   // 가장 낮은 장비부터 (단계 · 룬 · 값이 낮은 것)
-  const F = fuseClean(), C = fuseCands(F.cat, F.q).filter(g => !F.ids.includes(g.id)).sort((x, y) => x.t - y.t || (x.runes || []).length - (y.runes || []).length || gearValue(x) - gearValue(y));
+  const F = fuseClean(), C = fuseCands(F.cat, F.q).filter(g => !F.ids.includes(g.id)).sort((x, y) => x.t - y.t || (x.runes || []).length + (x.ms || []).length - (y.runes || []).length - (y.ms || []).length || gearValue(x) - gearValue(y));
   while (F.ids.length < FUSE.n && C.length) F.ids.push(C.shift().id);
 }
 function fuseWhy() {
@@ -413,11 +414,11 @@ function fuseBox() {
   const qs = QUALITY.slice(0, GRADE_MAX).map((Q, q) => { const n = fuseCands(F.cat, q).length; return `<button type="button" class="btn sm q${q}${F.q === q ? ' on' : ''}" data-act="fuseq" data-q="${q}">${Q.name} <small>${n}</small></button>`; }).join('');
   const slots = Array.from({ length: FUSE.n }, (_, i) => { const g = F.ids[i] != null ? S.gear.find(x => x.id === F.ids[i]) : null; return g ? `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuserm" data-id="${g.id}" title="빼기">${gArt(g, 2)}</button>` : `<span class="cell empty fslot">${rqEmpty(2)}<b class="fsn">${i + 1}</b></span>`; }).join('');
   const rest = C.filter(g => !F.ids.includes(g.id)).map(g => `<button type="button" class="cell${rq(g.q || 0)}" data-act="fuseadd" data-id="${g.id}">${gArt(g, 2)}</button>`);
-  const lost = F.ids.map(id => S.gear.find(g => g.id === id)).filter(g => g && (g.runes || []).length).length;
+  const lost = F.ids.map(id => S.gear.find(g => g.id === id)).filter(g => g && ((g.runes || []).length || (g.ms || []).length)).length;   // 빌드 69: 마석도 함께 녹는다
   return `<div class="sub muted">같은 레어도 · 같은 갈래(${Object.values(FUSE_CAT).join(' · ')}) 장비 ${FUSE.n}점을 녹이면 <b class="q${nq}">${QUALITY[nq].name}</b> 장비 하나가 무작위로 나와요. 아주 드물게(${Math.round(FUSE.jump * 100)}%) 두 단계 위가 나와요. 나오는 장비의 단계(Lv 구간)는 넣은 장비 단계의 평균이고, 룬은 사라져요.</div>
     <div class="btns">${cats}</div><div class="btns">${qs}</div>
     <div class="igrid fuse">${slots}</div>
-    ${lost ? `<div class="sub red-t">강화나 룬이 있는 장비 ${lost}점이 들어 있어요. 합성하면 사라져요.</div>` : ''}
+    ${lost ? `<div class="sub red-t">룬이나 마석을 끼운 장비 ${lost}점이 들어 있어요. 합성하면 끼운 것도 함께 사라져요.</div>` : ''}
     <div class="btns"><button type="button" class="btn sm" data-act="fuseauto"${C.length > F.ids.length && F.ids.length < FUSE.n ? '' : ' disabled'}>가장 낮은 장비 자동으로 넣기</button><button type="button" class="btn sm" data-act="fuseclr"${F.ids.length ? '' : ' disabled'}>비우기</button><button type="button" class="btn gold grow" data-act="fusego"${why ? ' disabled' : ''}>${why || `<span class="col2"><span class="nw">합성하기</span><span class="nw">${fmt(FUSE.fee[F.q])}G</span></span>`}</button></div>
     <div class="sec"><b>넣을 수 있는 장비</b><span>${QUALITY[F.q].name} ${FUSE_CAT[F.cat]} ${C.length}점 · 메인 창고</span></div>
     <div class="igrid gear">${whPad(rest, 6).join('')}</div>`;

@@ -163,7 +163,7 @@ function bookFromText(id) {
 
 /* ───────── 전투 통계 (DPS 미터) ───────── */
 // stats = e.stats(원정 중) 또는 p.last.stats(지난 원정), names = {id: 이름} (떠난 모험가용)
-const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '암기', bolt: '손목 석궁', rsw: '속성 대검', mast: '숙련', etc: '그 밖' };
+const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '암기', bolt: '손목 석궁', rsw: '속성 대검', mast: '숙련', reflect: '마석 반사', etc: '그 밖' };
 function bstatName(who, names) {
   if (String(who).charAt(0) === 'P') { const pt = petById(+String(who).slice(1)); return pt ? `펫 ${pt.name}` : '펫'; }
   const a = advById(+who); return a ? a.name : (names && names[who]) || '?';

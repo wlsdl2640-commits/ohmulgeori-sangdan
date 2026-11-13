@@ -82,16 +82,18 @@ function deriveBase(a) {
   atk += L * 0.4 + (G.atk || 0);
   const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul;
   const X = k => traitSum(a, k);   // 타고난 특성
+  const MC = msCounts(a);           // 빌드 69: 마석 (효과마다 상한 — data-maseok69.js)
   return {
     T, atk: atk * war * lic * (1 + (P.atkPct || 0) + X('atkPct')),
     matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0) + X('matkPct')) * war * lic,
     def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08 + X('defPct')) * (earth ? 1.1 : 1) * lic,
     maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct') + relic('hp'))),   // 유물: 세계수의 씨앗·별의 여왕의 왕관
     maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct') + (P.mpPct || 0) + Math.min(RUNE_CAP.mpPct, G.mpPct || 0))),   // 마나 룬 (방어구)
-    eva: Math.min(0.6, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva')),
+    // 환영의 문스톤: 회피는 Lv60쯤부터 거의 모두 상한 60%에 닿아 있어(민첩 × 0.4%) 문스톤 몫은 상한 밖에서 더한다 — 최대 72% (hitAdv도 0.6 + msEva로 자른다)
+    eva: Math.min(0.6, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva')) + msVal(MC, 'moon'), msEva: msVal(MC, 'moon'),
     crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0) + X('crit')),
-    block: Math.min(0.6, (G.block || 0) + (P.block || 0) + X('block')),
-    counter: Math.min(0.7, (G.counter || 0) + (P.counter || 0) + X('counter')),
+    block: Math.min(0.6, (G.block || 0) + (P.block || 0) + X('block') + msVal(MC, 'sapph')),       // 결계의 사파이어
+    counter: Math.min(0.7, (G.counter || 0) + (P.counter || 0) + X('counter') + msVal(MC, 'garn')),   // 역류의 가넷
     double: Math.min(0.6, (G.double || 0) + (P.double || 0) + X('double')),
     healPow: 1 + X('healPow') + (P.healPow || 0) + Math.min(RUNE_CAP.healPow, G.healPow || 0), rheal: X('rheal') + Math.min(RUNE_CAP.rheal, G.rheal || 0), hpRegen: X('hpRegen') + (P.hpRegen || 0), mpFlat: X('mpFlat'),   // 치유 룬: 무기 주는 회복 · 방어구 받는 회복
     spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd
@@ -107,6 +109,8 @@ function deriveBase(a) {
     res: resOf(G, P, X),                                                                   // 속성 저항: { 불 계열: 0.1, … }
     critDmg: P.critDmg || 0, firstCrit: P.firstCrit || 0, thrownPct: P.thrownPct || 0, petDmg: P.petDmg || 0, pBuff: P.pbuffDur || 0,   // 빌드 65 직업 개편: 치명 피해 · 첫 공격 치명 · 암기 피해 · 탈것 피해 · 파티 강화 지속
     baImm: P.baImm || 0, subst: P.subst || 0,                                              // 기본 공격 면역 · 쓰러질 한 방을 한 번 피함 (개편 직업용)
+    // 빌드 69 마석: 받는 피해 − (다이아몬드) · 반사 (오팔) · 싸움 시작 보호막 (아쿠아마린) · 버티기 (호박) · 노려질 확률 − (흑요석)
+    msDmg: msVal(MC, 'dia'), msRefl: msVal(MC, 'opal'), msShield: msVal(MC, 'aqua'), msEnd: msVal(MC, 'amber'), msHide: msVal(MC, 'obsid'),
     // 빌드 65 새 숙련 (data-mast65.js): 느림 · 출혈 · 훔치는 돈 · 암기 한 번 더 · 연계 한도 · 둘째 칼 · 보호막 세기 · 볼트 · 탈것 한 번 더 · 정령 스킬 · 지속 피해 · 마법 흡수
     mSlow: P.slowHit || 0, mBleed: P.bleedHit || 0, steal: P.stealPct || 0, thrown2: P.thrownTwice || 0, comboMax: P.comboMax || 0, offDmg: P.offDmg || 0, shieldPow: P.shieldPow || 0,
     boltPct: P.boltPct || 0, boltPen: P.boltPierce || 0, bolt2: P.boltTwice || 0, pet2: P.petTwice || 0, spiritPct: P.spiritPct || 0, dotPct: P.dotPct || 0, mDrain: P.mdrain || 0
@@ -315,6 +319,7 @@ function spawn(p, e) {
 }
 function ev(e, type, data) {
   if (e.ev) { e.ev.push(Object.assign({ n: ++e.evN, type }, data)); if (e.ev.length > 50) e.ev.shift(); }
+  if (type === 'spawn') msSpawn(e);   // 빌드 69 마석: 싸움이 시작될 때
   // 전투 통계: 준 피해(스킬별)·받은 피해·치유·처치
   if (type === 'hit' && data.v) { const who = data.by || data.s; if (who) { bstat(e, who, 'dealt', data.v, data.sid || (data.b ? 'basic' : data.ctr ? 'counter' : data.pet ? 'pet' : data.k === 'pet' ? 'companion' : data.dot ? 'dot' : 'etc')); (e.lastHit || (e.lastHit = {}))[data.d] = who; } }
   else if (type === 'hurt' && data.v) bstat(e, data.d, 'taken', data.v);
@@ -346,7 +351,9 @@ function cantGo(a) {
   return '';
 }
 // 전투 대형: 근접은 맨 앞, 원거리 딜러는 가운데, 짐꾼·마법사·치유사는 맨 뒤 (출발할 때 줄을 세운다)
-const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (C.row != null) return C.row; return C.act === 'melee' ? 0 : C.act === 'arrow' ? 1 : 2; };
+// 대형 (빌드 69, 11-13 21:22 사용자 「근접 맨 앞 셋까지 · 가운데 원거리 · 그 뒤 힐러 · 버퍼 · 짐꾼은 늘 맨 뒤」 · 11-14 00:42 「넣어」):
+//   0 근접 · 1 원거리 · 마법(탈것 직업도) · 2 힐러(act heal) · 3 짐꾼 계열 모두(음유시인 · 정찰가 · 마부 …). C.row는 이제 안 본다. 그리는 자리는 view.js formSlots
+const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (jobBase(c) === 'porter') return 3; if (C.act === 'heal') return 2; return C.act === 'melee' ? 0 : 1; };
 function formParty(p) { p.members = p.members.map((id, i) => [id, i]).sort((x, y) => { const a = advById(x[0]), b = advById(y[0]); return (a ? formRank(a.cls) : 2) - (b ? formRank(b.cls) : 2) || x[1] - y[1]; }).map(x => x[0]); }
 function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(빌드 69 — 레이드는 qol.js raidLaunch로 파티 넷 이상이 함께만)
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
@@ -899,11 +906,32 @@ function basicAct(e, a, d, team, dm, foes) {
 }
 // 적이 노릴 상대: 앞줄과 방패를 든 직업이 더 자주 맞는다
 function tankW(a) { const t = TR(a).tank; return Math.max(0, (t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0) + traitSum(a, 'tank')); }
-function pickTarget(live, e) {
-  const w = live.map((x, i) => (1 + (i === 0 ? 1 : 0) + tankW(x) * 2) * (e && buffAdd(e, x.id, 'hide') > 0 ? 0.25 : 1)), sum = w.reduce((s2, v) => s2 + v, 0);
+function pickTarget(live, e, dm) {
+  const w = live.map((x, i) => (1 + (i === 0 ? 1 : 0) + tankW(x) * 2) * (e && buffAdd(e, x.id, 'hide') > 0 ? 0.25 : 1) * (dm && dm[x.id] && dm[x.id].msHide ? 1 - dm[x.id].msHide : 1)), sum = w.reduce((s2, v) => s2 + v, 0);   // 빌드 69: 은신의 흑요석
   let r = rnd() * sum;
   for (let i = 0; i < live.length; i++) { r -= w[i]; if (r <= 0) return live[i]; }
   return live[0];
+}
+
+// 빌드 69 거울 마법의 오팔: 맞은 한 방(보호막이 막기 전)의 몇 %를 때린 적에게 — 방어 무시 · 몬스터 보호막이 먼저 받는다 · 투기장 상대에게는 안 듦
+function msReflect(e, f, x, d, v) {
+  if (!d.msRefl || !(v > 0) || f.hp <= 0 || f.pvp) return;
+  const r = Math.max(1, Math.round(v * d.msRefl));
+  if (f.shd > 0) { const ab = Math.min(f.shd, r); f.shd -= ab; f.hp -= r - ab; } else f.hp -= r;
+  ev(e, 'hit', { s: 0, by: x.id, d: f.uid, v: r, k: 'reflect', sid: 'reflect' });
+}
+// 빌드 69 마석: 싸움이 시작될 때(ev 'spawn' — 필드 · 던전 · 야영 습격 · 레이드 · 방어전 · 투기장) — 방벽의 아쿠아마린 보호막, 불멸의 호박 버티기를 다시 쓸 수 있게
+function msSpawn(e) {
+  e.msEnd = null;
+  const p = partyOfE(e); if (!p) return;
+  for (const a of teamOf(p)) {
+    if (!up(a)) continue;
+    const d = derive(a); if (!d.msShield) continue;
+    const amt = Math.max(1, Math.round(d.maxHp * d.msShield)), sid = 'ms_aqua@' + a.id;
+    e.buffs = (e.buffs || []).filter(b => b.sid !== sid);
+    e.buffs.push({ sid, to: a.id, stat: 'shield', hp: amt, max: amt, t: 600 });   // 싸움이 끝나면 걷힌다 (battle의 clear)
+    ev(e, 'shield', { s: a.id, d: a.id, v: amt, on: 1, ms: 1 });
+  }
 }
 
 /* ───────── 빌드 63: 전투 도우미 ───────── */
@@ -985,7 +1013,7 @@ function fSkill(p, e, f, foes, live, dm) {
   const O = { skill: 1, ms: 1, magic: !!s.magic, el: mskEl(s, f), sta: mskSta(s, f) || undefined, crit: s.crit || 0 };
   if (s.kind === 'hit' || s.kind === 'drain') {
     let tgt = e.taunt ? live.find(x => x.id === e.taunt.aid) || null : null;
-    if (!tgt) tgt = pickTarget(live, e);
+    if (!tgt) tgt = pickTarget(live, e, dm);
     if (!e.taunt && live.length > 1) tgt = coverOf(e, live, tgt, dm) || tgt;
     for (let h = 0; h < (s.hits || 1); h++) {
       if (!up(tgt)) break;
@@ -1119,7 +1147,7 @@ function battle(p, e, team, dm, dt) {
     if ((MONS[f.id].aoe || f.aoe) && !(fs && fs.shock) && rnd() < (f.ph2 ? FIGHT.lastAoe : 0.3)) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm, { skill: 1, aoe: 1 })); continue; }   // 광역기: 스킬이라 회피가 안 든다
     let tgt = null;
     if (e.taunt) tgt = live.find(x => x.id === e.taunt.aid) || null;
-    if (!tgt) { const pool = live.filter(x => !((dm[x.id].baImm || TR(x).baImm) && !(buffAdd(e, x.id, 'ground') > 0))); tgt = pickTarget(pool.length ? pool : live, e); }   // 기본 공격 면역(하늘에 뜬 용기수 …)은 혼자 남았을 때만 맞는다
+    if (!tgt) { const pool = live.filter(x => !((dm[x.id].baImm || TR(x).baImm) && !(buffAdd(e, x.id, 'ground') > 0))); tgt = pickTarget(pool.length ? pool : live, e, dm); }   // 기본 공격 면역(하늘에 뜬 용기수 …)은 혼자 남았을 때만 맞는다
     if (!e.taunt && live.length > 1) tgt = coverOf(e, live, tgt, dm) || tgt;
     hitAdv(p, e, f, tgt, 1, dm);
   }
@@ -1132,24 +1160,29 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   o = o || {};
   const d = dm[x.id], m = MONS[f.id], fs = f.sta, blind = !!(fs && fs.blind), magic = o.magic != null ? !!o.magic : !!m.magic;
   if (!o.skill && !o.ms && !o.aoe && buffAdd(e, x.id, 'deflect') > 0) { ev(e, 'miss', { s: f.uid, d: x.id, df: 1 }); return; }   // 튕겨내기(닌자): 기본 공격을 모두 튕겨 낸다
-  if (o.skill ? blind && rnd() < FIGHT.blind : rnd() < Math.min(0.6, d.eva + buffAdd(e, x.id, 'eva')) + (blind ? FIGHT.blind : 0)) { ev(e, 'miss', { s: f.uid, d: x.id, bl: blind ? 1 : 0 }); return; }   // 회피는 기본 공격에만
+  if (o.skill ? blind && rnd() < FIGHT.blind : rnd() < Math.min(0.6 + (d.msEva || 0), d.eva + buffAdd(e, x.id, 'eva')) + (blind ? FIGHT.blind : 0)) { ev(e, 'miss', { s: f.uid, d: x.id, bl: blind ? 1 : 0 }); return; }   // 회피는 기본 공격에만
   const el = o.el || (magic || o.aoe ? fAtkEl(f) : 'none'), fam = elFam(el), xs = e.sta && e.sta[x.id];
   const def = d.def * buffMul(e, x.id, 'def') * (magic ? 0.5 : 1);
   const crit = rnd() < (f.boss ? 0.08 : 0.04) + (o.crit || 0);
   const pet0 = petOfParty(p), guard = Math.min(0.6, TQ(x, 'guard') + relic('guard') + buffAdd(e, x.id, 'guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
   const blk = rnd() < Math.min(0.6, (d.block || 0) + buffAdd(e, x.id, 'block') + (o.skill || o.ms || o.aoe ? 0 : d.bblock || 0));   // 예리함 룬(방어구): 기본 공격만 막는다
   const resist = (magic ? 1 - (d.mres || 0) : 1) * (fam !== 'none' ? 1 - ((d.res && d.res[fam]) || 0) : 1);   // 마법 저항 · 속성 저항
-  let v = Math.max(1, Math.round(f.atk * fBuf(f, 'atk') * (fs && fs.weak ? 0.8 : 1) * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard) * (blk ? 0.25 : 1) * resist));
+  let v = Math.max(1, Math.round(f.atk * fBuf(f, 'atk') * (fs && fs.weak ? 0.8 : 1) * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard) * (blk ? 0.25 : 1) * resist * (1 - (d.msDmg || 0))));   // 빌드 69: 수호진의 다이아몬드
   if (xs && xs.freeze && fam === 'fire') { v = Math.round(v * FIGHT.thaw); delete xs.freeze; ev(e, 'stoff', { d: x.id, k: 'freeze', side: 'a' }); }   // 빙결: 불에 깨지며 ×1.3
   if (xs) wakeOnHit(e, xs, x.id, 'a');
   // 보호막이 먼저 깎인다
   let sh = 0;
+  const v0 = v;   // 빌드 69 오팔 반사: 보호막이 막기 전 피해로 센다
   for (const b of e.buffs) { if (v <= 0) break; if (b.stat === 'shield' && b.to === x.id && b.hp > 0) { const ab = Math.min(b.hp, v); b.hp -= ab; v -= ab; sh += ab; } }
   if (sh) ev(e, 'shield', { s: f.uid, d: x.id, v: sh });
-  if (v <= 0) return;
+  if (v <= 0) { msReflect(e, f, x, d, v0); return; }
   if (x.hp - v <= 0 && (d.subst || TR(x).subst) && !(e.subst && e.subst[x.id])) { (e.subst || (e.subst = {}))[x.id] = 1; x.hp = Math.max(x.hp, Math.round(d.maxHp * 0.3)); ev(e, 'subst', { d: x.id, s: f.uid }); return; }   // 쓰러질 한 방을 싸움마다 한 번 피한다 (통나무 바꾸기 …)
+  let endure = 0;
+  if (x.hp - v <= 0 && x.hp > 1 && d.msEnd && !(e.msEnd && e.msEnd[x.id])) { (e.msEnd || (e.msEnd = {}))[x.id] = 1; if (rnd() < d.msEnd) { v = Math.ceil(x.hp) - 1; endure = 1; } }   // 빌드 69 불멸의 호박: 쓰러질 한 방을 HP 1로 (싸움마다 한 번)
   x.hp -= v;
   ev(e, 'hurt', Object.assign({ s: f.uid, d: x.id, v, c: crit, k: magic ? 'magic' : '', blk: blk ? 1 : 0 }, o.ms ? { ms: 1 } : {}, fam !== 'none' ? { el } : {}));
+  if (endure) ev(e, 'endure', { d: x.id, s: f.uid });
+  msReflect(e, f, x, d, v0);
   if (x.hp <= 0) { down(p, e, x, f); return; }
   const ms = o.sta !== undefined ? o.sta : (m.sta || f.inflict);
   if (ms && rnd() < ms.p) inflictAdv(e, x, ms, f.atk);
@@ -1214,8 +1247,14 @@ function stoneDrops(p, e, f, luck) {
   const kind = e.area === 'field' && f.fb ? (f.fb >= 5 ? 'lord' : 'fb') : e.area === 'dungeon' && f.boss && !f.fb ? 'boss' : null;
   if (!kind) return;
   for (const it of STONE_IDS) if (rnd() < STONE_DROP[it][kind] * (1 + (luck || 0))) { addTo(e.bag, it, 1); ev(e, 'loot', { id: it }); log(`${p.name}이(가) ${f.name}에게서 ${ITEMS[it].name}을(를) 얻었다!`, 'good'); }   // 짐이 가득 차도 잃지 않는다
+  if (rnd() < MASEOK_DROP[kind] * (1 + (luck || 0))) msGot(p, e, f.name);   // 빌드 69: 마석 (data-maseok69.js MASEOK_DROP)
 }
 // 보물 지도: 필드의 우두머리(4%)·주인(8%)이 남긴다 (data-sky.js TMAP_DROP)
+function msGot(p, e, from) {   // 빌드 69: 마석 하나 — 짐이 차도 잃지 않게 e.bag에 바로
+  const id = msItem(); addTo(e.bag, id, 1); ev(e, 'loot', { id });
+  log(`${p.name}이(가) ${from ? from + '에게서 ' : ''}마석 「${ITEMS[id].name}」을(를) 얻었다!`, 'good'); HOOKS.toast(`마석 · ${ITEMS[id].name}`);
+  return id;
+}
 function mapDrops(p, e, f, luck) {
   if (e.area !== 'field' || !f.fb) return;
   if (rnd() < (f.fb >= 5 ? TMAP_DROP.lord : TMAP_DROP.fb) * (1 + (luck || 0))) { addTo(e.bag, 'tmap', 1); ev(e, 'loot', { id: 'tmap' }); log(`${p.name}이(가) ${f.name}에게서 낡은 보물 지도를 얻었다!`, 'good'); HOOKS.toast('보물 지도를 얻었다'); }
@@ -1226,6 +1265,7 @@ function rareDown(p, e, f) {
   dexRareKill(f.id);
   addTo(e.bag, 'bloomstone', 1); ev(e, 'loot', { id: 'bloomstone' });
   S.fame += 2; S.stats.rares = (S.stats.rares || 0) + 1;
+  if (rnd() < MASEOK_DROP.rare * (1 + (foodFx(e).luck || 0))) msGot(p, e, '희귀종 ' + f.name);   // 빌드 69: 마석
   log(`${p.name}이(가) 희귀종 ${f.name}을(를) 쓰러뜨렸다! 개화석을 남겼다. 명성 +2${first ? ` · 도감에 기록: ${MONS[f.id].name}에게 주는 피해 +${Math.round(RARE.dmg * 100)}%, 전리품 +${Math.round(RARE.drop * 100)}%` : ''}`, 'good');
   HOOKS.toast(`희귀종 격파 · ${f.name}`);
 }
@@ -1423,6 +1463,7 @@ function treasureClear(p, e) {
   const b = randomBook(Math.max(1, L - 15), L + 10); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); }
   if (rnd() < 0.5) { addTo(e.bag, 'bloomstone', 1); got.push('개화석'); }
   if (rnd() < 0.1) { addTo(e.bag, 'wizstone', 1); got.push('마법사의 돌'); }
+  if (rnd() < MASEOK_DROP.tclear) { const id = msItem(); addTo(e.bag, id, 1); got.push(`마석 「${ITEMS[id].name}」`); }   // 빌드 69
   log(`${p.name}이(가) 보물고의 수호자를 쓰러뜨리고 보물을 챙겼다: ${got.join(', ')}`, 'good');
   queueModal({ title: '보물 던전 공략', body: [`${p.name}이(가) 보물 지도의 끝에서 보물 수호자를 쓰러뜨렸다. 상자 ${(e.chests || 0) + 1}개를 열었다.`, `보상: ${got.join(', ')}.`, '보물 지도는 필드의 우두머리와 주인이 가끔 남긴다. 다음 지도를 찾으면 또 떠날 수 있다.'] });
   e.mode = 'return'; e.why = 'boss'; e.ei = 0; e.encs = []; e.next = null;

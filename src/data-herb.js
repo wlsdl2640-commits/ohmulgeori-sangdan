@@ -62,13 +62,13 @@ KINGDOMS.sarak.sells.push('fireherb');
 KINGDOMS.dwarves.sells.push('boltbranch');
 
 /* ───────── 창고 분류 ───────── */
-const INV_CATS = [['mat', '부속품'], ['herb', '약초'], ['sup', '소모품'], ['food', '요리'], ['book', '스킬북'], ['rune', '룬'], ['gear', '장비']];
+const INV_CATS = [['mat', '부속품'], ['herb', '약초'], ['sup', '소모품'], ['food', '요리'], ['book', '스킬북'], ['rune', '룬·마석'], ['gear', '장비']];
 function itemCat(k) {
   const I = ITEMS[k]; if (!I) return 'mat';
   if (I.dish || I.food) return 'food';
   if (I.herb) return 'herb';
   if (I.potion || I.sup || I.heal || I.mana || I.use) return 'sup';
   if (I.book || I.btier != null) return 'book';   // 빌드 63: 스킬북 단계도 스킬북 칸
-  if (k.startsWith('rune_')) return 'rune';
+  if (k.startsWith('rune_') || I.maseok) return 'rune';   // 빌드 69: 마석도 룬 칸에
   return 'mat';
 }

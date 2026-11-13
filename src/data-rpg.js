@@ -451,7 +451,7 @@ const GTYPES = {
   bag:     { name: '가방',     slot: 'bag',   cls: ['all'],                          st: { carry: 4 },                     w: 1, icon: 'bag',    mat: [0, 5, 0] }
 };
 const GTYPE_IDS = Object.keys(GTYPES);
-// 등급마다 룬 슬롯이 하나씩 열린다 (일반 0칸 … 신성 6칸)
+// 등급마다 장비 칸이 하나씩 열린다 — 빌드 69부터 룬 · 마석 · 원천물 9칸 (아래 slotN · data-maseok69.js)
 const QUALITY = [
   { name: '일반', m: 1.0,  c: '#d8d0c0' },
   { name: '고급', m: 1.25, c: '#7bd36a' },
@@ -463,7 +463,14 @@ const QUALITY = [
   { name: '우주', m: 5.1,  c: '#9c9cff' },   // 빌드 63 다섯째 묶음
   { name: '창조', m: 6.5,  c: '#ffffff' }
 ];
-const runeSlots = g => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? g.q || 0 : 0);   // 화살·표창은 룬 칸이 없다
+// 빌드 69 (11-13 23:06 사용자 「레어도 최하단에 룬 3칸 다음에 마석 3칸 그다음에 원천물 3칸 … 각등급당 1칸씩 열리는 거야 총 9칸」):
+//   일반 · 고급 · 희귀 = 룬 1 · 2 · 3칸 / 영웅 · 전설 · 신화 = 마석 1 · 2 · 3칸 / 신성 · 우주 · 창조 = 원천물 1 · 2 · 3칸 (빌드 68까지 룬만 레어도만큼 0 ~ 8칸)
+//   화살 · 표창(소모형)은 칸이 없다. 넘친 룬은 econ.js slot69가 불러올 때마다 창고로 뺀다
+const SLOT9_N = 3;
+const slotN = (g, i0) => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? Math.max(0, Math.min(SLOT9_N, (g.q || 0) + 1 - i0)) : 0);
+const runeSlots = g => slotN(g, 0);   // 룬: 일반 1 · 고급 2 · 희귀부터 3
+const msSlots = g => slotN(g, 3);     // 마석: 영웅 1 · 전설 2 · 신화부터 3
+const srcSlots = g => slotN(g, 6);    // 원천물: 신성 1 · 우주 2 · 창조 3 (원천물 아이템은 아직 없다)
 const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
 const PCT_STATS = ['crit', 'eva'];
 
@@ -523,7 +530,7 @@ const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${
 const gearName = g => gearBaseName(g);
 const gearNameOf = (base, t) => { const L = LADDER_B[base] ? ladderSteps(+t) : []; return L.length ? `${tierNamed(base) ? GTIERS[+t].name + ' ' : ''}${GTYPES[base].name} Lv${L[0]}${L.length > 1 ? '~' + L[L.length - 1] : ''}` : gearBaseName({ base, t: +t }); };   // 진열대 · 의뢰 열쇠(종류:단계) 이름 — 빌드 67: 중갑 · 판금은 그 단계의 착용 레벨 대(「늪지 중갑 Lv55~60」)
 const gearKey = g => `${g.base}:${g.t}`;
-const gearValue = g => Math.round((45 * gearP(g) * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));
+const gearValue = g => Math.round((45 * gearP(g) * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).concat(g.ms || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));   // 빌드 69: 끼운 마석도
 const recipeFee = t => Math.round(15 * GTIERS[t].p * GTIERS[t].p);
 function recipeNeed(base, t) {
   const need = {}, mats = GTIERS[t].mats;
