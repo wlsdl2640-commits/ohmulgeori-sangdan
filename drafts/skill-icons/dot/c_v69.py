@@ -164,3 +164,63 @@ ICONS = {
   'rations_a': ('웨건 보급 A', 'buff', supply_a), 'rations_b': ('웨건 보급 B', 'buff', supply_b),
   'pioneerwit_a': ('개척민의 지혜 A', 'none', camp_a), 'pioneerwit_b': ('개척민의 지혜 B', 'none', camp_b),
 }
+# ───────── 2차 시안 (11-13 17:41 사용자 「짐 덜어주기 시안 4개 다시」) ─────────
+MINIPACK = ['.tTt..', 'llllll', 'lyYlLL', 'llllLL', '.LLLL.']
+def minipack(col, col2):
+    return (MINIPACK, {'t': ('#e0c08a', 3), 'T': ('#a07a4a', 3), 'l': (col, 9), 'L': (col2, 9), 'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6)})
+def lighten2_a():   # 동료들 저마다의 짐(색이 다른 등짐 셋)을 한데 쌓아 묶었다 — 끈은 가로로만
+    a = A('sand', cy=10, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    sp(a, minipack('#4a7ad8', '#24408a'), 1, 9)    # 파란 등짐 (마법사)
+    sp(a, minipack('#c8403a', '#7a1e1a'), 9, 9)    # 붉은 등짐 (전사)
+    sp(a, minipack('#4a9a5a', '#24582e'), 5, 4)    # 초록 등짐 (궁수)
+    for x in range(1, 15): a.set(x, 12, '#e0c08a' if x % 2 else '#a07a4a')   # 묶은 밧줄 (가로 한 줄)
+    for (x, y) in [(2, 3), (13, 4), (12, 2)]: a.set(x, y, '#fff6d8')
+    return a, 0
+HG = (['YyyyyyyyY',
+       'p.ccccc.p',
+       'p.csssc.p',
+       'p..csc..p',
+       'p...s...p',
+       'p...s...p',
+       'p..cac..p',
+       'p.caaac.p',
+       'p.caaac.p',
+       'YyyyyyyyY'], {'y': ('#ffd84a', 6), 'Y': ('#c08a1c', 6), 'p': ('#a8743a', 3), 'c': ('#d8f4ff', 12), 's': ('#ffe090', 7), 'a': ('#e8c060', 7)})
+def lighten2_b():   # 등짐 + 모래시계 (짐을 덜어 기술을 더 자주)
+    a = A('sand', cy=10, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    sp(a, PACK8, 0, 7)
+    sp(a, HG, 7, 4)
+    for (x, y) in [(2, 4), (4, 3), (5, 5)]: a.set(x, y, '#fff6c8')
+    return a, 0
+SKINARM = {'m': ('#f4c494', 2), 'M': ('#c88a5a', 2), 'n': ('#8a5a3a', 2), 'w': ('#fff0d8', 2)}
+def lighten2_c():   # 불끈 쥔 팔이 자루를 번쩍 (힘으로 대신 든다)
+    a = A('amber', cy=8, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    sp(a, (['...l...', '..lyl..', '.lllll.', 'llllllL', 'llllLLL', 'lllLLLL', '.lLLLL.'], {'l': ('#d8b880', 9), 'L': ('#9a7a48', 9), 'y': ('#8a5a2a', 9)}), 8, 0)
+    sp(a, ARMFLEX[0], 0, 7, SKINARM)
+    for (x, y) in [(2, 3), (4, 5), (15, 9)]: a.set(x, y, '#fff6d8')
+    return a, 0
+PORTER = (['...tTtT.......',
+           '..tTtTtT......',
+           '.lllllllL.....',
+           'llLLLLLLLL.hh.',
+           'lll.yy.lLLhhhh',
+           'lllllllLLLssk.',
+           'lllllllLLggss.',
+           'llfllllfLggg..',
+           'llllllLLLgggs.',
+           'lLLLLLLLLggg..',
+           '.LLLLLLLLggg..',
+           '.........nnN..',
+           '........nn.NN.',
+           '........nn..NN',
+           '.......kk...kk'], {'t': ('#e0c08a', 3), 'T': ('#a07a4a', 3), 'l': ('#a8642e', 9), 'L': ('#6a3a1a', 9), 'f': ('#5a3010', 9), 'y': ('#ffd84a', 6),
+                               'h': ('#7a4a2a', 9), 's': ('#f4c494', 2), 'k': ('#2a1e18', 1), 'g': ('#4a8a5a', 7), 'n': ('#5a5a7a', 7), 'N': ('#3a3a58', 7)})
+def lighten2_d():   # 제 몸보다 큰 짐을 진 짐꾼 (옆모습)
+    a = A('sand', cy=12, cuts=[0.0, 0.22, 0.42, 0.62, 0.84])
+    sp(a, PORTER, 1, 2)
+    for (x, y) in [(14, 3), (13, 1)]: a.set(x, y, '#fff6d8')
+    return a, 0
+ICONS.update({
+  'shieldbag_c': ('짐 덜어 주기 2-A 지게', 'buff', lighten2_a), 'shieldbag_d': ('짐 덜어 주기 2-B 모래시계', 'buff', lighten2_b),
+  'shieldbag_e': ('짐 덜어 주기 2-C 불끈 팔', 'buff', lighten2_c), 'shieldbag_f': ('짐 덜어 주기 2-D 짐꾼', 'buff', lighten2_d),
+})
