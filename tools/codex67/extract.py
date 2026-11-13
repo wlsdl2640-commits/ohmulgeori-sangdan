@@ -10,7 +10,7 @@ JS = r"""(() => {
   const SMAX = BUILDINGS.smithy.max;
   const dropAt = t => { const s = new Set(GTYPE_IDS.filter(x => tierOk(x, t))); if (s.has('shield')) SHIELDS.filter(x => tierOk(x, t)).forEach(x => s.add(x)); return s; };
   const DROP = GTIERS.map((_, t) => dropAt(t));
-  const artN = b => { const G = GTYPES[b]; if (G.art && typeof ARMART !== 'undefined' && ARMART[G.art]) return ARMART[G.art].length; if (G.art && typeof HDART !== 'undefined' && HDART[G.art]) return HDART[G.art].length; if (typeof WICON !== 'undefined' && WICON[b]) return WICON[b].length; return 0; };
+  const artN = b => { const G = GTYPES[b]; if (G.art && typeof ARMART !== 'undefined' && ARMART[G.art]) return ARMART[G.art].length; if (G.art && typeof HDART !== 'undefined' && HDART[G.art]) return HDART[G.art].length; if (G.art && GEARART[G.art]) return GEARART[G.art].length; if (typeof WICON !== 'undefined' && WICON[b]) return WICON[b].length; return 0; };
   // ── 장비 종류마다 그림 차례(착용 레벨 낮은 순) ──
   const typeIds = Object.keys(GTYPES).filter(b => !GTYPES[b].old && GTYPES[b].slot);
   for (const b of typeIds) {
@@ -34,7 +34,8 @@ JS = r"""(() => {
       if (t >= 0) list.push(info(g, 1)); else list.push({ i: icon(gearIconURL(g)), n: WNAME[b][0], lv: UNIQ_ONLY[b], on: 0, fut: 1, s: '' });
     } else {
       GTIERS.forEach((T, t) => { if (!tierOk(b, t) || (G.arena && t < 2)) return; list.push(info({ id: 0, base: b, t, q: 0, bonus: null, runes: [] }, 1)); });   // 투기장 전용은 강철 단계부터 판다
-      if (G.art && typeof ARMART !== 'undefined' && ARMART[G.art]) for (let k = GTIERS.length; k < ARMART[G.art].length; k++) list.push({ i: icon(ARMART[G.art][k]), n: '다음 단계 그림', lv: null, on: 0, fut: 1, s: '' });
+      const A = G.art && ((typeof ARMART !== 'undefined' && ARMART[G.art]) || (typeof HDART !== 'undefined' && HDART[G.art]) || GEARART[G.art]);   // 단계가 늘면 쓰일 그림 (빌드 67 무기 판: 이름도)
+      if (A) for (let k = GTIERS.length; k < A.length; k++) list.push({ i: icon(A[k]), n: (UNIQ_T0[b] != null && WNAME[b] && WNAME[b][k - UNIQ_T0[b]]) || '다음 단계 그림', lv: null, on: 0, fut: 1, s: '' });
     }
     list.sort((x, y) => (x.lv == null) - (y.lv == null) || (x.lv || 0) - (y.lv || 0));
     out.types[b] = { name: G.name, slot: G.slot, who: gearWho(b), w: G.w, two: twoHand({ base: b, t: 0 }) ? 1 : 0, ammo: G.ammo ? 1 : 0, arena: G.arena ? 1 : 0, ladder: LADDER_B[b] ? 1 : 0, all: (G.cls || []).includes('all') ? 1 : 0, desc: G.desc || '', n, list };
@@ -70,7 +71,7 @@ JS = r"""(() => {
   }
   out.common = slotOrder.map(s => [s, typeOrder.filter(b => out.types[b].slot === s && out.types[b].all)]).filter(([, L]) => L.length);
   out.tiers = GTIERS.map((T, i) => [i, T.name, T.lv]);
-  out.ladder = ARM_LADDER.filter(ladderOn);
+  out.ladder = ARM_LADDER.filter(ladderOn); out.ladderAll = ARM_LADDER;
   return JSON.stringify(out);
 })()"""
 with sync_playwright() as pw:

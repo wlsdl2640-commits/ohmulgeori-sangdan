@@ -73,7 +73,7 @@ window.render = (b, no) => {
   const ids = all ? D.lines.map(L => L.jobs[0]) : W, sc = ids.length <= 8 ? 3 : 2;
   const jobs = ids.map(c => { const J = D.jobs[c]; return `<div class="jb"><div class="sp"><img src="${iu(J.img)}" width="${J.iw * sc}" height="${J.ih * sc}" alt=""></div><span>${esc(J.name)}</span>${all ? '' : `<i>${TIER[J.tier]} · Lv${J.lv}</i>`}</div>`; }).join('') + (all ? `<div class="allj">모든 직업 (${Object.keys(D.jobs).length}개)</div>` : '');
   const tiles = T.list.map(e => `<div class="t${e.on ? '' : ' fut'}"><div class="ic"><img class="${px(e.i) ? 'px' : ''}" src="${iu(e.i)}" alt=""></div><div class="tx"><div class="nm">${esc(e.n)}</div><div class="lv">${e.lv != null ? 'Lv' + e.lv + (e.tn ? ' · ' + esc(e.tn) : e.on ? '' : ' · 그림만') : '그림만 · 땅이 생기면'}</div>${e.st ? `<div class="st">${esc(e.st)}</div>` : ''}<div class="pp">${e.on ? [...e.s].map(s => `<i class="${s}"></i>`).join('') : ''}</div></div></div>`).join('');
-  const note = T.ladder && T.n === 16 ? '<div class="note">Lv160 ~ 200 그림은 아직 없어요.</div>' : '';
+  const note = T.ladder && T.n && T.n < D.ladderAll.length ? `<div class="note">Lv${D.ladderAll[T.n]} ~ 200 그림은 아직 없어요.</div>` : '';
   document.getElementById('card').innerHTML = `<div class="hd"><div class="eyebrow">${esc(SLOTN[T.slot])} · ${no}</div><div class="ttl"><b>${esc(titleOf(b))}</b>${tags}</div><div class="who"><span>입는 직업</span> ${esc(T.who)}</div></div>
     <div class="jobs">${jobs}</div><div class="grid">${tiles}</div>${note}
     <div class="ft"><span><i class="d"></i>몬스터가 떨어뜨림</span><span><i class="c"></i>대장간에서 만듦</span><span><i class="a"></i>투기장 상단</span><span><i class="b"></i>대장간에서 삼</span><span><i class="f"></i>그림만 있음(그 레벨 땅이 생기면)</span><span>능력치는 일반 등급 · 판타지상단키우기 빌드 67 작업판</span></div>`;

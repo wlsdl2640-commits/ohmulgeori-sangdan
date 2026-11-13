@@ -87,7 +87,8 @@ function wicURL(g) {
   return (ICON_URL[k] = keepCv(c));
 }
 function offMini(base, t) {
-  const uq = isUniq({ base, t }), ui = uq ? uniqIdx(LADDER_B[base] && ladderSteps(+t).length ? { base, t: +t, lv: ladderSteps(+t)[0] } : { base, t }) : 0;   // 빌드 67: 진열대 열쇠(종류:단계)의 2차 직업 장비는 그 단계 첫 착용 레벨 그림
+  // 빌드 67: 고유 이름만 있고 20칸 그림이 없는 종류(철퇴 · 몽둥이 · 도끼 · 창 · 류트 — 큰 그림은 GEARART)는 예전 도트 그림(OFFICON)으로
+  const uq = isUniq({ base, t }) && typeof WICON !== 'undefined' && !!WICON[base], ui = uq ? uniqIdx(LADDER_B[base] && ladderSteps(+t).length ? { base, t: +t, lv: ladderSteps(+t)[0] } : { base, t }) : 0;   // 빌드 67: 진열대 열쇠(종류:단계)의 2차 직업 장비는 그 단계 첫 착용 레벨 그림
   const k = uq ? 'w:' + base + ':' + ui : base + ':' + offLook(t); if (OFF_MINI[k] !== undefined) return OFF_MINI[k];
   const cells = uq ? wicCells(base, ui) : typeof OFFICON !== 'undefined' && OFFICON[base] ? skiCells('o:' + k) : null;
   if (!cells) return (OFF_MINI[k] = null);
@@ -130,7 +131,7 @@ function offIconURL(base, t) {
 // 빌드 65: 사용자가 준 디자인 그림을 그대로 쓰는 장비(ARMART — 경갑 · 경갑 하의). 도트 칸에 굽지 않고 칸 위에 얹는다(rarity.js rqClass · panels.js gImg)
 const HR_URL = new Set();
 function armArtURL(g) {
-  const T = g && GTYPES[g.base], L = T && T.art && ((typeof ARMART !== 'undefined' && ARMART[T.art]) || (typeof HDART !== 'undefined' && HDART[T.art])); if (!L) return null;   // HDART: 화살통 · 마나소드 (data-hdart65.js)
+  const T = g && GTYPES[g.base], L = T && T.art && ((typeof ARMART !== 'undefined' && ARMART[T.art]) || (typeof HDART !== 'undefined' && HDART[T.art]) || GEARART[T.art]); if (!L) return null;   // HDART: 화살통 · 마나소드 (data-hdart65.js) · GEARART: 빌드 67 무기 판 20장 (data-wart67.js)
   const u = L[Math.max(0, Math.min(L.length - 1, artIdx(g)))]; if (u) HR_URL.add(u);   // 빌드 67: 2차 직업 장비는 착용 레벨의 그림(artIdx — 옛 장비는 예전 그림)
   return u || null;
 }

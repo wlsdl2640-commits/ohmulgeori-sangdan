@@ -162,7 +162,7 @@ function whMoveKeys(keys, from, to) {
   return `${moved}칸을 ${whName(to)}로 옮겼어요.${left ? ` (${left}칸은 자리가 없어 그대로)` : ''}`;
 }
 function whGearDetail(g, from) {
-  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''} — ${esc(uniqDesc(g))}</span>` : ''}${GTYPES[g.base].desc ? `<span class="sub">${GTYPES[g.base].desc}</span>` : ''}<span class="sub muted">${gearWho(g.base)} · Lv${gearReqLv(g)}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
+  const top = `<div class="row">${gArt(g, 2)}<div class="grow stack"><span>${gearName(g)} ${qTag(g)}${runeDots(g)}</span><span class="sub">${statLine(gearStats(g))}${isAmmo(g) ? ` · ${fmt(ammoMax(g))}${ammoUnit(g)} 담음` : ''}</span>${isUniq(g) ? `<span class="sub">${GTYPES[g.base].name}${twoHand(g) ? ' · 두 손 (부장비를 함께 못 낌)' : ''}${uniqDesc(g) ? ` — ${esc(uniqDesc(g))}` : ''}</span>` : ''}${GTYPES[g.base].desc ? `<span class="sub">${GTYPES[g.base].desc}</span>` : ''}<span class="sub muted">${gearWho(g.base)} · Lv${gearReqLv(g)}+ · 무게 ${GTYPES[g.base].w}${fuseCatOf(g) ? ` · 합성 갈래 ${FUSE_CAT[fuseCatOf(g)]}` : ''}</span></div></div>`;
   if (from >= 0) return `<div class="card hl idet">${top}${whMoveRow(from, 'gear', g.id)}</div>`;
   // 빌드 64 (사용자 11-11 19:28 그림): 강화 · 합성 · 재감정 · 룬 새기기는 창고에서 빼고 각 시설에서만 — 팔기는 옮기기 단추 옆으로
   const bonus = (g.q || 0) >= 2 ? `<div class="sub">보너스 옵션: ${statLine(g.bonus || {}) || '없음'} <span class="muted">· 재감정은 마탑에서</span></div>` : '';

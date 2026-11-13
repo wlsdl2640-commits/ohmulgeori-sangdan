@@ -21,7 +21,7 @@ function dropOffFor(a) { if (a && a.eq && twoHand(a.eq.weapon) && a.eq.off) { S.
 const WEAPON_LOW = { gladius: 'sword', great: 'axe' };
 const weaponOf = (c, t = 0) => { const b = WEAPON_OF[c] || 'sword'; return (LADDER_B[b] ? ladderFor(MAX_LV, t) : tierOk(b, t)) ? b : WEAPON_LOW[b] || 'sword'; };   // 빌드 67: 2차 직업 무기는 사막왕 단계(Lv50)부터 — 주는 곳에서 gearFor로 착용 레벨을 고른다   // WEAPON_OF는 econ.js (쓸 때는 다 읽힌 뒤)
 // 장비 창 · 대장간에 보이는 한 줄 설명 (고유 장비만)
-const uniqDesc = g => (isUniq(g) && typeof WDESC !== 'undefined' && WDESC[g.base] ? WDESC[g.base][uniqIdx(g)] : '');
+const uniqDesc = g => (isUniq(g) && typeof WDESC !== 'undefined' && WDESC[g.base] && WDESC[g.base][uniqIdx(g)]) || '';   // 빌드 67: 설명이 없는 그림(판에 새로 더한 그림 · 그림이 바뀐 종류)은 빈칸
 STORY.v64 = [   // 빌드 64 (장비 개편 1단계 · 전직 레벨)
   '빌드 64: 전사 계열 장비 개편 — 장검 · 글라디우스 · 대검 · 라운드 실드 · 버클러 · 십자 방패 · 에테르 실드는 단계마다 고유 이름과 그림이 생겼다 (장검: 견습 기사검 → 성문 수비검 → … → 영원의 맹세).',
   '직업별 장비: 검투사 · 챔피언 = 버클러 + 글라디우스, 기사 · 성기사 = 십자 방패 + 장검, 광전사 · 피의 군주 = 대검(두 손 — 부장비를 함께 못 낀다), 마검사 · 마검성 = 에테르 실드 + 장검. 라운드 실드는 방패를 드는 직업 모두의 공용이다. 2차 직업 장비는 늪지(Lv52) 단계부터 나온다.',

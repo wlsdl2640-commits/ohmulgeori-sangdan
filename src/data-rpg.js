@@ -505,7 +505,8 @@ function gearStats(g) {
 // 1차부터 쓰는 장검 · 라운드 실드는 견습 단계부터, 2차 직업 장비는 늪지(Lv52) 단계부터만 있다 — 그 아래로는 나오지도, 만들지도 않는다
 const UNIQ_T0 = { sword: 0, shield: 0, gladius: 6, great: 6, buckler: 6, cross: 6, ether: 6 };
 const isUniq = g => !!g && UNIQ_T0[g.base] != null;
-const uniqLen = b => (typeof WICON !== 'undefined' && WICON[b] ? WICON[b].length : 16);   // 빌드 65: 그림이 하나뿐인 고유 장비(속성 대검 · 속성 특별 암기)는 1
+const GEARART = {};   // 빌드 67 (11-13 11:54 사용자가 준 무기 판 20장): 종류 → 그림 차례마다 WebP data URL — data-wart67.js가 채우고 data-weap67.js가 GTYPES[종류].art를 단다
+const uniqLen = b => { const k = GTYPES[b] && GTYPES[b].art, A = k && GEARART[k]; return A ? A.length : typeof WICON !== 'undefined' && WICON[b] ? WICON[b].length : 16; };   // 빌드 65: 그림이 하나뿐인 고유 장비(속성 대검 · 속성 특별 암기)는 1 · 빌드 67: 판 그림이 있으면 그 장 수(장검 21 · 몽둥이 22 …)
 const uniqIdx = g => Math.max(0, Math.min(uniqLen(g.base) - 1, LADDER_B[g.base] && g.lv ? ladderIdx(g) : (g.t || 0) - (UNIQ_T0[g.base] || 0)));   // 그림 · 이름 차례 (빌드 67: 2차 직업 장비는 착용 레벨 차례 — Lv50 = 0번 · Lv55 = 1번 …, g.lv 없는 옛 장비는 예전대로 늪지 = 0번)
 const artIdx = g => (isUniq(g) ? uniqIdx(g) : LADDER_B[g.base] && g.lv ? ladderIdx(g) : g.t || 0);   // 큰 그림(ARMART · HDART) 차례 — 빌드 67: 마나소드도 늪지 = 0번(예전엔 단계 번호를 그대로 써서 이름과 그림이 어긋났다)
 // 빌드 65: 한 단계에만 있는 장비(속성 대검 넷 — UNIQ_ONLY[종류] = 레벨) = 그 레벨 이상인 첫 단계에서만 나온다. 그 레벨 단계가 아직 없으면(Lv150 · 200) 어디서도 안 나오고, 단계가 생기면 바로 나온다
