@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -440,7 +440,7 @@ function learnSkill(aid, sid) {
   if (!a || a.status !== 'idle') return '대기 중인 모험가만 배울 수 있어요.';
   if (a.skills.includes(sid)) return '이미 배운 스킬이에요.';
   if (s.tier && jobTier(a.cls) < s.tier) return `${s.name}은(는) ${s.tier}차 전직 후에 배울 수 있어요.`;
-  if (!canLearn(a, sid)) return `${s.name}은(는) ${s.cls.includes('all') ? '' : s.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·') + ' '}Lv${s.lv} 이상만 배울 수 있어요.`;
+  if (!canLearn(a, sid)) return `${s.name}은(는) ${skJobTxt(sid)} · Lv${s.lv} 이상만 배울 수 있어요.`;   // 빌드 68: 계열 · 직업 글
   if (a.skills.length >= skillSlots(a)) { const nx = SKILL_SLOT_LV.find(l => a.lv < l); return `스킬 칸 ${skillSlots(a)}개가 꽉 찼어요. 하나를 잊거나${nx ? ` Lv${nx}에 칸이 늘어나면` : ''} 배울 수 있어요.`; }
   if (skillNeedsBook(sid) && !((S.inv['book_' + sid] || 0) > 0)) return `스킬북 「${s.name}」이 없어요.${s.own ? ' 2차 · 3차 고유 스킬도 이제 스킬북으로 배워요 (빛바랜 · 신비한 스킬북).' : ''}`;   // 빌드 63
   const fee = learnFee(s);
@@ -448,7 +448,7 @@ function learnSkill(aid, sid) {
   if (skillNeedsBook(sid)) addTo(S.inv, 'book_' + sid, -1);
   S.gold -= fee;
   a.skills.push(sid); clampVitals(a);
-  log(`${a.name}이(가) 스킬 「${s.name}」을(를) 배웠다.`, 'good');
+  log(`${a.name}이(가) 스킬 「${s.name}」을(를) 배웠다. (${skTag(sid)})`, 'good');
   changed();
   return '';
 }
@@ -1201,7 +1201,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1268,7 +1268,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68(); notes67();
+    notes64(); notes65(); notes68(); notes67(); notes68b();
     return true;
   } catch (_) { return false; }
 }
@@ -1521,6 +1521,7 @@ function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
 }
 function notes67() { if (!S.flags.v67) { S.flags.v67 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '장비 착용 레벨 · 무기 그림 · 룬 합성', body: STORY.v67 }); } }   // 빌드 67
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
+function notes68b() { if (!S.flags.v68b) { S.flags.v68b = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬북 계열 · 직업 표시 · 스킬 칸 나누기', body: STORY.v68b }); } }   // 빌드 68 (data-skjob68.js)
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);
   [...(S.advs || []), ...(S.cands || []), ...opps].forEach(a => { if (a && a.eq) for (const sl of SLOTS65) if (a.eq[sl] === undefined) a.eq[sl] = null; });   // 옛 모험가 · 손님 · 투기장 상대에게 빈 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸

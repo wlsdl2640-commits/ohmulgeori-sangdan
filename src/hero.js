@@ -646,7 +646,7 @@ function heroPanel(a) {
   const slots = skillSlots(a), hexes = [];
   for (let k = 0; k < slots; k++) {
     const id = a.skills[k], s = id && SKILLS[id];
-    if (s) { const lv = smLv(a, id); hexes.push(`<div class="hex${lv >= SM_MAX ? ' max' : ''}" title="${esc(s.name)} · 숙련 ${lv}/${SM_MAX}"><img src="${hexURL(skillGlyph(s), s.kind, lv >= SM_MAX, id)}" alt=""><span class="hx-n">${lv}/${SM_MAX}</span></div>`); }
+    if (s) { const lv = smLv(a, id); hexes.push(`<div class="hex${lv >= SM_MAX ? ' max' : ''}" title="${esc(s.name)} · ${skTag(id)} · 숙련 ${lv}/${SM_MAX}"><img src="${hexURL(skillGlyph(s), s.kind, lv >= SM_MAX, id)}" alt=""><span class="hx-n">${lv}/${SM_MAX}</span></div>`); }
     else hexes.push(`<div class="hex empty" title="빈 스킬 칸"><img src="${hexURL(null)}" alt=""></div>`);
   }
   const p = partyOf(a.id), mates = p ? p.members.map(advById).filter(Boolean) : S.advs.slice(0, 10);

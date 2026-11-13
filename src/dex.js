@@ -145,17 +145,18 @@ function skillHow(id) {
 function skillRow(id) {
   const s = SKILLS[id], who = S.advs.filter(a => a.skills.includes(id)).map(a => a.name), book = S.inv['book_' + id] || 0;
   const from = skillHow(id);
-  return `<div class="li${who.length ? ' on' : ''}"><div class="grow stack"><span>${s.name} <span class="muted">· Lv${s.lv} · ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span><span class="sub muted">${from}${s.cls.includes('all') ? ' · 누구나' : ` · ${s.cls.map(c => CLASSES[c] ? CLASSES[c].name : c).join('·')}`}${who.length ? ` · 배움: ${who.map(esc).join(', ')}` : ''}${book ? ` · 스킬북 ${book}권` : ''}</span></div></div>`;
+  return `<div class="li${who.length ? ' on' : ''}"><div class="grow stack"><span>${s.name} ${skChip(id)} <span class="muted">· Lv${s.lv} · ${costStr(s)}${s.cd ? ` · 재사용 ${s.cd}초` : ''}</span></span><span class="sub">${s.desc}</span><span class="sub">${skillSpecLine(id)}</span><span class="sub muted">${skJobTxt(id)} · ${from}${who.length ? ` · 배움: ${who.map(esc).join(', ')}` : ''}${book ? ` · 스킬북 ${book}권` : ''}</span></div></div>`;
 }
-function dexSkills() {
-  const groups = [['warrior', '전사 계열'], ['archer', '궁수 계열'], ['mage', '마법사 계열'], ['cleric', '성직자 계열'], ['rogue', '도적 계열'], ['porter', '짐꾼'], ['all', '누구나']];
-  const used = new Set();
-  const out = groups.map(([g, name]) => {
-    const ids = SKILL_IDS.filter(id => !used.has(id) && (g === 'all' ? SKILLS[id].cls.includes('all') : SKILLS[id].cls.some(c => c === g || jobBase(c) === g))).sort((x, y) => SKILLS[x].lv - SKILLS[y].lv);
-    ids.forEach(id => used.add(id));
-    return `<details class="card"><summary>${name} <span class="muted">${ids.length}개</span></summary><div class="list">${ids.map(skillRow).join('')}</div></details>`;
-  });
-  return out.join('');
+function dexSkills() {   // 빌드 68: 계열 안에서 직업마다 칸 — 계열 공통(1차) → 2차 → 그 3차 → 4차 (사용자 「전사(공통) · 검투사부터 · 챔피언부터」)
+  const groups = [['warrior', '전사 계열'], ['archer', '궁수 계열'], ['mage', '마법사 계열'], ['cleric', '성직자 계열'], ['rogue', '도적 계열'], ['porter', '짐꾼 계열'], ['all', '공용 (모든 직업)']];
+  const byLv = (x, y) => SKILLS[x].lv - SKILLS[y].lv, walk = c => [c, ...nextJobs(c).flatMap(walk)];
+  return groups.map(([g, name]) => {
+    if (g === 'all') { const ids = SKILL_IDS.filter(id => skJob(id).kind === 'all').sort(byLv); return `<details class="card"><summary>${name} <span class="muted">${ids.length}개</span></summary><div class="list">${ids.map(skillRow).join('')}</div></details>`; }
+    const line = SKILL_IDS.filter(id => { const J = skJob(id); return J.kind === 'line' && J.fams.includes(g); }).sort(byLv);
+    const secs = [[`${CLASSES[g].name} (공통)`, '1차 · 계열 누구나', 1, line]].concat(walk(g).slice(1).map(c => [`${CLASSES[c].name}부터`, `${jobTier(c)}차 · ${CLASSES[JOB_PARENT[c]].name}에서 전직`, jobTier(c), SKILL_IDS.filter(id => { const J = skJob(id); return J.kind === 'job' && J.jobs.includes(c); }).sort(byLv)]));
+    const n = secs.reduce((x, q) => x + q[3].length, 0);
+    return `<details class="card"><summary>${name} <span class="muted">${n}개</span></summary><div class="list">${secs.filter(q => q[3].length).map(([t, sub, tier, ids]) => `<div class="sksec t${tier}"><b>${t}</b><span>${sub} · ${ids.length}개</span></div>${ids.map(skillRow).join('')}`).join('')}</div></details>`;
+  }).join('');
 }
 
 /* ───────── 부속품 · 소모품 ───────── */
