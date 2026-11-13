@@ -29,9 +29,9 @@ const RAIDS = {
   kaishar: { name: '고블린 소드마스터 카이샤르', lv: 50, mon: 'kaishar', bg: 'forest', hp: 6.0e6,
     part: ['카이샤르의 부러진 검날', 1100], heart: ['소드마스터의 투혼', 7000], c: '#c0392b',
     desc: '천 번의 결투에서 살아남은 고블린 검객. 두 자루 대검을 쓴다.' },
-  griffon: { name: '대그리폰', lv: 70, mon: 'raidgriffon', bg: 'valley', hp: 1.3e7,
-    part: ['대그리폰의 황금 깃털', 1800], heart: ['대그리폰의 심장', 11000], c: '#f0c24a',
-    desc: '바람계곡의 하늘을 다스리는 거대한 그리폰.' },
+  griffon: { name: '대그리핀', lv: 70, mon: 'raidgriffon', bg: 'valley', hp: 1.3e7,
+    part: ['대그리핀의 황금 깃털', 1800], heart: ['대그리핀의 심장', 11000], c: '#f0c24a',
+    desc: '바람계곡의 하늘을 다스리는 거대한 그리핀.' },
   tempest: { name: '템페스트 드래곤', lv: 90, mon: 'tempest', bg: 'mountain', hp: 2.2e7,
     part: ['폭풍룡의 뇌린', 2800], heart: ['템페스트 드래곤의 심장', 18000], c: '#7ab8ff',
     desc: '번개 구름을 몰고 다니는 폭풍의 용.' },
@@ -68,7 +68,7 @@ const raidGold = lv => Math.round(4000 * Math.pow(lv / 30, 1.6) / 50) * 50;
 Object.assign(MONS, {
   kingslime:   { name: '킹슬라임', plan: 'kingslime', W: 46, H: 40, body: '#5ab0f0', dark: '#2a6aa8', boss: 1, giant: 1, mh: 3, ma: 1.6, md: 1.0, spd: 0.8, aoe: 1, drops: [] },
   kaishar:     { name: '카이샤르', plan: 'swordmaster', W: 34, H: 44, skin: '#6e9e44', cloth: '#5a1a1a', boss: 1, giant: 1, mh: 3, ma: 2.0, md: 1.4, spd: 1.2, eva: 0.12, aoe: 1, drops: [] },
-  raidgriffon: { name: '대그리폰', plan: 'giantgriffon', W: 60, H: 52, body: '#c8a050', dark: '#8a6a3a', boss: 1, giant: 1, mh: 3, ma: 1.9, md: 1.3, spd: 1.0, eva: 0.08, aoe: 1, drops: [] },
+  raidgriffon: { name: '대그리핀', plan: 'giantgriffon', W: 60, H: 52, body: '#c8a050', dark: '#8a6a3a', boss: 1, giant: 1, mh: 3, ma: 1.9, md: 1.3, spd: 1.0, eva: 0.08, aoe: 1, drops: [] },
   tempest:     { name: '템페스트 드래곤', plan: 'dragon', W: 76, H: 62, body: '#3a5a8a', dark: '#1e3050', boss: 1, giant: 1, mh: 3, ma: 2.1, md: 1.6, spd: 0.9, magic: 1, aoe: 1, drops: [] },
   behemoth:    { name: '베히모스', plan: 'whale', W: 112, H: 70, body: '#6a6aa8', dark: '#3a3a6a', boss: 1, giant: 1, fly: 1, mh: 3, ma: 2.2, md: 1.8, spd: 0.75, aoe: 1, drops: [] }
 });

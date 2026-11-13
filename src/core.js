@@ -166,9 +166,9 @@ function wagonWhy(p) {
   if (p.r2 && !caravanOf(p)) return '둘째 마차는 캐러밴 마스터가 있어야 몰아요';
   if (!coachLineOf(p)) return '말이 끄는 마차는 마부 계열(마부 · 코네스토가 · 캐러밴 마스터)이 몰아요';
   const h = horseOf(p);
-  if (!h) return p.horse && p.horse.startsWith('p:') ? '맨 펫이 없거나 아직 다 자라지 않았어요' : w.horse === 'fly' ? '마구간에서 그리폰·와이번·페가수스(다 자란 펫)를 매어야 해요' : w.horse === 'goat' ? '마구간에서 고산지대 산양(다 자란 펫)을 매어야 해요' : '마구간에서 말을 매어야 해요';
+  if (!h) return p.horse && p.horse.startsWith('p:') ? '맨 펫이 없거나 아직 다 자라지 않았어요' : w.horse === 'fly' ? '마구간에서 그리핀·와이번·페가수스(다 자란 펫)를 매어야 해요' : w.horse === 'goat' ? '마구간에서 고산지대 산양(다 자란 펫)을 매어야 해요' : '마구간에서 말을 매어야 해요';
   if (w.horse === 'goat' && !h.steel) return '고산지대 산양이 끌어야 해요';
-  if (w.horse === 'fly' && !h.fly) return '그리폰·와이번·페가수스가 끌어야 해요';
+  if (w.horse === 'fly' && !h.fly) return '그리핀·와이번·페가수스가 끌어야 해요';
   return '';
 }
 const wagonOf = p => { const w = wagonOwned(p); return w && !wagonWhy(p) ? w : null; };
@@ -180,7 +180,7 @@ const rig2Live = p => { const q = rig2(p); if (!q || !q.wagon || !wagonOf(p) || 
 const wagonCap = p => { const q = rig2Live(p); return rigCap(p) + (q ? rigCap(q) : 0); };   // 둘째 마차는 짐을 더 싣고
 const wagonSpd = p => { const q = rig2Live(p); return q ? Math.min(rigSpd(p), rigSpd(q)) : rigSpd(p); };   // 행렬은 느린 마차에 맞춘다
 const wagonFly = p => { const w = wagonOf(p), h = horseOf(p); return !!(w && w.fly && h && h.fly); };
-// 마차 이름: 비행 마차에 그리폰을 매면 그리폰 마차
+// 마차 이름: 비행 마차에 그리핀을 매면 그리핀 마차
 function rigName(p) { const w = wagonOwned(p); if (!w) return ''; const h = horseOf(p); return (w.fly && h && h.fly ? `${h.name} 마차` : w.name) + (wagonPlus(p) ? ` +${wagonPlus(p)}` : ''); }
 const rig2Name = p => { const q = rig2(p); return q && q.wagon ? rigName(q) : ''; };
 // 정찰가: 파티 이동 속도와 텐트(야영 피로 회복 배율)
@@ -357,7 +357,7 @@ function startExp(p, fid) {
   if (GR && avgLvOf(p) < GR.lv - RAID_GAP) return `${GR.name} 레이드는 파티 평균 Lv${GR.lv - RAID_GAP} 이상이어야 도전할 수 있어요.`;
   const pw = partyWhy(p); if (pw) return pw;
   if (FIELDS[fid].trade) { const tw = tradeWhy(p); if (tw) return tw; if (!Object.keys(tradeCargoPlan(p, FIELDS[fid].trade).cargo).length) return `${KINGDOMS[FIELDS[fid].trade].name}이(가) 원하는 물건이 창고에 없어요.`; }
-  if (FIELDS[fid].region === 'sky' && !wagonFly(p)) return `${FIELDS[fid].name}은(는) 비행 마차에 그리폰·와이번·페가수스를 맨 파티만 갈 수 있어요.`;
+  if (FIELDS[fid].region === 'sky' && !wagonFly(p)) return `${FIELDS[fid].name}은(는) 비행 마차에 그리핀·와이번·페가수스를 맨 파티만 갈 수 있어요.`;
   if (FIELDS[fid].treasure && (S.inv.tmap || 0) < 1) return '보물 지도가 없어요.';
   const sup = {};
   if (p.autoBuy) for (const [k, q] of Object.entries(p.sup)) { const short = q - (S.inv[k] || 0); if (short > 0 && ITEMS[k] && ITEMS[k].buy) { const cost = buyPrice(k) * short; if (S.gold >= cost) { S.gold -= cost; S.stats.spent = (S.stats.spent || 0) + cost; addTo(S.inv, k, short); log(`${p.name} 출발 전에 ${ITEMS[k].name} ${short}개를 ${g$(cost)}에 사 두었다.`); } } }

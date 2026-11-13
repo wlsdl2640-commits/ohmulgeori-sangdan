@@ -1077,7 +1077,7 @@ cC..........QQQQCCCCCCCCCCCCCCCCCCCCC........cQwwkc
 .
 .
 ` }, sh: [37, 18], hip: 99, ax: 19, still: 1, noArm: 1, wpn: 'none' },
-  raiju_b: {   // 시안 D 번개 그리폰: 짙은 남빛 사자 몸에 흰빛 독수리 머리 · 굽은 금빛 부리 · 뒤로 누운 머리 깃 · 어깨 위로 반쯤 들어 편 칼깃 날개 · 깃 끝마다 노란 번개 빛 · 꼬리 끝 번개 술 · 하늘빛 눈
+  raiju_b: {   // 시안 D 번개 그리핀: 짙은 남빛 사자 몸에 흰빛 독수리 머리 · 굽은 금빛 부리 · 뒤로 누운 머리 깃 · 어깨 위로 반쯤 들어 편 칼깃 날개 · 깃 끝마다 노란 번개 빛 · 꼬리 끝 번개 술 · 하늘빛 눈
     pal: { C: '#3e4a70', Q: '#5e6c98', c: '#242c4a', F: '#a4b0d0', G: '#d4dcee', g: '#6e7aa0', S: '#f2f4fa', O: '#e8b040', o: '#a87820', Y: '#ffd84a', L: '#fff6b0', B: '#8ae8ff', k: '#0c0e18', w: '#ffffff', R: '#7a1a2a', E: '#8ae8ff', I: '#e8e4d8' },
     g: `
 .
@@ -1286,4 +1286,4 @@ pxuLook('thunderhawk_b', 'thunderhawk', MONS.thunderhawk.name); pxuLook('thunder
 pxuLook('thunderdragon_b', 'thunderdragon', MONS.thunderdragon.name);
 pxuLook('raiju_b', 'raiju', MONS.raiju.name);
 Object.assign(PXU_SKIN, { stormcloud: ['stormcloud', 'stormcloud_b'], thunderhawk: ['thunderhawk', 'thunderhawk_b', 'thunderhawk_c'], thunderdragon: ['thunderdragon', 'thunderdragon_b'], raiju: ['raiju', 'raiju_b'] });
-Object.assign(PXU_SKIN_NAME, { stormcloud: ['뭉게 먹구름', '꼬마 뇌운 셋'], thunderhawk: ['먹빛 번개매', '폭풍 수리', '뇌제비'], thunderdragon: ['흰 두 뿔 뇌룡', '먹구름 날개 용'], raiju: ['번개 뿔 들소', '번개 그리폰'] });
+Object.assign(PXU_SKIN_NAME, { stormcloud: ['뭉게 먹구름', '꼬마 뇌운 셋'], thunderhawk: ['먹빛 번개매', '폭풍 수리', '뇌제비'], thunderdragon: ['흰 두 뿔 뇌룡', '먹구름 날개 용'], raiju: ['번개 뿔 들소', '번개 그리핀'] });

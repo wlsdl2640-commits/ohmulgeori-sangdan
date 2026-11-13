@@ -63,7 +63,7 @@ const ITEMS = {
   giant_gem:      { name: '바위거인의 원석',    v: 1600, w: 5, icon: 'gem',     c: '#5ad6e8' },
   harpy_feather:  { name: '하피 깃털',          v: 55,   w: 1, icon: 'feather', c: '#9ad0f0' },
   gale_fang:      { name: '질풍 송곳니',        v: 50,   w: 1, icon: 'fang',    c: '#cfe8f0' },
-  griffon_claw:   { name: '그리폰 발톱',        v: 80,   w: 2, icon: 'horn',    c: '#e0c070' },
+  griffon_claw:   { name: '그리핀 발톱',        v: 80,   w: 2, icon: 'horn',    c: '#e0c070' },
   wyvern_scale:   { name: '와이번 비늘',        v: 95,   w: 2, icon: 'gem',     c: '#5aa07a' },
   storm_heart:    { name: '폭풍의 심장',        v: 2600, w: 4, icon: 'heart',   c: '#7ab8ff' },
   snow_essence:   { name: '눈의 정수',          v: 60,   w: 1, icon: 'blob',    c: '#f0f6ff' },
@@ -111,7 +111,7 @@ const MONS = {
 
   harpy:   { name: '하피',         plan: 'flyer', body: '#c8a888', dark: '#7a9ab8', face: '#f1c9a5', mh: 0.9, ma: 1.0, md: 0.4, spd: 1.4, eva: 0.22, minS: 1, drops: [['harpy_feather', 0.6]] },
   windwolf:{ name: '바람 늑대',    plan: 'quad', body: '#b8c8d8', dark: '#7a8aa0', len: 15, h: 7, tail: 1, ear: 1, snout: 1, mh: 1.1, ma: 1.05, md: 0.6, spd: 1.3, eva: 0.1, minS: 2, drops: [['gale_fang', 0.55]] },
-  griffon: { name: '그리폰',       plan: 'flyer', body: '#c8a050', dark: '#8a6a3a', beak: '#f0c24a', big: 1, mh: 1.6, ma: 1.2, md: 1.0, spd: 1.0, eva: 0.12, minS: 4, drops: [['griffon_claw', 0.4]] },
+  griffon: { name: '그리핀',       plan: 'flyer', body: '#c8a050', dark: '#8a6a3a', beak: '#f0c24a', big: 1, mh: 1.6, ma: 1.2, md: 1.0, spd: 1.0, eva: 0.12, minS: 4, drops: [['griffon_claw', 0.4]] },
   wyvern:  { name: '와이번',       plan: 'flyer', body: '#4f8a5a', dark: '#2f5a3a', beak: '#e8e2d0', big: 1, mh: 1.9, ma: 1.3, md: 1.3, spd: 0.9, minS: 6, drops: [['wyvern_scale', 0.45]] },
   stormwyvern: { name: '폭풍 와이번', plan: 'flyer', body: '#3a5a8a', dark: '#24365a', beak: '#9ad0f0', big: 1, scale: 2, boss: 1, mh: 5.5, ma: 1.7, md: 1.6, spd: 0.8, eva: 0.1, aoe: 1, drops: [['storm_heart', 1], ['wyvern_scale', 1, 2]] },
 

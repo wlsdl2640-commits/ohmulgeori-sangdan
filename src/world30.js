@@ -51,12 +51,12 @@ function hitch(pid, key, sl) {
   const fits = H => (w.horse === 'goat' ? !!H.steel : w.horse === 'fly' ? !!H.fly : true);
   if (key.startsWith('h:')) {
     const k = key.slice(2), H = HORSES[k]; if (!H || H.pet) return '';
-    if (!fits(H)) return `${w.name}은(는) ${w.horse === 'goat' ? '고산지대 산양' : '그리폰·와이번·페가수스'}만 끌 수 있어요.`;
+    if (!fits(H)) return `${w.name}은(는) ${w.horse === 'goat' ? '고산지대 산양' : '그리핀·와이번·페가수스'}만 끌 수 있어요.`;
     if (p[RF.h] !== key && horseFree(k) < 1) return `남는 ${H.name}이(가) 없어요.`;
   } else {
     const pet = petById(+key.slice(2)); if (!pet) return '';
     const hk = horseOfPet(pet.kind); if (!hk) return `${PETS[pet.kind].name}은(는) 마차를 끌 수 없어요.`;
-    if (!fits(HORSES[hk])) return `${w.name}은(는) ${w.horse === 'goat' ? '고산지대 산양' : '그리폰·와이번·페가수스'}만 끌 수 있어요.`;
+    if (!fits(HORSES[hk])) return `${w.name}은(는) ${w.horse === 'goat' ? '고산지대 산양' : '그리핀·와이번·페가수스'}만 끌 수 있어요.`;
     if (!pet.stage) return `${pet.name}은(는) 아직 망아지예요. Lv${PET_EVO_LV}에 진화하면 끌 수 있어요.`;
     const other = S.parties.find(x => (x.horse === key || x.horse2 === key) && !(x.id === p.id && x[RF.h] === key)), fighter = S.parties.find(x => x.pet === pet.id);
     if (other && other.exp) return `${pet.name}은(는) ${other.name}의 마차를 끌고 원정 중이에요.`;
@@ -112,7 +112,7 @@ function stableRig(sp, sl) {
       <div class="sub">${q.wagon ? `짐 +${(sl === 2 ? rigCap(q) : rigCap(sp)) || 0} · 이동 ×${(sl === 2 ? rigSpd(q) : rigSpd(sp)).toFixed(2)}${h ? ` · 끄는 ${h.petName ? `펫 ${esc(h.petName)}(${h.name})` : h.name}` : ''}${why ? ` · <span class="red-t">${why}</span>` : ''}` : two ? '캐러밴 마스터는 마차를 두 대까지 몰아요 — 짐은 더하고, 행렬은 느린 마차에 맞춰 움직여요.' : '아래에서 마차를 고르고, 말을 매요.'}${drv ? ` · ${two ? '캐러밴 마스터' : coachLine(drv) ? '마부' : '짐꾼'} ${esc(drv.name)}` : q.wagon && q.wagon !== 'cart' ? ' · <span class="red-t">마부 계열 없음</span>' : ''}${busy ? ' · <span class="muted">원정 중</span>' : ''}</div>
       ${q.wagon && q.wagon !== 'cart' ? `<div class="row sub"><span class="grow">강화 +${n}/${wagonPlusMax()} <span class="muted">· 단계마다 짐 +${Math.round(WAGON_PLUS.cap * 100)}%, 속도 +${Math.round(WAGON_PLUS.spd * 100)}%${c && canPlus ? ` · 다음: ${fmt(c.gold)}G · 강철 편자 ${c.shoe}(창고 ${S.inv.horseshoe || 0}) · 철광석 ${c.ore}(창고 ${S.inv.iron_ore || 0})` : ''}</span></span><button type="button" class="btn sm gold" data-act="wplus" data-id="${sp.id}"${S2}${canPlus && !busy && S.gold >= c.gold && (S.inv.horseshoe || 0) >= c.shoe && (S.inv.iron_ore || 0) >= c.ore ? '' : ' disabled'}>${n >= WAGON_PLUS_MAX ? '최대' : n >= wagonPlusMax() ? '마구간 확장 필요' : `+${n + 1} 강화`}</button></div>` : ''}</div>
       <div class="sec"><b>${two ? '둘째 마차 몸체' : '마차 몸체'}</b><span>바꾸면 쓰던 마차는 반값에 넘기고 강화는 사라져요</span></div><div class="list">${bodies}</div>
-      ${w && w.horse ? `<div class="sec"><b>맬 말</b><span>${w.horse === 'goat' ? '고산지대 산양' : w.horse === 'fly' ? '그리폰·와이번·페가수스' : '마구간의 말 또는 다 자란 펫'}</span></div><div class="list">${horses}${petRows}${horses || petRows ? '' : '<div class="sub muted">맬 말이 없어요. 아래에서 말을 사거나, 사육장에서 적토마·켈피·페가수스·산양·그리폰·와이번을 키워요.</div>'}</div>` : ''}`;
+      ${w && w.horse ? `<div class="sec"><b>맬 말</b><span>${w.horse === 'goat' ? '고산지대 산양' : w.horse === 'fly' ? '그리핀·와이번·페가수스' : '마구간의 말 또는 다 자란 펫'}</span></div><div class="list">${horses}${petRows}${horses || petRows ? '' : '<div class="sub muted">맬 말이 없어요. 아래에서 말을 사거나, 사육장에서 적토마·켈피·페가수스·산양·그리핀·와이번을 키워요.</div>'}</div>` : ''}`;
   return rig;
 }
 BLD_BOX.stable = () => {
@@ -194,7 +194,7 @@ BLD_BOX.airfield = () => {
     const buy = p.wagon === 'sky' ? '' : `<button type="button" class="btn sm" data-act="wagon" data-id="${p.id}" data-w="sky"${!p.exp && S.gold + wagonBack(p) >= W.cost ? '' : ' disabled'}>비행 마차 ${fmt(Math.max(0, W.cost - wagonBack(p)))}G</button>`;
     return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg} · ${p.wagon ? rigName(p) : '마차 없음'}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : '<br><span class="ok-t">날아갈 준비가 됐어요</span>'}</span><button type="button" class="btn sm gold" data-act="skygo" data-id="${p.id}"${why ? ' disabled' : ''}>${fid === 'sky' ? '구름섬' : F.name} 출발</button></div>${buy ? `<div class="btns" style="margin-top:-2px;margin-bottom:6px">${buy}</div>` : ''}`; }).join('');
   return `<div class="chips">${isles}</div><div class="card hl"><div class="h">${F.name} <small>Lv${F.lv}~${fieldLv(F, FIELD_STAGES)}</small></div><div class="sub">${F.desc}</div><div class="sub ${open ? 'ok-t' : 'red-t'}">${open ? `열림 · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}` : F.unlock}</div></div>
-    <div class="sub">비행 마차(${fmt(WAGONS.sky.cost)}G · 짐 +${WAGONS.sky.cap} · 이동 ×${WAGONS.sky.spd})는 여기서 만들어요. 마구간에서 그리폰·와이번·페가수스(다 자란 펫)를 매면 그리폰 마차·와이번 마차·페가수스 마차가 되고, 그래야 구름섬으로 날아가요. 비행장 2단계면 비행 마차 짐 +20%.</div>
+    <div class="sub">비행 마차(${fmt(WAGONS.sky.cost)}G · 짐 +${WAGONS.sky.cap} · 이동 ×${WAGONS.sky.spd})는 여기서 만들어요. 마구간에서 그리핀·와이번·페가수스(다 자란 펫)를 매면 그리핀 마차·와이번 마차·페가수스 마차가 되고, 그래야 구름섬으로 날아가요. 비행장 2단계면 비행 마차 짐 +20%.</div>
     <div class="sec"><b>보낼 파티</b><span>보급품·목적지 거점은 원정대 창에서</span></div>${rows || '<div class="sub muted">파티가 없어요.</div>'}
     <div class="sub muted">하늘 지도는 지도 창의 「${SKY_NAME}」 탭에서 봐요. 구름섬 너머로 천둥 봉우리(Lv120) → 천계의 유적 폐허(Lv130) → 별의 정원(Lv140)이 이어지고, 앞 섬의 던전을 공략하면 다음 섬이 열려요.</div>`;
 };
