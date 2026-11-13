@@ -60,7 +60,8 @@ const ACHV = [
   { id: 'trade2', cat: '장사', name: '대상단', desc: '교역 20번', need: 20, get: () => S.stats.trades || 0, rw: { gold: 30000, fame: 20 } },
   { id: 'cook1', cat: '살림', name: '첫 도시락', desc: '주방에서 요리 10번', need: 10, get: () => S.stats.cooked || 0, rw: { gold: 2000 } },
   { id: 'cook2', cat: '살림', name: '상단의 요리사', desc: '주방에서 요리 200번', need: 200, get: () => S.stats.cooked || 0, rw: { gold: 15000, fame: 10 } },
-  { id: 'lv150', cat: '모험가', name: '별에 닿다', desc: '모험가 Lv150', need: 1, get: () => (S.advs.some(a => a.lv >= 150) || (S.hall || []).some(h => h.lv >= 150) ? 1 : 0), rw: { gold: 100000, fame: 80, item: ['bloomstone', 1] } }
+  { id: 'lv150', cat: '모험가', name: '별에 닿다', desc: '모험가 Lv150', need: 1, get: () => (S.advs.some(a => a.lv >= 150) || (S.hall || []).some(h => h.lv >= 150) ? 1 : 0), rw: { gold: 100000, fame: 80, item: ['bloomstone', 1] } },
+  { id: 'lv200', cat: '모험가', name: '별 너머로', desc: '모험가 Lv200', need: 1, get: () => (S.advs.some(a => a.lv >= 200) || (S.hall || []).some(h => h.lv >= 200) ? 1 : 0), rw: { gold: 1000000, fame: 150, item: ['bloomstone', 2] } }   // 빌드 69: 누구나 Lv200
 ];
 ACHV.push(   // 빌드 34: 던전 수거소
   { id: 'salv1', cat: '살림', name: '수거꾼의 첫 짐', desc: '던전 수거소가 부속품 50개 가져오기', need: 50, get: () => S.stats.salvaged || 0, rw: { gold: 3000 } },

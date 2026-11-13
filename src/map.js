@@ -110,11 +110,12 @@ function mapNodes(skyMap) {
     out.push(mapNodeHtml('field', fid, N.x, N.y, `fld${ok ? '' : ' lock'}${on ? ' on' : ''}${F.raid ? ' raid' : ''}${F.frontier ? ' front' : ''}${F.region === 'sky' ? ' skyf' : ''}`, `<i class="mn">${F.raid ? '!' : F.no}</i>`, F.name, W, H));
     if (N.dun && F.dungeon && (fs.found || fs.cleared)) out.push(mapNodeHtml('dungeon', fid, N.x + N.dun[0], N.y + N.dun[1], `dun${fs.cleared ? ' done' : ''}${sel.k === 'dungeon' && sel.id === fid ? ' on' : ''}`, `<i class="mn">${fs.cleared ? '★' : '▣'}</i>`, F.dungeon.name, W, H));
   }
-  if (skyMap) {   // 하늘 지도: 구름섬 둥지
+  if (skyMap) {   // 하늘 지도: 구름섬 둥지 · 빌드 69: 하늘 레이드(베히모스)
+    if (S.raid) for (const r of S.raid.list) { if (r.done || !raidSky(r.id)) continue; const R = RAIDS[r.id], N = MAP_NODES_SKY.sky; out.push(mapNodeHtml('raid', r.id, N.x + 22, N.y + 18, `rd${sel.k === 'raid' && sel.id === r.id ? ' on' : ''}`, `<i class="mn" style="background:${R.c}">☠</i>`, R.name, W, H)); }
     for (const ev0 of evActive('nest')) { const A = MAP_NODES_SKY[ev0.at]; if (A) out.push(mapNodeHtml('event', ev0.id, A.x + 16, A.y - 12, `evn nest${sel.k === 'event' && sel.id === ev0.id ? ' on' : ''}`, '<i class="mn">◉</i>', `둥지 ${ev0.got}/${ev0.need}`, W, H)); }
     return out.join('');
   }
-  if (S.raid) for (const r of S.raid.list) { if (r.done) continue; const R = RAIDS[r.id], N = MAP_NODES[MAP_RAID[r.id] || 'plains']; out.push(mapNodeHtml('raid', r.id, N.x - 16, N.y - 14, `rd${sel.k === 'raid' && sel.id === r.id ? ' on' : ''}`, `<i class="mn" style="background:${R.c}">☠</i>`, R.name)); }
+  if (S.raid) for (const r of S.raid.list) { if (r.done || raidSky(r.id)) continue; const R = RAIDS[r.id], N = MAP_NODES[MAP_RAID[r.id] || 'plains']; out.push(mapNodeHtml('raid', r.id, N.x - 16, N.y - 14, `rd${sel.k === 'raid' && sel.id === r.id ? ' on' : ''}`, `<i class="mn" style="background:${R.c}">☠</i>`, R.name)); }
   for (const k of KINGDOM_IDS) { const P = MAP_KINGS[k], open = kingOpen(k); out.push(mapNodeHtml('king', k, P.x, P.y + 10, `kg${open ? '' : ' lock'}${sel.k === 'king' && sel.id === k ? ' on' : ''}`, `<img src="${emblemURL(k)}" alt="">`, KINGDOMS[k].name.replace(/ .*/, ''))); }
   for (const o in MAP_ORGS) { const P = MAP_ORGS[o]; if (o === 'guild' && !underOpen()) continue; out.push(mapNodeHtml('org', o, P.x, P.y, `og${sel.k === 'org' && sel.id === o ? ' on' : ''}`, `<img src="${emblemURL(o)}" alt="">`, o === 'city' ? '하르겐' : '암살자 길드')); }
   out.push(eventNodes(sel));
@@ -193,7 +194,8 @@ Object.assign(ACT, {
   maptab: d => { UI.mapTab = d.t; UI.mapSel = null; renderPanel(true); },
   mapparty: d => { UI.mapP = +d.id; renderPanel(true); },
   mapgo: d => { const m = mapGo(+d.p, d.f, d.d === '1'); if (m) say(m); else { say(`${findP(+d.p).name} 출발!`); showWin(false); } },
-  mapexp: d => { const p = S.parties.find(x => !x.exp && !x.raidOnly); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } UI.expTab = p.id; } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : FIELDS[d.f] && FIELDS[d.f].region === 'sky' ? 'sky' : 'base'; menuOpen('exp'); },
+  mapexp: d => { if (FIELDS[d.f] && FIELDS[d.f].giant) { UI.expTab = 'raid'; menuOpen('exp'); return; }   // 빌드 69: 레이드는 레이드 탭에서 파티 넷 이상
+    const p = S.parties.find(x => !x.exp && !x.raidOnly); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } UI.expTab = p.id; } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : FIELDS[d.f] && FIELDS[d.f].region === 'sky' ? 'sky' : 'base'; menuOpen('exp'); },
   talk: d => openWin('talk', { who: d.id, mode: '' }),
   talkmode: d => { const top = winTop(); if (top && top.id === 'talk') { top.mode = d.m; renderPanel(true); } },
   talknote: () => say('지금은 그 왕국 상단이 와 있지 않아요. 찾아오면 지도나 상단 창의 교역에서 거래해요.'),

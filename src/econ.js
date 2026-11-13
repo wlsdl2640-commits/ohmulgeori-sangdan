@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1 , v69c: 1}, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -187,8 +187,7 @@ function makeCand() {
   const r = rnd();
   if (r < 0.25) { cond = { type: 'gift', item: pickOne(giftPool()), qty: ri(1, 3) }; lv += 1; }
   else if (r < 0.35) { cond = { type: 'fame', min: S.fame + ri(5, 15) }; lv += 2; }
-  const a = makeAdv({ lv });
-  if (spn('guild') >= 3) a.salary = Math.round(a.salary * 0.9 / 5) * 5;
+  const a = makeAdv({ lv });   // 봉급(길드 후원 3단계 −10% 포함)은 salaryCalc (빌드 69)
   a.fee = a.salary; a.cond = cond;
   if (rnd() < 0.35) { const t = Math.max(0, GTIERS.reduce((m, T, i) => (a.lv >= T.lv ? i : m), 0) - 1); a.eq.weapon = gearFor(weaponOf(a.cls, t), t, 0, a.lv); if (twoHand(a.eq.weapon)) a.eq.off = null; }
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
@@ -200,7 +199,7 @@ function rollCands() {
   for (let i = 0; i < n; i++) S.cands.push(makeCand());
   if (!living().length) {
     const a = makeAdv({ cls: pickOne(['warrior', 'archer', 'cleric']), lv: 1, bio: '모험가 길드가 보낸 견습생. 계약금 없이 일하겠다고 한다.' });
-    a.fee = 0; a.salary = 60; starterGear(a); S.cands.unshift(a);
+    a.fee = 0; a.salK = 0.5; salaryNew(a); starterGear(a); S.cands.unshift(a);   // 견습생은 봉급 절반 (빌드 69: 예전엔 60G로 고정)
   }
 }
 function hire(id) {
@@ -232,7 +231,7 @@ function fire(id) {
 
 /* ───────── 파티 ───────── */
 function createParty() {
-  if (regularParties().length >= partyMax()) return partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? `파티는 ${partyMax()}개까지예요. 레이드 전용 파티는 원정대 창의 레이드 탭에서 꾸려요.` : `지금 상단 랭크에서는 파티를 ${partyMax()}개까지 만들 수 있어요.`;
+  if (regularParties().length >= partyMax()) return partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? `파티는 ${partyMax()}개까지예요.` : `지금 상단 랭크에서는 파티를 ${partyMax()}개까지 만들 수 있어요.`;
   let n = 1;
   while (S.parties.some(p => p.name === `${n}팀`)) n++;
   const p = newParty(`${n}팀`, []);
@@ -832,7 +831,7 @@ function licenseUp(aid) {
   if (S.gold < L.fee) return '심사비가 모자라요.';
   S.gold -= L.fee;
   a.rank = (a.rank || 0) + 1;
-  a.salary = Math.round(a.salary * 1.2 / 5) * 5;
+  salaryNew(a);   // 라이선스마다 ×1.2 (빌드 69: salaryCalc가 다시 셈한다)
   const N = LICENSE[a.rank];
   if (a.rank >= LICENSE.length - 1) {
     S.fame += 15;
@@ -848,7 +847,7 @@ function licenseUp(aid) {
 
 /* ───────── 전직 ───────── */
 const jobOpen = () => true;   // 전직은 명성으로 열리지 않는다. 직업마다 조건(레벨·라이선스·돈·추가 조건)만 본다
-function checkUnlocks() { S.flags.job2 = 1; S.flags.job3 = 1; if (S.parties && (S.rank || 0) >= RAID_PARTY_RANK) raidPartyEnsure(); }
+function checkUnlocks() { S.flags.job2 = 1; S.flags.job3 = 1; }   // 빌드 69: S랭크 레이드대는 없앴다
 function promoWhy(a, cls) {
   const t = jobTier(cls), Q = JOB_REQ[t];
   const R = CLASSES[cls].req || {};
@@ -918,7 +917,7 @@ function promote(aid, cls) {
   if (!a.eq.weapon) a.eq.weapon = gearFor(weaponOf(cls, wasT), wasT, 0, a.lv);   // 길드가 새 직업에 맞는 무기를 준다 (빌드 67: 2차 직업 무기는 낄 수 있는 착용 레벨로)
   dropOffFor(a);   // 빌드 64: 두 손 무기(대검)를 들면 부장비는 창고로
   offGift65(a, wasT);   // 빌드 65: 쌍검사 = 보조 단검 · 닌자 = 암기 (부장비 칸이 비어 있으면)
-  a.salary = Math.round(a.salary * 1.3 / 5) * 5;
+  salaryNew(a);   // 전직마다 ×1.3 (빌드 69: salaryCalc가 다시 셈한다)
   clampVitals(a);
   log(`${a.name}이(가) ${C0.name}에서 ${C1.name}(으)로 전직했다!`, 'good');
   if (wolf) log(`${a.name}이(가) 늑대 「${wolf.name}」(Lv${wolf.lv})을(를) 타고 길을 나선다. 늑대는 이제 ${a.name}의 탈것이다.`, 'good');
@@ -980,7 +979,7 @@ function kingDay(k) {
 
 /* ───────── 초대형 레이드: 매달 둘이 열린다 ───────── */
 function newRaid(id) {
-  const R = RAIDS[id], max = raidHp(R.lv);
+  const R = RAIDS[id], max = raidMaxHp(id);   // 빌드 69: Lv150+ 레이드는 따로 정한 HP (data-raid69.js)
   const rv = RIVALS.slice().sort(() => rnd() - 0.5).slice(0, 5).map(r => ({ n: r.name, c: r.c, pw: 0.5 + rnd() * 0.9, d: 0 }));
   return { id, max, hp: max, me: 0, rivals: rv, done: 0, rank: 0 };
 }
@@ -990,7 +989,7 @@ function raidMonth(fresh) {
   S.raid = { list: [newRaid(a), newRaid(b)], from: today() };
   const names = S.raid.list.map(r => `${RAIDS[r.id].name}(Lv${RAIDS[r.id].lv})`).join('와(과) ');
   log(`이번 달 레이드: ${names}`, 'good');
-  if (!fresh) queueModal({ title: '이번 달 레이드', body: [`${names} 레이드가 열렸다.`, '다른 상단과 왕국 원정대가 함께 몬스터를 두드린다. 쓰러뜨리면 피해를 많이 준 순서대로 보상을 받고, 달이 바뀔 때까지 못 쓰러뜨리면 몬스터가 떠나 보상이 절반이 된다.', '원정 창에서 파티의 목적지를 레이드로 고르자.'] });
+  if (!fresh) queueModal({ title: '이번 달 레이드', body: [`${names} 레이드가 열렸다.`, '다른 상단과 왕국 원정대가 함께 몬스터를 두드린다. 쓰러뜨리면 피해를 많이 준 순서대로 보상을 받고, 달이 바뀔 때까지 못 쓰러뜨리면 몬스터가 떠나 보상이 절반이 된다.', `원정대 창의 「레이드」 탭에서 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내자.`] });   // 빌드 69
 }
 const raidStand = rec => rec.rivals.map(r => ({ n: r.n, d: r.d, c: r.c })).concat([{ n: S.company, d: rec.me, me: 1 }]).sort((x, y) => y.d - x.d);
 const raidTier = L => GTIERS.reduce((m, T, i) => (T.lv <= L ? i : m), 0);
@@ -1077,7 +1076,7 @@ function sponsor(k) {
 
 /* ───────── 월말 정산 ───────── */
 const rent = () => (S.flags.guildDown ? 0 : 300 + 50 * Math.floor(S.fame / 25));
-const salaryOf = a => Math.round(a.salary * (1 - mentorCut(a.cls)) / 5) * 5;   // 스승(명예의 전당) 할인
+const salaryOf = a => Math.round(salaryCalc(a) * (1 - mentorCut(a.cls)) / 5) * 5;   // 스승(명예의 전당) 할인 · 빌드 69: 지금 레벨로 셈한다 (data-sal69.js)
 const payroll = () => living().reduce((s, a) => s + salaryOf(a), 0);
 function settle() {
   const pm = dateParts(S.t - DAY_SEC).m, lines = [], r = rent();
@@ -1093,7 +1092,7 @@ function settle() {
   }
   let n = 0, sum = 0;
   const unpaid = [];
-  for (const a of living()) { if (S.gold >= a.salary) { S.gold -= a.salary; n++; sum += a.salary; a.unpaid = 0; } else unpaid.push(a); }
+  for (const a of living()) { salaryNew(a); const pay = salaryOf(a); if (S.gold >= pay) { S.gold -= pay; n++; sum += pay; a.unpaid = 0; } else unpaid.push(a); }   // 빌드 69: 스승 할인도 실제로 깎는다
   if (n) lines.push(`모험가 ${n}명에게 봉급 ${g$(sum)}을 줬다.`);
   const gone = [], warned = [];
   unpaid.forEach(a => {
@@ -1140,7 +1139,7 @@ function autoDepart(p) {
   const team = p.members.map(advById).filter(Boolean);
   if (!team.length || team.some(a => a.status !== 'idle' || a.inj || a.post || (a.sleep || 0) > SLEEP.ready || a.hp < derive(a).maxHp * 0.85 || (a.fat || 0) > FATIGUE.depart)) return;
   if (p.repeatLeft != null && p.repeatLeft <= 0) { p.repeat = false; p.repeatLeft = null; log(`${p.name}의 반복 출발이 정한 횟수를 다 채웠다.`); return; }
-  if (!startExp(p, p.dest && isUnlocked(p.dest) ? p.dest : 'plains') && p.repeatLeft != null) p.repeatLeft--;
+  if (!startExp(p, partyDest(p)) && p.repeatLeft != null) p.repeatLeft--;   // 빌드 69: 레이드는 목적지로 두지 않는다
 }
 function stepHome(dt) {
   const m = (spn('clinic') >= 2 ? 2 : 1) * (1 + relic('rest') + petHome('rest')), rest = SLEEP.rest(S.bld.inn) * (isNight() ? 1.6 : 0.8) * (1 + relic('rest') + petHome('rest')) * dt;
@@ -1201,7 +1200,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1215,6 +1214,8 @@ function loadFrom(v) {
     if (old < 16) lowJob66();     // 빌드 66: 늪지대 아래 단계의 2차 직업 전용 장비 → 같은 단계 1차 장비 (migrateS의 unfitGear보다 먼저)
     cut69();                      // 빌드 69: 왕국 · 투기장 스킬 빼기 — 배운 모험가 · 스킬북 정리 (불러올 때마다, 남은 게 없으면 아무것도 안 함)
     heal69();                     // 빌드 69 회복 개편: 이제 못 배우는 응급 처치 · 치유의 찬가 · 재기를 지우고 스킬북 · 수업료를 돌려준다 (불러올 때마다)
+    raid69();                     // 빌드 69 레이드 개편: 레이드대를 풀고(원정 중이면 돌아온 뒤) 레이드를 목적지로 둔 파티는 평원으로 (불러올 때마다)
+    sal69();                      // 빌드 69: 봉급을 지금 레벨 · 차수 · 라이선스로 다시 매긴다 (불러올 때마다)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
@@ -1270,7 +1271,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b();
+    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c();
     return true;
   } catch (_) { return false; }
 }
@@ -1632,6 +1633,38 @@ function notes69b() {
   const first = !S.flags.v69b; S.flags.v69b = 1;
   if (first && (lines.length || today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '회복 스킬 개편 · 새 숙련 신성력', body: STORY.v69b.concat(lines) });
   else if (lines.length) S.modals.push({ title: '회복 스킬 정리', body: lines });
+}
+/* ───────── 빌드 69 레이드 개편 · 봉급 (data-raid69.js · data-sal69.js) ───────── */
+let RAID69R = null, SAL69R = null;
+// 레이드대(빌드 36 레이드 전용 파티)를 푼다: 쉬고 있으면 바로, 원정 중이면 돌아온 뒤(arrive) — 모험가는 대기 중으로
+function raidDissolve(p) {
+  if (!p || !p.raidOnly || p.exp) return false;
+  S.parties = S.parties.filter(x => x !== p);
+  if (S.view === p.id) S.view = S.parties[0] ? S.parties[0].id : null;
+  (RAID69R || (RAID69R = { n: 0, who: 0 })).n++; RAID69R.who += p.members.length;
+  log(`레이드 전용 파티 「${p.name}」을(를) 풀었다. 모험가 ${p.members.length}명이 대기 중으로 돌아왔다. 이제 레이드는 일반 파티 ${RAID_MIN_PARTIES}개 이상이 함께 나간다.`);
+  return true;
+}
+function raid69() {
+  if (!S || !S.parties) return;
+  S.parties.filter(p => p.raidOnly).forEach(raidDissolve);
+  S.parties.forEach(p => { if (p.dest && FIELDS[p.dest] && FIELDS[p.dest].giant) p.dest = 'plains'; });   // 레이드는 레이드 탭에서 함께만 — 한 파티의 목적지로는 두지 않는다
+}
+function sal69() {
+  if (!S || !S.advs) return;
+  const first = !S.flags.v69c, before = first ? S.advs.filter(a => a.status !== 'dead').reduce((s, a) => s + (a.salary || 0), 0) : 0;
+  if (first) S.advs.concat(S.cands || []).forEach(a => { if (a && a.salK == null && a.bio && a.bio.startsWith('모험가 길드가 보낸 견습생')) a.salK = 0.5; });
+  S.advs.forEach(salaryNew); (S.cands || []).forEach(a => { salaryNew(a); if (a.fee) a.fee = a.salary; });
+  if (first) SAL69R = { before, after: payroll(), n: living().length };
+}
+function notes69c() {
+  const R = RAID69R, P = SAL69R; RAID69R = null; SAL69R = null;
+  const lines = [];
+  if (R && R.n) lines.push(`레이드대를 풀었다: 모험가 ${R.who}명이 대기 중으로 돌아왔다.`);
+  if (P && P.n) lines.push(`봉급: 모험가 ${P.n}명의 한 달 봉급이 ${fmt(P.before)}G → ${fmt(P.after)}G가 되었다 (명예의 전당 스승 할인을 깎은 값).`);
+  const first = !S.flags.v69c; S.flags.v69c = 1;
+  if (first && (lines.length || today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '누구나 Lv200 · 레이드 개편 · 봉급', body: STORY.v69c.concat(lines) });
+  else if (R && R.n) S.modals.push({ title: '레이드대 정리', body: lines });
 }
 function notes68b() { if (!S.flags.v68b) { S.flags.v68b = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬북 계열 · 직업 표시 · 스킬 칸 나누기', body: STORY.v68b }); } }   // 빌드 68 (data-skjob68.js)
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸

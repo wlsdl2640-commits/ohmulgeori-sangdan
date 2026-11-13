@@ -89,7 +89,7 @@ const RANK_UP = [
 ];
 const BUILD_RANK = { shop: 0, inn: 0, training: 0, temple: 0, alchemy: 0, smithy: 1, tower: 3 };
 const PARTY_MAX = [2, 3, 3, 4, 5, 6, 6];   // 일반 파티는 6개까지
-const RAID_PARTY_RANK = 6, RAID_FIGHTERS = 9;   // 빌드 36: 6개가 다 열린 뒤(S랭크) 레이드 전용 파티 하나 · 짐꾼 계열 빼고 9명 + 짐꾼 1 = 10명
+const RAID_PARTY_RANK = 6, RAID_FIGHTERS = 9;   // 빌드 36: 6개가 다 열린 뒤(S랭크) 레이드 전용 파티 하나 · 짐꾼 계열 빼고 9명 + 짐꾼 1 = 10명 — 빌드 69에 레이드대는 없앴다 (돌아오기 전의 옛 레이드대만 씀)
 const rankStands = r => (r >= 2 ? 1 : 0) + (r >= 4 ? 1 : 0) + (r >= 6 ? 1 : 0);
 const rankBeds = r => (r >= 3 ? 2 : 0) + (r >= 5 ? 2 : 0);
 function rankGifts(r) {   // 랭크 r에 오르면 받는 것 (설명용)
@@ -97,7 +97,6 @@ function rankGifts(r) {   // 랭크 r에 오르면 받는 것 (설명용)
   if (FIELD_IDS[r]) out.push(`새 필드: ${FIELDS[FIELD_IDS[r]].name}`);
   Object.entries(BUILD_RANK).filter(([, n]) => n === r).forEach(([b]) => out.push(`새 시설: ${BUILDINGS[b].name}`));
   if (PARTY_MAX[r] > PARTY_MAX[r - 1]) out.push(`파티 ${PARTY_MAX[r]}개까지`);
-  if (r === RAID_PARTY_RANK) out.push(`레이드 전용 파티 (짐꾼 포함 ${RAID_FIGHTERS + 1}명까지)`);
   if (rankStands(r) > rankStands(r - 1)) out.push('매대 +1');
   if (rankBeds(r) > rankBeds(r - 1)) out.push('여관 방 +2');
   out.push('길드 매입가 +2%p · 상점 손님 +8% · 의뢰 보상 +6%');

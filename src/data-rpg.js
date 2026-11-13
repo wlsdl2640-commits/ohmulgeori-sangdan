@@ -80,8 +80,8 @@ const TR = a => (CLASSES[a.cls] && CLASSES[a.cls].tr) || {};
 const CLASS_IDS = Object.keys(CLASSES).filter(k => !CLASSES[k].special);   // 여관에 무작위로 오는 직업
 const ALL_CLASS_IDS = Object.keys(CLASSES);
 const MAX_SKILLS = 4;   // 기본 스킬 칸. LV30·50·70·90·100마다 한 칸씩 늘어난다
-const MAX_LV4 = 200;   // 빌드 65: 4차 전직(대도 · 캐러밴 마스터)은 Lv200까지
-const MAX_LV = 150;   // 빌드 64: 누구나 Lv150 (2차 각성을 없앴다 · 4차 전직이 들어오면 200)
+const MAX_LV4 = 200;   // 빌드 65: 4차 전직(대도 · 캐러밴 마스터)은 Lv200까지 — 빌드 69부터는 MAX_LV와 같다
+const MAX_LV = 200;   // 빌드 69 (11-13 23:06 사용자 「모든 모험가의 lv을 200까지 열어」): 누구나 Lv200 · 빌드 64~68은 Lv150 (4차만 200)
 const RETIRE_LV = 100;   // 명예의 전당 은퇴 (예전 최고 레벨 그대로)
 const SKILL_SLOT_LV = [30, 50, 70, 90, 100];
 const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length;   // 빌드 64: 각성 칸은 없앴다

@@ -28,6 +28,10 @@
     </nav>
     <section class="pip" id="pip" aria-label="원정 화면. 누르면 전투 창이 열려요." role="button" tabindex="0">
       <canvas id="cv" width="480" height="256"></canvas>
+      <div class="rhead" id="rhead" aria-hidden="true"><span class="rh-t" id="rh-t"></span><span class="rh-bar"><i id="rh-hp"></i></span><b class="rh-p" id="rh-p"></b></div>
+      <canvas id="rcv" width="480" height="200" aria-label="레이드 원정대 창. 칸을 누르면 그 파티의 전투 창이 열려요."></canvas>
+      <div class="rtags" id="rtags" aria-hidden="true"></div>
+      <div class="pip-dots" id="pip-dots" hidden><button type="button" class="pdot" data-pg="0" aria-label="원정대 창"></button><button type="button" class="pdot" data-pg="1" aria-label="레이드 원정대 창"></button></div>
       <div class="callouts" id="callouts" aria-hidden="true"></div>
       <div class="ov ov-l" id="ov-l"></div>
       <div class="ov ov-r" id="ov-r" hidden></div>

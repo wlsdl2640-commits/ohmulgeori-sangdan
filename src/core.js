@@ -43,8 +43,9 @@ function makeAdv(o = {}) {
     status: 'idle', kills: 0, trips: 0, quit: false, fat: 0, sleep: 0, pf: 0, rank: 0, inj: null, post: null, down: false,
     st: Object.assign({}, C.base), tr: { str: 0, vit: 0, agi: 0, int: 0 },
     eq: { weapon: null, off: null, ammo: null, bcase: null, bolt: null, armor: null, legs: null, gloves: null, boots: null, belt: null, acc: null, ear: null, bag: null }, skills: [C.innate], sm: {}, mast: {}, traits: o.traits || rollTraits(), wxt: o.wxt || rollWxt(),
-    salary: o.salary != null ? o.salary : Math.round(C.salary * (1 + 0.09 * (lv - 1)) / 5) * 5
+    salary: 0
   };
+  a.salary = o.salary != null ? o.salary : salaryCalc(a);   // 빌드 69: 지금 레벨 · 차수 · 라이선스로 셈하고 Lv10마다 +50% (data-sal69.js)
   growStats(a, lv - 1);
   if (needsArrows(a)) a.eq.ammo = makeGear('arrows', arrowTierOf(lv), 0);   // 화살을 쓰는 직업은 레벨에 맞는 화살을 들고 온다
   if (gearFits(a, { base: 'shield', t: 0 })) { const st = arrowTierOf(lv); a.eq.off = gearFor(shieldOf(a.cls, st), st, 0, lv); }   // 전사·마부 계열은 방패를 들고 온다 (빌드 39 · 빌드 64: 그 단계에 있는 직업 방패)
@@ -114,7 +115,7 @@ function deriveBase(a) {
 function resOf(G, P, X) { const r = {}; for (const f of RES_FAMS) { const k = 'r_' + f, v = (G[k] || 0) + (P[k] || 0) + X(k); if (v > 0) r[f] = Math.min(FIGHT.resMax, v); } return r; }
 function clampVitals(a) { const d = derive(a); a.hp = Math.min(a.hp, d.maxHp); a.mp = Math.min(a.mp == null ? d.maxMp : a.mp, d.maxMp); }
 function addExp(a, n) {
-  const cap = lvCap(a);   // 빌드 64: 누구나 Lv150 (4차 전직이 들어오면 200)
+  const cap = lvCap(a);   // 빌드 69: 누구나 Lv200
   if (a.lv >= cap) { a.exp = 0; return false; }
   a.exp += Math.round(n * (1 + traitSum(a, 'expPct')));
   let up = false;
@@ -127,6 +128,7 @@ function addExp(a, n) {
     a.mp = Math.min(after.maxMp, a.mp + (after.maxMp - before.maxMp));
   }
   if (a.lv >= cap) a.exp = 0;
+  if (up) salaryNew(a);   // 빌드 69: 봉급은 레벨을 따라 오른다
   return up;
 }
 const advById = id => S.advs.find(a => a.id === id);
@@ -346,8 +348,7 @@ function cantGo(a) {
 // 전투 대형: 근접은 맨 앞, 원거리 딜러는 가운데, 짐꾼·마법사·치유사는 맨 뒤 (출발할 때 줄을 세운다)
 const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (C.row != null) return C.row; return C.act === 'melee' ? 0 : C.act === 'arrow' ? 1 : 2; };
 function formParty(p) { p.members = p.members.map((id, i) => [id, i]).sort((x, y) => { const a = advById(x[0]), b = advById(y[0]); return (a ? formRank(a.cls) : 2) - (b ? formRank(b.cls) : 2) || x[1] - y[1]; }).map(x => x[0]); }
-function startExp(p, fid) {
-  if (p.raidOnly && !(FIELDS[fid] && FIELDS[fid].giant)) return '레이드 전용 파티는 레이드에만 나가요. 원정대 창의 레이드 탭에서 보내요.';
+function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(빌드 69 — 레이드는 qol.js raidLaunch로 파티 넷 이상이 함께만)
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
   if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요.';
   if (!isUnlocked(fid)) return FIELDS[fid] && FIELDS[fid].giant ? '이번 달에는 열리지 않은 레이드예요.' : '아직 갈 수 없는 곳이에요.';
@@ -355,6 +356,9 @@ function startExp(p, fid) {
   if (why) return why + '.';
   const GR = FIELDS[fid].giant && RAIDS[FIELDS[fid].giant];
   if (GR && avgLvOf(p) < GR.lv - RAID_GAP) return `${GR.name} 레이드는 파티 평균 Lv${GR.lv - RAID_GAP} 이상이어야 도전할 수 있어요.`;
+  if (GR && !o.grp) return `레이드는 원정대 창의 「레이드」 탭에서 전투원 넷이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내요.`;
+  if (GR && fightersOf(p).length < PARTY_FIGHTERS) return `레이드에는 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티만 나가요. (지금 ${fightersOf(p).length}명)`;
+  if (GR && GR.sky && !S.bld.airfield) return `${GR.name}은(는) 구름섬 하늘에 있어요. 비행장이 있어야 레이드 비행선이 파티를 태워 가요.`;
   const pw = partyWhy(p); if (pw) return pw;
   if (FIELDS[fid].trade) { const tw = tradeWhy(p); if (tw) return tw; if (!Object.keys(tradeCargoPlan(p, FIELDS[fid].trade).cargo).length) return `${KINGDOMS[FIELDS[fid].trade].name}이(가) 원하는 물건이 창고에 없어요.`; }
   if (FIELDS[fid].region === 'sky' && !wagonFly(p)) return `${FIELDS[fid].name}은(는) 비행 마차에 그리핀·와이번·페가수스를 맨 파티만 갈 수 있어요.`;
@@ -365,6 +369,7 @@ function startExp(p, fid) {
   team.forEach(a => { const b = pickArrows(a, fid); if (b) log(`${a.name}이(가) ${FIELDS[fid].name}에 맞춰 ${GTYPES[b].name}을(를) 챙겼다.`); });   // 속성 화살 고르기 (빌드 39)
   formParty(p);
   p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
+  if (o.grp) { p.exp.grp = o.grp; p.exp.grpi = o.grpi || 0; }   // 빌드 69: 레이드 원정대 묶음 (함께 걷고 · 레이드 원정대 창에 함께 나온다)
   p.exp.food = packFood(p);   // 도시락
   boostStart(p.exp);   // 빌드 63: 상단 전용 원정 휴대품 (나침반 · 은화 · 부적 · 미끼 · 깃발 · 월계관 · 이슬 · 방울)
   if (FIELDS[fid].trade) tradeSetup(p, p.exp);
@@ -1358,6 +1363,7 @@ function arrive(p) {
   HOOKS.toast(`${p.name} 귀환 · 부속품 ${n}개${e.gbag.length ? ` · 장비 ${e.gbag.length}개` : ''}${hurt.length ? ` · 부상 ${hurt.length}명` : ''}`);
   p.last = { got, gear: e.gbag.length, kills: e.kills, field: e.field, hurt: hurt.length, stats: e.stats || null, names: Object.fromEntries(team.map(a => [a.id, a.name])), area: e.area };
   p.exp = null;
+  if (p.raidOnly) raidDissolve(p);   // 빌드 69: 옛 저장의 레이드대는 돌아오면 푼다
   if (trimParty(p)) log(`${p.name}은(는) 인원이 넘쳐 레벨이 낮은 모험가를 대기로 돌렸다. (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지)`);
   if (!S.flags.firstReturn) { S.flags.firstReturn = 1; queueModal({ title: '첫 원정', body: STORY.firstReturn }); }
   if (typeof achvTick === 'function') achvTick();
@@ -1440,10 +1446,13 @@ function isUnlocked(fid) {
 const RAID_FIGHT = 90;      // 한 번 도전하면 이만큼(게임 속 초) 싸우고 물러난다
 const RAID_GAP = 10;        // 레이드 레벨보다 이만큼 낮은 파티까지 도전할 수 있다
 const raidRec = id => (S && S.raid ? S.raid.list.find(r => r.id === id) : null);
+// 빌드 69: 레이드 원정대(같은 e.grp — e.rg는 재생 누적이 쓴다) — 가장 느린 파티 빠르기로 같이 걸어간다
+const raidGroup = g => (g && S ? S.parties.filter(q => q.exp && q.exp.grp === g).sort((a, b) => (a.exp.grpi || 0) - (b.exp.grpi || 0)) : []);
+function raidGrpV(p, e) { let v = moveOf(p); if (e.grp) for (const q of raidGroup(e.grp)) if (q !== p && q.exp.mode === 'advance' && !q.exp.fought) v = Math.min(v, moveOf(q)); return v; }
 const raidHp = L => Math.round(600 * (25 + 18 * L + 1.15 * L * L) * DIFF.hp / 1000) * 1000;
 function giantFoe(id) {
   const R = RAIDS[id], rec = raidRec(id), f = foeFrom(R.mon, R.lv + 4);
-  Object.assign(f, { maxHp: rec.max, hp: rec.hp, giant: id, boss: true, aoe: true, name: R.name, atk: f.atk * 0.55, spd: Math.min(f.spd, 0.8) });   // 파티 전체를 자주 치니 한 방은 약하게
+  Object.assign(f, { maxHp: rec.max, hp: rec.hp, giant: id, boss: true, aoe: true, name: R.name, atk: f.atk * (RAID69.hp[id] ? RAID69.atk : 0.55), spd: Math.min(f.spd, 0.8) });   // 파티 전체를 자주 치니 한 방은 약하게 (빌드 69: Lv150+ 레이드는 RAID69.atk)
   return f;
 }
 function raidLeave(p, e, why) {
@@ -1477,7 +1486,7 @@ function stepRaid(p, e, team, dm, dt, fr) {
   if (e.fought && !e.left) { raidLeave(p, e, e.why || 'retreat'); return; }   // 들것을 메고 빠져나왔다
   team.forEach(a => { const d = dm[a.id]; a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.008 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
   tire(team, FATIGUE.walk * fr * dt);
-  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1);
+  const v = (e.mode === 'advance' ? raidGrpV(p, e) : moveOf(p)) * (e.mode === 'return' ? 1.15 : 1);
   if (e.mode === 'advance') {
     if (!rec || rec.done) { raidLeave(p, e, 'over'); return; }
     e.pos = Math.min(STAGE_LEN * 0.6, e.pos + v * dt);

@@ -126,7 +126,38 @@ function whereStr(e) {
   if (e.area === 'trade') return tradeWhere(e);
   return e.area === 'dungeon' ? `${F.dungeon.name} ${e.stage}층` : `${F.name} ${F.no}-${e.stage}`;
 }
+/* 빌드 69: 작은 창 넘기기 — 첫째 장 원정대 창 · 둘째 장 레이드 원정대 창 (view.js RP · drawRaidPip) */
+function setPipPage(pg, dir) {
+  if (pg === 1 && !raidPipGroup().length) pg = 0;
+  if (RP.page === pg) return;
+  RP.page = pg; RP.n = 0; RP.tags = '';
+  const pip = $('pip');
+  pip.classList.toggle('rpage', pg === 1);
+  pip.setAttribute('aria-label', pg === 1 ? '레이드 원정대 창. 칸을 누르면 그 파티의 전투 창이 열려요. 옆으로 밀면 원정대 창.' : '원정 화면. 누르면 전투 창이 열려요.');
+  if (dir) { pip.classList.remove('slide-l', 'slide-r'); void pip.offsetWidth; pip.classList.add(dir < 0 ? 'slide-l' : 'slide-r'); }
+  clearCallouts(); updatePipDots(); updateOverlay();
+  requestAnimationFrame(() => layoutStage());
+}
+function updatePipDots() {
+  const on = raidPipGroup().length > 0, d = $('pip-dots');
+  if (!on && RP.page === 1) { setPipPage(0); return; }
+  d.hidden = !on;
+  if (on) d.querySelectorAll('.pdot').forEach(b => b.classList.toggle('on', +b.dataset.pg === RP.page));
+}
+function updateRaidHead() {
+  const ps = raidPipGroup(); if (!ps.length) return;
+  const e0 = ps[0].exp, R = RAIDS[e0.raid], rec = raidRec(e0.raid);
+  const fight = ps.some(p => p.exp.foes.length), rt = Math.max(...ps.map(p => p.exp.rt || 0));
+  const st = fight ? `${Math.floor(rt)}/${RAID_FIGHT}초` : ps.every(p => p.exp.mode === 'return') ? '돌아오는 중' : '가는 중';
+  $('rh-t').textContent = `${R ? R.name : '레이드'} · 파티 ${ps.length} · ${st}`;
+  const f = rec ? Math.max(0, rec.hp / rec.max) : 0;
+  $('rh-hp').style.width = (f * 100).toFixed(1) + '%'; $('rh-p').textContent = Math.ceil(f * 100) + '%';
+  const cols = ps.length > 1 ? 2 : 1, tg = $('rtags');
+  const tags = ps.map((p, i) => { const dn = teamOf(p).filter(a => a.down).length; return `<span class="rtag" style="background:${RP_COL[i % RP_COL.length]}">${esc(p.name)}${dn ? `<small>쓰러짐 ${dn}</small>` : p.exp.mode === 'return' ? '<small>복귀</small>' : ''}</span>`; }).join('');
+  if (tags !== RP.tags) { tg.innerHTML = tags; RP.tags = tags; tg.style.gridTemplateColumns = cols > 1 ? '1fr 1fr' : '1fr'; tg.style.gridTemplateRows = `repeat(${Math.ceil(ps.length / cols)}, 1fr)`; }
+}
 function updateOverlay() {
+  updatePipDots(); if (RP.page === 1) updateRaidHead();
   const p = viewParty(), L = $('ov-l'), Rr = $('ov-r'), B = $('ov-b');
   if (!p) { L.textContent = '오물거리 · 상단 앞'; Rr.hidden = true; B.hidden = true; return; }
   const e = p.exp;

@@ -169,7 +169,7 @@ textarea.code { width: 100%; min-height: 96px; padding: 8px; font: 11px/1.4 ui-m
 
 /* ── 본문 ── */
 .panel { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-.panel-in { padding-block: 14px 28px; padding-left: var(--gut-l); padding-right: var(--gut-r); display: grid; gap: 12px; }
+.panel-in { padding-block: 14px 28px; padding-left: var(--gut-l); padding-right: var(--gut-r); display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }   /* 빌드 69: 긴 탭 글이 창을 넓히지 않게 */
 .sec { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 10px; font-size: 12px; color: var(--ink-3); letter-spacing: .06em;  }
 .sec > b { white-space: nowrap; flex: none; }
 .sec b { color: var(--ink-2); font-weight: 700; }
@@ -718,3 +718,32 @@ details.skl { border-left-width: 5px; border-left-color: #8a93a6; }
 details.skl summary b { color: var(--ink); }
 /* 창고 · 도서관 스킬북 칸 왼쪽 아래: 배우는 차수 */
 .cell .bkt { position: absolute; left: 5px; bottom: 4px; padding: 0 2px 0 1px; font-size: 9px; font-style: normal; font-weight: 700; line-height: 11px; color: #e8ecf2; background: #11141b; border-left: 2px solid #8a93a6; pointer-events: none; }
+
+/* ───────── 빌드 69: 작은 창 둘째 장 — 레이드 원정대 창 (밀어 넘기기 · 파티마다 한 칸) ───────── */
+.pip { touch-action: pan-y; }
+.pip #rcv, .pip .rhead, .pip .rtags { display: none; }
+.pip.rpage { width: calc(100% - 82px); aspect-ratio: auto; display: flex; flex-direction: column; }
+.pip.rpage #cv, .pip.rpage .ov, .pip.rpage #callouts { display: none; }
+.pip.rpage #rcv { display: block; width: 100%; height: auto; aspect-ratio: 480 / 200; image-rendering: pixelated; }
+.pip.rpage .rhead { display: flex; align-items: center; gap: 5px; height: 16px; padding: 0 5px; font-size: 10px; line-height: 16px; color: #fff0c8; background: #14100c; border-bottom: 2px solid #000; white-space: nowrap; }
+.rh-t { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.rh-bar { flex: 1 1 60px; min-width: 36px; height: 7px; background: #3a1410; border: 1px solid #000; }
+.rh-bar i { display: block; width: 0; height: 100%; background: #e0503f; box-shadow: inset 0 1px 0 #ff9a7a; }
+.rh-p { flex: none; font-weight: 700; color: #fff; }
+.pip.rpage .rtags { display: grid; position: absolute; left: 0; right: 0; top: 18px; bottom: 0; grid-template-columns: 1fr 1fr; pointer-events: none; }
+.rtag { align-self: start; justify-self: start; margin: 2px; padding: 0 4px; font-size: 9px; line-height: 13px; font-weight: 700; color: #1a1410; border: 1px solid #000; box-shadow: 1px 1px 0 #000; }
+.rtag small { margin-left: 3px; font-size: 9px; font-weight: 400; color: #5a1010; }
+.pip-dots { position: absolute; left: 50%; bottom: 1px; z-index: 2; display: flex; gap: 2px; transform: translateX(-50%); }
+.pip-dots[hidden] { display: none; }
+.pdot { width: 18px; height: 14px; padding: 4px 6px; background: none; border: 0; cursor: pointer; }
+.pdot::after { content: ''; display: block; width: 6px; height: 6px; background: rgba(255, 255, 255, .5); box-shadow: 0 0 0 1px #000; }
+.pdot.on::after { background: var(--gold); }
+.pip.drag { transition: none; }
+.pip.slide-l { animation: pipL .2s steps(4); }
+.pip.slide-r { animation: pipR .2s steps(4); }
+@keyframes pipL { from { transform: translateX(28px); opacity: .35; } to { transform: none; opacity: 1; } }
+@keyframes pipR { from { transform: translateX(-28px); opacity: .35; } to { transform: none; opacity: 1; } }
+.rsend .rchk { min-width: 30px; min-height: 30px; margin-right: 6px; padding: 0; font-weight: 700; }
+.rsend .rchk.on { color: #1a1410; background: var(--gold); }
+.rsend.on { background: rgba(240, 194, 74, .08); }
+.tabs.exp .tab.raidt { flex: 0 0 auto; padding: 6px 7px; }   /* 레이드 탭은 줄어들지 않게 */

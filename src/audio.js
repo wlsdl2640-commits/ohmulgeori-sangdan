@@ -80,8 +80,9 @@ const SFX = {
   forge: t => { noise(t, 0.05, 0.4, 1500, 9000); tone('sine', 2200, t, 0.3, 0.2, 1800); tone('sine', 3300, t + 0.02, 0.2, 0.1); }
 };
 const SFX_GAP = { hit: 0.05, hurt: 0.05, arrow: 0.06, magic: 0.08, ui: 0.03, heal: 0.08, kill: 0.08 };
+const SFX_MUTE = { on: false };   // 빌드 69: 레이드 원정대 창(view.js drawRaidPip)의 다른 칸은 소리 없이
 function sfx(name) {
-  if (!AU.ok || !AU.sfx || !SFX[name]) return;
+  if (!AU.ok || !AU.sfx || !SFX[name] || SFX_MUTE.on) return;
   const t = AU.ctx.currentTime, gap = SFX_GAP[name] || 0.04;
   if (AU.last[name] && t - AU.last[name] < gap) return;
   AU.last[name] = t;

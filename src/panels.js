@@ -526,7 +526,7 @@ function partyCard(p) {
       <div class="row sub"><span class="grow">짐 <b data-load="${p.id}"></b> · 처치 <b data-kills="${p.id}"></b>${p.wagon ? ` · ${rigName(p)}` : ''}${F.treasure ? ` · 상자 ${e.chests || 0}` : ''}</span><span data-sup="${p.id}"></span></div>
       <div class="btns">${e.mode === 'advance' ? `<button type="button" class="btn sm" data-act="recall" data-id="${p.id}">복귀</button>` : ''}${toggles}</div></div>`;
   }
-  const dest = p.raidOnly ? raidDestOf(p) : p.dest && isUnlocked(p.dest) ? p.dest : 'plains', DF = FIELDS[dest];
+  const dest = partyDest(p), DF = FIELDS[dest];   // 빌드 69: 레이드는 파티 목적지로 두지 않는다 (레이드 탭에서 넷 이상 함께)
   const team = teamOf(p), block = team.map(cantGo).filter(Boolean);
   const cps = checkpoints(dest), st = cps.includes(p.start) ? p.start : 1;
   const cap = capOf(p), supW = wOf(p.sup);
@@ -535,9 +535,9 @@ function partyCard(p) {
   const wagonList = S.bld.stable ? '' : ['cart'].map(w => { const W = WAGONS[w], own = p.wagon === w, back = wagonBack(p); return `<div class="li${own ? ' on' : ''}"><div class="grow"><span>${W.name} <span class="muted">짐 +${W.cap} · 이동 ×${W.spd}</span></span><span class="sub muted">${W.desc}</span></div>${own ? '<span class="tag gold-t">쓰는 중</span>' : `<button type="button" class="btn sm" data-act="wagon" data-id="${p.id}" data-w="${w}"${S.gold + back >= W.cost ? '' : ' disabled'}>${fmt(W.cost - back)}G</button>`}</div>`; }).join('');
   const hurt = team.some(a => a.hp < derive(a).maxHp * 0.7);
   const avg = Math.round(avgLvOf(p));
-  const demon = DEMON_IDS, skyIds = SKY_IDS, dtab = p.raidOnly ? 'raid' : UI.destTab || (demon.includes(dest) ? 'demon' : skyIds.includes(dest) ? 'sky' : FIELDS[dest] && FIELDS[dest].trade ? 'trade' : 'base');
-  const raids = dtab === 'base' || dtab === 'raid' ? (S.raid ? S.raid.list.filter(r => !r.done) : []).map(r => { const R = RAIDS[r.id], fid = 'raid_' + r.id, ok = avg >= R.lv - RAID_GAP;
-    return `<button type="button" class="fbtn raid giant${dest === fid ? ' on' : ''}" data-act="dest" data-id="${p.id}" data-f="${fid}"${ok ? '' : ' disabled'}><span>레이드 · ${R.name}</span><small>Lv${R.lv} · 남은 HP ${pct(r.hp, r.max)}%${ok ? '' : ` · 평균 Lv${R.lv - RAID_GAP}+`}</small></button>`; }).join('') : '';
+  const demon = DEMON_IDS, skyIds = SKY_IDS, dtab = (UI.destTab !== 'raid' && UI.destTab) || (demon.includes(dest) ? 'demon' : skyIds.includes(dest) ? 'sky' : FIELDS[dest] && FIELDS[dest].trade ? 'trade' : 'base');
+  const openR = S.raid ? S.raid.list.filter(r => !r.done) : [];
+  const raids = dtab === 'base' && openR.length ? `<button type="button" class="fbtn raid giant" data-act="exptab" data-id="raid"><span>레이드 · ${openR.map(r => RAIDS[r.id].name).join(' · ')}</span><small>Lv${openR.map(r => RAIDS[r.id].lv).join(' · ')} · 「레이드」 탭에서 풀파티 ${RAID_MIN_PARTIES}개 이상을 함께 보내요</small></button>` : '';   // 빌드 69
   const fieldIds = dtab === 'trade' || dtab === 'raid' ? [] : dtab === 'demon' ? demon : dtab === 'sky' ? skyIds : ALL_FIELDS.filter(f => !demon.includes(f) && !skyIds.includes(f) && !FIELDS[f].hidden && (f !== 'alley' || isUnlocked('alley')));
   const fields = fieldIds.map(fid => {
     const F = FIELDS[fid], ok = isUnlocked(fid), fs = S.fields[fid];
@@ -555,8 +555,8 @@ function partyCard(p) {
     ${S.bld.pen || S.pets.length ? petRow(p) : ''}
     <div class="sec"><b>보급품</b><span>물약과 치료 소모품 · 가져간 것만 써요</span></div>
     ${SUPPLY_IDS.filter(k => (S.inv[k] || 0) > 0 || (p.sup[k] || 0) > 0 || k === 'pot_s').map(k => `<div class="row">${iconImg(k)}<span class="grow sub">${ITEMS[k].name} <span class="muted">창고 ${S.inv[k] || 0}</span></span><span class="step"><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="-1">−</button><span>${p.sup[k] || 0}</span><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="1">+</button></span></div>`).join('')}
-    <div class="sec"><b>${p.raidOnly ? '도전할 레이드' : '목적지'}</b><span>파티 평균 Lv${avg}</span></div>
-    ${p.raidOnly ? '' : destTabs}<div class="fields">${fields}${raids || (p.raidOnly ? '<div class="sub muted">이번 달에 도전할 수 있는 레이드가 없어요.</div>' : '')}</div>
+    <div class="sec"><b>목적지</b><span>파티 평균 Lv${avg}</span></div>
+    ${destTabs}<div class="fields">${fields}${raids}</div>
     ${dtab === 'demon' && !isUnlocked('swamp') ? '<div class="sub muted">마계는 사라크 사막의 왕릉을 공략하면 열려요. 늪지대 → 메마른 땅 → 백작의 성 차례로 열려요.</div>' : ''}
     ${dtab === 'sky' ? `<div class="sub muted">${isUnlocked('sky') ? `구름섬은 비행 마차(비행장에서 제작)에 그리핀·와이번·페가수스를 맨 파티만 가요. ${wagonFly(p) ? `이 파티: ${rigName(p)} ✓` : `이 파티: ${p.wagon ? rigName(p) : '마차 없음'} ✗`}` : '구름섬은 세계수의 심장을 공략하고 비행장을 지으면 열려요. 비행 마차에 그리핀·와이번·페가수스를 매야 날아갈 수 있어요.'}</div>` : ''}
     ${dtab === 'trade' ? (DF.trade ? tradeInfo(p, dest) : '<div class="sub muted">교역: 말이 끄는 마차에 그 나라가 원하는 물건을 창고에서 싣고 가서 다 팔고, 그 나라 특산물을 싸게 사 와요. 위에서 나라를 골라요.</div>') : ''}
@@ -587,16 +587,28 @@ function raidCard(r, full, send) {
     <div class="bar big raid"><i style="width:${pct(r.hp, r.max)}%"></i></div>${rows}
     ${full ? `<div class="sub muted">${R.desc}</div>` : ''}${send ? raidSendRows(r) : ''}</div>`;
 }
-// 레이드 탭에서 바로 보내기: 파티마다 「도전」 단추 (원정 중·레벨 부족·못 가는 사람이 있으면 막힘)
+// 레이드 탭에서 보내기 (빌드 69): 전투원이 다 찬 파티를 RAID_MIN_PARTIES(4)개 이상 골라 함께 — 레이드 원정대
 function raidSendRows(r) {
-  const R = RAIDS[r.id], fid = 'raid_' + r.id, need = R.lv - RAID_GAP;
+  const R = RAIDS[r.id], need = R.lv - RAID_GAP;
   if (r.done) return '';
-  const rows = S.parties.slice().sort((a, b) => (b.raidOnly ? 1 : 0) - (a.raidOnly ? 1 : 0)).map(p => {
-    const team = teamOf(p), avg = Math.round(avgLvOf(p)), block = team.map(cantGo).filter(Boolean);
-    const why = p.exp ? `원정 중 · ${whereStr(p.exp)}` : !team.length ? '파티원이 없어요' : avg < need ? `평균 Lv${need}+ 필요` : block.length ? block[0] : '';
-    return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : ''}</span><button type="button" class="btn sm gold" data-act="raidgo" data-id="${p.id}" data-f="${fid}"${why ? ' disabled' : ''}>도전</button></div>`;
+  const sel = raidSelOf(r.id), regs = regularParties();
+  const rows = regs.map(p => {
+    const why = raidPartyWhy(p, r.id), on = sel.includes(p.id);
+    return `<div class="row sub rsend${on ? ' on' : ''}"><button type="button" class="btn sm rchk${on ? ' on' : ''}" data-act="raidsel" data-r="${r.id}" data-id="${p.id}"${why && !on ? ' disabled' : ''} aria-pressed="${on ? 'true' : 'false'}" aria-label="${esc(p.name)} 고르기">${on ? '✓' : ''}</button><span class="grow">${esc(p.name)} <span class="muted">· 전투원 ${fightersOf(p).length}/${PARTY_FIGHTERS}${portersOf(p).length ? ' · 짐꾼 1' : ''} · 평균 Lv${Math.round(avgLvOf(p))}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : ''}</span></div>`;
   }).join('');
-  return `<div class="sec" style="margin-top:6px"><b>보낼 파티</b><span>평균 Lv${need}+ · 보급품은 파티 탭에서</span></div>${rows || '<div class="sub muted">파티가 없어요. 「+ 새 파티」로 만들어요.</div>'}`;
+  const gw = raidGroupWhy(r.id), okN = regs.filter(p => !raidPartyWhy(p, r.id)).length;
+  const note = okN < RAID_MIN_PARTIES ? `<div class="sub red-t">지금 갈 수 있는 파티가 ${okN}개예요. 전투원 ${PARTY_FIGHTERS}명이 다 찬 평균 Lv${need}+ 파티가 ${RAID_MIN_PARTIES}개 있어야 해요.</div>`
+    : gw && sel.length >= RAID_MIN_PARTIES ? `<div class="sub red-t">${esc(gw)}</div>` : sel.length < RAID_MIN_PARTIES ? `<div class="sub muted">${RAID_MIN_PARTIES}개 이상 고르면 함께 출발해요. 가장 느린 파티 빠르기로 같이 걸어가요.</div>` : '';
+  return `<div class="sec" style="margin-top:6px"><b>레이드 원정대 꾸리기</b><span>전투원 ${PARTY_FIGHTERS}명이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상 · 평균 Lv${need}+</span></div>${rows || '<div class="sub muted">파티가 없어요. 「+ 새 파티」로 만들어요.</div>'}
+    <div class="btns"><button type="button" class="btn sm" data-act="raidall" data-r="${r.id}"${okN ? '' : ' disabled'}>갈 수 있는 파티 모두 (${Math.min(okN, RAID_MAX_PARTIES)})</button><button type="button" class="btn sm gold grow" data-act="raidgo" data-r="${r.id}"${gw ? ' disabled' : ''}>고른 ${sel.length}개 파티로 도전</button></div>${note}${raidSky(r.id) ? `<div class="sub ${S.bld.airfield ? 'ok-t' : 'red-t'}">구름섬 하늘 · 비행장의 레이드 비행선이 파티들을 태워 가요${S.bld.airfield ? '' : ' — 비행장이 없어요'}</div>` : ''}`;
+}
+// 나가 있는 레이드 원정대 (탭 맨 위)
+function raidGroupsBox() {
+  const seen = new Set(), out = [];
+  for (const p of S.parties) { const e = p.exp; if (!e || !e.grp || seen.has(e.grp)) continue; seen.add(e.grp); const ps = raidGroup(e.grp), R = RAIDS[e.raid], rec = raidRec(e.raid);
+    const st = ps.some(q => q.exp.foes.length) ? '싸우는 중' : ps.every(q => q.exp.mode === 'return') ? '돌아오는 중' : '가는 중';
+    out.push(`<div class="card raidc" style="--rc:${R ? R.c : '#c0392b'}"><div class="row"><span class="rbadge">${ps.length}</span><div class="grow"><div class="h">레이드 원정대 · ${R ? R.name : '?'}</div><div class="sub">${st} · ${ps.map(q => esc(q.name)).join(' · ')}${rec ? ` · 남은 HP ${pct(rec.hp, rec.max)}%` : ''}</div></div><button type="button" class="btn sm" data-act="raidback" data-g="${e.grp}"${ps.some(q => q.exp.mode === 'advance') ? '' : ' disabled'}>모두 복귀</button></div></div>`); }
+  return out.length ? `<div class="sec" style="margin-top:0"><b>나가 있는 레이드 원정대</b><span>작은 창을 밀면 네 칸</span></div>${out.join('')}` : '';
 }
 PANELS.raid = w => {
   const r = raidRec(w.r);
@@ -605,7 +617,7 @@ PANELS.raid = w => {
   const rew = RAID_REWARD.map((W, i) => `<div class="row sub"><span class="rkn">${i < 3 ? i + 1 + '위' : '참가'}</span><span class="grow">${fmt(Math.round(raidGold(R.lv) * W.gold))}G · 명성 ${W.fame} · 부속품 ${W.part}${W.heart ? ' · ' + ITEMS['rh_' + r.id].name : ''}${W.gear ? ` · ${QUALITY[W.gear].name} 장비` : ''}${W.rune >= 0 ? ` · ${RUNE_LV[W.rune]} 룬` : ''}${STONE_DROP.bloomstone.raidN[i] ? ` · 개화석 ${STONE_DROP.bloomstone.raidN[i]}` : ''} · 마법사의 돌 ${stonePct(STONE_DROP.wizstone.raidP[i])}</span></div>`).join('');
   return `${raidCard(r, true)}
     <div class="sec"><b>순위 보상</b><span>달이 바뀌기 전에 쓰러뜨려야 보상을 다 받아요</span></div><div class="card">${rew}</div>
-    <div class="sub">원정 창에서 파티 목적지를 이 레이드로 고르세요. 파티 평균 Lv${R.lv - RAID_GAP} 이상이면 도전할 수 있고, 한 번에 ${RAID_FIGHT}초 동안 싸우고 물러나요. 다른 상단과 왕국 원정대는 날마다 몬스터를 두드려요.</div>`;
+    <div class="sub">원정대 창의 「레이드」 탭에서 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상(평균 Lv${R.lv - RAID_GAP}+)을 골라 함께 보내요. 파티마다 한 번에 ${RAID_FIGHT}초 동안 싸우고 물러나요. 다른 상단과 왕국 원정대는 날마다 몬스터를 두드려요.${R.sky ? ' 베히모스는 구름섬 하늘에 있어 비행장의 레이드 비행선이 파티들을 태워 가요.' : ''}</div>`;
 };
 PANELS.rune = w => {
   const f = findGear(w.gid);
@@ -621,24 +633,21 @@ PANELS.rune = w => {
     <div class="sec"><b>창고의 룬</b><span>마탑에서 새기고 합성해요</span></div><div class="list">${add || '<div class="li"><span class="sub">룬이 없어요. 필드 보스와 던전, 레이드에서 얻거나 마탑에서 새겨요.</span></div>'}</div>`;
 };
 PANELS.exp = () => {
-  raidPartyEnsure();
-  const regs = regularParties(), rp = raidParty(), ids = regs.map(p => p.id);
+  const regs = regularParties(), ids = regs.map(p => p.id);
   let tab = UI.expTab;
-  if (rp && tab === rp.id) tab = 'raid';   // 레이드대는 레이드 탭에서 꾸린다
   if (tab !== 'raid' && !ids.includes(tab)) tab = ids.includes(S.view) ? S.view : ids[0] || 'raid';
   UI.expTab = tab; const top = winTop(); if (top && top.id === 'exp') top.tab = tab;
   const tabTxt = p => (p.exp ? esc(whereStr(p.exp)) : p.members.length ? `대기 · ${p.members.length}명` : '비어 있음');
-  const bar = `<div class="tabs exp">${regs.map(p => `<button type="button" class="tab${tab === p.id ? ' on' : ''}" data-act="exptab" data-id="${p.id}">${esc(p.name)}<small>${tabTxt(p)}</small></button>`).join('')}${regs.length < partyMax() ? '<button type="button" class="tab add" data-act="newparty">+ 새 파티</button>' : ''}<button type="button" class="tab${tab === 'raid' ? ' on' : ''}" data-act="exptab" data-id="raid">레이드<small>${rp ? `레이드대 · ${rp.exp ? '도전 중' : `${rp.members.length}명`}` : S.raid ? `${S.raid.list.filter(r => !r.done).length}개` : '없음'}</small></button></div>`;
+  const rgOut = S.parties.some(p => p.exp && p.exp.grp), openN = S.raid ? S.raid.list.filter(r => !r.done).length : 0;
+  const bar = `<div class="tabs exp">${regs.map(p => `<button type="button" class="tab${tab === p.id ? ' on' : ''}" data-act="exptab" data-id="${p.id}">${esc(p.name)}<small>${tabTxt(p)}</small></button>`).join('')}${regs.length < partyMax() ? '<button type="button" class="tab add" data-act="newparty">+ 새 파티</button>' : ''}<button type="button" class="tab raidt${tab === 'raid' ? ' on' : ''}" data-act="exptab" data-id="raid">레이드<small>${rgOut ? '나가 있음' : openN ? `${openN}개 · Lv${RAIDS[S.raid.list.find(r => !r.done).id].lv}+` : '없음'}</small></button></div>`;
   if (tab === 'raid') {
-    const rpBox = rp ? `<div class="sec" style="margin-top:0"><b>레이드 전용 파티</b><span>짐꾼 포함 ${RAID_FIGHTERS + 1}명까지 · 레이드에만 나가요</span></div>${partyCard(rp)}`
-      : `<div class="card dim"><div class="h">레이드 전용 파티 <small>잠김</small></div><div class="sub">일반 파티 ${PARTY_MAX[RAID_PARTY_RANK]}개가 다 열린 뒤 상단이 ${RANKS[RAID_PARTY_RANK].name}랭크가 되면, 레이드에만 나가는 큰 파티 하나가 더 열려요. 짐꾼 계열을 빼고 ${RAID_FIGHTERS}명, 짐꾼 한 명을 더해 모두 ${RAID_FIGHTERS + 1}명까지.</div></div>`;
-    return `${bar}${rpBox}<div class="sec"><b>이번 달 레이드</b><span>${S.raid ? `D-${S.settleDay - today()} · 파티를 골라 바로 보내요` : '없음'}</span></div>${S.raid ? S.raid.list.map(r => raidCard(r, false, true)).join('') : '<div class="card"><div class="sub">이번 달 레이드가 없어요.</div></div>'}${S.parties.length ? '' : '<div class="sub muted">파티를 먼저 만들어 주세요.</div>'}`;
+    return `${bar}${raidGroupsBox()}<div class="sec"${rgOut ? '' : ' style="margin-top:0"'}><b>이번 달 레이드</b><span>${S.raid ? `D-${S.settleDay - today()} · 풀파티 ${RAID_MIN_PARTIES}개 이상 함께` : '없음'}</span></div>${S.raid ? S.raid.list.map(r => raidCard(r, false, true)).join('') : '<div class="card"><div class="sub">이번 달 레이드가 없어요.</div></div>'}${S.parties.length ? '' : '<div class="sub muted">파티를 먼저 만들어 주세요.</div>'}`;
   }
   const p = regs.find(x => x.id === tab);
   if (!p) return `${bar}<div class="card"><div class="sub">파티가 없어요. 「+ 새 파티」를 눌러 만들고 모험가를 넣어 주세요.</div></div>`;
   const allBtns = regs.length > 1 ? `<div class="btns"><button type="button" class="btn sm" data-act="allgo"${regs.some(x => !x.exp && x.members.length) ? '' : ' disabled'}>대기 파티 모두 출발</button><button type="button" class="btn sm" data-act="allback"${S.parties.some(x => x.exp && x.exp.mode === 'advance') ? '' : ' disabled'}>원정 파티 모두 복귀</button></div>` : '';
   const bst = boostLine() ? `<div class="sub gold-t">꺼내 둔 원정 휴대품 · ${boostLine()} — 다음에 떠나는 원정마다 하나씩 써요</div>` : '';
-  return `${bar}${allBtns}${bst}${partyCard(p)}${regs.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지${partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? (rp ? ' · 레이드 전용 파티는 레이드 탭에서 꾸려요' : ` · ${RANKS[RAID_PARTY_RANK].name}랭크가 되면 레이드 전용 파티가 하나 더 열려요`) : ' · 상단 랭크가 오르면 더 만들 수 있어요'}.</div>` : ''}`;
+  return `${bar}${allBtns}${bst}${partyCard(p)}${regs.length >= partyMax() ? `<div class="sub muted">파티는 ${partyMax()}개까지${partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? '' : ' · 상단 랭크가 오르면 더 만들 수 있어요'}.</div>` : ''}`;
 };
 
 /* 창고: 빌드 63부터 store.js (메인 창고 + 창고 1~10 · 창고 정리 · 직업별 장비 칸) */
@@ -792,8 +801,12 @@ const ACT = {
   desttab: d => { UI.destTab = d.t; renderPanel(true); },
   sup: d => setSup(+d.id, d.it, +d.d),
   dest: d => { const p = findP(d.id); if (p) p.dest = d.f; },
-  go: d => { const p = findP(d.id); if (!p) return; const m = startExp(p, p.raidOnly ? (p.dest = raidDestOf(p)) : p.dest && isUnlocked(p.dest) ? p.dest : 'plains'); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 출발!`); } },
-  raidgo: d => { const p = findP(d.id); if (!p || p.exp) return; p.dest = d.f; const m = startExp(p, d.f); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 레이드 출발!`); } },
+  go: d => { const p = findP(d.id); if (!p) return; const m = startExp(p, partyDest(p)); if (m) say(m); else { S.view = p.id; renderChips(); say(`${p.name} 출발!`); } },
+  // 빌드 69: 레이드는 파티 넷 이상을 골라 함께 (qol.js raidLaunch)
+  raidsel: d => { const L = raidSelOf(d.r), id = +d.id, i = L.indexOf(id); if (i >= 0) L.splice(i, 1); else { const p = findP(id), why = p && raidPartyWhy(p, d.r); if (!p) return; if (why) { say(`${p.name}: ${why}`); return; } if (L.length >= RAID_MAX_PARTIES) { say(`한 번에 ${RAID_MAX_PARTIES}개 파티까지예요.`); return; } L.push(id); } renderPanel(true); },
+  raidall: d => { UI.raidSel = UI.raidSel || {}; UI.raidSel[d.r] = regularParties().filter(p => !raidPartyWhy(p, d.r)).slice(0, RAID_MAX_PARTIES).map(p => p.id); renderPanel(true); },
+  raidgo: d => { UI.raidLast = null; const m = raidLaunch(d.r); if (UI.raidLast) { renderChips(); say(`레이드 원정대 출발!${m ? ` (${m})` : ''} 작은 원정 창을 옆으로 밀면 레이드 원정대 창이 나와요.`); } else if (m) say(m); renderPanel(true); },
+  raidback: d => { const ps = raidGroup(d.g); ps.forEach(p => recall(p, 'order')); if (ps.length) say(`레이드 원정대 ${ps.length}개 파티에 복귀 명령을 내렸어요.`); renderPanel(true); },
   recall: d => { const p = findP(d.id); if (p) recall(p, 'order'); },
   gate: d => { const p = findP(d.id); if (p) { gateChoice(p, d.c); S.view = p.id; } },
   wagon: d => say(buyWagon(+d.id, d.w, +d.s || 1)),
@@ -881,8 +894,30 @@ function bindUI() {
     const w = e.target.closest('[data-pwin]');
     if (w && FLOOR_INFO[w.dataset.pwin]) hqOpen({ win: FLOOR_INFO[w.dataset.pwin].win });
   });
-  $('pip').addEventListener('click', () => { if (S) openBattle(); });
-  $('pip').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && S) { e.preventDefault(); openBattle(); } });
+  // 작은 창: 누르면 전투 창 · 빌드 69: 레이드 원정대가 나가 있으면 옆으로 밀어 레이드 원정대 창 (점을 눌러도)
+  const pip = $('pip'); let pd = null;
+  const pipReset = () => { pd = null; pip.style.transform = ''; pip.classList.remove('drag'); };
+  pip.addEventListener('pointerdown', ev => { if (ev.target.closest('.pdot') || (ev.pointerType === 'mouse' && ev.button !== 0)) return; pd = { x: ev.clientX, y: ev.clientY, id: ev.pointerId, drag: false }; });
+  pip.addEventListener('pointermove', ev => {
+    if (!pd || ev.pointerId !== pd.id) return;
+    const dx = ev.clientX - pd.x, dy = ev.clientY - pd.y;
+    if (!pd.drag && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2 && S && raidPipGroup().length) { pd.drag = true; try { pip.setPointerCapture(ev.pointerId); } catch (_) {} pip.classList.add('drag'); }
+    if (pd.drag) pip.style.transform = `translateX(${Math.round(Math.max(-48, Math.min(48, dx * 0.5)))}px)`;
+  });
+  pip.addEventListener('pointerup', ev => { if (!pd || ev.pointerId !== pd.id) return; const dx = ev.clientX - pd.x, was = pd.drag; pipReset(); if (!was) return; RP.swiped = performance.now(); if (dx < -36) setPipPage(1, -1); else if (dx > 36) setPipPage(0, 1); });
+  pip.addEventListener('pointercancel', pipReset);
+  pip.addEventListener('click', ev => {
+    if (!S) return;
+    const dot = ev.target.closest('.pdot');
+    if (dot) { ev.stopPropagation(); const pg = +dot.dataset.pg; setPipPage(pg, pg ? -1 : 1); return; }
+    if (performance.now() - RP.swiped < 450) return;   // 밀어 넘긴 손가락은 누르기가 아니다
+    if (pipRaidOn()) { const i = raidPipHit(ev), ps = raidPipGroup(); if (i >= 0 && ps[i]) { S.view = ps[i].id; renderChips(); } }
+    openBattle();
+  });
+  pip.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && S) { e.preventDefault(); openBattle(); }
+    else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && S && raidPipGroup().length) { e.preventDefault(); const pg = e.key === 'ArrowRight' ? 1 : 0; setPipPage(pg, pg ? -1 : 1); }
+  });
   // 전투 창: 뒤로·닫기, 복귀·던전 입구 단추
   $('bw-back').addEventListener('click', backWin);
   $('bw-x').addEventListener('click', backWin);
@@ -920,7 +955,7 @@ function bindUI() {
   const panel = $('panel');
   panel.addEventListener('pointerdown', () => { UI.hold = true; });
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => panel.addEventListener(t, () => setTimeout(() => { UI.hold = false; }, 180)));
-  $('pchips').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (!b) return; S.view = +b.dataset.view; renderChips(); const top = winTop(); if (top && top.id === 'exp') renderPanel(true); });
+  $('pchips').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (!b) return; S.view = +b.dataset.view; renderChips(); { const vp = viewParty(); if (RP.page === 1 && !(vp && vp.exp && vp.exp.grp)) setPipPage(0, 1); } const top = winTop(); if (top && top.id === 'exp') renderPanel(true); });   // 빌드 69: 레이드 원정대가 아닌 파티를 고르면 원정대 창으로
   const mb = $('m-box');
   mb.addEventListener('pointerdown', () => { UI.mhold = true; });
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => mb.addEventListener(t, () => setTimeout(() => { UI.mhold = false; }, 180)));

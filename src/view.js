@@ -51,7 +51,7 @@ function bar(g, x, y, w, f, col, h = 1.5) {
 
 /* 스킬 이름은 글자로 띄운다 (화면 위 DOM). 작은 창과 전투 창 모두 */
 function callout(x, y, text, cls) {
-  if (document.hidden) return;
+  if (document.hidden || (RP.page === 1 && !V.bopen)) return;   // 빌드 69: 레이드 원정대 창(네 칸)에는 글자를 띄우지 않는다
   const k = Math.min(2.5, (S && S.speed) || 1), dur = cls === 'boss' || cls === 'rare' ? 2.3 : 1.1;
   const boxes = V.bopen ? [['bcallouts', 0, AH]] : [['callouts', PIP_Y, PIP_H]];
   for (const [id, y0, h] of boxes) {
@@ -73,8 +73,58 @@ function callout(x, y, text, cls) {
 }
 const clearCallouts = () => ['callouts', 'bcallouts'].forEach(id => { const b = $(id); if (b) b.textContent = ''; });
 
-function drawFrame(now, vt) {
-  const t = vt != null ? vt : now / 1000, p = viewParty(), e = p && p.exp;
+/* ───────── 빌드 69: 레이드 원정대 창 — 작은 창 둘째 장 (사용자 「원정창은 밀어서 넘기기」 · 「레이드 원정대 창은 r2로」) ─────────
+   레이드 원정대(같은 e.grp)가 나가 있으면 작은 창을 옆으로 밀어 넘긴다: 첫째 장 = 원정대 창(지금 보는 파티) · 둘째 장 = 파티마다 한 칸(2열).
+   칸마다 그 파티의 장면을 V.off에 따로 그린다 — 효과 · 쓰러짐 · 기록 같은 장면 상태(RP_KEYS)는 파티마다 바꿔 끼운다. 다른 칸은 소리 · 글자 없이. */
+const RP = { page: 0, st: {}, main: null, n: 0, cols: 2, rows: 0, ids: '', swiped: 0, k: 0 };
+const RP_KEYS = ['mode', 'lastN', 'lastF', 'scroll', 'fx', 'ghosts', 'flash', 'flash0', 'lunge', 'atk', 'mot', 'fmot', 'fhit', 'motLast', 'skSeen', 'jump', 'fall', 'last', 'shake', 'giant', 'log', 'logN', 'logP', 'fname', 'dir', 'nj', 'hitA', 'lowSt', 'coach', 'coachK'];
+const RP_CROP_Y = 100, RP_CROP_H = 100;   // 칸마다 무대의 이 띠 (파티 발밑 ~ 거인 머리)
+const RP_COL = ['#f0c24a', '#4ad0c8', '#ff7a9a', '#b08aff', '#8ad84a', '#f08a4a'];
+const rpFresh = () => ({ mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, fmot: {}, fhit: {}, motLast: {}, skSeen: {}, jump: {}, fall: {}, last: {}, shake: 0, giant: false, log: [], logN: 0, logP: 0, fname: {} });
+function rpSwap(pid) { RP.main = {}; for (const k of RP_KEYS) RP.main[k] = V[k]; const st = RP.st[pid] || (RP.st[pid] = rpFresh()); for (const k of RP_KEYS) V[k] = st[k]; }
+function rpBack(pid) { const st = RP.st[pid]; for (const k of RP_KEYS) st[k] = V[k]; for (const k of RP_KEYS) V[k] = RP.main[k]; RP.main = null; }
+// 보여 줄 레이드 원정대: 지금 보는 파티가 든 원정대, 없으면 처음 찾은 원정대
+function raidPipGroup() {
+  if (!S || !S.parties) return [];
+  const vp = viewParty(), g = vp && vp.exp && vp.exp.grp ? vp.exp.grp : (S.parties.find(p => p.exp && p.exp.grp) || { exp: {} }).exp.grp;
+  return g ? raidGroup(g).slice(0, RAID_MAX_PARTIES) : [];
+}
+const pipRaidOn = () => RP.page === 1 && !V.bopen && raidPipGroup().length > 0;
+function drawRaidPip(now, vt) {
+  const ps = raidPipGroup(), cv = $('rcv');
+  if (!cv || !ps.length) return;
+  const n = ps.length, cols = n > 1 ? 2 : 1, rows = Math.ceil(n / cols);
+  if (n !== RP.n) { RP.n = n; RP.cols = cols; RP.rows = rows; cv.style.aspectRatio = `${AW * cols} / ${RP_CROP_H * rows}`; layoutWin(); }
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, W = Math.max(AW * cols, Math.round(r.width * dpr)), H = Math.max(RP_CROP_H * rows, Math.round(r.height * dpr));
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const c = cv.getContext('2d'), gap = Math.max(2, Math.round(2 * dpr)), qw = Math.floor((W - gap * (cols - 1)) / cols), qh = Math.floor((H - gap * (rows - 1)) / rows);
+  c.imageSmoothingEnabled = false;
+  const keep = new Set(ps.map(p => p.id)); for (const k of Object.keys(RP.st)) if (!keep.has(+k)) delete RP.st[k];
+  RP.k = (RP.k + 1) % 2;
+  ps.forEach((p, i) => {
+    if (n > 2 && i % 2 !== RP.k) return;   // 셋 넘으면 칸마다 한 장 걸러 그린다 (칸마다 초당 30장 — 네 칸을 다 그리면 한 장에 ~15ms, 걸러 그리면 ~8ms)
+    rpSwap(p.id); SFX_MUTE.on = i !== 0;
+    try { drawFrame(now, vt, p); } finally { SFX_MUTE.on = false; rpBack(p.id); }
+    const qx = (i % cols) * (qw + gap), qy = Math.floor(i / cols) * (qh + gap);
+    c.drawImage(V.off, 0, RP_CROP_Y * HI, AW * HI, RP_CROP_H * HI, qx, qy, qw, qh);
+  });
+  c.fillStyle = '#000';
+  if (cols > 1) c.fillRect(qw, 0, gap, H);
+  for (let y = 1; y < rows; y++) c.fillRect(0, y * (qh + gap) - gap, W, gap);
+  if (n % cols) c.fillRect(qw + gap, (rows - 1) * (qh + gap), W - qw - gap, qh);   // 빈 칸
+}
+// 칸 누르기: 몇 번째 파티 칸인지
+function raidPipHit(ev) {
+  const cv = $('rcv'); if (!cv || !RP.n) return -1;
+  const r = cv.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width, y = (ev.clientY - r.top) / r.height;
+  if (x < 0 || y < 0 || x > 1 || y > 1) return -1;
+  const i = Math.min(RP.rows - 1, Math.floor(y * RP.rows)) * RP.cols + Math.min(RP.cols - 1, Math.floor(x * RP.cols));
+  return i < RP.n ? i : -1;
+}
+
+function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (빌드 69 — 그 파티를 V.off에 그리기만 하고 내보내지 않는다)
+  if (!pq && pipRaidOn()) { drawRaidPip(now, vt); return; }
+  const t = vt != null ? vt : now / 1000, p = pq || viewParty(), e = p && p.exp;
   const key = (p ? p.id : 0) + ':' + (e ? 'x' : 'h');
   // 화면을 바꿨거나 오래 멈췄다 돌아오면 밀린 효과는 건너뛴다
   if (key !== V.mode || now - V.lastF > 1000) {
@@ -112,6 +162,7 @@ function drawFrame(now, vt) {
   if (e) fx(g, t);
   g.save(); g.translate(0, bg.tall ? 0 : BG_OY); drawAmbient(g, id, V.scroll, t, T); g.restore();
   if (!bg.under) drawWeather(g, wxNow(e || null), t, BG_OY);   // 비·눈·바람·안개 (실내·던전은 없다)
+  if (pq) { V.shake = Math.max(0, V.shake - 0.4); return; }
   present();
 }
 // 작은 창에는 가운데 띠, 열려 있으면 전투 창에는 무대 전체
@@ -677,7 +728,7 @@ function events(e, pos, t, team, p) {
   const amid = id => { const q = at('a' + id); return q ? [q[0] + 4 * (V.dir || 1), q[1] - (12 + (q.ru || 0)) * zAt(q[1])] : null; };   // q.ru = 탈것에 탄 기수가 올라간 높이 (빌드 65)
   const atop = id => { const q = at('a' + id); return q ? [q[0], q[1] - (21 + (q.ru || 0)) * zAt(q[1]) - 6] : null; };
   const advOf = id => team.find(a => a.id === id);
-  const sfxAt = (k, d) => (d > 0.02 ? setTimeout(() => sfx(k), d * 1000) : sfx(k));
+  const mute = SFX_MUTE.on, sfxAt = (k, d) => (mute ? 0 : d > 0.02 ? setTimeout(() => sfx(k), d * 1000) : sfx(k));   // 빌드 69: 레이드 원정대 창의 다른 칸은 소리 없이
   for (let xi = 0; xi < e.ev.length; xi++) {
     const x = e.ev[xi];
     if (x.n <= V.lastN) continue;

@@ -62,7 +62,7 @@ const RAID_REWARD = [
   { gold: 0.4, fame: 15, part: 2, heart: 0, gear: 0, rune: 1 },
   { gold: 0.15, fame: 5, part: 1, heart: 0, gear: 0, rune: -1 }
 ];
-const raidGold = lv => Math.round(4000 * Math.pow(lv / 30, 1.6) / 50) * 50;
+const raidGold = lv => Math.round(4000 * Math.pow(lv / 30, 1.6) * (lv >= 150 ? 4 : 1) / 50) * 50;   // 빌드 69: 레이드는 파티 넷 이상이 함께 나가니 Lv150+ 레이드 돈은 ×4
 
 // 레이드 몬스터 (몸집이 커서 그림은 따로 그린다)
 Object.assign(MONS, {
