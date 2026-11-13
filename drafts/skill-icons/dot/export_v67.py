@@ -2,7 +2,8 @@
 - 스킬: 지금 SKICON 307개(export_game.py · final_snap) + v67 53개 + 하늘의 눈(dragonscale)은 skyeye68.py D안 「과녁 무늬 와이번 눈」(11-12 20:26).
   빌드 69: 물통 돌리기(medkit) · 웨건 보급(rations) · 개척민의 지혜(pioneerwit)는 c_v69.py A안 (11-13 17:41).
   v67의 같은 id(짐 방패 · 매복 · 하늘 사격 …)는 새 그림으로 바뀐다. 확정 그림 final_snap_v67/{id}.png
-- 숙련: 27개 × 다섯 단계 [안 배움, 초급, 중급, 상급, 달인] — 지금 12개는 0~3 그대로 + 달인, 새 15개는 m_v63.art63.
+- 숙련: 28개 × 다섯 단계 [안 배움, 초급, 중급, 상급, 달인] — 지금 12개는 0~3 그대로 + 달인, 새 15개는 m_v63.art63,
+  빌드 69 신성력(divine)은 m_v69c.py B안 「세 색 빛살」(11-13 19:40 사용자 「B로」).
   확정 그림 final_snap_mast/{id}_{단계}.png (지금 12개 0~3은 그 자리 그림과 같아야 한다)
 python3 export_v67.py <data-skicon.js> <data-masticon.js>"""
 import sys, json, pathlib
@@ -62,6 +63,11 @@ for k, name, theme, g in m_v63.MAST63:
     for lit in range(5):
         im, art = V.mast_img(k, lit, True); im.save(MS / f'{k}_{lit}.png'); vals.append(enc(art))
     mrows.append((k, vals))
+import m_v69c   # 빌드 69 새 숙련 신성력 (사제 계열 · 성기사) — 신전 색유리 창 + 파랑 · 빨강 · 노랑 빛살
+vals = []
+for lit in range(5):
+    m_v69c.img_sg('B', lit).save(MS / f'divine_{lit}.png'); vals.append(enc(m_v69c.art_sg('B', lit)))
+mrows.append(('divine', vals))
 js = ['/* 숙련 아이콘 (B안: 단계 점 + 틀 색): 숙련마다 [안 배움, 초급, 중급, 상급, 달인] 다섯, 칸 색은 data-skicon.js와 같은 꼴.',
       '   틀 색은 hero.js HEX_FR (기본 · 동 · 은 · 금 · 백금). 만든 곳: 시안 저장소 drafts/skill-icons/dot/export_v67.py — 손으로 고치지 않는다 */',
       'const MASTICON = {'] + [f'  {k}: {json.dumps(v)},' for k, v in mrows]
