@@ -97,11 +97,14 @@ const COMBO_MAX = 5;       // 연계 중첩 상한 (지속딜: 기본 공격 연
 const EXEC_HP = 0.3;       // 처형: 적 HP가 이 비율 아래면 한방딜의 피해 ×exec
 const MARK_BONUS = 0.2;    // 표식: 걸린 적이 받는 피해 +20%
 const CAST_GAP = 0.9;      // 스킬과 스킬 사이 최소 간격(초)
-const CDR_MAX = 0.5;       // 재사용 감소 합의 상한
-const SM_CD = 0.02;        // 숙련 한 단계마다 재사용 -2%
+// 빌드 69 쿨감 손질 (11-13 20:28 사용자 「쿨타임 감소 밸런스를 너가 제시한 대로」): 상한 50 → 30% · 숙련도 단계마다 2 → 1% · 스킬 레벨 단계마다 4 → 2% ·
+// 재사용 바닥 0.5초 → 기본 재사용의 40% (패시브 · 특성 · 앙코르 값은 data-cdr69.js)
+const CDR_MAX = 0.3;       // 재사용 감소 합의 상한
+const SM_CD = 0.01;        // 숙련 한 단계마다 재사용 -1%
+const CD_FLOOR = 0.4;      // 재사용은 기본 재사용의 40% 아래로 내려가지 않는다 (0.5초 아래로도)
 const basicCdOf = (spd, mul = 1) => BASIC_CD / Math.max(0.2, spd * mul);
-// 스킬 레벨: 같은 스킬북을 한 권 더 바쳐(고유·기본 스킬은 돈만) 올린다. 단계마다 위력 +8%, 재사용 -4%
-const SK_LV_MAX = 5, SK_LV_POW = 0.08, SK_LV_CD = 0.04;
+// 스킬 레벨: 같은 스킬북을 한 권 더 바쳐(고유·기본 스킬은 돈만) 올린다. 단계마다 위력 +8%, 재사용 -2%
+const SK_LV_MAX = 5, SK_LV_POW = 0.08, SK_LV_CD = 0.02;
 const skLv = (a, id) => (a && a.sl && a.sl[id]) || 1;
 const skLvMul = (a, id) => 1 + SK_LV_POW * (skLv(a, id) - 1);
 // 스킬을 lv단계로 올리는 값: 책이 있는 스킬은 책 한 권 + 돈, 고유·기본·각성 스킬은 돈만

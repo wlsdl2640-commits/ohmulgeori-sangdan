@@ -157,7 +157,7 @@ Object.assign(SKFX2_OVR, {
   summit: { mot: 'pjump', pal: 'earth', hit: 'quake', after: 'dust', shake: 3 }, junglecamo: { cast: 'smoke', pal: 'nature' }, vinetrap: { mot: 'down', pal: 'nature', hit: 'trap' },
   pioneerwhip: { mot: ['down', 'side'], pal: 'war', hit: 'stun' }, lassowhip: { mot: 'up', pal: 'war', hit: 'mark' }, wagonfort: { mot: 'guard', cast: 'barrier', pal: 'earth' }, rations: { cast: 'shout', pal: 'earth', big: 1 },
   westward: { mot: 'side', hold: 0.3, pal: 'gold', charge: 'aura', hit: 'quake', big: 1, dash: 1, after: 'dust', shake: 4 }, wagonlash: { mot: ['side', 'down'], pal: 'war', hit: 'slashes' },
-  caravanflag: { cast: 'shout', pal: 'gold', big: 1 }, medkit: { cast: 'potion', pal: 'water' }, shieldbag: { cast: 'heal', pal: 'heal', big: 1 },
+  caravanflag: { cast: 'shout', pal: 'gold', big: 1 }, medkit: { cast: 'potion', pal: 'water' }, shieldbag: { cast: 'shout', pal: 'earth', big: 1 },   /* 빌드 69 짐 덜어 주기 */
   cardfan: { mot: 'side', pal: 'coin', hit: 'slashes', proj: 'dart' }, calling: { mot: 'thrust', pal: 'coin', hit: 'mark', proj: 'dart' }, cardtrick: { mot: 'side', pal: 'coin', hit: 'slashes', proj: 'dart', big: 1 },
   magicshow: { mot: 'up', hold: 0.3, pal: 'coin', charge: 'aura', hit: 'rain', proj: null, big: 1, shake: 3 }, nightking: { mot: 'thrust', pal: 'shadow', hit: 'pierce', dash: 1, big: 1 },
   bottomdeal: { cast: 'aim', pal: 'coin' }, disguise: { cast: 'smoke', pal: 'shadow' }, thieveshonor: { cast: 'shout', pal: 'coin' },

@@ -77,6 +77,7 @@ function skillSpec(id, a) {
     out.push(`${s.dur}초 · ${SK_TGT_ALLY[s.tgt] || s.tgt}`);
     if (s.fat) out.push(`파티 모두의 피로 −${Math.round(s.fat * L * 10) / 10} · 피로 ${s.fatNeed || 20} 넘은 동료가 있을 때 쓴다`);   // 빌드 69 물통 돌리기
     if (s.ammo) out.push(`파티 모두의 화살 · 암기 · 볼트를 담는 수의 ${skPct(s.ammo)}씩 채운다`);   // 빌드 69 웨건 보급
+    if (s.durCarry) { const cp = a ? Math.min(s.durCarry, passives(a).carryPct || 0) : 0; out.push(`짐 늘리기(짐 +%)만큼 오래 간다 — 최대 ${Math.round((1 + s.durCarry) * 10) / 10}배${a ? ` · 지금 ${Math.round(s.dur * (1 + cp) * 10) / 10}초` : ''}`); }   // 빌드 69 짐 덜어 주기
     if (s.wagonMul) out.push(`마차를 끌고 왔으면 효과 ×${s.wagonMul}`);
   } else if (s.kind === 'taunt') {
     out.push(`${s.dur}초 동안 모든 적이 자신만 노린다`);
@@ -109,7 +110,7 @@ function skillSpec(id, a) {
     const eff = a ? skillCdOf(a, d, id, null) : s.cd;
     out.push(`재사용 ${skSec(s.cd)}${a && Math.abs(eff - s.cd) >= 0.05 ? ` → <b>${skSec(eff)}</b>` : ''}`);
   }
-  if (a) out.push(`숙련 ${ml}/${SM_MAX}${ml ? ` (위력 +${ml * 3}% · 재사용 -${ml * 2}%)` : ' (쓸수록 위력 +3%, 재사용 -2%씩)'}`);
+  if (a) out.push(`숙련 ${ml}/${SM_MAX}${ml ? ` (위력 +${ml * 3}% · 재사용 -${Math.round(ml * SM_CD * 100)}%)` : ` (쓸수록 위력 +3%, 재사용 -${Math.round(SM_CD * 100)}%씩)`}`);   // 빌드 69: 재사용은 SM_CD (2 → 1%)
   if (s.tier) out.push(`${s.tier}차 전직 후 배움`);
   if (lvLine) out.push(lvLine);
   return out;
@@ -150,7 +151,7 @@ function speedBreakdown(a) {
   if (MF.cdr) cd.push(`숙련 ${skPct(MF.cdr)}`);
   if (traitSum(a, 'cdr')) cd.push(`특성 ${skPct(traitSum(a, 'cdr'))}`);
   if (G.cdr) cd.push(`룬 ${skPct(G.cdr)}`);
-  return { spd: parts.join(' · '), cdr: cd.length ? cd.join(' · ') + (d.cdr >= CDR_MAX ? ' (상한 50%)' : '') : '없음 (지속 스킬 「전술」·특성 「전술가」·시간의 룬으로 늘어요)' };
+  return { spd: parts.join(' · '), cdr: cd.length ? cd.join(' · ') + (d.cdr >= CDR_MAX ? ` (상한 ${Math.round(CDR_MAX * 100)}%)` : '') : '없음 (지속 스킬 「전술」·특성 「전술가」·시간의 룬으로 늘어요)' };
 }
 // 스킬북이 어디서 나오는지 (도감·창고)
 function bookFromText(id) {

@@ -94,7 +94,7 @@ function deriveBase(a) {
     double: Math.min(0.6, (G.double || 0) + (P.double || 0) + X('double')),
     healPow: 1 + X('healPow') + (P.healPow || 0) + Math.min(RUNE_CAP.healPow, G.healPow || 0), rheal: X('rheal') + Math.min(RUNE_CAP.rheal, G.rheal || 0), hpRegen: X('hpRegen') + (P.hpRegen || 0), mpFlat: X('mpFlat'),   // 치유 룬: 무기 주는 회복 · 방어구 받는 회복
     spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd
-    cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 50%)
+    cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 CDR_MAX 30% — 빌드 69)
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
     move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct') + (G.movePct || 0)) * (wind ? 1.15 : 1),
     mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3 + Math.min(RUNE_CAP.mpRegen, G.mpRegen || 0),   // 영민 룬(방어구) · 마나 룬(무기)
@@ -690,7 +690,7 @@ const chestMul = p => 1 + Math.max(0, ...teamOf(p).filter(a => !a.down).map(a =>
 function skillCdOf(a, d, id, e) {
   const s = SKILLS[id]; if (!s || !s.cd) return 0;
   const cut = Math.min(CDR_MAX, (d.cdr || 0) + (e ? buffAdd(e, a.id, 'cdr') : 0));
-  return Math.max(0.5, s.cd * (1 - cut) * (1 - SM_CD * smLv(a, id)) * (1 - SK_LV_CD * (skLv(a, id) - 1)) * (d.wxSk || 1));   // 더위: 스킬 재사용이 길어진다
+  return Math.max(0.5, s.cd * CD_FLOOR, s.cd * (1 - cut) * (1 - SM_CD * smLv(a, id)) * (1 - SK_LV_CD * (skLv(a, id) - 1)) * (d.wxSk || 1));   // 더위: 스킬 재사용이 길어진다 · 바닥 = 기본 재사용의 40% (빌드 69)
 }
 // 기본 공격 대기시간 = 5초 ÷ 공격 속도(강화 포함)
 const basicCd = (a, d, e) => basicCdOf(d.spd, e ? buffMul(e, a.id, 'spd') : 1) * (d.wxBa || 1);   // 추위: 기본 공격 대기가 길어진다
@@ -813,7 +813,7 @@ function cast(e, a, d, id, team, dm, foes) {
     const to = s.tgt === 'party' ? 'party' : a.id;
     const P1 = s.wagonMul ? partyOfE(e) : null, wag = P1 && wagonOf(P1) ? s.wagonMul : 1, LW = L * wag;   // 웨건 보급(빌드 69): 마차를 끌고 왔으면 더 세다
     e.buffs = e.buffs.filter(b => b.sid !== id && !(typeof b.sid === 'string' && (b.sid === id + '#h' || b.sid.startsWith(id + '#m'))));
-    const dur = s.dur * (1 + (d.mBuff || 0) + (to === 'party' ? pBuffOf(team, dm) : 0));   // 숙련 (연주법): 강화가 더 오래 간다 · 여행 채비(마부): 파티 강화 +20%
+    const dur = s.dur * (1 + (d.mBuff || 0) + (to === 'party' ? pBuffOf(team, dm) : 0)) * (s.durCarry ? 1 + Math.min(s.durCarry, passives(a).carryPct || 0) : 1);   // 숙련 (연주법): 강화가 더 오래 간다 · 여행 채비(마부): 파티 강화 +20% · 짐 덜어 주기(빌드 69): 짐 +%만큼 (최대 durCarry)
     e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * LW : 0, add: (s.add || 0) * LW, t: dur });   // 스킬 레벨만큼 세진다
     if (s.haste) e.buffs.push({ sid: id + '#h', to, stat: 'spd', mult: 1 + (s.haste - 1) * LW, add: 0, t: dur });   // 공격 속도도 함께 올리는 강화
     (s.more || []).forEach((m2, i) => e.buffs.push({ sid: id + '#m' + i, to, stat: m2.stat, mult: m2.mult ? 1 + (m2.mult - 1) * LW : 0, add: (m2.add || 0) * LW, t: dur }));   // 함께 거는 다른 강화 (빌드 65: 방어 · 훔치는 돈 · 덜 노림 · 다음 공격)
