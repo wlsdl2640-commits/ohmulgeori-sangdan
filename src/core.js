@@ -413,7 +413,8 @@ function gateChoice(p, choice) {
 /* ───────── 야영: 지치면 모닥불을 피우고 잔다 ───────── */
 function startCamp(p, e) {
   const tent = tentOf(p);   // 정찰가가 있으면 텐트: 피로가 더 풀리고 밤습격도 반으로
-  e.camp = { t: 0, night: isNight(), cp: Math.max(0, ...teamOf(p).filter(a => !a.down).map(a => passives(a).camp || 0)), tent: tent > 1 ? tent : 0, amb: isNight() && e.area === 'field' && rnd() < (blessed('moon') ? 0.11 : 0.22) * (tent > 1 ? 0.5 : 1) ? 4 + rnd() * 10 : 0 };
+  const pv = teamOf(p).filter(a => !a.down).map(a => passives(a)), pmax = k => Math.max(0, ...pv.map(P => P[k] || 0));   // 개척민의 지혜(빌드 69): 야영 회복 · 밤습격 · 숙면 피로
+  e.camp = { t: 0, night: isNight(), cp: pmax('camp'), cs: pmax('campSleep'), tent: tent > 1 ? tent : 0, amb: isNight() && e.area === 'field' && rnd() < (blessed('moon') ? 0.11 : 0.22) * (tent > 1 ? 0.5 : 1) * (1 - Math.min(0.9, pmax('campAmb'))) ? 4 + rnd() * 10 : 0 };
   ev(e, 'camp', { tent: e.camp.tent ? 1 : 0 });
 }
 function stepCamp(p, e, team, dm, dt) {
@@ -422,6 +423,7 @@ function stepCamp(p, e, team, dm, dt) {
   const tm = (c.tent || 1) * (1 + (c.cp || 0));   // 텐트: 피로 회복 1.5~2배, HP 회복 1.25배 · 개척민의 지혜(코네스토가): 야영 회복 +20%
   c.wxf = campWxF(p, wxNow(e));   // 날씨: 노숙이면 비·강풍·추위·더위에 회복이 줄어든다 (텐트가 막는다)
   team.forEach(a => { const d = dm[a.id]; a.fat = Math.max(0, (a.fat || 0) - FATIGUE.sleep * tm * c.wxf * dt); a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.02 * (tm > 1 ? 1.25 : 1) * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
+  if (c.cs) teamOf(p).forEach(a => { a.sleep = Math.max(0, (a.sleep || 0) - c.cs * dt); });   // 개척민의 지혜(빌드 69): 웨건에서 자면 숙면 피로도 풀린다
   if (c.amb && c.t >= c.amb) {
     c.amb = 0;
     e.foes = rollFoes(e, -1, 1); e.cd = {}; e.buffs = []; e.taunt = null;
@@ -715,6 +717,8 @@ function pickSkill(a, d, team, dm, foes, e) {
     } else if (s.kind === 'buff') {
       if (!e.buffs.some(b => b.sid === id)) pr = foes.some(f => f.boss) || foes.length >= 2 ? 7 : 4;
       if (s.cures && team.some(x => up(x) && e.sta && e.sta[x.id] && s.cures.some(k => e.sta[x.id][k]))) pr = Math.max(pr, 9);   // 결의: 공포를 떨친다
+      if (s.fat) pr = team.some(x => up(x) && (x.fat || 0) >= (s.fatNeed || 20)) && pr ? Math.max(pr, 6) : 0;   // 물통 돌리기(빌드 69): 지친 동료가 있을 때만, 있으면 한 명만 치는 공격보다 먼저
+      if (pr && s.ammo && team.some(x => up(x) && ammoLow(x))) pr = Math.max(pr, 7);   // 웨건 보급(빌드 69): 탄약이 절반 아래인 동료가 있으면 먼저
     } else if (s.kind === 'shield') {   // 보호막: 아직 없을 때. 자기 보호막은 다쳤거나 보스일 때
       const has = x => e.buffs.some(b => b.stat === 'shield' && b.to === x.id && b.hp > 0);
       if (s.tgt === 'party') { if (team.filter(x => up(x) && !has(x)).length >= 2) pr = foes.some(f => f.boss) || foes.length >= 2 ? 8 : 5; }
@@ -807,12 +811,15 @@ function cast(e, a, d, id, team, dm, foes) {
     ev(e, 'buff', { s: a.id, id, party: true });
   } else if (s.kind === 'buff') {
     const to = s.tgt === 'party' ? 'party' : a.id;
+    const P1 = s.wagonMul ? partyOfE(e) : null, wag = P1 && wagonOf(P1) ? s.wagonMul : 1, LW = L * wag;   // 웨건 보급(빌드 69): 마차를 끌고 왔으면 더 세다
     e.buffs = e.buffs.filter(b => b.sid !== id && !(typeof b.sid === 'string' && (b.sid === id + '#h' || b.sid.startsWith(id + '#m'))));
     const dur = s.dur * (1 + (d.mBuff || 0) + (to === 'party' ? pBuffOf(team, dm) : 0));   // 숙련 (연주법): 강화가 더 오래 간다 · 여행 채비(마부): 파티 강화 +20%
-    e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * L : 0, add: (s.add || 0) * L, t: dur });   // 스킬 레벨만큼 세진다
-    if (s.haste) e.buffs.push({ sid: id + '#h', to, stat: 'spd', mult: 1 + (s.haste - 1) * L, add: 0, t: dur });   // 공격 속도도 함께 올리는 강화
-    (s.more || []).forEach((m2, i) => e.buffs.push({ sid: id + '#m' + i, to, stat: m2.stat, mult: m2.mult ? 1 + (m2.mult - 1) * L : 0, add: (m2.add || 0) * L, t: dur }));   // 함께 거는 다른 강화 (빌드 65: 방어 · 훔치는 돈 · 덜 노림 · 다음 공격)
+    e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * LW : 0, add: (s.add || 0) * LW, t: dur });   // 스킬 레벨만큼 세진다
+    if (s.haste) e.buffs.push({ sid: id + '#h', to, stat: 'spd', mult: 1 + (s.haste - 1) * LW, add: 0, t: dur });   // 공격 속도도 함께 올리는 강화
+    (s.more || []).forEach((m2, i) => e.buffs.push({ sid: id + '#m' + i, to, stat: m2.stat, mult: m2.mult ? 1 + (m2.mult - 1) * LW : 0, add: (m2.add || 0) * LW, t: dur }));   // 함께 거는 다른 강화 (빌드 65: 방어 · 훔치는 돈 · 덜 노림 · 다음 공격)
     if (s.cures) team.filter(up).forEach(x => cureSta(e, x, s.cures));   // 결의: 공포를 떨친다
+    if (s.fat) team.filter(up).forEach(x => { x.fat = Math.max(0, (x.fat || 0) - s.fat * L); });   // 물통 돌리기(빌드 69): 파티 피로를 던다
+    if (s.ammo) team.filter(up).forEach(x => ammoTop(x, s.ammo * wag));   // 웨건 보급(빌드 69): 화살 · 암기 · 볼트를 담는 수의 %만큼 (마차가 있으면 1.5배)
     ev(e, 'buff', { s: a.id, id, party: to === 'party' });
   } else if (s.kind === 'taunt') {
     e.taunt = { aid: a.id, t: s.dur };
