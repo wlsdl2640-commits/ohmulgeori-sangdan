@@ -344,7 +344,7 @@ PANELS.au = () => {
 };
 PANELS.ag = () => `<div class="card hl"><div class="h">암살자 길드 본부</div><div class="sub">지하수로 가장 깊은 곳, 등불 하나 없는 문 뒤에 길드장 검은 두건이 앉아 있다. 7번가의 모든 상단은 이들에게 자릿세를 낸다.</div></div>
   <div class="card"><div class="row"><span class="grow">매달 자릿세</span><span class="num ${S.flags.guildDown ? 'ok-t' : 'red-t'}">${S.flags.guildDown ? '없음 (토벌 완료)' : fmt(rent()) + 'G'}</span></div>
-  <div class="sub">${S.flags.guildDown ? '길드를 토벌한 뒤로 자릿세를 받으러 오지 않는다.' : `길드를 토벌하면 자릿세가 사라진다. 토벌은 명성 ${GUILD_RAID.fame}, 모험가 ${GUILD_RAID.advs}명, 후원 조건을 채운 뒤 원정 창의 「7번가 뒷골목」에서.`}</div></div>
+  <div class="sub">${S.flags.guildDown ? '길드를 토벌한 뒤로 자릿세를 받으러 오지 않는다.' : `자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3% — 이달은 기본 ${fmt(rentBase())}G + 판매액 ${fmt(S.salesM || 0)}G의 3% ${fmt(rentSales())}G. 길드를 토벌하면 자릿세가 사라진다. 토벌은 명성 ${GUILD_RAID.fame}, 모험가 ${GUILD_RAID.advs}명, 후원 조건을 채운 뒤 원정 창의 「7번가 뒷골목」에서.`}</div></div>
   <div class="sub muted">길드원들은 투기장과 암시장도 손에 쥐고 있다. 투기장 코인의 일부는 이들 주머니로 들어간다.</div>`;
 Object.assign(ACT, {
   arparty: d => { UI.arP = +d.id; renderPanel(true); },

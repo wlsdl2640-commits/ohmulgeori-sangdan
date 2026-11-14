@@ -730,6 +730,7 @@ function stepShop(dt) {
     HOOKS.sale(i, g);
     if (S.sold.day !== today()) S.sold = { day: today(), n: 0, g: 0 };
     S.sold.n++; S.sold.g += g;
+    S.salesM = (S.salesM || 0) + g;   // 빌드 69: 이달 상점(진열대) 판매액 — 자릿세 3%
   }
 }
 const buyPrice = it => Math.round(ITEMS[it].buy * (spn('clinic') >= 1 ? 0.8 : 1));
@@ -1034,8 +1035,6 @@ function raidReward(rec, i, half) {
   const ri4 = Math.min(i, 3), bn = STONE_DROP.bloomstone.raidN[ri4], bq = half ? Math.floor(bn / 2) : bn;
   if (bq > 0) { stashItem('bloomstone', bq); got.push(`개화석 ${bq}개`); }
   if (rnd() < STONE_DROP.wizstone.raidP[ri4] * k) { stashItem('wizstone', 1); got.push('마법사의 돌'); }
-  const mn = half ? Math.floor(MASEOK_DROP.raidN[ri4] / 2) : MASEOK_DROP.raidN[ri4];   // 빌드 69: 마석 (몬스터가 떠나면 절반)
-  for (let j = 0; j < mn; j++) { const id = msItem(); stashItem(id, 1); got.push(`마석 「${ITEMS[id].name}」`); }
   return `우리 상단 ${i + 1}위! 보상: ${got.join(', ')}`;
 }
 function raidEnd(rec, how) {
@@ -1104,13 +1103,17 @@ function sponsor(k) {
 }
 
 /* ───────── 월말 정산 ───────── */
-const rent = () => (S.flags.guildDown ? 0 : 300 + 50 * Math.floor(S.fame / 25));
+// 빌드 69 (11-14 사용자 「이걸로」 — 계획 문서 남은 물음 1): 자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3%
+const RENT_SALES = 0.03;
+const rentBase = () => (S.flags.guildDown ? 0 : 300 + 50 * Math.floor(S.fame / 25));
+const rentSales = () => (S.flags.guildDown ? 0 : Math.round((S.salesM || 0) * RENT_SALES));
+const rent = () => rentBase() + rentSales();
 const salaryOf = a => Math.round(salaryCalc(a) * (1 - mentorCut(a.cls)) / 5) * 5;   // 스승(명예의 전당) 할인 · 빌드 69: 지금 레벨로 셈한다 (data-sal69.js)
 const payroll = () => living().reduce((s, a) => s + salaryOf(a), 0);
 function settle() {
   const pm = dateParts(S.t - DAY_SEC).m, lines = [], r = rent();
   if (S.flags.guildDown) lines.push('암살자 길드가 무너져 이제 자릿세는 없다.');
-  else if (S.gold >= r) { S.gold -= r; lines.push(`암살자 길드에 자릿세 ${g$(r)}을 냈다.`); }
+  else if (S.gold >= r) { S.gold -= r; lines.push(`암살자 길드에 자릿세 ${g$(r)}을 냈다.${rentSales() ? ` (기본 ${g$(rentBase())} + 이달 상점 판매액 ${g$(S.salesM)}의 3% ${g$(rentSales())})` : ''}`); }
   else {
     const paid = S.gold; S.gold = 0;
     let lost = 0;
@@ -1132,7 +1135,8 @@ function settle() {
   });
   if (warned.length) lines.push(`${warned.join(', ')}에게 봉급을 주지 못했다. 다음 달에도 밀리면 떠난다.`);
   if (gone.length) lines.push(`두 달째 봉급을 못 받은 ${gone.join(', ')}은(는) 상단을 떠난다. 원정 중이면 돌아온 뒤에 떠난다.`);
-  if (!S.flags.guildDown) lines.push(`다음 달 자릿세는 ${g$(rent())}이다.`);
+  S.salesLast = S.salesM || 0; S.salesM = 0;   // 빌드 69: 상점 판매액은 달마다 새로 센다
+  if (!S.flags.guildDown) lines.push(`다음 달 자릿세는 ${g$(rentBase())}에 그달 상점 판매액의 3%를 더한 값이다.`);
   if (S.bld.temple) { blessRoll(); lines.push(`신전: 이번 달에는 「${BLESSINGS[S.bless.id].name}」. ${BLESSINGS[S.bless.id].desc}`); }
   leagueMonth(lines);
   log(`${pm}월 정산을 마쳤다.`, unpaid.length ? 'bad' : '');

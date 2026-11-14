@@ -189,7 +189,7 @@ function dexPots() {
   const runes = RUNE_IDS.map(k => `<div class="li">${iconImg(runeId(k, RUNE_TOP))}<div class="grow stack"><span>${RUNES[k].name}의 룬 <span class="muted">· ${RUNE_LV.join('·')}</span></span><span class="sub">무기: ${runeLine(k, 'w')}</span><span class="sub">부장비 · 방어구 · 하의 · 장갑 · 신발 · 벨트 · 장신구 · 귀걸이 · 가방: ${runeLine(k, 'a')}</span></div></div>`).join('');   // 빌드 64: 한 룬에 두 효과
   const mss = MASEOK_IDS.map(k => { const id = 'ms_' + k, M = MASEOK[k]; return `<div class="li">${iconImg(id)}<div class="grow stack"><span>${M.name} <span class="muted">· ${M.kind} · 영웅</span>${(S.inv[id] || 0) ? ` <span class="tag ok-t">${S.inv[id]}</span>` : ''}</span><span class="sub">${M.eff} · 합쳐서 ${M.capT}까지</span></div></div>`; }).join('');   // 빌드 69
   return `<div class="list">${rows}</div><div class="sec"><b>룬</b><span>마탑에서 장비에 새기고 합성해요 (같은 단계 아홉 → 한 단계 위)</span></div><div class="list">${runes}</div>
-    <div class="sec"><b>마석</b><span>영웅 이상 장비의 마석 칸에 끼워요 · 효과마다 여섯 개 몫까지</span></div><div class="list">${mss}</div>`;
+    <div class="sec"><b>마석</b><span>지하미궁에서만 아주 드물게 · 영웅 이상 장비의 마석 칸에 끼워요 · 효과마다 여섯 개 몫까지</span></div><div class="list">${mss}</div>`;
 }
 
 /* ───────── 장비 ───────── */

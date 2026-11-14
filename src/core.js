@@ -1247,10 +1247,9 @@ function stoneDrops(p, e, f, luck) {
   const kind = e.area === 'field' && f.fb ? (f.fb >= 5 ? 'lord' : 'fb') : e.area === 'dungeon' && f.boss && !f.fb ? 'boss' : null;
   if (!kind) return;
   for (const it of STONE_IDS) if (rnd() < STONE_DROP[it][kind] * (1 + (luck || 0))) { addTo(e.bag, it, 1); ev(e, 'loot', { id: it }); log(`${p.name}이(가) ${f.name}에게서 ${ITEMS[it].name}을(를) 얻었다!`, 'good'); }   // 짐이 가득 차도 잃지 않는다
-  if (rnd() < MASEOK_DROP[kind] * (1 + (luck || 0))) msGot(p, e, f.name);   // 빌드 69: 마석 (data-maseok69.js MASEOK_DROP)
 }
 // 보물 지도: 필드의 우두머리(4%)·주인(8%)이 남긴다 (data-sky.js TMAP_DROP)
-function msGot(p, e, from) {   // 빌드 69: 마석 하나 — 짐이 차도 잃지 않게 e.bag에 바로
+function msGot(p, e, from) {   // 빌드 69: 마석 하나 — 짐이 차도 잃지 않게 e.bag에 바로 (11-14 사용자 「마석은 지하미궁에서만 · 확률 극악」 — 지하미궁 층 보스가 부를 것, 지금은 부르는 곳 없음)
   const id = msItem(); addTo(e.bag, id, 1); ev(e, 'loot', { id });
   log(`${p.name}이(가) ${from ? from + '에게서 ' : ''}마석 「${ITEMS[id].name}」을(를) 얻었다!`, 'good'); HOOKS.toast(`마석 · ${ITEMS[id].name}`);
   return id;
@@ -1265,7 +1264,6 @@ function rareDown(p, e, f) {
   dexRareKill(f.id);
   addTo(e.bag, 'bloomstone', 1); ev(e, 'loot', { id: 'bloomstone' });
   S.fame += 2; S.stats.rares = (S.stats.rares || 0) + 1;
-  if (rnd() < MASEOK_DROP.rare * (1 + (foodFx(e).luck || 0))) msGot(p, e, '희귀종 ' + f.name);   // 빌드 69: 마석
   log(`${p.name}이(가) 희귀종 ${f.name}을(를) 쓰러뜨렸다! 개화석을 남겼다. 명성 +2${first ? ` · 도감에 기록: ${MONS[f.id].name}에게 주는 피해 +${Math.round(RARE.dmg * 100)}%, 전리품 +${Math.round(RARE.drop * 100)}%` : ''}`, 'good');
   HOOKS.toast(`희귀종 격파 · ${f.name}`);
 }
@@ -1463,7 +1461,6 @@ function treasureClear(p, e) {
   const b = randomBook(Math.max(1, L - 15), L + 10); if (b) { addTo(e.bag, b, 1); got.push(ITEMS[b].name); }
   if (rnd() < 0.5) { addTo(e.bag, 'bloomstone', 1); got.push('개화석'); }
   if (rnd() < 0.1) { addTo(e.bag, 'wizstone', 1); got.push('마법사의 돌'); }
-  if (rnd() < MASEOK_DROP.tclear) { const id = msItem(); addTo(e.bag, id, 1); got.push(`마석 「${ITEMS[id].name}」`); }   // 빌드 69
   log(`${p.name}이(가) 보물고의 수호자를 쓰러뜨리고 보물을 챙겼다: ${got.join(', ')}`, 'good');
   queueModal({ title: '보물 던전 공략', body: [`${p.name}이(가) 보물 지도의 끝에서 보물 수호자를 쓰러뜨렸다. 상자 ${(e.chests || 0) + 1}개를 열었다.`, `보상: ${got.join(', ')}.`, '보물 지도는 필드의 우두머리와 주인이 가끔 남긴다. 다음 지도를 찾으면 또 떠날 수 있다.'] });
   e.mode = 'return'; e.why = 'boss'; e.ei = 0; e.encs = []; e.next = null;

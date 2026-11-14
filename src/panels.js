@@ -154,7 +154,7 @@ PANELS.co_money = () => {
   const dd = S.settleDay - today(), cost = rent() + payroll(), sp = dateParts(S.settleDay * DAY_SEC);
   return `<div class="sec" style="margin-top:0"><b>${sp.m}월 ${sp.d}일 정산</b><span>D-${dd}</span></div>
   <div class="card">
-    <div class="row"><span class="grow">암살자 길드 자릿세</span><span class="num ${rent() ? 'red-t' : 'ok-t'}">${rent() ? fmt(rent()) + 'G' : '없음'}</span></div>
+    <div class="row"><span class="grow">암살자 길드 자릿세${rentSales() ? ` <span class="sub muted">· 기본 ${fmt(rentBase())} + 이달 상점 판매액의 3% ${fmt(rentSales())}</span>` : ''}</span><span class="num ${rent() ? 'red-t' : 'ok-t'}">${rent() ? fmt(rent()) + 'G' : '없음'}</span></div>
     <div class="row"><span class="grow">모험가 봉급 ${living().length}명</span><span class="num">${fmt(payroll())}G</span></div>
     <div class="row"><span class="grow"><b>합계</b></span><span class="num ${S.gold >= cost ? 'ok-t' : 'red-t'}">${fmt(cost)}G</span></div>
     <div class="sub">${S.gold >= cost ? '지금 가진 돈으로 낼 수 있어요.' : '돈이 모자라요. 자릿세를 못 내면 창고가 털리고, 봉급이 두 달 밀리면 모험가가 떠나요.'} 날짜는 게임을 켜 둔 동안에만 흘러요.</div>
@@ -659,7 +659,7 @@ PANELS.rune = w => {   // 빌드 69: 장비 칸 창 — 룬 · 마석 · 원천�
   const msAdd = msInv.map(id => { const k = msKey(id); return `<div class="li">${iconImg(id)}<div class="grow"><span>${ITEMS[id].name} <b class="num">×${S.inv[id]}</b></span><span class="sub">${MASEOK[k].eff} · 합쳐서 ${MASEOK[k].capT}까지${now(k)}</span></div><button type="button" class="btn sm gold" data-act="msin" data-g="${g.id}" data-it="${id}"${idle && nm && (g.ms || []).length < nm ? '' : ' disabled'}>끼우기</button></div>`; }).join('');
   const msSec = nm
     ? `<div class="sec"><b>끼운 마석</b><span>${(g.ms || []).length}/${nm}칸 · 빼면 창고로</span></div><div class="list">${msCur || '<div class="li"><span class="sub">끼운 마석이 없어요.</span></div>'}</div>
-      <div class="sec"><b>창고의 마석</b><span>모두 영웅 등급 · 모험가마다 효과를 더해요</span></div><div class="list">${msAdd || '<div class="li"><span class="sub">마석이 없어요. 필드 우두머리 · 던전 주인 · 희귀종 · 보물고 · 레이드 보상에서 드물게 나와요.</span></div>'}</div>`
+      <div class="sec"><b>창고의 마석</b><span>모두 영웅 등급 · 모험가마다 효과를 더해요</span></div><div class="list">${msAdd || '<div class="li"><span class="sub">마석이 없어요. 마석은 지하미궁에서만 아주 드물게 나와요 (지하미궁은 아직 열리지 않았어요).</span></div>'}</div>`
     : `<div class="sec"><b>마석</b><span>영웅 장비부터</span></div><div class="card"><div class="sub">마석 칸은 영웅 장비부터 열려요 (영웅 1 · 전설 2 · 신화부터 3칸). ${msInv.length ? `창고에 마석 ${msInv.reduce((t, id) => t + S.inv[id], 0)}개가 있어요.` : ''}</div></div>`;
   const srcSec = `<div class="sec"><b>원천물</b><span>${ns ? `${ns}칸 열림` : '신성 장비부터'}</span></div><div class="card"><div class="sub">${ns ? '이 장비에는 원천물 칸이 열려 있어요. ' : '원천물 칸은 신성 장비부터 열려요 (신성 1 · 우주 2 · 창조 3칸). '}원천물은 아직 없어요 — 강하고 특별한 몬스터가 아주 드물게 남길 예정이에요.</div></div>`;
   return `<div class="card hl"><div class="row">${gArt(g, 2)}<div class="grow"><div class="h">${gearName(g)} ${qTag(g)}</div><div class="sub">${statLine(gearStats(g))}</div><div class="sub">${f.a ? `${esc(f.a.name)}이(가) 쓰는 중` : '창고에 보관 중'} · ${slotCnt(g)}</div><div class="sub muted">${side === 'w' ? '무기라 룬의 「무기」 효과(때리는 쪽)가 붙어요.' : '무기가 아니라 룬의 「방어구」 효과(막는 쪽)가 붙어요.'}</div></div></div>${slot9Strip(g)}</div>
@@ -736,7 +736,7 @@ function invDetail(k, rate) {
     const s = SKILLS[I.book];   // 빌드 68: 계열 · 직업(몇 차)을 이름 바로 아래 한 줄로 (data-skjob68.js)
     jobl = skJobLine(I.book);
     desc = `${s.desc} · ${costStr(s)}<br>${skillSpecLine(I.book)}`; extra = `${skWhoTxt(I.book)}<br>${bookFromText(I.book)} · 모험가 창 → 스킬에서 배워요 (수업료 ${learnFee(s)}G)`;
-  } else if (cat === 'rune' && I.maseok) { desc = I.desc; extra = `${msEffTxt(I.maseok)} · 영웅 이상 장비의 마석 칸(영웅 1 · 전설 2 · 신화부터 3칸)에 끼워요 — 마탑 「장비 칸」 · 모험가 창 장비 탭`; }   // 빌드 69 마석
+  } else if (cat === 'rune' && I.maseok) { desc = I.desc; extra = `${msEffTxt(I.maseok)} · 영웅 이상 장비의 마석 칸(영웅 1 · 전설 2 · 신화부터 3칸)에 끼워요 — 마탑 「장비 칸」 · 모험가 창 장비 탭 · 지하미궁에서만 아주 드물게 나와요`; }   // 빌드 69 마석
   else if (cat === 'rune') extra = `${runeBoth(k)} · 마탑에서 장비에 새기고, 같은 단계 룬 ${RUNE_FUSE.n}개를 합성해 한 단계 위로${I.rune[1] >= RUNE_TOP ? ' (최상급)' : ''}`;   // 빌드 64 룬 개편: 무기 · 방어구 두 효과
   else if (cat === 'food' && I.dish) { const F = FOODS[I.dish]; desc = `${F.desc} · ${foodFxText(F.fx)}`; extra = `원정대 창에서 파티 도시락으로 골라요 · 주방 ${F.lv}단계: ${needStr(F.need)}`; if (S.bld.kitchen) btns += `<button type="button" class="btn sm" data-act="bopen" data-id="kitchen">주방에서 만들기</button>`; }
   else if (cat === 'food') { const uses = FOOD_IDS.filter(id => FOODS[id].need[k]).map(id => FOODS[id].name); extra = uses.length ? `들어가는 요리: ${uses.join(', ')}` : ''; if (KITCHEN_BUY[k] && S.bld.kitchen) btns += `<button type="button" class="btn sm gold" data-act="fbuy" data-k="${k}" data-n="5"${S.gold < KITCHEN_BUY[k] * 5 ? ' disabled' : ''}>주방에서 5개 ${KITCHEN_BUY[k] * 5}G</button>`; }
