@@ -8,8 +8,8 @@ NAME = {'gladiator': '검투사', 'knight': '기사', 'berserker': '광전사', 
         'shadowlord': '그림자 군주', 'bladedancer': '검무사', 'phantomthief': '괴도', 'kageninja': '카게닌자', 'elementlord': '정령왕', 'lich': '리치', 'archmage': '대마도사', 'alchemist': '연금술사',
         'archbishop': '대주교', 'physician': '명의', 'inquisitor': '심판관'}
 HEAL = {'priest', 'plaguedoc', 'exorcist', 'archbishop', 'physician', 'inquisitor'}
-LV = {'t80': 80, 't100': 100, 't120': 120, 't146': 146}
-tiers = sys.argv[1:] or ['t80', 't100', 't120', 't146']
+LV = {'t55': 55, 't80': 80, 't100': 100, 't120': 120, 't146': 146}
+tiers = sys.argv[1:] or ['t55', 't80', 't100', 't120', 't146']
 R = {}
 for t in tiers:
     rows = []

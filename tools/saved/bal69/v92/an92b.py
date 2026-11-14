@@ -5,13 +5,13 @@ D = os.path.dirname(os.path.abspath(__file__))
 src = open(f'{D}/an92.py', encoding='utf-8').read()
 ns = {'__file__': f'{D}/an92.py'}; exec(src.split("LV = {")[0], ns)   # NAME · HEAL
 NAME, HEAL = ns['NAME'], ns['HEAL']
-LV = {'t80': 80, 't100': 100, 't120': 120, 't146': 146}
+LV = {'t55': 55, 't80': 80, 't100': 100, 't120': 120, 't146': 146}
 FAM = {'gladiator': '전사', 'knight': '전사', 'berserker': '전사', 'spellblade': '전사', 'champion': '전사', 'paladin': '전사', 'bloodlord': '전사', 'arcblade': '전사',
        'ranger': '궁수', 'sniper': '궁수', 'mhunter': '궁수', 'huntsman': '궁수', 'dragoon': '궁수', 'hawkeye': '궁수', 'dslayer': '궁수', 'kaijuhunter': '궁수',
        'assassin': '도적', 'duelist': '도적', 'treasure': '도적', 'ninja': '도적', 'shadowlord': '도적', 'bladedancer': '도적', 'phantomthief': '도적', 'kageninja': '도적',
        'elementalist': '마법사', 'necromancer': '마법사', 'sorcerer': '마법사', 'elemancer': '마법사', 'elementlord': '마법사', 'lich': '마법사', 'archmage': '마법사', 'alchemist': '마법사',
        'priest': '성직자', 'plaguedoc': '성직자', 'exorcist': '성직자', 'archbishop': '성직자', 'physician': '성직자', 'inquisitor': '성직자'}
-tiers = sys.argv[1:] or ['t80', 't100', 't120', 't146']
+tiers = sys.argv[1:] or ['t55', 't80', 't100', 't120', 't146']
 out = {}
 for t in tiers:
     rows = []
@@ -28,7 +28,13 @@ for t in tiers:
         w1 = [r['r'] for r in rows if c in r['c'] and r['h'] >= 1]
         w1x = [r['r'] for r in rows if c in r['c'] and r['h'] == 1 and (c in HEAL or True)]
         nh = [r['r'] for r in rows if c in r['c'] and r['h'] == 0]
-        per[c] = {'w1': round(st.mean(w1), 2) if w1 else None, 'h1': round(st.mean(w1x), 2) if w1x else None, 'nh': round(st.mean(nh), 2) if nh else None,
+        k2 = [r['r'] for r in rows if r['c'].count(c) >= 2 and r['h'] >= 1]
+        if t == 't146':
+            P1 = [r for r in rows if c in r['c'] and r['h'] >= 1]; P2 = [r for r in rows if r['c'].count(c) >= 2 and r['h'] >= 1]; PN = [r for r in rows if c in r['c'] and r['h'] == 0]
+            pp = lambda L: round(100 * sum(1 for r in L if r['flv'] > 145) / len(L)) if L else None
+            pas = {'p1': pp(P1), 'p2': pp(P2), 'pn': pp(PN)}
+        else: pas = {}
+        per[c] = {**pas, 'k2': round(st.mean(k2), 2) if k2 else None, 'w1': round(st.mean(w1), 2) if w1 else None, 'h1': round(st.mean(w1x), 2) if w1x else None, 'nh': round(st.mean(nh), 2) if nh else None,
                   'cl': sum(1 for r in rows if c in r['c'] and r['cl']), 'w': round(sum(r['w'] for r in rows if c in r['c']) / max(1, sum(1 for r in rows if c in r['c'])), 3),
                   'tk': round(st.mean([r['tk'] / max(1, r['t']) for r in rows if c in r['c']]), 1)}
     o['per'] = per
