@@ -9,7 +9,7 @@
          탄 채 하는 동작은 내딛기 · 웅크림 · 몸 나감 · 뛰기를 뺀다(pxs.js PXS_RIDE).
    저장: a.ride = { wolf: { look, name, lv }, wyv: { look } } — 없으면 모습 A. 늑대 이름 · 레벨은 랑기수 전직 때 보낸 늑대 펫의 것. */
 const RIDE_LOOKS = ['A', 'B', 'C', 'D'];
-const RIDE_KIND_NAME = { wolf: '늑대', wyv: '와이번' };
+const RIDE_KIND_NAME = { wolf: '늑대', wyv: '와이번', sea: '해룡' };   // 해룡(빌드 69): 그림 넷(RIDE65.sea)만 — 해룡기수(용기수 다음 4차) · 해룡 펫이 들어올 때 rideKind에 잇는다
 // 이 모험가가 타는 것 (직업 계열로): 용기수 계열 → 와이번 · 랑기수 계열 → 늑대
 function rideKind(a) {
   if (!a || !a.cls || !CLASSES[a.cls]) return null;
@@ -128,7 +128,7 @@ function rideDo(a, fn) {
 // 동작 그림 (효과 칸 mfx · 가린 칸 occ를 읽는 곳): 타면 기수 그림
 const advMotSpr = (a, mk, f) => rideKind(a) ? rideRiderS(a, 'm:' + mk, f) : pxsAdvSprite(a, 'm:' + mk, f);
 // 발밑 그림자 반지름 (z 1 논리 픽셀) · 기수 머리 높이(위 −)
-const rideShadow = a => { const k = rideKind(a); return k === 'wolf' ? 22 : k === 'wyv' ? 18 : 0; };
+const rideShadow = a => { const k = rideKind(a); return k === 'wolf' ? 22 : k === 'wyv' || k === 'sea' ? 18 : 0; };
 const rideTop = a => { const ro = rideOff(a); return ro ? ro[1] : 0; };
 // 자는 탈것 (야영 · 마구간): sleep0 · sleep1 (숨쉬기)
 function rideSleepSpr(a, fr) { const k = rideKind(a); return k ? rideMSpr(k, rideLook(a, k), 'sleep', 'sleep' + (fr % 2)) : null; }

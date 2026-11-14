@@ -173,8 +173,15 @@ def grid(c):
     return '\n'.join(''.join(r) for r in c.g)
 
 
+# 노란 번개 (11-14 13:45 사용자 「천둥새 노란색 번개 색상 구상해봐」): 몸은 그대로 어둡게, 번개 · 눈 · (B) 볏만 노랑 — 노란 몸 번개새와 겹치지 않게
+YEL = {'L': '#ffe04a', 'l': '#e8962a', 'E': '#ffe04a'}
+YEL_K = {'B': {'R': '#ffd040'}}
+
 if __name__ == '__main__':
     out = {k: grid(bird(k)) for k in 'ABC'}
-    out['pal'] = PALS
+    out['pal'] = dict(PALS)
+    for k in 'ABC':
+        out[k + 'Y'] = out[k]
+        out['pal'][k + 'Y'] = {**PALS[k], **YEL, **YEL_K.get(k, {})}
     json.dump(out, open(sys.argv[1], 'w'), ensure_ascii=False, indent=0)
     print(out['A'])

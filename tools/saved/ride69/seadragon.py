@@ -32,6 +32,14 @@ POSE = {   # bob 몸 높이(칸, + = 위) · fin 지느러미 흔들림 · tc �
 }
 
 
+POSE_MON = {   # 몬스터 해룡 장: 물기(고개를 앞으로 · 입 벌림) · 뿜기 준비(고개를 젖힘) · 뿜기(입을 크게)
+    'bite': dict(bob=0.2, fin=1.0, tc=0.0, nk=-0.6, mouth=1.0),
+    'swell': dict(bob=0.8, fin=0.0, tc=0.4, nk=1.4),
+    'spit': dict(bob=0.4, fin=1.0, tc=0.2, nk=0.6, mouth=1.5),
+}
+POSE.update({})   # (POSE는 탈것 장만)
+
+
 def leaf(a, b, w):
     """잎사귀 꼴 (두 끝이 뾰족)"""
     dx, dy = b[0] - a[0], b[1] - a[1]; L = math.hypot(dx, dy) or 1; px, py = -dy / L * w, dx / L * w
@@ -40,7 +48,7 @@ def leaf(a, b, w):
 
 
 def seahorse(S, fr):
-    P = POSE[fr]; c = Cv(W, H); bob = P['bob']; fin = P['fin']; nk = P['nk']
+    P = POSE[fr] if fr in POSE else POSE_MON[fr]; c = Cv(W, H); bob = P['bob']; fin = P['fin']; nk = P['nk']
     a0 = S.get('tilt', TILT)   # 앞으로 기울인 몸 (등이 눕게 — 기수가 앉을 자리)
     def T(p):
         x, y = p[0] - 21.0, p[1] - 24.0; ca, sa = math.cos(a0), math.sin(a0)
@@ -75,7 +83,15 @@ def seahorse(S, fr):
     c.fill(ell(hx, hy, 3.4, 2.8), 'C')
     # 짧은 용 주둥이 (대롱 아님) + 턱
     c.fill(poly([Hh(p) for p in [(1.4, -1.6), (5.6, -0.6), (6.4, 0.8), (5.6, 1.6), (1.2, 1.8)]]), 'C')
-    c.fill(poly([Hh(p) for p in [(1.0, 1.4), (5.0, 1.8), (4.6, 2.8), (0.6, 3.0)]]), 'C')
+    mo = P.get('mouth', 0)
+    if mo:   # 몬스터 장: 턱을 경첩(0.6, 1.6)에서 아래로 벌린다
+        ang = 0.6 * mo; hg = (0.6, 1.6)
+        R = lambda q: (hg[0] + (q[0] - hg[0]) * math.cos(ang) - (q[1] - hg[1]) * math.sin(ang), hg[1] + (q[0] - hg[0]) * math.sin(ang) + (q[1] - hg[1]) * math.cos(ang))
+        jaw = [R(q) for q in [(1.0, 1.6), (5.4, 2.0), (5.0, 3.0), (0.6, 3.2)]]
+        c.fill(poly([Hh(q) for q in [(0.8, 1.4), (5.6, 1.6)] + [jaw[1], jaw[0]]]), 'K')   # 입 안
+        c.fill(poly([Hh(q) for q in jaw]), 'C')
+    else:
+        c.fill(poly([Hh(p) for p in [(1.0, 1.4), (5.0, 1.8), (4.6, 2.8), (0.6, 3.0)]]), 'C')
     # 뿔
     for (a, b, ch, r0, r1) in S['horns']:
         c.fill(path([Hh(a), Hh(((a[0] + b[0]) / 2 - 0.2, (a[1] + b[1]) / 2 - 0.5)), Hh(b)], r0, r1), ch)
@@ -103,9 +119,14 @@ def seahorse(S, fr):
     ex, ey = Hh(S.get('eye', (0.8, -0.6))); c.set(ex, ey, 'e'); c.set(ex - 1, ey, 'K')
     for i in range(3): c.set(*Hh((-0.4 + i, -1.6)), 'c')
     c.set(*Hh((5.2, -0.4)), 'K')                     # 콧구멍
-    for i in range(4): c.set(*Hh((5.0 - i, 1.6)), 'K')   # 입 줄
-    c.set(*Hh((4.2, 2.2)), 'w'); c.set(*Hh((2.6, 2.2)), 'w')   # 작은 이빨 둘
+    if mo:
+        for q in ((5.0, 1.9), (3.6, 1.9), (2.2, 1.9)): c.set(*Hh(q), 'w')   # 윗니
+        c.set(*Hh((0.6 + 3.6 * math.cos(0.6 * mo), 1.6 + 3.6 * math.sin(0.6 * mo) - 0.2)), 'w')   # 아랫니
+    else:
+        for i in range(4): c.set(*Hh((5.0 - i, 1.6)), 'K')   # 입 줄
+        c.set(*Hh((4.2, 2.2)), 'w'); c.set(*Hh((2.6, 2.2)), 'w')   # 작은 이빨 둘
     if S.get('post'): S['post'](c, T, Hh, P)
+    if S.get('wild'): return c, T((21.4, 12.4))   # 야생 해룡(몬스터 · 펫): 안장 없음
     # 안장: 목 밑동 뒤 등 위 (기수 엉덩이 칸 = 안장 가운데 위)
     sad = poly([T(p) for p in [(18.2, 13.8), (23.8, 13.4), (24.2, 16.2), (18.6, 16.6)]])
     for (x, y) in sad:

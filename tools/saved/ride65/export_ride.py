@@ -22,6 +22,26 @@ def rows(g):
     return [x.ljust(w, '.') for x in r]
 
 
+# 해룡 (빌드 69, 11-14 13:45 사용자 「다 추가하고」 — 해룡기수(용기수 다음 4차)가 탈 해마 꼴 용 넷): ../ride69/seadragon.json
+# (seadragon.py → seadragon_fs.py가 옆 · 앞 · 자는 모습을 한 파일에 둔다)
+SEA = T.parent.parent / 'ride69' / 'seadragon.json'
+
+
+def sea_looks():
+    D = json.load(open(SEA)); R = {}
+    for L in LOOKS:
+        S = D['sea' + L]; F, Z = S['front'], S['sleep']
+        look = {'name': S['label'].split(' ', 2)[2], 'desc': S['desc'], 'pal': S['pal'], 'float': S['float'],
+                'side': {'ax': S['ax'], 'fr': {f: rows(g) for f, g in S['frames'].items()}, 'seat': S['seat']},
+                'front': {'ax': F['ax'], 'fr': {f: rows(F['frames'][f]) for f in ('front0', 'front1')},
+                          'over': {f: rows(F['frames'][f + '_f']) for f in ('front0', 'front1')}, 'seat': F['seat']},
+                'sleep': {'ax': Z['ax'], 'fr': {f: rows(g) for f, g in Z['frames'].items()}}}
+        for f in ('front0', 'front1'):
+            assert len(look['front']['over'][f]) == len(look['front']['fr'][f]), ('sea', L, f)
+        R[L] = look
+    return R
+
+
 def main(out):
     side = {'wolf': json.load(open(T / 'wolf.json')), 'wyv': json.load(open(T / 'wyv.json'))}
     front, sleep = json.load(open(T / 'front.json')), json.load(open(T / 'sleep.json'))
@@ -43,8 +63,9 @@ def main(out):
             for f in ('front0', 'front1'):
                 assert len(look['front']['over'][f]) == len(look['front']['fr'][f]), (kind, L, f)
             R[kind][L] = look
+    R['sea'] = sea_looks()
     head = ('/* 탈것 그림 (빌드 65 — tools/saved/ride65/export_ride.py로 뽑는다, 손으로 고치지 말 것)\n'
-            '   RIDE65[종류 wolf · wyv][모습 A~D] = { name, desc, pal, float?(와이번: 떠 있는 높이, 뭉툭 칸),\n'
+            '   RIDE65[종류 wolf · wyv · sea(해룡, 빌드 69)][모습 A~D] = { name, desc, pal, float?(와이번: 떠 있는 높이, 뭉툭 칸),\n'
             '     side: { ax, fr: { idle0 · idle1 · run0~3: 반 해상도 줄 }, seat: { 장: [x, y] 기수 엉덩이 칸 } },\n'
             '     front: { ax, fr: { front0 · front1 }, over: { 같은 장: 기수 앞에 오는 머리 · 목 }, seat },\n'
             '     sleep: { ax, fr: { sleep0 · sleep1 } } }\n'

@@ -57,7 +57,33 @@
 },
 "label": "시안 A 산호 해룡",
 "desc": "산호빛 몸 · 가지 친 산호 뿔 · 청록 잎 지느러미 · 크림빛 배 마디",
-"float": 5
+"float": 5,
+"front": {
+"frames": {
+"front0": "\n.\n.\n...............fFF...................FF\n................fFFF...............FFF\n.................ffFF.............FFff\n..................FfF..V......V..FFfF\n...................FfF.WWWWWWWW.FFfF\n.....................f....QQ....Rf\n........................QQCCQQ\n.......................RCCCCCCR\n.......................GCCCCCCG\n......................QCaaaaaaCQ\n................fFFFF.CCAAAAAACC.FFFFF\n...................fffCCaaaaaaCCffff\n......................CCAAAAAACC\n......................CCaaaaaaCC\n......................cCAAAAAACc\n.......................CaaaaaaC\n.......................cAAAAAAc\n........................aaaaaa\n.........................cAACCQ\n.......................ff.CCCCCQ\n.......................ff.CCCcCCQ\n.........................QCCC.CCC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front1": "\n...............fF....................FF\n................fFFF................FF\n.................fFFF.............FFFf\n.................FfFF.............FFf\n..................FfFF.V......V..FFfF\n....................fF.WWWWWWWW.FFf\n......................f.........f\n.........................QQQQ\n........................QCCCCQ\n.......................GCCCCCCG\n.......................CAAAAAAC\n..................FFF.QCaaaaaaCQ..F\n..................ffffCCAAAAAACCfffff\n......................CCaaaaaaCC..F\n......................CCAAAAAACC\n......................cCaaaaaaCc\n.......................CAAAAAAC\n.......................caaaaaac\n........................AAAAAA\n.........................aaaaC\n.........................cCCCCQ\n........................f.CCCCCQ\n.......................ff.CCCcCCQ\n......................f..QCCC.CCC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front0_f": "\n.\n.\n.\n.\n.\n.......................z......z\n.......................z..CC..z\n......................zzZcCCcZzz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CQQC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n......................fCCCCCCCCf\n.......................CCAAAACC\n.......................CAKAAKAC\n........................cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n",
+"front1_f": "\n.\n.\n.\n.\n.......................z......z\n.......................z..CC..z\n......................zzZcCCcZzz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CQQC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n......................fCCCCCCCCf\n.......................CCAAAACC\n.......................CAKAAKAC\n........................cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n"
+},
+"ax": 27,
+"seat": {
+"front0": [
+27,
+6
+],
+"front1": [
+27,
+5
+]
+}
+},
+"sleep": {
+"frames": {
+"sleep0": "\n.\n......................FfFfFf....QQQQc\n......................FfFfFfFQQQCCCCCz\n.....................FfFFfFfFCCCCCCZCcz\n.....................FfFQQQQQCCCCCCCZZzz\n....................QQQQCCCCCCCCCCCCCZZzz\n............QQQc...QCCCCCCCCCCCCCCCaCCZZz\n........ffQQCCCCc.QCCCCCCCCCCCCCCCc.CCCCCc\n.........fCCCccCCQcCCCCCCCCCCCCCCCA.CCCCKKQQc\n.........QCCc..CCc.CCCCCCCCCCCCaAaA.FFCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCCaAaAa.FFcCCCcKKK\n.........ccCCCCCCCCCCaAaAaAaAaA.......ccc\n...........cccCCCCCCCcAaAaAaA\n..............ccCCccc\n................cc\n",
+"sleep1": "\n......................FfFfFf....QQQQc\n......................FfFfFfF.QQCCCCCc\n.....................FfFFfFfFQCCCCCCCz\n.....................FfFQQQQQCCCCCCZZCzz\n....................QQQQCCCCCCCCCCCCZZCz\n...................QCCCCCCCCCCCCCCCaCZZzz\n............QQQc...CCCCCCCCCCCCCCCc.aCZZzc\n.........fQQCCCCc.QCCCCCCCCCCCCCCCA..CCCCCc\n.........fCCCccCCQcCCCCCCCCCCCCCCaA.QCCCKKCQc\n.........QCCc..CCc.CCCCCCCCCCCCaAa.FFCCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCCaAaA..FFcccccKKK\n.........ccCCCCCCCCCCaAaAaAaAaA\n...........cccCCCCCCCcAaAaAaA\n..............ccCCccc\n................cc\n"
+},
+"ax": 25
+}
 },
 "seaB": {
 "frames": {
@@ -117,7 +143,33 @@
 },
 "label": "시안 B 해초 해룡",
 "desc": "올리브 몸 · 몸 곳곳에서 늘어진 해초 잎 · 나무빛 뿔 · 금빛 눈",
-"float": 5
+"float": 5,
+"front": {
+"frames": {
+"front0": "\n.\n.\n...............fFF...................FF\n................fFFF...............FFF\n.................ffFF.............FFff\n..................FfF..V......V..FFfF\n...................FfF.WWWWWWWW.FFfF\n.....................f....QQ....Rf\n........................QQCCQQ\n.......................RCCCCCCR\n.......................GCCCCCCG\n......................QCaaaaaaCQ\n................fFFFF.CCAAAAAACC.FFFFF\n...................fffCCaaaaaaCCffff\n......................CCAAAAAACC\n......................CCaaaaaaCC\n......................cCAAAAAACc\n.....................F.CaaaaaaCF\n.....................F.cAAAAAAc.F\n........................aaaaaa..F\n....................F....cAACCQ\n.......................ff.CCCCCQ\n.......................ff.CCCcCCQ\n.........................QCCC.CCC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front1": "\n...............fF....................FF\n................fFFF................FF\n.................fFFF.............FFFf\n.................FfFF.............FFf\n..................FfFF.V......V..FFfF\n....................fF.WWWWWWWW.FFf\n......................f.........f\n.........................QQQQ\n........................QCCCCQ\n.......................GCCCCCCG\n.......................CAAAAAAC\n..................FFF.QCaaaaaaCQ..F\n..................ffffCCAAAAAACCfffff\n......................CCaaaaaaCC..F\n......................CCAAAAAACC\n......................cCaaaaaaCc\n.......................CAAAAAAC\n.....................F.caaaaaacF\n.....................F..AAAAAA..F\n.........................aaaaC..F\n....................F....cCCCCQ\n........................f.CCCCCQ\n.......................ff.CCCcCCQ\n......................f..QCCC.CCC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front0_f": "\n.\n.\n.\n.\n.\n.......................z......z\n.......................z..CC..z\n.......................zZcCCcZz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CQQC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n.....................FfCCCCCCCCfF\n.....................F.CCAAAACC.F\n....................FF.CAKAAKAC.F\n....................F...cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n",
+"front1_f": "\n.\n.\n.\n.\n.......................z......z\n.......................z..CC..z\n.......................zZcCCcZz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CQQC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n.....................FfCCCCCCCCfF\n.....................F.CCAAAACC.F\n....................FF.CAKAAKAC.F\n....................F...cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n"
+},
+"ax": 27,
+"seat": {
+"front0": [
+27,
+6
+],
+"front1": [
+27,
+5
+]
+}
+},
+"sleep": {
+"frames": {
+"sleep0": "\n.\n......................FfFfFf....QQQQc\n......................FfFfFfFQQQCCCCCz\n..................FF.FfFFfFfFCCCCCCZCcz\n...................F.FfFQQQQQCCCCCCCZZzz\n....................QQQQCCCCCCCCCCCCCZZzz\n............QQQc...QCCCCCCCCCCCCCCCaCCZZz\n........ffQQCCCCc.QCCCCCCCCCCCCCCCc.CCCCCc\n.........fCCCccCCQcCCCCCCCCCCCCCCCA.CCCCKKQQc\n.........QCCc..CCc.CCCCCCCCCCCCaAaA.FFCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCCaAaAa.FFcCCCcKKK\n.........ccCCCCCCCCCCaAaAaAaAaA.......ccc\n...........cccCCCCCCCcAaAaAaA\n..............ccCCccc.......F\n................cc\n",
+"sleep1": "\n......................FfFfFf....QQQQc\n......................FfFfFfF.QQCCCCCc\n..................FF.FfFFfFfFQCCCCCCCz\n...................F.FfFQQQQQCCCCCCZZCzz\n....................QQQQCCCCCCCCCCCCZZCz\n...................QCCCCCCCCCCCCCCCaCZZzz\n............QQQc...CCCCCCCCCCCCCCCc.aCZZzc\n.........fQQCCCCc.QCCCCCCCCCCCCCCCA..CCCCCc\n.........fCCCccCCQcCCCCCCCCCCCCCCaA.QCCCKKCQc\n.........QCCc..CCc.CCCCCCCCCCCCaAa.FFCCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCCaAaA..FFcccccKKK\n.........ccCCCCCCCCCCaAaAaAaAaA\n...........cccCCCCCCCcAaAaAaA\n..............ccCCccc.......F\n................cc\n"
+},
+"ax": 25
+}
 },
 "seaC": {
 "frames": {
@@ -178,7 +230,33 @@
 },
 "label": "시안 C 심해 해룡",
 "desc": "남보라 몸 · 빛나는 청록 점 · 빛 테 지느러미 · 은빛 뿔 · 깊은 바다의 빛",
-"float": 5
+"float": 5,
+"front": {
+"frames": {
+"front0": "\n.\n.\n...............fFF...................FF\n................LFFF...............FFF\n.................ffFF.............FFff\n..................LfF..V......V..FFfL\n...................FfF.WWWWWWWW.FFfF\n.....................f....QQ....Rf\n........................QQCCQQ\n.......................RCCCCCCR\n.......................LCCCCCCL\n......................QCaaaaaaCQ\n................fFFFF.CCAAAAAACC.FFFFF\n...................fffCCaaaaaaCCffff\n......................CCAAAAAACC\n......................CCLaaaaaCC\n......................cCAAAAAACc\n.......................CaaaaaaL\n.......................cAAAAAAc\n........................aLaaaa\n.........................cAACCQ\n.......................ff.CCCCCQ\n.......................ff.CCCcCCQ\n.........................QCCC.CLC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front1": "\n...............fF....................FF\n................fFFF................FF\n.................fFFF.............FFFf\n.................FfFF.............FFf\n..................LfFF.V......V..FFfL\n....................fF.WWWWWWWW.FFf\n......................f.........f\n.........................QQQQ\n........................QCCCCQ\n.......................LCCCCCCL\n.......................CAAAAAAC\n..................FFF.QCaaaaaaCQ..F\n..................ffffCCAAAAAACCfffff\n......................CCaaaaaaCC..F\n......................CCLAAAAACC\n......................cCaaaaaaCc\n.......................CAAAAAAL\n.......................caaaaaac\n........................ALAAAA\n.........................aaaaC\n.........................cCCCCQ\n........................f.CCCCCQ\n.......................ff.CCCcCLQ\n......................f..QCCC.CCC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front0_f": "\n.\n.\n.\n.\n.\n.......................L......zL\n.......................z..CC..z\n.......................zZcCCcZz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CQQC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n......................fCCCCCCCCf\n.......................CCAAAACC\n.......................CAKAAKAC\n........................cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n",
+"front1_f": "\n.\n.\n.\n.\n.......................L......zL\n.......................z..CC..z\n.......................zZcCCcZz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CQQC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n......................fCCCCCCCCf\n.......................CCAAAACC\n.......................CAKAAKAC\n........................cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n"
+},
+"ax": 27,
+"seat": {
+"front0": [
+27,
+6
+],
+"front1": [
+27,
+5
+]
+}
+},
+"sleep": {
+"frames": {
+"sleep0": "\n.\n......................FfFfFf....QQQQc\n......................FfLfFfFQQQCCCCCz\n.....................FfFFfFfFCCCCCCZCcz\n.....................FfFQQQQQCCCCCCCZZzz\n....................QQQQCCCCCCCCCCCCCZZzz\n............QQQc...QCCCCCCCCCCCLCCCaCCZZz\n........ffQQCCCCc.QCCCCCCCCCCCCCCCc.CCCCCc\n.........fCCCccCCQcCCCCLCCCCCCCCCCA.CCCCKKQQc\n.........QCCc..CCc.CCCCCCCCCCCCaAaA.FFCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCLaAaAa.FFcCCCcKKK\n.........ccCCCCCCCCCCaAaAaAaAaA.......ccc\n...........cccCCCCCCCcAaAaAaA\n..............ccCCccc\n................cc\n",
+"sleep1": "\n......................FfFfFf....QQQQc\n......................FfLfFfF.QQCCCCCc\n.....................FfFFfFfFQCCCCCCCz\n.....................FfFQQQQQCCCCCCZZCzz\n....................QQQQCCCCCCCCCCCCZZCz\n...................QCCCCCCCCCCCLCCCaCZZzz\n............QQQc...CCCCCCCCCCCCCCCc.aCZZzc\n.........fQQCCCCc.QCCCCLCCCCCCCCCCA..CCCCCc\n.........fCCCccCCQcCCCCCCCCCCCCCCaA.QCCCKKCQc\n.........QCCc..CCc.CCCCCCCCCLCCaAa.FFCCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCCaAaA..FFcccccKKK\n.........ccCCCCCCCCCCaAaAaAaAaA\n...........cccCCCCCCCcAaAaAaA\n..............LcCCccc\n................cc\n"
+},
+"ax": 25
+}
 },
 "seaD": {
 "frames": {
@@ -240,6 +318,32 @@
 },
 "label": "시안 D 진주 해룡",
 "desc": "진주빛 몸 · 분홍 잎 지느러미 · 이마에 진주 · 연한 금빛 뿔",
-"float": 5
+"float": 5,
+"front": {
+"frames": {
+"front0": "\n.\n.\n...............fFF...................FF\n................fFFF...............FFF\n.................ffFF.............FFff\n..................FfF..V......V..FFfF\n...................FfF.WWWWWWWW.FFfF\n.....................f....QQ....Rf\n........................QQCCQQ\n.......................RCCCCCCR\n.......................GCCCCCCG\n......................QCaaaaaaCQ\n................fFFFF.CCAAAAAACC.FFFFF\n...................fffCCaaaaaaCCffff\n......................CCAAAAAACC\n......................CCaaaaaaCC\n......................cCAAAAAACc\n.......................CaaaaaaC\n.......................cAAAAAAc\n........................aaaaaa\n.........................cAACCQ\n.......................ff.CCCCCQ\n.......................ff.CCCcCCQ\n.........................QCCC.CCC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front1": "\n...............fF....................FF\n................fFFF................FF\n.................fFFF.............FFFf\n.................FfFF.............FFf\n..................FfFF.V......V..FFfF\n....................fF.WWWWWWWW.FFf\n......................f.........f\n.........................QQQQ\n........................QCCCCQ\n.......................GCCCCCCG\n.......................CAAAAAAC\n..................FFF.QCaaaaaaCQ..F\n..................ffffCCAAAAAACCfffff\n......................CCaaaaaaCC..F\n......................CCAAAAAACC\n......................cCaaaaaaCc\n.......................CAAAAAAC\n.......................caaaaaac\n........................AAAAAA\n.........................aaaaC\n.........................cCCCCQ\n........................f.CCCCCQ\n.......................ff.CCCcCCQ\n......................f..QCCC.CCC\n.........................cCCCQCCc\n..........................cccCccff\n.............................c\n",
+"front0_f": "\n.\n.\n.\n.\n.\n.......................z......z\n.......................z..CC..z\n.......................zZcCCcZz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CPpC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n......................fCCCCCCCCf\n.......................CCAAAACC\n.......................CAKAAKAC\n........................cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n",
+"front1_f": "\n.\n.\n.\n.\n.......................z......z\n.......................z..CC..z\n.......................zZcCCcZz\n.....................F..z.CC.z..F\n.....................FF.zZCCZz.FF\n.....................fFF.CPpC.FFf\n......................FCCQQQQCCF\n.....................FCeKCQQCKeCF\n......................fCCCCCCCCf\n.......................CCAAAACC\n.......................CAKAAKAC\n........................cwAAwc\n.........................cccc\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n"
+},
+"ax": 27,
+"seat": {
+"front0": [
+27,
+6
+],
+"front1": [
+27,
+5
+]
+}
+},
+"sleep": {
+"frames": {
+"sleep0": "\n.\n......................FfFfFf....QQQQc\n......................FfFfFfFQQQCCCCCz\n.....................FfFFfFfFCCCCCCZCcz\n.....................FfFQQQQQCCCCCCCZZzz\n....................QQQQCCCCCCCCCCCCCZZzz\n............QQQc...QCCCCCCCCCCCCCCCaCCZZz\n........ffQQCCCCc.QCCCCCCCCCCCCCCCc.CCCPpc\n.........fCCCccCCQcCCCCCCCCCCCCCCCA.CCCCKKQQc\n.........QCCc..CCc.CCCCCCCCCCCCaAaA.FFCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCCaAaAa.FFcCCCcKKK\n.........ccCCCCCCCCCCaAaAaAaAaA.......ccc\n...........cccCCCCCCCcAaAaAaA\n..............ccCCccc\n................cc\n",
+"sleep1": "\n......................FfFfFf....QQQQc\n......................FfFfFfF.QQCCCCCc\n.....................FfFFfFfFQCCCCCCCz\n.....................FfFQQQQQCCCCCCZZCzz\n....................QQQQCCCCCCCCCCCCZZCz\n...................QCCCCCCCCCCCCCCCaCZZzz\n............QQQc...CCCCCCCCCCCCCCCc.aCZZzc\n.........fQQCCCCc.QCCCCCCCCCCCCCCCA..CCPpCc\n.........fCCCccCCQcCCCCCCCCCCCCCCaA.QCCCKKCQc\n.........QCCc..CCc.CCCCCCCCCCCCaAa.FFCCCCCCCKc\n.........CCCCQQCCCQCCaCCCCCCCaAaA..FFcccccKKK\n.........ccCCCCCCCCCCaAaAaAaAaA\n...........cccCCCCCCCcAaAaAaA\n..............ccCCccc\n................cc\n"
+},
+"ax": 25
+}
 }
 }

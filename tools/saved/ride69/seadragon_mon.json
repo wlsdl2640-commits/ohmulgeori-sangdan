@@ -1,0 +1,260 @@
+{
+"monA": {
+"g": "\n................................z\n..............................Z.zZ\n..............................ZZ.Z\n...............................ZZZz\n................................Zzzc\n...............................cZZccc\n..............................ccQQKeCc\n............................QFFFCCCCCCQK\n..........................FQcFFQCCCCCCcc\n..........................QFCQQCCcccwKwK\n......................QQQQCFCCCCc\n...............FF...QQCCCCCCCCCc\n..............FfFFFQCCCCCAAACCc\n..............FFffQCCCCCCCaaac\n.............FFFFFCCCCCCCCAAA\n.............FffFQCCCCCCCCaaa\n.............FFFfCCCCCCCCCCAAA\n.............FFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n..............fFFCCCCCCCCaaa\n..............FQCCCCCCCCCAAA\n...............cCCCCCCCCaaa\n................CCCCCCCAAA\n..............FQCCCCCaaa\n.............FFfCCCCc\n..............QCCCCc\n..............CCCCc\n............f.CCCCCc\n...........fffCCCCCCc\n.............QCCCccCCc\n.............cccc..CCc\n................Cc.Cc\n.............ff.cCQCc\n.................ccc\n.\n.\n.\n.\n",
+"g2": "\n................................z\n..............................ZZzZ\n...............................ZZZz\n...............................ZZzz\n...............................cZZzc\n..............................cCQQccc\n............................FfFCCCKeCQc\n............................fFFCCCCCCcCK\n..........................QQCQQCCcccKKK\n.......................QQQCFCCCCc...wcwK\n...............FF....QQCCCCCCCCc\n..............FffF.QQCCCaaaCCCc\n.............FFFFfQCCCCCCAAACc\n.............FFFFfCCCCCCCCaaac\n.............FffFQCCCCCCCCAAA\n.............FFFfCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fffQCCCCCCCCCCaaa\n...............FCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............FfFCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n.............fFFCCCCcc\n..............QCCCCc\n..............CCCCc\n..............CCCCCc\n............ffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n.............ff.CCQCc\n.............f..cccc\n.\n.\n.\n.\n.\n",
+"gm": {
+"bite": "\n..............................Z.zz\n..............................ZZ.Z\n...............................ZZZz\n................................Zzz\n...............................cZZcQc\n...............................cQQQccc\n.............................cFFCCKeCCQK\n............................fFFQCCCccccc\n..........................FQCQQCCCcKwwK\n..........................QFCCCCCcccKKKw\n......................QQQQCFCCCCc..ccw\n..............FfF...QQCCCCCCCCCc....c\n..............FFfFFQCCCCCAAACCc\n.............FFFFfQCCCCCCCaaac\n.............FfFFFCCCCCCCCAAA\n.............FFffQCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n..............fFFCCCCCCCCaaa\n...............cCCCCCCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n..............FQCCCCaaa\n.............FFCCCCCc\n..............QCCCcc\n..............CCCc\n............ffCCCCQc\n...........fffCCCCCCc\n.............cCCCccCCc\n..............ccc..CCc\n................CQQCc\n.............ff.cCCCc\n.................ccc\n.\n.\n.\n.\n",
+"swell": "\n.\n.............................ZZ.zZ\n..............................ZZzZ\n...............................ZZZ\n...............................ZZzz\n...............................cZzzc\n............................FQccQcccc\n..........................F.QFFFCKeCCQcK\n..........................FQcFFQCCCCCCcc\n.......................QQQQFCQQCCccKKKK\n...............FF....QQCCCCCCCCCc...ww\n...............fFF.QQCCCaaaCCCCc\n..............FFffQCCCCCCAAACCc\n.............FFFFFCCCCCCCCaaac\n.............FffFQCCCCCCCCAAA\n.............FFFfCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n..............ffQCCCCCCCCCCaaa\n...............FCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............FfFCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n..............FFCCCCcc\n..............QCCCCc\n..............CCCCc\n..............CCCCCc\n...........fffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n.............ff.CCQCc\n.............f..cccc\n.\n.\n.\n.\n.\n",
+"spit": "\n................................z\n.............................ZZ.zZ\n..............................ZZ.Z\n...............................ZZZz\n................................Zzz\n...............................cZZccc\n.............................cccQQKecc\n............................fFFFCCcCCCQK\n..........................FQcFFQCcKccccc\n..........................QFCQQCCCcKwww\n...............F.....QQQQQCCCCCCcccKKK\n..............FfFF..QCCCCCCCCCCc..ccw\n..............FFffFQCCCCCAAACCc....cK\n.............FFFFfQCCCCCCCaaac\n.............FfFFQCCCCCCCCAAA\n.............FFffCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............F.CCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n..............FQfCCCccc\n.............FQCCCCc\n..............CCCCc\n..............CCCCc\n............ffCCCCCc\n...........ff.CCCcCCc\n.............cCCc.cCCc\n..............ccc..CCc\n..............f.CQQCc\n.............ff.ccCcc\n............f.....c\n.\n.\n.\n.\n"
+},
+"pal": {
+"C": "#e0704a",
+"Q": "#f4a07a",
+"c": "#b04a32",
+"d": "#7a3020",
+"A": "#f8d8c4",
+"a": "#e4b49a",
+"F": "#3ab0a8",
+"f": "#22807a",
+"Z": "#c8303a",
+"z": "#8a1e28",
+"e": "#1a2a3a",
+"K": "#2a1410",
+"w": "#ffffff",
+"R": "#2a5a8a",
+"G": "#e8c070",
+"W": "#5a3a22",
+"V": "#3e2616",
+"U": "#3a2418"
+},
+"ax": 21,
+"sh": [
+37,
+8
+],
+"hip": 22,
+"label": "A 산호 해룡 (야생)",
+"desc": "산호빛 몸 · 가지 친 산호 뿔 · 청록 잎 지느러미 · 크림빛 배 마디"
+},
+"petA": {
+"g": "\n..........z\n.........ZZ.z\n..........ZZz\n..........QQQQc\n.........QCCCCCc\n........QCCCCwKCc\n........cCCCCKKCCKc\n........FFCCCCCCCCc\n.......FFCCCCCccKK\n........QCAAcc\n.....FFQCCaa\n.....FQCCCAA\n.....FCCCCaa\n......cCCCAA\n.......CCCaa\n.......CAACc\n.......CCCCcQc\n.......cCCc.cc\n........Cc...c\n........cc..Qc\n..........cccc\n.\n",
+"g2": "\n.........Zz.z\n..........Z.z\n..........ZZzQc\n.........QCCCCCc\n.........CCCCCCCc\n........cCCCCwKCCc\n.........CCCCKKCCKc\n.......FFCCCCCCcKK\n........QaaCccc\n....FFFQCCAA\n....FFFCCCaa\n....FFQCCCAA\n......cCCCaa\n.......CCCAA\n.......CCaa\n.......CCCCQc\n.......CCCcccc\n.......CCc...c\n.......cCc...c\n........c.cQQc\n...........cc\n.\n",
+"pal": {
+"C": "#e0704a",
+"Q": "#f4a07a",
+"c": "#b04a32",
+"d": "#7a3020",
+"A": "#f8d8c4",
+"a": "#e4b49a",
+"F": "#3ab0a8",
+"f": "#22807a",
+"Z": "#c8303a",
+"z": "#8a1e28",
+"e": "#1a2a3a",
+"K": "#2a1410",
+"w": "#ffffff",
+"R": "#2a5a8a",
+"G": "#e8c070",
+"W": "#5a3a22",
+"V": "#3e2616",
+"U": "#3a2418"
+},
+"ax": 10,
+"label": "새끼 산호 해룡"
+},
+"monB": {
+"g": "\n................................z\n..............................ZZFz\n...............................ZZzz\n................................ZZzc\n...............................QcZccc\n..............................ccCQKeCc\n............................QFFFCCCCCCQK\n..........................FQcFFQCCCCCCcc\n..........................QFCQQCCcccwKwK\n......................QQQQCFCCCCc\n...............FF...QQCCCCCCCCCc\n..............FfFFFQCCCCCAAACCc\n..............FFffQCCCCCCCaaac\n.............FFFFFCCCCCCCFAAA\n.............FffFQCCCCCCCCaaa\n.............FFFfCCCCCCCCCCAAA\n.............FFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n..............fFFCCCCCCCCaaa\n..............FQCCCCCCCCCAAA\n...............cCCCCCCCCaaa\n................CCCCCCCAAA\n..............FQCCCCCaaa\n.............FFfCCCCF\n..............QCCCCcF\n..............CCCCc.F\n............f.CCCCCc\n...........fffCCCCCCc\n.............QCCCccCCc\n.............cccc..CCc\n................Cc.Cc\n.............ff.cCQCc\n.................ccc\n.\n.\n.\n.\n",
+"g2": "\n..............................Z.zz\n..............................ZZFz\n...............................ZZzz\n...............................cZZzc\n..............................cCQQccc\n............................FfFCCCKeCQc\n............................fFFCCCCCCcCK\n..........................QQCQQCCcccKKK\n.......................QQQCFCCCCc...wcwK\n...............FF....QQCCCCCCCCc\n..............FffF.QQCCCaaaCCCc\n.............FFFFfQCCCCCCAAACc\n.............FFFFfCCCCCCCfaaac\n.............FffFQCCCCCCCCAAA\n.............FFFfCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fffQCCCCCCCCCCaaa\n...............FCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............FfFCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n.............fFFCCCCFc\n..............QCCCCcF\n..............CCCCc.F\n..............CCCCCcF\n............ffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n.............ff.CCQCc\n.............f..cccc\n.\n.\n.\n.\n.\n",
+"gm": {
+"bite": "\n..............................ZZ.z\n...............................ZZzz\n................................ZZz\n...............................cZZcQc\n...............................cQQQccc\n.............................cFFCCKeCCQK\n............................fFFQCCCccccc\n..........................FQCQQCCCcKwwK\n..........................QFCCCCCcccKKKw\n......................QQQQCFCCCCc..ccw\n..............FfF...QQCCCCCCCCCc....c\n..............FFfFFQCCCCCAAACCc\n.............FFFFfQCCCCCCCaaac\n.............FfFFFCCCCCCCFAAA\n.............FFffQCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n..............fFFCCCCCCCCaaa\n...............cCCCCCCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n..............FQCCCCaaa\n.............FFCCCCCF\n..............QCCCccF\n..............CCCc..F\n............ffCCCCQc\n...........fffCCCCCCc\n.............cCCCccCCc\n..............ccc..CCc\n................CQQCc\n.............ff.cCCCc\n.................ccc\n.\n.\n.\n.\n",
+"swell": "\n................................F\n..............................Z.zz\n..............................ZZFz\n...............................ZZzz\n...............................cZZzc\n............................FQccQcccc\n..........................F.QFFFCKeCCQcK\n..........................FQcFFQCCCCCCcc\n.......................QQQQFCQQCCccKKKK\n...............FF....QQCCCCCCCCCc...ww\n...............fFF.QQCCCaaaCCCCc\n..............FFffQCCCCCCAAACCc\n.............FFFFFCCCCCCCCaaac\n.............FffFQCCCCCCCCAAA\n.............FFFfCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n..............ffQCCCCCCCCCCaaa\n...............FCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............FfFCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n..............FFCCCCFc\n..............QCCCCcF\n..............CCCCc.F\n..............CCCCCcF\n...........fffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n.............ff.CCQCc\n.............f..cccc\n.\n.\n.\n.\n.\n",
+"spit": "\n................................z\n..............................ZZFz\n...............................ZZzz\n................................Zzz\n...............................cZZccc\n.............................cccQQKecc\n............................fFFFCCcCCCQK\n..........................FQcFFQCcKccccc\n..........................QFCQQCCCcKwww\n...............F.....QQQQQCCCCCCcccKKK\n..............FfFF..QCCCCCCCCCCc..ccw\n..............FFffFQCCCCCAAACCc....cK\n.............FFFFfQCCCCCCCaaac\n.............FfFFQCCCCCCCFAAA\n.............FFffCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............F.CCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n..............FQfCCCFcc\n.............FQCCCCcF\n..............CCCCc.F\n..............CCCCc.F\n............ffCCCCCc\n...........ff.CCCcCCc\n.............cCCc.cCCc\n..............ccc..CCc\n..............f.CQQCc\n.............ff.ccCcc\n............f.....c\n.\n.\n.\n.\n"
+},
+"pal": {
+"C": "#6a8a3a",
+"Q": "#94b45e",
+"c": "#4a6428",
+"d": "#34481c",
+"A": "#c8d088",
+"a": "#a8b06a",
+"F": "#a8c040",
+"f": "#6e8a26",
+"Z": "#a87a4a",
+"z": "#6e4e2e",
+"e": "#e8b030",
+"K": "#1a1e10",
+"w": "#ffffff",
+"R": "#8a3a2a",
+"G": "#d8b060",
+"W": "#5a3a22",
+"V": "#3e2616",
+"U": "#3a2418"
+},
+"ax": 21,
+"sh": [
+37,
+7
+],
+"hip": 22,
+"label": "B 해초 해룡 (야생)",
+"desc": "올리브 몸 · 몸 곳곳에서 늘어진 해초 잎 · 나무빛 뿔 · 금빛 눈"
+},
+"petB": {
+"g": "\n.\n.........ZZ.z\n..........ZZz\n..........QQQQc\n.........QCCCCCc\n........QCCCCwKCc\n........cCCCCKKCCKc\n........FFCCCCCCCCc\n.......FFCCCCCccKK\n........QCAAcc\n.....FFQCCaa\n.....FQCCCAA\n.....FCCCCaa\n......cCCCAA\n.......CCCaa\n.......CAACc\n.......CCCCcQc\n.......cCCc.cc\n........Cc...c\n........cc..Qc\n..........cccc\n.\n",
+"g2": "\n.........Z..z\n..........Z.z\n..........ZZzQc\n.........QCCCCCc\n.........CCCCCCCc\n........cCCCCwKCCc\n.........CCCCKKCCKc\n.......FFCCCCCCcKK\n........QaaCccc\n....FFFQCCAA\n....FFFCCCaa\n....FFQCCCAA\n......cCCCaa\n.......CCCAA\n.......CCaa\n.......CCCCQc\n.......CCCcccc\n.......CCc...c\n.......cCc...c\n........c.cQQc\n...........cc\n.\n",
+"pal": {
+"C": "#6a8a3a",
+"Q": "#94b45e",
+"c": "#4a6428",
+"d": "#34481c",
+"A": "#c8d088",
+"a": "#a8b06a",
+"F": "#a8c040",
+"f": "#6e8a26",
+"Z": "#a87a4a",
+"z": "#6e4e2e",
+"e": "#e8b030",
+"K": "#1a1e10",
+"w": "#ffffff",
+"R": "#8a3a2a",
+"G": "#d8b060",
+"W": "#5a3a22",
+"V": "#3e2616",
+"U": "#3a2418"
+},
+"ax": 10,
+"label": "새끼 해초 해룡"
+},
+"monC": {
+"g": "\n................................z\n..............................L.zz\n..............................ZZ.z\n...............................ZZzz\n................................ZZzc\n...............................QcZccc\n..............................ccCQKeCc\n............................QFFFCCCCCCQK\n..........................FQcFFQCCCCCCcc\n..........................QFCQQCCcccwKwK\n......................QQQQCFCCCCc\n...............LF...QQCCCCCCCCCc\n..............FfFFFQCCCCCAAACCc\n..............FFffQCCCCCCCaaac\n.............FFFFFCCCCCCCCAAA\n.............LffFQCCCCCCLCaaa\n.............FFFfCCCCLCCCCCAAA\n.............FFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCCAAA\n................CCCLCCCCCCaaa\n................CCCCCCCCCCAAA\n................CCCCCCCCCaaa\n...............QCCCCLCCCCAAA\n...............cCCCCCCCCaaa\n................CCCCCCCAAA\n...............QCCCCCaaa\n...............CCCCCc\n..............QCCLCc\n..............CCCCc\n............f.CCCCCc\n...........fffCCCCCCc\n.............QCCCccCCc\n.............cccc..CCc\n................Cc.Cc\n................cCQLc\n.................ccc\n.\n.\n.\n.\n",
+"g2": "\n................................z\n..............................LZ.z\n...............................ZZz\n................................Zzz\n...............................cZZzc\n..............................cCQQccc\n............................FfFCCCKeCQc\n............................fFFCCCCCCcCK\n..........................QQCQQCCcccKKK\n.......................QQQCFCCCCc...wcwK\n...............LF....QQCCCCCCCCc\n..............FffF.QQCCCaaaCCCc\n.............FFFFfQCCCCCCAAACc\n.............FFFFfCCCCCCCCaaac\n.............LffFQCCCCCCLCAAA\n.............FFFfCCCCLCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fffQCCCCCCCCCCaaa\n...............FCCCLCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n................CCCCCCCCCaaa\n...............cCCCCLCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n...............CCCCCcc\n..............QCCLCc\n..............CCCCc\n..............CCCCCc\n............ffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n................CCQLc\n................cccc\n.\n.\n.\n.\n.\n",
+"gm": {
+"bite": "\n..............................Z.zz\n..............................LZ.z\n...............................ZZzz\n................................ZZz\n...............................QcZcQc\n...............................cCQQccc\n.............................cFFCCKeCCQK\n............................fFFQCCCccccc\n..........................FQCQQCCCcKwwK\n..........................QFCCCCCcccKKKw\n......................QQQQCFCCCCc..ccw\n..............FLF...QQCCCCCCCCCc....c\n..............FFfFFQCCCCCAAACCc\n.............FFFFfQCCCCCCCaaac\n.............LfFFFCCCCCCCCAAA\n.............FFffQCCCCCCLCCaaa\n.............FFFFCCCCLCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............LfCCCCCCCCCCAAA\n................CCCLCCCCCCaaa\n................CCCCCCCCCCAAA\n................CCCCCCCCCaaa\n...............cCCCCLCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n...............QCCCCaaa\n...............CCCCCc\n..............QCCLcc\n..............CCCc\n............ffCCCCQc\n...........fffCCCCCCc\n.............cCCCccCCc\n..............ccc..CCc\n................CQQCc\n................cCCLc\n.................ccc\n.\n.\n.\n.\n",
+"swell": "\n.\n................................z\n..............................LZzz\n...............................ZZz\n...............................ZZzz\n...............................cZZzc\n............................FQccQcccc\n..........................F.QFFFCKeCCQcK\n..........................FQcFFQCCCCCCcc\n.......................QQQQFCQQCCccKKKK\n...............LF....QQCCCCCCCCCc...ww\n...............fFF.QQCCCaaaCCCCc\n..............FFffQCCCCCCAAACCc\n.............FFFFFCCCCCCCCaaac\n.............LffFQCCCCCCLCAAA\n.............FFFfCCCCLCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n..............ffQCCCCCCCCCCaaa\n...............FCCCLCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n................CCCCCCCCCaaa\n...............cCCCCLCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n...............CCCCCcc\n..............QCCLCc\n..............CCCCc\n..............CCCCCc\n...........fffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n................CCQLc\n................cccc\n.\n.\n.\n.\n.\n",
+"spit": "\n.\n..............................Z.z\n..............................LZ.z\n...............................ZZzz\n................................Zzz\n...............................cZZccc\n.............................cccQQKecc\n............................fFFFCCcCCCQK\n..........................FQcFFQCcKccccc\n..........................QFCQQCCCcKwww\n...............L.....QQQQQCCCCCCcccKKK\n..............FfFF..QCCCCCCCCCCc..ccw\n..............FFffFQCCCCCAAACCc....cK\n.............FFFFfQCCCCCCCaaac\n.............LfFFQCCCCCCCCAAA\n.............FFffCCCCLCCLCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............LfCCCLCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n................CCCCCCCCCaaa\n...............cCCCCLCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n...............QCCCCccc\n..............QCCCCc\n..............CCCLc\n..............CCCCc\n............ffCCCCCc\n...........ff.CCCcCCc\n.............cCCc.cCCc\n..............ccc..CCc\n................CQQCc\n................ccCLc\n..................c\n.\n.\n.\n.\n"
+},
+"pal": {
+"C": "#3a3a7a",
+"Q": "#5a5aa8",
+"c": "#262656",
+"d": "#18183a",
+"A": "#4a4a8e",
+"a": "#383872",
+"F": "#2a5a8a",
+"f": "#1a3a60",
+"Z": "#c8e0f0",
+"z": "#8aa8c0",
+"e": "#7af0e8",
+"K": "#0c0c1e",
+"w": "#ffffff",
+"L": "#6af0e0",
+"R": "#5a2a6a",
+"G": "#e8c070",
+"W": "#3a2a3a",
+"V": "#241a26",
+"U": "#1e1626"
+},
+"ax": 21,
+"sh": [
+37,
+8
+],
+"hip": 22,
+"label": "C 심해 해룡 (야생)",
+"desc": "남보라 몸 · 빛나는 청록 점 · 빛 테 지느러미 · 은빛 뿔 · 깊은 바다의 빛"
+},
+"petC": {
+"g": "\n.\n.........ZZ.z\n..........ZZz\n..........QQQQc\n.........QCCCCCc\n........QCCCCwKCc\n........cCCCCKKCCKc\n........FFCCCCCCCCc\n.......FFCCCCCccKK\n........QCAAcc\n.....FFQCCaa\n.....FQCLCAA\n.....FCCCCaa\n......cCCCAA\n.......CCCLa\n.......CAACc\n.......CCCCcQc\n.......cCCc.cc\n........Cc...c\n........cc..Qc\n..........cccc\n.\n",
+"g2": "\n.........Z..z\n..........Z.z\n..........ZZzQc\n.........QCCCCCc\n.........CCCCCCCc\n........cCCCCwKCCc\n.........CCCCKKCCKc\n.......FFCCCCCCcKK\n........QaaCccc\n....FFFQCCAA\n....FFFCLCaa\n....FFQCCCAA\n......cCCCaa\n.......CCCLA\n.......CCaa\n.......CCCCQc\n.......CCCcccc\n.......CCc...c\n.......cCc...c\n........c.cQQc\n...........cL\n.\n",
+"pal": {
+"C": "#3a3a7a",
+"Q": "#5a5aa8",
+"c": "#262656",
+"d": "#18183a",
+"A": "#4a4a8e",
+"a": "#383872",
+"F": "#2a5a8a",
+"f": "#1a3a60",
+"Z": "#c8e0f0",
+"z": "#8aa8c0",
+"e": "#7af0e8",
+"K": "#0c0c1e",
+"w": "#ffffff",
+"L": "#6af0e0",
+"R": "#5a2a6a",
+"G": "#e8c070",
+"W": "#3a2a3a",
+"V": "#241a26",
+"U": "#1e1626"
+},
+"ax": 10,
+"label": "새끼 심해 해룡"
+},
+"monD": {
+"g": "\n.\n................................zz\n..............................ZZ.z\n...............................ZZzz\n................................ZZPp\n...............................QcZccc\n..............................ccCQKeCc\n............................QFFFCCCCCCQK\n..........................FQcFFQCCCCCCcc\n..........................QFCQQCCcccwKwK\n......................QQQQCFCCCCc\n...............FF...QQCCCCCCCCCc\n..............FfFFFQCCCCCAAACCc\n..............FFffQCCCCCCCaaac\n.............FFFFFCCCCCCCCAAA\n.............FffFQCCCCCCCCaaa\n.............FFFfCCCCCCCCCCAAA\n.............FFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n..............fFFCCCCCCCCaaa\n..............FQCCCCCCCCCAAA\n...............cCCCCCCCCaaa\n................CCCCCCCAAA\n..............FQCCCCCaaa\n.............FFfCCCCc\n..............QCCCCc\n..............CCCCc\n............f.CCCCCc\n...........fffCCCCCCc\n.............QCCCccCCc\n.............cccc..CCc\n................Cc.Cc\n.............ff.cCQCc\n.................ccc\n.\n.\n.\n.\n",
+"g2": "\n................................z\n..............................Z.zz\n..............................ZZZz\n...............................ZZzz\n...............................cZZPp\n..............................cCQQccc\n............................FfFCCCKeCQc\n............................fFFCCCCCCcCK\n..........................QQCQQCCcccKKK\n.......................QQQCFCCCCc...wcwK\n...............FF....QQCCCCCCCCc\n..............FffF.QQCCCaaaCCCc\n.............FFFFfQCCCCCCAAACc\n.............FFFFfCCCCCCCCaaac\n.............FffFQCCCCCCCCAAA\n.............FFFfCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fffQCCCCCCCCCCaaa\n...............FCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............FfFCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n.............fFFCCCCcc\n..............QCCCCc\n..............CCCCc\n..............CCCCCc\n............ffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n.............ff.CCQCc\n.............f..cccc\n.\n.\n.\n.\n.\n",
+"gm": {
+"bite": "\n................................z\n..............................ZZ.z\n...............................ZZzz\n................................ZZPp\n...............................cZZcQc\n...............................cQQQccc\n.............................cFFCCKeCCQK\n............................fFFQCCCccccc\n..........................FQCQQCCCcKwwK\n..........................QFCCCCCcccKKKw\n......................QQQQCFCCCCc..ccw\n..............FfF...QQCCCCCCCCCc....c\n..............FFfFFQCCCCCAAACCc\n.............FFFFfQCCCCCCCaaac\n.............FfFFFCCCCCCCCAAA\n.............FFffQCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n................CCCCCCCCCCAAA\n..............fFFCCCCCCCCaaa\n...............cCCCCCCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n..............FQCCCCaaa\n.............FFCCCCCc\n..............QCCCcc\n..............CCCc\n............ffCCCCQc\n...........fffCCCCCCc\n.............cCCCccCCc\n..............ccc..CCc\n................CQQCc\n.............ff.cCCCc\n.................ccc\n.\n.\n.\n.\n",
+"swell": "\n.\n................................z\n.............................ZZ.zz\n..............................ZZ.z\n...............................ZZzz\n...............................cZZPp\n............................FQccQcccc\n..........................F.QFFFCKeCCQcK\n..........................FQcFFQCCCCCCcc\n.......................QQQQFCQQCCccKKKK\n...............FF....QQCCCCCCCCCc...ww\n...............fFF.QQCCCaaaCCCCc\n..............FFffQCCCCCCAAACCc\n.............FFFFFCCCCCCCCaaac\n.............FffFQCCCCCCCCAAA\n.............FFFfCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n..............ffQCCCCCCCCCCaaa\n...............FCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............FfFCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCAAA\n................CCCCCCCaaa\n...............QCCCCCAAA\n..............FFCCCCcc\n..............QCCCCc\n..............CCCCc\n..............CCCCCc\n...........fffCCCCCCc\n.............QCCCccCc\n.............cCCc..CCc\n..............ccCc.Cc\n.............ff.CCQCc\n.............f..cccc\n.\n.\n.\n.\n.\n",
+"spit": "\n.\n................................z\n..............................ZZ.z\n...............................ZZzz\n................................ZzPp\n...............................cZZccc\n.............................cccQQKecc\n............................fFFFCCcCCCQK\n..........................FQcFFQCcKccccc\n..........................QFCQQCCCcKwww\n...............F.....QQQQQCCCCCCcccKKK\n..............FfFF..QCCCCCCCCCCc..ccw\n..............FFffFQCCCCCAAACCc....cK\n.............FFFFfQCCCCCCCaaac\n.............FfFFQCCCCCCCCAAA\n.............FFffCCCCCCCCCCaaa\n.............FFFFCCCCCCCCCCAAA\n.............fFFQCCCCCCCCCCaaa\n..............ffCCCCCCCCCCAAA\n................CCCCCCCCCCaaa\n..............F.CCCCCCCCCCAAA\n.............FfFCCCCCCCCCaaa\n...............cCCCCCCCCCAAA\n................CCCCCCCCaaa\n................CCCCCCAAA\n..............FQfCCCccc\n.............FQCCCCc\n..............CCCCc\n..............CCCCc\n............ffCCCCCc\n...........ff.CCCcCCc\n.............cCCc.cCCc\n..............ccc..CCc\n..............f.CQQCc\n.............ff.ccCcc\n............f.....c\n.\n.\n.\n.\n"
+},
+"pal": {
+"C": "#e4e0f0",
+"Q": "#ffffff",
+"c": "#b8b0d0",
+"d": "#8a82a8",
+"A": "#f4e8f4",
+"a": "#d8c8e0",
+"F": "#f0a0c0",
+"f": "#c87098",
+"Z": "#d8c8a0",
+"z": "#a8986e",
+"e": "#5a3a7a",
+"K": "#2a2238",
+"w": "#ffffff",
+"P": "#fff8f0",
+"p": "#d8c8d8",
+"R": "#4a7ab8",
+"G": "#e8c070",
+"W": "#5a3a22",
+"V": "#3e2616",
+"U": "#3a2418"
+},
+"ax": 21,
+"sh": [
+37,
+8
+],
+"hip": 22,
+"label": "D 진주 해룡 (야생)",
+"desc": "진주빛 몸 · 분홍 잎 지느러미 · 이마에 진주 · 연한 금빛 뿔"
+},
+"petD": {
+"g": "\n.\n.........ZZ.z\n..........ZZz\n..........QPQQc\n.........QCCCCCc\n........QCCCCwKCc\n........cCCCCKKCCKc\n........FFCCCCCCCCc\n.......FFCCCCCccKK\n........QCAAcc\n.....FFQCCaa\n.....FQCCCAA\n.....FCCCCaa\n......cCCCAA\n.......CCCaa\n.......CAACc\n.......CCCCcQc\n.......cCCc.cc\n........Cc...c\n........cc..Qc\n..........cccc\n.\n",
+"g2": "\n.........Z..z\n..........Z.z\n..........ZZzQc\n.........QCPCCCc\n.........CCCCCCCc\n........cCCCCwKCCc\n.........CCCCKKCCKc\n.......FFCCCCCCcKK\n........QaaCccc\n....FFFQCCAA\n....FFFCCCaa\n....FFQCCCAA\n......cCCCaa\n.......CCCAA\n.......CCaa\n.......CCCCQc\n.......CCCcccc\n.......CCc...c\n.......cCc...c\n........c.cQQc\n...........cc\n.\n",
+"pal": {
+"C": "#e4e0f0",
+"Q": "#ffffff",
+"c": "#b8b0d0",
+"d": "#8a82a8",
+"A": "#f4e8f4",
+"a": "#d8c8e0",
+"F": "#f0a0c0",
+"f": "#c87098",
+"Z": "#d8c8a0",
+"z": "#a8986e",
+"e": "#5a3a7a",
+"K": "#2a2238",
+"w": "#ffffff",
+"P": "#fff8f0",
+"p": "#d8c8d8",
+"R": "#4a7ab8",
+"G": "#e8c070",
+"W": "#5a3a22",
+"V": "#3e2616",
+"U": "#3a2418"
+},
+"ax": 10,
+"label": "새끼 진주 해룡"
+}
+}
