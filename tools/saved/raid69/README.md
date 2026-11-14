@@ -1,0 +1,13 @@
+# 레이드 보스 새 그림 (빌드 69)
+
+## 킹슬라임 (넣음 — 11-14 00:42 「킹슬라임B안」)
+- `kingslime.py <출력.json>` — 평원 초록 슬라임을 크게 키운 32×24 반 해상도 격자 A · B · C. 게임에는 B(머리 위 작은 왕관)가 `src/pxraid.js` PXRAID.kingslime에 들어갔다.
+- `shot.py` · `sheet.py` — 시안판 `kingslime_drafts.png`, 넣은 뒤 `kingslime_B_game.png` · `kingslime_B_raid_r2.png`.
+
+## 천둥새 (시안 — 11-14 12:18 「ㄱㄱ」, 게임에 아직 안 넣음)
+- 옛 대그리핀 자리(레이드에 남는 보스, id raidgriffon 그대로). `thunderbird.py <출력.json>` — 44×32 반 해상도 격자 A 먹구름 날개 · B 번개 깃 · C 비바람 → `thunderbird.json`.
+- 날개깃은 한 장씩 뒤에서 앞으로 겹쳐 칠하고(깃마다 위 가장자리 빛), 게임 굽기(pxBake)가 바깥 테 · 부위 사이 선을 더한다.
+- 노란 몸 · 뾰족 깃 번개새(유명한 캐릭터)와 겹치지 않게 노랑은 쓰지 않았다(먹구름 · 쪽빛 · 청백 번개).
+- `tb_rend.py <훅 페이지> <thunderbird.json> <출력.png>` — PXRAID.raidgriffon을 바꿔 끼워 실제 drawMon으로 · `tb_scene.py` — 실제 레이드 싸움(네 파티) · `tb_sheet.py` → `thunderbird_drafts.png`.
+- 고르면: PXRAID.raidgriffon = 고른 격자 · MONS.raidgriffon W/H · 이름 「천둥새」(RAIDS.griffon · FIELDS.raid_griffon · 도감) — 그리핀 이름은 일반 몬스터 그리핀에 그대로.
+- 스크립트 안 경로는 세션 작업 폴더(scratchpad) 기준 — 새 세션은 경로만 바꿔 쓴다.
