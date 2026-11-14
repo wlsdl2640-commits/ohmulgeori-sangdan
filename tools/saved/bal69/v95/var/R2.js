@@ -1,0 +1,3 @@
+// R2 잔상: 도적 계열이 회피 강화를 쓰면 잔상 — 자기에게 걸면 2, 파티에 걸면 동료마다 1. 잔상이 있으면 어떤 공격이든 하나를 반드시 피한다
+PATCH('cast', "e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * LW : 0, add: (s.add || 0) * LW, t: dur });", "e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * LW : 0, add: (s.add || 0) * LW, t: dur }); if (s.stat === 'eva' && jobBase(a.cls) === 'rogue') { e.ghost = e.ghost || {}; (to === 'party' ? team.filter(up) : [a]).forEach(x => { e.ghost[x.id] = Math.max(e.ghost[x.id] || 0, to === 'party' ? 1 : 2); }); }");
+PATCH('hitAdv', "o = o || {};", "o = o || {}; if (e.ghost && e.ghost[x.id] > 0) { e.ghost[x.id]--; ev(e, 'miss', { s: f.uid, d: x.id, df: 1 }); return false; }");

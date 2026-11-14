@@ -1,0 +1,2 @@
+// R3 회피 반격: 도적 계열이 기본 공격을 피하면 바로 되받아친다 (×0.8)
+PATCH('hitAdv', "ev(e, 'miss', Object.assign({ s: f.uid, d: x.id, bl: blind ? 1 : 0 }, hn)); return false; }", "ev(e, 'miss', Object.assign({ s: f.uid, d: x.id, bl: blind ? 1 : 0 }, hn)); if (!o.skill && f.hp > 0 && jobBase(x.cls) === 'rogue') { const cv = hitFoe(e, f, d.atk * buffMul(e, x.id, 'atk') * 0.8, rnd() < d.crit, false, x, 'none'); ev(e, 'hit', Object.assign({ s: x.id, d: f.uid, v: cv, c: false, k: 'melee', ctr: 1 }, hitTag())); } return false; }");

@@ -1,0 +1,5 @@
+// R9 회피 탱커(그림자 몸놀림 + 잔상 + 끌어 모으기): 도적에게 회피 강화가 걸린 동안 몬스터가 그 도적을 고를 몫 ×4, 스킬 · 광역기도 강화 몫만큼 피하고, 회피 강화를 쓰면 잔상
+PATCH('pickTarget', "(1 + (i === 0 ? 1 : 0) + tankW(x) * 2)", "(1 + (i === 0 ? 1 : 0) + tankW(x) * 2) * (e && jobBase(x.cls) === 'rogue' && buffAdd(e, x.id, 'eva') > 0 ? 4 : 1)");
+PATCH('hitAdv', "if (o.skill ? blind && rnd() < FIGHT.blind : ", "if (o.skill ? (blind && rnd() < FIGHT.blind) || rnd() < Math.min(CAP.eva, buffAdd(e, x.id, 'eva')) : ");
+PATCH('cast', "e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * LW : 0, add: (s.add || 0) * LW, t: dur });", "e.buffs.push({ sid: id, to, stat: s.stat, mult: s.mult ? 1 + (s.mult - 1) * LW : 0, add: (s.add || 0) * LW, t: dur }); if (s.stat === 'eva' && jobBase(a.cls) === 'rogue') { e.ghost = e.ghost || {}; (to === 'party' ? team.filter(up) : [a]).forEach(x => { e.ghost[x.id] = Math.max(e.ghost[x.id] || 0, to === 'party' ? 1 : 2); }); }");
+PATCH('hitAdv', "o = o || {};", "o = o || {}; if (e.ghost && e.ghost[x.id] > 0) { e.ghost[x.id]--; ev(e, 'miss', { s: f.uid, d: x.id, df: 1 }); return false; }");

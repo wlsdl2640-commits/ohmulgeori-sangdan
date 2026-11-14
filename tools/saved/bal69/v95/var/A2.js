@@ -1,0 +1,2 @@
+// A2 둔화 화살: 궁수 계열의 기본 공격(화살)이 맞으면 25%로 냉기 4초 (적의 행동이 2/3로 느려짐)
+{ const ev0 = ev; ev = function (e, k, x) { const r = ev0.apply(this, arguments); if (k === 'hit' && x && x.b && x.v > 0 && rnd() < 0.25) { const a = advById(x.s); if (a && jobBase(a.cls) === 'archer') { const f = e.foes && e.foes.find(o => o.uid === x.d); if (f && f.hp > 0) inflictFoe(e, f, { k: 'chill', p: 1, d: 4, m: 0 }, 0, a.id, 'a2'); } } return r; }; }

@@ -1,0 +1,4 @@
+// A4 엄호 사격: 동료가 맞아 HP 50% 아래가 되면, 서 있는 궁수가 그 몬스터에게 화살 한 발(×1.0) + 쇠약 5초(공격 −20%) — 궁수마다 4초에 한 번
+{ const ev0 = ev; ev = function (e, k, x) { const r = ev0.apply(this, arguments);
+  if (k === 'hurt' && x && x.s != null && !x.dot) { const v = advById(x.d); if (v && v.hp > 0 && v.hp < derive(v).maxHp * 0.5) { const p = partyOfE(e); if (p) { e.cov = e.cov || {}; const ar = teamOf(p).find(a => up(a) && a.id !== v.id && jobBase(a.cls) === 'archer' && !((e.cov[a.id] || -1e9) > S.t - 4)); const f = ar && e.foes && e.foes.find(o => o.uid === x.s); if (ar && f && f.hp > 0) { e.cov[ar.id] = S.t; const cv = hitFoe(e, f, derive(ar).atk, false, false, ar, 'none'); ev0(e, 'hit', Object.assign({ s: ar.id, d: f.uid, v: cv, c: false, k: 'arrow' }, hitTag())); inflictFoe(e, f, { k: 'weak', p: 1, d: 5, m: 0 }, 0, ar.id, 'a4'); } } } }
+  return r; }; }
