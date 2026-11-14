@@ -185,6 +185,7 @@ function jobReqText(c) {
   if (R.tkills) out.push(`${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 (상단 도감)`);
   if (R.petWolf) out.push(`늑대 펫 Lv${R.petWolf} 하나 (전직할 때 탈것으로 데려간다)`);
   if (R.petWyv) out.push(`와이번 펫 Lv${R.petWyv} 하나 (전직할 때 탈것으로 데려간다)`);
+  if (R.petSea) out.push(`해룡 펫 Lv${R.petSea} 하나 (전직할 때 탈것으로 데려간다 — 모습 그대로)`);
   return out.join(' · ');
 }
 // 모자란 조건 하나를 말로 (없으면 '')
@@ -205,5 +206,6 @@ function jobReqWhy(a, c) {
   if (R.tkills) { const n = typeKills(R.tkills[0]); if (n < R.tkills[1]) return `${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 필요 (상단 도감 ${fmt(n)}마리)`; }
   if (R.petWolf && !wolfMount(R.petWolf)) return `늑대 펫 Lv${R.petWolf} 이상이 상단에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
   if (R.petWyv && !wyvMount(R.petWyv)) return `와이번 펫 Lv${R.petWyv} 이상이 상단에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
+  if (R.petSea && !seaMount(R.petSea)) return `해룡 펫 Lv${R.petSea} 이상이 상단에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
   return '';
 }

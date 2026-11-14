@@ -134,6 +134,7 @@ function elemMul(el, f, a, s) {
   const T = TR(a), P = passives(a);   // 빌드 65 오브술: 약점 피해 + · 면역 꿰뚫기
   if (m > 1) m *= 1 + (T.elw || 0) + traitSum(a, 'elw') + (P.weakPct || 0);
   if (m === 0 && (T.immPierce || P.immPierce)) m = Math.max(T.immPierce || 0, P.immPierce || 0);
+  const ek = 'el_' + (el || 'none'), eb = (P[ek] || 0) + traitSum(a, ek); if (eb && m > 0) m *= 1 + eb;   // 빌드 69 해룡기수: 물 속성 피해 + (직업 특성 · 깊은 바다의 피)
   return m;
 }
 // 여러 속성 스킬: 그 적에게 가장 잘 듣는 속성

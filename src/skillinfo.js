@@ -2,12 +2,12 @@
    skillSpec(id)        — 스킬북·도감·상점용 (계수 그대로)
    skillSpec(id, a)     — 모험가 창용 (그 모험가의 공격력·숙련·재사용 감소를 넣은 실제 수치)
    basicSpec(a)         — 기본 공격 (5초 ÷ 공격 속도, 공격력 ×2.5) */
-const SK_TGT = { front: '앞의 적', low: '가장 약한 적', all: '모든 적', self: '자신', party: '파티 전원' };
+const SK_TGT = { front: '앞의 적', low: '가장 약한 적', strong: '가장 센 적', pierce: '맨 앞 적과 그 뒤 적 (꿰뚫기)', all: '모든 적', self: '자신', party: '파티 전원' };
 const SK_TGT_ALLY = Object.assign({}, SK_TGT, { low: '가장 다친 동료', ally: '가장 다친 동료' });   // 빌드 69: 치유 · 재생 · 보호막 · 강화의 low는 가장 다친 동료 (예전엔 「가장 약한 적」으로 나왔다)
 const SK_KIND = { dmg: '물리 피해', mdmg: '마법 피해', heal: '치유', buff: '강화', dot: '지속 피해', taunt: '도발', cure: '해제', shield: '보호막', regen: '재생', revive: '부활' };
 const SK_BUFF = { deflect: '기본 공격 튕겨내기', steal: '훔치는 돈', hide: '적이 덜 노림', ncrit: '다음 공격 치명타 확정', nmul: '다음 공격', ground: '땅에 내려앉음', atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '공격 속도', heal: '회복량', crit: '치명타', guard: '받는 피해 감소', cdr: '스킬 재사용 감소' };
 // 지속 효과 이름과 표기 방식: pct(배율 %) · pp(%p 더함) · neg(줄임) · x(배)
-const SK_PASS = { atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['공격 속도', 'pct'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'], healPow: ['치유량', 'pct'], hpRegen: ['초당 HP 재생', 'pct'], exec: ['약해진 적(HP 30% 아래) 피해', 'pct'], stun: ['기본 공격 기절', 'pp'], buffDur: ['강화 스킬 지속 시간', 'pct'],
+const SK_PASS = { el_water: ['물 속성 피해', 'pct'], atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['공격 속도', 'pct'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'], healPow: ['치유량', 'pct'], hpRegen: ['초당 HP 재생', 'pct'], exec: ['약해진 적(HP 30% 아래) 피해', 'pct'], stun: ['기본 공격 기절', 'pp'], buffDur: ['강화 스킬 지속 시간', 'pct'],
   critDmg: ['치명타 피해', 'pct'], chestGold: ['보물 상자 · 보물고 돈', 'pct'], thrownPct: ['암기 피해', 'pct'], thrownCap: ['암기 담는 수', 'pct'], petDmg: ['늑대 · 와이번 공격 피해', 'pct'], pbuffDur: ['파티 강화 스킬 지속 시간', 'pct'], camp: ['야영 회복', 'pct'], campAmb: ['야영 중 밤습격', 'neg'], campSleep: ['웨건 야영 중 숙면 피로 회복 (초당)', 'n'],   // 빌드 69 개척민의 지혜   // 빌드 65 직업 개편
   slowHit: ['기본 공격에 맞은 적 1.5초 느림', 'pp'], bleedHit: ['기본 공격 출혈', 'pp'], stealPct: ['훔치는 돈', 'pct'], chestExtra: ['보물고 상자 하나 더', 'pp'], thrownTwice: ['암기 한 번 더', 'pp'], comboMax: ['연계 한도', 'n'],   // 빌드 65 새 숙련
   offDmg: ['둘째 칼(보조 단검) 피해', 'pct'], arenaFame: ['투기장 랭킹 점수', 'pct'], shieldPow: ['거는 보호막', 'pct'], boltPct: ['볼트 피해', 'pct'], boltPierce: ['볼트 방어 무시', 'pct'], boltTwice: ['볼트 한 발 더', 'pp'], petTwice: ['탈것이 한 번 더', 'pp'],
@@ -98,7 +98,7 @@ function skillSpec(id, a) {
   if (s.sta) { const St = STATUS[s.sta.k]; out.push(`${St ? St.name : s.sta.k} ${skPct(s.sta.p)} · ${s.sta.d}초${s.sta.m ? ` · 초당 스킬 공격력의 ${skPct(s.sta.m)}` : ''}`); }
   if (s.sta2) { const St = STATUS[s.sta2.k]; out.push(`${St ? St.name : s.sta2.k} ${skPct(s.sta2.p)} · ${s.sta2.d}초`); }
   if (s.slow) out.push(`${s.slow}초 느려짐 (적 공격 간격 ×1.6)`);
-  if (s.after) { const A2 = s.after; out.push(A2.stat === 'ground' ? `쓴 뒤 ${A2.dur}초 동안 기본 공격을 맞는다` : `쓴 뒤 ${A2.dur}초 동안 ${A2.tgt === 'party' ? '파티' : '자신'}의 ${SK_BUFF[A2.stat] || A2.stat} ${A2.mult ? skMul(1 + (A2.mult - 1) * L) : '+' + skPct(A2.add * L) + 'p'}`); }
+  [s.after, s.after2].filter(Boolean).forEach(A2 => { out.push(A2.stat === 'ground' ? `쓴 뒤 ${A2.dur}초 동안 기본 공격을 맞는다` : `쓴 뒤 ${A2.dur}초 동안 ${A2.tgt === 'party' ? '파티' : '자신'}의 ${SK_BUFF[A2.stat] || A2.stat} ${A2.mult ? skMul(1 + (A2.mult - 1) * L) : '+' + skPct(A2.add * L) + 'p'}`); });
   if (s.pcures || (s.kind === 'buff' && s.cures)) out.push(`파티의 ${(s.pcures || s.cures).map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);   // 빌드 63: 정화 · 결의
   if (s.dk && STA_TYPE_IMM[s.dk]) out.push('언데드 · 골렘 · 원소에게는 안 듣는다');
   // 비용과 재사용 대기시간

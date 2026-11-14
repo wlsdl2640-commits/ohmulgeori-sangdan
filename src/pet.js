@@ -1,5 +1,5 @@
 // 펫 공격의 속성 (그림 효과로 정한다)
-const PET_FX_EL = { ice: 'ice', fire: 'fire', bolt: 'thunder', wind: 'wind', dark: 'dark', holy: 'holy' };
+const PET_FX_EL = { ice: 'ice', fire: 'fire', bolt: 'thunder', wind: 'wind', dark: 'dark', holy: 'holy', water: 'water' };   // water: 빌드 69 해룡
 /* ───────── 펫 살림: 부화·먹이·성장·진화·전투 행동 ───────── */
 function petState() { if (!S.pets) S.pets = []; if (!S.pen) S.pen = { inc: [] }; return S.pen; }
 // 알 품기
@@ -130,7 +130,7 @@ function petKill(p, e, f, xp) {
   if (f.pvp || f.giant) return;
   const kinds = petsOfField(e.field); if (!kinds.length) return;
   const ch = f.fb >= 5 ? 0.06 : f.fb ? 0.02 + 0.005 * f.fb : f.boss ? 0.08 : 0.001;   // 빌드 65: 약 4분의 1 (예전 25% · 10~16% · 35% · 0.4%)
-  if (rnd() < ch) { const kind = pickOne(kinds); loot(p, e, 'egg_' + kind, 1); if (f.fb || f.boss) { const P = petState(); P.lucky = P.lucky || {}; P.lucky[kind] = (P.lucky[kind] || 0) + 1; } }
+  if (rnd() < ch) { const sk = f.id === 'seadragon' && typeof pxuSkin === 'function' ? pxuSkin(f) : null, kind = sk && kinds.includes(sk) ? sk : pickOne(kinds); loot(p, e, 'egg_' + kind, 1); if (f.fb || f.boss) { const P = petState(); P.lucky = P.lucky || {}; P.lucky[kind] = (P.lucky[kind] || 0) + 1; } }   // 빌드 69: 해룡은 쓰러뜨린 그 모습의 알
 }
 // 파티에 넣기·빼기
 function setPartyPet(pid, petId) {

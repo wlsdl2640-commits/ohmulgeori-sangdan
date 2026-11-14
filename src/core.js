@@ -302,7 +302,7 @@ function rollFoes(e, idx, extra = 0) {
   else if (fboss) { out.push(fieldBoss(F, e.stage, lv)); for (let i = 0; i < (e.stage >= 30 ? 2 : 1); i++) out.push(foeFrom(pickOne(pool), lv)); }
   else {
     const nest = e.area === 'field' && e.mode === 'advance' ? nestAt(e.field) : null;
-    let n = e.mode === 'return' ? 1 : 1 + ri(0, Math.min(2, Math.floor(e.stage / 5))) + (e.area === 'dungeon' ? 1 : 0);
+    let n = e.mode === 'return' ? 1 : 1 + ri(0, Math.min(2, Math.floor(e.stage / 5))) + (e.area === 'dungeon' ? 1 : 0) + (lv >= PACK.lv && !F.treasure ? PACK.add : 0);   // 빌드 69: Lv100 넘는 땅은 +1
     n = Math.min(5, n + nightMore(e) * (F.frontier && e.field === 'grave' ? 2 : 1) + extra + (nest ? NEST.extra : 0));
     for (let i = 0; i < n; i++) { const f = foeFrom(pickOne(pool), lv); if (nest && rnd() < NEST.p) makeNestFoe(f); out.push(f); }
   }
@@ -591,7 +591,15 @@ function inflictFoe(e, f, o, atk, by, sid) {
     if (STACK_STA[k]) { const v = st[k]; if (v) { v.n = Math.min(STACK_STA[k], (v.n || 1) + 1); v.dps = Math.max(v.dps, dps); v.t = Math.max(v.t, t); v.by = by || v.by; v.sid = sid || v.sid; } else st[k] = { t, dps, acc: 0, n: 1, by: by || 0, sid: sid || 'dot' }; }
     else { if (st[k] && st[k].dps >= dps) { st[k].t = Math.max(st[k].t, t); return; } st[k] = { t, dps, acc: 0, by: by || 0, sid: sid || 'dot' }; }
   } else if (STACK_STA[k]) { const c = st[k], t = o.d || 10; if (c) { c.n = Math.min(STACK_STA[k], (c.n || 1) + 1); c.t = Math.max(c.t, t); } else st[k] = { t, n: 1 }; }
-  else st[k] = Math.max(st[k] || 0, (o.d || 3) * (f.boss && k !== 'mark' ? 0.5 : 1));   // 표식은 보스에게도 온전히
+  else {
+    let d = (o.d || 3) * (f.boss && k !== 'mark' ? 0.5 : 1);   // 표식은 보스에게도 온전히
+    if (f.boss && !f.pvp && CC_DR.ks.includes(k)) {   // 빌드 69: 우두머리 행동 방해 저항 (창 안에서 다시 걸면 반씩, max번 넘으면 저항)
+      const n = f.ccdrT > 0 ? (f.ccdrN || 0) + 1 : 1;
+      if (n > CC_DR.max) { ev(e, 'sta', { d: f.uid, k, side: 'f', res: 1 }); return; }
+      f.ccdrN = n; f.ccdrT = CC_DR.win; d *= Math.pow(CC_DR.mul, n - 1);
+    }
+    st[k] = Math.max(st[k] || 0, d);
+  }
   ev(e, 'sta', { d: f.uid, k, side: 'f' });
 }
 function cureSta(e, a, ks) {
@@ -751,7 +759,7 @@ function pickSkill(a, d, team, dm, foes, e) {
       if (tg.some(f => !(f.dots && f.dots[id]) && f.hp > f.maxHp * 0.4)) pr = s.tgt === 'all' && foes.length >= 2 ? 7 : 5;   // 지속 피해는 스킬마다 따로 돈다
     } else pr = s.tgt === 'all' ? (foes.length >= 2 ? 8 : 2) : (foes.some(f => f.boss) ? 6 : 5);
     if (pr && (s.kind === 'dmg' || s.kind === 'mdmg' || s.kind === 'dot')) {   // 속성: 면역이면 쓰지 않고, 약점이면 먼저
-      const tg = s.tgt === 'all' ? foes : [s.tgt === 'low' ? lowAwake(foes) : frontFoe(foes)], em = Math.max(...tg.map(f => skillElMul(s, f, a) * typeMul(a, f, s) * (s.dk && staTypeImm(s.dk, f) ? 0 : 1)));
+      const tg = s.tgt === 'all' ? foes : s.tgt === 'pierce' ? pierceFoes(foes) : [s.tgt === 'low' ? lowAwake(foes) : s.tgt === 'strong' ? strongAwake(foes) : frontFoe(foes)], em = Math.max(...tg.map(f => skillElMul(s, f, a) * typeMul(a, f, s) * (s.dk && staTypeImm(s.dk, f) ? 0 : 1)));
       if (em <= 0) pr = 0; else if (em > 1.2) pr += 2; else if (em < 1) pr -= 1;
     }
     if (pr && s.pcures && team.some(x => up(x) && e.sta && e.sta[x.id] && s.pcures.some(k => e.sta[x.id][k]))) pr += 3;   // 정화: 저주가 걸린 동료가 있으면 먼저
@@ -773,7 +781,7 @@ function cast(e, a, d, id, team, dm, foes) {
   if (smLv(a, id) > sm) ev(e, 'mastery', { s: a.id, id, lv: smLv(a, id) });
   if (s.kind === 'dmg' || s.kind === 'mdmg') {
     const magic = s.kind === 'mdmg';
-    const tg = s.tgt === 'all' ? foes.slice() : [s.tgt === 'low' ? lowAwake(foes) : frontFoe(foes)], blind = blindOf(e, a.id), NX = takeNext(e, a.id), P0 = s.wagonMul ? partyOfE(e) : null, wag = P0 && wagonOf(P0) ? s.wagonMul : 1;   // 마차 돌진: 마차를 끌고 왔으면 더 세다
+    const tg = s.tgt === 'all' ? foes.slice() : s.tgt === 'pierce' ? pierceFoes(foes) : [s.tgt === 'low' ? lowAwake(foes) : s.tgt === 'strong' ? strongAwake(foes) : frontFoe(foes)], blind = blindOf(e, a.id), NX = takeNext(e, a.id), P0 = s.wagonMul ? partyOfE(e) : null, wag = P0 && wagonOf(P0) ? s.wagonMul : 1;   // 마차 돌진: 마차를 끌고 왔으면 더 세다
     for (const f of tg) { if (blind && rnd() < FIGHT.blind) { ev(e, 'fmiss', { s: a.id, d: f.uid, sk: 1 }); continue; } for (let h = 0; h < (s.hits || 1); h++) {   // 눈멂: 스킬도 20% 빗나간다
       if (f.hp <= 0) break;
       let atk = (magic ? d.matk * buffMul(e, a.id, 'matk') : d.atk * buffMul(e, a.id, 'atk')) * s.mult * M * wag * (NX ? NX.mul : 1) * (s.thrown ? 1 + (d.thrownPct || 0) : 1) * (d.spiritPct && isSpiritSkill(s) ? 1 + d.spiritPct : 1);   // 완드술: 정령 스킬 피해
@@ -796,11 +804,12 @@ function cast(e, a, d, id, team, dm, foes) {
     } }
     stealGold(s, tg.length * (s.hits || 1), buffMul(e, a.id, 'steal') * (1 + (d.steal || 0)));   // 카드술: 훔치는 돈 +
     if (s.pcures) team.filter(up).forEach(x => cureSta(e, x, s.pcures));   // 정화: 파티의 저주를 씻는다
-    if (s.after) {   // 때린 뒤 따라붙는 강화 (서부로! · 세기의 마술쇼 · 와이번 강하의 내려앉음)
-      const A2 = s.after, to = A2.tgt === 'party' ? 'party' : a.id; e.buffs = e.buffs.filter(b => b.sid !== id + '#a');
-      e.buffs.push({ sid: id + '#a', to, stat: A2.stat, mult: A2.mult ? 1 + (A2.mult - 1) * L : 0, add: (A2.add || 0) * L, t: A2.dur * (1 + (to === 'party' ? pBuffOf(team, dm) : 0)) });
-      if (A2.stat !== 'ground') ev(e, 'buff', { s: a.id, id, party: to === 'party' });
-    }
+    [[s.after, '#a'], [s.after2, '#a2']].forEach(([A2, tag]) => {   // 때린 뒤 따라붙는 강화 (서부로! · 세기의 마술쇼 · 와이번 강하의 내려앉음 · 빌드 69 심해의 포효는 둘)
+      if (!A2) return;
+      const to = A2.tgt === 'party' ? 'party' : a.id; e.buffs = e.buffs.filter(b => b.sid !== id + tag);
+      e.buffs.push({ sid: id + tag, to, stat: A2.stat, mult: A2.mult ? 1 + (A2.mult - 1) * L : 0, add: (A2.add || 0) * L, t: A2.dur * (1 + (to === 'party' ? pBuffOf(team, dm) : 0)) });
+      if (A2.stat !== 'ground' && tag === '#a') ev(e, 'buff', { s: a.id, id, party: to === 'party' });
+    });
   } else if (s.kind === 'dot') {
     const tg = s.tgt === 'all' ? foes : [frontFoe(foes)];
     const blind = blindOf(e, a.id), pw = s.magic ? d.matk * buffMul(e, a.id, 'matk') : d.atk * buffMul(e, a.id, 'atk');
@@ -947,6 +956,8 @@ const calmFoe = f => f.hp > 0 && !(f.sta && (f.sta.sleep || f.sta.petrify || f.s
 const tauntFoe = foes => foes.find(f => f.ftaunt > 0 && f.hp > 0) || null;   // 빌드 69: 몬스터 스킬 「도발」 — 그동안 한 명을 치는 공격 · 스킬은 그 몬스터에게
 const frontFoe = foes => tauntFoe(foes) || foes.find(calmFoe) || foes[0];
 const lowAwake = foes => { const t = tauntFoe(foes); if (t) return t; const c = foes.filter(calmFoe); return lowestFoe(c.length ? c : foes); };
+const pierceFoes = foes => { const f0 = frontFoe(foes), f1 = foes.find(f => f !== f0 && f.hp > 0); return f1 ? [f0, f1] : [f0]; };   // 빌드 69 해룡기수 물살 화살: 맨 앞 적과 그 뒤 적을 꿰뚫는다
+const strongAwake = foes => { const t = tauntFoe(foes); if (t) return t; const c = foes.filter(calmFoe), L = c.length ? c : foes; return L.reduce((x, f) => ((f.boss ? 1e12 : 0) + (f.atk || 0) > (x.boss ? 1e12 : 0) + (x.atk || 0) ? f : x), L[0]); };   // 빌드 69 해룡기수: 가장 센 적 (우두머리 먼저)
 // 모험가 쪽 상태이상이 능력치에 주는 것 (stepExp가 dm에 얹는다)
 function staMods(d, st) {
   if (!st) return;
@@ -985,6 +996,7 @@ const fHasBuf = (f, sid) => !!(f.fbuf && f.fbuf.some(b => b.sid === sid));
 function fTick(e, f, dt) {
   if (f.fbuf) { f.fbuf.forEach(b => { b.t -= dt; }); f.fbuf = f.fbuf.filter(b => b.t > 0); if (!f.fbuf.length) f.fbuf = null; }
   if (f.ftaunt > 0) f.ftaunt -= dt;   // 빌드 69 몬스터 도발
+  if (f.ccdrT > 0) f.ccdrT -= dt;   // 빌드 69 우두머리 행동 방해 저항 창
   const L = monSkills(f); if (!L.length) return;
   if (!f.mcd) { f.mcd = {}; L.forEach(s => { f.mcd[s.id] = s.cd * (0.3 + rnd() * 0.5); }); }   // 처음 쓰는 때를 흩어 놓는다
   if (isHard(f.sta)) return;   // 행동 방해 중엔 스킬 대기시간도 멈춘다
@@ -1075,6 +1087,12 @@ function fSummon(e, f, foes, mons, n) {
 function fPhase(e, f, foes) {
   if (!f.boss || f.pvp) return;
   const r = f.hp / f.maxHp;
+  if (!f.ph0 && r <= PH0.at && f.hp > 0) {   // 빌드 69: 75% 단계 — 졸개를 부르거나 보호막
+    f.ph0 = 1;
+    const sm = monSkills(f).find(s => s.kind === 'summon'), n = sm ? fSummon(e, f, foes, sm.mon, PH0.sum) : 0;
+    let v = 0; if (!n) { const sh0 = Math.max(0, f.shd || 0); f.shd = sh0 + Math.round(f.maxHp * PH0.shd); v = f.shd - sh0; e.fheal = (e.fheal || 0) + v; }
+    ev(e, 'fphase', { s: f.uid, k: 0, n, v });
+  }
   if (!f.ph1 && r <= 0.5) { f.ph1 = 1; ev(e, 'fphase', { s: f.uid, k: 1 }); }
   if (!f.ph2 && r <= 0.25) {
     f.ph2 = 1; f.aoe = true;

@@ -716,7 +716,7 @@ function invDetail(k, rate) {
     const where = herbFields(k);
     extra = [where.length ? `자라는 곳: ${where.join(', ')}` : '', RECIPES.filter(r => r.need[k]).map(r => ITEMS[r.out].name).length ? `조제: ${RECIPES.filter(r => r.need[k]).map(r => ITEMS[r.out].name).join(', ')}` : '', k === 'herb' ? `부상 처치 ${HERB_USE}개 +${HERB_PTS}` : ''].filter(Boolean).join(' · ');
   } else if (cat === 'sup' && I.egg) {
-    desc = I.desc; extra = `${FIELDS[PETS[I.egg].field] ? FIELDS[PETS[I.egg].field].name : ''}의 우두머리·던전 주인이 남겨요 · 상단에 두면 ${petHomeText(I.egg)}`;
+    desc = I.desc; extra = `${FIELDS[PETS[I.egg].field] ? FIELDS[PETS[I.egg].field].name : PETS[I.egg].where || ''}의 우두머리·던전 주인이 남겨요 · 상단에 두면 ${petHomeText(I.egg)}`;
     btns += `<button type="button" class="btn sm gold" data-act="bopen" data-id="pen">사육장에서 품기</button>`;
   } else if (cat === 'sup' && I.excl) {   // 빌드 63: 상단 전용 물건
     const X = EXCL[k], why = exclWhy(k);

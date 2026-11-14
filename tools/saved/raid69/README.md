@@ -4,7 +4,7 @@
 - `kingslime.py <출력.json>` — 평원 초록 슬라임을 크게 키운 32×24 반 해상도 격자 A · B · C. 게임에는 B(머리 위 작은 왕관)가 `src/pxraid.js` PXRAID.kingslime에 들어갔다.
 - `shot.py` · `sheet.py` — 시안판 `kingslime_drafts.png`, 넣은 뒤 `kingslime_B_game.png` · `kingslime_B_raid_r2.png`.
 
-## 천둥새 (시안 — 11-14 12:18 「ㄱㄱ」, 게임에 아직 안 넣음)
+## 천둥새 (시안 — 11-14 12:18 「ㄱㄱ」 → 15:54 「BY로」 넣음, 아래)
 - 옛 대그리핀 자리(레이드에 남는 보스, id raidgriffon 그대로). `thunderbird.py <출력.json>` — 44×32 반 해상도 격자 A 먹구름 날개 · B 번개 깃 · C 비바람 → `thunderbird.json`.
 - 날개깃은 한 장씩 뒤에서 앞으로 겹쳐 칠하고(깃마다 위 가장자리 빛), 게임 굽기(pxBake)가 바깥 테 · 부위 사이 선을 더한다.
 - 노란 몸 · 뾰족 깃 번개새(유명한 캐릭터)와 겹치지 않게 노랑은 쓰지 않았다(먹구름 · 쪽빛 · 청백 번개).
@@ -15,3 +15,8 @@
 ## 천둥새 노란 번개 (시안 — 11-14 13:45 「천둥새 노란색 번개 색상 구상해봐」)
 - `thunderbird.py`가 AY · BY · CY도 뽑는다 — 격자는 A · B · C 그대로, 팔레트만 `YEL`(번개 L 노랑 · l 주황빛 호박 · 눈 E 노랑) + B는 볏 R 노랑(`YEL_K`). 몸은 어둡게 둔다(노란 몸 번개새와 겹치지 않게).
 - `tb_rend.py … cur A AY B BY C CY` → game_y.png · `tb_scene.py … AY BY CY` → sc/scene_*.png · `tb_sheet_y.py <그 폴더> <출력>` → `thunderbird_yellow_drafts.png`.
+
+## 천둥새 BY 넣음 (11-14 15:54 「BY로」)
+- `src/pxraid.js` PXRAID.raidgriffon = thunderbird.json의 BY 격자(44×32 · 팔레트 pal['BY']) — 다시 넣으려면 그 격자 · 팔레트를 그대로 옮긴다(손으로 고치지 말 것).
+- `src/data-raid69.js`: RAIDS.griffon 이름 「천둥새」 · 색 · 설명, 부속품 「천둥새의 번개 깃털」 · 「천둥새의 심장」(ITEMS rp_griffon · rh_griffon), FIELDS.raid_griffon, MONS.raidgriffon(W 88 · H 64 · 몸 색). id는 그대로(옛 저장). STORY.v69c 레이드 표 · 「대그리핀은 천둥새가 됐다」 한 줄.
+- 실제 레이드 싸움 화면 `thunderbird_BY_raid.png`(tb_scene.py BY). 구름섬 일반 몬스터 「뇌조」(MONS.thunderbird)와는 다른 몬스터.

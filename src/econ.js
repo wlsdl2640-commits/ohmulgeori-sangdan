@@ -3,7 +3,7 @@ const g$ = n => Math.round(n).toLocaleString('ko-KR') + 'G';
 const WEAPON_OF = { warrior: 'sword', archer: 'bow', mage: 'staff', cleric: 'mace', rogue: 'dagger', porter: 'club',
   gladiator: 'gladius', champion: 'gladius', knight: 'sword', paladin: 'sword', berserker: 'great', bloodlord: 'great',   // 빌드 64: 2차 무기는 늪지 단계부터 (weaponOf, data-warr.js)
   // 빌드 65 장비 개편 2단계: 2차 직업 무기(늪지 단계부터 — 그 아래 단계는 WEAPON_LOW의 옛 무기). 빌드 65 직업 개편: 정찰가 · 탐험가 = 정글칼 · 용기수 = 복합궁 · 쌍검사 · 검무사 = 단검(+ 보조 단검)
-  ranger: 'compbow', dragoon: 'compbow', sniper: 'longbow', hawkeye: 'longbow', bard: 'lute', maestro: 'lute', coachman: 'whip', conestoga: 'whip', caravanmaster: 'whip', scout: 'machete', pathfinder: 'machete', mhunter: 'compound', dslayer: 'compound', huntsman: 'greatbow', kaijuhunter: 'greatbow', sorcerer: 'staff', archmage: 'staff', elemancer: 'orb', alchemist: 'orb',
+  ranger: 'compbow', dragoon: 'compbow', seadragoon: 'compbow', sniper: 'longbow', hawkeye: 'longbow', bard: 'lute', maestro: 'lute', coachman: 'whip', conestoga: 'whip', caravanmaster: 'whip', scout: 'machete', pathfinder: 'machete', mhunter: 'compound', dslayer: 'compound', huntsman: 'greatbow', kaijuhunter: 'greatbow', sorcerer: 'staff', archmage: 'staff', elemancer: 'orb', alchemist: 'orb',
   assassin: 'dagger', shadowlord: 'dagger', duelist: 'dagger', bladedancer: 'dagger', treasure: 'card', phantomthief: 'card', masterthief: 'card', ninja: 'dagger', kageninja: 'dagger',
   elementalist: 'wand', elementlord: 'wand', necromancer: 'necro', lich: 'necro', spellblade: 'manasword', arcblade: 'manasword',
   priest: 'staff', archbishop: 'staff', plaguedoc: 'mace', physician: 'mace', exorcist: 'mace', inquisitor: 'mace' };
@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1, v69c: 1, v69d: 1, v69e: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1, v69c: 1, v69d: 1, v69e: 1, v69f: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -933,6 +933,7 @@ function promote(aid, cls) {
   let wolf = null;
   if (C1.req && C1.req.petWolf) { wolf = wolfMount(C1.req.petWolf); if (wolf) { S.pets = S.pets.filter(x => x !== wolf); a.ride = Object.assign(a.ride || {}, { wolf: { look: 'A', name: wolf.name, lv: wolf.lv } }); } }   // 빌드 65: 랑기수 = 늑대 펫을 탈것으로 데려간다 (pxride65.js — 모습 A가 기본)
   if (C1.req && C1.req.petWyv) { const wy = wyvMount(C1.req.petWyv); if (wy) { S.pets = S.pets.filter(x => x !== wy); a.ride = Object.assign(a.ride || {}, { wyv: { look: 'A', name: wy.name, lv: wy.lv } }); log(`${a.name}이(가) 와이번 펫 「${wy.name}」을(를) 타고 용기수가 되었다.`, 'good'); } }   // 빌드 65 넷째 묶음
+  if (C1.req && C1.req.petSea) { const sd = seaMount(C1.req.petSea); if (sd) { S.pets = S.pets.filter(x => x !== sd); a.ride = Object.assign(a.ride || {}, { sea: { look: PETS[sd.kind].look || 'A', name: sd.name, lv: sd.lv } }); } }   // 빌드 69 해룡기수: 그 해룡(모습 그대로)이 탈것
   STAT_KEYS.forEach(k => { a.st[k] += Math.max(0, C1.base[k] - C0.base[k]) + 1; });
   a.cls = cls;
   rideEnsure(a);   // 빌드 65: 용기수가 되면 와이번 (모습 A)
@@ -1233,7 +1234,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1305,7 +1306,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e();
+    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f();
     return true;
   } catch (_) { return false; }
 }
@@ -1727,6 +1728,7 @@ function notes69d() {
   else if (lines.length) S.modals.push({ title: '룬 칸 정리', body: lines });
 }
 function notes69e() { if (!S.flags.v69e) { S.flags.v69e = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '능력치 상한 · 몬스터 강화', body: STORY.v69e }); } }   // 빌드 69 (11-14 12:18 — data-cap69.js · data-monup69.js)
+function notes69f() { if (!S.flags.v69f) { S.flags.v69f = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '해룡 · 해룡기수', body: STORY.v69f }); } }   // 빌드 69 (11-14 15:54): 해룡 펫 · 해룡기수
 function notes68b() { if (!S.flags.v68b) { S.flags.v68b = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬북 계열 · 직업 표시 · 스킬 칸 나누기', body: STORY.v68b }); } }   // 빌드 68 (data-skjob68.js)
 function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(경갑 · 중갑 · 판금) · 하의 칸
   const U = S.under || {}, opps = ((U.arena && U.arena.opps) || []).flatMap(o => (o && o.members) || []);

@@ -22,16 +22,25 @@ const raidSky = id => !!(RAIDS[id] && RAIDS[id].sky);
 //   그림은 pxraid.js PXRAID.kingslime(= tools/saved/raid69/kingslime.py B, 32×24 반 해상도 → 64×48). 색 · 설명도 초록 슬라임에 맞춘다.
 Object.assign(RAIDS.kingslime, { c: '#5fbf5a', desc: '평원의 초록 슬라임이 모두 모여 하나가 된 괴물. 머리에 작은 왕관을 얹었고, 투명한 몸속에 삼킨 장검 · 보물 상자 · 금화가 비친다.' });
 Object.assign(FIELDS.raid_kingslime, { desc: RAIDS.kingslime.desc });
+// 천둥새 (11-13 21:22 「대그리폰 → 천둥새」 · 11-14 15:54 「BY로」): 쪽빛 몸 · 노랗게 빛나는 볏 · 노란 번개 깃 — 그림은 pxraid.js PXRAID.raidgriffon
+//   (= tools/saved/raid69/thunderbird.py BY, 44×32 반 해상도 → 88×64). id griffon · raidgriffon · 부속품 rp_/rh_griffon은 그대로(저장 호환), 이름 · 색 · 설명만.
+Object.assign(RAIDS.griffon, { name: '천둥새', c: '#ffd040', desc: '먹구름을 몰고 다니는 거대한 쪽빛 새. 볏이 노랗게 빛나고, 날갯짓마다 깃 끝에서 노란 번개가 튄다. (예전 대그리핀)' });
+RAIDS.griffon.part[0] = '천둥새의 번개 깃털'; RAIDS.griffon.heart[0] = '천둥새의 심장';
+Object.assign(ITEMS.rp_griffon, { name: RAIDS.griffon.part[0], c: RAIDS.griffon.c });
+Object.assign(ITEMS.rh_griffon, { name: RAIDS.griffon.heart[0], c: RAIDS.griffon.c });
+Object.assign(FIELDS.raid_griffon, { name: RAIDS.griffon.name, desc: RAIDS.griffon.desc });
+Object.assign(MONS.raidgriffon, { name: '천둥새', W: 88, H: 64, body: '#3a3468', dark: '#26214c' });
 Object.assign(MONS.kingslime, { W: 64, H: 48, body: '#5fbf5a', dark: '#3f8f3c' });
 // 레이드 HP · 세기 (빌드 69 측정 scratchpad/v88/rhp88.js — 레이드 레벨 파티 넷(3차 Lv150 ~ 190 · 스킬 3단계 · 숙련도 3 · 고급 장비)이 한 번 도전(90초)에
 //   예전 식 raidHp(Lv)의 97% · 69% · 63% · 45% · 41%를 깎고 아무도 안 쓰러졌다 → HP를 따로 정하고(한 번에 8% ~ 4%) 한 방 세기도 올린다)
-//   다시 잰 값(DIFF.hp 1.22 포함): 레이드 레벨 파티 넷이 한 번에 킹슬라임 6.5% · 카이샤르 5.0% · 대그리핀 4.9% · 템페스트 3.8% · 베히모스 3.7%, 한 방 ×2.0이면 90초에 최대 HP의 12 ~ 26%를 맞는다
+//   다시 잰 값(DIFF.hp 1.22 포함): 레이드 레벨 파티 넷이 한 번에 킹슬라임 6.5% · 카이샤르 5.0% · 대그리핀(천둥새) 4.9% · 템페스트 3.8% · 베히모스 3.7%, 한 방 ×2.0이면 90초에 최대 HP의 12 ~ 26%를 맞는다
 const RAID69 = { hp: { kingslime: 2.6e8, kaishar: 2.7e8, griffon: 2.8e8, tempest: 2.9e8, behemoth: 3.0e8 }, atk: 2.0 };
 const raidMaxHp = id => (RAID69.hp[id] ? Math.round(RAID69.hp[id] * DIFF.hp / 1e5) * 1e5 : raidHp(RAIDS[id].lv));
 
 STORY.v69c = [
   '모험가는 이제 누구나 Lv200까지 자란다. (4차 전직만 Lv200이던 것을 모두에게 열었다.)',
-  `레이드가 바뀌었다: 레이드 몬스터는 모두 Lv150 ~ 190(킹슬라임 150 · 카이샤르 160 · 대그리핀 170 · 템페스트 드래곤 180 · 베히모스 190). 이제 한 파티로는 못 가고, 원정대 창의 「레이드」 탭에서 전투원 넷이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보낸다.`,
+  `레이드가 바뀌었다: 레이드 몬스터는 모두 Lv150 ~ 190(킹슬라임 150 · 카이샤르 160 · 천둥새 170 · 템페스트 드래곤 180 · 베히모스 190). 이제 한 파티로는 못 가고, 원정대 창의 「레이드」 탭에서 전투원 넷이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보낸다.`,
+  '대그리핀은 천둥새가 됐다 — 먹구름을 몰고 다니는 쪽빛 새, 볏이 노랗게 빛나고 깃 끝에서 노란 번개가 튄다(부속품 이름도 천둥새의 번개 깃털 · 천둥새의 심장).',
   '베히모스는 이제 구름섬 하늘에 나온다 — 하늘 지도에 보이고, 비행장의 레이드 비행선이 파티들을 태워 간다.',
   '레이드 전용 파티 「레이드대」는 없앴다. 레이드대에 있던 모험가는 대기 중으로 돌아왔다.',
   '레이드 원정대가 나가 있으면 작은 원정 창을 옆으로 밀어 레이드 원정대 창(파티마다 한 칸)을 볼 수 있다.'

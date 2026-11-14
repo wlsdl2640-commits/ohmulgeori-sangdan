@@ -112,7 +112,7 @@ function monFightRow(id, lvl) {
   const L = (m.msk || []);
   if (!L.length && !m.boss) return head;
   if (lvl < 2) return head + `<div class="sub muted">5마리 잡으면 스킬이 열려요.</div>`;
-  return head + `<div class="sec" style="margin-top:4px"><b>스킬</b><span>${L.length}개</span></div>${L.map(s => mskText(s, id)).join('')}${m.boss || m.giant ? '<div class="sub muted">우두머리: HP 50%에서 분노(공격 속도 ×1.3), 25%에서 마지막 발악(광역기 ↑ · 졸개를 부른다)</div>' : ''}`;
+  return head + `<div class="sec" style="margin-top:4px"><b>스킬</b><span>${L.length}개</span></div>${L.map(s => mskText(s, id)).join('')}${m.boss || m.giant ? '<div class="sub muted">우두머리: HP 75%에서 버티기(졸개를 부르거나 보호막), 50%에서 분노(공격 속도 ×1.3), 25%에서 마지막 발악(광역기 ↑ · 졸개를 부른다). 행동 방해를 15초 안에 다시 걸면 시간이 반씩 줄고, 네 번째부터는 저항한다.</div>' : ''}`;
 }
 // 모습 여럿 (빌드 46: 골렘·바위거인은 만날 때마다 넷 중 하나)
 function skinRow(id) {
@@ -212,7 +212,7 @@ function dexSub() {
 function dexPets() {
   const D = dexState(), known = D.pets || {};
   const rows = PET_IDS.map(k => { const P = PETS[k], seen = !!known[k] || (S.pets || []).some(x => x.kind === k), own = (S.pets || []).filter(x => x.kind === k).length, egg = S.inv['egg_' + k] || 0;
-    return `<div class="li${seen ? '' : ' dim'}"><img class="dexi" src="${monIconURL('pet_' + k, !seen)}" alt=""><div class="grow stack"><span>${seen ? P.name : '???'}${own ? ` <span class="tag ok-t">${own}마리</span>` : ''}${egg ? ` <span class="tag">알 ${egg}</span>` : ''}</span><span class="sub">${seen ? `${PET_ACT_NAME[P.act]} · ${P.desc}` : '알을 부화시키면 열려요'}</span><span class="sub muted">알: ${FIELDS[P.field] ? FIELDS[P.field].name : '?'}의 우두머리·던전 주인${seen ? ` · 진화 ${P.evo} · 상단에 두면 ${petHomeText(k)} · 먹이 ${P.likes.map(it => ITEMS[it].name).join('·')}` : ''}</span></div></div>`; }).join('');
+    return `<div class="li${seen ? '' : ' dim'}"><img class="dexi" src="${monIconURL('pet_' + k, !seen)}" alt=""><div class="grow stack"><span>${seen ? P.name : '???'}${own ? ` <span class="tag ok-t">${own}마리</span>` : ''}${egg ? ` <span class="tag">알 ${egg}</span>` : ''}</span><span class="sub">${seen ? `${PET_ACT_NAME[P.act]} · ${P.desc}` : '알을 부화시키면 열려요'}</span><span class="sub muted">알: ${FIELDS[P.field] ? FIELDS[P.field].name : P.where || '?'}의 우두머리·던전 주인${seen ? ` · 진화 ${P.evo} · 상단에 두면 ${petHomeText(k)} · 먹이 ${P.likes.map(it => ITEMS[it].name).join('·')}` : ''}</span></div></div>`; }).join('');
   return `<div class="sub muted">${PET_IDS.filter(k => known[k] || (S.pets || []).some(x => x.kind === k)).length}/${PET_IDS.length} 길러 봄 · 파티마다 한 마리 · Lv${PET_EVO_LV} 진화 · 호감도가 차면 특성</div><div class="list">${rows}</div>`;
 }
 /* ───────── 창 ───────── */

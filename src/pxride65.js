@@ -9,12 +9,12 @@
          탄 채 하는 동작은 내딛기 · 웅크림 · 몸 나감 · 뛰기를 뺀다(pxs.js PXS_RIDE).
    저장: a.ride = { wolf: { look, name, lv }, wyv: { look } } — 없으면 모습 A. 늑대 이름 · 레벨은 랑기수 전직 때 보낸 늑대 펫의 것. */
 const RIDE_LOOKS = ['A', 'B', 'C', 'D'];
-const RIDE_KIND_NAME = { wolf: '늑대', wyv: '와이번', sea: '해룡' };   // 해룡(빌드 69): 그림 넷(RIDE65.sea)만 — 해룡기수(용기수 다음 4차) · 해룡 펫이 들어올 때 rideKind에 잇는다
+const RIDE_KIND_NAME = { wolf: '늑대', wyv: '와이번', sea: '해룡' };   // 해룡(빌드 69): 해룡기수(용기수 다음 4차)가 탄다 — 모습은 보낸 해룡 펫 그대로(a.ride.sea.look)
 // 이 모험가가 타는 것 (직업 계열로): 용기수 계열 → 와이번 · 랑기수 계열 → 늑대
 function rideKind(a) {
   if (!a || !a.cls || !CLASSES[a.cls]) return null;
   const ch = chainOf(a.cls);
-  return ch.includes('dragoon') ? 'wyv' : ch.includes('ranger') ? 'wolf' : null;
+  return ch.includes('seadragoon') ? 'sea' : ch.includes('dragoon') ? 'wyv' : ch.includes('ranger') ? 'wolf' : null;   // 빌드 69 해룡기수: 해룡
 }
 const rideLook = (a, k) => { const r = a && a.ride && a.ride[k]; return r && RIDE65[k][r.look] ? r.look : 'A'; };
 const rideData = a => { const k = rideKind(a); return k ? RIDE65[k][rideLook(a, k)] : null; };

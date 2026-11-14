@@ -437,7 +437,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
 
   // 펫: 파티 뒤에서 따라다니며 cd마다 앞으로 튀어나온다 (빌드 48: 파티와 같은 쪽을 본다 — 예전에는 뒤를 보고 있었다 · 큰 펫은 너비 44 안으로)
   if (pet) {
-    const [px, py] = pos['aP' + pet.id], pz = zAt(py) * (pet.stage ? 0.72 * monFit(petLook(pet), 44) : 1.1), pat = V.atk['aP' + pet.id], plunge = pat && t - pat < 0.3;
+    const [px, py] = pos['aP' + pet.id], pz = zAt(py) * (pet.stage ? 0.72 * monFit(petLook(pet), 44) : PXU[petLook(pet)] ? 1.1 * monFit(petLook(pet), 18) : 1.1), pat = V.atk['aP' + pet.id], plunge = pat && t - pat < 0.3;
     const hop = walking ? Math.abs(Math.sin(t * 7)) * 2 : plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 4 : Math.abs(Math.sin(t * 2.5)) * 0.6;
     const pdx = (plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 14 : 0) * dir;
     draws.push({ y: py - 1, f: g => {
@@ -837,7 +837,8 @@ function events(e, pos, t, team, p) {
       if (aq) { V.fx.push({ k: 'num', x: aq[0] + jx(), y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6, s: String(x.v), c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a', t0: t, d: 0.7 }); V.fx.push({ k: 'bubble', x: aq[0], y: aq[1] - 10, t0: t, d: 0.5, c: STATUS[x.k] ? STATUS[x.k].c : '#ff6a5a' }); }
     } else if (x.type === 'sta') {
       const q = at((x.side === 'f' ? 'f' : 'a') + x.d), St = STATUS[x.k], dl = x.side !== 'f' ? Math.max(0, (V.fhit['a' + x.d] || 0) - t) : 0;
-      if (q && St) { const cy = q[1] - (21 + (q.ru || 0)) * zAt(q[1]) - 10; if (dl > 0.02) setTimeout(() => callout(q[0], cy, St.name + '!', 'dot'), dl * 1000); else callout(q[0], cy, St.name + '!', 'dot'); V.fx.push({ k: 'buff', x: q[0], y: q[1], t0: t + dl, d: 0.6, c: St.c }); }
+      if (q && St && x.res) callout(q[0], q[1] - (21 + (q.ru || 0)) * zAt(q[1]) - 10, '저항', 'dot');   // 빌드 69 우두머리 행동 방해 저항
+      else if (q && St) { const cy = q[1] - (21 + (q.ru || 0)) * zAt(q[1]) - 10; if (dl > 0.02) setTimeout(() => callout(q[0], cy, St.name + '!', 'dot'), dl * 1000); else callout(q[0], cy, St.name + '!', 'dot'); V.fx.push({ k: 'buff', x: q[0], y: q[1], t0: t + dl, d: 0.6, c: St.c }); }
     } else if (x.type === 'cure') {
       const aq = at('a' + x.d);
       if (aq) V.fx.push({ k: 'heal', x: aq[0], y: aq[1], t0: t, d: 0.6, c: '#c8f0ff' });
@@ -926,8 +927,8 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'fbuff') {
       const fq = at('f' + x.d); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 0.7, c: BUFF_C[x.stat] || '#ff9a6a' });
     } else if (x.type === 'fphase') {   // 우두머리 단계: 분노 · 마지막 발악
-      const ft = ftop(x.s); callout(ft ? ft[0] : 170, 120, `${V.fname[x.s] || '우두머리'} ${x.k === 2 ? '마지막 발악!' : '분노!'}`, 'boss'); V.shake = Math.max(V.shake, x.k === 2 ? 6 : 4);
-      const fq = at('f' + x.s); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 1.0, c: x.k === 2 ? '#ff3a2a' : '#ff9a3a' });
+      const ft = ftop(x.s); callout(ft ? ft[0] : 170, 120, `${V.fname[x.s] || '우두머리'} ${x.k === 2 ? '마지막 발악!' : x.k === 0 ? (x.n ? '졸개를 불렀다!' : '버티기!') : '분노!'}`, 'boss'); V.shake = Math.max(V.shake, x.k === 2 ? 6 : x.k === 0 ? 3 : 4);
+      const fq = at('f' + x.s); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 1.0, c: x.k === 2 ? '#ff3a2a' : x.k === 0 ? '#8ac8ff' : '#ff9a3a' });
     } else if (x.type === 'ffear') {
       const ft = ftop(x.s); if (ft) callout(ft[0], ft[1] - 2, x.c ? '멍하니' : '겁먹음', 'dot');
     } else if (x.type === 'fhit') {     // 홀린 몬스터가 같은 편을 친다
@@ -1075,7 +1076,7 @@ function logEvent(x, e, p) {
   if (x.type === 'fmiss') return add(`${ally(A(x.s))}의 ${x.sk ? '스킬' : '공격'}이 ${foe(Fn(x.d))}에게 빗나갔습니다.${x.sk || blindLog(e, x.s) ? ' (눈멂)' : ''}`, 'dim');
   if (x.type === 'hurt' && x.dot) return add(`${ally(jo(A(x.d), '이', '가'))} ${STATUS[x.k] ? STATUS[x.k].name : '독'}(으)로 ${num(x.v, 'r')} 피해를 입었습니다.`, 'dim');
   if (x.type === 'hurt') return add(`${foe(Fn(x.s))}의 공격! ${ally(jo(A(x.d), '이', '가'))} ${num(x.v, 'r')} 피해를 입었습니다.${x.blk ? ' <i class="lg-c">막았다!</i>' : ''}`);
-  if (x.type === 'sta') { const St = STATUS[x.k]; if (St) add(x.side === 'f' ? `${foe(jo(Fn(x.d), '이', '가'))} ${St.name} 상태가 됐습니다.` : `${ally(jo(A(x.d), '이', '가'))} ${St.name} 상태가 됐습니다!`, x.side === 'f' ? 'sk' : 'warn'); return; }
+  if (x.type === 'sta') { const St = STATUS[x.k]; if (St && x.res) add(`${foe(jo(Fn(x.d), '이', '가'))} ${St.name}에 저항했습니다 (연달아 건 행동 방해).`, 'sk'); else if (St) add(x.side === 'f' ? `${foe(jo(Fn(x.d), '이', '가'))} ${St.name} 상태가 됐습니다.` : `${ally(jo(A(x.d), '이', '가'))} ${St.name} 상태가 됐습니다!`, x.side === 'f' ? 'sk' : 'warn'); return; }
   if (x.type === 'cure') return add(`${ally(A(x.d))}의 상태이상이 풀렸습니다.`, 'dim');
   if (x.type === 'resist') return add(`${ally(A(x.d))}: 섬광 룬이 ${STATUS[x.k] ? STATUS[x.k].name : '눈멂'}을(를) 막았습니다.`, 'dim');   // 빌드 64 룬 개편
   if (x.type === 'miss') return add(x.df ? `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 튕겨 냈습니다.` : x.bl ? `${foe(Fn(x.s))}의 공격이 ${ally(A(x.d))}에게 빗나갔습니다. (눈멂)` : `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
@@ -1084,7 +1085,7 @@ function logEvent(x, e, p) {
   if (x.type === 'fdispel') return add(`${foe(jo(Fn(x.s), '이', '가'))} 걸린 강화 ${x.n}개를 지웠다!`, 'warn');   // 빌드 69
   if (x.type === 'ftaunt') return add(`${foe(jo(Fn(x.s), '이', '가'))} 도발한다 — ${Math.round(x.t)}초 동안 공격이 그쪽으로 쏠린다.`, 'warn');
   if (x.type === 'mpburn') return add(`${ally(A(x.d))}의 MP가 ${num(x.v, 'b')} 타 버렸다.`, 'dim');
-  if (x.type === 'fphase') return add(x.k === 2 ? `<i class="lg-c">마지막 발악!</i> ${foe(jo(Fn(x.s), '이', '가'))} 광역기를 더 자주 쓴다${x.n ? ' · 졸개를 불렀다' : ''}.` : `<i class="lg-c">분노!</i> ${foe(Fn(x.s))}의 공격이 빨라졌다.`, 'warn');
+  if (x.type === 'fphase') return add(x.k === 2 ? `<i class="lg-c">마지막 발악!</i> ${foe(jo(Fn(x.s), '이', '가'))} 광역기를 더 자주 쓴다${x.n ? ' · 졸개를 불렀다' : ''}.` : x.k === 0 ? `<i class="lg-c">버티기!</i> ${foe(jo(Fn(x.s), '이', '가'))} ${x.n ? '졸개를 불렀다' : '보호막을 둘렀다'}.` : `<i class="lg-c">분노!</i> ${foe(Fn(x.s))}의 공격이 빨라졌다.`, 'warn');
   if (x.type === 'fsum') return add(`${foe(jo(Fn(x.s), '이', '가'))} ${esc(MONS[x.id] ? MONS[x.id].name : '졸개')}${x.n > 1 ? ` 무리(${x.n})` : ''}를 불렀다!`, 'warn');
   if (x.type === 'ffear') return add(x.c ? `${foe(Fn(x.s))}은(는) 홀렸지만 칠 상대가 없어 멍하니 서 있다.` : `${foe(jo(Fn(x.s), '이', '가'))} 겁에 질려 머뭇거린다.`, 'dim');
   if (x.type === 'fhit') return add(`${foe(jo(Fn(x.s), '이', '가'))} 홀려서 ${foe(Fn(x.d))}에게 ${num(x.v)} 피해!`, 'sk');
