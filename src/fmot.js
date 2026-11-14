@@ -12,6 +12,7 @@ for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(
 }
 SKFX['u:low:tear'] = { pal: 'blood', hit: 'slashes', after: 'petals' };   // 망토가 찢어질 때: 천 조각이 흩날린다 (빌드 44)
 const fmotOK = f => !!(f && !f.giant && !f.adv && PXU[f.id]);
+const FMOT_HN = 0.16;   // 빌드 69 몬스터 연타: 한 대마다 늦추는 초
 const fmotKey = (id, cat, mk) => 'u:' + id + ':' + (mk && SKFX['u:' + id + ':' + mk] ? mk : cat);
 const fmotSk = (id, cat, mk) => SKFX[fmotKey(id, cat, mk)] || null;
 // 사건 하나 → 동작 시작 · 맞는 때까지 남은 초 (PXU 몬스터가 아니면 0) · nx = 바로 뒤 사건 (상태이상을 거는 한 방인지 본다)
@@ -24,6 +25,7 @@ function fmotOn(e, x, t, nx, at) {
     return Math.max(0, m0.aoe.T1 - t) + dist / (FMOT_AOE_V[m0.aoe.k] || 200);
   }
   if (m0 && m0.t0 === t && m0.d === x.d && (x.type === 'shield' || m0.from === 'shield')) return m0.hit + m0.fl;   // 보호막이 받은 한 방과 그 뒤 맞기: 같은 동작
+  if (x.hn && m0 && m0.t0 === t && m0.d === x.d) return m0.hit + m0.fl + x.hn * FMOT_HN;   // 빌드 69 연타: 같은 동작에서 한 대씩 늦게
   const sta = nx && nx.type === 'sta' && nx.side === 'a' && nx.d === x.d;
   const cat = x.type === 'aoe' ? 'skl' : A.skl && !MONS[f.id].aoe && !f.aoe && (x.c || sta || x.ms) ? 'skl' : x.k === 'magic' && A.mag ? 'mag' : A.atk ? 'atk' : 'mag';   // 몬스터 스킬 한 방(ms, 빌드 63)도 스킬 갈래
   const mk = pxuPick(f.id, cat, m0 && m0.mk), T = pxuMotT(f.id, mk), hf = pxsMotHit(mk), sk = fmotSk(f.id, cat, mk);

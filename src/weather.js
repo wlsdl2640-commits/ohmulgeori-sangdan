@@ -125,7 +125,7 @@ function expMods(d, a) {
   if (ff.def) d.def *= 1 + ff.def;
   if (ff.hp) d.maxHp = Math.round(d.maxHp * (1 + ff.hp));
   if (ff.move) d.move *= 1 + ff.move;
-  if (ff.crit) d.crit = Math.min(0.75, d.crit + ff.crit);
+  if (ff.crit) { const c0 = d.crit + ff.crit; d.crit = Math.min(CAP.crit, c0); if (c0 > CAP.crit) d.critDmg = Math.min(CAP.critDmg, (d.critDmg || 0) + (c0 - CAP.crit) * CRIT_OVER); }   // 빌드 69: 치명타 50%까지 · 넘친 몫은 치명타 피해로
   if (ff.regen) d.hpRegen = (d.hpRegen || 0) + ff.regen;
   if (ff.carry) d.carry += ff.carry;
   for (const k in FOOD_RES) if (ff[k]) { const f = FOOD_RES[k]; d.res = Object.assign({}, d.res); d.res[f] = Math.min(FIGHT.resMax, (d.res[f] || 0) + 0.1); }   // 뜨거운 수프 · 얼음 빙수: 그 속성 피해 −10% (빌드 63)

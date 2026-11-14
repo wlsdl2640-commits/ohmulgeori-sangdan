@@ -43,7 +43,7 @@ function skillSpec(id, a) {
     if (d) { const base = (magic ? d.matk : d.atk) * s.mult * M; out.push(`한 방 약 <b>${skRange(base)}</b>${hits > 1 ? ` × ${hits}` : ''} (방어 0 기준)`); }
     out.push(`대상 ${SK_TGT[s.tgt] || s.tgt}`);
     if (s.crit === 1) out.push('반드시 치명타');
-    else if (s.crit) out.push(d ? `치명타 ${skPct(Math.min(1, d.crit + s.crit))} (기본 ${skPct(d.crit)} + ${skPct(s.crit)}p)` : `치명타 +${skPct(s.crit)}p`);
+    else if (s.crit) out.push(d ? `치명타 ${skPct(capCrit(d, s.crit))} (기본 ${skPct(d.crit)} + ${skPct(s.crit)}p)` : `치명타 +${skPct(s.crit)}p`);
     else if (d) out.push(`치명타 ${skPct(d.crit)}`);
     if (d) out.push(`치명타 피해 ×${T.critMul || 1.75}`);
     if (s.boss) out.push(`보스에게 ×${s.boss}`);
@@ -123,8 +123,8 @@ function basicSpec(a) {
   out.push(`${magic ? '마법 공격력' : '공격력'} ${skMul(magic ? BASIC_MAGIC : BASIC_MULT)}${T.hybrid ? ` + 마법 공격력 ${skMul(T.hybrid * BASIC_MULT)}` : ''}`);
   out.push(`한 방 약 <b>${skRange(base)}</b> (방어 0 기준)`);
   out.push(`대상 ${CLASSES[a.cls].act === 'arrow' || shootsArrows(a) ? SK_TGT.low : SK_TGT.front}`);
-  out.push(`치명타 ${skPct(d.crit)} (×${T.critMul || 1.75})`);
-  const dbl = (T.double || 0) + d.double; if (dbl) out.push(`연타 ${skPct(dbl)}`);
+  out.push(`치명타 ${skPct(d.crit)} (×${Math.round(((T.critMul || 1.75) + (d.critDmg || 0)) * 100) / 100}${d.critOver ? ` — 50%를 넘은 ${skPct(d.critOver)}의 절반은 치명타 피해로` : ''})`);   // 빌드 69 상한
+  const dbl = Math.min(CAP.double, (T.double || 0) + d.double); if (dbl) out.push(`연타 ${skPct(dbl)}`);
   if (T.aoe) out.push(`다른 적에게도 ${skMul(T.aoe)}`);
   if (T.pet) out.push(`동물 동료가 ${skPct(0.5 + T.pet)}로 함께 문다 (공격력 ${skMul((0.35 + T.pet) * BASIC_MULT)})`);
   out.push(`재사용 ${BASIC_CD}초 ÷ 공격 속도 ${skMul(d.spd)} = <b>${skSec(cd)}</b>`);

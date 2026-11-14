@@ -130,7 +130,7 @@ function offShot(e, a, d, foes) {
   const el = (T.thrown && T.el) || 'none', atk = d.atk * buffMul(e, a.id, 'atk');
   const twice = T.thrown ? d.thrown2 : d.bolt2;   // 빌드 65 숙련: 암기술 달인 · 석궁술 상급부터 — 한 번 더
   for (const tg of tgs) {
-    const c = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, tg, atk * BASIC_MULT * (T.thrown ? SHURI_MUL * (1 + (d.thrownPct || 0)) : XBOW_MUL * (1 + (d.boltPct || 0))), c, false, null, el, !T.thrown && d.boltPen ? { pen: d.boltPen } : undefined);   // 석궁술: 볼트 피해 · 방어 무시
+    const c = rnd() < capCrit(d, buffAdd(e, a.id, 'crit')), v = hitFoe(e, tg, atk * BASIC_MULT * (T.thrown ? SHURI_MUL * (1 + (d.thrownPct || 0)) : XBOW_MUL * (1 + (d.boltPct || 0))), c, false, null, el, !T.thrown && d.boltPen ? { pen: d.boltPen } : undefined);   // 석궁술: 볼트 피해 · 방어 무시
     ev(e, 'hit', Object.assign({ s: a.id, d: tg.uid, v, c, k: 'arrow', sid: key }, el !== 'none' ? { el } : {}, hitTag()));
     if (v && T.thrown && T.sta && tg.hp > 0 && rnd() < T.sta.p) inflictFoe(e, tg, T.sta, atk, a.id, key);
   }

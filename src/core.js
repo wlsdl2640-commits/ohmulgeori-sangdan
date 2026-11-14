@@ -83,23 +83,24 @@ function deriveBase(a) {
   const war = blessed('war') ? 1.15 : 1, earth = blessed('earth'), wind = blessed('wind'), lic = (LICENSE[a.rank || 0] || LICENSE[0]).mul;
   const X = k => traitSum(a, k);   // 타고난 특성
   const MC = msCounts(a);           // 빌드 69: 마석 (효과마다 상한 — data-maseok69.js)
+  const crit0 = C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0) + X('crit');   // 빌드 69 상한(data-cap69.js): 50%를 넘는 몫의 절반은 치명타 피해로
   return {
     T, atk: atk * war * lic * (1 + (P.atkPct || 0) + X('atkPct')),
     matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0) + X('matkPct')) * war * lic,
     def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08 + X('defPct')) * (earth ? 1.1 : 1) * lic,
     maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct') + relic('hp'))),   // 유물: 세계수의 씨앗·별의 여왕의 왕관
     maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct') + (P.mpPct || 0) + Math.min(RUNE_CAP.mpPct, G.mpPct || 0))),   // 마나 룬 (방어구)
-    // 환영의 문스톤: 회피는 Lv60쯤부터 거의 모두 상한 60%에 닿아 있어(민첩 × 0.4%) 문스톤 몫은 상한 밖에서 더한다 — 최대 72% (hitAdv도 0.6 + msEva로 자른다)
-    eva: Math.min(0.6, T.agi * 0.004 + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva')) + msVal(MC, 'moon'), msEva: msVal(MC, 'moon'),
-    crit: Math.min(0.75, C.crit + T.agi * 0.0015 + (G.crit || 0) + (P.crit || 0) + X('crit')),
-    block: Math.min(0.6, (G.block || 0) + (P.block || 0) + X('block') + msVal(MC, 'sapph')),       // 결계의 사파이어
-    counter: Math.min(0.7, (G.counter || 0) + (P.counter || 0) + X('counter') + msVal(MC, 'garn')),   // 역류의 가넷
-    double: Math.min(0.6, (G.double || 0) + (P.double || 0) + X('double')),
+    // 빌드 69 상한(11-14 12:18 사용자 「확률이 붙는건 최대치를 50%까지」): 회피는 모두 더해 50% — 민첩 몫은 35%까지(내 제안), 나머지는 장비 · 룬 · 환영의 문스톤 · 특성 · 스킬로
+    eva: Math.min(CAP.eva, Math.min(EVA_AGI_MAX, T.agi * 0.004) + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva') + msVal(MC, 'moon')),
+    crit: Math.min(CAP.crit, crit0),
+    block: Math.min(CAP.block, (G.block || 0) + (P.block || 0) + X('block') + msVal(MC, 'sapph')),       // 결계의 사파이어
+    counter: Math.min(CAP.counter, (G.counter || 0) + (P.counter || 0) + X('counter') + msVal(MC, 'garn')),   // 역류의 가넷
+    double: Math.min(CAP.double, (G.double || 0) + (P.double || 0) + X('double')),
     healPow: 1 + X('healPow') + (P.healPow || 0) + Math.min(RUNE_CAP.healPow, G.healPow || 0), rheal: X('rheal') + Math.min(RUNE_CAP.rheal, G.rheal || 0), hpRegen: X('hpRegen') + (P.hpRegen || 0), mpFlat: X('mpFlat'),   // 치유 룬: 무기 주는 회복 · 방어구 받는 회복
-    spd: C.spd * (1 + T.agi * 0.004) * (1 + (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd
+    spd: C.spd * (1 + T.agi * 0.004) * (1 + Math.min(CAP.spdPct, (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0))),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd (더하는 % 몫은 +100%까지)
     cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 CDR_MAX 30% — 빌드 69)
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
-    move: (6 + T.agi * 0.06) * (1 + (P.movePct || 0) + relic('move') + X('movePct') + (G.movePct || 0)) * (wind ? 1.15 : 1),
+    move: (6 + T.agi * 0.06) * (1 + Math.min(CAP.movePct, (P.movePct || 0) + relic('move') + X('movePct') + (G.movePct || 0))) * (wind ? 1.15 : 1),   // 빌드 69: 더하는 % 몫은 +200%까지
     mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3 + Math.min(RUNE_CAP.mpRegen, G.mpRegen || 0),   // 영민 룬(방어구) · 마나 룬(무기)
     // 빌드 64 룬 개편: 명중(몬스터 회피 −%p) · 기본 공격 방어 · 행동 방해 시간 − · 기본 공격 눈멂 · 눈멂 저항 · 흡혈 (속성 피해 d_*는 runeSum으로 hitFoe에서)
     hit: Math.min(RUNE_CAP.hit, G.hit || 0), bblock: Math.min(RUNE_CAP.bblock, G.bblock || 0), ccRes: Math.min(RUNE_CAP.ccRes, G.ccRes || 0),
@@ -107,7 +108,7 @@ function deriveBase(a) {
     mExec: P.exec || 0, mStun: P.stun || 0, mBuff: P.buffDur || 0,   // 숙련: 처형 피해 · 기본 공격 기절 · 강화 지속
     mres: Math.min(FIGHT.mresMax, mresJob(a) + (G.mres || 0) + (P.mres || 0) + X('mres')),   // 마법 저항 (빌드 63): 마법 피해 −%
     res: resOf(G, P, X),                                                                   // 속성 저항: { 불 계열: 0.1, … }
-    critDmg: P.critDmg || 0, firstCrit: P.firstCrit || 0, thrownPct: P.thrownPct || 0, petDmg: P.petDmg || 0, pBuff: P.pbuffDur || 0,   // 빌드 65 직업 개편: 치명 피해 · 첫 공격 치명 · 암기 피해 · 탈것 피해 · 파티 강화 지속
+    critDmg: Math.min(CAP.critDmg, (P.critDmg || 0) + Math.max(0, crit0 - CAP.crit) * CRIT_OVER), critOver: Math.max(0, crit0 - CAP.crit), firstCrit: P.firstCrit || 0, thrownPct: P.thrownPct || 0, petDmg: P.petDmg || 0, pBuff: P.pbuffDur || 0,   // 빌드 65 직업 개편: 치명 피해 · 첫 공격 치명 · 암기 피해 · 탈것 피해 · 파티 강화 지속
     baImm: P.baImm || 0, subst: P.subst || 0,                                              // 기본 공격 면역 · 쓰러질 한 방을 한 번 피함 (개편 직업용)
     // 빌드 69 마석: 받는 피해 − (다이아몬드) · 반사 (오팔) · 싸움 시작 보호막 (아쿠아마린) · 버티기 (호박) · 노려질 확률 − (흑요석)
     msDmg: msVal(MC, 'dia'), msRefl: msVal(MC, 'opal'), msShield: msVal(MC, 'aqua'), msEnd: msVal(MC, 'amber'), msHide: msVal(MC, 'obsid'),
@@ -253,14 +254,14 @@ function makeEncs(e) {
   return [25 + ri(-4, 4), 55 + ri(-4, 4), 85 + ri(-4, 4)];
 }
 function foeFrom(id, lv) {
-  const m = MONS[id], hp = Math.round(mHp(m, lv) * DIFF.hp);
+  const m = MONS[id], U = m.giant ? null : monMul69(lv), hp = Math.round(mHp(m, lv) * DIFF.hp * (U ? U.hp : 1));   // 빌드 69: 레벨마다 몬스터 능력치 배율 (data-monup69.js — 레이드 거인은 RAID69)
   if (S && S.advs) dexSeen(id);   // 도감: 만난 몬스터
-  return { uid: nid(), id, lv, hp, maxHp: hp, atk: mAtk(m, lv) * DIFF.atk, def: mDef(m, lv), spd: m.spd, eva: m.eva || 0, cd: 0.6 + rnd() * 0.8, boss: !!m.boss, dot: null, dotT: 0, slow: 0 };
+  return { uid: nid(), id, lv, hp, maxHp: hp, atk: mAtk(m, lv) * DIFF.atk * (U ? U.atk : 1), def: mDef(m, lv) * (U ? U.def : 1), spd: m.spd, eva: m.eva || 0, cd: 0.6 + rnd() * 0.8, boss: !!m.boss, dot: null, dotT: 0, slow: 0 };
 }
 // 희귀종: 아주 가끔 반짝이는 개체. 체력·공격·방어·회피가 높고 경험치가 많다 (data-sky.js RARE)
 function makeRare(f) {
   f.rare = 1; f.name = RARE.name + MONS[f.id].name;
-  f.hp = f.maxHp = Math.round(f.maxHp * RARE.hp); f.atk *= RARE.atk; f.def *= RARE.def; f.eva = Math.min(0.6, (f.eva || 0) + RARE.eva);
+  f.hp = f.maxHp = Math.round(f.maxHp * RARE.hp); f.atk *= RARE.atk; f.def *= RARE.def; f.eva = Math.min(CAP.rareEva, (f.eva || 0) + RARE.eva);
   return f;
 }
 // 둥지 몬스터: 둥지 이벤트가 있는 필드에서 섞여 나온다. 강하고 전리품이 두 배
@@ -320,6 +321,7 @@ function spawn(p, e) {
 function ev(e, type, data) {
   if (e.ev) { e.ev.push(Object.assign({ n: ++e.evN, type }, data)); if (e.ev.length > 50) e.ev.shift(); }
   if (type === 'spawn') msSpawn(e);   // 빌드 69 마석: 싸움이 시작될 때
+  if (type === 'fheal' && data && data.v > 0) e.fheal = (e.fheal || 0) + data.v;   // 빌드 69: 몬스터가 회복한 몫 (battle의 「공격이 통하지 않는다」 판정이 뺀다)
   // 전투 통계: 준 피해(스킬별)·받은 피해·치유·처치
   if (type === 'hit' && data.v) { const who = data.by || data.s; if (who) { bstat(e, who, 'dealt', data.v, data.sid || (data.b ? 'basic' : data.ctr ? 'counter' : data.pet ? 'pet' : data.k === 'pet' ? 'companion' : data.dot ? 'dot' : 'etc')); (e.lastHit || (e.lastHit = {}))[data.d] = who; } }
   else if (type === 'hurt' && data.v) bstat(e, data.d, 'taken', data.v);
@@ -560,14 +562,14 @@ function inflictAdv(e, a, o, atk) {
   e.sta = e.sta || {};
   const st = e.sta[a.id] || (e.sta[a.id] = {}), ff = foodFx(e).sta || 0;
   if (DOT_STA.includes(k)) {
-    const res = Math.min(0.9, (k === 'burn' ? traitSum(a, 'resBurn') : traitSum(a, 'resPoison')) + ff);
+    const res = Math.min(CAP.dotRes, (k === 'burn' ? traitSum(a, 'resBurn') : traitSum(a, 'resPoison')) + ff);   // 빌드 69: 90% → 60%
     const dps = Math.max(1, Math.round((atk || 10) * (o.m || 0.25) * (1 - res))), t = o.d || 8;
     if (STACK_STA[k]) { const v = st[k]; if (v) { v.n = Math.min(STACK_STA[k], (v.n || 1) + 1); v.dps = Math.max(v.dps, dps); v.t = Math.max(v.t, t); } else st[k] = { t, dps, acc: 0, n: 1 }; }   // 맹독: 쌓일수록 세진다
     else { if (st[k] && st[k].dps >= dps) { st[k].t = Math.max(st[k].t, t); return; } st[k] = { t, dps, acc: 0 }; }
   } else if (STACK_STA[k]) { const c = st[k], t = (o.d || 10) * (1 - ff); if (c) { c.n = Math.min(STACK_STA[k], (c.n || 1) + 1); c.t = Math.max(c.t, t); } else st[k] = { t, n: 1 }; }   // 부식
   else if (CC_IDS.includes(k)) {
-    const cut = traitSum(a, 'resCc') + (TR(a).ccRes || 0) + runeSum(a, 'ccRes') + (k === 'freeze' ? traitSum(a, 'resFreeze') : 0);   // 시간 룬 (방어구)
-    const d = (o.d || 3) * Math.max(0, 1 - cut) * (1 - ff); if (d <= 0.2) return;
+    const cut = Math.min(CAP.ccRes, traitSum(a, 'resCc') + (TR(a).ccRes || 0) + runeSum(a, 'ccRes') + (k === 'freeze' ? traitSum(a, 'resFreeze') : 0) + ff);   // 시간 룬 (방어구) · 빌드 69: 냉정함 · 탱커 · 룬 · 도시락을 모두 더해 60%까지 (예전엔 더하면 면역)
+    const d = (o.d || 3) * (1 - cut); if (d <= 0.2) return;
     st[k] = Math.max(st[k] || 0, d);
     if (k === 'para' || k === 'charm' || HARD_CC.includes(k)) comboBreak(e, a.id);   // 기절 · 마비 · 수면 · 빙결 · 석화 · 매혹이면 연계가 끊긴다
   } else {   // 쇠약 · 눈멂 · 저주
@@ -779,8 +781,9 @@ function cast(e, a, d, id, team, dm, foes) {
       if (s.exec && f.hp <= f.maxHp * EXEC_HP) atk *= s.exec;   // 스킬 자체의 처형 보너스
       if (d.mExec && f.hp <= f.maxHp * EXEC_HP) atk *= 1 + d.mExec;   // 숙련 (상급 도끼술)
       if (s.gamble) { const jack = rnd() < s.gamble.p; if (jack) { atk *= s.gamble.mult; ev(e, 'jackpot', { s: a.id }); } }   // 대박: 확률로 몇 배
-      const crit = s.crit === 1 || !!(NX && NX.crit) || firstCrit(e, a, d) || rnd() < d.crit + (s.crit || 0) + buffAdd(e, a.id, 'crit');
-      if (crit && d.critDmg) atk *= 1 + d.critDmg / (TR(a).critMul || 1.75);   // 치명타 피해 +% (행운의 여신 · 첫 화살)
+      const cadd = s.crit === 1 ? 0 : (s.crit || 0) + buffAdd(e, a.id, 'crit');   // 빌드 69: 치명타 확률은 50%까지 · 넘친 몫의 절반은 치명타 피해로 (data-cap69.js)
+      const crit = s.crit === 1 || !!(NX && NX.crit) || firstCrit(e, a, d) || rnd() < capCrit(d, cadd);
+      if (crit) { const cb = critBonus(d, cadd); if (cb) atk *= 1 + cb / (TR(a).critMul || 1.75); }   // 치명타 피해 +% (행운의 여신 · 첫 화살 · 넘친 치명타)
       const v = hitFoe(e, f, atk, crit, magic, a, skillEl(s, f, a), s);
       ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: s.fx || (magic ? 'magic' : CLASSES[a.cls].act === 'arrow' ? 'arrow' : 'melee'), sid: id }, hitTag()));
       if (!v) continue;   // 면역: 상태이상도 걸리지 않는다
@@ -865,7 +868,8 @@ function basicAct(e, a, d, team, dm, foes) {
   if (act === 'magic') {
     const f = frontFoe(foes);
     if (blind && rnd() < FIGHT.blind) { ev(e, 'fmiss', { s: a.id, d: f.uid }); return; }   // 눈멂
-    const mk = d.matk * buffMul(e, a.id, 'matk') * BASIC_MAGIC, crit = rnd() < d.crit + buffAdd(e, a.id, 'crit'), v = hitFoe(e, f, mk, crit, true, a, 'none');
+    const cadd = buffAdd(e, a.id, 'crit'), crit = rnd() < capCrit(d, cadd), cb = crit ? critBonus(d, cadd) : 0;   // 빌드 69: 치명타 50%까지 · 넘친 몫은 치명타 피해로
+    const mk = d.matk * buffMul(e, a.id, 'matk') * BASIC_MAGIC, v = hitFoe(e, f, mk * (cb ? 1 + cb / (T.critMul || 1.75) : 1), crit, true, a, 'none');
     ev(e, 'hit', Object.assign({ s: a.id, d: f.uid, v, c: crit, k: 'magic', b: 1 }, hitTag()));
     if (v && d.blindHit && f.hp > 0 && rnd() < d.blindHit) inflictFoe(e, f, { k: 'blind', d: RUNE_BLIND }, mk, a.id, 'rune');   // 섬광 룬 (무기)
     leech(e, a, d, v, true);
@@ -878,13 +882,13 @@ function basicAct(e, a, d, team, dm, foes) {
   const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
   const bow = shootsArrows(a), WR = bow ? null : wpnRune(a);   // WR = 속성 대검(빌드 65): 그 속성 추가 피해 · 상태이상
   if (bow && ammoLeft(a.eq.ammo, a) <= 0) { noAmmo(e, a); return; }   // 화살이 없으면 기본 공격을 못 한다
-  const swings = 1 + (rnd() < (T.double || 0) + (d.double || 0) ? 1 : 0), NX = takeNext(e, a.id), od = d.offDmg && a.eq && a.eq.off && a.eq.off.base === 'dagger2' ? d.offDmg : 0;   // NX = 다음 공격 강화(그림자 숨기 · 숨죽이기) · od = 쌍수술: 둘째 칼(보조 단검) 피해
+  const swings = 1 + (rnd() < Math.min(CAP.double, (T.double || 0) + (d.double || 0)) ? 1 : 0), NX = takeNext(e, a.id), od = d.offDmg && a.eq && a.eq.off && a.eq.off.base === 'dagger2' ? d.offDmg : 0;   // NX = 다음 공격 강화(그림자 숨기 · 숨죽이기) · od = 쌍수술: 둘째 칼(보조 단검) 피해
   for (let i = 0; i < swings; i++) {
     if (f.hp <= 0) break;
     if (bow && !useAmmo(a.eq.ammo, a, 1)) { noAmmo(e, a); break; }   // 한 발씩
     if (rnd() < Math.max(0, f.eva - (d.hit || 0)) + (blind ? FIGHT.blind : 0)) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }   // 회피는 기본 공격에만 · 눈멀면 20%p 더 · 바람 룬 명중은 몬스터 회피를 깎는다
-    const crit = (i === 0 && !!(NX && NX.crit)) || firstCrit(e, a, d) || rnd() < d.crit + buffAdd(e, a.id, 'crit');
-    const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (i === 0 && NX ? NX.mul : 1) * (crit && d.critDmg ? 1 + d.critDmg / (T.critMul || 1.75) : 1) * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1) * (act === 'melee' && isFly(f) ? FIGHT.fly : 1) * (i === 1 && od ? 1 + od : 1);   // 날아다니는 적: 근접 기본 공격 ×0.7   // 5초에 한 번, 그만큼 세게 (숙련 처형)
+    const cadd = buffAdd(e, a.id, 'crit'), crit = (i === 0 && !!(NX && NX.crit)) || firstCrit(e, a, d) || rnd() < capCrit(d, cadd), cb = crit ? critBonus(d, cadd) : 0;   // 빌드 69: 치명타 50%까지 · 넘친 몫은 치명타 피해로
+    const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (i === 0 && NX ? NX.mul : 1) * (cb ? 1 + cb / (T.critMul || 1.75) : 1) * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1) * (act === 'melee' && isFly(f) ? FIGHT.fly : 1) * (i === 1 && od ? 1 + od : 1);   // 날아다니는 적: 근접 기본 공격 ×0.7   // 5초에 한 번, 그만큼 세게 (숙련 처형)
     const bel = bow ? arrowEl(a) || 'none' : 'none';   // 속성 화살 (빌드 39)
     const v0 = hitFoe(e, f, atk, crit, false, a, bel), tag0 = hitTag();
     const vx = WR && f.hp > 0 ? hitFoe(e, f, atk * ELEM_SWORD_MUL, false, true, a, WR.el) : 0, v = v0 + vx;   // 속성 대검: 한 번 벨 때 그 속성 피해가 덧붙는다(면역이면 0 — 본 피해는 그대로)
@@ -940,8 +944,9 @@ const healMul = (e, aid) => (e.sta && e.sta[aid] && e.sta[aid].curse ? FIGHT.cur
 const fHealMul = f => (f.sta && f.sta.curse ? FIGHT.curseHeal : 1);
 // 잠든 · 돌이 된 · 홀린 적은 되도록 건드리지 않는다 (깨우거나 풀어 주지 않게)
 const calmFoe = f => f.hp > 0 && !(f.sta && (f.sta.sleep || f.sta.petrify || f.sta.charm));
-const frontFoe = foes => foes.find(calmFoe) || foes[0];
-const lowAwake = foes => { const c = foes.filter(calmFoe); return lowestFoe(c.length ? c : foes); };
+const tauntFoe = foes => foes.find(f => f.ftaunt > 0 && f.hp > 0) || null;   // 빌드 69: 몬스터 스킬 「도발」 — 그동안 한 명을 치는 공격 · 스킬은 그 몬스터에게
+const frontFoe = foes => tauntFoe(foes) || foes.find(calmFoe) || foes[0];
+const lowAwake = foes => { const t = tauntFoe(foes); if (t) return t; const c = foes.filter(calmFoe); return lowestFoe(c.length ? c : foes); };
 // 모험가 쪽 상태이상이 능력치에 주는 것 (stepExp가 dm에 얹는다)
 function staMods(d, st) {
   if (!st) return;
@@ -979,21 +984,26 @@ const fBuf = (f, stat) => (f.fbuf ? f.fbuf.reduce((m, b) => (b.stat === stat ? m
 const fHasBuf = (f, sid) => !!(f.fbuf && f.fbuf.some(b => b.sid === sid));
 function fTick(e, f, dt) {
   if (f.fbuf) { f.fbuf.forEach(b => { b.t -= dt; }); f.fbuf = f.fbuf.filter(b => b.t > 0); if (!f.fbuf.length) f.fbuf = null; }
+  if (f.ftaunt > 0) f.ftaunt -= dt;   // 빌드 69 몬스터 도발
   const L = monSkills(f); if (!L.length) return;
   if (!f.mcd) { f.mcd = {}; L.forEach(s => { f.mcd[s.id] = s.cd * (0.3 + rnd() * 0.5); }); }   // 처음 쓰는 때를 흩어 놓는다
   if (isHard(f.sta)) return;   // 행동 방해 중엔 스킬 대기시간도 멈춘다
   const k = dt * (f.sta && f.sta.chill ? 0.67 : 1);
   for (const id in f.mcd) f.mcd[id] = Math.max(0, f.mcd[id] - k);
 }
-function fSkillPick(f, foes, live) {
+// 빌드 69: 지울 수 있는 모험가 강화 (보호막 · 다음 공격 강화 · 내려앉음은 빼고)
+const fskBufs = (e, live) => e.buffs.filter(b => !['shield', 'ncrit', 'nmul', 'ground'].includes(b.stat) && (b.to === 'party' || live.some(x => x.id === b.to)));
+function fSkillPick(f, foes, live, dm, e) {
   const L = monSkills(f); if (!L.length || !f.mcd) return null;
   const allies = foes.filter(o => o.hp > 0);
   let best = null, bp = 0;
   for (const s of L) {
     if ((f.mcd[s.id] || 0) > 0) continue;
     let pr = 0;
-    if (s.kind === 'hit') pr = 5;
+    if (s.kind === 'hit') pr = s.tg === 'low' ? (dm && live.some(x => x.hp < dm[x.id].maxHp * 0.5) ? 7 : 4) : s.tg === 'mp' ? (live.some(x => x.mp > 30) ? 5 : 0) : 5;   // 빌드 69: 약한 자 노리기 · 마나 태우기
     else if (s.kind === 'drain') pr = f.hp < f.maxHp * 0.7 ? 7 : 4;
+    else if (s.kind === 'dispel') pr = e && fskBufs(e, live).length >= 2 ? 7 : 0;               // 빌드 69: 강화 지우기 — 걸린 강화가 둘 넘을 때만
+    else if (s.kind === 'taunt') pr = allies.length >= 2 && !(f.ftaunt > 0) ? 6 : 0;   // 도발: 동료를 지킬 때
     else if (s.kind === 'all') pr = live.length >= 2 ? 6 : 3;
     else if (s.kind === 'buff') pr = fHasBuf(f, s.id) ? 0 : 4;
     else if (s.kind === 'rally') pr = allies.length >= 2 && !allies.some(o => fHasBuf(o, s.id)) ? 5 : 0;
@@ -1006,31 +1016,44 @@ function fSkillPick(f, foes, live) {
 }
 // 차례가 왔을 때 준비된 스킬이 있으면 쓴다 (쓰면 true — 그 차례의 기본 공격 대신)
 function fSkill(p, e, f, foes, live, dm) {
-  const s = fSkillPick(f, foes, live);
+  const s = fSkillPick(f, foes, live, dm, e);
   if (!s || rnd() > FIGHT.skUse) return false;
   f.mcd[s.id] = s.cd * (0.9 + rnd() * 0.2);
   ev(e, 'fskill', { s: f.uid, id: s.id, name: s.name, kind: s.kind });
-  const O = { skill: 1, ms: 1, magic: !!s.magic, el: mskEl(s, f), sta: mskSta(s, f) || undefined, crit: s.crit || 0 };
+  const O = { skill: 1, ms: 1, magic: !!s.magic, el: mskEl(s, f), sta: mskSta(s, f) || undefined, crit: s.crit || 0, pen: s.pen || 0 };
   if (s.kind === 'hit' || s.kind === 'drain') {
     let tgt = e.taunt ? live.find(x => x.id === e.taunt.aid) || null : null;
+    if (!tgt && s.tg === 'low') tgt = live.slice().sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];   // 빌드 69 약한 자 노리기: 가장 다친 모험가
+    if (!tgt && s.tg === 'mp') tgt = live.slice().sort((x, y) => (y.mp || 0) - (x.mp || 0))[0];                       // 마나 태우기: MP가 가장 많은 모험가
     if (!tgt) tgt = pickTarget(live, e, dm);
     if (!e.taunt && live.length > 1) tgt = coverOf(e, live, tgt, dm) || tgt;
     for (let h = 0; h < (s.hits || 1); h++) {
       if (!up(tgt)) break;
-      const before = tgt.hp;
-      hitAdv(p, e, f, tgt, s.mult, dm, O);
+      const before = tgt.hp, mp0 = tgt.mp || 0;
+      const hit = hitAdv(p, e, f, tgt, s.mult, dm, h ? Object.assign({}, O, { hn: h }) : O);
       if (s.kind === 'drain') { const dealt = Math.max(0, before - Math.max(0, tgt.hp)), hv = Math.round(dealt * (s.heal || 0.5) * fHealMul(f)); if (hv > 0 && !f.giant) { f.hp = Math.min(f.maxHp, f.hp + hv); ev(e, 'fheal', { s: f.uid, d: f.uid, v: hv }); } }
+      if (s.mp && hit && up(tgt) && mp0 > 0) { tgt.mp = Math.max(0, mp0 - dm[tgt.id].maxMp * s.mp); ev(e, 'mpburn', { s: f.uid, d: tgt.id, v: Math.round(mp0 - tgt.mp) }); }   // 마나 태우기
     }
-  } else if (s.kind === 'all') {
+  } else if (s.kind === 'all' || s.kind === 'dispel') {
     ev(e, 'aoe', { s: f.uid, ms: 1 });
     live.forEach(x => hitAdv(p, e, f, x, s.mult, dm, O));
+    if (s.kind === 'dispel') {   // 빌드 69 강화 지우기: 모험가마다 걸린 강화를 n개(나중에 건 것부터) · 파티 전체 강화는 모두
+      const gone = new Set(), L = fskBufs(e, live);
+      live.forEach(x => L.filter(b => b.to === x.id).slice(-(s.n || 2)).forEach(b => gone.add(b)));
+      L.filter(b => b.to === 'party').forEach(b => gone.add(b));
+      if (gone.size) { e.buffs = e.buffs.filter(b => !gone.has(b)); ev(e, 'fdispel', { s: f.uid, n: gone.size }); }
+    }
+  } else if (s.kind === 'taunt') {   // 빌드 69 도발: 그동안 모험가의 한 명 공격 · 스킬은 이 몬스터에게 (frontFoe · lowAwake) + 방어 강화
+    f.ftaunt = s.dur || 6;
+    f.fbuf = (f.fbuf || []).filter(b => b.sid !== s.id); f.fbuf.push({ sid: s.id, stat: 'def', mul: s.mul || 1.3, t: s.dur || 6 });
+    ev(e, 'ftaunt', { s: f.uid, t: f.ftaunt });
   } else if (s.kind === 'buff' || s.kind === 'rally') {
     (s.kind === 'rally' ? foes.filter(o => o.hp > 0) : [f]).forEach(o => { o.fbuf = (o.fbuf || []).filter(b => b.sid !== s.id); o.fbuf.push({ sid: s.id, stat: s.stat, mul: s.mul, t: s.dur }); ev(e, 'fbuff', { s: f.uid, d: o.uid, stat: s.stat }); });
   } else if (s.kind === 'heal') {
     const o = s.self ? f : foes.filter(x => x.hp > 0).sort((x, y) => x.hp / x.maxHp - y.hp / y.maxHp)[0];
-    if (o && !o.giant) { const hv = Math.round(o.maxHp * s.pct * fHealMul(o)); o.hp = Math.min(o.maxHp, o.hp + hv); ev(e, 'fheal', { s: f.uid, d: o.uid, v: hv }); }
+    if (o && !o.giant) { const hv = Math.round(o.maxHp * s.pct * (o.fb ? FB_HEAL69 : 1) * fHealMul(o)); o.hp = Math.min(o.maxHp, o.hp + hv); ev(e, 'fheal', { s: f.uid, d: o.uid, v: hv }); }   // 빌드 69: 필드 우두머리는 HP가 몇 배라 회복 몫을 줄인다
   } else if (s.kind === 'shield') {
-    f.shd = Math.round(f.maxHp * s.pct); ev(e, 'fbuff', { s: f.uid, d: f.uid, stat: 'shield' });
+    const sh0 = Math.max(0, f.shd || 0); f.shd = Math.round(f.maxHp * s.pct * (f.fb ? FB_HEAL69 : 1)); e.fheal = (e.fheal || 0) + Math.max(0, f.shd - sh0); ev(e, 'fbuff', { s: f.uid, d: f.uid, stat: 'shield' });
   } else if (s.kind === 'summon') { f.nsum = (f.nsum || 0) + 1; fSummon(e, f, foes, s.mon, s.n || 1); }
   return true;
 }
@@ -1083,14 +1106,17 @@ function battle(p, e, team, dm, dt) {
   // 면역뿐이라 아무 피해도 못 주면 물러난다 (강철에 무속성만, 빛·신성에 속성만 …)
   // 적 무리가 바뀌면(새 무리·방어전 다음 차례·소환) 처음부터 다시 잰다
   const sig = foes.map(f => f.uid).join(',');
-  if (e.hpS !== sig) { e.hpS = sig; e.hpW = null; e.noDmg = 0; }
+  if (e.hpS !== sig) { e.hpS = sig; e.hpW = null; e.noDmg = 0; e.fheal = 0; e.hpB = null; e.noNet = 0; }
   const hpNow = foes.reduce((t, f) => t + Math.max(0, f.hp) + Math.max(0, f.shd || 0), 0);   // 몬스터 보호막이 깎이는 것도 피해로 센다
-  if (e.hpW == null || hpNow < e.hpW - 0.5) { e.hpW = hpNow; e.noDmg = 0; } else e.noDmg = (e.noDmg || 0) + dt;
-  if (e.noDmg > 14 && !e.flee && !foes.some(f => f.pvp)) {
-    const live = foes.filter(f => f.hp > 0), bossF = live.find(f => f.boss || f.fb), boss = !!bossF || e.area === 'raid', f0 = bossF || live[0];
-    e.flee = 2.5; e.fleeImm = boss ? 2 : 1; e.noDmg = 0; ev(e, 'immflee', { boss: boss ? 1 : 0 });
-    log(`${p.name}의 공격이 ${f0 ? f0.name || MONS[f0.id].name : '적'}에게 통하지 않는다! ${boss ? '넘을 수 없는 상대라 물러난다' : '싸움을 피해 지나간다'}.${f0 && monElNote(f0.id) ? ` (${monElNote(f0.id)})` : ''}`, 'bad');
-    HOOKS.toast(`${p.name}: 공격이 통하지 않아 ${boss ? '돌아옵니다' : '싸움을 피해 지나갑니다'}`);
+  const hpAdj = hpNow - (e.fheal || 0);   // 빌드 69: 몬스터가 회복 · 보호막으로 되돌린 몫을 빼고 본다 (회복하는 우두머리를 면역으로 잘못 보지 않게)
+  if (e.hpW == null || hpAdj < e.hpW - 0.5) { e.hpW = hpAdj; e.noDmg = 0; } else e.noDmg = (e.noDmg || 0) + dt;
+  if (e.hpB == null || hpNow < e.hpB - 0.5) { e.hpB = hpNow; e.noNet = 0; } else e.noNet = (e.noNet || 0) + dt;   // 회복까지 친 HP가 45초 동안 안 줄면 이길 수 없는 싸움
+  if ((e.noDmg > 14 || e.noNet > 45) && !e.flee && !foes.some(f => f.pvp)) {
+    const live = foes.filter(f => f.hp > 0), bossF = live.find(f => f.boss || f.fb), boss = !!bossF || e.area === 'raid', f0 = bossF || live[0], imm = e.noDmg > 14;
+    e.flee = 2.5; e.fleeImm = boss ? 2 : 1; e.noDmg = 0; e.noNet = 0; ev(e, 'immflee', { boss: boss ? 1 : 0, net: imm ? 0 : 1 });
+    if (imm) log(`${p.name}의 공격이 ${f0 ? f0.name || MONS[f0.id].name : '적'}에게 통하지 않는다! ${boss ? '넘을 수 없는 상대라 물러난다' : '싸움을 피해 지나간다'}.${f0 && monElNote(f0.id) ? ` (${monElNote(f0.id)})` : ''}`, 'bad');
+    else log(`${p.name}은(는) ${f0 ? f0.name || MONS[f0.id].name : '적'}의 회복을 넘지 못한다 — 이길 수 없는 싸움이라 ${boss ? '물러난다' : '싸움을 피해 지나간다'}.`, 'bad');
+    HOOKS.toast(`${p.name}: ${imm ? '공격이 통하지 않아' : '이길 수 없는 싸움이라'} ${boss ? '돌아옵니다' : '싸움을 피해 지나갑니다'}`);
   }
   e.buffs.forEach(b => { b.t -= dt; });
   e.buffs = e.buffs.filter(b => b.t > 0 && !(b.stat === 'shield' && b.hp <= 0));   // 다 깨진 보호막은 걷는다
@@ -1149,25 +1175,29 @@ function battle(p, e, team, dm, dt) {
     if (e.taunt) tgt = live.find(x => x.id === e.taunt.aid) || null;
     if (!tgt) { const pool = live.filter(x => !((dm[x.id].baImm || TR(x).baImm) && !(buffAdd(e, x.id, 'ground') > 0))); tgt = pickTarget(pool.length ? pool : live, e, dm); }   // 기본 공격 면역(하늘에 뜬 용기수 …)은 혼자 남았을 때만 맞는다
     if (!e.taunt && live.length > 1) tgt = coverOf(e, live, tgt, dm) || tgt;
-    hitAdv(p, e, f, tgt, 1, dm);
+    const nh = f.pvp ? 1 : MONS[f.id].hits || 1;   // 빌드 69 몬스터 연타 (data-monup69.js): 대마다 회피 · 피해 ×HITS_MUL, 상태이상 · 반격은 한 번만
+    if (nh > 1) { const once = {}; for (let h = 0; h < nh && up(tgt); h++) hitAdv(p, e, f, tgt, HITS_MUL[nh] || 1 / nh, dm, { hn: h, once }); }
+    else hitAdv(p, e, f, tgt, 1, dm);
   }
   for (let i = foes.length - 1; i >= 0; i--) if (foes[i].hp <= 0) { const f = foes[i]; foes.splice(i, 1); kill(p, e, f); }
   if (!foes.length) { e.cd = {}; e.buffs = []; e.taunt = null; e.subst = null; e.fc = null; ev(e, 'clear', {}); }
 }
 // 몬스터가 모험가를 친다. o: { skill 스킬(회피 안 듦 · 눈멀면 20% 빗나감) · aoe 광역기 · ms 몬스터 스킬 · magic · el 속성 · sta 상태이상 · crit }
 function hitAdv(p, e, f, x, mult, dm, o) {
-  if (!up(x)) return;
+  if (!up(x)) return false;
   o = o || {};
   const d = dm[x.id], m = MONS[f.id], fs = f.sta, blind = !!(fs && fs.blind), magic = o.magic != null ? !!o.magic : !!m.magic;
-  if (!o.skill && !o.ms && !o.aoe && buffAdd(e, x.id, 'deflect') > 0) { ev(e, 'miss', { s: f.uid, d: x.id, df: 1 }); return; }   // 튕겨내기(닌자): 기본 공격을 모두 튕겨 낸다
-  if (o.skill ? blind && rnd() < FIGHT.blind : rnd() < Math.min(0.6 + (d.msEva || 0), d.eva + buffAdd(e, x.id, 'eva')) + (blind ? FIGHT.blind : 0)) { ev(e, 'miss', { s: f.uid, d: x.id, bl: blind ? 1 : 0 }); return; }   // 회피는 기본 공격에만
+  if (!o.skill && !o.ms && !o.aoe && buffAdd(e, x.id, 'deflect') > 0) { ev(e, 'miss', { s: f.uid, d: x.id, df: 1 }); return false; }   // 튕겨내기(닌자): 기본 공격을 모두 튕겨 낸다
+  const hn = o.hn ? { hn: o.hn } : {};   // 빌드 69 몬스터 연타: 몇 번째 한 대인지 (화면이 한 대씩 늦게 그린다)
+  if (o.skill ? blind && rnd() < FIGHT.blind : rnd() < Math.min(CAP.eva, d.eva + buffAdd(e, x.id, 'eva')) + (blind ? FIGHT.blind : 0)) { ev(e, 'miss', Object.assign({ s: f.uid, d: x.id, bl: blind ? 1 : 0 }, hn)); return false; }   // 회피는 기본 공격에만 (빌드 69: 강화를 더해도 50%까지)
   const el = o.el || (magic || o.aoe ? fAtkEl(f) : 'none'), fam = elFam(el), xs = e.sta && e.sta[x.id];
-  const def = d.def * buffMul(e, x.id, 'def') * (magic ? 0.5 : 1);
+  const def = d.def * buffMul(e, x.id, 'def') * (magic ? 0.5 : 1) * (1 - (o.pen || 0));   // 빌드 69: 몬스터 스킬 「꿰뚫기」는 방어를 덜 본다
   const crit = rnd() < (f.boss ? 0.08 : 0.04) + (o.crit || 0);
-  const pet0 = petOfParty(p), guard = Math.min(0.6, TQ(x, 'guard') + relic('guard') + buffAdd(e, x.id, 'guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
-  const blk = rnd() < Math.min(0.6, (d.block || 0) + buffAdd(e, x.id, 'block') + (o.skill || o.ms || o.aoe ? 0 : d.bblock || 0));   // 예리함 룬(방어구): 기본 공격만 막는다
+  const pet0 = petOfParty(p), guard = Math.min(CAP.guard, TQ(x, 'guard') + relic('guard') + buffAdd(e, x.id, 'guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
+  const blk = rnd() < Math.min(CAP.block, (d.block || 0) + buffAdd(e, x.id, 'block') + (o.skill || o.ms || o.aoe ? 0 : d.bblock || 0));   // 예리함 룬(방어구): 기본 공격만 막는다 (빌드 69: 모두 더해 50%까지)
   const resist = (magic ? 1 - (d.mres || 0) : 1) * (fam !== 'none' ? 1 - ((d.res && d.res[fam]) || 0) : 1);   // 마법 저항 · 속성 저항
-  let v = Math.max(1, Math.round(f.atk * fBuf(f, 'atk') * (fs && fs.weak ? 0.8 : 1) * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (1 - guard) * (blk ? 0.25 : 1) * resist * (1 - (d.msDmg || 0))));   // 빌드 69: 수호진의 다이아몬드
+  const cut = Math.max(CAP.dmgFloor, (1 - guard) * resist * (1 - (d.msDmg || 0)));   // 빌드 69: 받는 피해 감소 · 저항 · 수호진의 다이아몬드를 곱해도 원래의 20% 아래로는 안 내려간다 (막기 1/4은 따로)
+  let v = Math.max(1, Math.round(f.atk * fBuf(f, 'atk') * (fs && fs.weak ? 0.8 : 1) * mult * (0.85 + rnd() * 0.3) * red(def) * (crit ? 1.6 : 1) * (blk ? 0.25 : 1) * cut));
   if (xs && xs.freeze && fam === 'fire') { v = Math.round(v * FIGHT.thaw); delete xs.freeze; ev(e, 'stoff', { d: x.id, k: 'freeze', side: 'a' }); }   // 빙결: 불에 깨지며 ×1.3
   if (xs) wakeOnHit(e, xs, x.id, 'a');
   // 보호막이 먼저 깎인다
@@ -1175,22 +1205,28 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   const v0 = v;   // 빌드 69 오팔 반사: 보호막이 막기 전 피해로 센다
   for (const b of e.buffs) { if (v <= 0) break; if (b.stat === 'shield' && b.to === x.id && b.hp > 0) { const ab = Math.min(b.hp, v); b.hp -= ab; v -= ab; sh += ab; } }
   if (sh) ev(e, 'shield', { s: f.uid, d: x.id, v: sh });
-  if (v <= 0) { msReflect(e, f, x, d, v0); return; }
-  if (x.hp - v <= 0 && (d.subst || TR(x).subst) && !(e.subst && e.subst[x.id])) { (e.subst || (e.subst = {}))[x.id] = 1; x.hp = Math.max(x.hp, Math.round(d.maxHp * 0.3)); ev(e, 'subst', { d: x.id, s: f.uid }); return; }   // 쓰러질 한 방을 싸움마다 한 번 피한다 (통나무 바꾸기 …)
+  if (v <= 0) { msReflect(e, f, x, d, v0); return true; }
+  if (x.hp - v <= 0 && (d.subst || TR(x).subst) && !(e.subst && e.subst[x.id])) { (e.subst || (e.subst = {}))[x.id] = 1; x.hp = Math.max(x.hp, Math.round(d.maxHp * 0.3)); ev(e, 'subst', { d: x.id, s: f.uid }); return true; }   // 쓰러질 한 방을 싸움마다 한 번 피한다 (통나무 바꾸기 …)
   let endure = 0;
   if (x.hp - v <= 0 && x.hp > 1 && d.msEnd && !(e.msEnd && e.msEnd[x.id])) { (e.msEnd || (e.msEnd = {}))[x.id] = 1; if (rnd() < d.msEnd) { v = Math.ceil(x.hp) - 1; endure = 1; } }   // 빌드 69 불멸의 호박: 쓰러질 한 방을 HP 1로 (싸움마다 한 번)
   x.hp -= v;
-  ev(e, 'hurt', Object.assign({ s: f.uid, d: x.id, v, c: crit, k: magic ? 'magic' : '', blk: blk ? 1 : 0 }, o.ms ? { ms: 1 } : {}, fam !== 'none' ? { el } : {}));
+  ev(e, 'hurt', Object.assign({ s: f.uid, d: x.id, v, c: crit, k: magic ? 'magic' : '', blk: blk ? 1 : 0 }, o.ms ? { ms: 1 } : {}, fam !== 'none' ? { el } : {}, hn));
   if (endure) ev(e, 'endure', { d: x.id, s: f.uid });
   msReflect(e, f, x, d, v0);
-  if (x.hp <= 0) { down(p, e, x, f); return; }
-  const ms = o.sta !== undefined ? o.sta : (m.sta || f.inflict);
-  if (ms && rnd() < ms.p) inflictAdv(e, x, ms, f.atk);
+  if (x.hp <= 0) { down(p, e, x, f); return true; }
+  if (!(o.once && o.once.sta)) {   // 빌드 69 연타: 한 번 칠 때 상태이상은 처음 들어간 한 대만
+    if (o.once) o.once.sta = 1;
+    const ms = o.sta !== undefined ? o.sta : (m.sta || f.inflict);
+    if (ms && rnd() < ms.p) inflictAdv(e, x, ms, f.atk);
+    if (o.sta === undefined && m.sta2 && rnd() < m.sta2.p) inflictAdv(e, x, m.sta2, f.atk);   // 빌드 69: 우두머리 · 던전 주인은 맞힐 때 거는 상태이상이 둘 (data-monup69.js)
+  }
   const st = e.sta && e.sta[x.id];
-  if (!(st && (st.para || st.charm || isHard(st))) && rnd() < Math.min(0.7, (d.counter || 0) + buffAdd(e, x.id, 'counter'))) {
+  if (!(o.once && o.once.ctr) && !(st && (st.para || st.charm || isHard(st))) && rnd() < Math.min(CAP.counter, (d.counter || 0) + buffAdd(e, x.id, 'counter'))) {
+    if (o.once) o.once.ctr = 1;   // 연타에는 한 번만 되받아친다
     const cv = hitFoe(e, f, d.atk * buffMul(e, x.id, 'atk') * 0.8, rnd() < d.crit, false, x, 'none');
     ev(e, 'hit', Object.assign({ s: x.id, d: f.uid, v: cv, c: false, k: 'melee', ctr: 1 }, hitTag()));
   }
+  return true;   // 빌드 69: 맞았으면 참 (빗나감 · 튕김은 거짓 — 마나 태우기 같은 스킬이 본다)
 }
 function kill(p, e, f) {
   const m = MONS[f.id], F = FIELDS[e.field];

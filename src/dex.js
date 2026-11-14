@@ -87,7 +87,7 @@ function monCard(id) {
     const extra = m.giant ? `<div class="sub muted">레이드 등수 보상: ${ITEMS['rp_' + where[0].raid] ? ITEMS['rp_' + where[0].raid].name : '부속품'}, ${ITEMS['rh_' + where[0].raid] ? ITEMS['rh_' + where[0].raid].name : '심장'}, 개화석(1위 ${SD.bloomstone.raidN[0]}·2위 ${SD.bloomstone.raidN[1]}·3위 ${SD.bloomstone.raidN[2]}), 마법사의 돌(1위 ${stonePct(SD.wizstone.raidP[0])}~참가 ${stonePct(SD.wizstone.raidP[3])})</div>` : m.boss && !m.fb ? `<div class="sub muted">던전을 처음 공략하면 보물 상자(장비·스킬북·주인의 혼·룬)와 유물. 주인을 잡을 때마다 ${stoneTxt('boss')}</div>` : `<div class="sub muted">필드에서는 약초 12%${lvl >= 3 ? ', 장비 0.6% (던전 2.5%)' : ''}. 스킬북은 던전 안에서 ${BOOK_RATE.dungeon * 100}%, 우두머리로 나오면 ${Math.round(BOOK_RATE.fb * 100)}%, 주인이면 ${Math.round(BOOK_RATE.boss * 100)}%. 우두머리로 나오면 증표·핵·혼과 ${stoneTxt('fb')}, 필드의 주인이면 ${stoneTxt('lord')}</div>`;
     drops = `<div class="sec" style="margin-top:6px"><b>전리품</b><span>${lvl >= 3 ? '확률' : '15마리부터 확률'}</span></div>${rows || '<div class="sub muted">떨어뜨리는 것 없음</div>'}${books ? `<div class="sub muted" style="margin-top:4px">스킬북</div>${books}` : ''}${extra}`;
   } else drops = `<div class="sub muted">5마리 잡으면 전리품이, 15마리면 확률이 열려요.</div>`;
-  const sta = lvl >= 4 ? `<div class="sub ok-t">완전 기록: 이 몬스터에게 주는 피해 +3%${m.sta ? ` · 거는 상태이상: ${STATUS[m.sta.k].name} (${Math.round(m.sta.p * 100)}%)` : ''}</div>` : `<div class="sub muted">30마리 잡으면 완전 기록 (피해 +3%${m.sta ? ', 상태이상 정보' : ''})</div>`;
+  const sta = lvl >= 4 ? `<div class="sub ok-t">완전 기록: 이 몬스터에게 주는 피해 +3%${m.sta ? ` · 거는 상태이상: ${[m.sta, m.sta2].filter(x => x && STATUS[x.k]).map(x => `${STATUS[x.k].name} (${Math.round(x.p * 100)}%)`).join(' · ')}` : ''}</div>` : `<div class="sub muted">30마리 잡으면 완전 기록 (피해 +3%${m.sta ? ', 상태이상 정보' : ''})</div>`;
   const rr = dexRare(id), rareRow = m.boss || m.giant || m.fb ? '' : rr ? `<div class="sub gold-t">★ 희귀종 ${rr}마리 기록: 이 종에게 주는 피해 +${Math.round(RARE.dmg * 100)}% · 전리품 +${Math.round(RARE.drop * 100)}%</div>` : `<div class="sub muted">희귀종(반짝이는 개체, 1/${Math.round(1 / RARE.p)})을 잡으면 이 종에게 피해 +${Math.round(RARE.dmg * 100)}%·전리품 +${Math.round(RARE.drop * 100)}%</div>`;
   return `<details class="card dexm"><summary><span class="row"><img class="dexi" src="${monIconURL(id)}" alt=""><span class="grow stack"><span>${m.name} ${tags}${rr ? ' <span class="tag gold-t">★희귀</span>' : ''}</span><span class="sub">${where.map(w => esc(w.where)).join(' · ') || '?'} · 잡음 <b class="num">${k}</b> · 기록 ${lvl}/4</span></span></span></summary>
     <div class="sub">${monTypes(id).map(t => `<span class="tyt">${MTYPES[t] ? MTYPES[t].name : t}</span>`).join('')} 속성 ${monEls(id).length ? monEls(id).map(elTag).join('·') : '<span class="muted">없음</span>'}${monElNote(id) ? ` <span class="muted">· ${monElNote(id)}</span>` : ''}</div>
@@ -95,9 +95,9 @@ function monCard(id) {
 }
 // 빌드 63: 공격 속성 · 날아다님 · 몸의 면역 · 몬스터 스킬 · 우두머리 단계
 function mskText(s, id) {
-  const K = { hit: '한 명', drain: '한 명 · 흡혈', all: '모두', buff: '자기 강화', rally: '동료 모두 강화', heal: s.self ? '자기 회복' : '동료 회복', shield: '보호막', summon: '졸개 부르기' }[s.kind] || '';
+  const K = { hit: s.tg === 'low' ? '가장 다친 한 명' : s.tg === 'mp' ? 'MP가 많은 한 명' : '한 명', drain: '한 명 · 흡혈', all: '모두', dispel: '모두 · 강화 지우기', taunt: `도발 ${s.dur || 6}초 · 방어 ×${s.mul || 1.3}`, buff: '자기 강화', rally: '동료 모두 강화', heal: s.self ? '자기 회복' : '동료 회복', shield: '보호막', summon: '졸개 부르기' }[s.kind] || '';   // 빌드 69 새 틀
   const P = [K], f = { id };
-  if (['hit', 'drain', 'all'].includes(s.kind)) { P.push(`×${s.mult}${(s.hits || 1) > 1 ? ' ' + s.hits + '번' : ''}${s.magic ? ' 마법' : ''}`); const el = mskEl(s, f); if (el !== 'none') P.push(elName(el)); }
+  if (['hit', 'drain', 'all', 'dispel'].includes(s.kind)) { P.push(`×${s.mult}${(s.hits || 1) > 1 ? ' ' + s.hits + '번' : ''}${s.magic ? ' 마법' : ''}${s.pen ? ` · 방어 ${Math.round(s.pen * 100)}% 무시` : ''}${s.mp ? ` · 최대 MP ${Math.round(s.mp * 100)}% 태움` : ''}`); const el = mskEl(s, f); if (el !== 'none') P.push(elName(el)); }
   const st = mskSta(s, f); if (st && STATUS[st.k]) P.push(`${STATUS[st.k].name} ${Math.round(st.p * 100)}%`);
   if (s.stat) P.push(`${{ atk: '공격', def: '방어', spd: '속도' }[s.stat] || s.stat} ×${s.mul} ${s.dur}초`);
   if (s.pct) P.push(`최대 HP ${Math.round(s.pct * 100)}%`);
@@ -108,7 +108,7 @@ function mskText(s, id) {
 function monFightRow(id, lvl) {
   const m = MONS[id], f = { id }, el = fAtkEl(f), imm = ['undead', 'construct', 'elemental'].some(t => monTypes(id).includes(t));
   const tags = [m.fly ? '<span class="tag">날아다님 · 근접 기본 공격 -30%</span>' : '', imm ? '<span class="tag">중독 · 맹독 · 출혈 면역</span>' : ''].filter(Boolean).join(' ');
-  const head = `<div class="sub">공격 속성 ${el !== 'none' ? elTag(el) : '<span class="muted">무속성</span>'}<span class="muted"> · 마법 공격과 광역기에 실린다</span>${tags ? ' ' + tags : ''}</div>`;
+  const head = `<div class="sub">공격 속성 ${el !== 'none' ? elTag(el) : '<span class="muted">무속성</span>'}<span class="muted"> · 마법 공격과 광역기에 실린다</span>${tags ? ' ' + tags : ''}</div>${m.hits > 1 ? `<div class="sub">기본 공격 ${m.hits}연타 <span class="muted">· 대마다 ×${HITS_MUL[m.hits]} · 회피는 대마다</span></div>` : ''}`;   // 빌드 69
   const L = (m.msk || []);
   if (!L.length && !m.boss) return head;
   if (lvl < 2) return head + `<div class="sub muted">5마리 잡으면 스킬이 열려요.</div>`;

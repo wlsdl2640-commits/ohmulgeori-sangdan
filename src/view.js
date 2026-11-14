@@ -754,15 +754,16 @@ function events(e, pos, t, team, p) {
     if (x.n <= V.lastN) continue;
     const md = x.type === 'hit' || x.type === 'fmiss' ? motOn(advOf(x.s), x, t) : 0;   // 칼 동작: 맞히는 장까지 남은 시간
     const fd = (x.type === 'hurt' && !x.dot) || x.type === 'miss' || x.type === 'aoe' || (x.type === 'shield' && !x.on) ? fmotOn(e, x, t, e.ev[xi + 1], at) : 0;   // 몬스터 동작 (빌드 43): 맞는 때까지
+    const hd = !fd && (x.type === 'hurt' || x.type === 'miss') && x.hn ? x.hn * FMOT_HN : 0;   // 빌드 69 몬스터 연타: 예전 그림 몬스터도 한 대씩 늦게 (새 그림은 fmotOn이)
     if (x.type === 'hit') { /* 소리는 맞는 때에 (아래 hit) */ }
-    else if (x.type === 'hurt' && !x.dot) sfxAt('hurt', fd);
+    else if (x.type === 'hurt' && !x.dot) sfxAt('hurt', fd + hd);
     else if (x.type === 'heal' || x.type === 'pot' || x.type === 'fheal') sfx(x.type === 'pot' ? 'pot' : 'heal');
     else if (x.type === 'buff' || x.type === 'revive' || (x.type === 'shield' && x.on && !x.ms)) sfx('buff');   // 빌드 69: 마석 보호막(싸움 시작)은 소리 없이
     else if (x.type === 'kill') sfx('kill');
     else if (x.type === 'lvl' || x.type === 'petlvl') sfx('lvl');
     else if (x.type === 'down') sfx('down');
     else if (x.type === 'loot' || x.type === 'gear') sfx('loot');
-    else if (x.type === 'miss' || x.type === 'fmiss') sfxAt('miss', x.type === 'miss' ? fd : md);
+    else if (x.type === 'miss' || x.type === 'fmiss') sfxAt('miss', x.type === 'miss' ? fd + hd : md);
     else if (x.type === 'mastery') sfx('mast');
     else if (x.type === 'spawn' && x.boss) sfx('boss');
     else if (x.type === 'arena') sfx(x.win ? 'win' : 'lose');
@@ -843,22 +844,23 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'hurt') {
       const am = amid(x.d), aq = at('a' + x.d);
       if (!am) continue;
-      const T1 = t + fd;   // 맞는 때 (언데드는 동작이 닿는 때 · 그 밖은 바로)
-      if (!fd) V.lunge['f' + x.s] = t + 0.14;
+      const T1 = t + fd + hd;   // 맞는 때 (언데드는 동작이 닿는 때 · 그 밖은 바로 — 연타는 한 대씩 늦게)
+      if (!fd && !hd) V.lunge['f' + x.s] = t + 0.14;
+      else if (hd) V.lunge['f' + x.s] = T1 + 0.1;
       if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: T1, d: 0.6 }); motCast(advOf(x.d), 'block', T1 - 0.1, 1); }
       V.flash['a' + x.d] = T1 + 0.1; V.flash0['a' + x.d] = T1; V.fhit['a' + x.d] = T1;
       const fm = fmid(x.s);
       if (fd) fmotHitFx(e, x, t, fd, am, aq, at);   // 언데드: 갈래 효과 (투사체 · 맞히기)
       else {
         if (fm && x.k === 'magic') V.fx.push({ k: 'orb', x0: fm[0], y0: fm[1], x1: am[0], y1: am[1], t0: t - 0.12, d: 0.14, c: '#d86aff', c2: '#ffffff', size: 2 });
-        V.fx.push({ k: 'slash', x: am[0], y: am[1], t0: t, d: 0.18, c: '#ff8a7a', dir: -(V.dir || 1) });
-        V.fx.push({ k: 'burst', x: am[0], y: am[1], t0: t, d: 0.25, c: '#ff6a5a', c2: '#ffd0c0' });
+        V.fx.push({ k: 'slash', x: am[0] + (x.hn ? 3 * (x.hn % 2 ? 1 : -1) : 0), y: am[1] + (x.hn || 0) * 2, t0: T1, d: 0.18, c: '#ff8a7a', dir: -(V.dir || 1) });
+        V.fx.push({ k: 'burst', x: am[0], y: am[1], t0: T1, d: 0.25, c: '#ff6a5a', c2: '#ffd0c0' });
       }
-      V.fx.push({ k: 'num', x: aq[0], y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6, s: String(x.v), c: x.c ? '#ff9a3a' : '#ff6a5a', t0: T1, d: 0.7 });
+      V.fx.push({ k: 'num', x: aq[0] + (x.hn ? (x.hn % 2 ? 5 : -5) : 0), y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6 - (x.hn || 0) * 4, s: String(x.v), c: x.c ? '#ff9a3a' : '#ff6a5a', t0: T1, d: 0.7 });
     } else if (x.type === 'miss') {
       const aq = at('a' + x.d);
-      if (!fd) V.lunge['f' + x.s] = t + 0.14;
-      if (aq) V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12, s: x.df ? '튕김' : 'MISS', c: x.df ? '#ffe08a' : '#cfe8ff', t0: t + fd, d: 0.6 });   // df = 튕겨내기(닌자)
+      if (!fd && !hd) V.lunge['f' + x.s] = t + 0.14;
+      if (aq) V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12 - (x.hn || 0) * 4, s: x.df ? '튕김' : 'MISS', c: x.df ? '#ffe08a' : '#cfe8ff', t0: t + fd + hd, d: 0.6 });   // df = 튕겨내기(닌자)
     } else if (x.type === 'aoe') {
       const q = at('f' + x.s);
       if (fd) fmotAoe(e, x, t, fd, team, at);   // 언데드 광역기: 박쥐 떼 · 죽음의 파동 · 죽음의 회전 · 암흑 강타
@@ -914,6 +916,13 @@ function events(e, pos, t, team, p) {
       const ft = ftop(x.s), fq = at('f' + x.s);
       if (ft) callout(ft[0], ft[1] - 2, x.name, 'msk');
       if (fq && !['hit', 'drain', 'all'].includes(x.kind)) V.fx.push({ k: 'cast', x: fq[0], y: fq[1], t0: t, d: 0.4, c: x.kind === 'heal' ? '#8af08a' : '#ff9a6a' });
+    } else if (x.type === 'fdispel') {   // 빌드 69 몬스터 「강화 지우기」
+      team.filter(m => !m.down).forEach(m => { const q = at('a' + m.id); if (q) V.fx.push({ k: 'buff', x: q[0], y: q[1], t0: t + 0.2, d: 0.6, c: '#8a8ab8' }); });
+      const ft = ftop(x.s); if (ft) callout(ft[0], ft[1] - 14, '강화 지움!', 'dot');
+    } else if (x.type === 'ftaunt') {    // 빌드 69 몬스터 「도발」
+      const fq = at('f' + x.s), ft = ftop(x.s); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 0.8, c: '#ff5a4a' }); if (ft) V.fx.push({ k: 'num', x: ft[0], y: ft[1] - 10, s: '!', c: '#ff5a4a', t0: t, d: 1.2, big: 1 });
+    } else if (x.type === 'mpburn') {    // 빌드 69 몬스터 「마나 태우기」
+      const aq = at('a' + x.d); if (aq) V.fx.push({ k: 'num', x: aq[0] - 6, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 14, s: '-' + x.v + ' MP', c: '#7ab8ff', t0: t + 0.1, d: 0.8 });
     } else if (x.type === 'fbuff') {
       const fq = at('f' + x.d); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 0.7, c: BUFF_C[x.stat] || '#ff9a6a' });
     } else if (x.type === 'fphase') {   // 우두머리 단계: 분노 · 마지막 발악
@@ -1072,6 +1081,9 @@ function logEvent(x, e, p) {
   if (x.type === 'miss') return add(x.df ? `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 튕겨 냈습니다.` : x.bl ? `${foe(Fn(x.s))}의 공격이 ${ally(A(x.d))}에게 빗나갔습니다. (눈멂)` : `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
   if (x.type === 'aoe') { if (!x.ms) add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn'); return; }
   if (x.type === 'fskill') return add(`${foe(Fn(x.s))}의 「${esc(x.name)}」!`, 'warn');
+  if (x.type === 'fdispel') return add(`${foe(jo(Fn(x.s), '이', '가'))} 걸린 강화 ${x.n}개를 지웠다!`, 'warn');   // 빌드 69
+  if (x.type === 'ftaunt') return add(`${foe(jo(Fn(x.s), '이', '가'))} 도발한다 — ${Math.round(x.t)}초 동안 공격이 그쪽으로 쏠린다.`, 'warn');
+  if (x.type === 'mpburn') return add(`${ally(A(x.d))}의 MP가 ${num(x.v, 'b')} 타 버렸다.`, 'dim');
   if (x.type === 'fphase') return add(x.k === 2 ? `<i class="lg-c">마지막 발악!</i> ${foe(jo(Fn(x.s), '이', '가'))} 광역기를 더 자주 쓴다${x.n ? ' · 졸개를 불렀다' : ''}.` : `<i class="lg-c">분노!</i> ${foe(Fn(x.s))}의 공격이 빨라졌다.`, 'warn');
   if (x.type === 'fsum') return add(`${foe(jo(Fn(x.s), '이', '가'))} ${esc(MONS[x.id] ? MONS[x.id].name : '졸개')}${x.n > 1 ? ` 무리(${x.n})` : ''}를 불렀다!`, 'warn');
   if (x.type === 'ffear') return add(x.c ? `${foe(Fn(x.s))}은(는) 홀렸지만 칠 상대가 없어 멍하니 서 있다.` : `${foe(jo(Fn(x.s), '이', '가'))} 겁에 질려 머뭇거린다.`, 'dim');
