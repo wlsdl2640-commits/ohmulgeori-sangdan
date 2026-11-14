@@ -735,6 +735,7 @@ function pickSkill(a, d, team, dm, foes, e) {
     } else if (s.kind === 'heal') {
       const hurt = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * (s.tgt === 'party' ? 0.7 : 0.6));
       if (s.tgt === 'party' ? hurt.length >= 2 : hurt.length >= 1) pr = s.tgt === 'party' ? 11 : 10;
+      else if (s.tgt === 'party' && team.some(x => up(x) && x.hp < dm[x.id].maxHp * 0.4)) pr = 9.5;   // 빌드 69 (11-14 19:58 「넣자」): 파티 치유만 고른 힐러도 한 명이 크게 다치면 쓴다 (한 명 치유가 있으면 그쪽이 먼저)
       if (s.reviveAll && downedOf(e, team).length) pr = 13;   // 천상의 기적: 쓰러진 동료가 있으면 가장 먼저
     } else if (s.kind === 'buff') {
       if (!e.buffs.some(b => b.sid === id)) pr = foes.some(f => f.boss) || foes.length >= 2 ? 7 : 4;
