@@ -19,3 +19,4 @@
 - pxride65.js rideKind: chainOf에 seadragoon → 'sea'(용기수보다 먼저).
 - `shot_rider.py <훅 페이지> <폴더>` — 해룡기수(해초 해룡 B · Lv170) + 성기사 · 대주교 · 대마도사, 새끼 심해 해룡 펫(C) / 다 자란 진주 해룡 펫(D)으로 용암 화산 전투 둘 · 영웅 창 앞모습 → `seadragoon_game.png`.
 - 아직 시안부터: 해룡기수 기수 그림 · 스킬 그림 여섯(지금은 바다빛 용기수 · 예전 글리프).
+- 해룡기수 스킬 그림 시안(게임에 안 넣음): 시안 저장소 skill-icons-draft `drafts/skill-icons/dot/c_v69s.py` · `v69ssheet.py` → `v69_seadragoon.png`(사본 `seadragoon_skill_drafts.png`) — 여섯 × A · B. 고르면 export_v67.py에 넣는다.

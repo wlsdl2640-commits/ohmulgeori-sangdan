@@ -128,7 +128,7 @@ function petKill(p, e, f, xp) {
   const pet = petOfParty(p);
   if (pet) { pet.kills = (pet.kills || 0) + 1; if (petExp(pet, Math.round(xp * 0.5))) ev(e, 'petlvl', { pet: pet.id }); }
   if (f.pvp || f.giant) return;
-  const kinds = petsOfField(e.field); if (!kinds.length) return;
+  const kinds = petsOfField(e.field).filter(k => !(PETS[k].sea && f.id !== 'seadragon')); if (!kinds.length) return;   // 빌드 69: 해룡 알은 야생 해룡만 남긴다
   const ch = f.fb >= 5 ? 0.06 : f.fb ? 0.02 + 0.005 * f.fb : f.boss ? 0.08 : 0.001;   // 빌드 65: 약 4분의 1 (예전 25% · 10~16% · 35% · 0.4%)
   if (rnd() < ch) { const sk = f.id === 'seadragon' && typeof pxuSkin === 'function' ? pxuSkin(f) : null, kind = sk && kinds.includes(sk) ? sk : pickOne(kinds); loot(p, e, 'egg_' + kind, 1); if (f.fb || f.boss) { const P = petState(); P.lucky = P.lucky || {}; P.lucky[kind] = (P.lucky[kind] || 0) + 1; } }   // 빌드 69: 해룡은 쓰러뜨린 그 모습의 알
 }
