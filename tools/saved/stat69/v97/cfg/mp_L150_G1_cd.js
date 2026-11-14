@@ -1,0 +1,1 @@
+window.__CFG = {"lv": 150, "fid": "stargarden", "st": 1, "cls": ["paladin", "archmage", "archbishop", "shadowlord"], "gauge": [0.015, 0.015, 0.025, 0.04, 0.06], "cd50": 0, "secs": 600, "name": "mp_L150_G1_cd"};

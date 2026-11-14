@@ -1,0 +1,1 @@
+window.__CFG = {"lv": 100, "fid": "sky", "st": 1, "cls": ["paladin", "archmage", "archbishop", "hawkeye"], "gauge": [0.015, 0.015, 0.025, 0.04, 0.06], "cd50": 1, "secs": 600, "name": "mp_L100_G1_cd50"};
