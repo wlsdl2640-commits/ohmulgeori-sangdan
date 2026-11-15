@@ -55,7 +55,9 @@ RECIPES.push(
   { out: 'pot_l',    need: { moonflower: 1, mandrake: 1, lizard_scale: 1 }, fee: 60, lv: 2 },
   { out: 'mp_m',     need: { ethermoss: 2, frost_crystal: 1 },     fee: 60,  lv: 2 },
   { out: 'tonic',    need: { mandrake: 1, ethermoss: 1, bloodshroom: 1 }, fee: 30, lv: 2 },
-  { out: 'panacea',  need: { mandrake: 2, moonflower: 1, ethermoss: 1 }, fee: 120, lv: 2 }
+  { out: 'panacea',  need: { mandrake: 2, moonflower: 1, ethermoss: 1 }, fee: 120, lv: 2 },
+  { out: 'mp_l',     need: { ethermoss: 2, moonflower: 1, swamp_moss: 1 }, fee: 120, lv: 3 },   // 빌드 69 밤: 상급 · 최상급 마나 물약 (늪지대 · 구름섬 재료)
+  { out: 'mp_x',     need: { ethermoss: 3, moonflower: 2, cloud_wool: 1 }, fee: 300, lv: 4 }
 );
 KINGDOMS.elves.sells.push('waterherb', 'ethermoss');
 KINGDOMS.sarak.sells.push('fireherb');

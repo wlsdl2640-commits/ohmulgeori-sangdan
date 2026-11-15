@@ -276,7 +276,7 @@ function floorInfo(f) {
   if (f.id === 'temple') return `환자 ${patients().length}명 · 치유사 ${healers().length}/${healerSlots()}`;
   if (f.id === 'pen') return `펫 ${S.pets.length}/${penCap()} · 품는 알 ${(S.pen && S.pen.inc.length) || 0}`;
   if (f.id === 'training') { const ph = phaseOf(S.t); return ph === 0 || ph === 3 ? '밤에는 쉬어요' : `훈련하는 모험가 ${hqWhere().train.length}명`; }
-  if (f.id === 'alchemy') return `회복 물약 ${(S.inv.pot_s || 0) + (S.inv.pot_m || 0) + (S.inv.pot_l || 0)}개 · 마나 물약 ${(S.inv.mp_s || 0) + (S.inv.mp_m || 0)}개`;
+  if (f.id === 'alchemy') return `회복 물약 ${(S.inv.pot_s || 0) + (S.inv.pot_m || 0) + (S.inv.pot_l || 0)}개 · 마나 물약 ${MP_POTS.reduce((n, k) => n + (S.inv[k] || 0), 0)}개`;
   if (f.id === 'tower') return S.research.cur ? `연구 중: ${RESEARCH[S.research.cur.k].name}` : '연구를 쉬고 있어요';
   if (f.id === 'smithy') return `보관 중인 장비 ${S.gear.length}개`;
   if (typeof FLOOR_TXT !== 'undefined' && FLOOR_TXT[f.id]) return FLOOR_TXT[f.id]();

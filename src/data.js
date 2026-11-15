@@ -83,9 +83,13 @@ const ITEMS = {
   pot_m: { name: '중급 회복 물약', v: 90,  w: 1, icon: 'potion', c: '#c03ad8', heal: 130, buy: 95,  potion: 'hp' },
   pot_l: { name: '상급 회복 물약', v: 240, w: 1, icon: 'potion', c: '#f0b43c', heal: 320, buy: 260, potion: 'hp' },
   mp_s:  { name: '마나 물약',      v: 50,  w: 1, icon: 'potion', c: '#4a7af0', mana: 40,  buy: 55,  potion: 'mp' },
-  mp_m:  { name: '고급 마나 물약', v: 150, w: 1, icon: 'potion', c: '#3ad8e0', mana: 110, buy: 160, potion: 'mp' }
+  mp_m:  { name: '고급 마나 물약', v: 150, w: 1, icon: 'potion', c: '#3ad8e0', mana: 110, buy: 160, potion: 'mp' },
+  // 빌드 69 밤 (11-16 사용자 「더 큰 물약 추가」): 마법사 · 성직자 스킬 MP가 Lv54부터 ×11이라 높은 레벨용 마나 물약 — 큰 것일수록 MP당 값이 싸다
+  mp_l:  { name: '상급 마나 물약',   v: 280, w: 1, icon: 'potion', c: '#3a54e8', mana: 400,  buy: 300, potion: 'mp' },
+  mp_x:  { name: '최상급 마나 물약', v: 650, w: 1, icon: 'potion', c: '#a47cff', mana: 1200, buy: 700, potion: 'mp' }
 };
-const POTIONS = ['pot_s', 'pot_m', 'pot_l', 'mp_s', 'mp_m'];
+const POTIONS = ['pot_s', 'pot_m', 'pot_l', 'mp_s', 'mp_m', 'mp_l', 'mp_x'];
+const MP_POTS = ['mp_s', 'mp_m', 'mp_l', 'mp_x'];   // 작은 것부터 (core.js usePotions)
 
 /* ───────── 몬스터 ───────── */
 // mh·ma·md: 레벨 곡선에 곱하는 체력·공격·방어 배율, spd: 초당 공격, eva: 회피율, magic: 방어 절반 무시, aoe: 광역 공격

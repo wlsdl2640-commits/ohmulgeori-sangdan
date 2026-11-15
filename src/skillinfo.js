@@ -103,7 +103,7 @@ function skillSpec(id, a) {
   if (s.pcures || (s.kind === 'buff' && s.cures)) out.push(`파티의 ${(s.pcures || s.cures).map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);   // 빌드 63: 정화 · 결의
   if (s.dk && STA_TYPE_IMM[s.dk]) out.push('언데드 · 골렘 · 원소에게는 안 듣는다');
   // 비용과 재사용 대기시간
-  out.push(s.cost.hp ? `HP ${skPct(s.cost.hp)}${d ? ` (${skN(d.maxHp * s.cost.hp)})` : ''} 소모` : a && mpLine69(a) ? `MP ${skMp(a, s)} 소모 (${s.cost.mp} × 마법사 · 성직자 계열 Lv${a.lv} ${mpMulTxt(a, s)})` : `MP ${s.cost.mp} 소모 (마법사 · 성직자 계열은 ×(${MP69.k0} + 레벨 ÷ ${MP69.per}), 최대 ×${MP69.max}${MP69.heal < 1 && MP69.healK.includes(s.kind) ? ` — 회복 · 보호 스킬이라 늘어난 몫의 ${Math.round(MP69.heal * 100)}%` : ''})`);   // 빌드 69 밤
+  out.push(s.cost.hp ? `HP ${skPct(s.cost.hp)}${d ? ` (${skN(d.maxHp * s.cost.hp)})` : ''} 소모` : a && mpLine69(a) ? `MP ${skMp(a, s)} 소모 (${s.cost.mp} × 마법사 · 성직자 계열 Lv${a.lv} ${mpMulTxt(a, s)})` : `MP ${s.cost.mp} 소모 (마법사 · 성직자 계열은 ×(${MP69.k0} + 레벨 ÷ ${MP69.per}), 최대 ×${MP69.max}${MP69.healK.includes(s.kind) ? ` — 회복 · 보호 스킬은 ${mpHealTxt()}` : ''})`);   // 빌드 69 밤
   if (arrowSkill(s) && (!a || needsArrows(a))) out.push(`화살 ${s.tgt === 'all' ? `맞히는 적마다 ${s.kind === 'dmg' ? s.hits || 1 : 1}발 (여섯까지)` : `${arrowCost(s, 1)}발`} · 모자라면 못 씀`);
   if (s.thrown) out.push(`암기 ${s.tgt === 'all' ? `맞히는 적마다 ${s.hits || 1}개 (여섯까지)` : `${arrowCost(s, 1)}개`} · 부장비 칸의 암기가 모자라면 못 씀`);
   if (s.bolt) out.push(`볼트 ${arrowCost(s, 1)}발 · 손목 석궁과 볼트가 있어야 씀`);

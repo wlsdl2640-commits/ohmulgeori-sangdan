@@ -79,10 +79,15 @@ for (const id in SKILLS) {
    마법사 · 성직자 계열(jobBase mage · cleric)이 쓰는 스킬은 MP × min(max, k0 + 레벨 ÷ per) — 치유 · 재생 · 보호막 · 부활 · 해제는 늘어난 몫의 heal배(낮은 땅 성직자가 MP에 막혀 힐러 파티가 쓰러져서).
    두 계열은 지능이 높아 최대 MP가 물리 직업의 6 ~ 10배라 스킬 MP가 거의 안 들었다(싸움 중 MP 98 ~ 100%). Lv12 ×6.3 · Lv30 ×8.3 · Lv54부터 ×11 → 딜러 싸움 중 MP 평균 55%쯤
    (Lv12 ~ 30 56 ~ 65% · Lv60 49 ~ 60% · Lv100 18 ~ 24% · Lv146 39 ~ 50%), 힐러는 낮은 땅 63 ~ 85% · 높은 땅 97 ~ 99% — tools/saved/stat69/v101. 21:36판은 min(8, 2 + 레벨 ÷ 8)이었다.
+   11-16 사용자 「높은 레벨만 조이기」(채팅): 힐러는 스킬을 1분 4 ~ 16번만 써서 Lv80부터 싸움 중 MP가 96 ~ 99%였다 → 회복 · 보호 스킬의 몫을 Lv75부터 늘려 Lv100부터 늘어난 몫의 200%(×21).
+     ×11(100%)로는 힐러 MP 94 ~ 98%로 거의 그대로 · ×21 → Lv100 ~ 146 대주교 86 ~ 92% · 명의 71 ~ 92%(힐러 파티 도달 Lv100 ~ 130 ±0.6, Lv146 −1 ~ −1.6 — 최상급 마나 물약을 챙기면 되찾는다)
+     · ×26(250%)는 Lv146 명의가 MP에 막혀(16%) −3.3 — tools/saved/stat69/v101 hh*
    core.js pickSkill · cast · panels.js · skillinfo.js가 skMp를 본다 */
-const MP69 = { lines: ['mage', 'cleric'], k0: 5, per: 9, max: 11, heal: 0.5, healK: ['heal', 'regen', 'shield', 'revive', 'cure'] };   // 회복 · 보호 스킬은 늘어난 몫의 heal배
+const MP69 = { lines: ['mage', 'cleric'], k0: 5, per: 9, max: 11, heal: 0.5, healHi: { lv0: 75, lv1: 100, to: 2 }, healK: ['heal', 'regen', 'shield', 'revive', 'cure'] };   // 회복 · 보호 스킬은 늘어난 몫의 heal배 → healHi: lv0부터 lv1까지 to배로 (11-16 「높은 레벨만 조이기」)
 const mpLine69 = a => !!a && MP69.lines.includes(jobBase(a.cls));
-const mpMul69 = (a, s) => { const k = Math.min(MP69.max, MP69.k0 + (a.lv || 1) / MP69.per); return s && MP69.heal < 1 && MP69.healK.includes(s.kind) ? 1 + (k - 1) * MP69.heal : k; };
+const mpHealShare = lv => { const H = MP69.healHi; if (!H) return MP69.heal; const t = Math.max(0, Math.min(1, ((lv || 1) - H.lv0) / (H.lv1 - H.lv0))); return MP69.heal + (H.to - MP69.heal) * t; };
+const mpHealTxt = () => { const H = MP69.healHi, p = x => `${Math.round(x * 100)}%`; return H ? `늘어난 몫의 ${p(MP69.heal)} — Lv${H.lv0}부터 늘어 Lv${H.lv1}부터 ${p(H.to)}(×${Math.round((1 + (MP69.max - 1) * H.to) * 100) / 100})` : `늘어난 몫의 ${p(MP69.heal)}`; };
+const mpMul69 = (a, s) => { const k = Math.min(MP69.max, MP69.k0 + (a.lv || 1) / MP69.per); return s && MP69.healK.includes(s.kind) ? 1 + (k - 1) * mpHealShare(a.lv) : k; };
 const skMp = (a, s) => { const m = (s && s.cost && s.cost.mp) || 0; return m && mpLine69(a) ? Math.round(m * mpMul69(a, s)) : m; };
 const mpMulTxt = (a, s) => `×${Math.round(mpMul69(a, s) * 100) / 100}`;
 
@@ -91,5 +96,5 @@ STORY.v69h = [
   `회복의 빛은 가장 다친 동료 둘을, 소생의 기도는 HP가 ${Math.round(HEAL_DANGER * 100)}% 아래로 떨어진 동료를 모두 크게 치료한다. 명의의 손은 6초 동안 이어지는 재생이, 생명의 축복은 8초 동안 이어지는 파티 재생이 됐다.`,
   `싸움의 리듬이 바뀌었다 — 스킬 재사용 대기시간이 공용 · 1차 · 2차 스킬 ${PACE69.cdT[2]}배 · 3차 ${PACE69.cdT[3]}배 · 4차 ${PACE69.cdT[4]}배로 길어지고, 강화 · 도발 · 지속 피해도 그만큼 오래 간다. 그 대신 공격 스킬 한 방이 1차 ×${PACE69.powT[1]} · 2차 ×${PACE69.powT[2]} · 3차 ×${PACE69.powT[3]} · 4차 ×${PACE69.powT[4]}, 치유 · 재생 · 보호막 한 번이 ×${PACE69.healT[1]} ~ ×${PACE69.healT[4]}만큼 크다. 숙련도가 오르는 빠르기는 그대로.`,
   `기본 공격은 쿨타임 ${BASIC69.base}초가 돌면 휘두르기 시작해 ${BASIC69.exec}초 ÷ 공격 속도만에 맞힌다(맞힌 뒤부터 다음 쿨타임). 쿨타임은 직업 · 전직(차수마다 ${BASIC69.tier}초) · 민첩(${BASIC69.agiStep}점마다 ${BASIC69.agi}초)이 줄이고(가장 짧게 ${BASIC69.floor}초), 공격 속도는 휘둘러 맞히기까지를 줄인다 — 민첩(1점마다 ${Math.round(BASIC69.aspd * 1000) / 10}%) · 「신속」 같은 지속 스킬 · 특성 · 숙련 · 신속의 룬 · 강화 스킬. 한 방은 공격력 ×${BASIC_MULT}(마법 ×${BASIC_MAGIC})로 세졌지만 스킬 한 번이 더 세다.`,
-  `마법사 · 성직자 계열은 스킬에 MP를 훨씬 더 쓴다 — ×(${MP69.k0} + 레벨 ÷ ${MP69.per}), Lv${Math.ceil((MP69.max - MP69.k0) * MP69.per)}부터 ×${MP69.max}(치유 · 재생 · 보호막 · 부활 · 해제는 늘어난 몫의 절반). 최대 MP가 큰 만큼 아껴 써야 하고, MP 물약 · MP 회복이 꼭 필요하다.`
+  `마법사 · 성직자 계열은 스킬에 MP를 훨씬 더 쓴다 — ×(${MP69.k0} + 레벨 ÷ ${MP69.per}), Lv${Math.ceil((MP69.max - MP69.k0) * MP69.per)}부터 ×${MP69.max}(치유 · 재생 · 보호막 · 부활 · 해제는 ${mpHealTxt()}). 최대 MP가 큰 만큼 아껴 써야 하고, 마나 물약 · MP 회복이 꼭 필요하다 — 상급 · 최상급 마나 물약(MP ${ITEMS.mp_l.mana} · ${ITEMS.mp_x.mana.toLocaleString('ko-KR')})이 새로 나왔다(창고에서 사거나 연금술 공방 3 · 4단계에서 만든다).`
 ];

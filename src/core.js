@@ -1424,10 +1424,11 @@ function usePotions(p, e, team, dm) {
   }
   if (e.mpCd <= 0) {
     const dry = team.find(a => up(a) && isCaster(a) && a.mp < dm[a.id].maxMp * 0.2);
-    const use = dry && ['mp_s', 'mp_m'].find(k => (e.sup[k] || 0) > 0);
+    const mb = 1 + rlv('potion') * 0.25, order = dry ? MP_POTS.filter(k => (e.sup[k] || 0) > 0) : [];
+    const use = dry && (order.find(k => ITEMS[k].mana * mb >= (dm[dry.id].maxMp - dry.mp) * 0.6) || order[order.length - 1]);   // 빌드 69 밤: 모자란 MP의 60%를 채우는 가장 작은 것 (없으면 가장 큰 것)
     if (use) {
       addTo(e.sup, use, -1);
-      dry.mp = Math.min(dm[dry.id].maxMp, dry.mp + ITEMS[use].mana * (1 + rlv('potion') * 0.25));
+      dry.mp = Math.min(dm[dry.id].maxMp, dry.mp + ITEMS[use].mana * mb);
       e.mpCd = 2;
       ev(e, 'mana', { d: dry.id, v: ITEMS[use].mana });
     }

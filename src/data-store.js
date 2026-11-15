@@ -27,7 +27,7 @@ const GRADE_DROP = {
   hi: { fb: 3, boss: 6, chest: 4, raid: 8 }   // 영웅부터 곱하는 배율 — 필드 우두머리 · 던전 주인 · 보물 상자 · 레이드 보상
 };
 const tierGrade = t => Math.min(5, Math.floor(t / 3));   // 장비 단계 0~15 → 일반 ~ 신화
-const SUP_GRADE = { pot_s: 0, mp_s: 0, bandage: 0, pot_m: 1, mp_m: 1, antidote: 1, salve: 1, warmer: 1, ward: 1, salts: 1, eyedrop: 1, pot_l: 2, tonic: 2, holyvial: 2, panacea: 3 };
+const SUP_GRADE = { pot_s: 0, mp_s: 0, bandage: 0, pot_m: 1, mp_m: 1, antidote: 1, salve: 1, warmer: 1, ward: 1, salts: 1, eyedrop: 1, pot_l: 2, mp_l: 2, tonic: 2, holyvial: 2, panacea: 3, mp_x: 3 };
 const vGrade = v => (v < 30 ? 0 : v < 100 ? 1 : v < 300 ? 2 : v < 1000 ? 3 : v < 5000 ? 4 : 5);   // 아무 데도 안 들어가는 것은 값으로
 let IGRADE = null;
 // 재료가 들어가는 곳: 장비 단계 재료 · 조제법 · 요리. 여러 곳에 들어가면 가장 낮은 쓰임새(흔한 재료는 흔하게) — 히포크리초 · 날고기 · 밀가루는 일반

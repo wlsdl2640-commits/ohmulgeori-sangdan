@@ -45,6 +45,7 @@
       if (D && x) {
         if (k === 'hit' && x.v > 0) { const g = x.b ? 'basic' : x.dot ? 'dot' : (x.sid === 'shuri' || x.sid === 'bolt' || x.ctr || x.k === 'pet' || x.sid === 'reflect') ? 'extra' : x.sid ? 'skill' : 'extra'; D.dmg[g] += x.v; if (x.b) D.basics++; }
         else if (k === 'skill') { const a = advById(x.s); if (a) D.casts[a.cls] = (D.casts[a.cls] || 0) + 1; }
+        else if (k === 'mana') { const a = advById(x.d); if (a) D.pots[a.cls] = (D.pots[a.cls] || 0) + 1; }
       }
       return ev1.apply(this, arguments);
     };
@@ -113,16 +114,16 @@
         for (let i = 0; i < N; i++) {
           H.fresh();
           const team = comp.map(k => { const [c, sk] = B[k]; return H.adv(c, C.lv, { sk, slv, sm }); });
-          const Dv = { dmg: { basic: 0, skill: 0, dot: 0, extra: 0 }, casts: {}, basics: 0, mp: {}, mpb: {}, ft: 0, ammo: 0 };
+          const Dv = { dmg: { basic: 0, skill: 0, dot: 0, extra: 0 }, casts: {}, basics: 0, mp: {}, mpb: {}, pots: {}, ft: 0, ammo: 0 };
           window.__D99(Dv);
-          const r = H.push(team, C.fid, C.st, SECS);
+          const r = H.push(team, C.fid, C.st, SECS, P.sup ? { sup: Object.assign({}, P.sup[tk] || P.sup.all || {}) } : {});   // sup: 보급품 {단계 | all: {물약: 수}}
           window.__D99(null);
           const ft = Math.max(1, Dv.ft);
           runs.push({ flv: r.flv, stage: r.stage, wiped: r.wiped, cleared: r.cleared, t: r.t, taken: Math.round(r.R.taken), heff: Math.round(r.R.heff), downs: r.R.downs, fightT: Math.round(Dv.ft),
             dmg: Object.fromEntries(Object.entries(Dv.dmg).map(([k, v]) => [k, Math.round(v)])), basics: Dv.basics, ammo: Dv.ammo,
             casts: Object.fromEntries(Object.entries(Dv.casts).map(([k, v]) => [k, +(v / ft * 60).toFixed(1)])),
             mp: Object.fromEntries(Object.entries(Dv.mp).map(([k, v]) => [k, Math.round(v / ft * 100)])),
-            mpb: Object.fromEntries(Object.entries(Dv.mpb).map(([k, v]) => [k, Math.round(v * 0.1 / ft * 1000) / 10])) });   // 싸움 시간 중 MP가 모자라 스킬을 건너뛴 틱 몫 %
+            mpb: Object.fromEntries(Object.entries(Dv.mpb).map(([k, v]) => [k, Math.round(v * 0.1 / ft * 1000) / 10])), pots: Dv.pots });   // pots: 마나 물약을 마신 수   // 싸움 시간 중 MP가 모자라 스킬을 건너뛴 틱 몫 %
         }
         out.push({ tier: +tk, comp: cn, slv, sm, runs });
       }
