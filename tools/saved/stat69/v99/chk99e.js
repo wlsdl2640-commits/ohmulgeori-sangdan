@@ -1,0 +1,1 @@
+(() => JSON.stringify({ story: STORY.v69h, pct: ['bloodthirst', 'secondwind', 'aegis', 'wagonwall', 'manaward', 'layhands', 'waterspirit', 'hymn', 'firstaid'].map(id => { const s = SKILLS[id]; return s ? [id, s.name, s.kind, s.tgt, 'pct ' + (s.pct0 || '') + '→' + (s.pct || ''), 'mult ' + (s.mult0 || '') + '→' + (s.mult || ''), 'cd ' + s.cd0 + '→' + s.cd, s.desc] : [id]; }) }))()

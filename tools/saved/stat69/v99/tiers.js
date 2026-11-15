@@ -1,0 +1,1 @@
+(() => { const c = {}; const ex = {}; for (const id in SKILLS) { const s = SKILLS[id]; if (s.cut || s.passive) continue; const j = skJob(id); const t = j ? j.tier : 'x'; const key = (j ? j.kind : 'nojob') + ':' + t; c[key] = (c[key] || 0) + 1; if (!ex[key]) ex[key] = []; if (ex[key].length < 4) ex[key].push(id + '/' + s.kind); } return JSON.stringify({ c, ex }); })()

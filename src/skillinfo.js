@@ -1,9 +1,9 @@
 /* ───────── 스킬 설명: 계수·대기시간·확률·증가율을 전부 숫자로 ─────────
    skillSpec(id)        — 스킬북·도감·상점용 (계수 그대로)
    skillSpec(id, a)     — 모험가 창용 (그 모험가의 공격력·숙련·재사용 감소를 넣은 실제 수치)
-   basicSpec(a)         — 기본 공격 (5초 ÷ 공격 속도, 공격력 ×2.5) */
+   basicSpec(a)         — 기본 공격 (BASIC_CD초 ÷ 공격 속도, 공격력 ×2.5) */
 const SK_TGT = { front: '앞의 적', low: '가장 약한 적', strong: '가장 센 적', pierce: '맨 앞 적과 그 뒤 적 (꿰뚫기)', all: '모든 적', self: '자신', party: '파티 전원' };
-const SK_TGT_ALLY = Object.assign({}, SK_TGT, { low: '가장 다친 동료', ally: '가장 다친 동료' });   // 빌드 69: 치유 · 재생 · 보호막 · 강화의 low는 가장 다친 동료 (예전엔 「가장 약한 적」으로 나왔다)
+const SK_TGT_ALLY = Object.assign({}, SK_TGT, { low: '가장 다친 동료', ally: '가장 다친 동료', low2: '가장 다친 동료 둘', danger: `HP ${Math.round(HEAL_DANGER * 100)}% 아래 동료 모두` });   // 빌드 69: 치유 · 재생 · 보호막 · 강화의 low는 가장 다친 동료 (예전엔 「가장 약한 적」으로 나왔다)
 const SK_KIND = { dmg: '물리 피해', mdmg: '마법 피해', heal: '치유', buff: '강화', dot: '지속 피해', taunt: '도발', cure: '해제', shield: '보호막', regen: '재생', revive: '부활' };
 const SK_BUFF = { deflect: '기본 공격 튕겨내기', steal: '훔치는 돈', hide: '적이 덜 노림', ncrit: '다음 공격 치명타 확정', nmul: '다음 공격', ground: '땅에 내려앉음', atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '공격 속도', heal: '회복량', crit: '치명타', guard: '받는 피해 감소', cdr: '스킬 재사용 감소' };
 // 지속 효과 이름과 표기 방식: pct(배율 %) · pp(%p 더함) · neg(줄임) · x(배)
@@ -66,7 +66,7 @@ function skillSpec(id, a) {
   } else if (s.kind === 'heal') {
     if (s.pct) out.push(`${s.tgt === 'party' ? '파티 전원' : '가장 다친 동료'}의 최대 HP ${skPct(s.pct * L)} 회복`);   // 빌드 65: 약상자 · 보급품
     else { out.push(`치유 마법 공격력 ${skMul(s.mult * L)} · ${SK_TGT_ALLY[s.tgt] || s.tgt}`);
-    if (d) out.push(`약 <b>${skRange(d.matk * s.mult * M * (T.healPow || 1) * d.healPow)}</b> 회복${s.tgt === 'party' ? ' (한 사람마다)' : ''}`); }
+    if (d) out.push(`약 <b>${skRange(d.matk * s.mult * M * (T.healPow || 1) * d.healPow)}</b> 회복${['party', 'low2', 'danger'].includes(s.tgt) ? ' (한 사람마다)' : ''}`); }
     if (s.cure1) out.push('상태이상 하나 해제');
     else if (s.cures && s.cures.length) out.push(`${s.cures.length >= STATUS_IDS.length - 1 ? '모든 상태이상' : s.cures.map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);
     else out.push('출혈 해제');

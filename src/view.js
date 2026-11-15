@@ -874,10 +874,10 @@ function events(e, pos, t, team, p) {
       V.fx.push({ k: 'heal', x: aq[0], y: aq[1], t0: t, d: 0.7, c: x.type === 'pot' ? '#ff7a8a' : blue ? '#8ac8ff' : '#8af08a' });
     } else if (x.type === 'skill') {
       const aq = at('a' + x.s), s = SKILLS[x.id], sk = SKFX[x.id], ma = advOf(x.s), mot = ma && pxsMotOK(ma), cast = s && !['dmg', 'mdmg', 'dot'].includes(s.kind);
-      if (aq && s) { callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); if (!sk || (!sk.cast && !mot)) V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
+      if (aq && s) { callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); if (!sk || (!sk.cast && !mot)) V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' || s.kind === 'regen' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
       if (cast && mot) motCast(ma, sk && sk.mot ? sk.mot : (s.kind === 'buff' && ['def', 'block', 'guard'].includes(s.stat)) || s.kind === 'shield' ? 'guard' : 'raise', t, 0, sk ? x.id : null);
       else if (s && s.kind === 'dot' && mot && !x.pet) { const mk = motPick(ma, x.id, 0, s.fx || (s.magic ? 'magic' : 'melee')), sk2 = sk && sk.mot ? x.id : null; V.mot['a' + ma.id] = { t, sid: x.id, dot: 1, n: {}, q: [{ mk, t0: t, f0: 0, sk: sk2, T: motT(mk, sk2 && sk.hold) }] }; }   // 지속 피해 스킬도 동작 (빌드 42)
-      else if (s && !mot && (s.kind === 'mdmg' || s.kind === 'heal')) V.atk['a' + x.s] = t;
+      else if (s && !mot && (s.kind === 'mdmg' || s.kind === 'heal' || s.kind === 'regen')) V.atk['a' + x.s] = t;
       if (cast && sk && sk.cast && aq) V.fx.push({ k: 'skc', id: x.id, x: aq[0], y: aq[1], z: zAt(aq[1]), dir: V.dir || 1, t0: t, d: 1.6, tg: sk.party ? team.filter(m => !m.down && m.id !== x.s).map(m => at('a' + m.id)).filter(Boolean).map(q => [q[0], q[1], zAt(q[1])]) : [] });
     } else if (x.type === 'buff') {
       const s = SKILLS[x.id], col = x.pet ? BUFF_C[x.pet === 'song' ? 'atk' : 'def'] : s && s.kind === 'taunt' ? '#ff5a4a' : BUFF_C[s && s.stat] || '#e8e2d0';
@@ -1104,7 +1104,7 @@ function logEvent(x, e, p) {
   if (x.type === 'pot' && x.k) return add(`${ally(jo(A(x.d), '이', '가'))} ${ITEMS[x.k].name}(으)로 ${cureName(ITEMS[x.k].cure)}을(를) 풀었습니다.`);
   if (x.type === 'pot') return add(`${ally(jo(A(x.d), '이', '가'))} 회복 물약으로 HP ${num(x.v, 'g')} 회복.`);
   if (x.type === 'mana') return add(`${ally(jo(A(x.d), '이', '가'))} 마나 물약으로 MP ${num(x.v, 'b')} 회복.`);
-  if (x.type === 'skill') { const s = SKILLS[x.id]; if (s) add(`${ally(jo(A(x.s), '이', '가'))} 「${esc(s.name)}」${s.kind === 'heal' ? '을(를) 외웠습니다.' : '!'}`, 'sk'); return; }
+  if (x.type === 'skill') { const s = SKILLS[x.id]; if (s) add(`${ally(jo(A(x.s), '이', '가'))} 「${esc(s.name)}」${s.kind === 'heal' || s.kind === 'regen' ? '을(를) 외웠습니다.' : '!'}`, 'sk'); return; }
   if (x.type === 'kill') return add(`${foe(jo(Fn(x.d), '을', '를'))} 처치했습니다!`, 'kill');
   if (x.type === 'wave') return add(`${x.cur}번째 무리를 막았습니다! (${x.cur}/${x.n})`, 'kill');
   if (x.type === 'loot') { const it = ITEMS[x.id]; if (it) add(`전리품 <b class="lg-l">${esc(it.name)}</b> 획득`, 'loot'); return; }

@@ -727,7 +727,7 @@ function skillCdOf(a, d, id, e) {
   const cut = Math.min(CDR_MAX, (d.cdr || 0) + (e ? buffAdd(e, a.id, 'cdr') : 0));
   return Math.max(0.5, s.cd * CD_FLOOR, s.cd * (1 - cut) * (1 - SM_CD * smLv(a, id)) * (1 - SK_LV_CD * (skLv(a, id) - 1)) * (d.wxSk || 1));   // 더위: 스킬 재사용이 길어진다 · 바닥 = 기본 재사용의 40% (빌드 69)
 }
-// 기본 공격 대기시간 = 5초 ÷ 공격 속도(강화 포함)
+// 기본 공격 대기시간 = BASIC_CD초 ÷ 공격 속도(강화 포함)
 const basicCd = (a, d, e) => basicCdOf(d.spd, e ? buffMul(e, a.id, 'spd') : 1) * (d.wxBa || 1);   // 추위: 기본 공격 대기가 길어진다
 const basicIsMagic = a => CLASSES[a.cls].act === 'magic';
 function pickSkill(a, d, team, dm, foes, e) {
@@ -745,6 +745,12 @@ function pickSkill(a, d, team, dm, foes, e) {
     let pr = 0;
     if (s.kind === 'heal' && s.tgt === 'self') {
       if (a.hp < d.maxHp * 0.5) pr = 10;
+    } else if (s.kind === 'heal' && s.tgt === 'danger') {   // 빌드 69 (11-15 20:20): 소생의 기도 — HP 40% 아래 동료가 있을 때만, 한 명 치유보다 먼저
+      const n = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * HEAL_DANGER).length;
+      if (n) pr = n >= 2 ? 11.2 : 10.5;
+    } else if (s.kind === 'heal' && s.tgt === 'low2') {   // 빌드 69 (11-15 20:20): 회복의 빛 — 가장 다친 둘
+      if (team.filter(x => up(x) && x.hp < dm[x.id].maxHp * 0.7).length >= 2) pr = 10.6;
+      else if (team.some(x => up(x) && x.hp < dm[x.id].maxHp * 0.6)) pr = 9.8;
     } else if (s.kind === 'heal') {
       const hurt = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * (s.tgt === 'party' ? 0.7 : 0.6));
       if (s.tgt === 'party' ? hurt.length >= 2 : hurt.length >= 1) pr = s.tgt === 'party' ? 11 : 10;
@@ -760,8 +766,10 @@ function pickSkill(a, d, team, dm, foes, e) {
       if (s.tgt === 'party') { if (team.filter(x => up(x) && !has(x)).length >= 2) pr = foes.some(f => f.boss) || foes.length >= 2 ? 8 : 5; }
       else if (!has(a) && (a.hp < d.maxHp * 0.8 || foes.some(f => f.boss) || foes.length >= 2)) pr = 7;
     } else if (s.kind === 'regen') {    // 재생: 다친 사람이 있고 재생이 안 걸려 있을 때 (급할 땐 직접 치유가 먼저)
-      const hurt = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * 0.85 && !buffAdd(e, x.id, 'regen'));
+      const own = x => e.buffs.some(b => b.sid === id + '@' + x.id && b.t > 1);
+      const hurt = team.filter(x => up(x) && x.hp < dm[x.id].maxHp * 0.85 && !(s.urgent ? own(x) : buffAdd(e, x.id, 'regen')));
       if (s.tgt === 'party' ? hurt.length >= 2 : hurt.length >= 1) pr = s.tgt === 'party' ? 9 : 8;
+      if (s.urgent && (s.tgt === 'party' ? hurt.filter(x => x.hp < dm[x.id].maxHp * 0.7).length >= 2 : hurt.some(x => x.hp < dm[x.id].maxHp * 0.6))) pr = s.tgt === 'party' ? 10.5 : 10;   // 빌드 69 (11-15 20:20): 명의의 손 · 생명의 축복은 바로 채우던 치유가 재생이 됐다 — 급하면 직접 치유처럼 (다른 재생과 겹쳐도 쓴다)
     } else if (s.kind === 'revive') {   // 부활: 쓰러진 동료가 있으면 무엇보다 먼저, 싸움마다 한 번
       if (downedOf(e, team).length && !(e.rev && e.rev[a.id])) pr = 12;
     } else if (s.kind === 'cure') {
@@ -791,7 +799,7 @@ function cast(e, a, d, id, team, dm, foes) {
   ev(e, 'skill', { s: a.id, id });
   // 숙련도: 쓸수록 위력이 조금씩 오른다 (단계가 오르면 알린다)
   const sm = smLv(a, id), M = smMul(a, id) * skLvMul(a, id), L = skLvMul(a, id);
-  a.sm = a.sm || {}; a.sm[id] = (a.sm[id] || 0) + 1;
+  a.sm = a.sm || {}; a.sm[id] = (a.sm[id] || 0) + PACE69_SM;   // 빌드 69 (11-15 20:20): 재사용이 길어진 만큼 한 번을 여러 번으로 쳐서 숙련도가 오르는 빠르기는 그대로
   if (smLv(a, id) > sm) ev(e, 'mastery', { s: a.id, id, lv: smLv(a, id) });
   if (s.kind === 'dmg' || s.kind === 'mdmg') {
     const magic = s.kind === 'mdmg';
@@ -839,8 +847,8 @@ function cast(e, a, d, id, team, dm, foes) {
     const h = Math.round(d.maxHp * s.pct * M * d.healPow * (1 + d.rheal + buffAdd(e, a.id, 'rheal')) * healMul(e, a.id)); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); cureSta(e, a, ['bleed']);
   } else if (s.kind === 'heal') {
     const pow = d.matk * s.mult * M * (TR(a).healPow || 1) * d.healPow * buffMul(e, a.id, 'heal');
-    const alive = team.filter(up);
-    const tg = s.tgt === 'party' ? alive : [alive.sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0]];
+    const alive = team.filter(up), byHp = alive.slice().sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp);
+    const tg = s.tgt === 'party' ? alive : s.tgt === 'low2' ? byHp.slice(0, 2) : s.tgt === 'danger' ? alive.filter(x => x.hp < dm[x.id].maxHp * HEAL_DANGER) : [byHp[0]];   // 빌드 69: 가장 다친 둘 · HP 40% 아래 모두
     tg.forEach(x => { const h = Math.round((s.pct ? dm[x.id].maxHp * s.pct * M * d.healPow : pow * (0.9 + rnd() * 0.2)) * (1 + dm[x.id].rheal + buffAdd(e, x.id, 'rheal')) * healMul(e, x.id)); x.hp = Math.min(dm[x.id].maxHp, x.hp + h); ev(e, 'heal', { s: a.id, d: x.id, v: h }); if (s.cure1) cureOne(e, x); else cureSta(e, x, s.cures || ['bleed']); });   // pct = 대상 최대 HP의 %(약상자 · 보급품)
     if (s.reviveAll) downedOf(e, team).forEach(x => { x.down = false; x.hp = Math.max(1, Math.round(derive(x).maxHp * s.reviveAll)); x.inj = null; ev(e, 'revive', { s: a.id, d: x.id }); log(`${a.name}의 「${s.name}」에 ${x.name}이(가) 다시 일어섰다!`, 'good'); });   // 2차 각성기: 쓰러진 동료를 모두
     if (s.reviveAll && e.flee && !downedOf(e, team).length) e.flee = 0;
@@ -868,8 +876,8 @@ function cast(e, a, d, id, team, dm, foes) {
     ev(e, 'buff', { s: a.id, id, party: s.tgt === 'party' });
   } else if (s.kind === 'regen') {    // 재생: 초당 회복이 dur초 이어진다
     const hps = d.matk * s.mult * M * (TR(a).healPow || 1) * d.healPow * buffMul(e, a.id, 'heal');
-    const alive = team.filter(up);
-    const tg = s.tgt === 'party' ? alive : [alive.sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0]];
+    const alive = team.filter(up), frac = (x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp, own = x => e.buffs.some(b => b.sid === id + '@' + x.id && b.t > 1);
+    const tg = s.tgt === 'party' ? alive : [alive.filter(x => !own(x)).sort(frac)[0] || alive.slice().sort(frac)[0]];   // 한 사람 재생: 이 재생이 아직 안 걸린 가장 다친 동료 (빌드 69)
     tg.forEach(x => { e.buffs = e.buffs.filter(b => b.sid !== id + '@' + x.id); e.buffs.push({ sid: id + '@' + x.id, to: x.id, stat: 'regen', add: s.pct ? dm[x.id].maxHp * s.pct * M * d.healPow : hps, t: s.dur }); if (s.cure1) cureOne(e, x); });   // pct = 초당 최대 HP의 %(비상식량)
     ev(e, 'buff', { s: a.id, id, party: s.tgt === 'party' });
   } else if (s.kind === 'revive') {   // 부활: 쓰러진 동료 하나를 일으킨다 (싸움마다 한 번)
@@ -1174,7 +1182,7 @@ function battle(p, e, team, dm, dt) {
       const sk = pickSkill(a, d, team, dm, alive, e);
       if (sk) { cast(e, a, d, sk, team, dm, alive); e.gcd[a.id] = CAST_GAP; }
     }
-    // 기본 공격: 5초 ÷ 공격 속도마다 한 번, 스킬과 상관없이
+    // 기본 공격: BASIC_CD초 ÷ 공격 속도마다 한 번, 스킬과 상관없이
     e.cd[a.id] = (e.cd[a.id] ?? (0.3 + rnd() * 0.6)) - dt * chill;
     if (e.cd[a.id] > 0) continue;
     e.cd[a.id] = basicCd(a, d, e) * (0.95 + rnd() * 0.1);
