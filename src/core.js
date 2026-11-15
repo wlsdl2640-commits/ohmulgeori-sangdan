@@ -97,7 +97,9 @@ function deriveBase(a) {
     counter: Math.min(CAP.counter, (G.counter || 0) + (P.counter || 0) + X('counter') + msVal(MC, 'garn')),   // 역류의 가넷
     double: Math.min(CAP.double, (G.double || 0) + (P.double || 0) + X('double')),
     healPow: 1 + X('healPow') + (P.healPow || 0) + Math.min(RUNE_CAP.healPow, G.healPow || 0), rheal: X('rheal') + Math.min(RUNE_CAP.rheal, G.rheal || 0), hpRegen: X('hpRegen') + (P.hpRegen || 0), mpFlat: X('mpFlat'),   // 치유 룬: 무기 주는 회복 · 방어구 받는 회복
-    spd: C.spd * (1 + T.agi * 0.004) * (1 + Math.min(CAP.spdPct, (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0))),   // 공격 속도: 기본 공격 대기시간 = BASIC_CD ÷ spd (더하는 % 몫은 +100%까지)
+    // 빌드 69 밤: 기본 공격 = 쿨타임(BASIC69.base − 쿨타임 감소, basicCd) + 실행(BASIC69.exec ÷ 공격 속도 aspd, basicExec). spdPct = 쿨타임 감소로 바뀐 예전 「공격 속도 +%」 몫(+100%까지)
+    aspd: 1 + T.agi * BASIC69.aspd, spdPct: Math.min(CAP.spdPct, (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0)),
+    spd: C.spd * (1 + T.agi * 0.004) * (1 + Math.min(CAP.spdPct, (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0))),   // 예전 공격 속도 (빌드 68까지의 기본 공격 = 5초 ÷ spd) — 지금은 투기장 상대(under.js pvpFoe)만 쓴다
     cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 CDR_MAX 30% — 빌드 69)
     carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
     move: (6 + T.agi * 0.06) * (1 + Math.min(CAP.movePct, (P.movePct || 0) + relic('move') + X('movePct') + (G.movePct || 0))) * (wind ? 1.15 : 1),   // 빌드 69: 더하는 % 몫은 +200%까지
@@ -727,8 +729,24 @@ function skillCdOf(a, d, id, e) {
   const cut = Math.min(CDR_MAX, (d.cdr || 0) + (e ? buffAdd(e, a.id, 'cdr') : 0));
   return Math.max(0.5, s.cd * CD_FLOOR, s.cd * (1 - cut) * (1 - SM_CD * smLv(a, id)) * (1 - SK_LV_CD * (skLv(a, id) - 1)) * (d.wxSk || 1));   // 더위: 스킬 재사용이 길어진다 · 바닥 = 기본 재사용의 40% (빌드 69)
 }
-// 기본 공격 대기시간 = BASIC_CD초 ÷ 공격 속도(강화 포함)
-const basicCd = (a, d, e) => basicCdOf(d.spd, e ? buffMul(e, a.id, 'spd') : 1) * (d.wxBa || 1);   // 추위: 기본 공격 대기가 길어진다
+// 기본 공격 (빌드 69 밤 — data-rpg.js BASIC69): 쿨타임 감소(초) = 직업 · 전직 · 민첩 · 패시브 · 특성 · 숙련 · 룬 (강화 스킬 몫은 싸움 중에 basicBuffCut)
+const clsCut = cls => Math.round((CLASSES[cls].spd - BASIC69.cls0) / BASIC69.clsPer) * BASIC69.cls;   // 직업 빠르기를 0.5초 단위로 (짐꾼 −1 · 마법사 −0.5 · 전사 0 · 궁수 +1 · 도적 +2 · 그림자 군주 +2.5)
+function basicCutParts(a, d) {
+  const B = BASIC69;
+  return { cls: clsCut(a.cls), tier: (jobTier(a.cls) - 1) * B.tier, agi: Math.floor(((d.T && d.T.agi) || 0) / B.agiStep) * B.agi, pct: (d.spdPct || 0) * B.pct };
+}
+const basicCut = (a, d) => { const q = basicCutParts(a, d); return q.cls + q.tier + q.agi + q.pct; };
+const basicBuffCut = (a, e) => (e ? (buffMul(e, a.id, 'spd') - 1) * BASIC69.buff : 0);   // 강화 스킬 (광폭화 ×1.25 → −1.25초 …)
+// 기본 공격 쿨타임(대기) = max(1.5초, 8초 − 쿨타임 감소) × 추위 · 실행(휘둘러 맞히기까지) = 1초 ÷ 공격 속도
+const basicCd = (a, d, e) => Math.max(BASIC69.floor, BASIC69.base - basicCut(a, d) - basicBuffCut(a, e)) * (d.wxBa || 1);   // 추위: 기본 공격 대기가 길어진다
+const basicExec = (a, d) => BASIC69.exec / Math.max(0.2, d.aspd || 1);
+// 기본 공격의 맞힘 갈래 (basicAct가 내는 사건 k와 같다 — 화면이 휘두르기 시작할 때 동작을 고른다)
+function basicK(a) {
+  const act0 = CLASSES[a.cls].act, act = act0 === 'melee' && shootsArrows(a) ? 'arrow' : act0 === 'arrow' && needsArrows(a) && meleeHeld(a) ? 'melee' : act0;
+  if (act === 'magic') return 'magic';
+  if (TR(a).hybrid) return 'spell';
+  return act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
+}
 const basicIsMagic = a => CLASSES[a.cls].act === 'magic';
 function pickSkill(a, d, team, dm, foes, e) {
   const st = e.sta && e.sta[a.id];
@@ -739,7 +757,7 @@ function pickSkill(a, d, team, dm, foes, e) {
     const s = SKILLS[id];
     if (!s || s.passive || (sc[id] || 0) > 0) continue;
     if (a.skoff && a.skoff[id]) continue;   // 자동 사용 끔
-    if (s.cost.mp && a.mp < s.cost.mp) continue;
+    if (s.cost.mp && a.mp < skMp(a, s)) continue;   // 빌드 69 밤: 마법사 · 성직자 계열은 MP ×MP69.caster (data-pace69.js)
     if (s.cost.hp && a.hp < d.maxHp * (s.cost.hp + 0.35)) continue;
     { const AM = skillAmmo(s, a, foes.length); if (AM && (!AM[0] || ammoLeft(AM[0], a) < AM[1])) continue; }   // 화살 · 암기 · 볼트가 모자라면 그 스킬을 못 쓴다
     let pr = 0;
@@ -792,14 +810,14 @@ function pickSkill(a, d, team, dm, foes, e) {
 }
 function cast(e, a, d, id, team, dm, foes) {
   const s = SKILLS[id];
-  if (s.cost.mp) a.mp -= s.cost.mp;
+  if (s.cost.mp) a.mp -= skMp(a, s);
   if (s.cost.hp) a.hp -= Math.round(d.maxHp * s.cost.hp);
   { const AM = skillAmmo(s, a, foes.length); if (AM && AM[0]) useAmmo(AM[0], a, AM[1]); }   // 화살 · 암기 · 볼트 스킬: 쏘는 만큼
   e.scd[a.id][id] = skillCdOf(a, d, id, e);
   ev(e, 'skill', { s: a.id, id });
   // 숙련도: 쓸수록 위력이 조금씩 오른다 (단계가 오르면 알린다)
   const sm = smLv(a, id), M = smMul(a, id) * skLvMul(a, id), L = skLvMul(a, id);
-  a.sm = a.sm || {}; a.sm[id] = (a.sm[id] || 0) + PACE69_SM;   // 빌드 69 (11-15 20:20): 재사용이 길어진 만큼 한 번을 여러 번으로 쳐서 숙련도가 오르는 빠르기는 그대로
+  a.sm = a.sm || {}; a.sm[id] = (a.sm[id] || 0) + paceSm(id);   // 빌드 69 (11-15 20:20 · 밤): 재사용이 길어진 만큼(차수마다 data-pace69.js PACE69.cdT) 한 번을 여러 번으로 쳐서 숙련도가 오르는 빠르기는 그대로
   if (smLv(a, id) > sm) ev(e, 'mastery', { s: a.id, id, lv: smLv(a, id) });
   if (s.kind === 'dmg' || s.kind === 'mdmg') {
     const magic = s.kind === 'mdmg';
@@ -1182,13 +1200,23 @@ function battle(p, e, team, dm, dt) {
       const sk = pickSkill(a, d, team, dm, alive, e);
       if (sk) { cast(e, a, d, sk, team, dm, alive); e.gcd[a.id] = CAST_GAP; }
     }
-    // 기본 공격: BASIC_CD초 ÷ 공격 속도마다 한 번, 스킬과 상관없이
+    // 기본 공격 (빌드 69 밤): 쿨타임이 돌면 휘두르기 시작해(실행 — e.cd['w' + id]에 남은 초) 맞히고, 맞힌 뒤부터 다음 쿨타임이 돈다. 스킬과 상관없이 · 넘친 몫은 다음으로 넘긴다
+    const wk = 'w' + a.id;
+    if (e.cd[wk] != null) {
+      e.cd[wk] -= dt * chill;
+      if (e.cd[wk] > 0) continue;
+      const over = e.cd[wk]; delete e.cd[wk];
+      e.cd[a.id] = basicCd(a, d, e) * (0.95 + rnd() * 0.1) + over;
+      const alive2 = foes.filter(f => f.hp > 0);
+      if (!alive2.length) break;
+      basicAct(e, a, d, team, dm, alive2);
+      continue;
+    }
     e.cd[a.id] = (e.cd[a.id] ?? (0.3 + rnd() * 0.6)) - dt * chill;
     if (e.cd[a.id] > 0) continue;
-    e.cd[a.id] = basicCd(a, d, e) * (0.95 + rnd() * 0.1);
-    const alive2 = foes.filter(f => f.hp > 0);
-    if (!alive2.length) break;
-    basicAct(e, a, d, team, dm, alive2);
+    if (st && st.para) { e.cd[a.id] = basicCd(a, d, e) * (0.95 + rnd() * 0.1); continue; }   // 마비: 기본 공격을 못 한다 (쿨타임만 다시)
+    e.cd[wk] = Math.max(0.01, basicExec(a, d) + e.cd[a.id]);
+    ev(e, 'swing', { s: a.id, w: Math.round(e.cd[wk] * 100) / 100, k: basicK(a) });   // 화면: 휘두르는 동작을 실행 시간만큼 붙잡았다가 맞히는 장에서 맞힌다 (view.js motSwing)
   }
   petTick(p, e, team, dm, dt);
   for (const f of foes) {

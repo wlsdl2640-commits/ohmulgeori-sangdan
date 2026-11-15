@@ -87,11 +87,16 @@ const SKILL_SLOT_LV = [30, 50, 70, 90, 100];
 const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length;   // 빌드 64: 각성 칸은 없앴다
 
 /* ───────── 기본 공격 · 재사용 대기시간 ─────────
-   기본 공격은 BASIC_CD초마다 한 번(공격 속도로 나눈다 — 빌드 22 ~ 68은 5초, 빌드 69부터 3초), 그 대신 한 방이 세다. 스킬은 저마다의 재사용 대기시간이 돌면 따로 나간다.
-   공격 속도(spd)는 기본 공격 대기시간을, 재사용 감소(cdr)는 스킬 대기시간을 줄인다. 둘 다 특성·지속 스킬·룬·강화 스킬로 모인다. */
-const BASIC_CD = 3;        // 기본 공격 대기시간(초) ÷ 공격 속도 — 빌드 69 (11-15 20:20 「기본공격의 쿨타임은 줄이고」): 5 → 3초 (스킬 재사용은 data-pace69.js에서 ×2)
-const BASIC_MULT = 2.5;    // 기본 공격 = 공격력 × 2.5
-const BASIC_MAGIC = 2.1;   // 마법 직업의 기본 공격 = 마법 공격력 × 2.1 (빌드 29: 초반 마법사가 너무 앞서 2.3에서 내림)
+   기본 공격(빌드 69 밤, 11-15 21:36 사용자 「기본 공격 8초 ㅇㅇ 넣어봐」 · 「공격속도는, 기본공격의 쿨타임이 돌아 왔을때의 기본공격이 실행되어 타격까지 이어지는 그 시간이 줄어들게 해줘.
+   기본공격 쿨타임 감소는 기본공격을 다시 하기까지의 대기시간」): 쿨타임(대기)이 돌면 휘두르기 시작해(실행) 맞히고, 맞힌 뒤부터 다음 쿨타임이 돈다 — 한 번 = 쿨타임 + 실행.
+     쿨타임 = max(floor, base − 쿨타임 감소) × 추위. 쿨타임 감소(초) = 직업(직업 빠르기를 0.5초 단위로) · 전직(차수마다 1초) · 민첩(10점마다 0.03초) ·
+       패시브 · 특성 · 숙련 · 룬(spdPct — 예전 「공격 속도 +%」의 pct배 초) · 강화 스킬(예전 공격 속도 배율 −1의 buff배 초) — core.js basicCut · basicCd
+     실행 = exec ÷ 공격 속도, 공격 속도 = 1 + 민첩 × aspd (core.js basicExec — 화면은 휘두르는 동작을 그만큼 붙잡았다가 맞히는 장에서 맞힌다, view.js motSwing)
+   빌드 22 ~ 68은 「5초 ÷ 공격 속도」, 빌드 69 낮(20:20)은 「3초 ÷ 공격 속도」. 스킬은 저마다의 재사용 대기시간이 돌면 따로 나가고 재사용 감소(cdr)가 줄인다. */
+const BASIC69 = { base: 8, floor: 1.5, cls0: 0.8, clsPer: 0.125, cls: 0.5, tier: 1, agi: 0.03, agiStep: 10, pct: 5, buff: 5, exec: 1, aspd: 0.004 };
+const BASIC_CD = BASIC69.base;   // 예전 이름 (옛 글 · 도구)
+const BASIC_MULT = 3.5;    // 기본 공격 = 공격력 × 3.5 (빌드 69 밤 「스킬이 더 강함으로」: 예전 2.5 × 1.4 — 동물 동료 · 암기 · 볼트도 이것을 본다)
+const BASIC_MAGIC = 2.94;  // 마법 직업의 기본 공격 = 마법 공격력 × 2.94 (예전 2.1 × 1.4 · 빌드 29: 초반 마법사가 너무 앞서 2.3에서 2.1로 내렸다)
 // 빌드 29 역할 장치
 const COMBO_MAX = 5;       // 연계 중첩 상한 (지속딜: 기본 공격 연속 적중마다 쌓이고 빗나가거나 기절·마비되면 끊긴다)
 const EXEC_HP = 0.3;       // 처형: 적 HP가 이 비율 아래면 한방딜의 피해 ×exec
@@ -102,7 +107,6 @@ const CAST_GAP = 0.9;      // 스킬과 스킬 사이 최소 간격(초)
 const CDR_MAX = 0.3;       // 재사용 감소 합의 상한
 const SM_CD = 0.01;        // 숙련 한 단계마다 재사용 -1%
 const CD_FLOOR = 0.4;      // 재사용은 기본 재사용의 40% 아래로 내려가지 않는다 (0.5초 아래로도)
-const basicCdOf = (spd, mul = 1) => BASIC_CD / Math.max(0.2, spd * mul);
 // 스킬 레벨: 같은 스킬북을 한 권 더 바쳐(고유·기본 스킬은 돈만) 올린다. 단계마다 위력 +8%, 재사용 -2%
 const SK_LV_MAX = 5, SK_LV_POW = 0.08, SK_LV_CD = 0.02;
 const skLv = (a, id) => (a && a.sl && a.sl[id]) || 1;
@@ -115,7 +119,7 @@ const skillUpCost = (id, lv) => { const s = SKILLS[id], L = s.lv0 || s.lv; retur
 /* ───────── 스킬 ───────── */
 // cls: 배울 수 있는 직업 (all = 모두), lv: 배울 수 있는 레벨, cost: { mp } 또는 { hp: 최대 HP 비율 }
 // kind: dmg(물리) mdmg(마법) heal buff taunt dot, tgt: front low all self party
-// haste: 강화 스킬이 함께 주는 공격 속도 배율, passive.spdPct/cdr: 공격 속도·스킬 재사용 감소
+// haste: 강화 스킬이 함께 주는 기본 공격 빠르기 배율(빌드 69 밤부터 (배율 − 1) × BASIC69.buff초만큼 기본 공격 쿨타임을 줄인다), passive.spdPct/cdr: 기본 공격 쿨타임 감소(× BASIC69.pct초)·스킬 재사용 감소
 const SKILLS = {
   bash:       { name: '강타',       cls: ['warrior'], lv: 1,  cost: { mp: 6 },    cd: 4,  kind: 'dmg',  mult: 1.8, tgt: 'front', desc: '앞의 적을 세게 내리친다.' },
   taunt:      { name: '도발 1',     cls: ['warrior'], lv: 5,  cost: { mp: 8 },    cd: 12, kind: 'taunt', dur: 6, desc: '6초 동안 모든 적이 자신만 노리게 한다.' },
@@ -471,7 +475,7 @@ const slotN = (g, i0) => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? Math.m
 const runeSlots = g => slotN(g, 0);   // 룬: 일반 1 · 고급 2 · 희귀부터 3
 const msSlots = g => slotN(g, 3);     // 마석: 영웅 1 · 전설 2 · 신화부터 3
 const srcSlots = g => slotN(g, 6);    // 원천물: 신성 1 · 우주 2 · 창조 3 (원천물 아이템은 아직 없다)
-const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
+const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '기본 공격 쿨타임', cdr: '재사용 감소', spd: '공격 속도' };   // 빌드 69 밤: spdPct는 기본 공격 쿨타임을 초로 줄인다 (panels.js statLine)
 const PCT_STATS = ['crit', 'eva'];
 
 // 빌드 64: 장비 강화(+1~+10)는 없앴다 (사용자 11-11 19:28). 옛 저장은 migrate12가 들인 재료 · 돈을 돌려준다

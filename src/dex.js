@@ -126,7 +126,7 @@ function clsCard(c) {
   const req = t === 1 ? '선술집에서 고용' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${Q.souls ? `, 주인의 혼 ${Q.souls}` : ''}${jobReqText(c) ? ` · ${jobReqText(c)}` : ''}`;
   return `<details class="card"><summary><span class="row"><img class="por" src="${clsIconURL(c)}" alt=""><span class="grow stack"><span>${C.name}${tierTag(c)}${n ? ` <span class="tag ok-t">${n}명</span>` : ''}</span><span class="sub">${C.desc}</span></span></span></summary>
     <div class="stats"><span>힘 <b>${C.base.str}</b> +${C.grow.str}/Lv</span><span>체력 <b>${C.base.vit}</b> +${C.grow.vit}/Lv</span><span>민첩 <b>${C.base.agi}</b> +${C.grow.agi}/Lv</span><span>지능 <b>${C.base.int}</b> +${C.grow.int}/Lv</span></div>
-    <div class="stats"><span>공격 속도 <b>×${C.spd}</b> (기본 공격 ${Math.round(BASIC_CD / C.spd * 10) / 10}초)</span><span>치명 <b>${Math.round(C.crit * 100)}%</b></span><span>짐 <b>${C.carry}</b></span>${C.salary ? `<span>봉급 <b>${C.salary}G</b></span>` : ''}</div>
+    <div class="stats"><span>기본 공격 쿨타임 <b>${BASIC69.base - clsCut(c) - (jobTier(c) - 1) * BASIC69.tier}초</b> (${BASIC69.base}초 · 직업 ${clsCut(c) >= 0 ? '−' : '+'}${Math.abs(clsCut(c))}초${jobTier(c) > 1 ? ` · 전직 −${(jobTier(c) - 1) * BASIC69.tier}초` : ''} — 민첩 · 효과가 더 줄인다)</span><span>치명 <b>${Math.round(C.crit * 100)}%</b></span><span>짐 <b>${C.carry}</b></span>${C.salary ? `<span>봉급 <b>${C.salary}G</b></span>` : ''}</div>
     ${trText(c) ? `<div class="sub gold-t">${trText(c)}</div>` : ''}
     ${JOB_TRAITS[c] ? `<div class="sub gold-t">직업 특성 「${JOB_TRAITS[c].name}」 ${JOB_TRAITS[c].desc}</div>` : ''}
     <div class="sub">기본 스킬 「${SKILLS[C.innate] ? SKILLS[C.innate].name : '-'}」 · ${req}</div>

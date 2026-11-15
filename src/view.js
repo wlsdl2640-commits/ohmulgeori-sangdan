@@ -680,11 +680,24 @@ function motPick(a, sid, i, k) {
   const pick = pool.filter(q => q !== last || MOT_REPEAT[q]), mk = pick.length ? pick[Math.floor(Math.random() * pick.length)] : pool[0];
   V.motLast[a.id] = mk; return mk;
 }
+// 빌드 69 밤 기본 공격 실행 (core.js battle 'swing'): 쿨타임이 돌면 휘두르기 시작해 x.w초 뒤에 맞힌다 — 실행이 길면 맞히기 두 장 앞(모으는 장)을 붙잡고, 짧으면 앞 장들을 빨리.
+// 뒤따르는 기본 공격 사건(hit b · 빗나감 fmiss)이 이 동작을 이어받는다(motOn). 스킬 동작 중이면 끊지 않는다
+function motSwing(a, x, t) {
+  if (!a || a.down || !pxsMotOK(a)) return;
+  const m0 = V.mot['a' + a.id]; if (m0 && !m0.sw && motNow(a, t + 0.05)) return;
+  const mk = motPick(a, null, 0, x.k), T0 = pxsMotT(mk), hi = pxsMotHit(mk), h0 = T0.slice(0, hi).reduce((s, v) => s + v, 0), w = Math.max(0.05, x.w || 0), hold = Math.max(0, hi - 2);
+  const T = w >= h0 ? T0.map((v, f) => (f === hold ? v + w - h0 : v)) : T0.map((v, f) => (f < hi ? v * w / h0 : v));
+  V.mot['a' + a.id] = { t: -1, sid: '', n: {}, sw: t + w, q: [{ mk, t0: t, f0: 0, c: 0, sk: null, T }] };
+}
 // 사건 하나(hit·fmiss)에 동작을 붙이고 맞히는(쏘는) 때까지 남은 초를 돌려준다 (동작이 없으면 0)
 function motOn(a, x, t) {
   if (!a || a.down || !pxsMotOK(a) || x.sid === 'shuri' || x.sid === 'bolt' || x.k === 'pet') return 0;
   const key = 'a' + a.id, sid = x.sid || (x.ctr ? 'ctr' : '');
   let m = V.mot[key];
+  if (m && m.sw && (x.b || (x.type === 'fmiss' && !x.sk))) {   // 빌드 69 밤: 휘두르기 시작한 기본 공격을 이어받는다 (맞히는 장이 지금쯤) — 너무 늦게 오면(기절로 실행이 멈췄던 것) 새 동작
+    if (t <= m.sw + 0.6) { m.t = t; m.sid = sid; m.n = {}; }
+    m.sw = 0;
+  }
   if (x.dot) { if (!m || m.t !== t || !m.dot) return 0; m.lastQ = m.q[0]; return m.q[0].t0 + motToHit(m.q[0]) - t; }   // 지속 피해: skill 사건이 건 동작에 맞춘다
   const sk = x.sid && SKFX[x.sid] && SKFX[x.sid].mot ? x.sid : null;
   if (!m || m.t !== t || m.sid !== sid) { const mk = motPick(a, x.sid, 0, x.k); m = V.mot[key] = { t, sid, n: {}, q: [{ mk, t0: t, f0: 0, c: x.c, sk, T: motT(mk, sk && SKFX[sk].hold) }] }; }
@@ -692,7 +705,7 @@ function motOn(a, x, t) {
   while (m.q.length <= n) { const q = m.q[m.q.length - 1], mk = motPick(a, x.sid, m.q.length, x.k); m.q.push({ mk, t0: q.t0 + motToHit(q) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c, sk, T: pxsMotT(mk) }); }
   if (x.c) m.q[n].c = 1;
   m.lastN = n + 1; m.lastQ = m.q[n];
-  return m.q[n].t0 + motToHit(m.q[n]) - t;
+  return Math.max(0.001, m.q[n].t0 + motToHit(m.q[n]) - t);   // 이어받은 기본 공격은 맞히는 장이 이미 지났을 수 있다 (0이면 동작 없는 것으로 본다)
 }
 // 공격이 아닌 동작 (막기·치켜들기·방패 세우기): 다른 동작 중이 아닐 때(휘두르던 무기를 끊지 않는다), 막기는 방패가 있을 때 · 갈래에 맞게 바꾼다
 function motCast(a, mk, t, blk, sk) {
@@ -752,6 +765,8 @@ function events(e, pos, t, team, p) {
   for (let xi = 0; xi < e.ev.length; xi++) {
     const x = e.ev[xi];
     if (x.n <= V.lastN) continue;
+    if (x.type === 'swing') { V.lastN = x.n; motSwing(advOf(x.s), x, t); continue; }   // 빌드 69 밤: 기본 공격 실행 시작 (동작만)
+    if (x.type === 'clear') for (const k in V.mot) if (V.mot[k].sw) delete V.mot[k];   // 싸움이 끝나면 휘두르던 기본 공격은 거둔다
     const md = x.type === 'hit' || x.type === 'fmiss' ? motOn(advOf(x.s), x, t) : 0;   // 칼 동작: 맞히는 장까지 남은 시간
     const fd = (x.type === 'hurt' && !x.dot) || x.type === 'miss' || x.type === 'aoe' || (x.type === 'shield' && !x.on) ? fmotOn(e, x, t, e.ev[xi + 1], at) : 0;   // 몬스터 동작 (빌드 43): 맞는 때까지
     const hd = !fd && (x.type === 'hurt' || x.type === 'miss') && x.hn ? x.hn * FMOT_HN : 0;   // 빌드 69 몬스터 연타: 예전 그림 몬스터도 한 대씩 늦게 (새 그림은 fmotOn이)
