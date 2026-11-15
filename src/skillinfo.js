@@ -49,7 +49,7 @@ function skillSpec(id, a) {
     if (s.boss) out.push(`보스에게 ×${s.boss}`);
     if (s.exec) out.push(`HP ${skPct(EXEC_HP)} 아래 적에게 ×${s.exec} (처형)`);
     if (s.gamble) out.push(`${skPct(s.gamble.p)} 확률로 ×${s.gamble.mult} 대박 (평균 ${skMul(1 + s.gamble.p * (s.gamble.mult - 1))})`);
-    if (s.drain) out.push(`준 피해의 ${skPct(s.drain)} 흡혈`);
+    if (s.drain) out.push(`준 피해의 ${skPct(s.drain)} 흡혈 — ${LEECH_TXT}`);
     if (s.steal) out.push(`맞힌 적마다 금화 +${s.steal}G${hits > 1 ? ` ×${hits}` : ''}`);
     out.push(skElLine(s));
     if (s.vs) out.push(Object.entries(s.vs).map(([t, v]) => `${MTYPES[t] ? MTYPES[t].name : t}에게 ×${v}`).join(' · '));

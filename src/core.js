@@ -489,7 +489,7 @@ function stepExp(p, dt) {
   if (maxF >= FATIGUE.camp || (isNight() && p.campNight !== false && avgF >= FATIGUE.nightCamp)) { startCamp(p, e); return; }
   tire(team, FATIGUE.walk * fr * dt);
   if (!e.next && e.encs[e.ei] != null) e.next = rollFoes(e, e.ei);
-  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1);
+  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1) / (e.area === 'field' || e.area === 'dungeon' ? WALK_STRETCH : 1);   // 빌드 69 (11-15 12:03 「×3으로」): 필드 · 던전의 걷는 길 세 배 (data-stat69.js)
   if (e.mode === 'advance') {
     const next = e.encs[e.ei], np = e.pos + v * dt;
     if (next != null && np >= next) { e.pos = next; e.ei++; spawn(p, e); return; }
@@ -689,9 +689,22 @@ function partyDrain(e, team, dm, a, v) {
 function leech(e, a, d, v, magic) {
   const T = TR(a), k = ((magic ? T.mdrain : T.lifesteal) || 0) + (d.lifesteal || 0) + (magic ? d.mDrain || 0 : 0);   // 생명 룬 (무기): 물리 · 마법 모두 · 금서 해독: 마법 피해 흡수
   if (!k || !v || a.hp >= d.maxHp) return;
-  const h = Math.max(1, Math.round(v * k * healMul(e, a.id)));
+  const h = leechCap(e, a, d, Math.max(1, Math.round(v * k * healMul(e, a.id))));
+  if (h <= 0) return;
   a.hp = Math.min(d.maxHp, a.hp + h);
   ev(e, 'heal', { s: a.id, d: a.id, v: h });
+}
+// 빌드 69 (11-15 12:03 사용자 「흡혈의 제한을 두던 안으로」): 흡혈 그릇 — 흡혈 · 흡혈 스킬로 채우는 HP는 싸움 LEECH_CAP.win초마다 최대 HP의 max까지, 한 번에 once까지 (data-stat69.js)
+//   e.lsT = 싸움 시간(battle이 센다) · 가득 차서 넘친 몫은 세지 않는다 · 성스러운 흡수(partyDrain)는 그대로
+function leechCap(e, a, d, h) {
+  h = Math.min(h, Math.max(0, d.maxHp - a.hp));
+  if (h <= 0) return 0;
+  const B = e.lsB || (e.lsB = {}), t = e.lsT || 0;
+  let w = B[a.id];
+  if (!w || t - w.t0 >= LEECH_CAP.win) w = B[a.id] = { t0: t, used: 0 };
+  const ok = Math.floor(Math.max(0, Math.min(h, d.maxHp * LEECH_CAP.once, d.maxHp * LEECH_CAP.max - w.used)));
+  w.used += ok;
+  return ok;
 }
 function stealGold(s, hits, mul) { if (!s.steal) return; const g = Math.round(s.steal * hits * (mul || 1)); S.gold += g; S.stats.earned += g; }
 // 빌드 65: 다음 공격 하나에만 드는 강화(그림자 숨기 = 치명 확정 · 숨죽이기 = ×2)를 꺼내 쓴다
@@ -799,7 +812,7 @@ function cast(e, a, d, id, team, dm, foes) {
       if (s.sta && (f.hp > 0 || s.sta.k === 'mark') && rnd() < s.sta.p) inflictFoe(e, f, s.sta, atk, a.id, id);
       if (s.sta2 && (f.hp > 0 || s.sta2.k === 'mark') && rnd() < s.sta2.p) inflictFoe(e, f, s.sta2, atk, a.id, id);   // 둘째 상태이상 (올가미 채찍: 마비 + 표식)
       if (s.slow) f.slow = s.slow;
-      if (s.drain) { const h = Math.round(v * s.drain * healMul(e, a.id)); a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); }
+      if (s.drain) { const h = leechCap(e, a, d, Math.round(v * s.drain * healMul(e, a.id))); if (h > 0) { a.hp = Math.min(d.maxHp, a.hp + h); ev(e, 'heal', { s: a.id, d: a.id, v: h }); } }   // 흡혈 스킬도 흡혈 그릇에 든다
       else leech(e, a, d, v, magic);
       partyDrain(e, team, dm, a, v);
     } }
@@ -1104,6 +1117,7 @@ function fPhase(e, f, foes) {
 }
 function battle(p, e, team, dm, dt) {
   const foes = e.foes;
+  e.lsT = (e.lsT || 0) + dt;   // 흡혈 그릇이 세는 싸움 시간
   if (e.flee) {
     e.flee -= dt;
     if (e.flee <= 0) {

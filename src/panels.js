@@ -11,9 +11,9 @@ const gearWho = b => GTYPES[b].who || clsList(GTYPES[b].cls);   // 빌드 65: �
 const TR_TXT = {
   thrown: v => `암기를 ${v}통까지 지닌다`,
   critMul: v => `치명타 피해 ×${v}`, guard: v => (v < 0 ? `받는 피해 +${Math.round(-v * 100)}%` : `받는 피해 -${Math.round(v * 100)}%`), tank: v => (v < 0 ? '적이 덜 노린다' : v >= 2 ? '적이 아주 자주 노린다' : '적이 자주 노린다'),
-  lifesteal: v => `준 피해의 ${Math.round(v * 100)}% 흡혈`, rage: v => `체력이 줄수록 공격력 최대 +${Math.round(v * 100)}%`, pet: () => '동물 동료가 함께 공격',
+  lifesteal: v => `준 피해의 ${Math.round(v * 100)}% 흡혈 (싸움 ${LEECH_CAP.win}초마다 최대 HP ${Math.round(LEECH_CAP.max * 100)}%까지)`, rage: v => `체력이 줄수록 공격력 최대 +${Math.round(v * 100)}%`, pet: () => '동물 동료가 함께 공격',
   pen: v => `방어 ${Math.round(v * 100)}% 무시`, first: v => `싸움 첫 공격 ×${v}`, double: v => `${Math.round(v * 100)}% 확률로 두 번 공격`,
-  luck: v => `전리품·금화 +${Math.round(v * 100)}%`, aoe: v => `마법이 다른 적에게 ${Math.round(v * 100)}% 번짐`, mdrain: v => `마법 피해의 ${Math.round(v * 100)}% 흡수`,
+  luck: v => `전리품·금화 +${Math.round(v * 100)}%`, aoe: v => `마법이 다른 적에게 ${Math.round(v * 100)}% 번짐`, mdrain: v => `마법 피해의 ${Math.round(v * 100)}% 흡수 (싸움 ${LEECH_CAP.win}초마다 최대 HP ${Math.round(LEECH_CAP.max * 100)}%까지)`,
   hybrid: v => `기본 공격에 마법 피해 ${Math.round(v * 100)}%`, healPow: v => `치유량 ×${v}`, dot: v => `지속 피해 ×${v}`, bossDmg: v => `보스 피해 ×${v}`, aura: v => `파티 공격력 +${Math.round(v * 100)}%`,
   combo: v => `연계: 기본 공격을 맞힐 때마다 피해 +${Math.round(v * 100)}% (${COMBO_MAX}중첩, 빗나가거나 기절하면 끊김)`, exec: v => `처형: HP ${Math.round(EXEC_HP * 100)}% 아래 적에게 ×${v}`, cover: v => `엄호: 동료가 노려지면 ${Math.round(v * 100)}%로 대신 맞음`,
   pdrain: v => `성스러운 흡수: 마법 피해의 ${Math.round(v * 100)}%만큼 가장 다친 동료 회복`, wagon: v => `마차 짐 +${Math.round(v * 100)}%`, wagonSpd: v => `마차 속도 +${Math.round(v * 100)}%`, scout: v => `파티 이동 속도 +${Math.round(v * 100)}%`, tent: v => `야영은 텐트 (피로 회복 ×${v})`, drop: v => `전리품 +${Math.round(v * 100)}%`
@@ -33,7 +33,7 @@ function runeDerived(a, d) {
   if (d.ccRes) out.push(['행동 방해 시간', '-' + pc(d.ccRes)]);
   if (d.blindHit) out.push(['기본 공격 눈멂', pc(d.blindHit)]);
   if (d.blindRes) out.push(['눈멂 저항', pc(d.blindRes)]);
-  if (d.lifesteal) out.push(['흡혈', pc(d.lifesteal)]);
+  if (d.lifesteal) out.push(['흡혈', pc(d.lifesteal) + ` · ${LEECH_CAP.win}초에 HP ${Math.round(LEECH_CAP.max * 100)}%까지`]);
   if (d.hpRegen) out.push(['초당 HP 재생', pc(d.hpRegen)]);   // 빌드 69: 신성력 숙련 · 건강함 · 직업 특성 · 도시락
   if (d.msDmg) out.push(['받는 피해', '-' + pc(d.msDmg)]);   // 빌드 69 마석: 다이아몬드 · 오팔 · 아쿠아마린 · 호박 · 흑요석
   if (d.msRefl) out.push(['반사', pc(d.msRefl)]);

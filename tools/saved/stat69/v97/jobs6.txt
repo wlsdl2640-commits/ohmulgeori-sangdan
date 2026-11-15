@@ -1,0 +1,8 @@
+ls_heal_L0b
+ls_noheal_L0b
+ls_bossnoheal_L0b
+ls_bossheal_L0b
+walk_L100_W0
+walk_L150_W0
+walk_farm_W0
+mp_L150_C0_cd
