@@ -5,7 +5,7 @@
     ['rogue', 1], ['assassin', 50], ['shadowlord', 100], ['shadowlord', 200], ['mage', 1], ['sorcerer', 50], ['archmage', 100], ['archmage', 200],
     ['cleric', 1], ['priest', 50], ['archbishop', 100], ['archbishop', 200], ['porter', 1], ['coachman', 50], ['caravanmaster', 150], ['caravanmaster', 200], ['masterthief', 200], ['seadragoon', 200]];
   out.tab = rows.map(([c, lv]) => { H.fresh(); const a = H.adv(c, lv, { slv: 3, sm: 3 }); const d = derive(a), q = basicCutParts(a, d), w = basicCd(a, d, null), x = basicExec(a, d);
-    return [CLASSES[c].name, lv, Math.round(d.T.agi), q.cls, q.tier, +q.agi.toFixed(2), +q.pct.toFixed(2), +w.toFixed(2), +d.aspd.toFixed(2), +x.toFixed(2), +(w + x).toFixed(2)]; });
+    return [CLASSES[c].name, lv, Math.round(d.T.agi), q.cls, q.tier, +q.agi.toFixed(2), +(d.spdPct || 0).toFixed(2), +w.toFixed(2), +d.aspd.toFixed(2), +x.toFixed(2), +(w + x).toFixed(2)]; });
   // 2. 설명 글에 「공격 속도」가 남은 스킬 · 특성
   out.left = Object.keys(SKILLS).filter(id => !SKILLS[id].cut && /공격 ?속도/.test(SKILLS[id].desc || '')).map(id => [id, SKILLS[id].desc]);
   out.leftT = Object.keys(TRAITS).filter(k => /공격 ?속도/.test(TRAITS[k].desc || '')).map(k => [k, TRAITS[k].desc]);

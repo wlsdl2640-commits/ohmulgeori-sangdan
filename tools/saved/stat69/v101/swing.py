@@ -34,5 +34,6 @@ with sync_playwright() as pw:
         pg.wait_for_timeout(40)
         T.append(EV("Math.round(V.lastF)")); pg.locator('#bcv').screenshot(path=f'{OUT}/f{k:03d}.png')
     json.dump(T, open(f'{OUT}/times.json', 'w'))
+    json.dump(EV("window.__LOGV"), open(f'{OUT}/log.json', 'w'))  # swing_sheet.py가 읽는다
     print(json.dumps(EV("({ n: window.__LOGV.length, evs: S.parties[0].exp ? S.parties[0].exp.ev.slice(-12).map(x => [x.type, x.s, x.w || 0, x.b || 0]) : [], evsrc: String(ev).slice(0, 60), log: window.__LOGV.slice(0, 60) })")))
     print('page errors:', errs[:8]); br.close()

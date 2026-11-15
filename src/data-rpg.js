@@ -89,11 +89,11 @@ const skillSlots = a => MAX_SKILLS + SKILL_SLOT_LV.filter(l => a.lv >= l).length
 /* ───────── 기본 공격 · 재사용 대기시간 ─────────
    기본 공격(빌드 69 밤, 11-15 21:36 사용자 「기본 공격 8초 ㅇㅇ 넣어봐」 · 「공격속도는, 기본공격의 쿨타임이 돌아 왔을때의 기본공격이 실행되어 타격까지 이어지는 그 시간이 줄어들게 해줘.
    기본공격 쿨타임 감소는 기본공격을 다시 하기까지의 대기시간」): 쿨타임(대기)이 돌면 휘두르기 시작해(실행) 맞히고, 맞힌 뒤부터 다음 쿨타임이 돈다 — 한 번 = 쿨타임 + 실행.
-     쿨타임 = max(floor, base − 쿨타임 감소) × 추위. 쿨타임 감소(초) = 직업(직업 빠르기를 0.5초 단위로) · 전직(차수마다 1초) · 민첩(10점마다 0.03초) ·
-       패시브 · 특성 · 숙련 · 룬(spdPct — 예전 「공격 속도 +%」의 pct배 초) · 강화 스킬(예전 공격 속도 배율 −1의 buff배 초) — core.js basicCut · basicCd
-     실행 = exec ÷ 공격 속도, 공격 속도 = 1 + 민첩 × aspd (core.js basicExec — 화면은 휘두르는 동작을 그만큼 붙잡았다가 맞히는 장에서 맞힌다, view.js motSwing)
+     쿨타임 = max(floor, base − 쿨타임 감소) × 추위. 쿨타임 감소(초) = 직업(직업 빠르기를 0.5초 단위로) · 전직(차수마다 1초) · 민첩(10점마다 0.03초) — core.js basicCut · basicCd
+     실행 = exec ÷ 공격 속도, 공격 속도 = (1 + 민첩 × aspd) × (1 + 패시브 · 특성 · 숙련 · 룬의 「공격 속도 +%」) × 강화 스킬 배율 (core.js basicExec — 화면은 휘두르는 동작을 그만큼 붙잡았다가 맞히는 장에서 맞힌다, view.js motSwing)
+     11-16 01:18 사용자(채팅): 민첩 「둘 다 그대로」 · 실행 「더 길게 1.5초」 · 예전 「공격 속도 +%」 효과 「모두 공격 속도로」(21:36판은 쿨타임 감소 초로 바꿨었다)
    빌드 22 ~ 68은 「5초 ÷ 공격 속도」, 빌드 69 낮(20:20)은 「3초 ÷ 공격 속도」. 스킬은 저마다의 재사용 대기시간이 돌면 따로 나가고 재사용 감소(cdr)가 줄인다. */
-const BASIC69 = { base: 8, floor: 1.5, cls0: 0.8, clsPer: 0.125, cls: 0.5, tier: 1, agi: 0.03, agiStep: 10, pct: 5, buff: 5, exec: 1, aspd: 0.004 };
+const BASIC69 = { base: 8, floor: 1.5, cls0: 0.8, clsPer: 0.125, cls: 0.5, tier: 1, agi: 0.03, agiStep: 10, exec: 1.5, aspd: 0.004 };
 const BASIC_CD = BASIC69.base;   // 예전 이름 (옛 글 · 도구)
 const BASIC_MULT = 3.5;    // 기본 공격 = 공격력 × 3.5 (빌드 69 밤 「스킬이 더 강함으로」: 예전 2.5 × 1.4 — 동물 동료 · 암기 · 볼트도 이것을 본다)
 const BASIC_MAGIC = 2.94;  // 마법 직업의 기본 공격 = 마법 공격력 × 2.94 (예전 2.1 × 1.4 · 빌드 29: 초반 마법사가 너무 앞서 2.3에서 2.1로 내렸다)
@@ -119,7 +119,7 @@ const skillUpCost = (id, lv) => { const s = SKILLS[id], L = s.lv0 || s.lv; retur
 /* ───────── 스킬 ───────── */
 // cls: 배울 수 있는 직업 (all = 모두), lv: 배울 수 있는 레벨, cost: { mp } 또는 { hp: 최대 HP 비율 }
 // kind: dmg(물리) mdmg(마법) heal buff taunt dot, tgt: front low all self party
-// haste: 강화 스킬이 함께 주는 기본 공격 빠르기 배율(빌드 69 밤부터 (배율 − 1) × BASIC69.buff초만큼 기본 공격 쿨타임을 줄인다), passive.spdPct/cdr: 기본 공격 쿨타임 감소(× BASIC69.pct초)·스킬 재사용 감소
+// haste: 강화 스킬이 함께 주는 공격 속도 배율, passive.spdPct/cdr: 공격 속도·스킬 재사용 감소 (빌드 69 밤부터 공격 속도 = 기본 공격 실행(휘둘러 맞히기까지)을 줄인다)
 const SKILLS = {
   bash:       { name: '강타',       cls: ['warrior'], lv: 1,  cost: { mp: 6 },    cd: 4,  kind: 'dmg',  mult: 1.8, tgt: 'front', desc: '앞의 적을 세게 내리친다.' },
   taunt:      { name: '도발 1',     cls: ['warrior'], lv: 5,  cost: { mp: 8 },    cd: 12, kind: 'taunt', dur: 6, desc: '6초 동안 모든 적이 자신만 노리게 한다.' },
@@ -176,7 +176,7 @@ const SKILLS = {
   toughness:   { name: '강인함', cls: ['all'], lv: 25, passive: { hpPct: 0.08 }, desc: '최대 HP가 8% 오른다.' },
   focus:       { name: '집중', cls: ['all'], lv: 40, passive: { crit: 0.03 }, desc: '치명타 확률이 3%p 오른다.' },
   secondwind:  { name: '재기', cls: ['all'], lv: 55, cost: { mp: 20 }, cd: 30, kind: 'heal', tgt: 'self', pct: 0.3, desc: '최대 HP의 30%를 회복한다.' },
-  haste:       { name: '신속', cls: ['all'], lv: 20, passive: { spdPct: 0.1 }, desc: '공격 속도가 10% 빨라져 기본 공격 대기시간이 줄어든다.' },
+  haste:       { name: '신속', cls: ['all'], lv: 20, passive: { spdPct: 0.1 }, desc: '공격 속도가 10% 빨라져 기본 공격을 휘둘러 맞히기까지가 짧아진다.' },
   tactics:     { name: '전술', cls: ['all'], lv: 35, passive: { cdr: 0.08 }, desc: '스킬 재사용 대기시간이 8% 줄어든다.' },
   rhythm:      { name: '전투 리듬', cls: ['all'], lv: 60, passive: { spdPct: 0.08, cdr: 0.08 }, desc: '공격 속도 8%, 스킬 재사용 감소 8%가 오른다.' },
   // ── 2차·3차 직업 스킬 (own: 스킬북 없이 훈련소에서 배운다. 3차는 2차·기본 직업 스킬도 배울 수 있다) ──
@@ -475,7 +475,7 @@ const slotN = (g, i0) => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? Math.m
 const runeSlots = g => slotN(g, 0);   // 룬: 일반 1 · 고급 2 · 희귀부터 3
 const msSlots = g => slotN(g, 3);     // 마석: 영웅 1 · 전설 2 · 신화부터 3
 const srcSlots = g => slotN(g, 6);    // 원천물: 신성 1 · 우주 2 · 창조 3 (원천물 아이템은 아직 없다)
-const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '기본 공격 쿨타임', cdr: '재사용 감소', spd: '공격 속도' };   // 빌드 69 밤: spdPct는 기본 공격 쿨타임을 초로 줄인다 (panels.js statLine)
+const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
 const PCT_STATS = ['crit', 'eva'];
 
 // 빌드 64: 장비 강화(+1~+10)는 없앴다 (사용자 11-11 19:28). 옛 저장은 migrate12가 들인 재료 · 돈을 돌려준다

@@ -1,24 +1,23 @@
 /* ───────── 스킬 설명: 계수·대기시간·확률·증가율을 전부 숫자로 ─────────
    skillSpec(id)        — 스킬북·도감·상점용 (계수 그대로)
    skillSpec(id, a)     — 모험가 창용 (그 모험가의 공격력·숙련·재사용 감소를 넣은 실제 수치)
-   basicSpec(a)         — 기본 공격 (빌드 69 밤: 쿨타임 8초 − 쿨타임 감소 + 실행 1초 ÷ 공격 속도, 공격력 ×3.5) */
+   basicSpec(a)         — 기본 공격 (빌드 69 밤: 쿨타임 8초 − 쿨타임 감소 + 실행 1.5초 ÷ 공격 속도, 공격력 ×3.5) */
 const SK_TGT = { front: '앞의 적', low: '가장 약한 적', strong: '가장 센 적', pierce: '맨 앞 적과 그 뒤 적 (꿰뚫기)', all: '모든 적', self: '자신', party: '파티 전원' };
 const SK_TGT_ALLY = Object.assign({}, SK_TGT, { low: '가장 다친 동료', ally: '가장 다친 동료', low2: '가장 다친 동료 둘', danger: `HP ${Math.round(HEAL_DANGER * 100)}% 아래 동료 모두` });   // 빌드 69: 치유 · 재생 · 보호막 · 강화의 low는 가장 다친 동료 (예전엔 「가장 약한 적」으로 나왔다)
 const SK_KIND = { dmg: '물리 피해', mdmg: '마법 피해', heal: '치유', buff: '강화', dot: '지속 피해', taunt: '도발', cure: '해제', shield: '보호막', regen: '재생', revive: '부활' };
-const SK_BUFF = { deflect: '기본 공격 튕겨내기', steal: '훔치는 돈', hide: '적이 덜 노림', ncrit: '다음 공격 치명타 확정', nmul: '다음 공격', ground: '땅에 내려앉음', atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '기본 공격 쿨타임', heal: '회복량', crit: '치명타', guard: '받는 피해 감소', cdr: '스킬 재사용 감소' };
+const SK_BUFF = { deflect: '기본 공격 튕겨내기', steal: '훔치는 돈', hide: '적이 덜 노림', ncrit: '다음 공격 치명타 확정', nmul: '다음 공격', ground: '땅에 내려앉음', atk: '공격력', matk: '마법 공격력', def: '방어력', eva: '회피', block: '방어 확률', counter: '반격', rheal: '받는 회복량', spd: '공격 속도', heal: '회복량', crit: '치명타', guard: '받는 피해 감소', cdr: '스킬 재사용 감소' };
 // 지속 효과 이름과 표기 방식: pct(배율 %) · pp(%p 더함) · neg(줄임) · x(배)
-const SK_PASS = { el_water: ['물 속성 피해', 'pct'], atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['기본 공격 쿨타임', 'sec'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'], healPow: ['치유량', 'pct'], hpRegen: ['초당 HP 재생', 'pct'], exec: ['약해진 적(HP 30% 아래) 피해', 'pct'], stun: ['기본 공격 기절', 'pp'], buffDur: ['강화 스킬 지속 시간', 'pct'],
+const SK_PASS = { el_water: ['물 속성 피해', 'pct'], atkPct: ['공격력', 'pct'], matkPct: ['마법 공격력·치유량', 'pct'], defPct: ['방어력', 'pct'], hpPct: ['최대 HP', 'pct'], mpPct: ['최대 MP', 'pct'], carryPct: ['짐', 'pct'], movePct: ['이동 속도', 'pct'], spdPct: ['공격 속도', 'pct'], cdr: ['스킬 재사용 대기시간', 'neg'], crit: ['치명타', 'pp'], eva: ['회피', 'pp'], block: ['방어 확률', 'pp'], counter: ['반격', 'pp'], double: ['연타', 'pp'], mpRegen: ['MP 회복', 'x'], healPow: ['치유량', 'pct'], hpRegen: ['초당 HP 재생', 'pct'], exec: ['약해진 적(HP 30% 아래) 피해', 'pct'], stun: ['기본 공격 기절', 'pp'], buffDur: ['강화 스킬 지속 시간', 'pct'],
   critDmg: ['치명타 피해', 'pct'], chestGold: ['보물 상자 · 보물고 돈', 'pct'], thrownPct: ['암기 피해', 'pct'], thrownCap: ['암기 담는 수', 'pct'], petDmg: ['늑대 · 와이번 공격 피해', 'pct'], pbuffDur: ['파티 강화 스킬 지속 시간', 'pct'], camp: ['야영 회복', 'pct'], campAmb: ['야영 중 밤습격', 'neg'], campSleep: ['웨건 야영 중 숙면 피로 회복 (초당)', 'n'],   // 빌드 69 개척민의 지혜   // 빌드 65 직업 개편
   slowHit: ['기본 공격에 맞은 적 1.5초 느림', 'pp'], bleedHit: ['기본 공격 출혈', 'pp'], stealPct: ['훔치는 돈', 'pct'], chestExtra: ['보물고 상자 하나 더', 'pp'], thrownTwice: ['암기 한 번 더', 'pp'], comboMax: ['연계 한도', 'n'],   // 빌드 65 새 숙련
   offDmg: ['둘째 칼(보조 단검) 피해', 'pct'], arenaFame: ['투기장 랭킹 점수', 'pct'], shieldPow: ['거는 보호막', 'pct'], boltPct: ['볼트 피해', 'pct'], boltPierce: ['볼트 방어 무시', 'pct'], boltTwice: ['볼트 한 발 더', 'pp'], petTwice: ['탈것이 한 번 더', 'pp'],
   spiritPct: ['정령 스킬 피해', 'pct'], weakPct: ['약점 피해', 'pct'], immPierce: ['면역인 적에게도 피해', 'pct'], mdrain: ['마법 피해 흡수', 'pct'], dotPct: ['지속 피해', 'pct'], wagonSpd: ['모는 마차 속도', 'pct'], wagonCap: ['모는 마차 짐', 'pct'] };
 const SK_PASS_FLAG = { subst: '싸움마다 한 번, 쓰러질 한 방을 피하고 HP 30%로 버틴다', firstCrit: '싸움마다 첫 공격은 반드시 치명타', baImm: '기본 공격에 맞지 않는다' };
 // 숙련 효과 한 줄: 공격력 +8% · 치명타 +1%p
-const mastFxText = f => Object.entries(f).map(([k, v]) => { const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct']; return `${P[0]} ${P[1] === 'sec' ? '−' + skSec2(v * BASIC69.pct) : P[1] === 'n' ? '+' + v : P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`; }).join(' · ');
+const mastFxText = f => Object.entries(f).map(([k, v]) => { const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct']; return `${P[0]} ${P[1] === 'n' ? '+' + v : P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`; }).join(' · ');
 const skPct = v => `${Math.round(v * 1000) / 10}%`;
 const skSec = v => `${Math.round(v * 10) / 10}초`;
-const skSec2 = v => `${Math.round(v * 100) / 100}초`;   // 빌드 69 밤: 기본 공격 쿨타임 감소 (0.15 · 0.25초 …)
-const skSpdCut = m => skSec2((m - 1) * BASIC69.buff);    // 강화 스킬의 기본 공격 쿨타임 감소 (배율 → 초)
+const skSec2 = v => `${Math.round(v * 100) / 100}초`;   // 빌드 69 밤: 기본 공격 쿨타임 · 실행 (0.03 · 0.25초 …)
 const skN = v => fmt(Math.round(v));
 const skRange = v => `${skN(v * 0.85)}~${skN(v * 1.15)}`;
 const skMul = v => `×${Math.round(v * 100) / 100}`;
@@ -33,7 +32,7 @@ function skillSpec(id, a) {
     for (const [k, v0] of Object.entries(s.passive)) {
       if (SK_PASS_FLAG[k]) { out.push(SK_PASS_FLAG[k]); continue; }
       const P = SK_PASS[k] || [STAT_NAMES[k] || k, 'pct'], v = v0 * L;
-      out.push(`${P[0]} ${P[1] === 'sec' ? '−' + skSec2(v * BASIC69.pct) : P[1] === 'x' ? '×' + (Math.round((1 + v) * 100) / 100) : P[1] === 'n' ? Math.round(v * 100) / 100 : P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`);
+      out.push(`${P[0]} ${P[1] === 'x' ? '×' + (Math.round((1 + v) * 100) / 100) : P[1] === 'n' ? Math.round(v * 100) / 100 : P[1] === 'neg' ? '-' + skPct(v) : '+' + skPct(v) + (P[1] === 'pp' ? 'p' : '')}`);
     }
     out.push('지속 효과 · 배우고 있는 동안 늘 적용');
     if (lvLine) out.push(lvLine);
@@ -74,8 +73,8 @@ function skillSpec(id, a) {
     else out.push('출혈 해제');
     if (s.reviveAll) out.push(`쓰러진 동료를 모두 최대 HP의 ${skPct(s.reviveAll)}로 일으킨다 · 부상도 남지 않는다`);
   } else if (s.kind === 'buff') {
-    const bf = m2 => (['deflect', 'hide', 'ncrit', 'ground'].includes(m2.stat) ? SK_BUFF[m2.stat] : m2.stat === 'spd' && m2.mult ? `${SK_BUFF.spd} −${skSpdCut(1 + (m2.mult - 1) * L)}` : `${SK_BUFF[m2.stat] || STAT_NAMES[m2.stat] || m2.stat} ${m2.mult ? skMul(1 + (m2.mult - 1) * L) : '+' + skPct(m2.add * L) + 'p'}`);
-    out.push(`${bf(s)}${s.haste ? ` · ${SK_BUFF.spd} −${skSpdCut(1 + (s.haste - 1) * L)}` : ''}${(s.more || []).map(m2 => ' · ' + bf(m2)).join('')}`);
+    const bf = m2 => (['deflect', 'hide', 'ncrit', 'ground'].includes(m2.stat) ? SK_BUFF[m2.stat] : `${SK_BUFF[m2.stat] || STAT_NAMES[m2.stat] || m2.stat} ${m2.mult ? skMul(1 + (m2.mult - 1) * L) : '+' + skPct(m2.add * L) + 'p'}`);
+    out.push(`${bf(s)}${s.haste ? ` · 공격 속도 ${skMul(1 + (s.haste - 1) * L)}` : ''}${(s.more || []).map(m2 => ' · ' + bf(m2)).join('')}`);
     out.push(`${s.dur}초 · ${SK_TGT_ALLY[s.tgt] || s.tgt}`);
     if (s.fat) out.push(`파티 모두의 피로 −${Math.round(s.fat * L * 10) / 10} · 피로 ${s.fatNeed || 20} 넘은 동료가 있을 때 쓴다`);   // 빌드 69 물통 돌리기
     if (s.ammo) out.push(`파티 모두의 화살 · 암기 · 볼트를 담는 수의 ${skPct(s.ammo)}씩 채운다`);   // 빌드 69 웨건 보급
@@ -100,11 +99,11 @@ function skillSpec(id, a) {
   if (s.sta) { const St = STATUS[s.sta.k]; out.push(`${St ? St.name : s.sta.k} ${skPct(s.sta.p)} · ${s.sta.d}초${s.sta.m ? ` · 초당 스킬 공격력의 ${skPct(s.sta.m)}` : ''}`); }
   if (s.sta2) { const St = STATUS[s.sta2.k]; out.push(`${St ? St.name : s.sta2.k} ${skPct(s.sta2.p)} · ${s.sta2.d}초`); }
   if (s.slow) out.push(`${s.slow}초 느려짐 (적 공격 간격 ×1.6)`);
-  [s.after, s.after2].filter(Boolean).forEach(A2 => { out.push(A2.stat === 'ground' ? `쓴 뒤 ${A2.dur}초 동안 기본 공격을 맞는다` : `쓴 뒤 ${A2.dur}초 동안 ${A2.tgt === 'party' ? '파티' : '자신'}의 ${SK_BUFF[A2.stat] || A2.stat} ${A2.stat === 'spd' && A2.mult ? '−' + skSpdCut(1 + (A2.mult - 1) * L) : A2.mult ? skMul(1 + (A2.mult - 1) * L) : '+' + skPct(A2.add * L) + 'p'}`); });
+  [s.after, s.after2].filter(Boolean).forEach(A2 => { out.push(A2.stat === 'ground' ? `쓴 뒤 ${A2.dur}초 동안 기본 공격을 맞는다` : `쓴 뒤 ${A2.dur}초 동안 ${A2.tgt === 'party' ? '파티' : '자신'}의 ${SK_BUFF[A2.stat] || A2.stat} ${A2.mult ? skMul(1 + (A2.mult - 1) * L) : '+' + skPct(A2.add * L) + 'p'}`); });
   if (s.pcures || (s.kind === 'buff' && s.cures)) out.push(`파티의 ${(s.pcures || s.cures).map(k => STATUS[k] ? STATUS[k].name : k).join('·')} 해제`);   // 빌드 63: 정화 · 결의
   if (s.dk && STA_TYPE_IMM[s.dk]) out.push('언데드 · 골렘 · 원소에게는 안 듣는다');
   // 비용과 재사용 대기시간
-  out.push(s.cost.hp ? `HP ${skPct(s.cost.hp)}${d ? ` (${skN(d.maxHp * s.cost.hp)})` : ''} 소모` : a && mpLine69(a) ? `MP ${skMp(a, s)} 소모 (${s.cost.mp} × 마법사 · 성직자 계열 Lv${a.lv} ${mpMulTxt(a)})` : `MP ${s.cost.mp} 소모 (마법사 · 성직자 계열은 ×(${MP69.k0} + 레벨 ÷ ${MP69.per}), 최대 ×${MP69.max})`);   // 빌드 69 밤
+  out.push(s.cost.hp ? `HP ${skPct(s.cost.hp)}${d ? ` (${skN(d.maxHp * s.cost.hp)})` : ''} 소모` : a && mpLine69(a) ? `MP ${skMp(a, s)} 소모 (${s.cost.mp} × 마법사 · 성직자 계열 Lv${a.lv} ${mpMulTxt(a, s)})` : `MP ${s.cost.mp} 소모 (마법사 · 성직자 계열은 ×(${MP69.k0} + 레벨 ÷ ${MP69.per}), 최대 ×${MP69.max}${MP69.heal < 1 && MP69.healK.includes(s.kind) ? ` — 회복 · 보호 스킬이라 늘어난 몫의 ${Math.round(MP69.heal * 100)}%` : ''})`);   // 빌드 69 밤
   if (arrowSkill(s) && (!a || needsArrows(a))) out.push(`화살 ${s.tgt === 'all' ? `맞히는 적마다 ${s.kind === 'dmg' ? s.hits || 1 : 1}발 (여섯까지)` : `${arrowCost(s, 1)}발`} · 모자라면 못 씀`);
   if (s.thrown) out.push(`암기 ${s.tgt === 'all' ? `맞히는 적마다 ${s.hits || 1}개 (여섯까지)` : `${arrowCost(s, 1)}개`} · 부장비 칸의 암기가 모자라면 못 씀`);
   if (s.bolt) out.push(`볼트 ${arrowCost(s, 1)}발 · 손목 석궁과 볼트가 있어야 씀`);
@@ -129,7 +128,7 @@ function basicSpec(a) {
   const dbl = Math.min(CAP.double, (T.double || 0) + d.double); if (dbl) out.push(`연타 ${skPct(dbl)}`);
   if (T.aoe) out.push(`다른 적에게도 ${skMul(T.aoe)}`);
   if (T.pet) out.push(`동물 동료가 ${skPct(0.5 + T.pet)}로 함께 문다 (공격력 ${skMul((0.35 + T.pet) * BASIC_MULT)})`);
-  out.push(`쿨타임 ${BASIC69.base}초 − 쿨타임 감소 ${skSec2(basicCut(a, d))}${d.wxBa && d.wxBa !== 1 ? ` (날씨 ×${d.wxBa})` : ''} = <b>${skSec2(cd)}</b>${BASIC69.base - basicCut(a, d) <= BASIC69.floor ? ` (가장 짧게 ${BASIC69.floor}초)` : ''}`);   // 빌드 69 밤
+  out.push(`쿨타임 ${BASIC69.base}초 − 쿨타임 감소(직업 · 전직 · 민첩) ${skSec2(basicCut(a, d))}${d.wxBa && d.wxBa !== 1 ? ` (날씨 ×${d.wxBa})` : ''} = <b>${skSec2(cd)}</b>${BASIC69.base - basicCut(a, d) <= BASIC69.floor ? ` (가장 짧게 ${BASIC69.floor}초)` : ''}`);   // 빌드 69 밤
   out.push(`실행 ${BASIC69.exec}초 ÷ 공격 속도 ${skMul(d.aspd)} = <b>${skSec2(ex)}</b> (쿨타임이 돌면 휘두르기 시작해 이만큼 뒤에 맞힌다) → <b>${skSec(cd + ex)}</b>마다 한 번`);
   if (needsArrows(a) && !shootsArrows(a)) out.push('활을 들면 기본 공격이 화살 사격이 된다 (화살 1발씩)');
   if (T.baImm) out.push('하늘에 떠 있어 기본 공격에 맞지 않는다 (혼자 남거나 와이번 강하 뒤 2초는 맞는다)');
@@ -141,25 +140,27 @@ function basicSpec(a) {
   { const WR = wpnRune(a); if (WR && !shootsArrows(a)) { const St = WR.sta && STATUS[WR.sta.k]; out.push(`속성 대검: 맞으면 ${WR.el !== 'none' ? elTag(WR.el) + ' 속성 ' : ''}추가 피해 (기본 공격의 ${Math.round(ELEM_SWORD_MUL * 100)}%)${St ? ` · ${Math.round(WR.sta.p * 100)}%로 ${St.name} ${WR.sta.d}초` : ''}`); } }
   return out;
 }
-// 기본 공격 쿨타임 감소 · 공격 속도 · 재사용 감소가 어디서 오는지 (능력치 탭 — 빌드 69 밤)
+// 기본 공격 쿨타임 감소 · 공격 속도 · 재사용 감소가 어디서 오는지 (능력치 탭 — 빌드 69 밤: 쿨타임 감소 = 직업 · 전직 · 민첩, 공격 속도 = 실행을 줄인다)
 function speedBreakdown(a) {
   const d = derive(a), G = gearSum(a), P = passives(a), T = d.T, MF = mastFx(a), q = basicCutParts(a, d), B = BASIC69;
   const sg = v => (v >= 0 ? '−' : '+') + skSec2(Math.abs(v));   // 줄이면 −, 느린 직업은 +
-  const cut = q.cls ? [`직업 ${sg(q.cls)}`] : [];
+  const cut = [];
+  if (q.cls) cut.push(`직업 ${sg(q.cls)}`);
   if (q.tier) cut.push(`전직 ${sg(q.tier)}`);
   if (q.agi) cut.push(`민첩 ${sg(q.agi)}`);
+  const sp = [`민첩 +${skPct(T.agi * B.aspd)}`];
   const pS = (P.spdPct || 0) - (MF.spdPct || 0), tS = traitSum(a, 'spdPct');
-  if (pS > 1e-9) cut.push(`지속 스킬 ${sg(pS * B.pct)}`);
-  if (MF.spdPct) cut.push(`숙련 ${sg(MF.spdPct * B.pct)}`);
-  if (tS) cut.push(`특성 ${sg(tS * B.pct)}`);
-  if (G.spdPct) cut.push(`룬 ${sg(G.spdPct * B.pct)}`);
-  if (pS + (MF.spdPct || 0) + tS + (G.spdPct || 0) > CAP.spdPct + 1e-9) cut.push(`(지속 스킬 · 숙련 · 특성 · 룬은 합해 ${skSec2(CAP.spdPct * B.pct)}까지)`);
+  if (pS > 1e-9) sp.push(`지속 스킬 +${skPct(pS)}`);
+  if (MF.spdPct) sp.push(`숙련 +${skPct(MF.spdPct)}`);
+  if (tS) sp.push(`특성 +${skPct(tS)}`);
+  if (G.spdPct) sp.push(`룬 +${skPct(G.spdPct)}`);
+  if (pS + (MF.spdPct || 0) + tS + (G.spdPct || 0) > CAP.spdPct + 1e-9) sp.push(`(지속 스킬 · 숙련 · 특성 · 룬은 합해 +${Math.round(CAP.spdPct * 100)}%까지)`);
   const pC = (P.cdr || 0) - (MF.cdr || 0), cd = [];
   if (pC > 1e-9) cd.push(`지속 스킬 ${skPct(pC)}`);
   if (MF.cdr) cd.push(`숙련 ${skPct(MF.cdr)}`);
   if (traitSum(a, 'cdr')) cd.push(`특성 ${skPct(traitSum(a, 'cdr'))}`);
   if (G.cdr) cd.push(`룬 ${skPct(G.cdr)}`);
-  return { cut: cut.length ? cut.join(' · ') : '줄이는 것 없음', spd: `민첩 +${skPct(T.agi * B.aspd)}`, cdr: cd.length ? cd.join(' · ') + (d.cdr >= CDR_MAX ? ` (상한 ${Math.round(CDR_MAX * 100)}%)` : '') : '없음 (지속 스킬 「전술」·특성 「전술가」·시간의 룬으로 늘어요)' };
+  return { cut: cut.length ? cut.join(' · ') : '줄이는 것 없음', spd: sp.join(' · '), cdr: cd.length ? cd.join(' · ') + (d.cdr >= CDR_MAX ? ` (상한 ${Math.round(CDR_MAX * 100)}%)` : '') : '없음 (지속 스킬 「전술」·특성 「전술가」·시간의 룬으로 늘어요)' };
 }
 // 스킬북이 어디서 나오는지 (도감·창고)
 function bookFromText(id) {

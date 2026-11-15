@@ -3,7 +3,7 @@ const PANELS = {};
 const qTag = g => `<span class="q q${g.q}">${QUALITY[g.q].name}</span>`;
 const gImg = (g, cls = 'ico') => { const u = gearIconURL(g); return `<img class="${cls}${HR_URL.has(u) ? ' hr' : ''}" src="${u}" alt="">`; };   // 빌드 65: 디자인 그림(hr)은 부드럽게 줄인다
 function statLine(st) {
-  return Object.entries(st).filter(([, v]) => v !== 0).map(([k, v]) => `${STAT_NAMES[k] || k} ${k === 'spdPct' ? '−' + Math.round(v * BASIC69.pct * 100) / 100 + '초' : PCT_STATS.includes(k) || k === 'cdr' ? (k === 'cdr' || k === 'ccRes' ? '-' : '+') + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
+  return Object.entries(st).filter(([, v]) => v !== 0).map(([k, v]) => `${STAT_NAMES[k] || k} ${PCT_STATS.includes(k) || k === 'spdPct' || k === 'cdr' ? (k === 'cdr' || k === 'ccRes' ? '-' : '+') + (Math.round(v * 1000) / 10) + '%' : (v > 0 ? '+' : '') + v}`).join(' · ');
 }
 const clsList = cls => (cls.includes('all') ? '모든 직업' : cls.map(c => CLASSES[c].name + (jobTier(c) === 1 ? ' 계열' : '')).join('·'));
 const gearWho = b => GTYPES[b].who || clsList(GTYPES[b].cls);   // 빌드 65: 같은 계열이라도 못 입는 직업이 있으면(cx) who 글로
@@ -335,7 +335,7 @@ const advCatBar = cur => `<div class="tabs advcat">${ADV_CATS.map(([k, n]) => { 
 const ADV_GUIDE = () => `
   <details class="card"><summary>라이선스와 전직 안내</summary><div class="log">
     <div>모험가는 원정에서 몬스터를 잡고, 필드 보스와 던전을 쓰러뜨리고, 무사히 돌아올 때마다 개인 명성을 쌓아요. 레벨·개인 명성·처치 수·우두머리 처치 수·던전 공략 수가 차면 모험가 길드 심사를 받아 ${LICENSE.map(L => L.name).join(' → ')}로 올라가요 (${LICENSE_UP.map((L, i) => `${LICENSE[i + 1].name} Lv${L.lv}·명성 ${L.pf}·처치 ${fmt(L.kills)}·우두머리 ${L.bosses}${L.dungeons ? '·던전 ' + L.dungeons : ''}·${fmt(L.fee)}G`).join(', ')}). 라이선스가 오를수록 능력이 강해지고 봉급도 올라요.</div>
-    <div>전투에서 기본 공격은 쿨타임 ${BASIC69.base}초가 돌면 휘두르기 시작해 ${BASIC69.exec}초 ÷ 공격 속도만에 맞혀요(공격력 ×${BASIC_MULT}). 쿨타임은 직업·전직(차수마다 ${BASIC69.tier}초)·민첩(${BASIC69.agiStep}점마다 ${BASIC69.agi}초)·지속 스킬 「신속」·특성 「재빠름」·숙련·신속의 룬·강화 스킬이 몇 초씩 줄이고(가장 짧게 ${BASIC69.floor}초), 공격 속도는 민첩이 올려요. 스킬은 저마다의 재사용 대기시간이 돌면 따로 나가고, 스킬 재사용 감소는 지속 스킬 「전술」·특성 「전술가」·시간의 룬·숙련도로 모여요. 스킬 창에서 모든 스킬의 계수·피해·확률·대기시간을 볼 수 있어요.</div>
+    <div>전투에서 기본 공격은 쿨타임 ${BASIC69.base}초가 돌면 휘두르기 시작해 ${BASIC69.exec}초 ÷ 공격 속도만에 맞혀요(공격력 ×${BASIC_MULT}). 쿨타임은 직업·전직(차수마다 ${BASIC69.tier}초)·민첩(${BASIC69.agiStep}점마다 ${BASIC69.agi}초)이 줄이고(가장 짧게 ${BASIC69.floor}초), 공격 속도(휘둘러 맞히기까지를 줄임)는 민첩·특성 「재빠름」·지속 스킬 「신속」·숙련·신속의 룬·강화 스킬로 모여요. 스킬은 저마다의 재사용 대기시간이 돌면 따로 나가고, 스킬 재사용 감소는 지속 스킬 「전술」·특성 「전술가」·시간의 룬·숙련도로 모여요. 스킬 창에서 모든 스킬의 계수·피해·확률·대기시간을 볼 수 있어요.</div>
     <div>2차 전직은 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 전직은 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G·주인의 혼 ${JOB_REQ[3].souls}개, 4차 전직(대도·캐러밴 마스터)은 Lv${JOB_REQ[4].lv}·${LICENSE[JOB_REQ[4].rank].name} 라이선스·${fmt(JOB_REQ[4].fee)}G·주인의 혼 ${JOB_REQ[4].souls}개·${ITEMS[JOB_REQ[4].item[0]].name}이 들어요(4차는 Lv${MAX_LV4}까지 자라요). 훈련소에서 전직하면 모습도 직업에 맞게 바뀌어요. 계열마다 맨 앞 2차 직업(검투사·랑기수·정령술사·사제·암살자·음유시인)은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요.</div>
     <div>2차·3차 직업은 역할이 갈려요. 전사: 기사=탱커(도발·엄호·받는 피해 감소) · 검투사=지속딜(연계) · 광전사=한방딜(분노·처형) · 마검사=브루저(마법 검+보호막). 마법사: 네크로맨서=지속딜(저주·역병) · 마도사=한방딜(긴 쿨 큰 한 방·처형) · 정령술사=혼합(광역+치유·방어). 궁수: 랑기수=지속딜(연사·늑대) · 저격수=한방딜(선공·관통·처형) · 트래커=혼합(표식·보스). 도적: 쌍검사=지속딜(쌍단검) · 암살자=한방딜 · 소매치기=혼합(금화·연막) · 닌자=암기·회피. 성직자: 사제=치유·보호막·부활(3차) · 역병의사=재생+지속 딜 · 퇴마사=전투 사제(때리면 파티가 회복). 짐꾼(늘 맨 뒤의 서포터): 음유시인=공격 버퍼 · 마부=보호막·마차·야영 텐트 · 정찰가=디버퍼(표식·약점 간파)·이동.</div>
     <div>장치: 연계 — 기본 공격을 맞힐 때마다 피해가 쌓이고(5중첩) 빗나가거나 기절하면 끊겨요. 처형 — HP 30% 아래 적에게 더 큰 피해. 표식 — 걸린 적이 받는 피해 +20%. 보호막 — 피해를 대신 받는 임시 HP(HP 막대 위 하늘색). 엄호 — 동료가 노려지면 탱커가 대신 맞아요. 재생 — 초당 회복이 이어져요.</div>${jobTreeList()}
@@ -451,7 +451,7 @@ function advDetail(a) {
     <div class="sec" style="margin-top:0"><b>능력치</b><span>${S.bld.training ? `훈련 ${trainedTotal(a)}/${trainCap(a)}번` : '훈련소를 지으면 훈련할 수 있어요'}</span></div>
     <div class="list">${stats}</div>
     <div class="stats boxed">${derived}</div>
-    <div class="sub muted">기본 공격 쿨타임 ${BASIC69.base}초: ${spdB.cut} (가장 짧게 ${BASIC69.floor}초) → 쿨타임이 돌면 휘두르기 시작해 ${BASIC69.exec}초 ÷ 공격 속도(${spdB.spd})만에 맞혀요(${basicIsMagic(a) ? `마법 공격력 ×${BASIC_MAGIC}` : `공격력 ×${BASIC_MULT}`}). 스킬 재사용 감소: ${spdB.cdr}. 숙련도가 오르면 그 스킬의 재사용도 ${Math.round(SM_CD * 100)}%씩 줄어요.</div>${notes}`;
+    <div class="sub muted">기본 공격 쿨타임 ${BASIC69.base}초: ${spdB.cut} (가장 짧게 ${BASIC69.floor}초) → 쿨타임이 돌면 휘두르기 시작해 ${BASIC69.exec}초 ÷ 공격 속도(${spdB.spd} · 강화 스킬은 싸움 중에)만에 맞혀요(${basicIsMagic(a) ? `마법 공격력 ×${BASIC_MAGIC}` : `공격력 ×${BASIC_MULT}`}). 스킬 재사용 감소: ${spdB.cdr}. 숙련도가 오르면 그 스킬의 재사용도 ${Math.round(SM_CD * 100)}%씩 줄어요.</div>${notes}`;
   else if (tab === 'job') body = `
     ${promo ? `<div class="sec" style="margin-top:0"><b>${jobTier(a.cls) + 1}차 전직</b><span>${jobTier(a.cls) === 1 ? '하나를 골라요 · 되돌릴 수 없어요' : '훈련소에서'}</span></div><div class="list">${promo}</div>` : `<div class="sub muted" style="margin-top:0">${jobTier(a.cls) >= 3 ? '3차 직업의 끝이에요. 아래에서 각성할 수 있어요.' : '더 전직할 수 없어요.'}</div>`}
     <details class="card"><summary>전직 길 안내</summary><div class="log">${jobTreeList()}<div class="muted">계열마다 맨 앞 2차 직업은 레벨만 맞으면 되고, 나머지는 저마다 추가 조건이 있어요. 2차 Lv${JOB_REQ[2].lv}·${LICENSE[JOB_REQ[2].rank].name} 라이선스·${fmt(JOB_REQ[2].fee)}G, 3차 Lv${JOB_REQ[3].lv}·${LICENSE[JOB_REQ[3].rank].name} 라이선스·${fmt(JOB_REQ[3].fee)}G.</div></div></details>${notes}`;

@@ -13,7 +13,7 @@ const TRAITS = {
   sturdy:    { name: '단단함',     desc: '방어력 +15%',                  defPct: 0.15 },
   faith:     { name: '믿음',       desc: '회복 스킬 회복량 +15%',        healPow: 0.15 },
   sage:      { name: '현자',       desc: '마법 공격력 +15%',             matkPct: 0.15 },
-  quick:     { name: '재빠름',     desc: '공격 속도 +10% (기본 공격 대기 ↓)', spdPct: 0.10 },
+  quick:     { name: '재빠름',     desc: '공격 속도 +10% (기본 공격 실행 ↓)', spdPct: 0.10 },
   tactician: { name: '전술가',     desc: '스킬 재사용 대기시간 -8%',     cdr: 0.08 },
   flurry:    { name: '연타꾼',     desc: '연타 확률 +15%',               double: 0.15 },
   healthy:   { name: '건강함',     desc: '초당 HP 1% 재생',              hpRegen: 0.01 },
