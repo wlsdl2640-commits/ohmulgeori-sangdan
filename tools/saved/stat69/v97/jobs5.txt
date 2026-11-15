@@ -1,0 +1,16 @@
+mp_L100_C4_cd
+mp_L100_C4_cd50
+mp_L100_C5_cd
+mp_L100_C5_cd50
+mp_L150_C4_cd
+mp_L150_C4_cd50
+mp_L150_C5_cd
+mp_L150_C5_cd50
+ls_bossheal_L0b
+ls_bossheal_L1b
+ls_bossheal_D2
+ls_bossheal_D4
+ls_bossnoheal_L0b
+ls_bossnoheal_L1b
+ls_bossnoheal_D2
+ls_bossnoheal_D4
