@@ -47,3 +47,10 @@ def head_js(name, pic, note, L=6.0, shaft='G', below=2.5, fxw='staff'):
 def eyes(c, pts, ch='E', w=2):
     """눈: 굵은 픽셀에서 읽히게 가로 w칸"""
     for (x, y) in pts: c.fill(box(x, y, x + w - 1, y), ch)
+
+
+def comp(dst, src):
+    """src의 빈 칸이 아닌 칸을 dst 위에 그대로 얹는다 (같은 크기 Cv)"""
+    for y in range(src.H):
+        for x in range(src.W):
+            if src.g[y][x] != '.': dst.set(x, y, src.g[y][x])
