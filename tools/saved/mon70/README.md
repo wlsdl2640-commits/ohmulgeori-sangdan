@@ -48,6 +48,16 @@
 
 확인(시험 묶음 아님): `python3 chk70.py <훅 페이지> <폴더>` — 새 id마다 모든 동작 장 그림(552장 · 24 id) · 모습 여럿 이름표와 고르는 몫 · 실제 싸움(그 땅 · 던전에서 stepExp + drawFrame 30초, 대천사의 타락 천사 부르기 · 여왕의 별빛 요정 부르기 · 보물 수호자의 미믹 부르기도) 오류 없음 → `fight_*.png`.
 
+## 레이드 보스 셋 시안 (11-17 18:56 사용자 「다음 해야 할거 ㄱㄱ」 — 게임에는 아직 안 넣음)
+옛 그림으로 남은 레이드 보스(킹슬라임 · 천둥새는 빌드 69에 새로). 레이드 거인은 **한 장 그림**(PXRAID — 반 해상도 격자 · 게임이 B4 손질을 하지 않아서 명암 · 부위 선을 격자에 직접: `kit.seams` · `kit.rim`, `kit.gridtxt`로 빈 줄 · 열을 잘라 낸다).
+| 보스 (id · 레이드) | 도구 | A | B | C |
+|---|---|---|---|---|
+| 고블린 소드마스터 카이샤르 (kaishar · Lv160) | g/raidk.py | 대태도 고블린 검성 | 칼집 지게 고블린 군주 | 칼바람 쌍검 고블린 |
+| 템페스트 드래곤 (tempest · Lv180) | g/raidt.py | 폭풍우 바다용 | 바람 날개 용 | 먹구름 갑주 용 |
+| 베히모스 (behemoth · Lv190 · 하늘) | g/raidb.py | 네 눈 하늘 고래 | 갑각 하늘 괴수 | 구름 해파리 고래 |
+
+판 `d/raid_*.png` = `python3 t/rsheet70.py <훅 페이지> t/raid_<id>.json <몬스터 id> <레이드 열쇠> <출력> <제목>`(PXRAID[id]를 잠깐 바꿔 끼워 pxGiantSprite 가까이 ×2 + 실제 레이드 싸움 — 레이드 원정대 네 파티 Lv192). 고르면 PXRAID[id] = 고른 격자 · 팔레트(+ MONS[id] W/H는 PXG_DIM이 격자에서 잰다), 이름 · 설명은 그대로(바꿀지는 그때).
+
 ## 다시 뽑기
 - 그림: `cd g && python3 <도구>.py` → `t/<이름>.json` = `{defs: {id: PXU 항목 + act · mon · label · desc · field · area · show}, extra: 새 무기 JS}`.
   - 공용: `kit.py`(Batch.add — 여러 장을 같은 틀로 자르고(frames) sh · hip를 맞춘다 · head_js — 지팡이 머리 그림 → PXU_WPN) · `feath.py`(깃털 날개 fwing · layer · wing_feathers — raid69/thunderbird.py에서) · `quad.py`(네발 body4 + swell · spit 자세 — v60 beast4.py에서) · `cv.py` · `blunt.py` · `shp.py` · `cloud.py`(빌드 56~61 시안 도구).

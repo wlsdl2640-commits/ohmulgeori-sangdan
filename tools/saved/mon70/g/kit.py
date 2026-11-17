@@ -54,3 +54,33 @@ def comp(dst, src):
     for y in range(src.H):
         for x in range(src.W):
             if src.g[y][x] != '.': dst.set(x, y, src.g[y][x])
+
+
+def seams(c, groups):
+    """부위 사이 어두운 선 (레이드 거인처럼 게임이 B4 손질을 하지 않는 격자용): 위나 왼쪽 이웃이 다른 부위면 그 칸을 이 부위의 어두운 글자로.
+    groups = {부위 이름: (글자들, 어두운 글자)}"""
+    g = {ch: (name, dark) for name, (letters, dark) in groups.items() for ch in letters}
+    out = []
+    for y in range(c.H):
+        for x in range(c.W):
+            ch = c.g[y][x]
+            if ch not in g: continue
+            for (dx, dy) in ((0, -1), (-1, 0)):
+                n = c.get(x + dx, y + dy)
+                if n != '.' and n in g and g[n][0] != g[ch][0]:
+                    out.append((x, y, g[ch][1])); break
+    for x, y, d in out: c.g[y][x] = d
+
+
+def rim(c, letters, lite):
+    """바깥 왼쪽 위 가장자리 빛: 위나 왼쪽이 빈 칸이면 lite"""
+    out = [(x, y) for y in range(c.H) for x in range(c.W) if c.g[y][x] in letters and (c.get(x, y - 1) == '.' or c.get(x - 1, y) == '.')]
+    for x, y in out: c.g[y][x] = lite
+
+
+def gridtxt(c):
+    """빈 줄 · 빈 열을 잘라낸 격자 글"""
+    rows = [''.join(r) for r in c.g]
+    ys = [y for y, r in enumerate(rows) if r.strip('.')]
+    xs = [x for x in range(c.W) if any(rows[y][x] != '.' for y in ys)]
+    return '\n'.join(rows[y][min(xs):max(xs) + 1] for y in range(min(ys), max(ys) + 1))

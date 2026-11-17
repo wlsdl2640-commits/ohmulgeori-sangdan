@@ -714,6 +714,7 @@
 - 넣음(고른 순서대로 기본 id · `_b` · `_c`, PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만): `src/pxruins.js`(유적 수호상 B · 타락 천사 A·B·C · 스핑크스 A·B · 오파님 A·C · 천계의 거상 A·C · 타락한 대천사 A + 무기 vscep) · `src/pxstar.js`(별빛 요정 A · 월광 사냥개 시안 2 A · 성운 해파리 A·B · 성좌 기사 시안 2 B + 무기 slance 별빛 창 · 별꽃 트렌트 B · 별고래 A·C · 별의 여왕 B + 무기 sscep) · `src/pxvault.js`(미믹 A·B · 황금 골렘 A · 보물 수호자 시안 2 A 미믹 왕) — build.py에서 pxsea69.js 뒤. **손으로 고치지 말고 `tools/saved/mon70/emit70.py`로 다시 뽑는다**(시안 도구 g/*.py → t/*.json, README 표). 옛 그림(pxmon4.js PXM4)은 그대로 남아 있다(PXU가 먼저).
 - 월광 사냥개 · 성좌 기사 · 보물 수호자는 첫 시안을 「다시」(11-16 22:15) → 시안 2(넷씩 `d/r_*.png` — hound2 · knight2 · guard2)에서 골랐다.
 - 확인: `tools/saved/mon70/chk70.py <훅 페이지> <폴더>`(그림 552장 · 모습 · 실제 싸움 오류 없음 — 부르기 스킬 셋 포함) · node --check · 묶음 eslint(10개 그대로) · smoke63 오류 없음. README 「빌드 N부터」 절은 APK 때.
+- **레이드 보스 셋 시안**(11-17 18:56 사용자 「다음 해야 할거 ㄱㄱ」 — 11:20 정리의 다음 차례, 고르는 중): 카이샤르 `g/raidk.py`(A 대태도 고블린 검성 · B 칼집 지게 고블린 군주 · C 칼바람 쌍검 고블린) · 템페스트 드래곤 `g/raidt.py`(A 폭풍우 바다용 · B 바람 날개 용 · C 먹구름 갑주 용 — 천둥 봉우리 뇌룡과 겹치지 않게 바람 · 비 쪽) · 베히모스 `g/raidb.py`(A 네 눈 하늘 고래 · B 갑각 하늘 괴수 · C 구름 해파리 고래). 판 `tools/saved/mon70/d/raid_*.png`(t/rsheet70.py). 레이드 거인은 한 장 그림(PXRAID · 게임 B4 손질 없음 → 격자에 명암 · 부위 선). 그 다음 차례: 새끼 펫 16 · 말 7.
 
 ## 펫 · 알 · 재배소 · 식재료 · 요리 · 항구 (빌드 65 넷째 묶음 — 11-12 18:55 시안 → 20:34 사용자 「최소 가장싼 식재료 가격을 300원으로 그애 맞게 다 올리자 … 가격 조정하고 다 넣어 그 후에 APK 작업」)
 - 규칙 · 수치 · 레시피 26 · 물어볼 것 5: Claude 문서 「펫 · 알 · 재배소 · 식재료 · 요리 개편 시안」 https://claude.ai/artifact/DVH2ZBaAATBTuhGv9Vkb9R (그림도 문서 안에). 시안 원본 `tools/saved/draft68/`(README).
