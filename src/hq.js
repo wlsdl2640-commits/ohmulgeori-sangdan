@@ -1109,7 +1109,7 @@ const A3_PEN = {
     ((S.pen && S.pen.inc) || []).slice(0, 3).forEach((x, i) => { const E = ITEMS['egg_' + x.kind] || { c: '#e8dcb8' }, ex = 134 + i * 7, wob = Math.round(Math.sin(t * 4 + i) * 0.6); qEll(g, ex + wob, FB - 10, 3, 4, E.c); qP(g, ex - 1 + wob, FB - 12, shade(E.c, 0.4)); });   // 품는 알
     petsAtHome().slice(0, 7).forEach((pet, i) => {
       const id = petLook(pet), bx = 22 + (i % 4) * 34, by = FB + 18 + Math.floor(i / 4) * 22, x = bx + Math.sin(t * 0.6 + i * 2) * 10, hop = Math.abs(Math.sin(t * 4 + i)) * 2, fl = Math.cos(t * 0.6 + i * 2) < 0;
-      hqMon(g, id, x, by - hop, t, Math.min(1, monFit(id, 22)), fl, i);
+      hqMon(g, id, x, by - hop, t, Math.min(1, monFit(id, 26)), fl, i);   // 빌드 70: 새 그림 새끼 펫은 너비 26 안으로
     });
     qPeo('groom', g, true, 'idle', Math.floor(t * 1.2) % 2, 110, FB + 30, true);
     qB(g, q3Lamp(6), 40, K.top + 11);

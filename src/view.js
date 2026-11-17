@@ -436,8 +436,9 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   });
 
   // 펫: 파티 뒤에서 따라다니며 cd마다 앞으로 튀어나온다 (빌드 48: 파티와 같은 쪽을 본다 — 예전에는 뒤를 보고 있었다 · 큰 펫은 너비 44 안으로)
+  //   빌드 70: 새 그림 새끼 펫(pxpet70.js — 24~34픽셀)은 너비 26 안으로 (예전 1.1 × 너비 18은 새 그림을 너무 줄였다)
   if (pet) {
-    const [px, py] = pos['aP' + pet.id], pz = zAt(py) * (pet.stage ? 0.72 * monFit(petLook(pet), 44) : PXU[petLook(pet)] ? 1.1 * monFit(petLook(pet), 18) : 1.1), pat = V.atk['aP' + pet.id], plunge = pat && t - pat < 0.3;
+    const [px, py] = pos['aP' + pet.id], pz = zAt(py) * (pet.stage ? 0.72 * monFit(petLook(pet), 44) : PXU[petLook(pet)] ? monFit(petLook(pet), 26) : 1.1), pat = V.atk['aP' + pet.id], plunge = pat && t - pat < 0.3;
     const hop = walking ? Math.abs(Math.sin(t * 7)) * 2 : plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 4 : Math.abs(Math.sin(t * 2.5)) * 0.6;
     const pdx = (plunge ? Math.sin((t - pat) / 0.3 * Math.PI) * 14 : 0) * dir;
     draws.push({ y: py - 1, f: g => {
