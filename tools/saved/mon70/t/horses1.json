@@ -1,0 +1,259 @@
+{
+"pets": {
+"old": {
+"base": "horse_old",
+"name": "노쇠",
+"old": "horse_old",
+"adult": null,
+"pal": {
+"F": "#e8e0d0",
+"k": "#2a1e1a",
+"K": "#2a201a",
+"e": "#1a1418",
+"m": "#b4aca2",
+"M": "#d0cac0",
+"n": "#3a302a",
+"w": "#d8d2c8"
+},
+"A": {
+"label": "A 날씬한 준마",
+"desc": "늙은 말: 듬성한 잿빛 갈기 · 흰 주둥이 · 처진 눈꺼풀",
+"ax": 13,
+"ifr": 2,
+"body": "#8a7a6a",
+"dark": "#5a4e42",
+"g": "\n.....................k.k...\n....................CQCQ...\n...................CmCdCQ..\n..................CmCCeCCQ.\n.................CmCCCCCCCQ\n................CmCCCCcCCww\n...............CmCCCCc..cww\n..............CmCCCCc......\n......QQQQQQQCmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n...mCCCCCCCCCCCCCCCC.......\n..mmcCCCCCCCCCCCCCCc.......\n.mm..cCCCCCCCCCCCCc........\n.m...cCcCccccccCcCc........\n.....C.C.......C..C........\n.m...C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n",
+"g2": "\n.....................k.k...\n....................CQCQ...\n...................CmCdCQ..\n..................CmCCeCCQ.\n.................CmCCCCCCCQ\n................CmCCCCcCCww\n...............CmCCCCc..cww\n..............CmCCCCc......\n......QQQQQQQCmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n...mCCCCCCCCCCCCCCCC.......\n..mmcCCCCCCCCCCCCCCc.......\n.mm..cCCCCCCCCCCCCc........\n.m...cCcCccccccCcCc........\nm....C.C.......C..C........\n.....C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n"
+},
+"B": {
+"label": "B 뭉툭한 짐말",
+"desc": "늙은 말: 듬성한 잿빛 갈기 · 흰 주둥이 · 처진 눈꺼풀",
+"ax": 10,
+"ifr": 2,
+"body": "#8a7a6a",
+"dark": "#5a4e42",
+"g": "\n..................k.k...\n.................CQCQ...\n................CmCdCQ..\n...............CmCCeCCQ.\n..............CmCCCCCCCQ\n.............CmCCCCcCCww\n............CmCCCCCc.cww\n....QQQQQQQCmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n.mmCCCCCCCCCCCCCCCCC....\nmm.CCCCCCCCCCCCCCCCc....\nm..cCCCCCCCCCCCCCCc.....\n...cCCcCccccccCCcCc.....\nm..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n",
+"g2": "\n..................k.k...\n.................CQCQ...\n................CmCdCQ..\n...............CmCCeCCQ.\n..............CmCCCCCCCQ\n.............CmCCCCcCCww\n............CmCCCCCc.cww\n....QQQQQQQCmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n..mCCCCCCCCCCCCCCCCC....\n.m.CCCCCCCCCCCCCCCCc....\nm..cCCCCCCCCCCCCCCc.....\n.m.cCCcCccccccCCcCc.....\nm..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n"
+}
+},
+"donkey": {
+"base": "horse_donkey",
+"name": "당나귀",
+"old": "horse_donkey",
+"adult": null,
+"pal": {
+"F": "#e8e0d0",
+"k": "#2a1e1a",
+"K": "#2a2420",
+"e": "#1a1418",
+"m": "#4a4440",
+"n": "#2a2420",
+"w": "#e8e2da"
+},
+"A": {
+"label": "A 날씬한 준마",
+"desc": "긴 귀 · 짧게 선 검은 갈기 · 흰 주둥이 · 등줄 · 끝에 술 달린 꼬리",
+"ax": 13,
+"ifr": 2,
+"body": "#9a9088",
+"dark": "#625a52",
+"g": "\n.....................k.k...\n.....................C.C...\n.....................c.C...\n....................KQCQ...\n...................KmCCCQ..\n..................KmCCeCCQ.\n.................KmCCCCCwwQ\n................KmCCCCcCwwn\n...............KmCCCCc..wnn\n................CCCCc......\n......QQQQQQQ..CCCCC.......\n...cQQCCCCCCCCCCCCCC.......\n..c.CCCCCCCCCCCCCCCC.......\n..c.cCCCCCCCCCCCCCCc.......\n.c...cCCCCCCCCCCCCc........\n.K...cCcCccccccCcCc........\n.....C.C.......C..C........\n.....C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n",
+"g2": "\n.....................k.k...\n.....................C.C...\n.....................c.C...\n....................KQCQ...\n...................KmCCCQ..\n..................KmCCeCCQ.\n.................KmCCCCCwwQ\n................KmCCCCcCwwn\n...............KmCCCCc..wnn\n................CCCCc......\n......QQQQQQQ..CCCCC.......\n...cQQCCCCCCCCCCCCCC.......\n..c.CCCCCCCCCCCCCCCC.......\n.c..cCCCCCCCCCCCCCCc.......\nc....cCCCCCCCCCCCCc........\nK....cCcCccccccCcCc........\n.....C.C.......C..C........\n.....C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n"
+},
+"B": {
+"label": "B 뭉툭한 짐말",
+"desc": "긴 귀 · 짧게 선 검은 갈기 · 흰 주둥이 · 등줄 · 끝에 술 달린 꼬리",
+"ax": 10,
+"ifr": 2,
+"body": "#9a9088",
+"dark": "#625a52",
+"g": "\n..................k.k...\n..................C.C...\n..................c.C...\n.................mQCQ...\n................mKCCCQ..\n...............mKCCeCCQ.\n..............mKCCCCCwwQ\n.............mKCCCCcCwwn\n............mKCCCCCc.wnn\n....QQQQQQQ..CCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n..cCCCCCCCCCCCCCCCCC....\n.c.CCCCCCCCCCCCCCCCc....\n.c.cCCCCCCCCCCCCCCc.....\nK..cCCcCccccccCCcCc.....\n...cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n",
+"g2": "\n..................k.k...\n..................C.C...\n..................c.C...\n.................mQCQ...\n................mKCCCQ..\n...............mKCCeCCQ.\n..............mKCCCCCwwQ\n.............mKCCCCcCwwn\n............mKCCCCCc.wnn\n....QQQQQQQ..CCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n..cCCCCCCCCCCCCCCCCC....\n.c.CCCCCCCCCCCCCCCCc....\nc..cCCCCCCCCCCCCCCc.....\n...cCCcCccccccCCcCc....K\n...cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n"
+}
+},
+"gray": {
+"base": "horse_gray",
+"name": "갈마",
+"old": "horse_gray",
+"adult": null,
+"pal": {
+"F": "#e8e0d0",
+"k": "#2a1e1a",
+"K": "#2a201a",
+"e": "#1a1418",
+"m": "#2a1e16",
+"b": "#2e2218",
+"n": "#2a1e16",
+"w": "#f4ece0"
+},
+"A": {
+"label": "A 날씬한 준마",
+"desc": "밤색 몸 · 검은 갈기와 꼬리 · 검은 아랫다리 · 이마의 흰 별",
+"ax": 13,
+"ifr": 2,
+"body": "#a8743e",
+"dark": "#6a4824",
+"g": "\n.....................k.k...\n....................mQCQ...\n...................mmCCCQ..\n..................mmCCwCCQ.\n.................mmCCCCCCCQ\n................mmCCCCcCCCn\n...............mmCCCCc..cnn\n..............mmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n..mmCCCCCCCCCCCCCCCC.......\n.mmmcCCCCCCCCCCCCCCc.......\n.mm..cCCCCCCCCCCCCc........\n.m...cCcCccccccCcCc........\n.m...C.C.......C..C........\n.m...b.b.......b..b........\n.....b.b.......b..b........\n.....b.b.......b..b........\n.....K.K.......K..K........\n",
+"g2": "\n.....................k.k...\n....................mQCQ...\n...................mmCCCQ..\n..................mmCCwCCQ.\n.................mmCCCCCCCQ\n................mmCCCCcCCCn\n...............mmCCCCc..cnn\n..............mmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n...mCCCCCCCCCCCCCCCC.......\n..mmcCCCCCCCCCCCCCCc.......\n.mm..cCCCCCCCCCCCCc........\n.mm..cCcCccccccCcCc........\nmm...C.C.......C..C........\nm....b.b.......b..b........\n.....b.b.......b..b........\n.....b.b.......b..b........\n.....K.K.......K..K........\n"
+},
+"B": {
+"label": "B 뭉툭한 짐말",
+"desc": "밤색 몸 · 검은 갈기와 꼬리 · 검은 아랫다리 · 이마의 흰 별",
+"ax": 10,
+"ifr": 2,
+"body": "#a8743e",
+"dark": "#6a4824",
+"g": "\n..................k.k...\n.................mQCQ...\n................mmCCCQ..\n...............mmCCwCCQ.\n..............mmCCCCCCCQ\n.............mmCCCCcCCCn\n............mmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n.mmCCCCCCCCCCCCCCCCC....\nmmmCCCCCCCCCCCCCCCCc....\nmm.cCCCCCCCCCCCCCCc.....\nm..bbbbbbbbbbbbbbbb.....\nm..bbb.bb.....bbb.bC....\n...bbb.bb.....bbb.bC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n",
+"g2": "\n..................k.k...\n.................mQCQ...\n................mmCCCQ..\n...............mmCCwCCQ.\n..............mmCCCCCCCQ\n.............mmCCCCcCCCn\n............mmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n..mCCCCCCCCCCCCCCCCC....\n.mmCCCCCCCCCCCCCCCCc....\nmm.cCCCCCCCCCCCCCCc.....\nmm.bbbbbbbbbbbbbbbb.....\nm..bbb.bb.....bbb.bC....\n...bbb.bb.....bbb.bC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n"
+}
+},
+"black": {
+"base": "horse_black",
+"name": "흑마",
+"old": "horse_black",
+"adult": null,
+"pal": {
+"F": "#e8e0d0",
+"k": "#2a1e1a",
+"K": "#2a201a",
+"e": "#c8a040",
+"m": "#0e0c10",
+"Q": "#4a4656",
+"n": "#0e0c10",
+"w": "#f0f0f4"
+},
+"A": {
+"label": "A 날씬한 준마",
+"desc": "검은 몸 · 길게 흐르는 검은 갈기 · 얼굴의 흰 줄",
+"ax": 13,
+"ifr": 2,
+"body": "#2e2a30",
+"dark": "#1a181c",
+"g": "\n.....................k.k...\n....................mQCQ...\n...................mmCCCQ..\n..................mmCCewCQ.\n.................mmCCCCCwCQ\n................mmCCCCcCCwn\n...............mmCCCCc..cnn\n..............mmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n..mmCCCCCCCCCCCCCCCC.......\n.mmmcCCCCCCCCCCCCCCc.......\n.mm..cCCCCCCCCCCCCc........\n.m...cCcCccccccCcCc........\n.m...C.C.......C..C........\n.m...C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n",
+"g2": "\n.....................k.k...\n....................mQCQ...\n...................mmCCCQ..\n..................mmCCewCQ.\n.................mmCCCCCwCQ\n................mmCCCCcCCwn\n...............mmCCCCc..cnn\n..............mmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n...mCCCCCCCCCCCCCCCC.......\n..mmcCCCCCCCCCCCCCCc.......\n.mm..cCCCCCCCCCCCCc........\n.mm..cCcCccccccCcCc........\nmm...C.C.......C..C........\nm....C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n"
+},
+"B": {
+"label": "B 뭉툭한 짐말",
+"desc": "검은 몸 · 길게 흐르는 검은 갈기 · 얼굴의 흰 줄",
+"ax": 10,
+"ifr": 2,
+"body": "#2e2a30",
+"dark": "#1a181c",
+"g": "\n..................k.k...\n................mmQCQ...\n...............mmmCCCQ..\n..............mmmCCewCQ.\n.............mmmCCCCCwCQ\n............mmmCCCCcCCwn\n...........mmmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n.mmCCCCCCCCCCCCCCCCC....\nmmmCCCCCCCCCCCCCCCCc....\nmm.cCCCCCCCCCCCCCCc.....\nm..cCCcCccccccCCcCc.....\nm..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n",
+"g2": "\n..................k.k...\n................mmQCQ...\n...............mmmCCCQ..\n..............mmmCCewCQ.\n.............mmmCCCCCwCQ\n............mmmCCCCcCCwn\n...........mmmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n..mCCCCCCCCCCCCCCCCC....\n.mmCCCCCCCCCCCCCCCCc....\nmm.cCCCCCCCCCCCCCCc.....\nmm.cCCcCccccccCCcCc.....\nm..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n"
+}
+},
+"white": {
+"base": "horse_white",
+"name": "백마",
+"old": "horse_white",
+"adult": null,
+"pal": {
+"F": "#e8e0d0",
+"k": "#2a1e1a",
+"K": "#2a201a",
+"e": "#2a2a3a",
+"m": "#c8ccd8",
+"n": "#a8a0a8",
+"B": "#4a7ac8",
+"b": "#2e508a"
+},
+"A": {
+"label": "A 날씬한 준마",
+"desc": "흰 몸 · 은빛 갈기 · 기사의 푸른 안장 천",
+"ax": 13,
+"ifr": 2,
+"body": "#f0f0f4",
+"dark": "#b8b8c4",
+"g": "\n.....................k.k...\n....................mQCQ...\n...................mmCCCQ..\n..................mmCCeCCQ.\n.................mmCCCCCCCQ\n................mmCCCCcCCCn\n...............mmCCCCc..cnn\n..............mmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCBBBBBBBBCCCCC.......\n..mmCCCBBBBBBBBCCCCC.......\n.mmmcCCBBBBBBBBCCCCc.......\n.mm..cCbbbbbbbbCCCc........\n.m...cCcCccccccCcCc........\n.m...C.C.......C..C........\n.m...C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n",
+"g2": "\n.....................k.k...\n....................mQCQ...\n...................mmCCCQ..\n..................mmCCeCCQ.\n.................mmCCCCCCCQ\n................mmCCCCcCCCn\n...............mmCCCCc..cnn\n..............mmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCBBBBBBBBCCCCC.......\n...mCCCBBBBBBBBCCCCC.......\n..mmcCCBBBBBBBBCCCCc.......\n.mm..cCbbbbbbbbCCCc........\n.mm..cCcCccccccCcCc........\nmm...C.C.......C..C........\nm....C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n"
+},
+"B": {
+"label": "B 뭉툭한 짐말",
+"desc": "흰 몸 · 은빛 갈기 · 기사의 푸른 안장 천",
+"ax": 10,
+"ifr": 2,
+"body": "#f0f0f4",
+"dark": "#b8b8c4",
+"g": "\n..................k.k...\n.................mQCQ...\n................mmCCCQ..\n...............mmCCeCCQ.\n..............mmCCCCCCCQ\n.............mmCCCCcCCCn\n............mmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCBBBBBBBBCCCCCC....\n.mmCCCBBBBBBBBCCCCCC....\nmmmCCCBBBBBBBBCCCCCc....\nmm.cCCbbbbbbbbCCCCc.....\nm..cCCcCccccccCCcCc.....\nm..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n",
+"g2": "\n..................k.k...\n.................mQCQ...\n................mmCCCQ..\n...............mmCCeCCQ.\n..............mmCCCCCCCQ\n.............mmCCCCcCCCn\n............mmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCBBBBBBBBCCCCCC....\n..mCCCBBBBBBBBCCCCCC....\n.mmCCCBBBBBBBBCCCCCc....\nmm.cCCbbbbbbbbCCCCc.....\nmm.cCCcCccccccCCcCc.....\nm..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n"
+}
+},
+"war": {
+"base": "horse_war",
+"name": "군마",
+"old": "horse_war",
+"adult": null,
+"pal": {
+"F": "#e8e0d0",
+"k": "#2a1e1a",
+"K": "#2a201a",
+"e": "#1a1418",
+"m": "#1e1410",
+"n": "#1e1410",
+"R": "#a82a2a",
+"G": "#d8a838",
+"M": "#a8a8b4",
+"N": "#6e6e7a"
+},
+"A": {
+"label": "A 날씬한 준마",
+"desc": "쇠 마면 · 목 비늘 갑옷 · 붉은 마의(금 테) · 머리의 붉은 술",
+"ax": 13,
+"ifr": 2,
+"body": "#5a3a2a",
+"dark": "#38241a",
+"g": "\n......................R....\n.....................kRk...\n....................mMMN...\n...................mmMNMM..\n..................mmMNeMNM.\n.................mmCNMMNMMQ\n................mmNMMMNMMNn\n...............mmNMNMN..Nnn\n..............mmNMNMN......\n......RRRRRRRmmNMNMN.......\n....RRRRRRRRRRRMNMNM.......\n..mmRRRRRRRRRRRRRRRC.......\n.mmmRRRRRRRRRRRRRRRc.......\n.mm..RRRRRRRRRRRRRR........\n.m...GGGGGGGGGGGGGG........\n.m...G.G.......G..G........\n.m...C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n",
+"g2": "\n......................R....\n.....................kRk...\n....................mMMN...\n...................mmMNMM..\n..................mmMNeMNM.\n.................mmCNMMNMMQ\n................mmNMMMNMMNn\n...............mmNMNMN..Nnn\n..............mmNMNMN......\n......RRRRRRRmmNMNMN.......\n....RRRRRRRRRRRMNMNM.......\n...mRRRRRRRRRRRRRRRC.......\n..mmRRRRRRRRRRRRRRRc.......\n.mm..RRRRRRRRRRRRRR........\n.mm..GGGGGGGGGGGGGG........\nmm...G.G.......G..G........\nm....C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n"
+},
+"B": {
+"label": "B 뭉툭한 짐말",
+"desc": "쇠 마면 · 목 비늘 갑옷 · 붉은 마의(금 테) · 머리의 붉은 술",
+"ax": 10,
+"ifr": 2,
+"body": "#5a3a2a",
+"dark": "#38241a",
+"g": "\n...................R....\n..................kRk...\n.................mMMN...\n................mmMNMM..\n...............mmMNeMNM.\n..............mmCNMMNMMQ\n.............mmMNMMNMMNn\n............mmMNMMNM.Nnn\n....RRRRRRRmmMNMNNM.....\n..RRRRRRRRRRMNMNMCCC....\n.mmRRRRRRRRRNMNMNCCC....\nmmmRRRRRRRRRRRRRCCCc....\nmm.RRRRRRRRRRRRRCCc.....\nm..GGGGGGGGGGGGGcCc.....\nm..GGG.GG.....GGC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n",
+"g2": "\n...................R....\n..................kRk...\n.................mMMN...\n................mmMNMM..\n...............mmMNeMNM.\n..............mmCNMMNMMQ\n.............mmMNMMNMMNn\n............mmMNMMNM.Nnn\n....RRRRRRRmmMNMNNM.....\n..RRRRRRRRRRMNMNMCCC....\n..mRRRRRRRRRNMNMNCCC....\n.mmRRRRRRRRRRRRRCCCc....\nmm.RRRRRRRRRRRRRCCc.....\nmm.GGGGGGGGGGGGGcCc.....\nm..GGG.GG.....GGC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n"
+}
+},
+"noble": {
+"base": "horse_noble",
+"name": "명마",
+"old": "horse_noble",
+"adult": null,
+"pal": {
+"F": "#e8e0d0",
+"k": "#2a1e1a",
+"K": "#2a201a",
+"e": "#1a1418",
+"m": "#f0d070",
+"M": "#fff0b0",
+"n": "#5a3a18",
+"G": "#ffd040",
+"R": "#d8303a",
+"r": "#8a1820"
+},
+"A": {
+"label": "A 날씬한 준마",
+"desc": "금빛 몸 · 길게 흐르는 연금빛 갈기 · 금 굴레 · 붉은 장미 매듭",
+"ax": 13,
+"ifr": 2,
+"body": "#c08a3a",
+"dark": "#7a5420",
+"g": "\n.....................k.k...\n...................MmQCQ...\n..................MmmCCCQ..\n.................MmmCCeCCQ.\n................MmmCCCRGGGQ\n...............MmmCCCCrCCCn\n..............MmmCCCCc..cnn\n.............MmmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n..MMCCCCCCCCCCCCCCCC.......\n.MMMcCCCCCCCCCCCCCCc.......\n.MM..cCCCCCCCCCCCCc........\n.M...cCcCccccccCcCc........\n.M...C.C.......C..C........\n.M...C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n",
+"g2": "\n.....................k.k...\n...................MmQCQ...\n..................MmmCCCQ..\n.................MmmCCeCCQ.\n................MmmCCCRGGGQ\n...............MmmCCCCrCCCn\n..............MmmCCCCc..cnn\n.............MmmCCCCc......\n......QQQQQQQmmCCCCC.......\n....QQCCCCCCCCCCCCCC.......\n...MCCCCCCCCCCCCCCCC.......\n..MMcCCCCCCCCCCCCCCc.......\n.MM..cCCCCCCCCCCCCc........\n.MM..cCcCccccccCcCc........\nMM...C.C.......C..C........\nM....C.C.......C..C........\n.....C.C.......C..C........\n.....c.c.......c..c........\n.....K.K.......K..K........\n"
+},
+"B": {
+"label": "B 뭉툭한 짐말",
+"desc": "금빛 몸 · 길게 흐르는 연금빛 갈기 · 금 굴레 · 붉은 장미 매듭",
+"ax": 10,
+"ifr": 2,
+"body": "#c08a3a",
+"dark": "#7a5420",
+"g": "\n..................k.k...\n................MmQCQ...\n...............MmmCCCQ..\n..............MmmCCeCCQ.\n.............MmmCCCRGGGQ\n............MmmCCCCrCCCn\n...........MmmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n.MMCCCCCCCCCCCCCCCCC....\nMMMCCCCCCCCCCCCCCCCc....\nMM.cCCCCCCCCCCCCCCc.....\nM..cCCcCccccccCCcCc.....\nM..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n",
+"g2": "\n..................k.k...\n................MmQCQ...\n...............MmmCCCQ..\n..............MmmCCeCCQ.\n.............MmmCCCRGGGQ\n............MmmCCCCrCCCn\n...........MmmCCCCCc.cnn\n....QQQQQQQmmCCCCCC.....\n..QQCCCCCCCCCCCCCCCC....\n..MCCCCCCCCCCCCCCCCC....\n.MMCCCCCCCCCCCCCCCCc....\nMM.cCCCCCCCCCCCCCCc.....\nMM.cCCcCccccccCCcCc.....\nM..cCC.cC.....cCC.cC....\n...cCC.cC.....cCC.cC....\n...FFF.FFF....FFF.FFF...\n...KKK.KKK....KKK.KKK...\n"
+}
+}
+}
+}

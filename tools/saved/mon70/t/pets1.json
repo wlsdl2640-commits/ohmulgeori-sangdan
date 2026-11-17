@@ -1,0 +1,536 @@
+{
+"pets": {
+"slime": {
+"base": "pslime",
+"name": "슬라임 새끼",
+"pal": {
+"G": "#f0c040",
+"g": "#b08020",
+"X": "#ff5a6a"
+},
+"A": {
+"label": "A 물방울 아기",
+"desc": "끝이 뾰족한 물방울 꼴 · 큰 눈 · 작은 분홍 입",
+"ax": 5,
+"ifr": 2.5,
+"g": "\n....Q.....\n...QQc....\n...QwCc...\n..QwCCCc..\n.QCCCCCCc.\n.CkCCCkCc.\n.CCCXCCCc.\n..cccccc..\n",
+"g2": "\n..........\n....QQ....\n...QwCCc..\n..QwCCCCc.\n.QCCCCCCCc\n.CkCCCkCCc\n.CCCXCCCcc\n..ccccccc.\n"
+},
+"B": {
+"label": "B 금화 삼킨 아기",
+"desc": "몸속에 삼킨 금화 한 닢이 비친다(킹슬라임처럼)",
+"ax": 5,
+"ifr": 2.5,
+"g": "\n..........\n....QQ....\n..QQwCCc..\n.QwCCCCCc.\n.CkCCCkCc.\n.CCCCGCCc.\n.cCCCGgcc.\n..cccccc..\n",
+"g2": "\n..........\n..........\n...QQQCc..\n.QwwCCCCCc\n.CkCCCkCCc\nCCCCCGCCcc\n.cCCCGgccc\n..ccccccc.\n"
+}
+},
+"wolf": {
+"base": "wolf",
+"name": "새끼 늑대",
+"pal": {
+"K": "#14100e",
+"w": "#f4f0e4",
+"e": "#f0c040"
+},
+"A": {
+"label": "A 솜털 강아지",
+"desc": "둥근 귀 · 큰 머리 · 짧은 다리 · 위로 말린 꼬리를 흔든다",
+"ax": 6,
+"ifr": 4,
+"g": "\n......c..c...\n.....cCccCc..\n.....CCCCCCc.\n.....CCeKCCCc\n.c...CCCCCCCK\ncCc..QCCCCQQ.\n.cCQQCCCCCc..\n..cCwwCCCCc..\n..cC.cC.cCc..\n..cc.cc.cc...\n",
+"g2": "\n......c..c...\n.....cCccCc..\n.....CCCCCCc.\n.....CCeKCCCc\n.....CCCCCCCK\n.c...QCCCCQQ.\ncCcQQCCCCCc..\n.cCCwwCCCCc..\n..cC.cC.cCc..\n..cc.cc.cc...\n"
+},
+"B": {
+"label": "B 앉은 강아지",
+"desc": "엉덩이를 깔고 앉아 고개를 갸웃 · 밝은 주둥이 · 흰 가슴털 · 꼬리를 흔든다",
+"ax": 7,
+"ifr": 3,
+"g": "\n....c....c..\n...cCc..cCc.\n...cCCCCCCc.\n..cCeKCCeKCc\n..CCCCwwCCCc\n..cCCwKKwCc.\n...cCCwwCc..\n.c..CwwwwC..\ncCc.CwwwwCc.\n.cCCCCCCCCc.\n..ccc.cc.cc.\n",
+"g2": "\n....c....c..\n...cCc..cCc.\n...cCCCCCCc.\n..cCeKCCeKCc\n..CCCCwwCCCc\n..cCCwKKwCc.\n...cCCwwCc..\n....CwwwwC..\n.c..CwwwwCc.\ncCCCCCCCCCc.\n.cccc.cc.cc.\n"
+}
+},
+"spider": {
+"base": "spider",
+"name": "아기 거미",
+"pal": {
+"L": "#7a6684",
+"l": "#43364c",
+"C": "#4e3e56",
+"c": "#2e2436",
+"Q": "#6e5a78",
+"d": "#1e1622",
+"R": "#d03a3a",
+"e": "#ff5a4a",
+"w": "#f0ece0",
+"K": "#14101a"
+},
+"A": {
+"label": "A 동글 아기 거미",
+"desc": "동그란 배에 붉은 점 둘 · 커다란 붉은 눈 · 짧은 다리 여섯이 꼼지락",
+"ax": 6,
+"ifr": 4,
+"g": "\n....QQC......\n..QQCCCCc....\n.QCCRCCCCcQC.\n.CCRCCCCCQCCC\n.CCCCCCCcCeCe\n..cccccccLCCc\n..L.L.L.L.cc.\n.L..L.L..L.L.\n",
+"g2": "\n....QQC......\n..QQCCCCc....\n.QCCRCCCCcQC.\n.CCRCCCCCQCCC\n.CCCCCCCcCeCe\n..cccccccLCCc\n...L.L.L.L.c.\n..L.L..L.L.L.\n"
+},
+"B": {
+"label": "B 앞다리 든 아기 거미",
+"desc": "솜털 난 배 · 앞다리 둘을 번쩍 들어 인사 · 붉은 눈 넷",
+"ax": 5,
+"ifr": 3,
+"g": "\n...........L.\n..QQQC....L..\n.QCQCCC..L.L.\nQCRCQCCc.QCL.\nQCCRCCCcQCCC.\nCCCCCCCccCeCe\n.cccccc.cCeCw\n..L.L.L.L.cc.\n.L.L..L..L.L.\n",
+"g2": "\n..........L..\n..QQQC...L.L.\n.QCQCCC..L..L\nQCRCQCCc.QCL.\nQCCRCCCcQCCC.\nCCCCCCCccCeCe\n.cccccc.cCeCw\n..L.L.L.L.cc.\n.L.L..L..L.L.\n"
+}
+},
+"golem": {
+"base": "golem_c",
+"name": "골렘 조각",
+"pal": {
+"K": "#1e1a22",
+"X": "#9af2ff",
+"x": "#3aa8c8",
+"O": "#b8703a",
+"Z": "#7ae6f4",
+"z": "#2f98b8",
+"w": "#eaffff",
+"G": "#f0c850"
+},
+"A": {
+"label": "A 조약돌 꼬마 골렘",
+"desc": "둥근 돌 몸 하나에 짧은 팔다리 · 이마에 수정 한 조각 · 빛나는 하늘빛 눈",
+"ax": 6,
+"ifr": 2,
+"g": "\n......Z.....\n.....ZzZ....\n...QQQQQc...\n..QCCCCCCc..\n..CKXCCKXc..\n.QCCCCCCCCc.\nQcCCCOCCCcCc\ncc.cCCCCcc.c\n...QCc.QCc..\n...ccc.ccc..\n",
+"g2": "\n......Z.....\n.....ZzZ....\n...QQQQQc...\n..QCCCCCCc..\n..CKXCCKXc..\n.QCCCCCCCCc.\n.QCCCOCCCcc.\nQccCCCCCccCc\ncc.QCc.QCc.c\n...ccc.ccc..\n"
+},
+"B": {
+"label": "B 수정 왕관 꼬마 골렘",
+"desc": "머리에 하늘빛 수정이 왕관처럼 돋은 돌 꼬마 · 가슴에 작은 핵 · 다 자라면 수정 골렘",
+"ax": 6,
+"ifr": 2,
+"g": "\n.....Z......\n..Z..ZzZ..Z.\n.ZzZ.ZzZ.ZzZ\n.ZzZZXXZZZzz\n..QQQQQQQQc.\n.QCKXCCKXCc.\n.QCCCCCCCCc.\nQcCCCXxCCcCc\ncc.cCCCCcc.c\n..QCc..QCc..\n..ccc..ccc..\n",
+"g2": "\n.....Z......\n..Z..ZzZ..Z.\n.ZzZ.ZzZ.ZzZ\n.ZzZZXXZZZzz\n..QQQQQQQQc.\n.QCKXCCKXCc.\n.QCCCCCCCCc.\n.QCCCxXCCcc.\nQccCCCCCccCc\ncc.QCc..QCcc\n..ccc..ccc..\n"
+}
+},
+"griffon": {
+"base": "griffon",
+"name": "아기 그리핀",
+"pal": {
+"K": "#1a140e",
+"H": "#f4e8c8",
+"h": "#c8b48a",
+"Y": "#f0c24a",
+"y": "#b88a2a",
+"F": "#b07e3e",
+"f": "#f4e8c8",
+"T": "#5a3a1e",
+"e": "#ffd040",
+"w": "#ffffff",
+"G": "#d0a060",
+"D": "#8a5a2a"
+},
+"A": {
+"label": "A 솜털 아기 그리핀",
+"desc": "병아리 같은 크림빛 솜털 머리 · 큰 눈 · 작은 노란 부리 · 등에 작은 날개 · 사자 몸에 짧은 다리",
+"ax": 6,
+"ifr": 3,
+"g": "\n.......hHh...\n......hHHHH..\n.......HHHHH.\n...ff.HHKHHHY\n..fGGfHHHHHYY\n.fGGDDhHHHh..\nT.GDDDDHHh...\nTcQQQCCCCc...\n.cCCCCCCCCc..\n..cC.cC.cYc..\n..cc.cc.Yc...\n",
+"g2": "\n.......hHh...\n......hHHHH..\n..ff...HHHHH.\n.fGGf.HHKHHHY\n.fGDGfHHHHHYY\n..GDDDhHHHh..\nT.GDDDDHHh...\nTcQQQCCCCc...\n.cCCCCCCCCc..\n..cC.cC.cYc..\n..cc.cc.Yc...\n"
+},
+"B": {
+"label": "B 날개 편 아기 그리핀",
+"desc": "작은 날개를 활짝 펴고 날갯짓 연습 · 머리 깃이 삐죽 · 꼬리 끝 술",
+"ax": 6,
+"ifr": 4,
+"g": "\n.ff.....hH...\nfGGf...hHHh..\nfGDGf..HHHHH.\n.GDDGfHHKHHHY\n..GDDDhHHHHYY\n...GDDDHHHh..\nT..QQQCCCh...\nTcQCCCCCCc...\n.cCCCCCCCCc..\n..cC.cC.cYc..\n..cc.cc.Yc...\n",
+"g2": "\n.............\n.......hH....\n......hHHh...\n.ff....HHHHH.\nfGGGfHHHKHHHY\nfGDDGGhHHHHYY\n.fGDDDDHHHh..\nT..QQQCCCh...\nTcQCCCCCCc...\n.cCCCCCCCCc..\n.cC.cC.cYc...\n"
+}
+},
+"harpy": {
+"base": "harpy",
+"name": "하피 병아리",
+"pal": {
+"H": "#4a5a8a",
+"h": "#2e3a5e",
+"S": "#f1c9a5",
+"s": "#c89a78",
+"e": "#e83a5a",
+"K": "#1a1418",
+"P": "#9ab8d8",
+"p": "#5e7ea0",
+"q": "#34506e",
+"Y": "#e8b040",
+"y": "#a87020",
+"w": "#f8f0e8",
+"F": "#d8c0a0",
+"f": "#a88a6a",
+"R": "#c83a4a",
+"Q": "#f0dcc0",
+"W": "#eef6ff",
+"V": "#c8dcf0"
+},
+"A": {
+"label": "A 솜털 병아리 하피",
+"desc": "동글한 솜털 몸 · 푸른 머리 술 · 작은 날개 팔을 파닥 · 노란 발",
+"ax": 6,
+"ifr": 3,
+"g": "\n....hHHh....\n...hHHHHh...\n...hSSSSh...\n...SKSSKS...\n.P.SSssSS.P.\nPPqhFFFFhqPP\n.PPFFQQFFPP.\n..pFFFFFFp..\n...fFFFFf...\n....Y..Y....\n...YY..YY...\n",
+"g2": "\n....hHHh....\n...hHHHHh...\nP..hSSSSh..P\nPP.SKSSKS.PP\nqPPSSssSSPPq\n.qqhFFFFhqq.\n...FFQQFF...\n..pFFFFFFp..\n...fFFFFf...\n....Y..Y....\n...YY..YY...\n"
+},
+"B": {
+"label": "B 알 껍데기 쓴 하피",
+"desc": "머리에 깨진 알 껍데기를 쓴 채 · 껍데기 아래로 삐죽 나온 푸른 머리 · 작은 날개",
+"ax": 6,
+"ifr": 3,
+"pal": {
+"O": "#f4ecd8",
+"o": "#c8b898"
+},
+"g": "\n....OOOO....\n...OOwOOo...\n..OoOOoOoo..\n..hO.oh.Oh..\n...SKSSKS...\n.P.SSssSS.P.\nPPqhFFFFhqPP\n.PPFFQQFFPP.\n..pFFFFFFp..\n...fFFFFf...\n....Y..Y....\n...YY..YY...\n",
+"g2": "\n....OOOO....\n...OOwOOo...\n..OoOOoOoo..\nP.hO.oh.Oh.P\nPP.SKSSKS.PP\nqPPSSssSSPPq\n.qqhFFFFhqq.\n...FFQQFF...\n..pFFFFFFp..\n...fFFFFf...\n....Y..Y....\n...YY..YY...\n"
+}
+},
+"icesprite": {
+"base": "icesprite",
+"name": "얼음 정령 새끼",
+"pal": {
+"Q": "#eafcff",
+"C": "#9ee2ff",
+"c": "#58aee6",
+"d": "#2e6cb0",
+"w": "#ffffff",
+"K": "#142038",
+"e": "#16305a",
+"B": "#d8f8ff",
+"b": "#7ad0f8"
+},
+"A": {
+"label": "A 작은 결정 정령",
+"desc": "마름모 결정 몸 하나 · 큰 남빛 눈 · 양옆에 떠 있는 작은 조각 둘",
+"ax": 5,
+"float": 1,
+"g": "\n.....Q.....\n....QwC....\n...QwQCc...\n..QQQQCCc..\nc.QeCCeCc.c\nC.QQQCCCc.C\nd..cCCCcd..\n....cCcd...\n.....Bd....\n.....b.....\n.\n.\n",
+"g2": "\n.....Q.....\n....QwC....\n...QwQCc...\nc.QQQQCCc.c\nC.QeCCeCc.C\nd.QQQCCCc.d\n...cCCCcd..\n....cCcd...\n.....Bd....\n.....b.....\n.\n.\n"
+},
+"B": {
+"label": "B 눈송이 방울 정령",
+"desc": "둥근 얼음 방울 몸 · 머리에 결정 뿔 셋 · 아래로 반짝이는 눈가루",
+"ax": 5,
+"float": 1,
+"g": "\n..Q..Q..Q..\n..Qw.Q.wC..\n...QQwQC...\n..QQwQQCc..\n.QQeQQeCcc.\n.QQQQQCCcc.\n.cQQCCCCcd.\n..cCCCCcd..\n...ccccd...\n....b.B....\n...B...b...\n.\n",
+"g2": "\n..Q..Q..Q..\n..Qw.Q.wC..\n...QQwQC...\n..QQwQQCc..\n.QQeQQeCcc.\n.QQQQQCCcc.\n.cQQCCCCcd.\n..cCCCCcd..\n...ccccd...\n...B..b....\n.....b..B..\n.\n"
+}
+},
+"scorpion": {
+"base": "scorpion",
+"name": "아기 전갈",
+"pal": {
+"Q": "#e8a060",
+"C": "#c0702e",
+"c": "#8a4a1e",
+"d": "#5e2e12",
+"K": "#1e120c",
+"e": "#1e120c",
+"Y": "#f2c844",
+"y": "#a87a1a",
+"w": "#ffffff"
+},
+"A": {
+"label": "A 동글 아기 전갈",
+"desc": "다 자란 전갈을 동글게 줄인 꼴 · 마디진 꼬리를 등 위로 세워 노란 독침을 앞으로 · 마디 줄 등딱지 · 집게 둘",
+"ax": 6,
+"ifr": 3,
+"g": "\n...QCcQ.......\n..Qc..cQ......\n.QCc...cY.....\n.Ccd....yK....\n.QCc..........\n..dQc.......Qc\n..CCQCQCQCQQCd\n..QCcCcCcCewCc\n..ccdcdcdcdc..\n...c.c.c.c....\n",
+"g2": "\n...QCcQ.......\n..Qc..cQ......\n.QCc....Y.....\n.Ccd....yY....\n.QCc.....K....\n..dQc.......Qc\n..CCQCQCQCQQCd\n..QCcCcCcCewCc\n..ccdcdcdcdc..\n....c.c.c.c...\n"
+},
+"B": {
+"label": "B 집게 든 아기 전갈",
+"desc": "집게 둘을 번쩍 치켜든 아기 전갈 · 마디진 꼬리 끝 독침이 반짝",
+"ax": 6,
+"ifr": 3,
+"g": "\n...QCcQ.....Qc\n..Qc..cQ...QCd\n.QCc...cY..QC.\n.Ccd....yK.QC.\n.QCc.......QC.\n..dQc.....QCc.\n..CCQCQCQCQCd.\n..QCcCcCcCewc.\n..ccdcdcdcdc..\n...c.c.c.c....\n",
+"g2": "\n...QCcQ....Qc.\n..Qc..cQ..QCd.\n.QCc....Y.QC..\n.Ccd....yYQC..\n.QCc.....KQC..\n..dQc.....QCc.\n..CCQCQCQCQCd.\n..QCcCcCcCewc.\n..ccdcdcdcdc..\n....c.c.c.c...\n"
+}
+},
+"sewerrat": {
+"base": "psewerrat",
+"name": "하수도 생쥐",
+"pal": {
+"Q": "#8a8278",
+"C": "#5e5850",
+"c": "#3e3a34",
+"S": "#c88a84",
+"s": "#946058",
+"K": "#ff3030",
+"w": "#f4ecd0",
+"k": "#1a1614"
+},
+"A": {
+"label": "A 동글 아기 생쥐",
+"desc": "분홍 속귀가 큰 동그란 귀 둘 · 콩알 같은 몸 · 가는 분홍 꼬리를 살랑",
+"ax": 6,
+"ifr": 3,
+"g": "\n......QQ.QQ.\n.....QSScSSc\n.....QCCCCCc\n.....CCkwCCCS\n.s..QCCCCCCs.\ns.QQCCCCCCc..\n.sCCCCCCCc...\n...cS.cS.S...\n",
+"g2": "\n......QQ.QQ.\n.....QSScSSc\n.....QCCCCCc\n.....CCkwCCCS\n....QCCCCCCs.\n..QQCCCCCCc..\nssCCCCCCCc...\n...cS.cS.S...\n"
+},
+"B": {
+"label": "B 빵 부스러기 든 생쥐",
+"desc": "뒷다리로 서서 앞발로 노란 빵 부스러기를 꼭 쥔 아기 생쥐",
+"ax": 6,
+"ifr": 2.5,
+"pal": {
+"Y": "#e8c060",
+"y": "#a8803a"
+},
+"g": "\n....QQ..QQ..\n...QSSccSSc.\n...QCCCCCCc.\n...CCkwCkwCc\n...cCCCSSCC.\n....cCYYyCc.\n....QCYyyCc.\ns...CCCCCCc.\n.s.QCCCCCCc.\n..sCCCCCCc..\n...cS.cS....\n",
+"g2": "\n....QQ..QQ..\n...QSSccSSc.\n...QCCCCCCc.\n...CCkwCkwCc\n...cCCCSSCC.\n....cCYYyCc.\n....QCYyyCc.\n....CCCCCCc.\n.s.QCCCCCCc.\ns.sCCCCCCc..\n...cS.cS....\n"
+}
+},
+"kelpie": {
+"base": "kelpie",
+"name": "켈피 망아지",
+"pal": {
+"M": "#c8ccd4",
+"N": "#8a8e98",
+"x": "#f4f6fa",
+"w": "#ffffff",
+"e": "#50c8e0",
+"Q": "#ffffff",
+"C": "#f0f2f4",
+"c": "#a8b4c0",
+"K": "#405060",
+"S": "#c8d0d8",
+"s": "#a8b4c0",
+"k": "#505860",
+"V": "#4a9a3a",
+"v": "#2a6a24",
+"B": "#80c8f0"
+},
+"A": {
+"label": "A 켈프 갈기 망아지",
+"desc": "다리가 긴 흰 망아지 · 목덜미에 짧은 켈프 갈기 · 켈프 꼬리 · 물빛 눈",
+"ax": 6,
+"ifr": 2.5,
+"g": "\n.........k.k..\n........VCCQ..\n.......VVCCCQ.\n.......VCCeCCQ\n.......VCCCCCCs\n......VVCCc.ss.\n......VCCC.....\n..QQQQCCCC.....\nVQCCCCCCCCc....\nvVcCCCCCCCc....\nv..cCc..cCc....\n...C.....C.....\n...C.....C.....\n...k.....k.....\n",
+"g2": "\n.........k.k..\n........VCCQ..\n.......VVCCCQ.\n.......VCCeCCQ\n.......VCCCCCCs\n......VVCCc.ss.\n......VCCC.....\n..QQQQCCCC.....\n.QCCCCCCCCc....\nVVcCCCCCCCc....\nvv.cCc..cCc....\nv..C.....C.....\n...C.....C.....\n...k.....k.....\n"
+},
+"B": {
+"label": "B 물방울 켈피 망아지",
+"desc": "켈프 갈기 끝과 꼬리에 맺힌 물방울 · 몸 아래쪽이 물결처럼 푸르스름 · 짧은 다리",
+"ax": 6,
+"ifr": 2.5,
+"g": "\n.........k.k..\n........VCCQ..\n.......VVCCCQ.\n......BVCCeCCQ\n.......VCCCCCCs\n......VVCCc.ss.\n.....BVCCC.....\n..QQQQCCCC.....\nVQCCCCCCCCc....\nvVBCCBCCBCc....\nv.BcBc.BcBc....\nB..B.....B.....\n...k.....k.....\n",
+"g2": "\n.........k.k..\n........VCCQ..\n.......VVCCCQ.\n.......VCCeCCQ\n......BVCCCCCCs\n......VVCCc.ss.\n......VCCC.....\n.....BQQCC.....\n.QQQQCCCCCc....\nVVBCCBCCBCc....\nvv.cBc.BcBc....\nv..B.....B.....\nB..k.....k.....\n"
+}
+},
+"imp": {
+"base": "imp",
+"name": "임프 새끼",
+"pal": {
+"H": "#6a161c",
+"L": "#8e262c",
+"h": "#3a0a10",
+"m": "#140406",
+"K": "#140406",
+"e": "#ffc020",
+"w": "#ffffff",
+"Z": "#2c2a32",
+"z": "#9a96a2",
+"k": "#2a0c0c",
+"O": "#ffe27a",
+"o": "#ff7a20",
+"x": "#fff6c0",
+"V": "#3a2a22",
+"v": "#1e1410",
+"C": "#c42a26",
+"c": "#7e1418"
+},
+"A": {
+"label": "A 두건 쓴 꼬마 임프",
+"desc": "작은 뿔 둘이 솟은 붉은 두건 · 어둠 속 노란 눈 둘 · 뾰족 이 · 짧은 망토 자락",
+"ax": 5,
+"ifr": 2,
+"g": "\n..z.....z..\n..zZ...Zz..\n...ZHHHZ...\n..HHLLHHH..\n.HLHmmmmHH.\n.HHmemmemH.\n.HHmmwwmmH.\n.HHHmmmmHHh\nHLHHHHHHHHh\nHLHHHHHHHhh\n.hHHhHHhHh.\n..kk...kk..\n",
+"g2": "\n..z.....z..\n..zZ...Zz..\n...ZHHHZ...\n..HHLLHHH..\n.HLHmmmmHH.\n.HHmmmmmmH.\n.HHmemmemH.\n.HHHmwwmHHh\nHLHHHHHHHHh\nHLHHHHHHHhh\n.hHHhHHhHh.\n..kk...kk..\n"
+},
+"B": {
+"label": "B 불씨 든 꼬마 임프",
+"desc": "두건 쓴 꼬마 임프가 손바닥에 작은 불씨를 띄운다 · 갈래 꼬리",
+"ax": 5,
+"ifr": 3,
+"g": "\n..z.....z...\n..zZ...Zz...\n...ZHHHZ.....\n..HHLLHHH.o..\n.HLHmmmmHHoOo\n.HHmemmemHOxO\n.HHmmwwmmHoOo\n.HHHmmmmHHCc.\nHLHHHHHHHHc..\nHLHHHHHHHhh..\n.hHHhHHhHh.c.\n..kk...kk.cC.\n",
+"g2": "\n..z.....z...\n..zZ...Zz...\n...ZHHHZ..o..\n..HHLLHHH.Oo.\n.HLHmmmmHoxOo\n.HHmemmemHOOo\n.HHmmwwmmH.o.\n.HHHmmmmHHCc.\nHLHHHHHHHHc..\nHLHHHHHHHhh..\n.hHHhHHhHh..c\n..kk...kk..cC\n"
+}
+},
+"vbat": {
+"base": "vbat",
+"name": "아기 박쥐",
+"pal": {
+"C": "#5a3e4a",
+"Q": "#7e5a68",
+"c": "#3a2430",
+"A": "#5a3e4a",
+"a": "#3a2430",
+"P": "#a02a40",
+"q": "#62162a",
+"R": "#5a1424",
+"r": "#3e0c18",
+"F": "#2e1820",
+"f": "#2e1820",
+"S": "#e07080",
+"e": "#ff3a30",
+"w": "#ffffff",
+"m": "#1a0a10",
+"K": "#160a10"
+},
+"A": {
+"label": "A 동글 아기 박쥐",
+"desc": "솜털 공 같은 몸 · 분홍 속귀 큰 귀 · 작은 송곳니 둘 · 붉은 날개를 파닥",
+"ax": 6,
+"float": 1,
+"ifr": 4,
+"g": "\n...A.....A...\n...AA...AA...\n...ASQCQSA...\n..AQQCCCCCA..\nP.CeCCCCCeC.P\nPPCCCwCwCCCPP\nPqPCCCCCCCPqP\nq.qPcCCCcPq.q\n....cccc.....\n....K..K.....\n.\n.\n",
+"g2": "\nP..A.....A..P\nPq.AA...AA.qP\nqPPASQCQSAPPq\n.qPQQCCCCCPq.\n..CeCCCCCeC..\n..CCCwCwCCC..\n...CCCCCCC...\n....cCCCc....\n....cccc.....\n....K..K.....\n.\n.\n"
+},
+"B": {
+"label": "B 날개 망토 아기 박쥐",
+"desc": "붉은 날개로 몸을 망토처럼 감싸고 얼굴만 빼꼼 · 큰 귀 · 송곳니",
+"ax": 6,
+"float": 1,
+"ifr": 2,
+"g": "\n...A.....A...\n...AA...AA...\n...ASQCQSA...\n..AQQCCCCCA..\n..CeCCCCCeC..\n..PCCwCwCCP..\n.PPPCCCCCPPq.\n.PPPPPPPPPqq.\n.qPPPPPPPPqq.\n.qqPPqPPqPqq.\n..q.q.q.q.q..\n.\n",
+"g2": "\n...A.....A...\n...AA...AA...\n...ASQCQSA...\n..AQQCCCCCA..\n..CCCCCCCCC..\n..PeCwCweCP..\n.PPPCCCCCPPq.\n.PPPPPPPPPqq.\n.qPPPPPPPPqq.\n.qqPPqPPqPqq.\n..q.q.q.q.q..\n.\n"
+}
+},
+"goat": {
+"base": "alpgoat",
+"name": "아기 산양",
+"pal": {
+"Q": "#fbf4e6",
+"C": "#e2d4ba",
+"c": "#b49e7e",
+"d": "#7e6a52",
+"K": "#2a2420",
+"e": "#2a1e1a",
+"n": "#4a3a30",
+"w": "#ffffff",
+"H": "#a08c68",
+"h": "#5e4e38"
+},
+"A": {
+"label": "A 뿔 돋은 아기 산양",
+"desc": "이마에 짧은 뿔이 막 돋은 크림빛 아기 산양 · 옆으로 뻗은 귀 · 긴 주둥이 · 짧은 꼬리를 쫑긋",
+"ax": 6,
+"ifr": 3,
+"g": "\n..........h...\n.........hH...\n........cCCQ..\n.......QcCeCQ.\n.........CCCCc\n.Q.......cCCdn\n.QcQQQQQCCCc..\n..QQQCCCCCcd..\n..CCCCCCCccd..\n..cC.cC.cC.cC.\n..cC.cC.cC.cC.\n..KK.KK.KK.KK.\n",
+"g2": "\n..........h...\n.........hH...\n........cCCQ..\n.......QcCeCQ.\n.........CCCCc\n.........cCCdn\nQQcQQQQQCCCc..\n.QQQQCCCCCcd..\n..CCCCCCCccd..\n..cC.cC.cC.cC.\n..cC.cC.cC.cC.\n..KK.KK.KK.KK.\n"
+},
+"B": {
+"label": "B 수염 난 아기 산양",
+"desc": "뒤로 휘기 시작한 작은 마디 뿔 · 턱 밑 흰 수염 한 가닥 · 바위 위에 선 듯 네 발을 모음",
+"ax": 6,
+"ifr": 2.5,
+"g": "\n.......hHh....\n......h...h...\n........cCCQ..\n.......QcCeCQ.\n.........CCCCc\n.Q.......cCCdn\n.QcQQQQQCCCcw.\n..QQQCCCCCcdw.\n..CCCCCCCccd..\n...cCcC.cCcC..\n...cCcC.cCcC..\n...KKKK.KKKK..\n",
+"g2": "\n.......hHh....\n......h...h...\n........cCCQ..\n.......QcCeCQ.\n.........CCCCc\n.........cCCdn\nQQcQQQQQCCCcw.\n.QQQQCCCCCcd.w\n..CCCCCCCccd..\n...cCcC.cCcC..\n...cCcC.cCcC..\n...KKKK.KKKK..\n"
+}
+},
+"wyvern": {
+"base": "wyvern",
+"name": "아기 와이번",
+"pal": {
+"K": "#101a12",
+"P": "#9ac878",
+"p": "#5a8a4a",
+"S": "#e0d8a8",
+"s": "#b0a878",
+"Z": "#e8e2d0",
+"z": "#a8a290",
+"e": "#ffd040",
+"w": "#f8f4e8",
+"R": "#c84a3a"
+},
+"A": {
+"label": "A 통통 아기 와이번",
+"desc": "머리가 큰 통통한 초록 아기 용 · 등에 작은 날개 · 뿔 두 개가 콩알만큼 · 크림빛 배",
+"ax": 6,
+"ifr": 3,
+"g": "\n........Z.Z..\n.......cCCCc.\n...PP..CCeKCC\n..PpPPcCCCCCK\n.PpPPCCCCCwww\n....cCCCCCc..\n.cc.CSSSSCc..\ncC.CCSSSCCc..\nc..cCc.cCc...\n...KKc.KKc...\n",
+"g2": "\n........Z.Z..\n..PP...cCCCc.\n.PpPP..CCeKCC\nPpPPPPcCCCCCK\n....PCCCCCwww\n....cCCCCCc..\n.cc.CSSSSCc..\ncC.CCSSSCCc..\nc..cCc.cCc...\n...KKc.KKc...\n"
+},
+"B": {
+"label": "B 날갯짓하는 아기 와이번",
+"desc": "날개를 크게 펴고 퍼덕여 살짝 떠오르는 아기 와이번 · 뾰족 꼬리",
+"ax": 6,
+"ifr": 4,
+"g": "\n.cP.........\ncPpP...Z.Z..\ncPpPP.cCCCc.\n.cPpPPCCeKCC\n..cPpPCCCCCK\n...cPCCCCwww\n....CSSSCc..\n.ccCCSSSCc..\ncC.cCc.cCc..\nc..KK..KK...\n",
+"g2": "\n............\n.......Z.Z..\n......cCCCc.\n.....cCCeKCC\ncPPPPPCCCCCK\ncPpPpPPCCwww\n.cPPpPSSCc..\n.ccCCSSSCc..\ncC.cCc.cCc..\nc..KK..KK...\n"
+}
+},
+"redhare": {
+"base": "redhare",
+"name": "적토마 망아지",
+"pal": {
+"C": "#c83a28",
+"Q": "#ee6a4a",
+"c": "#8a2016",
+"K": "#3a1a12",
+"R": "#e8401a",
+"O": "#ffa030",
+"Y": "#ffe070",
+"e": "#ffd040",
+"k": "#2a0a06",
+"w": "#ffffff"
+},
+"A": {
+"label": "A 불씨 갈기 망아지",
+"desc": "다리가 긴 붉은 망아지 · 목덜미에 작은 불씨 갈기 · 꼬리 끝에 불꽃",
+"ax": 6,
+"ifr": 3,
+"g": "\n.........K.K..\n........OCCQ..\n.......ROCCCQ.\n.......OCCeCCQ\n......R.CCCCCCc\n.......OCCc.cc.\n......ROCC.....\n..QQQQCCCC.....\nOQCCCCCCCCc....\nRYcCCCCCCCc....\nR..cCc..cCc....\n...C.....C.....\n...C.....C.....\n...k.....k.....\n",
+"g2": "\n........R.....\n........OCCQ..\n.......YOCCCQ.\n......R.CCeCCQ\n.......OCCCCCCc\n......ROCCc.cc.\n.......OCC.....\n..QQQQCCCC.....\n.QCCCCCCCCc....\nOYcCCCCCCCc....\nRR.cCc..cCc....\nR..C.....C.....\n...C.....C.....\n...k.....k.....\n"
+},
+"B": {
+"label": "B 불꽃 망아지",
+"desc": "갈기와 꼬리가 길게 타오르는 망아지 · 발굽에 불티",
+"ax": 6,
+"ifr": 3,
+"g": "\n........R.K.K.\n.......R.OCCQ.\n......R.ROCCCQ\n.......ROYCeCCQ\n......R.OCCCCCCc\n.......ROCCc.cc.\n......R.OCC.....\n..QQQQCCCCC.....\nQQCCCCCCCCCc....\nRYcCCCCCCCCc....\nRRO.cCc..cCc....\n.R..C.....C.....\n....C.....C.....\n....O.....O.....\n",
+"g2": "\n.......R..K.K.\n......R..OCCQ.\n.......RROCCCQ\n......R.OYCeCCQ\n.......ROCCCCCCc\n......R.OCCc.cc.\n.......ROCC.....\n..QQQQCCCCC.....\n.QCCCCCCCCCc....\nRYcCCCCCCCCc....\nROR.cCc..cCc....\nR...C.....C.....\n....C.....C.....\n....Y.....Y.....\n"
+}
+},
+"pegasus": {
+"base": "pegasus",
+"name": "페가수스 망아지",
+"pal": {
+"C": "#f4f6fa",
+"Q": "#ffffff",
+"c": "#b4bcd0",
+"K": "#8a94b0",
+"W": "#ffffff",
+"w": "#ccd6ea",
+"V": "#a8b6d4",
+"L": "#ffffff",
+"M": "#a8d4ff",
+"m": "#6aa0e0",
+"e": "#1a2240",
+"k": "#3a4258"
+},
+"A": {
+"label": "A 작은 날개 망아지",
+"desc": "다리가 긴 흰 망아지 · 등에 작은 깃 날개 · 하늘빛 갈기 술 · 하늘빛 꼬리",
+"ax": 6,
+"ifr": 3,
+"g": "\n.........k.k..\n........MCCQ..\n...WW..MMCCCQ.\n..WVWW.MCCeCCQ\n..wVVWWMCCCCCCc\n...wwVWMCCc.cc.\n......MCCC.....\n..QQQQCCCC.....\nMQCCCCCCCCc....\nmMcCCCCCCCc....\nm..cCc..cCc....\n...C.....C.....\n...C.....C.....\n...k.....k.....\n",
+"g2": "\n.........k.k..\n.WW.....MCCQ..\nWVWW...MMCCCQ.\nwVVWW..MCCeCCQ\n.wVVWW.MCCCCCCc\n..wwVWWMCCc.cc.\n......MCCC.....\n..QQQQCCCC.....\n.QCCCCCCCCc....\nMMcCCCCCCCc....\nmm.cCc..cCc....\nm..C.....C.....\n...C.....C.....\n...k.....k.....\n"
+},
+"B": {
+"label": "B 날개 접은 망아지",
+"desc": "깃 날개를 옆구리에 접고 다소곳이 선 망아지 · 앞머리 술이 이마에",
+"ax": 6,
+"ifr": 2,
+"g": "\n.........k.k..\n........MmCQ..\n.......MMMCCQ.\n.......MCCeCCQ\n.......MCCCCCCc\n......MMCCc.cc.\n......MCCC.....\n..QQQQCCCC.....\nMQCWWWWVCCc....\nmMcwVVVwCCc....\nm..cwwwcCCc....\n...C.....C.....\n...C.....C.....\n...k.....k.....\n",
+"g2": "\n.........k.k..\n........MmCQ..\n.......MMMCCQ.\n.......MCCeCCQ\n.......MCCCCCCc\n......MMCCc.cc.\n......MCCC.....\n..QQQQCCCC.....\n.QCWWWWVCCc....\nMMcwVVVwCCc....\nmm.cwwwcCCc....\nm..C.....C.....\n...C.....C.....\n...k.....k.....\n"
+}
+}
+}
+}
