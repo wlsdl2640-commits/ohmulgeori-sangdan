@@ -1,5 +1,5 @@
 """고른 시안 → 게임 그림 파일 (손으로 고치지 말고 이것으로 다시 뽑는다): python3 emit70.py
-11-16 22:13 · 22:15 사용자 고름 — 고른 순서대로 기본 id · _b · _c (PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만)
+11-16 22:13 · 22:15 · 11-17 18:46 사용자 고름 — 고른 순서대로 기본 id · _b · _c (PXU 항목 통째 + pxuLook + PXU_SKIN/PXU_SKIN_NAME, PXU_ACT는 기본 id에만)
 src/pxruins.js(천계의 유적 폐허 · 성소) · src/pxstar.js(별의 정원 · 별의 왕좌) · src/pxvault.js(보물 던전 · 보물고) — build.py에서 pxsea69.js 뒤"""
 import json, re, pathlib
 
@@ -13,16 +13,19 @@ FILES = [
         ('colossus', 'colossus1', ['colossus', 'colossus_c']),
         ('fallenarch', 'arch1', ['fallenarch']),
     ]),
-    ('pxstar.js', '별의 정원 · 별의 왕좌 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 별빛 요정 · 성운 해파리 · 별꽃 트렌트 · 우두머리 별고래 · 두목 별의 여왕 아스테리아 (월광 사냥개 · 성좌 기사는 시안 2를 고르는 중)', [
+    ('pxstar.js', '별의 정원 · 별의 왕좌 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 별빛 요정 · 월광 사냥개 · 성운 해파리 · 성좌 기사 · 별꽃 트렌트 · 우두머리 별고래 · 두목 별의 여왕 아스테리아', [
         ('starsprite', 'sprite1', ['starsprite']),
+        ('moonhound', 'hound2', ['moonhound']),
+        ('constellation', 'knight2', ['constellation_b']),
         ('nebula', 'jelly1', ['nebula', 'nebula_b']),
         ('startreant', 'tree1', ['startreant_b']),
         ('starwhale', 'whale1', ['starwhale', 'starwhale_c']),
         ('starqueen', 'queen1', ['starqueen_b']),
     ]),
-    ('pxvault.js', '보물 던전 · 보물고 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 미믹 · 황금 골렘 (보물 수호자는 시안 2를 고르는 중)', [
+    ('pxvault.js', '보물 던전 · 보물고 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 미믹 · 황금 골렘 · 두목 보물 수호자', [
         ('mimic', 'mimic1', ['mimic', 'mimic_b']),
         ('goldgolem', 'gold1', ['goldgolem']),
+        ('treasureguard', 'guard2', ['treasureguard']),
     ]),
 ]
 KEEP = ['sh', 'hip', 'ax', 'ms', 'mx', 'my', 'arm', 'hand', 'wpn', 'wmap', 'idle', 'float', 'still', 'noArm']

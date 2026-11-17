@@ -1,7 +1,14 @@
-/* ───────── 별의 정원 · 별의 왕좌 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 별빛 요정 · 성운 해파리 · 별꽃 트렌트 · 우두머리 별고래 · 두목 별의 여왕 아스테리아 (월광 사냥개 · 성좌 기사는 시안 2를 고르는 중) ─────────
+/* ───────── 별의 정원 · 별의 왕좌 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 별빛 요정 · 월광 사냥개 · 성운 해파리 · 성좌 기사 · 별꽃 트렌트 · 우두머리 별고래 · 두목 별의 여왕 아스테리아 ─────────
    그림체는 빌드 55~61과 같은 「뭉툭」(큰 면 한 색 · 윗가장자리 빛 · 아래 그늘 · 부위마다 다른 글자로 PX_FX가 선을 긋는다).
    원본은 tools/saved/mon70 (g/*.py 시안 도구 → t/*.json → emit70.py) — 손으로 고치지 말고 다시 뽑는다. */
 // 새 무기 (빌드 70 시안)
+// 별빛 창 (성좌 기사): 긴 금 자루 끝 길쭉한 별 수정 날 · 날 가운데 흰 빛 · 금 날밑
+PXU_WPN.slance = (F, d) => { const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a || 0), px = -dy, py = dx, out = [], k = (d && d.ms) || 1, L = 9.0 * k, o = L - 9.0;
+  const at = (t, s, ch) => out.push([hx + 0.5 + dx * t + px * s, hy + 0.5 + dy * t + py * s, ch]);
+  for (let t = -2.5; t <= L; t += 0.5) at(t, 0, t < -2.5 + 0.6 ? 'g' : 'G');
+  for (const [t, s, ch] of [[16.5,0.0,'y'],[15.5,-1.0,'y'],[15.5,0.0,'Y'],[15.5,1.0,'y'],[14.5,-1.0,'Y'],[14.5,0.0,'L'],[14.5,1.0,'Y'],[13.5,-1.0,'Y'],[13.5,0.0,'L'],[13.5,1.0,'Y'],[12.5,-1.0,'Y'],[12.5,0.0,'L'],[12.5,1.0,'Y'],[11.5,-1.0,'y'],[11.5,0.0,'Y'],[11.5,1.0,'y'],[10.5,0.0,'Y'],[9.5,-2.0,'G'],[9.5,-1.0,'G'],[9.5,0.0,'Y'],[9.5,1.0,'G'],[9.5,2.0,'G']]) for (const e of [-0.25, 0.25]) for (const f of [-0.25, 0.25]) at(t + o + e, s + f, ch);
+  return out; };
+PXU_FXW.slance = 'pole';
 // 금 별 홀 (별의 여왕): 금 자루 끝 다섯 꼭지 노란 별(속 흰 빛)
 PXU_WPN.sscep = (F, d) => { const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a || 0), px = -dy, py = dx, out = [], k = (d && d.ms) || 1, L = 7.0 * k, o = L - 7.0;
   const at = (t, s, ch) => out.push([hx + 0.5 + dx * t + px * s, hy + 0.5 + dy * t + py * s, ch]);
@@ -153,6 +160,162 @@ Object.assign(PXU, {
 .
 .
 ` }, sh: [18, 7], hip: 99, ax: 13, wpn: 'none', float: 1, still: 1, noArm: 1 },
+  moonhound: {   // 시안 A 달빛 갈기 늑대개 (사용자가 고른 것): 굵고 큰 은푸른 늑대개 · 목과 어깨에서 뒤로 흩날리는 빛나는 달빛 갈기(불꽃처럼) · 얼음빛 눈 · 꼬리 끝 빛
+    pal: { C: '#94a2c4', Q: '#d0dcf2', c: '#5a6690', k: '#121626', w: '#ffffff', E: '#9af4ff', L: '#a8eaff', H: '#f0fcff', m: '#5a1a2a' },
+    g: `
+.........................QQQc
+..LLL................LLLLLCCcc
+..LLL.............LLLLLHHHLLQQQ
+..cLL..............LLLHLLLHLCEEQQQ
+...CCQ...........LLLLLLHHHLLCCCCCCQk
+...cCCQ.......QQQQLLLLHHLLLCCCccccc
+....cCCQQQQQQQCCCCCCCLLHHHLCCckkkkkk
+.....cccCCCCCCCCCCLLLLHHLLLCc
+........CCCCCCCCCCCCLLHLHLCc
+.......cCCCCCCCCCCCCLLHHLLC
+........CCCCCCCCCCCCCCCLHCC
+........CCCCCccccCCCCCCCCCC
+........CCCCcc...cccCCCCCCC
+........CCCCcc......cccCCCC
+.......QCCCcc........ccCCCC
+.......CCCCcc........ccCCCC
+.......CCCcc.........ccCCCC
+.......CCCcc.........cccCCC
+.......CCCcc.........cccCCC
+.......cCCQcc........cccCCC
+........cCcccc.......ccccCcc
+.........c.c..........c..c
+`, g2: `
+......................LL.QQQcc
+...L................LLLHHLLCQQQ
+..LLL.............LLLLLLLHHLCEEQQ
+..LLL..............LLLHHLLLLCEECCQQk
+..cLC............LLLLLHLLHLCCCCCccck
+...CCQQ.....QQQQQQLLLLLHHLLCCCcckkkk
+...ccCCQQQQQCCCCCCCCCLLLLHLCcckk
+.....cccCCCCCCCCCCLLLLLHHLCC
+........CCCCCCCCCCCLLLHHLLCc
+.......cCCCCCCCCCCCCCCLHHCC
+........cCCCCCCCCCCCCCCCLCC
+.........CCCCcccccCCCCCCCCC
+........QCCCcc....ccccCCCCC
+........CCCCcc.......ccCCCC
+.......QCCCcc........ccCCCC
+.......CCCCcc........ccCCCC
+.......CCCcc.........ccCCCC
+.......CCCcc.........cccCCC
+.......CCCcc.........cccCCC
+.......cCCQccc.......cccCCCc
+........ccccc........cccccc
+.
+`, gm: { bite: `
+.........................c
+...LLL....................Q.c
+...LLL....................C.c
+...LLC....................CQcc
+...CCC..............LLLHLLLCQQQ
+...cCCQQ.........QQLLLLLHHHLCCEE
+....ccCCQQQQQQQQQCLLLLHHLLLLCCEEQQQkk
+......ccCCCCCCCCCCCCCLLLHHHLCCCcccckk
+........CCCCCCCCCCLLLLHHHLLCCCcmmmm
+.......cCCCCCCCCCCCLLLHLLHLCCCmmwmw
+........CCCCCCCCCCLLLLLHHLCccccwccw
+........CCCCCCccCCCLLLHHLLC
+........CCCCcc..ccCCCCLHHLC
+........CCCCcc....cccCCCLLC
+.......QCCCcc........ccCCCC
+.......CCCCcc........cccCCC
+.......CCCcc.........cccCCC
+......QCCCcc..........ccCCC
+......cCCCcc..........cccCCQ
+.......cCCQcc.........cccCCCQ
+........CCccc..........cccCcc
+........cc.c...........c..c
+`, charge: `
+.........................c..c
+...LL.....................Q.c
+...LLL....................CQc
+...LLL...............LLHLLLCccQ
+...CCC.............LLLLHHHLLQQCQ
+...cCCQ........QQQQLLLHHLLHLCEECQQQkk
+....cCCQQQQQQQQCCLLLLLLHHHLLCCCCCCCkk
+.....cccCCCCCCCCCCLLLLHHLLLLCCcccccc
+........CCCCCCCCCCCCCLLLHHLCCckkkkkk
+.......cCCCCCCCCCCLLLLHHLLLcc
+........CCCCCCCCCCCLLLHLHHC
+........CCCCCcccCCCCCCLHHLC
+........CCCCcc..cccCCCCLHLC
+.......QCCCccc.....cccCCCCC
+.......CCCCcc........cccCCC
+......QCCCcc..........ccCCCQ
+......CCCcc...........cccCCC
+.....QCCCcc...........cccCCC
+.....cCCCc.............cccCCQ
+......CCCcc............ccccCCQ
+......cCcccc............cccccc
+.......c.c
+`, leap: `
+.LLL.............LLLLHLLLLQQcccccc
+..CCQ.............QQLLHHHLCCmmwmmw
+..cCC..........QQLLLLHHLLLCcccwQw
+...cCQ......QQQCCCCLLLLHLCC....cc
+....CCQQQQQQCCCCCCLLLHHLLCC
+....cccCCCCCCCCCCCCCCCLHCCC
+.......CCCCCCCCCCCCCCCCCCCC
+.......cCCCCCCCCCCCCCCCCCCC
+........CCCCCCCccCCCCCCCCCC
+........CCCCCcc..cccccccCCC
+........CCCCcc.......cccCCCQ
+.......QCCCcc.........ccCCCC
+......QCCCCcc.........cccCCC
+......CCCCcc..........cccCCCQQQQ
+.....QCCCcc............ccCCCCCcc
+....QCCCcc.............ccccccc
+....CCCcc
+....cccc
+.
+.
+.
+.
+` }, sh: [33, 6], hip: 99, ax: 17, wpn: 'none', still: 1, noArm: 1 },
+  constellation: {   // 시안 B 천구 방패 기사 (사용자가 고른 것): 두꺼운 남빛 판금에 금빛 별 지도 새김 · 먼 팔의 큰 둥근 방패(금테 · 비스듬한 별 길 고리 · 별 넷 · 가운데 금빛 해) · 투구 위 앞에서 뒤로 난 짧은 하늘빛 술 볏 · 금 별빛 창
+    pal: { C: '#2a3c8a', Q: '#4a62b8', c: '#18245a', k: '#080c1e', E: '#9ae8ff', G: '#e8c050', g: '#a8842a', L: '#fff6c0', Y: '#ffe070', y: '#c8a440', V: '#141a4a', v: '#3a4a9a', P: '#9ad8ff', p: '#e8f8ff' },
+    g: `
+...........PpppP
+.........PPPPPPP
+.........PP...QQQQQQQ
+.............QCCCCCCC
+.............CCCCCCCC
+.............CCCkEEEEk
+.............CCCkEEEEk
+.............CCCCCCCC
+.............CccccccC
+.............cccccccCQ
+.........cccccccccccCCQQQ
+.........cccccccccccCCCCCQ
+......GGGGGGccQQQQQQCCCCcc
+.....GVVVVVVGQgGgCCCgCCC
+....GVVVVVVVVGCCCggCgCCc
+....GVVVVVLVVGCCCCCGCCC
+....GVVLvvvVVGCCCCCCCCC
+...GVvvVVVVvvVGgGgCCCCc
+...GVvVVYYVVvVGCCCggCC
+...GVvvVYYVvvVGCCCCCgc
+....GVvvvvvLVGCCCCCCC
+....GVVVVVVVVGCCCCCCCQ
+.....GVVLVVVGCCCCCCCCC
+.....GGVVVVGGCCCCCCCCC
+.......GGGGCCCCCCCCCCCQ
+..........cccccccCCCCCC
+............cccc.CCCCCC
+............cccc.CCCCCC
+............cccc.CCCCCc
+............cccc.CCCCC
+............cccc.CCCCC
+...........ccccccCCCCCQQ
+...........ccccccCCCCCCC
+...........ccccccccccccc
+`, sh: [22, 12], hip: 21, ax: 17, ms: 1.25, mx: 20, my: 20, arm: ['C', 'c'], hand: 'C', wpn: 'slance', idle: { h: [2, 3], a: -70 } },
   nebula: {   // 시안 A 보랏빛 성운 해파리 (사용자가 고른 것 중 첫째 = 기본 모습): 반투명 보랏빛 갓 속에 분홍 · 파랑 성운과 별 · 끝이 빛나는 긴 물결 촉수 다섯 · 마법을 쏠 때 갓이 부풀었다 오므린다
     pal: { C: '#8a5ad0', Q: '#c09aff', c: '#5a3696', P: '#ff8ad0', B: '#6ab8ff', L: '#ffffff', p: '#a87ae8' },
     g: `
@@ -883,6 +1046,8 @@ Object.assign(PXU, {
 });
 Object.assign(PXU_ACT, {
   starsprite: { mag: ['wspit'], atk: ['bswoop'], skl: ['wspit'], tk: 0.9, fx: { mag: { pal: 'star', hit: 'flash', p: 'orb' }, atk: { pal: 'star', hit: 'star' }, skl: { pal: 'ice', hit: 'shatter', p: 'shard', big: 1, after: 'motes' } } },
+  moonhound: { atk: ['qbite', 'qpounce'], skl: ['qmaul'], tk: 0.9, fx: { atk: { pal: 'ice', hit: 'bite' }, skl: { pal: 'ice', hit: 'claw', big: 1, after: 'motes' } } },
+  constellation: { atk: ['thrust', 'side'], skl: ['pjump'], tk: 1.1, fx: { atk: { pal: 'star', hit: 'pierce' }, skl: { pal: 'star', hit: 'star', big: 1, after: 'motes' } } },
   nebula: { mag: ['wspit'], atk: ['bswoop'], skl: ['wspit'], tk: 1.0, fx: { mag: { pal: 'arcane', hit: 'flash', p: 'orb' }, atk: { pal: 'dark', hit: 'slashes' }, skl: { pal: 'dark', hit: 'vortex', p: 'orb', big: 1, after: 'drain' } } },
   startreant: { atk: ['side', 'down'], skl: ['smash'], tk: 1.2, fx: { atk: { pal: 'nature', hit: 'star', big: 1 }, skl: { pal: 'star', hit: 'stun', big: 1, after: 'petals', shake: 1 } } },
   starwhale: { atk: ['bswoop'], skl: ['wspit'], tk: 1.3, fx: { atk: { pal: 'water', hit: 'star', big: 1 }, skl: { pal: 'water', hit: 'vortex', p: 'orb', big: 2, after: 'bubbles', shake: 3 } } },

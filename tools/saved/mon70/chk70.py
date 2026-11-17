@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 PAGE, OUT = sys.argv[1], sys.argv[2]; os.makedirs(OUT, exist_ok=True)
 H83 = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'bal69', 'h83.js'), encoding='utf-8').read()
 IDS = ['ruinguard', 'fallenangel', 'fallenangel_b', 'fallenangel_c', 'sphinx', 'sphinx_b', 'ophan', 'ophan_b', 'colossus', 'colossus_b', 'fallenarch',
-       'starsprite', 'nebula', 'nebula_b', 'startreant', 'starwhale', 'starwhale_b', 'starqueen', 'mimic', 'mimic_b', 'goldgolem']
+       'starsprite', 'moonhound', 'nebula', 'nebula_b', 'constellation', 'startreant', 'starwhale', 'starwhale_b', 'starqueen', 'mimic', 'mimic_b', 'goldgolem', 'treasureguard']
 SPR = r"""((ids) => {
   const out = {}, bad = [];
   for (const id of ids) {
@@ -61,9 +61,11 @@ RUNS = [
     ('colossus', 'ruins', 'field', ['colossus'], 135, 0, 1),
     ('fallenarch', 'ruins', 'dungeon', ['fallenarch'], 140, 1, 0),
     ('star', 'stargarden', 'field', ['starsprite', 'nebula', 'startreant'], 140, 0, 0),
+    ('star2', 'stargarden', 'field', ['moonhound', 'constellation', 'nebula'], 140, 0, 0),
     ('starwhale', 'stargarden', 'field', ['starwhale'], 145, 0, 1),
     ('starqueen', 'stargarden', 'dungeon', ['starqueen'], 150, 1, 0),
     ('vault', 'treasure', 'dungeon', ['mimic', 'goldgolem', 'mimic'], 120, 0, 0),
+    ('treasureguard', 'treasure', 'dungeon', ['treasureguard'], 125, 1, 0),
 ]
 def img(u): return Image.open(io.BytesIO(base64.b64decode(u.split(',')[1]))).convert('RGB')
 with sync_playwright() as pw:

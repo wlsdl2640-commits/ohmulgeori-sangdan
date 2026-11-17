@@ -1,4 +1,4 @@
-/* ───────── 보물 던전 · 보물고 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 미믹 · 황금 골렘 (보물 수호자는 시안 2를 고르는 중) ─────────
+/* ───────── 보물 던전 · 보물고 몬스터 (빌드 70 시안 · 사용자가 고른 모습): 미믹 · 황금 골렘 · 두목 보물 수호자 ─────────
    그림체는 빌드 55~61과 같은 「뭉툭」(큰 면 한 색 · 윗가장자리 빛 · 아래 그늘 · 부위마다 다른 글자로 PX_FX가 선을 긋는다).
    원본은 tools/saved/mon70 (g/*.py 시안 도구 → t/*.json → emit70.py) — 손으로 고치지 말고 다시 뽑는다. */
 Object.assign(PXU, {
@@ -246,11 +246,57 @@ Object.assign(PXU, {
 .........QQQQQ..QQQQ
 .........ccccc.CCCCCC
 .........ccccccCCCCCC
-`, sh: [21, 8], hip: 20, ax: 15, ms: 1.25, arm: ['C', 'c'], hand: 'C', wpn: 'rfist', idle: { h: [1, 3], a: 80 } }
+`, sh: [21, 8], hip: 20, ax: 15, ms: 1.25, arm: ['C', 'c'], hand: 'C', wpn: 'rfist', idle: { h: [1, 3], a: 80 } },
+  treasureguard: {   // 시안 A 미믹 왕 (사용자가 고른 것): 몸통이 이빨 난 큰 나무 보물 상자 · 둥근 뚜껑의 성난 노란 눈 · 위아래 이빨과 늘어진 붉은 혀 · 세로 쇠 띠와 금 자물쇠 · 잿빛 돌 어깨 · 팔다리 · 큰 돌주먹
+    pal: { A: '#8a8678', a: '#5e5a50', C: '#9a968a', Q: '#c4c0b4', c: '#66625a', J: '#a8743e', j: '#6e4822', I: '#d09a5a', M: '#6a6a76', G: '#f0c444', m: '#6a1420', k: '#1a0a0a', w: '#fff8e8', T: '#d83a4a', t: '#ff8a9a', E: '#ffe040' },
+    g: `
+..............IIMMIIIIIIIIIIIIIMMI
+.............IJJMMJJJJJJJJJJJJJMMJI
+............IJJJMMJJJJJJJJJJJJJMMJJI
+............JJJJMMJJJJJJJJJJJJJMMJJJ
+............JJJJMMJJJJJJJjjjjjjjjjJJ
+...........cJJJJMMJJJJJJJJEEEJJEEEJJQQ
+..........ccJJJJMMJJJJJJJJEEEJJEEEJJCCQ
+.........cccJJJJMMJJJJJJJJJJJJJMMJJJCCC
+.........ccIJJJJMMJJJJJJJJJJJJJMMJJJICC
+..........cJJJJJMMJJJJJJJJJJJJJMMJJJJCc
+..........cJJJJJMMJJJJJJJJJJJJJMMJJJJc
+.........ccjjjjjMMjjjjjjjjjjjjjMMjjjj
+.........cccmkkkkkkwkkwkkwkkkTTkkwkkm
+.........cccmkkkkkkkwkkwkkwkkTttTTwkm
+........ccccmmmmmmmmmmmmmmmmmTTTTttTm
+........ccccJJJJMMJJJJGGGGJJJJJMTTTTT
+........ccccJJJJMMJJJJGGGGJJJJJMMJJTTT
+........ccccJJJJMMJJJJGGkGJJJJJMMJJJTT
+........ccccJJJJMMJJJJGGGGJJJJJMMJJJTTT
+........ccccJJJJMMJJJJJJJJJJJJJMMJJJTT
+........ccccJJJJMMJJJJJJJJJJJJJMMJJJTT
+........ccccJJJJMMJJJJJJJJJJJJJMMJJJTT
+.......cccccJJJJMMJJJJJJJJJJJJJMMJJJJ
+.......cccccJJJJMMJJJJJJJJJJJJJMMJJJJ
+.......cccccJJJJMMJJJJJJJJJJJJJMMJJJJ
+.......cccccJJJJMMJJJJJJJJJJJJJMMJJJJ
+.......cccccJJJJMMJJJJJJJJJJJJJMMJJJJ
+.......cccccJJJJMMJJJJJJJJJJJJJMMJJJJ
+.......cccccjjjjMMjjjjjjjjjjjjjMMjjjj
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+................ccccccc..CCCCCCC
+...............cccccccccQCCCCCCCQQQ
+...............cccccccccCCCCCCCCCCC
+...............cccccccccccccccccccc
+`, sh: [34, 9], hip: 25, ax: 24, ms: 1.5, mx: 20, my: 20, arm: ['A', 'a'], hand: 'C', wpn: 'rfist', idle: { h: [1, 4], a: 78 } }
 });
 Object.assign(PXU_ACT, {
   mimic: { atk: ['qbite'], skl: ['qmaul'], tk: 0.9, fx: { atk: { pal: 'gold', hit: 'bite' }, skl: { pal: 'gold', hit: 'coins', big: 1, after: 'dust' } } },
-  goldgolem: { atk: ['side', 'down'], skl: ['smash'], tk: 1.25, fx: { atk: { pal: 'gold', hit: 'star', big: 1 }, skl: { pal: 'gold', hit: 'coins', big: 1, after: 'dust', shake: 1 } } }
+  goldgolem: { atk: ['side', 'down'], skl: ['smash'], tk: 1.25, fx: { atk: { pal: 'gold', hit: 'star', big: 1 }, skl: { pal: 'gold', hit: 'coins', big: 1, after: 'dust', shake: 1 } } },
+  treasureguard: { atk: ['side', 'down'], skl: ['smash'], tk: 1.35, fx: { atk: { pal: 'gold', hit: 'star', big: 1 }, skl: { pal: 'earth', hit: 'stun', big: 2, after: 'dust', shake: 3 } } }
 });
 // 만날 때마다 모습 하나: 기본 모습이 아닌 것은 드랍 없는 이름표 (pxuLook) · PXU_ACT는 기본 id에만
 pxuLook('mimic_b', 'mimic', MONS.mimic.name);
