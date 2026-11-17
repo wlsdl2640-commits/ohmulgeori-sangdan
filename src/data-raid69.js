@@ -31,6 +31,11 @@ Object.assign(ITEMS.rh_griffon, { name: RAIDS.griffon.heart[0], c: RAIDS.griffon
 Object.assign(FIELDS.raid_griffon, { name: RAIDS.griffon.name, desc: RAIDS.griffon.desc });
 Object.assign(MONS.raidgriffon, { name: '천둥새', W: 88, H: 64, body: '#3a3468', dark: '#26214c' });
 Object.assign(MONS.kingslime, { W: 64, H: 48, body: '#5fbf5a', dark: '#3f8f3c' });
+// 카이샤르 (11-17 19:10 사용자 「카이샤르 A」): 대태도 고블린 검성 — 그림은 pxraid.js PXRAID.kaishar(= tools/saved/mon70/g/raidk.py A, 41×46 반 해상도 → 82×92).
+//   예전 설명의 「두 자루 대검」은 긴 외날 칼 한 자루로. id · 부속품(rp_/rh_kaishar) · 이름은 그대로.
+Object.assign(RAIDS.kaishar, { desc: '천 번의 결투에서 살아남은 고블린 검성. 붉은 겉옷에 검은 상투를 높이 묶고, 두 손으로 긴 외날 칼을 비스듬히 치켜든다.' });
+Object.assign(FIELDS.raid_kaishar, { desc: RAIDS.kaishar.desc });
+Object.assign(MONS.kaishar, { W: 82, H: 92, skin: '#6aa040', cloth: '#8a2028' });
 // 레이드 HP · 세기 (빌드 69 측정 scratchpad/v88/rhp88.js — 레이드 레벨 파티 넷(3차 Lv150 ~ 190 · 스킬 3단계 · 숙련도 3 · 고급 장비)이 한 번 도전(90초)에
 //   예전 식 raidHp(Lv)의 97% · 69% · 63% · 45% · 41%를 깎고 아무도 안 쓰러졌다 → HP를 따로 정하고(한 번에 8% ~ 4%) 한 방 세기도 올린다)
 //   다시 잰 값(DIFF.hp 1.22 포함): 레이드 레벨 파티 넷이 한 번에 킹슬라임 6.5% · 카이샤르 5.0% · 대그리핀(천둥새) 4.9% · 템페스트 3.8% · 베히모스 3.7%, 한 방 ×2.0이면 90초에 최대 HP의 12 ~ 26%를 맞는다

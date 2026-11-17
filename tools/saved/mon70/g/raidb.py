@@ -79,19 +79,94 @@ def behC():
     return c
 
 
+def cumulus(c, circles, W='W', w='w', V='V', u='u', sq=0.86, low=0.34, spec=True, arc=0.15, drawn=None):
+    """도트 뭉게구름을 덩이 하나씩 겹쳐 그린다(뒤 덩이부터): 덩이마다 아래쪽 그늘(w, 오른쪽이 조금 더 깊게) · 왼쪽 위 빛 무리(V) ·
+    앞 덩이가 뒤 덩이에 걸치는 가장자리는 테(u) — 덩이 하나하나가 부풀어 보이게 (A 배 밑 구름을 크게 · 여러 겹으로)"""
+    drawn = set(drawn or ())
+    for (x0, y0, r) in circles:
+        cells = ell(x0, y0, r, r * sq)
+        for (x, y) in cells:
+            dx = (x + 0.5 - x0) / r; dy = (y + 0.5 - y0) / (r * sq)
+            ch = W
+            if dy > low - 0.22 * dx + 0.08 * math.sin(x * 1.9 + y0): ch = w
+            elif spec and r >= 3.0 and -0.78 <= dx <= -0.18 and -0.86 <= dy <= -0.42: ch = V
+            c.set(x, y, ch)
+        for (x, y) in cells:   # 테는 덩이 윗부분에만 (아랫부분은 그늘로 뒤 덩이와 이어진다 — 비늘 무늬가 되지 않게)
+            if (y + 0.5 - y0) / (r * sq) > arc: continue
+            if any((x + ex, y + ey) in drawn and (x + ex, y + ey) not in cells for (ex, ey) in ((0, -1), (-1, 0), (1, 0))): c.set(x, y, u)
+        drawn |= cells
+    return drawn
+
+
+def fill_holes(c, near, ch):
+    """둘레에 막힌 빈 칸(구멍) 가운데 near 글자와 맞닿은 덩이를 ch로 메운다 (구름 덩이 사이 틈)"""
+    out = set(); st = [(x, y) for x in range(c.W) for y in (0, c.H - 1)] + [(x, y) for y in range(c.H) for x in (0, c.W - 1)]
+    while st:
+        q = st.pop()
+        if q in out or not c.inb(*q) or c.g[q[1]][q[0]] != '.': continue
+        out.add(q); x, y = q; st += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+    seen = set()
+    for y in range(c.H):
+        for x in range(c.W):
+            if c.g[y][x] != '.' or (x, y) in out or (x, y) in seen: continue
+            blob = []; st = [(x, y)]
+            while st:
+                q = st.pop()
+                if q in seen or not c.inb(*q) or c.g[q[1]][q[0]] != '.': continue
+                seen.add(q); blob.append(q); a, b = q; st += [(a + 1, b), (a - 1, b), (a, b + 1), (a, b - 1)]
+            if any(c.get(a + ex, b + ey) in near for (a, b) in blob for (ex, ey) in ((1, 0), (-1, 0), (0, 1), (0, -1))): c.fill(blob, ch)
+
+
+def behD():
+    """11-17 19:10 사용자 「베히모스는 B에 A 기존 배 아래에 있는 구름 좀 더 업글해서 붙히고 C의 해파리 다리 붙혀줘」
+    B 갑각 하늘 괴수(몸 · 마디 · 뿔 · 붉은 눈 넷 · 가시 꼬리 그대로 — 배 밑 작은 지느러미 다리는 구름에 묻힘) + 배에 붙은 뭉게구름 침대
+    (A 배 밑 구름을 크고 여러 겹으로: 배를 덮는 위 덩이 · 앞 큰 덩이 · 꼬리와 턱 밑으로 말려 올라가는 끝 덩이 · 잿보랏빛 아랫면 층) +
+    구름 아래로 늘어진 C 해파리 다리 여섯(물결 · 가운데가 길게 · 끝이 하늘빛으로 빛남)"""
+    c = Cv(72, 60); cy = 16.0
+    for (x, n, ph) in ((21.0, 6, 0.0), (25.6, 7, 0.5), (30.2, 8, 1.0), (45.4, 8, 2.0), (50.0, 7, 2.5), (54.4, 6, 3.0)):          # 구름 아래로 늘어진 가는 해파리 다리 (맨 뒤 · 다 같이 한쪽으로 물결)
+        pts = [(x + 1.7 * math.sin(k * 0.95 - ph) * min(1.0, k / 2.0), 31.4 + k * 2.9) for k in range(n)]
+        c.fill(path(pts, 1.25, 0.45), 'T'); c.only(path(pts[:3], 0.4), 't', 'T')
+        tx, ty = pts[-1]; c.fill(ell(tx, ty + 0.3, 0.8, 0.8), 'L')
+    for (x, n, ph) in ((35.0, 9, 1.4), (40.2, 9, 1.8)):                                                                     # 가운데 넓은 주름 다리 둘 (C 촉수 꼴 · 앞)
+        pts = [(x + 2.0 * math.sin(k * 0.9 - ph) * min(1.0, k / 2.0), 31.4 + k * 2.9) for k in range(n)]
+        arm = path(pts, 2.0, 0.6); c.fill(arm, 'T')
+        for (ax, ay) in arm:                                                                                                # 주름: 왼쪽 가장자리에 한 줄 걸러 빛
+            if (ax - 1, ay) not in arm and ay % 2 == 0: c.set(ax, ay, 't')
+        tx, ty = pts[-1]; c.fill(ell(tx, ty + 0.3, 0.9, 0.9), 'L')
+    cumulus(c, [(24.0, 31.6, 3.0), (33.0, 32.4, 3.4), (42.0, 32.4, 3.4), (51.0, 31.4, 3.0)], 'G', 'g', 'G', 'g', spec=False)   # 잿보랏빛 아랫면 층 (뒤)
+    body_c, fl = whale(c, cy, body='A', lite='a', dark='Z', belly='P', grooves='p')
+    for i in range(8):                                                                                                       # 겹친 갑각 마디 여덟
+        x = 18.0 + i * 5.2
+        c.only(thin((x, cy - 11.0), (x - 1.4, cy + 4.0)), 'Z', 'Aa')
+        top = [(xx, yy) for (xx, yy) in body_c if abs(xx - (x + 2.6)) < 0.6]
+        if top: ty = min(yy for (xx, yy) in top); c.fill(box(x + 1.0, ty, x + 4.2, ty), 'a')
+    c.fill(poly([(58.0, cy - 4.6), (64.6, cy - 8.6), (60.4, cy - 2.4)]), 'O')                                                # 주둥이의 짧은 뿔
+    for (x, y) in ((2.0, cy - 10.6), (2.0, cy + 10.8), (5.0, cy - 7.4)): c.fill(poly([(x, y), (x - 1.4, y - 1.6 if y < cy else y + 1.6), (x + 1.4, y)]), 'O')   # 가시 꼬리
+    four_eyes(c, cy, 'E', 'e')
+    cumulus(c, [(18.4, 23.6, 3.0), (24.2, 24.6, 2.8), (29.6, 25.0, 3.4), (36.4, 25.6, 3.2), (42.6, 25.8, 3.4), (48.0, 25.2, 2.8), (55.0, 23.0, 3.0),   # 배를 덮는 위 덩이
+                (14.2, 25.6, 2.8), (59.8, 24.8, 2.8), (21.0, 27.6, 3.8), (52.0, 27.6, 4.0),                                     # 꼬리 · 턱 밑으로 말려 올라가는 끝 덩이
+                (31.0, 28.2, 4.4), (42.0, 28.4, 4.6),                                                                           # 가운데 큰 덩이
+                (26.0, 31.0, 2.6), (36.6, 31.6, 3.0), (47.0, 31.0, 2.6)], u='x')                                               # 맨 앞 아래 작은 덩이 (덩이 사이 틈을 메움)
+    fill_holes(c, 'WwVx', 'w')                                                                                               # 덩이 사이 갇힌 틈은 그늘로
+    seams(c, {'body': ('AaZ', 'Z'), 'belly': ('Pp', 'p'), 'horn': ('O', 'O'), 'cloud': ('WwVux', 'u'), 'under': ('Gg', 'g'), 'leg': ('TtL', 't')})
+    return c
+
 PAL = {
     'A': {'C': '#8a7ad0', 'Q': '#b4a6ee', 'c': '#5a4a9e', 'P': '#f2ecfa', 'p': '#c8bce0', 'F': '#6a5ab8', 'f': '#d0c4ff', 'D': '#3e3078',
           'W': '#f4f6ff', 'w': '#c8d0ec', 'V': '#ffffff', 'E': '#ffc040', 'e': '#3a1a08', 'k': '#1e1640'},
     'B': {'A': '#4a3c8a', 'a': '#7a6cc0', 'Z': '#2a2058', 'P': '#c8c0e8', 'p': '#9a90c0', 'F': '#5a4ca0', 'f': '#8a7cd0', 'O': '#e8e0d0',
           'E': '#ff6a5a', 'e': '#2a0a08', 'k': '#140e2a'},
+    'D': {'A': '#4a3c8a', 'a': '#7a6cc0', 'Z': '#2a2058', 'P': '#c8c0e8', 'p': '#9a90c0', 'O': '#e8e0d0', 'E': '#ff6a5a', 'e': '#2a0a08', 'k': '#140e2a',
+          'W': '#f2f4ff', 'w': '#c6caec', 'V': '#ffffff', 'u': '#8e90c4', 'x': '#b2b4e0', 'G': '#9692c6', 'g': '#6c6aa0', 'T': '#d4cbf2', 't': '#ffffff', 'L': '#8ef0ff'},
     'C': {'C': '#b8cce8', 'Q': '#e4eefc', 'c': '#7e96c0', 'P': '#f4f8ff', 'p': '#c8d6ec', 'F': '#9a7ae0', 'f': '#c8a8ff', 'L': '#ffffff',
           'W': '#e8f0ff', 'V': '#ffffff', 'E': '#7af0ff', 'k': '#2a3450'},
 }
 LAB = {'A': ('A 네 눈 하늘 고래', '연보랏빛 몸 · 등줄기를 따라 솟은 짙은 판 · 줄무늬 진 크림빛 배 · 머리 옆에 나란한 호박빛 눈 넷 · 배를 따라 늘어선 보랏빛 지느러미 여섯 · 배 밑의 흰 구름'),
        'B': ('B 갑각 하늘 괴수', '머리부터 꼬리까지 겹친 남보랏빛 갑각 마디 여덟(마디 사이 짙은 줄) · 마디마다 배 밑 작은 지느러미 다리 · 주둥이의 짧은 흰 뿔 · 붉은 눈 넷 · 가시 꼬리'),
+       'D': ('B+A 구름+C 다리', 'B 갑각 하늘 괴수 그대로 + 배에 붙은 뭉게구름(A 배 밑 구름을 크고 여러 겹으로 — 덩이마다 빛 · 그늘 · 테, 배를 덮는 위 덩이 · 앞 큰 덩이 · 꼬리와 턱 밑으로 말려 올라가는 끝 덩이 · 잿보랏빛 아랫면) + 구름 아래로 늘어진 C 해파리 다리 여섯(물결 · 끝이 하늘빛으로 빛남)'),
        'C': ('C 구름 해파리 고래', '옅은 하늘빛 몸 · 배 밑으로 길게 늘어진 흰 구름 촉수 다섯 · 빛줄기가 비치는 보랏빛 지느러미 셋 · 하늘빛으로 빛나는 눈 넷')}
 if __name__ == '__main__':
     out = {'pal': PAL, 'label': {k: v[0] for k, v in LAB.items()}, 'desc': {k: v[1] for k, v in LAB.items()}}
-    for k, fn in (('A', behA), ('B', behB), ('C', behC)): out[k] = gridtxt(fn())
+    for k, fn in (('A', behA), ('B', behB), ('C', behC), ('D', behD)): out[k] = gridtxt(fn())
     json.dump(out, open(sys.argv[1] if len(sys.argv) > 1 else '../t/raid_behemoth.json', 'w'), ensure_ascii=False)
-    print('ok', [(len(out[k].split('\n')), max(len(r) for r in out[k].split('\n'))) for k in 'ABC'])
+    print('ok', [(len(out[k].split('\n')), max(len(r) for r in out[k].split('\n'))) for k in 'ABCD'])

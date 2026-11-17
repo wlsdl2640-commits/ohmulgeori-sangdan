@@ -113,8 +113,16 @@ PAL = {
 LAB = {'A': ('A 폭풍우 바다용', '청록 몸 · 지느러미 같은 막 날개 둘(살대 · 끝이 오목) · 목과 등을 따라 흰 물거품 갈기 · 연한 배 비늘 · 뒤로 누운 짙은 뿔 · 하늘빛 눈 · 둘레 빗줄기'),
        'B': ('B 바람 날개 용', '잿빛 녹색 몸 · 바람으로 된 흰 날개 둘(속에 휘는 바람 줄 · 끝이 말린 갈래) · 몸과 머리 위를 감는 연둣빛 바람 띠 · 등 돌기 · 노란 눈'),
        'C': ('C 먹구름 갑주 용', '짙은 먹빛 몸 · 가슴과 몸의 두꺼운 판 갑 · 목과 등을 따라 먹구름 갈기 · 끝이 먹구름인 날개에서 떨어지는 비 · 흰 눈')}
+# 11-17 19:10 사용자 「템페스트 A에 C색상 입혀봐」: A 꼴(폭풍우 바다용) 그대로 · 색만 C(먹구름 갑주 용)
+PC_ = PAL['C']
+PAL['AC'] = {'C': PC_['C'], 'Q': PC_['Q'], 'c': PC_['c'], 'P': PC_['P'], 'p': PC_['p'], 'M': PC_['M'], 'N': PC_['N'], 'm': PC_['m'], 'n': '#14181e',
+             'W': PC_['W'], 'F': PC_['V'], 'O': PC_['O'], 'E': PC_['E'], 'k': PC_['k'], 'w': PC_['w'], 'r': PC_['r']}
+PAL['AC2'] = dict(PAL['AC'], W='#e8eef8', F='#9aa4b8')
+LAB['AC'] = ('A+C색 폭풍우 먹구름 용', 'A(폭풍우 바다용) 꼴 그대로 · 색만 C — 짙은 먹빛 몸 · 먹빛 막 날개 · 잿빛 먹구름 갈기 · 흰 눈 · 푸른 빗줄기')
+LAB['AC2'] = ('A+C색 (흰 물거품 갈기)', 'A+C색과 같고 · 목과 등의 갈기만 A처럼 흰 물거품으로 남김(어두운 몸에서 갈기가 또렷이 보인다)')
 if __name__ == '__main__':
     out = {'pal': PAL, 'label': {k: v[0] for k, v in LAB.items()}, 'desc': {k: v[1] for k, v in LAB.items()}}
     for k, fn in (('A', tempA), ('B', tempB), ('C', tempC)): out[k] = gridtxt(fn())
+    out['AC'] = out['AC2'] = out['A']
     json.dump(out, open(sys.argv[1] if len(sys.argv) > 1 else '../t/raid_tempest.json', 'w'), ensure_ascii=False)
     print('ok', [len(out[k].split('\n')) for k in 'ABC'])
