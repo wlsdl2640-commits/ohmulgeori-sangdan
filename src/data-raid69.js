@@ -14,7 +14,7 @@ for (const [id, lv] of Object.entries(RAID_LV69)) {
   R.lv0 = R.lv; R.lv = lv; F.lv = lv;
 }
 // 베히모스는 하늘에: 레이드 무대는 구름섬 하늘 · 하늘 지도 · 비행장이 있어야
-Object.assign(RAIDS.behemoth, { bg: 'sky', sky: 1, desc: '구름섬 위 하늘을 떠다니는 거대한 고래. 눈이 넷, 지느러미가 수없이 많다. 비행장의 레이드 비행선을 타고 간다.' });
+Object.assign(RAIDS.behemoth, { bg: 'sky', sky: 1, desc: '구름섬 위 하늘을 떠다니는 거대한 갑각 괴수. 붉은 눈이 넷, 등에는 겹친 갑각 마디가 여덟. 배에 뭉게구름을 두르고 그 아래로 해파리 다리를 늘어뜨린다. 비행장의 레이드 비행선을 타고 간다.' });
 Object.assign(FIELDS.raid_behemoth, { bg: 'sky', skyRaid: 1, desc: RAIDS.behemoth.desc });
 FIELDS.raid_behemoth.dungeon.bg = 'sky';
 const raidSky = id => !!(RAIDS[id] && RAIDS[id].sky);
@@ -36,6 +36,14 @@ Object.assign(MONS.kingslime, { W: 64, H: 48, body: '#5fbf5a', dark: '#3f8f3c' }
 Object.assign(RAIDS.kaishar, { desc: '천 번의 결투에서 살아남은 고블린 검성. 붉은 겉옷에 검은 상투를 높이 묶고, 두 손으로 긴 외날 칼을 비스듬히 치켜든다.' });
 Object.assign(FIELDS.raid_kaishar, { desc: RAIDS.kaishar.desc });
 Object.assign(MONS.kaishar, { W: 82, H: 92, skin: '#6aa040', cloth: '#8a2028' });
+// 템페스트 드래곤 (11-17 22:53 사용자 「템페스트 드래곤은 A+C 색으로」): A 폭풍우 바다용 꼴 + C 먹구름 갑주 용 색 — 그림은 pxraid.js PXRAID.tempest
+//   (= tools/saved/mon70/g/raidt.py AC, 52×46 반 해상도 → 104×92). 이름 · 색(c — 부속품 · 레이드 카드) · 부속품은 그대로, 설명 · 크기 · 몸 색만.
+Object.assign(RAIDS.tempest, { desc: '번개 구름을 몰고 다니는 폭풍의 용. 먹빛 몸에 지느러미 같은 막 날개를 펴고, 목과 등의 잿빛 먹구름 갈기에서 푸른 빗줄기가 쏟아진다.' });
+Object.assign(FIELDS.raid_tempest, { desc: RAIDS.tempest.desc });
+Object.assign(MONS.tempest, { W: 104, H: 92, body: '#3a4250', dark: '#222834' });
+// 베히모스 (11-17 22:53 사용자 「베히모스는 B+A」): B 갑각 하늘 괴수 + 배에 붙은 뭉게구름 + C 해파리 다리 — 그림은 pxraid.js PXRAID.behemoth
+//   (= tools/saved/mon70/g/raidb.py D, 64×52 반 해상도 → 128×104). 설명은 위 하늘 레이드 줄(RAIDS.behemoth · FIELDS.raid_behemoth)에서 함께 바꿨다.
+Object.assign(MONS.behemoth, { W: 128, H: 104, body: '#4a3c8a', dark: '#2a2058' });
 // 레이드 HP · 세기 (빌드 69 측정 scratchpad/v88/rhp88.js — 레이드 레벨 파티 넷(3차 Lv150 ~ 190 · 스킬 3단계 · 숙련도 3 · 고급 장비)이 한 번 도전(90초)에
 //   예전 식 raidHp(Lv)의 97% · 69% · 63% · 45% · 41%를 깎고 아무도 안 쓰러졌다 → HP를 따로 정하고(한 번에 8% ~ 4%) 한 방 세기도 올린다)
 //   다시 잰 값(DIFF.hp 1.22 포함): 레이드 레벨 파티 넷이 한 번에 킹슬라임 6.5% · 카이샤르 5.0% · 대그리핀(천둥새) 4.9% · 템페스트 3.8% · 베히모스 3.7%, 한 방 ×2.0이면 90초에 최대 HP의 12 ~ 26%를 맞는다

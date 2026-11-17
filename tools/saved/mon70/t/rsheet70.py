@@ -1,4 +1,4 @@
-"""레이드 보스 시안판: python3 rsheet70.py <훅 페이지> <시안.json> <몬스터 id> <레이드 열쇠> <출력.png> <제목>
+"""레이드 보스 시안판: python3 rsheet70.py <훅 페이지> <시안.json> <몬스터 id> <레이드 열쇠> <출력.png> <제목> [<부제>]
 시안.json = { 'A': 격자, 'B': …, 'pal': {키: 팔레트}, 'label': {키: 이름}, 'desc': {키: 설명} }
 PXRAID[id]를 잠깐 바꿔 끼워(게임 데이터는 안 바꿈) 실제 굽기(pxGiantSprite)로 가까이 ×2 + 실제 레이드 싸움(네 파티, 레이드 원정대 창)을 찍는다."""
 import json, base64, sys, os, io, textwrap
@@ -6,6 +6,7 @@ from playwright.sync_api import sync_playwright
 from PIL import Image, ImageDraw, ImageFont
 
 PAGE, JS, MID, RK, OUT, TITLE = sys.argv[1:7]
+SUBT = sys.argv[7] if len(sys.argv) > 7 else '실제 게임 굽기(pxGiantSprite)로 찍음 · 가까이 2배 · 레이드 보스는 한 장 그림(동작 없이 흔들림 · 번쩍임). 게임에는 아직 안 넣음.'
 TB = json.load(open(JS)); KEYS = [k for k in TB if k not in ('pal', 'label', 'desc')]
 H83 = open('/tmp/claude-0/-home-claude/4368c869-ae47-5efb-8102-510605121dd4/scratchpad/v83/h83.js', encoding='utf-8').read()
 SETUP = H83 + r'''
@@ -69,7 +70,7 @@ for k in KEYS: H += 40 + 22 * len(textwrap.wrap(TB['desc'][k], 70)) + closes[k][
 H += 50 + max(i.height for i in sc.values()) + 40
 sh = Image.new('RGB', (W, H), BG); d = ImageDraw.Draw(sh)
 d.text((30, 18), TITLE, font=fnt(28, True), fill=GOLD)
-d.text((30, 62), '실제 게임 굽기(pxGiantSprite)로 찍음 · 가까이 2배 · 레이드 보스는 한 장 그림(동작 없이 흔들림 · 번쩍임). 게임에는 아직 안 넣음.', font=fnt(16), fill=SUB)
+d.text((30, 62), SUBT, font=fnt(16), fill=SUB)
 y = 100; d.text((30, y), '지금 그림', font=fnt(18, True), fill=SUB); sh.paste(cur, (30, y + 30)); y += cur.height + 50
 for k in KEYS:
     d.text((30, y), TB['label'][k] + f"   ({closes[k][1][0] // 2}×{closes[k][1][1] // 2}칸)", font=fnt(22, True), fill=TXT); y += 36

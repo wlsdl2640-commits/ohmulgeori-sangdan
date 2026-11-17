@@ -48,7 +48,7 @@
 
 확인(시험 묶음 아님): `python3 chk70.py <훅 페이지> <폴더>` — 새 id마다 모든 동작 장 그림(552장 · 24 id) · 모습 여럿 이름표와 고르는 몫 · 실제 싸움(그 땅 · 던전에서 stepExp + drawFrame 30초, 대천사의 타락 천사 부르기 · 여왕의 별빛 요정 부르기 · 보물 수호자의 미믹 부르기도) 오류 없음 → `fight_*.png`.
 
-## 레이드 보스 셋 시안 (11-17 18:56 사용자 「다음 해야 할거 ㄱㄱ」 → 19:10 카이샤르 A 넣음 · 템페스트 · 베히모스는 섞은 시안)
+## 레이드 보스 셋 (11-17 18:56 사용자 「다음 해야 할거 ㄱㄱ」 시안 → 19:10 카이샤르 A 넣음 → 22:53 「템페스트 드래곤은 A+C 색으로 베히모스는 B+A ㄱㄱ」 셋 다 넣음)
 옛 그림으로 남은 레이드 보스(킹슬라임 · 천둥새는 빌드 69에 새로). 레이드 거인은 **한 장 그림**(PXRAID — 반 해상도 격자 · 게임이 B4 손질을 하지 않아서 명암 · 부위 선을 격자에 직접: `kit.seams` · `kit.rim`, `kit.gridtxt`로 빈 줄 · 열을 잘라 낸다).
 | 보스 (id · 레이드) | 도구 | A | B | C |
 |---|---|---|---|---|
@@ -56,14 +56,14 @@
 | 템페스트 드래곤 (tempest · Lv180) | g/raidt.py | 폭풍우 바다용 | 바람 날개 용 | 먹구름 갑주 용 |
 | 베히모스 (behemoth · Lv190 · 하늘) | g/raidb.py | 네 눈 하늘 고래 | 갑각 하늘 괴수 | 구름 해파리 고래 |
 
-판 `d/raid_*.png` = `python3 t/rsheet70.py <훅 페이지> t/raid_<id>.json <몬스터 id> <레이드 열쇠> <출력> <제목>`(PXRAID[id]를 잠깐 바꿔 끼워 pxGiantSprite 가까이 ×2 + 실제 레이드 싸움 — 레이드 원정대 네 파티 Lv192). 고르면 PXRAID[id] = 고른 격자 · 팔레트(+ MONS[id] W/H는 PXG_DIM이 격자에서 잰다), 이름 · 설명은 그대로(바꿀지는 그때).
+판 `d/raid_*.png` = `python3 t/rsheet70.py <훅 페이지> t/raid_<id>.json <몬스터 id> <레이드 열쇠> <출력> <제목> [<부제>]`(넣은 것 판 `d/raid_*_in.png`은 `t/raid_*_in.json`)(PXRAID[id]를 잠깐 바꿔 끼워 pxGiantSprite 가까이 ×2 + 실제 레이드 싸움 — 레이드 원정대 네 파티 Lv192). 고르면 PXRAID[id] = 고른 격자 · 팔레트(+ MONS[id] W/H는 PXG_DIM이 격자에서 잰다), 이름 · 설명은 그대로(바꿀지는 그때).
 
 ### 11-17 19:10 사용자 「카이샤르 A 템페스트 A에 C색상입혀봐 베히모스는 B에 A기존 배아래에 있는 구름 좀더 업글해서 붙히고 C의 해파리다리 붙혀줘」
 | 보스 | 한 것 | 판 |
 |---|---|---|
 | 카이샤르 | **A 넣음** — `python3 applyraid70.py ../../../src/pxraid.js t/raid_kaishar.json kaishar A`(PXRAID 한 항목만 바꿈) + `src/data-raid69.js`(설명 「두 자루 대검」 → 긴 외날 칼 · MONS W 82 · H 92 · 색). 허리 금 매듭이 금 십자처럼 보여서 네모 매듭 + 벌어진 끈 둘로 바꿈(`d/raid_kaishar.png`는 옛 매듭 시안) | `d/raid_kaishar_in.png`(게임 그림 · 실제 레이드) |
-| 템페스트 드래곤 | 시안 `AC`(A 꼴 + C 색 — 먹빛 몸 · 먹빛 막 날개 · 잿빛 먹구름 갈기 · 흰 눈 · 푸른 빗줄기) · `AC2`(같고 갈기만 A처럼 흰 물거품) — 고르는 중 | `d/raid_tempest_AC.png`(A · C와 나란히, `t/raid_tempest2.json`) |
-| 베히모스 | 시안 `D` = B 몸 + 배에 붙은 뭉게구름 + C 해파리 다리 — 고르는 중 | `d/raid_behemoth_D.png`(A · B · C와 나란히, `t/raid_behemoth2.json`) |
+| 템페스트 드래곤 | 시안 `AC`(A 꼴 + C 색 — 먹빛 몸 · 먹빛 막 날개 · 잿빛 먹구름 갈기 · 흰 눈 · 푸른 빗줄기) · `AC2`(같고 갈기만 A처럼 흰 물거품) → **22:53 「A+C 색」 = `AC` 넣음** — `python3 applyraid70.py ../../../src/pxraid.js t/raid_tempest.json tempest AC`(52×46 → 104×92) + data-raid69.js(설명 · MONS W 104 · H 92 · 몸 색) | 시안 `d/raid_tempest_AC.png`(A · C와 나란히, `t/raid_tempest2.json`) · 넣은 것 `d/raid_tempest_in.png` |
+| 베히모스 | 시안 `D` = B 몸 + 배에 붙은 뭉게구름 + C 해파리 다리 → **22:53 「B+A」 = `D` 넣음** — `python3 applyraid70.py ../../../src/pxraid.js t/raid_behemoth.json behemoth D`(64×52 → 128×104) + data-raid69.js(하늘 레이드 설명 「거대한 갑각 괴수 … 해파리 다리」 · MONS W 128 · H 104 · 몸 색) | 시안 `d/raid_behemoth_D.png`(A · B · C와 나란히, `t/raid_behemoth2.json`) · 넣은 것 `d/raid_behemoth_in.png` |
 
 - 베히모스 D 구름(`g/raidb.py`): `cumulus(c, [(x, y, r) …])`가 덩이를 하나씩 겹쳐 그린다(뒤 덩이부터 — 덩이마다 아래 그늘 w · 왼쪽 위 빛 V · 앞 덩이가 뒤 덩이에 걸치는 **윗부분만** 테 x(옆 · 아래까지 테를 두르면 비늘 무늬가 된다)) → `fill_holes`(덩이 사이 갇힌 틈을 그늘로) → `seams`의 구름 테 u. 덩이: 배를 덮는 위 덩이 일곱 · 꼬리와 턱 밑 끝 덩이 · 가운데 큰 덩이 · 맨 앞 아래 작은 덩이 + 뒤의 잿보랏빛 아랫면 G. 해 보고 뺀 것: 넓은 바닥 타원(원반처럼 보였다) · 꼬리 쪽 흩어지는 구름 줄(빛 줄처럼 보였다) · 끝으로 벌어지는 다리(거미 다리처럼 보였다).
 - 빠른 미리보기(게임 굽기 아님): `python3 t/quickprev.py <json> <키> <출력.png> [배율]` — 칸 2×2 + 바깥 검은 테, 갇힌 빈 칸(구멍) 수도 찍는다.
