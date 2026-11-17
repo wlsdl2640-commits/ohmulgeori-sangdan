@@ -43,7 +43,7 @@ SCENE = r"""((r) => {
   S.advs = team.slice();
   if (!S.parties.length) S.parties.push(newParty('1팀', [])); const p = S.parties[0]; p.members = team.map(a => a.id); S.view = p.id; p.pet = null; p.sup = p.sup || {};
   const foes = r.ids.map((id, i) => { const f = foeFrom(id, r.lv); f.uid = 50 + i; f.cd = 99; if (r.boss) { f.boss = true; } return f; });
-  const e = { field: r.field, area: r.area, stage: 12, pos: 60, mode: 'advance', encs: [60], ei: 0, foes, next: [], ev: [], evN: 0, buffs: [], cd: {}, scd: {}, gcd: {}, sta: {}, kills: 0, bag: {}, gbag: [], log: [], dots: {} };
+  const e = { field: r.field, area: r.area, stage: 12, pos: 60, mode: 'advance', encs: [60], ei: 0, foes, next: [], ev: [], evN: 0, buffs: [], cd: {}, scd: {}, gcd: {}, sta: {}, kills: 0, bag: {}, gbag: [], log: [], dots: {}, sup: {} };
   p.exp = e; V.mode = ''; V.fx = []; V.fmot = {}; V.fhit = {}; V.mot = {};
   for (let i = 0; i < 4; i++) drawFrame(10000 + i * 100, 10 + i * 0.1);
   const [cx, cy, cw, ch] = r.crop, c = document.createElement('canvas'); c.width = cw * HI; c.height = ch * HI;
