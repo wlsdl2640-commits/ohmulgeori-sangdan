@@ -1,4 +1,6 @@
-"""빌드 70 시안판: python3 sheet70.py <훅 페이지> <출력.png> <제목> <시안.json> [시안.json …] [--z 3] [--lv 130] [--per 4] [--hour 0.45] [--note 글]
+"""빌드 70 시안판: python3 sheet70.py <훅 페이지> <출력.png> <제목> <시안.json> [시안.json …] [--z 3] [--lv 130] [--per 4] [--hour 0.45] [--note 글] [--scenes 장면.json]
+--hide k1,k2: 줄(가까이)을 그리지 않을 시안 (장면에만 쓴다)
+--scenes: [{ids: [...], label: 글, post: JS(그린 뒤 V.off에 덧그리기 — g · HI · pos(모험가 발 자리 [x, y] 목록) · t), field?, area?, boss?}, …] — 주면 자동 묶음 대신 이 장면들
 시안 PXU 항목을 게임에 잠깐 끼워(게임 데이터는 안 바꿈) 실제 굽기(pxuSprite · 뭉툭 B4)로
 줄마다: 이름 · 설명 · 가까이(서 있기 둘 + show 동작 장) / 끝에: 실제 전투 화면(그 땅 배경 · 파티 셋 · 적 per마리씩)"""
 import json, base64, sys, os, io, textwrap
@@ -12,6 +14,8 @@ def opt(k, d):
 QUICK = '--quick' in A
 if QUICK: A.remove('--quick')
 Z = int(opt('--z', '3')); LV = int(opt('--lv', '130')); PER = int(opt('--per', '4')); HOUR = float(opt('--hour', '0.45')); NOTE = opt('--note', ''); OLD = opt('--old', '')
+SCNF = opt('--scenes', ''); SCN = json.load(open(SCNF)) if SCNF else None
+HIDE = set(v for v in opt('--hide', '').split(',') if v)
 CROP = [int(v) for v in opt('--crop', '0,40,240,160').split(',')]
 PAGE, OUT, TITLE = A[0], A[1], A[2]; FILES = A[3:]
 defs, extra = {}, ''
@@ -46,6 +50,7 @@ SCENE = r"""((r) => {
   const e = { field: r.field, area: r.area, stage: 12, pos: 60, mode: 'advance', encs: [60], ei: 0, foes, next: [], ev: [], evN: 0, buffs: [], cd: {}, scd: {}, gcd: {}, sta: {}, kills: 0, bag: {}, gbag: [], log: [], dots: {}, sup: {} };
   p.exp = e; V.mode = ''; V.fx = []; V.fmot = {}; V.fhit = {}; V.mot = {};
   for (let i = 0; i < 4; i++) drawFrame(10000 + i * 100, 10 + i * 0.1);
+  if (r.post) { const g0 = V.off.getContext('2d'); g0.save(); g0.setTransform(1, 0, 0, 1, 0, 0); (new Function('g', 'HI', 'pos', 't', r.post))(g0, HI, (V.hitA || []).map(q => [q[1], q[2]]), 10.3); g0.restore(); }   // 논리 픽셀 × HI로 덧그린다
   const [cx, cy, cw, ch] = r.crop, c = document.createElement('canvas'); c.width = cw * HI; c.height = ch * HI;
   const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(V.off, cx * HI, cy * HI, cw * HI, ch * HI, 0, 0, cw * HI, ch * HI);
   return c.toDataURL();
@@ -73,12 +78,18 @@ with sync_playwright() as pw:
     EV(f"{INJ}({json.dumps(defs)})")
     rows = []
     for k, d in defs.items():
+        if k in HIDE: continue
         lst = [[k, 'idle', 0], [k, 'idle', 1]] + [[k, mk, f] for mk, f in d.get('show', [])]
         rows.append((k, d, img(EV(f"{CLOSE}({json.dumps(lst)}, {Z})"))))
     keys = list(defs); scenes = []
     grp = {}
     for k in keys: grp.setdefault((defs[k]['field'], defs[k]['area'], defs[k]['mon']['base']), []).append(k)
-    for (fld, area, base), ks in ([] if QUICK else grp.items()):
+    if SCN and not QUICK:
+        for q in SCN:
+            k0 = q['ids'][0]; d0 = defs.get(k0, {})
+            r = dict(ids=q['ids'], field=q.get('field', d0.get('field', 'sewer')), area=q.get('area', d0.get('area', 'field')), lv=LV, hour=HOUR, crop=CROP, boss=q.get('boss', True), post=q.get('post', ''))
+            scenes.append((q.get('label', ' · '.join(q['ids'])), img(EV(f"{SCENE}({json.dumps(r)})"))))
+    for (fld, area, base), ks in ([] if QUICK or SCN else grp.items()):
         for i in range(0, len(ks), PER):
             ids = ks[i:i + PER]
             r = dict(ids=ids, field=fld, area=area, lv=LV, hour=HOUR, crop=CROP, boss=area == 'dungeon' or PER == 1)
@@ -108,5 +119,5 @@ for k, d, im in rows:
 dr.text((30, y + 6), '실제 전투 화면 (그 땅 배경 · 낮 · 왼쪽 파티 Lv%d)' % LV, font=fnt(20, True), fill=TXT); y += 46
 for i, (ids, im) in enumerate(scenes):
     cx = 30 + (i % cols) * (sw + 20); cy = y + (i // cols) * (im.height + 46)
-    dr.text((cx, cy), ' · '.join(defs[k]['label'].split(' ')[0] for k in ids), font=fnt(16), fill=SUB); sh.paste(im, (cx, cy + 24))
+    dr.text((cx, cy), ids if isinstance(ids, str) else ' · '.join(defs[k]['label'].split(' ')[0] for k in ids), font=fnt(16), fill=SUB); sh.paste(im, (cx, cy + 24))
 sh.save(OUT); print('sheet', OUT, sh.size)
