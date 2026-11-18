@@ -112,7 +112,14 @@ function monFightRow(id, lvl) {
   const L = (m.msk || []);
   if (!L.length && !m.boss) return head;
   if (lvl < 2) return head + `<div class="sub muted">5마리 잡으면 스킬이 열려요.</div>`;
-  return head + `<div class="sec" style="margin-top:4px"><b>스킬</b><span>${L.length}개</span></div>${L.map(s => mskText(s, id)).join('')}${m.boss || m.giant ? '<div class="sub muted">우두머리: HP 75%에서 버티기(졸개를 부르거나 보호막), 50%에서 분노(공격 속도 ×1.3), 25%에서 마지막 발악(광역기 ↑ · 졸개를 부른다). 행동 방해를 15초 안에 다시 걸면 시간이 반씩 줄고, 네 번째부터는 저항한다.</div>' : ''}`;
+  return head + `<div class="sec" style="margin-top:4px"><b>스킬</b><span>${L.length}개</span></div>${L.map(s => mskText(s, id)).join('')}${m.boss || m.giant ? '<div class="sub muted">우두머리: HP 75%에서 버티기(졸개를 부르거나 보호막), 50%에서 분노(공격 속도 ×1.3), 25%에서 마지막 발악(광역기 ↑ · 졸개를 부른다). 행동 방해를 15초 안에 다시 걸면 시간이 반씩 줄고, 네 번째부터는 저항한다.</div>' : ''}${patRows(id)}`;
+}
+// 빌드 70: 우두머리 패턴 (길드장 — HP 50% · 25%에서 모습과 싸움이 바뀐다)
+function patRows(id) {
+  const P = MONS[id] && MONS[id].pat; if (!P) return '';
+  const L = (typeof pxuLowL === 'function' && pxuLowL(id)) || [];
+  return `<div class="sec" style="margin-top:4px"><b>패턴</b><span>${Object.keys(P).length}개</span></div>` + Object.keys(P).map(k => { const Q = P[k], lo = L.find(x => Math.abs(x.hp - (k === '1' ? 0.5 : 0.25)) < 0.01);
+    return `<div class="row sub">${lo ? `<img class="dexi" src="${monIconURL(lo.id)}" alt="">` : ''}<span class="grow"><b>HP ${k === '1' ? 50 : 25}% 「${esc(Q.name)}」</b> <span class="muted">${esc(Q.desc || '')}</span></span></div>`; }).join('');
 }
 // 모습 여럿 (빌드 46: 골렘·바위거인은 만날 때마다 넷 중 하나)
 function skinRow(id) {

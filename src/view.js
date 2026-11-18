@@ -147,6 +147,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   g.save(); g.translate(0, BG_OY); drawSky(g, id, V.scroll, t, dp); g.restore();
   w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
   if (!bg.under) groundWx(w, wxNow(e || null), oy);   // 겨울 눈 덮인 땅 · 젖은 땅
+  else if (e && floodOn(e)) floodFloor(w, V.scroll, t, oy);   // 빌드 70: 물이 찬 스테이지 (under70.js)
   if (id === 'forest' && !bg.tall) { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
   if (bg.under && !bg.tall) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
   const lights = [], post = [];
@@ -406,7 +407,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const jy = fmo ? fmotJy(f, fmo, z) : 0;   // 짐승이 뛰어오른 높이 (빌드 44): 그림자는 땅에
     const did = fmotOK(f) ? pxuLow(f) : f.id, lw0 = (V.lowSt || (V.lowSt = {}))[f.uid];   // 다친 모습 (빌드 44: 들쥐왕은 HP 30% 아래에서 망토가 찢어진다)
     V.lowSt[f.uid] = did;
-    if (lw0 !== undefined && lw0 !== did && PXU[f.id] && PXU[f.id].low && did === PXU[f.id].low.id) V.fx.push({ k: 'skh', id: 'u:low:tear', x: x + 9 * z * dir, y: y - 13 * z, fy: y, h: 21 * z, t0: t, pre: 0, d: 1.2, big: 1, last: 1, dir: -dir, ax: x });
+    const lo = lw0 !== undefined && lw0 !== did ? pxuLowOf(f.id, did) : null;   // 빌드 70: 문턱 여럿 (길드장 패턴) — 문턱마다 효과 lo.fx
+    if (lo) V.fx.push({ k: 'skh', id: lo.fx || 'u:low:tear', x: x + 9 * z * dir, y: y - 13 * z, fy: y, h: 21 * z, t0: t, pre: 0, d: 1.2, big: 1, last: 1, dir: -dir, ax: x });
     if (fmo) post.push(g => fmotFx(g, f, fmo, x, y + jy, z, dir));
     draws.push({ y, f: g => {
       g.save(); g.translate(x + lg, y);
@@ -492,6 +494,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   });
   // 뒤에 선 것부터 그린다
   draws.sort((a, b) => a.y - b.y).forEach(d => d.f(w));
+  if (floodOn(e)) floodFeet(w, t, team.filter(a => !a.down).map(a => pos['a' + a.id]).concat(foes.filter(f => !(MONS[f.id] && MONS[f.id].fly)).map(f => pos['f' + f.uid])).filter(Boolean), walking);   // 빌드 70: 물에 잠긴 발목 · 물결 (under70.js)
   if (dark > 0.25 && team.length && !bg.under) { const [px0, py0] = pos['a' + team[0].id], lx = px0 + 11 * dir, ly = py0 - 12; lights.push({ x: lx, y: ly, r: 70, c: '#f0c060', glow: 1, flick: 1 }); post.push(g => { R(g, lx - 1, ly - 1.5, 2.5, 3, '#f7d070'); R(g, lx - 0.5, ly - 0.5, 1, 1, '#ffffff'); }); }
   else if (bg.under && team.length) lights.push({ x: 80, y: 170, r: 96, c: '#f0c060' });
   if (waiting) post.push(g => { const k = Math.floor(t * 2) % 2; drawNum(g, 190, GY + BG_OY - 40 - k, '?', '#f0b43c'); });
@@ -943,7 +946,7 @@ function events(e, pos, t, team, p) {
     } else if (x.type === 'fbuff') {
       const fq = at('f' + x.d); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 0.7, c: BUFF_C[x.stat] || '#ff9a6a' });
     } else if (x.type === 'fphase') {   // 우두머리 단계: 분노 · 마지막 발악
-      const ft = ftop(x.s); callout(ft ? ft[0] : 170, 120, `${V.fname[x.s] || '우두머리'} ${x.k === 2 ? '마지막 발악!' : x.k === 0 ? (x.n ? '졸개를 불렀다!' : '버티기!') : '분노!'}`, 'boss'); V.shake = Math.max(V.shake, x.k === 2 ? 6 : x.k === 0 ? 3 : 4);
+      const ft = ftop(x.s); callout(ft ? ft[0] : 170, 120, `${V.fname[x.s] || '우두머리'} ${x.pat ? `패턴 「${x.pn || ''}」!` : x.k === 2 ? '마지막 발악!' : x.k === 0 ? (x.n ? '졸개를 불렀다!' : '버티기!') : '분노!'}`, 'boss'); V.shake = Math.max(V.shake, x.k === 2 ? 6 : x.k === 0 ? 3 : 4);   // 빌드 70: 패턴 이름 (길드장)
       const fq = at('f' + x.s); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 1.0, c: x.k === 2 ? '#ff3a2a' : x.k === 0 ? '#8ac8ff' : '#ff9a3a' });
     } else if (x.type === 'ffear') {
       const ft = ftop(x.s); if (ft) callout(ft[0], ft[1] - 2, x.c ? '멍하니' : '겁먹음', 'dot');
@@ -992,7 +995,7 @@ function fx(g, t) {
     const k = (t - f.t0) / f.d;
     if (k < 0) continue;
     if (f.k === 'skh' || f.k === 'skw' || f.k === 'skq' || f.k === 'skc' || f.k === 'shk' || f.k === 'skp') { skDraw(g, f, t); continue; }   // 스킬 효과 (빌드 41) · 투사체 (빌드 43에서 바로잡음)
-    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm' || f.k === 'ublizz' || f.k === 'usand' || f.k === 'ublade' || f.k === 'uflood' || f.k === 'ucoil' || f.k === 'umiasma' || f.k === 'urock' || f.k === 'ufire' || f.k === 'umeteor' || f.k === 'upillar' || f.k === 'ufang' || f.k === 'ulash' || f.k === 'utwist' || f.k === 'ufeath' || f.k === 'uzap' || f.k === 'uchain') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 48 번개 폭풍 · 49 눈보라 · 50 모래 해일 · 57 화산탄 비 · 불기둥 · 58 땅속 독니 · 가시 덩굴 채찍 · 59 회오리바람 · 깃털 폭풍 · 60 뇌전 숨결 · 번개 사슬)
+    if (f.k === 'ubat' || f.k === 'unova' || f.k === 'uspin' || f.k === 'urat' || f.k === 'ustorm' || f.k === 'ublizz' || f.k === 'usand' || f.k === 'ublade' || f.k === 'uflood' || f.k === 'ucoil' || f.k === 'umiasma' || f.k === 'urock' || f.k === 'ufire' || f.k === 'umeteor' || f.k === 'upillar' || f.k === 'ufang' || f.k === 'ulash' || f.k === 'utwist' || f.k === 'ufeath' || f.k === 'uzap' || f.k === 'uchain' || f.k === 'ugas') { fmotDraw(g, f, t); continue; }   // 몬스터 광역기 (빌드 43·44 · 48 번개 폭풍 · 49 눈보라 · 50 모래 해일 · 57 화산탄 비 · 불기둥 · 58 땅속 독니 · 가시 덩굴 채찍 · 59 회오리바람 · 깃털 폭풍 · 60 뇌전 숨결 · 번개 사슬)
     const L = f.x1 != null ? Math.hypot(f.x1 - f.x0, f.y1 - f.y0) || 1 : 1, AH = f.arc != null ? f.arc : f.k === 'arrow' ? 10 : 4;   // 포물선 높이 (사선으로 쏜 화살은 높이)
     let ux = f.x1 != null ? (f.x1 - f.x0) / L : 1, uy = f.x1 != null ? (f.y1 - f.y0) / L : 0;
     const px = f.x1 != null ? f.x0 + (f.x1 - f.x0) * k : 0, py = f.x1 != null ? f.y0 + (f.y1 - f.y0) * k - Math.sin(k * Math.PI) * AH : 0;
@@ -1091,16 +1094,18 @@ function logEvent(x, e, p) {
   }
   if (x.type === 'fmiss') return add(`${ally(A(x.s))}의 ${x.sk ? '스킬' : '공격'}이 ${foe(Fn(x.d))}에게 빗나갔습니다.${x.sk || blindLog(e, x.s) ? ' (눈멂)' : ''}`, 'dim');
   if (x.type === 'hurt' && x.dot) return add(`${ally(jo(A(x.d), '이', '가'))} ${STATUS[x.k] ? STATUS[x.k].name : '독'}(으)로 ${num(x.v, 'r')} 피해를 입었습니다.`, 'dim');
-  if (x.type === 'hurt') return add(`${foe(Fn(x.s))}의 공격! ${ally(jo(A(x.d), '이', '가'))} ${num(x.v, 'r')} 피해를 입었습니다.${x.blk ? ' <i class="lg-c">막았다!</i>' : ''}`);
+  if (x.type === 'hurt') return add(`${x.echo ? '<i class="lg-c">분신!</i> ' : ''}${foe(Fn(x.s))}의 ${x.echo ? '등 뒤 분신이 따라 벤다' : '공격'}! ${ally(jo(A(x.d), '이', '가'))} ${num(x.v, 'r')} 피해를 입었습니다.${x.blk ? ' <i class="lg-c">막았다!</i>' : ''}`);
   if (x.type === 'sta') { const St = STATUS[x.k]; if (St && x.res) add(`${foe(jo(Fn(x.d), '이', '가'))} ${St.name}에 저항했습니다 (연달아 건 행동 방해).`, 'sk'); else if (St) add(x.side === 'f' ? `${foe(jo(Fn(x.d), '이', '가'))} ${St.name} 상태가 됐습니다.` : `${ally(jo(A(x.d), '이', '가'))} ${St.name} 상태가 됐습니다!`, x.side === 'f' ? 'sk' : 'warn'); return; }
   if (x.type === 'cure') return add(`${ally(A(x.d))}의 상태이상이 풀렸습니다.`, 'dim');
   if (x.type === 'resist') return add(`${ally(A(x.d))}: 섬광 룬이 ${STATUS[x.k] ? STATUS[x.k].name : '눈멂'}을(를) 막았습니다.`, 'dim');   // 빌드 64 룬 개편
   if (x.type === 'miss') return add(x.df ? `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 튕겨 냈습니다.` : x.bl ? `${foe(Fn(x.s))}의 공격이 ${ally(A(x.d))}에게 빗나갔습니다. (눈멂)` : `${ally(jo(A(x.d), '이', '가'))} ${foe(Fn(x.s))}의 공격을 피했습니다.`, 'dim');
-  if (x.type === 'aoe') { if (!x.ms) add(`${foe(Fn(x.s))}의 광역 공격!`, 'warn'); return; }
+  if (x.type === 'aoe') { if (!x.ms) add(x.gas ? `${foe(Fn(x.s))}의 독 안개! 독 약병이 날아든다.` : `${foe(Fn(x.s))}의 광역 공격!`, 'warn'); return; }   // 빌드 70: 독 안개 (길드장 패턴 2)
+  if (x.type === 'flood') return add('물이 찬 길 — 발목까지 차오른 물에 걸음이 느려진다.', 'dim');   // 빌드 70 옛 제국 수로
   if (x.type === 'fskill') return add(`${foe(Fn(x.s))}의 「${esc(x.name)}」!`, 'warn');
   if (x.type === 'fdispel') return add(`${foe(jo(Fn(x.s), '이', '가'))} 걸린 강화 ${x.n}개를 지웠다!`, 'warn');   // 빌드 69
   if (x.type === 'ftaunt') return add(`${foe(jo(Fn(x.s), '이', '가'))} 도발한다 — ${Math.round(x.t)}초 동안 공격이 그쪽으로 쏠린다.`, 'warn');
   if (x.type === 'mpburn') return add(`${ally(A(x.d))}의 MP가 ${num(x.v, 'b')} 타 버렸다.`, 'dim');
+  if (x.type === 'fphase' && x.pat) return add(`<i class="lg-c">패턴 「${esc(x.pn || '')}」!</i> ${foe(jo(Fn(x.s), '이', '가'))} ${x.pat === 1 ? `${x.n ? `매연 그림자 분신 ${x.n}을 불러내고 ` : ''}등 뒤의 분신과 함께 벤다.` : '독 약병을 꺼내 들었다 — 광역기가 독 안개(맹독 · 눈멂)가 된다.'}`, 'warn');   // 빌드 70 길드장 패턴
   if (x.type === 'fphase') return add(x.k === 2 ? `<i class="lg-c">마지막 발악!</i> ${foe(jo(Fn(x.s), '이', '가'))} 광역기를 더 자주 쓴다${x.n ? ' · 졸개를 불렀다' : ''}.` : x.k === 0 ? `<i class="lg-c">버티기!</i> ${foe(jo(Fn(x.s), '이', '가'))} ${x.n ? '졸개를 불렀다' : '보호막을 둘렀다'}.` : `<i class="lg-c">분노!</i> ${foe(Fn(x.s))}의 공격이 빨라졌다.`, 'warn');
   if (x.type === 'fsum') return add(`${foe(jo(Fn(x.s), '이', '가'))} ${esc(MONS[x.id] ? MONS[x.id].name : '졸개')}${x.n > 1 ? ` 무리(${x.n})` : ''}를 불렀다!`, 'warn');
   if (x.type === 'ffear') return add(x.c ? `${foe(Fn(x.s))}은(는) 홀렸지만 칠 상대가 없어 멍하니 서 있다.` : `${foe(jo(Fn(x.s), '이', '가'))} 겁에 질려 머뭇거린다.`, 'dim');

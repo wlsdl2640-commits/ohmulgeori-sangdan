@@ -492,7 +492,7 @@ function stepExp(p, dt) {
   if (maxF >= FATIGUE.camp || (isNight() && p.campNight !== false && avgF >= FATIGUE.nightCamp)) { startCamp(p, e); return; }
   tire(team, FATIGUE.walk * fr * dt);
   if (!e.next && e.encs[e.ei] != null) e.next = rollFoes(e, e.ei);
-  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1) / (e.area === 'field' || e.area === 'dungeon' ? WALK_STRETCH : 1);   // 빌드 69 (11-15 12:03 「×3으로」): 필드 · 던전의 걷는 길 세 배 (data-stat69.js)
+  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1) * floodMul(e) / (e.area === 'field' || e.area === 'dungeon' ? WALK_STRETCH : 1);   // 빌드 69 (11-15 12:03 「×3으로」): 필드 · 던전의 걷는 길 세 배 (data-stat69.js) · 빌드 70: 물이 찬 스테이지는 걸음 ×0.7 (data-under70.js)
   if (e.mode === 'advance') {
     const next = e.encs[e.ei], np = e.pos + v * dt;
     if (next != null && np >= next) { e.pos = next; e.ei++; spawn(p, e); return; }
@@ -532,6 +532,7 @@ function stageClear(p, e) {
     e.stage++;
   } else if (e.stage < floorsOf(e)) { if (F.treasure) treasureChest(p, e); e.stage++; }
   e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
+  if (floodOn(e)) ev(e, 'flood', {});   // 빌드 70: 물이 찬 스테이지 (옛 제국 수로)
   changed();
 }
 // 보물 던전: 층을 지날 때마다 상자 하나 (돈·황금 가루·가끔 장비나 스킬북)
@@ -1125,6 +1126,7 @@ function fSummon(e, f, foes, mons, n) {
   return k;
 }
 // 우두머리 단계: HP 50% 분노(공격 속도 ×1.3) · 25% 마지막 발악(광역기 0.3 → 0.5 · 졸개 · 스킬을 서두른다)
+const fPat = (f, k) => { const P = MONS[f.id] && MONS[f.id].pat; return (P && P[k]) || null; };   // 빌드 70: 우두머리 패턴 (data-under70.js 길드장)
 function fPhase(e, f, foes) {
   if (!f.boss || f.pvp) return;
   const r = f.hp / f.maxHp;
@@ -1134,12 +1136,19 @@ function fPhase(e, f, foes) {
     let v = 0; if (!n) { const sh0 = Math.max(0, f.shd || 0); f.shd = sh0 + Math.round(f.maxHp * PH0.shd); v = f.shd - sh0; e.fheal = (e.fheal || 0) + v; }
     ev(e, 'fphase', { s: f.uid, k: 0, n, v });
   }
-  if (!f.ph1 && r <= 0.5) { f.ph1 = 1; ev(e, 'fphase', { s: f.uid, k: 1 }); }
+  if (!f.ph1 && r <= 0.5) {
+    f.ph1 = 1;
+    const P = fPat(f, 1), n = P && P.sum ? fSummon(e, f, foes, [P.sum[0]], P.sum[1]) : 0;   // 빌드 70 길드장 패턴 1 「그림자 분신」: 분신을 부르고 · 등 뒤 분신이 따라 벤다
+    if (P && P.echo) f.echo = P.echo;
+    ev(e, 'fphase', Object.assign({ s: f.uid, k: 1 }, P ? { pat: 1, pn: P.name, n } : {}));
+  }
   if (!f.ph2 && r <= 0.25) {
     f.ph2 = 1; f.aoe = true;
     if (f.mcd) for (const id in f.mcd) f.mcd[id] = Math.min(f.mcd[id], 1);
-    const sm = monSkills(f).find(s => s.kind === 'summon'), n = fSummon(e, f, foes, sm && sm.mon, FIGHT.lastSummon);
-    ev(e, 'fphase', { s: f.uid, k: 2, n });
+    const P = fPat(f, 2), sm = monSkills(f).find(s => s.kind === 'summon');
+    if (P && P.gas) f.gas = P.gas;   // 빌드 70 길드장 패턴 2 「독 안개」: 광역기가 독 약병으로 (맹독 · 눈멂)
+    const n = P ? (P.sum ? fSummon(e, f, foes, [P.sum[0]], P.sum[1]) : 0) : fSummon(e, f, foes, sm && sm.mon, FIGHT.lastSummon);
+    ev(e, 'fphase', Object.assign({ s: f.uid, k: 2, n }, P ? { pat: 2, pn: P.name } : {}));
   }
 }
 function battle(p, e, team, dm, dt) {
@@ -1240,7 +1249,12 @@ function battle(p, e, team, dm, dt) {
     if (fs && (fs.charm || (fs.confuse && rnd() < FIGHT.confuse))) { foeAllyHit(e, f, foes); continue; }   // 매혹 · 혼란: 같은 편을 친다
     if (f.heal && !(fs && fs.shock) && rnd() < 0.3) { const ally = foes.filter(x => x.hp > 0).sort((x, y) => x.hp / x.maxHp - y.hp / y.maxHp)[0]; if (ally && ally.hp < ally.maxHp * 0.75) { const h = Math.round(f.heal * (0.9 + rnd() * 0.2) * fHealMul(ally)); ally.hp = Math.min(ally.maxHp, ally.hp + h); ev(e, 'fheal', { s: f.uid, d: ally.uid, v: h }); continue; } }
     if (!(fs && fs.shock) && fSkill(p, e, f, foes, live, dm)) continue;   // 몬스터 스킬 (감전이면 못 쓴다)
-    if ((MONS[f.id].aoe || f.aoe) && !(fs && fs.shock) && rnd() < (f.ph2 ? FIGHT.lastAoe : 0.3)) { ev(e, 'aoe', { s: f.uid }); live.forEach(x => hitAdv(p, e, f, x, 0.7, dm, { skill: 1, aoe: 1 })); continue; }   // 광역기: 스킬이라 회피가 안 든다
+    if ((MONS[f.id].aoe || f.aoe) && !(fs && fs.shock) && rnd() < (f.ph2 ? FIGHT.lastAoe : 0.3)) {   // 광역기: 스킬이라 회피가 안 든다
+      const G = f.gas;   // 빌드 70: 독 안개 (길드장 패턴 2) — 맞은 자리마다 맹독 · 눈멂
+      ev(e, 'aoe', G ? { s: f.uid, gas: 1 } : { s: f.uid });
+      live.forEach(x => hitAdv(p, e, f, x, G ? G.mult : 0.7, dm, G ? { skill: 1, aoe: 1, sta: G.sta, sta2: G.sta2 } : { skill: 1, aoe: 1 }));
+      continue;
+    }
     let tgt = null;
     if (e.taunt) tgt = live.find(x => x.id === e.taunt.aid) || null;
     if (!tgt) { const pool = live.filter(x => !((dm[x.id].baImm || TR(x).baImm) && !(buffAdd(e, x.id, 'ground') > 0))); tgt = pickTarget(pool.length ? pool : live, e, dm); }   // 기본 공격 면역(하늘에 뜬 용기수 …)은 혼자 남았을 때만 맞는다
@@ -1248,6 +1262,7 @@ function battle(p, e, team, dm, dt) {
     const nh = f.pvp ? 1 : MONS[f.id].hits || 1;   // 빌드 69 몬스터 연타 (data-monup69.js): 대마다 회피 · 피해 ×HITS_MUL, 상태이상 · 반격은 한 번만
     if (nh > 1) { const once = {}; for (let h = 0; h < nh && up(tgt); h++) hitAdv(p, e, f, tgt, HITS_MUL[nh] || 1 / nh, dm, { hn: h, once }); }
     else hitAdv(p, e, f, tgt, 1, dm);
+    if (f.echo && up(tgt)) hitAdv(p, e, f, tgt, f.echo, dm, { hn: nh, sta: null, echo: 1 });   // 빌드 70: 등 뒤의 매연 분신이 따라 벤다 (길드장 패턴 1 — 피해 절반, 상태이상 없음)
   }
   for (let i = foes.length - 1; i >= 0; i--) if (foes[i].hp <= 0) { const f = foes[i]; foes.splice(i, 1); kill(p, e, f); }
   if (!foes.length) { e.cd = {}; e.buffs = []; e.taunt = null; e.subst = null; e.fc = null; ev(e, 'clear', {}); }
@@ -1280,7 +1295,7 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   let endure = 0;
   if (x.hp - v <= 0 && x.hp > 1 && d.msEnd && !(e.msEnd && e.msEnd[x.id])) { (e.msEnd || (e.msEnd = {}))[x.id] = 1; if (rnd() < d.msEnd) { v = Math.ceil(x.hp) - 1; endure = 1; } }   // 빌드 69 불멸의 호박: 쓰러질 한 방을 HP 1로 (싸움마다 한 번)
   x.hp -= v;
-  ev(e, 'hurt', Object.assign({ s: f.uid, d: x.id, v, c: crit, k: magic ? 'magic' : '', blk: blk ? 1 : 0 }, o.ms ? { ms: 1 } : {}, fam !== 'none' ? { el } : {}, hn));
+  ev(e, 'hurt', Object.assign({ s: f.uid, d: x.id, v, c: crit, k: magic ? 'magic' : '', blk: blk ? 1 : 0 }, o.ms ? { ms: 1 } : {}, o.echo ? { echo: 1 } : {}, fam !== 'none' ? { el } : {}, hn));
   if (endure) ev(e, 'endure', { d: x.id, s: f.uid });
   msReflect(e, f, x, d, v0);
   if (x.hp <= 0) { down(p, e, x, f); return true; }
@@ -1289,6 +1304,7 @@ function hitAdv(p, e, f, x, mult, dm, o) {
     const ms = o.sta !== undefined ? o.sta : (m.sta || f.inflict);
     if (ms && rnd() < ms.p) inflictAdv(e, x, ms, f.atk);
     if (o.sta === undefined && m.sta2 && rnd() < m.sta2.p) inflictAdv(e, x, m.sta2, f.atk);   // 빌드 69: 우두머리 · 던전 주인은 맞힐 때 거는 상태이상이 둘 (data-monup69.js)
+    if (o.sta2 && rnd() < o.sta2.p) inflictAdv(e, x, o.sta2, f.atk);   // 빌드 70: 광역기가 거는 둘째 상태이상 (독 안개의 눈멂)
   }
   const st = e.sta && e.sta[x.id];
   if (!(o.once && o.once.ctr) && !(st && (st.para || st.charm || isHard(st))) && rnd() < Math.min(CAP.counter, (d.counter || 0) + buffAdd(e, x.id, 'counter'))) {
@@ -1340,7 +1356,7 @@ function kill(p, e, f) {
 }
 // 보스 전용 부속품: 우두머리(1-10~1-40)는 증표, 필드의 주인(1-50)은 핵, 던전을 공략한 뒤에는 가끔 혼까지
 function bossParts(p, e, f, inD) {
-  if (!TIER_FIELDS.includes(e.field)) return;
+  if (!TIER_FIELDS.includes(e.field) && !(FIELDS[e.field] && FIELDS[e.field].parts)) return;   // 빌드 70: 하르겐 지하 3구역 · 통로도 그 단계의 증표 · 핵 · 혼
   const t = FIELDS[e.field].tier, fs = S.fields[e.field];
   if (f.fb) {
     if (f.fb < 5) loot(p, e, 'crest_' + t, 1 + (rnd() < 0.35 ? 1 : 0));
@@ -1531,8 +1547,8 @@ function dungeonClear(p, e) {
     S.flags.guildDown = 1;
     S.fame += 50; S.gold += 5000; S.stats.earned += 5000;
     team.forEach(a => { a.pf = (a.pf || 0) + 25; a.dungeons = (a.dungeons || 0) + 1; });
-    log(`${p.name}이(가) 암살자 길드장을 쓰러뜨렸다! 길드 금고에서 5,000G, 명성 +50`, 'good');
-    queueModal({ title: '암살자 길드 토벌', body: STORY.guild });
+    log(`${p.name}이(가) 암살자 길드 지부의 검은 두건(대역)을 쓰러뜨렸다! 지부 금고에서 5,000G, 명성 +50 · 자릿세 절반`, 'good');
+    queueModal({ title: '암살자 길드 지부 토벌', body: STORY.guild });   // 빌드 70: 뒷골목 은신처는 지부 (data-under70.js)
   } else if (first) {
     const gold = Math.round((DUNGEON_GOLD[F.tier] || 3000) * chestMul(p)), fame = 60 + F.tier * 25;
     S.gold += gold; S.fame += fame; S.stats.earned += gold; S.stats.dungeons = (S.stats.dungeons || 0) + 1;
@@ -1549,6 +1565,7 @@ function dungeonClear(p, e) {
     queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 영웅 장비, 장비 한 점, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 상단 창의 유물에서 볼 수 있다.`] : []) });
     if (e.field === 'barren' && STORY.frontier) queueModal({ title: '북쪽 변경', body: STORY.frontier });   // 빌드 30: 안개 묘지가 열린다
     if (e.field === 'roots' && S.bld.airfield && STORY.skyOpen) queueModal({ title: '구름 위의 섬', body: STORY.skyOpen });
+    if (e.field === 'passage' && !S.flags.guildHQ) { S.flags.guildHQ = 1; log('암살자 길드 본부가 무너졌다. 이제 자릿세는 없다.', 'good'); HOOKS.toast('암살자 길드 본부 토벌 · 자릿세 끝'); }   // 빌드 70: 진짜 본부 (STORY.passage)
   } else {
     S.fame += 3;
     log(`${p.name}이(가) ${MONS[F.dungeon.boss].name}을(를) 또 쓰러뜨렸다. 명성 +3`, 'good');

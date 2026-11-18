@@ -354,8 +354,11 @@ function pxuClaw(F, d) {
 // 모습 여럿 (빌드 46): PXU_SKIN[id] = [그림 id …] — 적마다 uid로 하나를 고른다(같은 적은 늘 같은 모습). 이름은 PXU_SKIN_NAME (도감)
 const PXU_SKIN = {}, PXU_SKIN_NAME = {};
 const pxuSkin = f => { const L = f && PXU_SKIN[f.id]; return L ? L[Math.floor((Math.imul((f.uid | 0) + 7, 0x9e3779b1) >>> 0) / 4294967296 * L.length)] : f && f.id; };   // 피보나치 해시의 윗자리
-const pxuDead = (id, uid) => PXU[id] && PXU[id].low ? PXU[id].low.id : pxuSkin({ id, uid });   // 쓰러지는 그림 (HP 0 = 다친 모습)
-const pxuLow = f => { const L = f && PXU[f.id] && PXU[f.id].low; return L && f.maxHp && f.hp <= f.maxHp * L.hp ? L.id : pxuSkin(f); };
+// 빌드 70: low가 배열이면 문턱 여럿 (길드장 패턴 1 · 2 — HP가 가장 낮은 문턱 아래의 그림, { fx }는 바뀌는 순간의 효과 SKFX id)
+const pxuLowL = id => { const L = PXU[id] && PXU[id].low; return !L ? null : Array.isArray(L) ? L : [L]; };
+const pxuLowOf = (id, did) => { const L = pxuLowL(id); return (L && L.find(x => x.id === did)) || null; };
+const pxuDead = (id, uid) => { const L = pxuLowL(id); return L ? L.reduce((a, b) => (b.hp < a.hp ? b : a)).id : pxuSkin({ id, uid }); };   // 쓰러지는 그림 (HP 0 = 가장 다친 모습)
+const pxuLow = f => { const L = f && pxuLowL(f.id); if (L && f.maxHp) { let b = null; for (const x of L) if (f.hp <= f.maxHp * x.hp && (!b || x.hp < b.hp)) b = x; if (b) return b.id; } return pxuSkin(f); };
 function pxuSprite(id, mk, f) {
   const key = 'PU|' + id + '|' + mk + '|' + f, k = pxKeyOf(key), hit = PXC.get(k);
   if (hit) return hit;

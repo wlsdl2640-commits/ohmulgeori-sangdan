@@ -3,7 +3,8 @@
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
-const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420, rocks: 240, breath: 260, meteor: 110, pillar: 520, fang: 700, lash: 260, twister: 150, feathers: 300, zap: 600, chain: 300 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
+const FMOT_AOE_PRE = { gas: 0.3 };   // 빌드 70: 퍼지기 전에 더 걸리는 초 (독 약병은 바로 앞 사람에게도 포물선으로 날아간다)
+const FMOT_AOE_V = { bats: 150, nova: 230, spin: 260, slam: 240, rats: 120, roots: 240, storm: 700, blizzard: 300, sand: 190, blades: 260, flood: 210, coil: 900, miasma: 420, rocks: 240, breath: 260, meteor: 110, pillar: 520, fang: 700, lash: 260, twister: 150, feathers: 300, zap: 600, chain: 300, gas: 180 };   // 광역기가 퍼지는 빠르기 (논리 픽셀/초)
 const FMOT_NAME = { thunderdragon: '뇌전 숨결', stormking: '번개 사슬', skytitan: '회오리바람', skyemperor: '깃털 폭풍', worldserpent: '땅속 독니', corruptheart: '가시 덩굴 채찍', magmadragon: '화산탄 비', firelord: '불기둥', ogreking: '대지 가르기', chimera: '불길 숨결', anaconda: '휘감아 조이기', swampwitch: '독 늪', sewertroll: '하수 범람', blackhood: '그림자 칼날 비', greatworm: '모래 해일', icequeen: '눈보라', stormwyvern: '번개 폭풍', ratking: '쥐 떼', elder: '뿌리 솟기', giant: '땅 울림', dracula: '박쥐 떼', lichking: '죽음의 파동', reaper: '죽음의 회전', deathknight: '암흑 강타', banshee: '죽음의 비명', ghosttree: '원혼의 뿌리', seraphknight: '천벌' };   // 광역기 이름 (알림 · 3번째부터의 우두머리도 광역기를 쓴다)
 // 효과 표: SKFX에 'u:id:갈래'로 넣어 스킬 효과 그리기(skh 맞히기 · skp 투사체 · skw 초승달 · skq 땅 금)를 빌린다
 for (const id in PXU_ACT) for (const cat in PXU_ACT[id].fx || {}) {   // 갈래(atk·mag·skl) · 동작 이름(그 동작만, 빌드 44)
@@ -22,17 +23,18 @@ function fmotOn(e, x, t, nx, at) {
   const key = 'f' + f.uid, A = PXU_ACT[f.id] || {}, m0 = V.fmot[key], fq = at('f' + f.uid);
   if ((x.type === 'hurt' || x.type === 'miss' || x.type === 'shield') && m0 && m0.aoe && m0.aoe.t === t) {   // 광역기의 한 방: 퍼지는 것이 그 사람에게 닿는 때
     const q = at('a' + x.d), dist = q ? Math.abs(q[0] - m0.aoe.x0) : 60;
-    return Math.max(0, m0.aoe.T1 - t) + dist / (FMOT_AOE_V[m0.aoe.k] || 200);
+    return Math.max(0, m0.aoe.T1 - t) + (FMOT_AOE_PRE[m0.aoe.k] || 0) + dist / (FMOT_AOE_V[m0.aoe.k] || 200);
   }
   if (m0 && m0.t0 === t && m0.d === x.d && (x.type === 'shield' || m0.from === 'shield')) return m0.hit + m0.fl;   // 보호막이 받은 한 방과 그 뒤 맞기: 같은 동작
   if (x.hn && m0 && m0.t0 === t && m0.d === x.d) return m0.hit + m0.fl + x.hn * FMOT_HN;   // 빌드 69 연타: 같은 동작에서 한 대씩 늦게
   const sta = nx && nx.type === 'sta' && nx.side === 'a' && nx.d === x.d;
   const cat = x.type === 'aoe' ? 'skl' : A.skl && !MONS[f.id].aoe && !f.aoe && (x.c || sta || x.ms) ? 'skl' : x.k === 'magic' && A.mag ? 'mag' : A.atk ? 'atk' : 'mag';   // 몬스터 스킬 한 방(ms, 빌드 63)도 스킬 갈래
-  const mk = pxuPick(f.id, cat, m0 && m0.mk), T = pxuMotT(f.id, mk), hf = pxsMotHit(mk), sk = fmotSk(f.id, cat, mk);
+  const gas = x.type === 'aoe' && x.gas && SKFX['u:' + f.id + ':gas'] ? 'gas' : null;   // 빌드 70: 독 안개 (길드장 패턴 2) — 동작은 스킬 갈래, 효과는 'gas'
+  const mk = pxuPick(f.id, cat, m0 && m0.mk), T = pxuMotT(f.id, mk), hf = pxsMotHit(mk), sk = gas ? fmotSk(f.id, gas) : fmotSk(f.id, cat, mk);
   let hit = 0; for (let i = 0; i < hf; i++) hit += T[i];
   const fl = sk && sk.proj && FMOT_CAST[mk] && x.type !== 'aoe' ? SK_PROJ_T[sk.proj] || 0.2 : 0;
   V.fmot[key] = { mk, cat, t0: t, T, hit, fl, c: x.c, d: x.d, from: x.type };
-  if (x.type === 'aoe') V.fmot[key].aoe = { t, T1: t + hit, x0: fq ? fq[0] : 170, k: (sk && sk.aoe) || 'nova' };
+  if (x.type === 'aoe') V.fmot[key].aoe = { t, T1: t + hit, x0: fq ? fq[0] : 170, k: (sk && sk.aoe) || 'nova', cat: gas || 'skl' };
   return hit + fl;
 }
 // 지금 장 { mk, f, cat, c } (동작이 끝나면 지운다)
@@ -66,9 +68,10 @@ function fmotTip(f, m, q, z, dir) {
 function fmotHitFx(e, x, t, fd, am, aq, at) {
   const f = e.foes.find(o => o.uid === x.s), m = f && V.fmot['f' + f.uid];
   if (!m) return;
-  const dir = V.dir || 1, fq = at('f' + f.uid), cat = m.aoe && m.aoe.t === t ? 'skl' : m.cat, sk = fmotSk(f.id, cat, m.mk), id = fmotKey(f.id, cat, m.mk), T1 = t + fd;
+  const ec = x.echo && SKFX['u:' + f.id + ':echo'] ? 'u:' + f.id + ':echo' : null;   // 빌드 70: 등 뒤 매연 분신이 따라 베기 (길드장 패턴 1)
+  const dir = V.dir || 1, fq = at('f' + f.uid), cat = m.aoe && m.aoe.t === t ? m.aoe.cat || 'skl' : m.cat, sk = ec ? SKFX[ec] : fmotSk(f.id, cat, m.mk), id = ec || fmotKey(f.id, cat, m.mk), T1 = t + fd;
   if (!sk) return;
-  if (m.fl && fq) {
+  if (m.fl && fq && !ec) {
     const src = fmotTip(f, m, fq, zAt(fq[1]), dir);
     V.fx.push({ k: 'skp', id, style: sk.proj, x0: src[0], y0: src[1], x1: am[0], y1: am[1], t0: T1 - m.fl, d: m.fl, arc: m.mk === 'bdiag' ? 34 : sk.proj === 'snow' ? 16 : 0, dir: -dir, big: sk.big || 0 });
   }
@@ -78,10 +81,11 @@ function fmotHitFx(e, x, t, fd, am, aq, at) {
 function fmotAoe(e, x, t, fd, team, at) {
   const f = e.foes.find(o => o.uid === x.s), m = f && V.fmot['f' + f.uid];
   if (!m || !m.aoe) return;
-  const dir = V.dir || 1, fq = at('f' + f.uid), z = fq ? zAt(fq[1]) : 1, sk = fmotSk(f.id, 'skl'), id = 'u:' + f.id + ':skl', T1 = t + fd, k = m.aoe.k;
+  const ac = m.aoe.cat || 'skl', dir = V.dir || 1, fq = at('f' + f.uid), z = fq ? zAt(fq[1]) : 1, sk = fmotSk(f.id, ac), id = 'u:' + f.id + ':' + ac, T1 = t + fd, k = m.aoe.k;
   if (!fq || !sk) return;
   const H = monH(f.id, f.sc) * z, cx = fq[0], cy = fq[1] - H * 0.55, tg = team.filter(a => !a.down).map(a => at('a' + a.id)).filter(Boolean);
-  if (FMOT_NAME[f.id] && !x.ms) callout(fq[0], fq[1] - H - 6, FMOT_NAME[f.id] + '!', 'boss');   // 몬스터 스킬(빌드 63)은 이름 띠를 따로 띄운다
+  const nm = (ac !== 'skl' && sk.nm) || FMOT_NAME[f.id];   // 빌드 70: 패턴 광역기는 그 이름 (독 안개)
+  if (nm && !x.ms) callout(fq[0], fq[1] - H - 6, nm + '!', 'boss');   // 몬스터 스킬(빌드 63)은 이름 띠를 따로 띄운다
   let dmin = null;   // 땅속 독니 · 가시 덩굴 채찍 · 깃털 폭풍: 가장 먼저 맞는 때까지 (흔들림)
   if (k === 'bats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'ubat', id, x0: cx - 6 * dir + (j - 1) * 6, y0: cy - 10 + j * 6, x1: q[0] + (j - 1) * 4, y1: q[1] - 14 * zAt(q[1]) + (j - 1) * 5, t0: T1 + j * 0.06, d: Math.abs(q[0] - cx) / FMOT_AOE_V.bats, s: i * 3 + j }); });
   else if (k === 'rats') tg.forEach((q, i) => { for (let j = 0; j < 3; j++) V.fx.push({ k: 'urat', id, x0: cx - 8 * dir + (j - 1) * 5, y0: fq[1] - 1 - j * 3, x1: q[0] + (j - 1) * 6, y1: q[1] - 1 - j * 2, t0: T1 + j * 0.07, d: Math.abs(q[0] - cx) / FMOT_AOE_V.rats, s: i * 3 + j }); });
@@ -141,6 +145,10 @@ function fmotAoe(e, x, t, fd, team, at) {
     if (nodes.length) dmin = nodes[0][2];
     V.fx.push({ k: 'uchain', id, x0: src[0], y0: src[1], nodes, t0: T1, z, d: (nodes.length ? nodes[nodes.length - 1][2] : 0.3) + 0.6, s: f.uid % 7 });
   }
+  else if (k === 'gas') {   // 독 안개 (빌드 70 길드장 패턴 2): 띠의 독 약병을 사람마다 하나씩 포물선으로 던진다 — 맞는 때(0.3초 + 거리 ÷ 빠르기)에 깨져 초록 안개 · 유리 조각 (그림 under70.js gasDraw)
+    const sx = cx - 8 * z * dir, sy = cy - 4 * z;   // 몸 앞에서 (찌르기 동작의 칼끝은 앞으로 너무 나간다)
+    tg.forEach((q, i) => { const zq = zAt(q[1]), dt = FMOT_AOE_PRE.gas + Math.abs(q[0] - cx) / FMOT_AOE_V.gas; dmin = Math.min(dmin == null ? 9 : dmin, dt); V.fx.push({ k: 'ugas', id, x0: sx, y0: sy, x1: q[0], y1: q[1] - 12 * zq, gy: q[1], t0: T1, fl: dt, d: dt + 1.6, h: 34 + i * 7, z: zq, s: i }); });
+  }
   else if (k === 'slam' || k === 'roots') { const xe = tg.length ? (dir > 0 ? Math.min(...tg.map(q => q[0])) - 12 : Math.max(...tg.map(q => q[0])) + 12) : cx - 120 * dir; V.fx.push({ k: 'skq', id, x0: cx - 22 * dir, gy: fq[1], xe, dir: -dir, t0: T1, d: Math.abs(cx - xe) / SK_QUAKE + 1.2 }); }
   if (sk.shake) V.fx.push({ k: 'shk', id, n: sk.shake, t0: T1 + (k === 'meteor' ? 0.55 : dmin != null ? dmin : 0), d: 0.1 });   // 화산탄 비는 떨어질 때 · 땅속 독니 · 가시 덩굴 채찍 · 깃털 폭풍 · 뇌전 숨결 · 번개 사슬은 처음 맞을 때 흔든다 (회오리바람은 내리칠 때)
 }
@@ -171,6 +179,7 @@ function fmotDraw(g, f, t) {
   const sk = SKFX[f.id]; if (!sk) return;
   const P = SK_PAL[sk.pal], e = t - f.t0;
   if (e < 0) return;
+  if (f.k === 'ugas') { gasDraw(g, f, e, P); return; }   // 빌드 70 독 안개 (under70.js)
   if (f.k === 'uzap') {   // 뇌전 숨결 (빌드 60): 입가에 튀는 불꽃 · 입에서 부채꼴 번개 다섯 갈래 + 굵은 줄기 (앞머리까지) · 앞머리가 지나간 사람마다 줄기에서 갈래가 꽂히고 맞는 자리 불꽃 · 끝 0.3초에 사그라진다
     if (e > f.d) return;
     const z = f.z || 1, sg = Math.sign(f.cx - f.xe) || 1, tr = Math.abs(f.cx - f.xe) / f.v, al = e > f.d - 0.3 ? Math.max(0, (f.d - e) / 0.3) : 1, sd = Math.floor(e / 0.05) + f.s * 31;

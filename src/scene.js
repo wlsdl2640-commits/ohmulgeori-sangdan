@@ -193,8 +193,8 @@ function buildDesert() {
   return { back, far, mid, gr, fore, clouds: 2, ambient: 'sand' };
 }
 
-// 지하 던전 색과 장식: 새 던전은 뒤 파일(sky.js)에서 UNDER_PAL·UNDER_DECOR에 더한다
-const UNDER_DECOR = {};
+// 지하 던전 색과 장식: 새 던전은 뒤 파일(sky.js)에서 UNDER_PAL·UNDER_DECOR에 더한다 · 빌드 70: 바닥은 UNDER_FLOOR (under70.js)
+const UNDER_DECOR = {}, UNDER_FLOOR = {};
 const UNDER_PAL = {
     cellar: { wall: '#3a302a', line: '#2a221e', floor: '#5a4632', fl: '#4a3a28' },
     cave:   { wall: '#2a2a22', line: '#1e1e18', floor: '#2f2a20', fl: '#3a3428' },
@@ -273,6 +273,7 @@ function buildUnder(kind) {
   if (kind === 'mine') { R(g, 0, 10, 480, 1, '#8a8a90'); R(g, 0, 16, 480, 1, '#8a8a90'); for (let x = 2; x < 480; x += 8) R(g, x, 9, 3, 9, '#5e4630'); }
   if (kind === 'sewer') { R(g, 0, 14, 480, 14, '#1e3a3a'); R(g, 0, 14, 480, 1, '#2a4a4a'); for (let x = 0; x < 480; x += 23) { R(g, x + 3, 18 + (x / 23) % 3, 9, 1, '#2e5a5a'); R(g, x + 14, 23 - (x / 23) % 2, 6, 1, '#2e5a5a'); } R(g, 0, 13, 480, 1, '#4a5a54'); }
   if (kind === 'arena') { for (let i = 0; i < 90; i++) R(g, Math.floor(r() * 480), Math.floor(r() * 28), 2, 1, i % 2 ? '#d8b878' : '#a88a52'); R(g, 0, 0, 480, 1, '#8a7a4a'); }
+  if (UNDER_FLOOR[kind]) UNDER_FLOOR[kind](g, r);
   const [fore, fo] = mkCanvas(480, 128);
   for (let x = 90; x < 480; x += 200) { R(fo, x, 0, 12, 128, shade(pal.wall, -0.45)); R(fo, x, 0, 2, 128, shade(pal.wall, -0.3)); R(fo, x - 2, 0, 16, 6, shade(pal.wall, -0.5)); }
   const torch = pal.torch || '#f0a03a';

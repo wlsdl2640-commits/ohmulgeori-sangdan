@@ -357,6 +357,8 @@ details.card .list { margin-top: 8px; }
 .fbtn.front span { color: #a8c8f0; }
 .fbtn.skyf { border-color: #6aa0ff; background: #1c2a44; }
 .fbtn.skyf span { color: #bfe0ff; }
+.fbtn.under { border-color: #4a7a64; background: #18241f; }   /* 빌드 70: 하르겐 지하 (옛 제국 수로 · 지하미궁 통로) */
+.fbtn.under span { color: #a8dcc0; }
 .fbtn.treasure { border-color: #a8743e; background: #2a2010; }
 .fbtn.treasure span { color: #ffd870; }
 .fbtn.giant { border-color: #c0392b; }
@@ -543,6 +545,7 @@ details.card > .list { margin-top: 8px; }
 .mnode.nest .mn { background: #a8743e; color: #fff4d0; animation: mpulse 1.4s steps(1) infinite; }
 .mnode.fld.front:not(.lock) .mn { background: #8ab0d8; }
 .mnode.fld.skyf:not(.lock) .mn { background: #6aa0ff; color: #0c1428; }
+.mnode.fld.under:not(.lock) .mn { background: #5a9a7a; color: #0c1a14; }
 
 .tabs.adv { margin: 8px 0; }
 .tabs.exp { z-index: 3; }

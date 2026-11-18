@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1, v69c: 1, v69d: 1, v69e: 1, v69f: 1, v69g: 1, v69h: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1, v69c: 1, v69d: 1, v69e: 1, v69f: 1, v69g: 1, v69h: 1, v70: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -713,7 +713,7 @@ function setSlot(i, it, tier) {
   S.shop.slots[i] = it ? { item: it, tier: tier || 0, tm: 0 } : null;
   changed();
 }
-const traffic = () => (1 + S.fame / 150) * (1 + 0.1 * (S.bld.shop - 1)) * (1 + (spn('citizens') >= 1 ? 0.15 : 0) + (spn('citizens') >= 3 ? 0.15 : 0)) * (S.flags.guildDown ? 1.2 : 1) * (1 + 0.08 * (S.rank || 0)) * (1 + petHome('traffic')) * (cityDamaged() ? 0.7 : 1);
+const traffic = () => (1 + S.fame / 150) * (1 + 0.1 * (S.bld.shop - 1)) * (1 + (spn('citizens') >= 1 ? 0.15 : 0) + (spn('citizens') >= 3 ? 0.15 : 0)) * (S.flags.guildDown ? 1.2 : 1) * (S.flags.guildHQ ? 1.1 : 1) * (1 + 0.08 * (S.rank || 0)) * (1 + petHome('traffic')) * (cityDamaged() ? 0.7 : 1);
 function stepShop(dt) {
   const n = slotCount(), tr = traffic();
   for (let i = 0; i < n; i++) {
@@ -1106,15 +1106,17 @@ function sponsor(k) {
 /* ───────── 월말 정산 ───────── */
 // 빌드 69 (11-14 사용자 「이걸로」 — 계획 문서 남은 물음 1): 자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3%
 const RENT_SALES = 0.03;
-const rentBase = () => (S.flags.guildDown ? 0 : 300 + 50 * Math.floor(S.fame / 25));
-const rentSales = () => (S.flags.guildDown ? 0 : Math.round((S.salesM || 0) * RENT_SALES));
+// 빌드 70 (계획 문서 「암살자 길드」): 뒷골목 은신처는 지부 — 깨면(guildDown) 절반, 지하미궁 통로의 본부를 깨면(guildHQ) 끝
+const rentMul = () => (S.flags.guildHQ ? 0 : S.flags.guildDown ? 0.5 : 1);
+const rentBase = () => Math.round((300 + 50 * Math.floor(S.fame / 25)) * rentMul());
+const rentSales = () => Math.round((S.salesM || 0) * RENT_SALES * rentMul());
 const rent = () => rentBase() + rentSales();
 const salaryOf = a => Math.round(salaryCalc(a) * (1 - mentorCut(a.cls)) / 5) * 5;   // 스승(명예의 전당) 할인 · 빌드 69: 지금 레벨로 셈한다 (data-sal69.js)
 const payroll = () => living().reduce((s, a) => s + salaryOf(a), 0);
 function settle() {
   const pm = dateParts(S.t - DAY_SEC).m, lines = [], r = rent();
-  if (S.flags.guildDown) lines.push('암살자 길드가 무너져 이제 자릿세는 없다.');
-  else if (S.gold >= r) { S.gold -= r; lines.push(`암살자 길드에 자릿세 ${g$(r)}을 냈다.${rentSales() ? ` (기본 ${g$(rentBase())} + 이달 상점 판매액 ${g$(S.salesM)}의 3% ${g$(rentSales())})` : ''}`); }
+  if (S.flags.guildHQ) lines.push('암살자 길드 본부가 무너져 이제 자릿세는 없다.');
+  else if (S.gold >= r) { S.gold -= r; lines.push(`암살자 길드에 자릿세 ${g$(r)}을 냈다.${rentSales() ? ` (기본 ${g$(rentBase())} + 이달 상점 판매액 ${g$(S.salesM)}의 ${S.flags.guildDown ? '1.5%' : '3%'} ${g$(rentSales())})` : ''}${S.flags.guildDown ? ' 지부가 무너져 절반만 걷는다.' : ''}`); }
   else {
     const paid = S.gold; S.gold = 0;
     let lost = 0;
@@ -1137,7 +1139,7 @@ function settle() {
   if (warned.length) lines.push(`${warned.join(', ')}에게 봉급을 주지 못했다. 다음 달에도 밀리면 떠난다.`);
   if (gone.length) lines.push(`두 달째 봉급을 못 받은 ${gone.join(', ')}은(는) 상단을 떠난다. 원정 중이면 돌아온 뒤에 떠난다.`);
   S.salesLast = S.salesM || 0; S.salesM = 0;   // 빌드 69: 상점 판매액은 달마다 새로 센다
-  if (!S.flags.guildDown) lines.push(`다음 달 자릿세는 ${g$(rentBase())}에 그달 상점 판매액의 3%를 더한 값이다.`);
+  if (!S.flags.guildHQ) lines.push(`다음 달 자릿세는 ${g$(rentBase())}에 그달 상점 판매액의 ${S.flags.guildDown ? '1.5%' : '3%'}를 더한 값이다.${S.flags.guildDown ? ' 지하미궁 통로의 길드 본부를 토벌하면 자릿세가 끝난다.' : ''}`);
   if (S.bld.temple) { blessRoll(); lines.push(`신전: 이번 달에는 「${BLESSINGS[S.bless.id].name}」. ${BLESSINGS[S.bless.id].desc}`); }
   leagueMonth(lines);
   log(`${pm}월 정산을 마쳤다.`, unpaid.length ? 'bad' : '');
@@ -1234,7 +1236,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1306,7 +1308,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h();
+    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70();
     return true;
   } catch (_) { return false; }
 }
@@ -1729,6 +1731,12 @@ function notes69d() {
 }
 function notes69e() { if (!S.flags.v69e) { S.flags.v69e = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '능력치 상한 · 몬스터 강화', body: STORY.v69e }); } }   // 빌드 69 (11-14 12:18 — data-cap69.js · data-monup69.js)
 function notes69g() { if (!S.flags.v69g) { S.flags.v69g = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '흡혈 그릇 · 걷는 길 세 배', body: STORY.v69g }); } }   // 빌드 69 (11-15 12:03): data-stat69.js
+function notes70() {   // 빌드 70: 하르겐 지하 3구역 · 지하미궁 통로 · 암살자 길드 지부 / 본부 (data-under70.js)
+  if (S.flags.v70) return;
+  S.flags.v70 = 1;
+  if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '하르겐 지하 · 암살자 길드 본부', body: STORY.v70 });
+  if (S.flags.guildDown && !S.flags.guildHQ) { S.modals.push({ title: '암살자 길드의 대역', body: STORY.guildHalf }); log('뒷골목에서 쓰러뜨린 검은 두건은 대역이었다. 암살자 길드가 자릿세를 절반만 다시 걷는다.', 'bad'); }
+}
 function notes69h() { if (!S.flags.v69h) { S.flags.v69h = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '회복 방식 · 스킬 리듬', body: STORY.v69h }); } }   // 빌드 69 (11-15 20:20): data-pace69.js
 function notes69f() { if (!S.flags.v69f) { S.flags.v69f = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '해룡 · 해룡기수', body: STORY.v69f }); } }   // 빌드 69 (11-14 15:54): 해룡 펫 · 해룡기수
 function notes68b() { if (!S.flags.v68b) { S.flags.v68b = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬북 계열 · 직업 표시 · 스킬 칸 나누기', body: STORY.v68b }); } }   // 빌드 68 (data-skjob68.js)
