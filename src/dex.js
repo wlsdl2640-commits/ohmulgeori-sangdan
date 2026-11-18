@@ -130,7 +130,7 @@ function skinRow(id) {
 /* ───────── 직업 ───────── */
 function clsCard(c) {
   const C = CLASSES[c], t = jobTier(c), n = S.advs.filter(a => a.cls === c).length, Q = JOB_REQ[t];
-  const req = t === 1 ? '선술집에서 고용' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${Q.souls ? `, 주인의 혼 ${Q.souls}` : ''}${jobReqText(c) ? ` · ${jobReqText(c)}` : ''}`;
+  const req = t === 1 ? '선술집에서 영입' : `${CLASSES[C.from].name}에서 전직 · Lv${Q.lv}, ${LICENSE[Q.rank].name} 라이선스, ${fmt(Q.fee)}G${Q.souls ? `, 주인의 혼 ${Q.souls}` : ''}${jobReqText(c) ? ` · ${jobReqText(c)}` : ''}`;
   return `<details class="card"><summary><span class="row"><img class="por" src="${clsIconURL(c)}" alt=""><span class="grow stack"><span>${C.name}${tierTag(c)}${n ? ` <span class="tag ok-t">${n}명</span>` : ''}</span><span class="sub">${C.desc}</span></span></span></summary>
     <div class="stats"><span>힘 <b>${C.base.str}</b> +${C.grow.str}/Lv</span><span>체력 <b>${C.base.vit}</b> +${C.grow.vit}/Lv</span><span>민첩 <b>${C.base.agi}</b> +${C.grow.agi}/Lv</span><span>지능 <b>${C.base.int}</b> +${C.grow.int}/Lv</span></div>
     <div class="stats"><span>기본 공격 쿨타임 <b>${BASIC69.base - clsCut(c) - (jobTier(c) - 1) * BASIC69.tier}초</b> (${BASIC69.base}초 · 직업 ${clsCut(c) >= 0 ? '−' : '+'}${Math.abs(clsCut(c))}초${jobTier(c) > 1 ? ` · 전직 −${(jobTier(c) - 1) * BASIC69.tier}초` : ''} — 민첩이 더 줄인다 · 공격 속도는 휘둘러 맞히기까지를 줄인다)</span><span>치명 <b>${Math.round(C.crit * 100)}%</b></span><span>짐 <b>${C.carry}</b></span>${C.salary ? `<span>봉급 <b>${C.salary}G</b></span>` : ''}</div>
@@ -219,7 +219,7 @@ function dexSub() {
 function dexPets() {
   const D = dexState(), known = D.pets || {};
   const rows = PET_IDS.map(k => { const P = PETS[k], seen = !!known[k] || (S.pets || []).some(x => x.kind === k), own = (S.pets || []).filter(x => x.kind === k).length, egg = S.inv['egg_' + k] || 0;
-    return `<div class="li${seen ? '' : ' dim'}"><img class="dexi" src="${monIconURL('pet_' + k, !seen)}" alt=""><div class="grow stack"><span>${seen ? P.name : '???'}${own ? ` <span class="tag ok-t">${own}마리</span>` : ''}${egg ? ` <span class="tag">알 ${egg}</span>` : ''}</span><span class="sub">${seen ? `${PET_ACT_NAME[P.act]} · ${P.desc}` : '알을 부화시키면 열려요'}</span><span class="sub muted">알: ${FIELDS[P.field] ? FIELDS[P.field].name : P.where || '?'}의 우두머리·던전 주인${seen ? ` · 진화 ${P.evo} · 상단에 두면 ${petHomeText(k)} · 먹이 ${P.likes.map(it => ITEMS[it].name).join('·')}` : ''}</span></div></div>`; }).join('');
+    return `<div class="li${seen ? '' : ' dim'}"><img class="dexi" src="${monIconURL('pet_' + k, !seen)}" alt=""><div class="grow stack"><span>${seen ? P.name : '???'}${own ? ` <span class="tag ok-t">${own}마리</span>` : ''}${egg ? ` <span class="tag">알 ${egg}</span>` : ''}</span><span class="sub">${seen ? `${PET_ACT_NAME[P.act]} · ${P.desc}` : '알을 부화시키면 열려요'}</span><span class="sub muted">알: ${FIELDS[P.field] ? FIELDS[P.field].name : P.where || '?'}의 우두머리·던전 주인${seen ? ` · 진화 ${P.evo} · 길드에 두면 ${petHomeText(k)} · 먹이 ${P.likes.map(it => ITEMS[it].name).join('·')}` : ''}</span></div></div>`; }).join('');
   return `<div class="sub muted">${PET_IDS.filter(k => known[k] || (S.pets || []).some(x => x.kind === k)).length}/${PET_IDS.length} 길러 봄 · 파티마다 한 마리 · Lv${PET_EVO_LV} 진화 · 호감도가 차면 특성</div><div class="list">${rows}</div>`;
 }
 /* ───────── 창 ───────── */

@@ -40,7 +40,7 @@ with sync_playwright() as p:
     b = p.chromium.launch(); pg = b.new_page(); errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + PAGE); pg.wait_for_timeout(900)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1000)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1000)
     R = pg.evaluate("s => window.__EV(s)", f"{INJ}({json.dumps(P)}, {json.dumps(KS)}, {Z})")
     if errs: print('PAGE ERRORS', errs[:3])
     b.close()

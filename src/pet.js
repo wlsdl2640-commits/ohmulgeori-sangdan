@@ -44,12 +44,12 @@ function penDay(k) {
     return { egg, fertile, pet };
   });
   const rate = `사육장 Lv${S.bld.pen} 부화 확률 ${Math.round(penHatch() * 100)}% (유정란일 때) · 강화하면 Lv5에서 70%`;
-  const bornTxt = r => { const pet = r.pet, qn = QUALITY[pet.q].name; return `${r.egg}이(가) 갈라지고 ${qn} ${PETS[pet.kind].name} 「${pet.name}」이(가) 나왔다 — 힘과 상단 효과 ×${petQMul(pet)}`; };
+  const bornTxt = r => { const pet = r.pet, qn = QUALITY[pet.q].name; return `${r.egg}이(가) 갈라지고 ${qn} ${PETS[pet.kind].name} 「${pet.name}」이(가) 나왔다 — 힘과 길드 효과 ×${petQMul(pet)}`; };
   const failTxt = r => `${r.egg}은(는) ${r.fertile ? '유정란이었지만 깨어나지 못했다' : '무정란이었다'} → 요리 재료 「무정란」`;
   if (res.length === 1) {
     const r = res[0];
     if (!r.pet) queueModal({ title: r.fertile ? '부화에 실패했어요' : '무정란이었어요…', body: [`${r.egg}은(는) ${r.fertile ? '유정란이었지만 깨어나지 못했다' : '깨어나지 않았다'}. 요리 재료 「무정란」 1개를 창고에 넣었다.`, rate] });
-    else queueModal({ title: '유정란이었어요!', pet: r.pet.id, body: [bornTxt(r), PETS[r.pet.kind].desc, '원정대 창에서 파티에 넣으면 함께 싸우고, 상단에 두면 ' + petHomeText(r.pet.kind, r.pet) + '.'] });
+    else queueModal({ title: '유정란이었어요!', pet: r.pet.id, body: [bornTxt(r), PETS[r.pet.kind].desc, '원정대 창에서 파티에 넣으면 함께 싸우고, 길드에 두면 ' + petHomeText(r.pet.kind, r.pet) + '.'] });
     return;
   }
   const pets = res.filter(r => r.pet), fails = res.filter(r => !r.pet);
@@ -90,7 +90,7 @@ function petExp(pet, xp) {
   if (up2 && !pet.stage && pet.lv >= PET_EVO_LV) {
     pet.stage = 1;
     log(`${pet.name}이(가) ${PETS[pet.kind].evo}(으)로 진화했다!`, 'good');
-    queueModal({ title: '진화', pet: pet.id, body: [`${PETS[pet.kind].name} 「${pet.name}」이(가) Lv${PET_EVO_LV}에 닿아 ${PETS[pet.kind].evo}(으)로 자라났다.`, '행동의 힘이 1.8배가 되고 상단에 둘 때의 효과도 커진다.'] });
+    queueModal({ title: '진화', pet: pet.id, body: [`${PETS[pet.kind].name} 「${pet.name}」이(가) Lv${PET_EVO_LV}에 닿아 ${PETS[pet.kind].evo}(으)로 자라났다.`, '행동의 힘이 1.8배가 되고 길드에 둘 때의 효과도 커진다.'] });
   }
   return up2;
 }

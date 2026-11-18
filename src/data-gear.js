@@ -76,10 +76,10 @@ const REAPPRAISE = { fee: t => Math.round(150 * GTIERS[t].p), crest: 1 };
 const RUNE_FUSE = { n: 9, fee: [600, 2500, 10000] };     // 마탑 룬 합성: 같은 단계 룬 9개(종류는 섞어도 됨) → 한 단계 위 하나 (빌드 67 · store.js rf* — 예전엔 같은 룬 3개)
 const RUNE_CARVE = { crest: 2, fee: 300 };               // 증표 2개 + 300G → 하급 룬 (마탑)
 
-/* ───────── 유물: 던전 주인을 쓰러뜨리면 하나씩 (상단 전체에 효과) ───────── */
+/* ───────── 유물: 던전 주인을 쓰러뜨리면 하나씩 (길드 전체에 효과) ───────── */
 const RELICS = {
   plains:   { name: '들쥐왕의 금관',          desc: '부속품을 얻을 확률 +10%',                      drop: 0.1 },
-  forest:   { name: '세계수의 새싹',          desc: '상단에서 쉬는 동안 회복·치료·숙면 +30%',      rest: 0.3 },
+  forest:   { name: '세계수의 새싹',          desc: '길드에서 쉬는 동안 회복·치료·숙면 +30%',      rest: 0.3 },
   mountain: { name: '드워프 장인의 망치',     desc: '대장간 제작비 -20%, 좋은 품질이 더 잘 나온다', smith: 0.2 },
   valley:   { name: '폭풍 와이번의 깃털',     desc: '모험가 이동속도 +10%',                         move: 0.1 },
   snow:     { name: '설녀 여왕의 얼음 왕관',  desc: '모험가가 받는 피해 -8%',                       guard: 0.08 },

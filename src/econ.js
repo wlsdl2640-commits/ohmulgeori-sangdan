@@ -12,7 +12,7 @@ const newField = () => ({ best: 0, cleared: false, found: false, boss: {} });
 function blankState(company) {
   return {
     v: SAVE_V, seq: 1, t: 0, lastSeen: Date.now(),
-    company: (company || '').trim().slice(0, 12) || '등불 상단',
+    company: (company || '').trim().slice(0, 12) || '등불 길드',
     gold: 1000, fame: 0, rank: 0, unlocked: [],
     inv: { pot_s: 6, mp_s: 2, herb: 6 },
     advs: [], parties: [], gear: [], pets: [], pen: { inc: [] }, wh: Array.from({ length: WH_N }, () => ({ inv: {}, gear: [] })),
@@ -24,7 +24,7 @@ function blankState(company) {
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
     spons: {},
-    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1, v69c: 1, v69d: 1, v69e: 1, v69f: 1, v69g: 1, v69h: 1, v70: 1 }, speed: 1,
+    log: [], modals: [], flags: { v02: 1, v03: 1, v04: 1, v05: 1, v06: 1, v07: 1, bview: 1, v22: 1, v23: 1, v25: 1, v28: 1, v29: 1, v30: 1, v31: 1, v34: 1, v36: 1, v37: 1, v38: 1, v39: 1, v40: 1, v41: 1, v42: 1, v43: 1, v44: 1, v45: 1, v46: 1, v48: 1, v49: 1, v50: 1, v51: 1, v52: 1, v53: 1, v55: 1, v56: 1, v57: 1, v58: 1, v59: 1, v60: 1, v61: 1, v62: 1, v63: 1, v63b: 1, v63c: 1, wh63: 1, v64: 1, v65: 1, v67: 1, v68: 1, v68b: 1, v69: 1, v69b: 1, v69c: 1, v69d: 1, v69e: 1, v69f: 1, v69g: 1, v69h: 1, v70: 1, v70b: 1, c70: 1 }, speed: 1,
     relics: [], raid: null, king: { favor: {}, visit: null, next: 4 },
     cook: { known: {}, made: {}, pot: [], sus: 0 }, farm: { cur: 0, auto: 1, houses: [] }, port: { next: 3, ship: null },
     stats: { earned: 0, kills: 0, downs: 0, wipes: 0, trips: 0, sales: 0, reqs: 0, soldG: 0, dungeons: 0 },
@@ -97,7 +97,7 @@ function migrate3() {
   if (!S.flags.v04) { S.flags.v04 = 1; S.modals.push({ title: 'v0.4 업데이트', body: STORY.v04 }); }
   if (!speedList().includes(S.speed)) S.speed = 1;
 }
-// v0.4 → v0.5: 죽음 대신 부상, 필드 보스와 거점, 상단 랭크, 라이선스, 전직, 숙면 피로
+// v0.4 → v0.5: 죽음 대신 부상, 필드 보스와 거점, 길드 랭크, 라이선스, 전직, 숙면 피로
 function migrate4() {
   if (S.v >= 4) return;
   S.v = 4;
@@ -140,8 +140,8 @@ function migrate4() {
   if (!S.flags.v05) {
     S.flags.v05 = 1;
     const body = STORY.v05.slice();
-    if (back.length) body.push(`묘지에 이름을 올렸던 ${back.join(', ')}은(는) 사실 오물거리 진료소에 누워 있었다. 크게 다친 채로 상단에 돌아왔으니 신전에서 치료해 주자.`);
-    body.push(`지금까지 공략한 던전에 맞춰 상단은 ${RANKS[S.rank].name}랭크 「${RANKS[S.rank].title}」(으)로 시작한다.`);
+    if (back.length) body.push(`묘지에 이름을 올렸던 ${back.join(', ')}은(는) 사실 오물거리 진료소에 누워 있었다. 크게 다친 채로 길드에 돌아왔으니 신전에서 치료해 주자.`);
+    body.push(`지금까지 공략한 던전에 맞춰 길드는 ${RANKS[S.rank].name}랭크 「${RANKS[S.rank].title}」(으)로 시작한다.`);
     S.modals.push({ title: 'v0.5 업데이트', body });
   }
 }
@@ -170,7 +170,7 @@ function migrate5() {
   if (!S.flags.v07) {
     S.flags.v07 = 1;
     const body = STORY.v07.slice();
-    if (S.relics.length) body.push(`지금까지 공략한 던전에서 유물 ${S.relics.length}개(${S.relics.map(f => RELICS[f].name).join(', ')})를 찾아 상단에 모셔 두었다.`);
+    if (S.relics.length) body.push(`지금까지 공략한 던전에서 유물 ${S.relics.length}개(${S.relics.map(f => RELICS[f].name).join(', ')})를 찾아 길드에 모셔 두었다.`);
     S.modals.push({ title: 'v0.7 업데이트', body });
   }
 }
@@ -187,7 +187,7 @@ function makeCand() {
   const r = rnd();
   if (r < 0.25) { cond = { type: 'gift', item: pickOne(giftPool()), qty: ri(1, 3) }; lv += 1; }
   else if (r < 0.35) { cond = { type: 'fame', min: S.fame + ri(5, 15) }; lv += 2; }
-  const a = makeAdv({ lv });   // 봉급(길드 후원 3단계 −10% 포함)은 salaryCalc (빌드 69)
+  const a = makeAdv({ lv });   // 봉급(협회 후원 3단계 −10% 포함)은 salaryCalc (빌드 69)
   a.fee = a.salary; a.cond = cond;
   if (rnd() < 0.35) { const t = Math.max(0, GTIERS.reduce((m, T, i) => (a.lv >= T.lv ? i : m), 0) - 1); a.eq.weapon = gearFor(weaponOf(a.cls, t), t, 0, a.lv); if (twoHand(a.eq.weapon)) a.eq.off = null; }
   const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp;
@@ -198,7 +198,7 @@ function rollCands() {
   const n = 3 + (spn('guild') >= 3 ? 1 : 0);
   for (let i = 0; i < n; i++) S.cands.push(makeCand());
   if (!living().length) {
-    const a = makeAdv({ cls: pickOne(['warrior', 'archer', 'cleric']), lv: 1, bio: '모험가 길드가 보낸 견습생. 계약금 없이 일하겠다고 한다.' });
+    const a = makeAdv({ cls: pickOne(['warrior', 'archer', 'cleric']), lv: 1, bio: '모험가 협회가 보낸 견습생. 계약금 없이 일하겠다고 한다.' });
     a.fee = 0; a.salK = 0.5; salaryNew(a); starterGear(a); S.cands.unshift(a);   // 견습생은 봉급 절반 (빌드 69: 예전엔 60G로 고정)
   }
 }
@@ -216,7 +216,7 @@ function hire(id) {
   delete a.fee; delete a.cond; delete a.heroOf; delete a.specOf;
   a.status = 'idle';
   S.advs.push(a);
-  log(`${a.name}(${CLASSES[a.cls].name}, Lv${a.lv})을(를) 고용했다.`, 'good');
+  log(`${a.name}(${CLASSES[a.cls].name}, Lv${a.lv})을(를) 길드에 영입했다.`, 'good');
   changed();
   return '';
 }
@@ -224,14 +224,14 @@ function fire(id) {
   const a = advById(id);
   if (!a || a.status !== 'idle') return '대기 중인 모험가만 내보낼 수 있어요.';
   if (a.inj) return '다친 모험가를 내보낼 수는 없어요. 다 나을 때까지 돌봐 주세요.';
-  leave(a, '상단을 떠났다.');
+  leave(a, '길드를 떠났다.');
   changed();
   return '';
 }
 
 /* ───────── 파티 ───────── */
 function createParty() {
-  if (regularParties().length >= partyMax()) return partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? `파티는 ${partyMax()}개까지예요.` : `지금 상단 랭크에서는 파티를 ${partyMax()}개까지 만들 수 있어요.`;
+  if (regularParties().length >= partyMax()) return partyMax() >= PARTY_MAX[PARTY_MAX.length - 1] ? `파티는 ${partyMax()}개까지예요.` : `지금 길드 랭크에서는 파티를 ${partyMax()}개까지 만들 수 있어요.`;
   let n = 1;
   while (S.parties.some(p => p.name === `${n}팀`)) n++;
   const p = newParty(`${n}팀`, []);
@@ -277,7 +277,7 @@ function equip(aid, gid) {
   if (slot === 'weapon' && twoHand(g) && a.eq.off && a.eq.weapon && !roomGear()) return WH_FULL;   // 두 손 무기: 무기와 부장비가 함께 창고로
   S.gear.splice(i, 1);
   if (a.eq[slot]) S.gear.push(a.eq[slot]);
-  a.eq[slot] = g; if (isAmmo(g)) g.n = null;   // 상단에서 끼우면 가득
+  a.eq[slot] = g; if (isAmmo(g)) g.n = null;   // 길드에서 끼우면 가득
   if (slot === 'weapon') dropOffFor(a);
   clampVitals(a); changed();
   return '';
@@ -483,7 +483,7 @@ function skillUpWhy(a, id) {
   const s = SKILLS[id]; if (!a || !s) return '';
   if (!S.bld.training) return '훈련소가 필요해요';
   if (!a.skills.includes(id)) return '배운 스킬만';
-  if (a.status !== 'idle') return '상단에 있을 때만';
+  if (a.status !== 'idle') return '길드에 있을 때만';
   const lv = skLv(a, id);
   if (lv >= SK_LV_MAX) return `최고 단계(Lv${SK_LV_MAX})예요`;
   if (skillNeedsBook(id) && !((S.inv['book_' + id] || 0) > 0)) return `스킬북 「${s.name}」이 한 권 더 필요해요`;
@@ -529,7 +529,7 @@ function mastWhy(a, k) {
   if (!S.bld.training) return '훈련소가 필요해요';
   if (a.lv < T.lv) return `${T.name}은 Lv${T.lv}부터`;
   if (jobTier(a.cls) < T.job) return `${T.name}은 ${T.job}차 전직 뒤에`;
-  if (a.status !== 'idle') return '상단에 있을 때만';
+  if (a.status !== 'idle') return '길드에 있을 때만';
   if (S.gold < T.fee) return `${fmt(T.fee)}G가 필요해요`;
   return '';
 }
@@ -693,7 +693,7 @@ const guildRate = () => GUILD_RATE + (spn('guild') >= 1 ? 0.1 : 0) + 0.02 * (S.r
 function autoSellRun(who) {
   const A = S.autoSell || {}; let total = 0, n = 0;
   for (const k in A) { if (!ITEMS[k] || A[k] == null) continue; const q = (S.inv[k] || 0) - A[k]; if (q > 0) { const g = Math.round(ITEMS[k].v * guildRate() * q); addTo(S.inv, k, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g; total += g; n += q; } }
-  if (n) { log(`자동 판매: 부속품 ${n}개를 모험가 길드에 ${g$(total)}에 팔았다.`); S.stats.autoG = (S.stats.autoG || 0) + total; }
+  if (n) { log(`자동 판매: 부속품 ${n}개를 모험가 협회에 ${g$(total)}에 팔았다.`); S.stats.autoG = (S.stats.autoG || 0) + total; }
 }
 function sellGuild(it, q) {
   q = Math.min(q, S.inv[it] || 0);
@@ -758,8 +758,8 @@ function craft(i) {
 function upgrade(bid) {
   const B = BUILDINGS[bid], lv = S.bld[bid];
   if (lv >= B.max) return '더 올릴 수 없어요.';
-  if (!lv && (S.rank || 0) < (BUILD_RANK[bid] || 0)) return `상단이 ${RANKS[BUILD_RANK[bid]].name}랭크가 되어야 지을 수 있어요.`;
-  if (bid === 'farm' && lv && (S.rank || 0) < FARM.rank[lv]) return `상단이 ${RANKS[FARM.rank[lv]].name}랭크가 되어야 재배소 ${lv + 1}동을 지을 수 있어요.`;
+  if (!lv && (S.rank || 0) < (BUILD_RANK[bid] || 0)) return `길드가 ${RANKS[BUILD_RANK[bid]].name}랭크가 되어야 지을 수 있어요.`;
+  if (bid === 'farm' && lv && (S.rank || 0) < FARM.rank[lv]) return `길드가 ${RANKS[FARM.rank[lv]].name}랭크가 되어야 재배소 ${lv + 1}동을 지을 수 있어요.`;
   const cost = B.cost[lv];
   if (S.gold < cost) return '돈이 모자라요.';
   S.gold -= cost; S.bld[bid] = lv + 1;
@@ -821,7 +821,7 @@ function autoFulfill() {
   return n;
 }
 
-/* ───────── 상단 랭크 ───────── */
+/* ───────── 길드 랭크 ───────── */
 const partyMax = () => PARTY_MAX[Math.min(S.rank || 0, PARTY_MAX.length - 1)];
 function rankReqs(r = S.rank || 0) {
   const R = RANK_UP[r];
@@ -829,7 +829,7 @@ function rankReqs(r = S.rank || 0) {
   const fs = S.fields[R.dungeon], licN = S.advs.filter(a => (a.rank || 0) >= R.lic[0]).length;
   return [
     { label: `${FIELDS[R.dungeon].dungeon.name} 공략`, ok: !!fs.cleared, cur: fs.cleared ? 1 : 0, need: 1, flag: 1 },
-    { label: '상단 명성', ok: S.fame >= R.fame, cur: S.fame, need: R.fame },
+    { label: '길드 명성', ok: S.fame >= R.fame, cur: S.fame, need: R.fame },
     { label: '끝낸 의뢰', ok: (S.stats.reqs || 0) >= R.reqs, cur: S.stats.reqs || 0, need: R.reqs },
     { label: '누적 판매액', ok: (S.stats.soldG || 0) >= R.sold, cur: S.stats.soldG || 0, need: R.sold, gold: 1 },
     { label: '소속 모험가', ok: living().length >= R.advs, cur: living().length, need: R.advs },
@@ -843,7 +843,7 @@ function rankUp() {
   const R = RANKS[S.rank], fame = 5 * S.rank;
   S.fame += fame;
   log(`${S.company}이(가) ${R.name}랭크 「${R.title}」(으)로 올라섰다! 명성 +${fame}`, 'good');
-  queueModal({ title: `상단 랭크 ${R.name}`, body: [`상인 조합 심사를 통과했다. 이제 ${S.company}은(는) ${R.name}랭크 「${R.title}」이다. 명성 +${fame}`].concat(rankGifts(S.rank).map(g => '· ' + g)) });
+  queueModal({ title: `길드 랭크 ${R.name}`, body: [`모험가 협회 심사를 통과했다. 이제 ${S.company}은(는) ${R.name}랭크 「${R.title}」이다. 명성 +${fame}`].concat(rankGifts(S.rank).map(g => '· ' + g)) });
   changed();
   return '';
 }
@@ -853,7 +853,7 @@ const licNext = a => LICENSE_UP[a.rank || 0] || null;
 function licenseUp(aid) {
   const a = advById(aid), L = a && licNext(a);
   if (!a || !L) return '';
-  if (a.status !== 'idle') return '상단에 있을 때만 심사를 받을 수 있어요.';
+  if (a.status !== 'idle') return '길드에 있을 때만 심사를 받을 수 있어요.';
   const miss = licReqs(a).find(r => !r.ok);
   if (miss) return `${miss.label} ${miss.need} 이상이어야 해요. (지금 ${miss.cur})`;
   if (S.gold < L.fee) return '심사비가 모자라요.';
@@ -863,10 +863,10 @@ function licenseUp(aid) {
   const N = LICENSE[a.rank];
   if (a.rank >= LICENSE.length - 1) {
     S.fame += 15;
-    log(`${a.name}이(가) 백금 라이선스를 받았다! 상단 명성 +15`, 'good');
+    log(`${a.name}이(가) 백금 라이선스를 받았다! 길드 명성 +15`, 'good');
     HOOKS.toast(`${a.name} · 백금 라이선스`);
   } else {
-    log(`${a.name}이(가) 모험가 길드 심사를 통과해 ${N.name} 라이선스를 받았다.`, 'good');
+    log(`${a.name}이(가) 모험가 협회 심사를 통과해 ${N.name} 라이선스를 받았다.`, 'good');
     HOOKS.toast(`${a.name} · ${N.name} 라이선스`);
   }
   changed();
@@ -883,7 +883,7 @@ function promoWhy(a, cls) {
   if (a.lv < Math.max(Q.lv, R.lv || 0)) return `Lv${Math.max(Q.lv, R.lv || 0)}부터`;
   const rw = jobReqWhy(a, cls); if (rw) return rw;
   if ((a.rank || 0) < Q.rank) return `${LICENSE[Q.rank].name} 라이선스 필요`;
-  if (a.status !== 'idle' || a.inj) return '상단에서 쉬고 있을 때만';
+  if (a.status !== 'idle' || a.inj) return '길드에서 쉬고 있을 때만';
   if (S.gold < Q.fee) return '돈이 모자라요';
   if (Q.souls && soulCount() < Q.souls) return `주인의 혼 ${Q.souls}개 필요 (지금 ${soulCount()})`;   // 빌드 64: 3차 전직
   if (Q.item && (S.inv[Q.item[0]] || 0) < Q.item[1]) return `${ITEMS[Q.item[0]].name} ${Q.item[1]}개 필요`;   // 빌드 65: 4차 전직 (별의 정원 주인의 핵)
@@ -970,8 +970,8 @@ function kingArrive(forId, days) {
   const order = pick.map(it => ({ it, n: Math.max(1, Math.round(Math.min(40, Math.max(2, 700 / ITEMS[it].v)) * (1 + fv * 0.2))), got: 0 }));
   S.king.visit = { k: id, until: today() + (days || 3), order, m: FAVOR[fv].m, earned: 0, goods: kingGoods(D).map(o => Object.assign(o, { price: Math.round(o.price * festBuyMul(id)) })) };
   log(`${D.name}의 상단이 오물거리를 찾아왔다. 사흘 동안 물건을 사 간다.`, 'good');
-  HOOKS.toast(`${D.name} 상단 방문 · 상단 창의 교역에서 팔 수 있어요`);
-  queueModal({ title: `${D.name} 상단 방문`, body: [D.desc, `이번에 사 가려는 것: ${order.map(o => `${ITEMS[o.it].name} ${o.n}개`).join(', ')}. 기준가의 ${Math.round(FAVOR[fv].m * 100)}%를 쳐준다.`, '사흘 안에 상단 창의 「왕국 교역」에서 팔 수 있다. 주문을 다 채우면 왕국과 더 가까워진다.'] });
+  HOOKS.toast(`${D.name} 상단 방문 · 길드 창의 교역에서 팔 수 있어요`);
+  queueModal({ title: `${D.name} 상단 방문`, body: [D.desc, `이번에 사 가려는 것: ${order.map(o => `${ITEMS[o.it].name} ${o.n}개`).join(', ')}. 기준가의 ${Math.round(FAVOR[fv].m * 100)}%를 쳐준다.`, '사흘 안에 길드 창의 「왕국 교역」에서 팔 수 있다. 주문을 다 채우면 왕국과 더 가까워진다.'] });
   changed();
 }
 function kingSell(it) {
@@ -1018,7 +1018,7 @@ function raidMonth(fresh) {
   S.raid = { list: [newRaid(a), newRaid(b)], from: today() };
   const names = S.raid.list.map(r => `${RAIDS[r.id].name}(Lv${RAIDS[r.id].lv})`).join('와(과) ');
   log(`이번 달 레이드: ${names}`, 'good');
-  if (!fresh) queueModal({ title: '이번 달 레이드', body: [`${names} 레이드가 열렸다.`, '다른 상단과 왕국 원정대가 함께 몬스터를 두드린다. 쓰러뜨리면 피해를 많이 준 순서대로 보상을 받고, 달이 바뀔 때까지 못 쓰러뜨리면 몬스터가 떠나 보상이 절반이 된다.', `원정대 창의 「레이드」 탭에서 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내자.`] });   // 빌드 69
+  if (!fresh) queueModal({ title: '이번 달 레이드', body: [`${names} 레이드가 열렸다.`, '다른 길드와 왕국 원정대가 함께 몬스터를 두드린다. 쓰러뜨리면 피해를 많이 준 순서대로 보상을 받고, 달이 바뀔 때까지 못 쓰러뜨리면 몬스터가 떠나 보상이 절반이 된다.', `원정대 창의 「레이드」 탭에서 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내자.`] });   // 빌드 69
 }
 const raidStand = rec => rec.rivals.map(r => ({ n: r.n, d: r.d, c: r.c })).concat([{ n: S.company, d: rec.me, me: 1 }]).sort((x, y) => y.d - x.d);
 const raidTier = L => GTIERS.reduce((m, T, i) => (T.lv <= L ? i : m), 0);
@@ -1036,7 +1036,7 @@ function raidReward(rec, i, half) {
   const ri4 = Math.min(i, 3), bn = STONE_DROP.bloomstone.raidN[ri4], bq = half ? Math.floor(bn / 2) : bn;
   if (bq > 0) { stashItem('bloomstone', bq); got.push(`개화석 ${bq}개`); }
   if (rnd() < STONE_DROP.wizstone.raidP[ri4] * k) { stashItem('wizstone', 1); got.push('마법사의 돌'); }
-  return `우리 상단 ${i + 1}위! 보상: ${got.join(', ')}`;
+  return `우리 길드 ${i + 1}위! 보상: ${got.join(', ')}`;
 }
 function raidEnd(rec, how) {
   if (rec.done) return;
@@ -1046,8 +1046,8 @@ function raidEnd(rec, how) {
   rec.final = st.map(x => ({ n: x.n, d: Math.round(x.d), me: x.me ? 1 : 0 }));
   const body = [how === 'kill' ? `${R.name}이(가) 쓰러졌다!` : `달이 바뀌자 ${R.name}이(가) 모습을 감췄다. 보상은 절반이다.`,
     '순위 · ' + st.slice(0, 6).map((x, i) => `${i + 1}. ${x.n} ${Math.round(x.d).toLocaleString('ko-KR')}`).join(' · ')];
-  body.push(rec.me > 0 ? raidReward(rec, my, how !== 'kill') : '우리 상단은 이번 레이드에 나서지 않았다.');
-  log(`${R.name} 레이드가 끝났다.${rec.rank ? ` 우리 상단 ${rec.rank}위.` : ''}`, rec.rank ? 'good' : '');
+  body.push(rec.me > 0 ? raidReward(rec, my, how !== 'kill') : '우리 길드는 이번 레이드에 나서지 않았다.');
+  log(`${R.name} 레이드가 끝났다.${rec.rank ? ` 우리 길드 ${rec.rank}위.` : ''}`, rec.rank ? 'good' : '');
   queueModal({ title: `레이드 종료 · ${R.name}`, body });
   changed();
 }
@@ -1134,10 +1134,10 @@ function settle() {
     a.unpaid = (a.unpaid || 0) + 1;
     if (a.unpaid < 2) { warned.push(a.name); return; }
     gone.push(a.name);
-    if (a.status === 'idle') leave(a, '두 달째 봉급을 받지 못해 상단을 떠났다.'); else a.quit = true;
+    if (a.status === 'idle') leave(a, '두 달째 봉급을 받지 못해 길드를 떠났다.'); else a.quit = true;
   });
   if (warned.length) lines.push(`${warned.join(', ')}에게 봉급을 주지 못했다. 다음 달에도 밀리면 떠난다.`);
-  if (gone.length) lines.push(`두 달째 봉급을 못 받은 ${gone.join(', ')}은(는) 상단을 떠난다. 원정 중이면 돌아온 뒤에 떠난다.`);
+  if (gone.length) lines.push(`두 달째 봉급을 못 받은 ${gone.join(', ')}은(는) 길드를 떠난다. 원정 중이면 돌아온 뒤에 떠난다.`);
   S.salesLast = S.salesM || 0; S.salesM = 0;   // 빌드 69: 상점 판매액은 달마다 새로 센다
   if (!S.flags.guildHQ) lines.push(`다음 달 자릿세는 ${g$(rentBase())}에 그달 상점 판매액의 ${S.flags.guildDown ? '1.5%' : '3%'}를 더한 값이다.${S.flags.guildDown ? ' 지하미궁 통로의 길드 본부를 토벌하면 자릿세가 끝난다.' : ''}`);
   if (S.bld.temple) { blessRoll(); lines.push(`신전: 이번 달에는 「${BLESSINGS[S.bless.id].name}」. ${BLESSINGS[S.bless.id].desc}`); }
@@ -1236,7 +1236,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); concept70(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1252,6 +1252,7 @@ function loadFrom(v) {
     heal69();                     // 빌드 69 회복 개편: 이제 못 배우는 응급 처치 · 치유의 찬가 · 재기를 지우고 스킬북 · 수업료를 돌려준다 (불러올 때마다)
     raid69();                     // 빌드 69 레이드 개편: 레이드대를 풀고(원정 중이면 돌아온 뒤) 레이드를 목적지로 둔 파티는 평원으로 (불러올 때마다)
     sal69();                      // 빌드 69: 봉급을 지금 레벨 · 차수 · 라이선스로 다시 매긴다 (불러올 때마다)
+    concept70();                  // 빌드 70 미궁도시 개편 첫 단계: 길드 이름 꼬리 · 경쟁 길드 이름 · 성문 방어전 없앰 (불러올 때마다)
     slot69();                     // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
@@ -1308,7 +1309,7 @@ function loadFrom(v) {
     notes63();
     notes63b();
     notes63c();
-    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70();
+    notes64(); notes65(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); notes70b();
     return true;
   } catch (_) { return false; }
 }
@@ -1386,7 +1387,7 @@ function migrate11() {
   delete S.bank;
   S.v = 11;
   if (!lv && !dep && !loan) return;
-  const body = ['상단 본부를 새로 꾸미면서 은행을 닫았다.'];
+  const body = ['길드 본부를 새로 꾸미면서 은행을 닫았다.'];
   if (refund) body.push(`은행을 지은 값 ${fmt(refund)}G를 돌려받았다.`);
   if (loan) body.push(`빌려준 돈의 원금 ${fmt(loan)}G를 돌려받았다. (이자는 없음)`);
   if (dep) body.push(`맡아 둔 예금의 원금 ${fmt(dep)}G를 주인들에게 돌려주었다.${before + refund + loan < dep ? ' 돈이 모자라 가진 돈을 모두 내주었다.' : ''}`);
@@ -1690,7 +1691,7 @@ function raid69() {
 function sal69() {
   if (!S || !S.advs) return;
   const first = !S.flags.v69c, before = first ? S.advs.filter(a => a.status !== 'dead').reduce((s, a) => s + (a.salary || 0), 0) : 0;
-  if (first) S.advs.concat(S.cands || []).forEach(a => { if (a && a.salK == null && a.bio && a.bio.startsWith('모험가 길드가 보낸 견습생')) a.salK = 0.5; });
+  if (first) S.advs.concat(S.cands || []).forEach(a => { if (a && a.salK == null && a.bio && (a.bio.startsWith('모험가 협회가 보낸 견습생') || a.bio.startsWith('모험가 협회가 보낸 견습생'))) a.salK = 0.5; });
   S.advs.forEach(salaryNew); (S.cands || []).forEach(a => { salaryNew(a); if (a.fee) a.fee = a.salary; });
   if (first) SAL69R = { before, after: payroll(), n: living().length };
 }
@@ -1731,6 +1732,29 @@ function notes69d() {
 }
 function notes69e() { if (!S.flags.v69e) { S.flags.v69e = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '능력치 상한 · 몬스터 강화', body: STORY.v69e }); } }   // 빌드 69 (11-14 12:18 — data-cap69.js · data-monup69.js)
 function notes69g() { if (!S.flags.v69g) { S.flags.v69g = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '흡혈 그릇 · 걷는 길 세 배', body: STORY.v69g }); } }   // 빌드 69 (11-15 12:03): data-stat69.js
+// 빌드 70 미궁도시 개편 첫 단계 (11-18 13:04 사용자): 플레이어는 상단이 아니라 모험가 길드 — 이름 끝 「상단」을 「길드」로(한 번만), 경쟁 · 투기장 상대 이름의 「상단」도, 성문 방어전 없앰
+let C70 = null;
+function concept70() {
+  const sw = n => (typeof n === 'string' && /\s?상단$/.test(n) ? n.replace(/(\s?)상단$/, '$1길드') : n);
+  if (!S.flags.c70 && S.company && sw(S.company) !== S.company) { C70 = C70 || {}; C70.from = S.company; S.company = sw(S.company); C70.to = S.company; }
+  S.flags.c70 = 1;
+  if (S.league && Array.isArray(S.league.rivals)) S.league.rivals.forEach(r => { if (r) r.n = sw(r.n); });
+  const A = S.under && S.under.arena; if (A && A.season && Array.isArray(A.season.rivals)) A.season.rivals.forEach(r => { if (r) r.name = sw(r.name); });
+  if (A && Array.isArray(A.opps)) A.opps.forEach(o => { if (o) o.name = sw(o.name); });
+  if (S.raid && Array.isArray(S.raid.list)) S.raid.list.forEach(rec => { if (rec && Array.isArray(rec.rivals)) rec.rivals.forEach(r => { if (r) r.n = sw(r.n); }); });
+  const w = typeof waveRetire === 'function' ? waveRetire() : 0;
+  if (w) { C70 = C70 || {}; C70.wave = w; }
+}
+function notes70b() {
+  const first = !S.flags.v70b;
+  if (first) S.flags.v70b = 1;
+  const extra = [];
+  if (C70 && C70.to) extra.push(`길드 이름 끝의 「상단」도 「길드」로 바꾸었다: ${C70.from} → ${C70.to}.`);
+  if (C70 && C70.wave) extra.push('지도에 떠 있던 몬스터 웨이브를 치웠다.' + (C70.wave.party ? ' 성문에 나가 있던 파티는 싸움 없이 그대로 돌아온다.' : ''));
+  if (first && (today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '미궁도시 하르겐 · 모험가 길드', body: STORY.v70b.concat(extra) });
+  else if (extra.length) log(extra.join(' '));
+  C70 = null;
+}
 function notes70() {   // 빌드 70: 하르겐 지하 3구역 · 지하미궁 통로 · 암살자 길드 지부 / 본부 (data-under70.js)
   if (S.flags.v70) return;
   S.flags.v70 = 1;
@@ -1751,7 +1775,7 @@ function notes65() {   // 빌드 65: 세트 효과 없앰 · 전사 방어구(�
 }
 function notes64() { if (!S.flags.v64) { S.flags.v64 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전사 장비 개편 · 룬 개편 · 전직 레벨', body: STORY.v64 }); } }
 function notes63() { if (!S.flags.v63) { S.flags.v63 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투 개편 · 몬스터 스킬 · 새 상태이상', body: STORY.v63 }); } }
-function notes62() { if (!S.flags.v62) { S.flags.v62 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '상단 본부 새 단장 · 선술집', body: STORY.v62 }); } }
+function notes62() { if (!S.flags.v62) { S.flags.v62 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '길드 본부 새 단장 · 선술집', body: STORY.v62 }); } }
 function notes61() { if (!S.flags.v61) { S.flags.v61 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '뇌수 · 폭풍 골렘 새 그림', body: STORY.v61 }); } }
 function notes60() { if (!S.flags.v60) { S.flags.v60 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '천둥 봉우리 몬스터 새 그림', body: STORY.v60 }); } }
 function notes59() { if (!S.flags.v59) { S.flags.v59 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '구름섬 몬스터 새 그림', body: STORY.v59 }); } }
@@ -1818,7 +1842,7 @@ function notes29() { if (!S.flags.v29) { S.flags.v29 = 1; if (today() > 1 || S.a
 function notes28() { if (!S.flags.v28) { S.flags.v28 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '개화석·레이드 탭·왕국 마차', body: STORY.v28 }); } }
 function notes25() { if (!S.flags.v25) { S.flags.v25 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '원정대 탭·대형·마부·정찰가', body: STORY.v25 }); } }
 function notes23() { if (!S.flags.v23) { S.flags.v23 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬 레벨·업적·전투 통계', body: STORY.v23 }); } }
-function notes22() { if (!S.flags.v22) { S.flags.v22 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투와 길드 심사가 바뀌었어요', body: STORY.v22 }); } }
+function notes22() { if (!S.flags.v22) { S.flags.v22 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투와 협회 심사가 바뀌었어요', body: STORY.v22 }); } }
 // v0.6: 본부 화면 안내 (한 번만)
 function notes6() { if (!S.flags.v06) { S.flags.v06 = 1; S.modals.push({ title: 'v0.6 업데이트', body: STORY.v06 }); } }
 function resetGame() { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} S = null; }

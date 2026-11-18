@@ -36,7 +36,7 @@ def shot(b, variant, dp, name):
     pg = ctx.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.add_init_script(f"window.HQD = {json.dumps(variant)};")
     pg.goto(URL); pg.wait_for_timeout(800)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
     for _ in range(20):
         if pg.evaluate(f"() => !!localStorage.getItem('{KEY}')"): break
         pg.wait_for_timeout(250)

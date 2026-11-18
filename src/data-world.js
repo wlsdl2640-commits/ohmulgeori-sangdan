@@ -3,7 +3,7 @@
 const KINGDOMS = {
   inglisia: { name: '잉그리시아 왕국', race: '인간', c: '#3f6aa8', c2: '#e8c060', need: null,
     wants: ['wolf_pelt', 'wolf_fang', 'iron_ore', 'lizard_scale', 'kobold_pick', 'golem_core', 'yeti_fur', 'griffon_claw', 'rh_kaishar', 'rh_tempest'],
-    desc: '파로스 제국 서쪽의 기사 왕국. 군대에 쓸 가죽과 철을 대량으로 사들인다.' },
+    desc: '파로스 왕국 서쪽의 기사 왕국. 군대에 쓸 가죽과 철을 대량으로 사들인다.' },
   frama: { name: '프라마 왕국', race: '인간', c: '#a8432f', c2: '#f4f0e0', need: null,
     wants: ['rabbit_horn', 'shaman_feather', 'harpy_feather', 'spider_silk', 'maiden_veil', 'sand_silk', 'ratking_crown', 'giant_gem', 'worm_pearl', 'rh_kingslime', 'rh_griffon'],
     desc: '남쪽 바다의 상업 왕국. 사치품과 보석에 돈을 아끼지 않는다.' },
@@ -21,7 +21,7 @@ const KINGDOM_IDS = Object.keys(KINGDOMS);
 const FAVOR = [{ at: 0, name: '경계', m: 1.35 }, { at: 30, name: '보통', m: 1.5 }, { at: 70, name: '우호', m: 1.65 }, { at: 130, name: '동맹', m: 1.85 }];
 const favorTier = f => FAVOR.reduce((t, x, i) => (f >= x.at ? i : t), 0);
 
-// 초대형 레이드: 달마다 둘이 열리고, 다른 상단과 왕국 원정대가 함께 겨룬다
+// 초대형 레이드: 달마다 둘이 열리고, 다른 길드와 왕국 원정대가 함께 겨룬다
 const RAIDS = {
   kingslime: { name: '킹슬라임', lv: 30, mon: 'kingslime', bg: 'plains', hp: 2.0e6,
     part: ['킹슬라임 왕관 젤리', 600], heart: ['킹슬라임의 심장', 4000], c: '#5ab0f0',
@@ -50,9 +50,9 @@ RAID_IDS.forEach(id => {
 });
 // 신성 장비에는 장비 단계에 맞는 레이드 부속품이 든다
 const RAID_FOR_TIER = ['kingslime', 'kingslime', 'kaishar', 'griffon', 'tempest', 'behemoth'];
-// 함께 겨루는 다른 상단과 왕국 원정대
+// 함께 겨루는 다른 길드와 왕국 원정대
 const RIVALS = [
-  { name: '황금사자 상단', c: '#f0c24a' }, { name: '푸른 돛 상단', c: '#4a8ad8' }, { name: '검은 늪 상단', c: '#5a6a4a' },
+  { name: '황금사자 길드', c: '#f0c24a' }, { name: '푸른 돛 길드', c: '#4a8ad8' }, { name: '검은 늪 길드', c: '#5a6a4a' },
   { name: '잉그리시아 왕립 원정대', c: '#3f6aa8', k: 'inglisia' }, { name: '프라마 용병단', c: '#a8432f', k: 'frama' },
   { name: '실바레아 순찰대', c: '#3f8a4a', k: 'elves' }, { name: '브론하임 철벽대', c: '#7a5a3a', k: 'dwarves' }
 ];

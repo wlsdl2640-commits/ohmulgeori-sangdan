@@ -137,7 +137,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   const F = e && FIELDS[e.field];
   const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg === 'forest' && e.stage > 20 ? 'primeval' : F.bg) : 'front';
   const bg = getBg(id), oy = bg.tall ? 0 : BG_OY;
-  // 옆으로 흐르는 풍경: 간 거리만큼 (상단 앞은 멈춰 있다)
+  // 옆으로 흐르는 풍경: 간 거리만큼 (길드 앞은 멈춰 있다)
   if (e) { const target = routePos(e) * 1.6; if (Math.abs(target - V.scroll) > 200) V.scroll = target; else V.scroll += (target - V.scroll) * 0.2; } else V.scroll = 0;
   w.clearRect(0, 0, AW, AH);
   // 옛 240×128 풍경을 무대 아래쪽에 붙이고, 위는 하늘로 잇는다 (키 큰 풍경은 무대 전체)
@@ -211,7 +211,7 @@ function glows(g, lights, dark) {
   g.restore();
 }
 
-/* ───────── 상단 앞 (원정 중이 아닐 때): 입구 앞에 선 파티, 거리를 오가는 사람들 ───────── */
+/* ───────── 길드 앞 (원정 중이 아닐 때): 입구 앞에 선 파티, 거리를 오가는 사람들 ───────── */
 const TOWNSFOLK = [
   { cls: 'porter', look: { hair: '#5a3a22', skin: '#e0ac7e' }, id: 1, sp: 14, off: 0, dir: 1 },
   { cls: 'cleric', look: { hair: '#c9a04a', skin: '#f1c9a5' }, id: 2, sp: 11, off: 150, dir: -1 },
@@ -225,7 +225,7 @@ function frontSlots(n) {
   for (let i = 0; i < front; i++) out.push([Math.round(120 + (i - (front - 1) / 2) * 44 + (front === back ? 22 : 0)), 191]);
   return out;
 }
-/* ───────── 왕국 상단의 마차: 방문하는 동안 상단 앞 오른쪽에 서 있고, 올 때 굴러 들어오고 갈 때 굴러 나간다 ───────── */
+/* ───────── 왕국 상단의 마차: 방문하는 동안 길드 앞 오른쪽에 서 있고, 올 때 굴러 들어오고 갈 때 굴러 나간다 ───────── */
 const COACH_PARK = 166;   // 서 있을 때 마차 몸통 왼쪽 끝 x (말은 그 왼쪽, 문 앞을 가리지 않게)
 const COACH_RUN = 3.2;    // 들어오고 나가는 데 걸리는 시간(초)
 function coachState(t) {
@@ -307,7 +307,7 @@ function townScene(w, t, p, lights, post, dark) {
   });
   const coach = coachState(t);   // 왕국 상단의 마차 (파티 뒤)
   if (coach) drawCoach(w, coach.x, 181, t, KINGDOMS[coach.k], coach.moving, lights, dark);
-  if (p && p.wagon) { const q2 = rig2Live(p); if (q2) drawRig(w, -6, 178, t, q2, false, 1); drawRig(w, 30, 182, t, p, false, 1); }   // 상단 앞에 세워 둔 이 파티의 마차 (빌드 65: 둘째 마차는 그 뒤)
+  if (p && p.wagon) { const q2 = rig2Live(p); if (q2) drawRig(w, -6, 178, t, q2, false, 1); drawRig(w, 30, 182, t, p, false, 1); }   // 길드 앞에 세워 둔 이 파티의 마차 (빌드 65: 둘째 마차는 그 뒤)
   let list = p ? teamOf(p) : [];
   if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6);
   list = list.slice(0, 6);
@@ -1142,7 +1142,7 @@ function logEvent(x, e, p) {
   if (x.type === 'camp') return add(x.tent ? '텐트를 치고 쉬어 갑니다. 피로가 빨리 풀립니다.' : '모닥불을 피우고 쉬어 갑니다.', 'dim');
   if (x.type === 'wake') return add('다시 길을 나섭니다.', 'dim');
   if (x.type === 'enter') return add(`${esc(FIELDS[e.field].dungeon.name)}에 들어섰습니다.`, 'warn');
-  if (x.type === 'turn') return add('상단으로 발길을 돌립니다.', 'dim');
+  if (x.type === 'turn') return add('길드로 발길을 돌립니다.', 'dim');
 }
 
 /* 날씨와 생물 (빛을 입힌 뒤에 그린다) */
@@ -1161,7 +1161,7 @@ function showBattle(on) {
 function renderBattle() {
   if (!V.bopen || !S) return;
   const p = viewParty(), e = p && p.exp;
-  $('bw-title').textContent = p ? `${p.name} · ${e ? whereStr(e) : '상단 앞'}` : '원정';
+  $('bw-title').textContent = p ? `${p.name} · ${e ? whereStr(e) : '길드 앞'}` : '원정';
   $('bw-st').textContent = !p ? '' : e ? expStatus(p) : p.members.length ? '대기 중 · 원정 메뉴에서 출발' : '파티원이 없어요';
   const k = e ? (e.stage - 1 + e.pos / STAGE_LEN) / (e.area === 'dungeon' ? DUNGEON_FLOORS : FIELD_STAGES) : 0;
   $('bw-prog').style.width = Math.round(Math.max(0, Math.min(1, k)) * 100) + '%';

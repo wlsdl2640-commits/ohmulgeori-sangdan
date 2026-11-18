@@ -95,7 +95,7 @@ Object.assign(ACT, {
   tradego: d => { const p = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly); if (!p) { say('쉬고 있는 파티가 없어요.'); return; } p.dest = 'trade_' + d.k; UI.destTab = 'trade'; UI.expTab = p.id; openWin('exp'); }
 });
 
-/* ───────── 눈에 보이는 마차: 원정 화면에서 파티 뒤를 따라오고, 상단 앞에는 세워 둔다 ───────── */
+/* ───────── 눈에 보이는 마차: 원정 화면에서 파티 뒤를 따라오고, 길드 앞에는 세워 둔다 ───────── */
 // X: 마차 몸통 가운데, gy: 땅. 앞(dir 쪽)에 말·펫이 서서 끈다. 비행 마차는 떠서 날고 그림자만 땅에 진다.
 function rigAnimalId(p) { const h = horseOf(p); if (!h) return null; if (h.petId) { const pet = petById(h.petId); return pet ? petLook(pet) : null; } return 'horse_' + h.id; }
 function drawRig(g, X, gy, t, p, moving, dir) {

@@ -9,7 +9,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=dpr)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + HOOK); pg.wait_for_timeout(700)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200)
     EV = lambda js: pg.evaluate("s => window.__EV(s)", js)
     EV("S.modals = []; closeModal(); S.rank = 5; ['forest','mountain','valley','snow','desert','grave','volcano','roots','swamp','barren'].forEach(f => { S.fields[f].best = 10; }); S.fields.plains.found = true; S.fields.forest.cleared = true; S.unlocked = ALL_FIELDS.slice(); 1")
     if url: pg.evaluate("u => window.__EV('MAP_CV = ' + JSON.stringify(u) + '; 1')", url)

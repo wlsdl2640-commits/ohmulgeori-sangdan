@@ -37,7 +37,7 @@ function farmPlant(hi, i, k) {
   H.plots[i] = { k, at: S.t, ready: S.t + farmDays(k) * DAY_SEC };
   changed(); return '';
 }
-// 거두기: 하급 3 · 중급 2 ~ 3 · 최상급 1 ~ 2 · 채소 3 ~ 5 (상단에 둔 약초 펫만큼 더) · 「거두면 다시 심기」면 하나를 다시 심는다
+// 거두기: 하급 3 · 중급 2 ~ 3 · 최상급 1 ~ 2 · 채소 3 ~ 5 (길드에 둔 약초 펫만큼 더) · 「거두면 다시 심기」면 하나를 다시 심는다
 function farmHarvest(hi, i, quiet) {
   const F = farmState(), H = F.houses[hi], P = H && H.plots[i];
   if (!farmIsReady(P)) return '';
@@ -304,7 +304,7 @@ BLD_BOX.farm = () => {
     <div class="sec"><b>심을 것</b><span>모종 = 창고의 그 약초 · 채소 하나${sel != null ? ` · 밭 ${sel + 1}에` : ''}</span></div>
     <div class="tabs inv"><button type="button" class="tab${tab === 'herb' ? ' on' : ''}" data-act="farmtab" data-id="herb">약초</button><button type="button" class="tab${tab === 'veg' ? ' on' : ''}" data-act="farmtab" data-id="veg">채소</button></div>
     <div class="igrid">${pick}</div>
-    <div class="sub muted">약초: 하급 1일 → 3개 · 중급 2일 → 2~3개 (동 Lv2) · 최상급 4일 → 1~2개 (동 Lv3) · 채소: 하르겐 1일 · 왕국 특산 2일 → 3~5개${ph ? ` · 상단에 둔 약초 펫: 수확 +${Math.round(ph * 100)}%` : ''}. 중급 · 최상급 약초는 상점에서 팔지 않아요 — 필드에서 드물게 주운 것을 길러 늘려요.</div>
+    <div class="sub muted">약초: 하급 1일 → 3개 · 중급 2일 → 2~3개 (동 Lv2) · 최상급 4일 → 1~2개 (동 Lv3) · 채소: 하르겐 1일 · 왕국 특산 2일 → 3~5개${ph ? ` · 길드에 둔 약초 펫: 수확 +${Math.round(ph * 100)}%` : ''}. 중급 · 최상급 약초는 상점에서 팔지 않아요 — 필드에서 드물게 주운 것을 길러 늘려요.</div>
     <details class="card"><summary class="sec"><b>모종 사기</b><span>하르겐 시장 · 히포크리초</span></summary><div class="list">${shop}</div><div class="sub muted">왕국 특산 채소는 그 나라 상단이 찾아올 때 팔아요.</div></details>`;
 };
 Object.assign(ACT, {

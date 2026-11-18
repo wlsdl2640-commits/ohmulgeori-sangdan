@@ -1,8 +1,8 @@
-/* ───────── 지도 이벤트: 하르겐 몬스터 웨이브 방어전 · 왕국 축제 · 떠돌이 상인 ─────────
+/* ───────── 지도 이벤트: 왕국 축제 · 떠돌이 상인 · 몬스터 둥지 (하르겐 몬스터 웨이브 방어전은 빌드 70에서 없앴다 — 옛 저장용 길만 남음) ─────────
    S.events = [{ id, type: 'wave'|'fest'|'merchant', ... }], S.evNext = { wave, fest, merchant } (다음에 뜨는 날) */
 const EV_GAP = { wave: [9, 14], fest: [10, 16], merchant: [6, 10], nest: [7, 12] };
 const WAVE_FIELD = 'wave';
-FIELDS[WAVE_FIELD] = { no: 0, name: '하르겐 성문', lv: 1, bg: 'front', tier: 0, mons: [], raid: 1, dungeon: null, next: null, event: 1, desc: '제도 하르겐의 성문 앞. 몰려오는 몬스터를 막는다.' };
+FIELDS[WAVE_FIELD] = { no: 0, name: '하르겐 성문', lv: 1, bg: 'front', tier: 0, mons: [], raid: 1, dungeon: null, next: null, event: 1, desc: '미궁도시 하르겐의 성문 앞. 몰려오는 몬스터를 막는다.' };
 Object.assign(WIN_TITLE, { merchant: '떠돌이 상인' });
 function evState() { if (!S.events) S.events = []; if (!S.evNext) S.evNext = {}; return S.events; }
 const evOf = id => evState().find(x => x.id === id);
@@ -15,26 +15,33 @@ function eventsDay(k) {
   if ((S.rank || 0) < 1) return;
   // 끝난 것 치우기
   for (const ev0 of E) {
-    if (ev0.type === 'wave' && !ev0.done && k >= ev0.arrive && !ev0.party) waveFail(ev0, '막는 파티가 없어');
     if ((ev0.type === 'fest' || ev0.type === 'merchant') && k >= ev0.end) ev0.done = 1;
     if (ev0.type === 'nest' && !ev0.done && k >= ev0.end) { ev0.done = 1; log(`${FIELDS[ev0.at].name}의 몬스터 둥지가 흩어졌다. (${ev0.got}/${ev0.need})`); }
   }
   S.events = E.filter(x => !x.done || (x.type === 'wave' && k < x.arrive + 2));
-  for (const type of ['wave', 'fest', 'merchant', 'nest']) {
+  for (const type of ['fest', 'merchant', 'nest']) {   // 빌드 70 (11-18 13:03 사용자 「그건 이제 필요없어」): 웨이브(성문 방어전)는 더 뜨지 않는다
     if (N[type] == null) N[type] = k + ri(2, EV_GAP[type][1]);
     if (k < N[type] || evActive(type).length) continue;
     const made = type === 'wave' ? newWave(k) : type === 'fest' ? newFest(k) : type === 'nest' ? newNest(k) : newMerchant(k);
     if (made) { if (!S.events.includes(made)) S.events.push(made); N[type] = k + ri(EV_GAP[type][0], EV_GAP[type][1]); }
   }
 }
-/* 몬스터 웨이브: 열린 필드 하나에서 몬스터가 하르겐으로 몰려온다 */
+/* 빌드 70: 성문 방어전 없앰 — 옛 저장의 웨이브 이벤트를 치우고, 성문에 나가 있던 파티는 싸움 없이 그대로 돌아오게 한다 (불러올 때마다 · 남은 게 없으면 아무것도 안 함) */
+function waveRetire() {
+  const r = { ev: 0, party: 0 };
+  if (S.events) { const k0 = S.events.length; S.events = S.events.filter(x => x.type !== 'wave'); r.ev = k0 - S.events.length; }
+  if (S.evNext) delete S.evNext.wave;
+  for (const p of S.parties || []) { const e = p.exp; if (e && e.area === 'wave' && !e.done) { e.done = 1; e.mode = 'return'; e.why = 'wave'; e.foes = []; e.cd = {}; e.buffs = []; e.taunt = null; r.party++; } }
+  return r.ev || r.party ? r : null;
+}
+/* 몬스터 웨이브(빌드 70부터 뜨지 않음): 열린 필드 하나에서 몬스터가 하르겐으로 몰려온다 */
 function newWave(k) {
   const pool = TIER_FIELDS.filter(f => isUnlocked(f) && FIELDS[f].mons.length);
   if (!pool.length) return null;
   const from = pickOne(pool), F = FIELDS[from], n = 3 + Math.min(2, Math.floor(F.tier / 2));
   const ev0 = { id: nid(), type: 'wave', from, born: k, arrive: k + ri(3, 5), n, lv: F.lv + 8, party: null, done: 0 };
   log(`${F.name} 쪽에서 몬스터 떼가 하르겐으로 몰려온다! ${ev0.arrive - k}일 뒤 성문에 닿는다. 지도에서 방어전 파티를 보내자.`, 'warn');
-  queueModal({ title: '몬스터 웨이브', body: [`${F.name}의 몬스터들이 떼를 지어 제도 하르겐으로 몰려오고 있다. 성문에 닿기까지 ${ev0.arrive - k}일.`, `모험가 길드가 상단에 방어를 청했다. 지도에서 웨이브를 누르고 파티를 보내면 성문 앞에서 ${n}차례 밀려오는 몬스터를 막는다(Lv${ev0.lv}쯤, 마지막엔 우두머리).`, '막으면 명성과 상금, 전리품을 얻는다. 막지 못하거나 내버려 두면 도시가 어지러워져 사흘 동안 손님이 줄고 명성이 깎인다.'] });
+  queueModal({ title: '몬스터 웨이브', body: [`${F.name}의 몬스터들이 떼를 지어 미궁도시 하르겐으로 몰려오고 있다. 성문에 닿기까지 ${ev0.arrive - k}일.`, `모험가 협회가 길드에 방어를 청했다. 지도에서 웨이브를 누르고 파티를 보내면 성문 앞에서 ${n}차례 밀려오는 몬스터를 막는다(Lv${ev0.lv}쯤, 마지막엔 우두머리).`, '막으면 명성과 상금, 전리품을 얻는다. 막지 못하거나 내버려 두면 도시가 어지러워져 사흘 동안 손님이 줄고 명성이 깎인다.'] });
   return ev0;
 }
 function waveReward(ev0) { const F = FIELDS[ev0.from]; return { gold: Math.round((F.lv * 60 + 800) * ev0.n / 3 / 10) * 10, fame: 15 + F.tier * 5 }; }
@@ -99,7 +106,7 @@ function waveEnd(p, e, win) {
     S.stats.waves = (S.stats.waves || 0) + 1;
     log(`${p.name}이(가) 하르겐 성문에서 ${F.name}의 몬스터 웨이브를 모두 막아 냈다! 상금 ${g$(R.gold)}, 명성 +${R.fame}`, 'good');
     HOOKS.toast(`방어전 승리 · ${g$(R.gold)} · 명성 +${R.fame}`);
-    queueModal({ title: '방어전 승리', body: [`${p.name}이(가) 성문 앞에서 ${e.wave.n}차례 밀려온 몬스터를 모두 쓰러뜨렸다. 시민들이 환호한다.`, `모험가 길드의 상금 ${g$(R.gold)}과 명성 +${R.fame}. 전리품은 창고로.`] });
+    queueModal({ title: '방어전 승리', body: [`${p.name}이(가) 성문 앞에서 ${e.wave.n}차례 밀려온 몬스터를 모두 쓰러뜨렸다. 시민들이 환호한다.`, `모험가 협회의 상금 ${g$(R.gold)}과 명성 +${R.fame}. 전리품은 창고로.`] });
   } else if (ev0 && !ev0.done) waveFail(ev0, `${p.name}이(가) 밀려나`);
   ev(e, 'arena', { win: win ? 1 : 0 });
   e.done = 1; e.mode = 'return'; e.why = 'wave'; e.foes = []; e.cd = {}; e.buffs = []; e.taunt = null;
@@ -122,7 +129,7 @@ function newFest(k) {
   const open = KINGDOM_IDS.filter(kingOpen); if (!open.length) return null;
   const kid = pickOne(open), D = KINGDOMS[kid], ev0 = { id: nid(), type: 'fest', k: kid, born: k, end: k + 3, done: 0 };
   log(`${D.name}에서 축제가 열렸다! 사흘 동안 ${D.name} 상단이 물건을 두 배로 쳐주고, 가져온 물건은 30% 싸다.`, 'good');
-  queueModal({ title: `${D.name} 축제`, body: [`${D.name}의 축제 기간이다. 축제에 쓸 물건을 구하러 상단이 찾아왔다.`, `사흘 동안 ${D.name} 상단이 사 가는 값이 두 배, 가져온 물건과 그 나라 전용 물건은 30% 싸다. 상단 창의 왕국 교역에서 거래하자.`] });
+  queueModal({ title: `${D.name} 축제`, body: [`${D.name}의 축제 기간이다. 축제에 쓸 물건을 구하러 상단이 찾아왔다.`, `사흘 동안 ${D.name} 상단이 사 가는 값이 두 배, 가져온 물건과 그 나라 전용 물건은 30% 싸다. 길드 창의 왕국 교역에서 거래하자.`] });
   S.events.push(ev0);
   if (!S.king.visit || S.king.visit.k !== kid) { S.king.visit = null; kingArriveFor(kid, 3); }
   else S.king.visit.until = Math.max(S.king.visit.until, k + 3);
@@ -164,7 +171,7 @@ function newNest(k) {
   const ev0 = { id: nid(), type: 'nest', at, born: k, end: k + NEST.days, need: NEST.need, got: 0, done: 0 };
   log(`${F.name}에 몬스터 둥지가 생겼다! ${NEST.days}일 동안 둥지 몬스터(강하고 전리품 두 배)가 섞여 나온다. ${NEST.need}마리 잡으면 둥지를 치운 보상을 받는다.`, 'warn');
   HOOKS.toast(`몬스터 둥지 · ${F.name} · ${NEST.days}일`);
-  queueModal({ title: '몬스터 둥지', body: [`${F.name}에 몬스터 둥지가 생겼다. ${NEST.days}일 동안 그 필드에서 둥지 몬스터가 섞여 나온다. 보통 개체보다 체력 ${Math.round((NEST.hp - 1) * 100)}%·공격 ${Math.round((NEST.atk - 1) * 100)}% 강하고, 전리품을 두 배로 떨어뜨린다.`, `둥지 몬스터를 ${NEST.need}마리 잡으면 둥지를 치운 것으로 보고 모험가 길드가 상금과 명성, 그리고 그 필드의 알을 준다. 원정대 창에서 ${F.name}(으)로 파티를 보내자.`] });
+  queueModal({ title: '몬스터 둥지', body: [`${F.name}에 몬스터 둥지가 생겼다. ${NEST.days}일 동안 그 필드에서 둥지 몬스터가 섞여 나온다. 보통 개체보다 체력 ${Math.round((NEST.hp - 1) * 100)}%·공격 ${Math.round((NEST.atk - 1) * 100)}% 강하고, 전리품을 두 배로 떨어뜨린다.`, `둥지 몬스터를 ${NEST.need}마리 잡으면 둥지를 치운 것으로 보고 모험가 협회가 상금과 명성, 그리고 그 필드의 알을 준다. 원정대 창에서 ${F.name}(으)로 파티를 보내자.`] });
   return ev0;
 }
 function nestReward(ev0) { const F = FIELDS[ev0.at]; return { gold: Math.round((F.lv * 90 + 1200) / 10) * 10, fame: 12 + F.tier * 3 }; }
@@ -180,7 +187,7 @@ function nestKill(p, e, f) {
   teamOf(p).filter(a => !a.down).forEach(a => { a.pf = (a.pf || 0) + 4; });
   log(`${p.name}이(가) ${F.name}의 몬스터 둥지를 치웠다! 상금 ${g$(R.gold)}, 명성 +${R.fame}${egg ? `, ${ITEMS[egg].name}` : ''}`, 'good');
   HOOKS.toast(`둥지 소탕 · ${g$(R.gold)} · 명성 +${R.fame}`);
-  queueModal({ title: '둥지 소탕', body: [`${p.name}이(가) ${F.name}의 둥지 몬스터 ${ev0.need}마리를 잡아 둥지를 치웠다.`, `모험가 길드의 상금 ${g$(R.gold)}과 명성 +${R.fame}${egg ? `. 둥지에서 ${ITEMS[egg].name}을(를) 찾아 창고에 넣었다` : ''}.`] });
+  queueModal({ title: '둥지 소탕', body: [`${p.name}이(가) ${F.name}의 둥지 몬스터 ${ev0.need}마리를 잡아 둥지를 치웠다.`, `모험가 협회의 상금 ${g$(R.gold)}과 명성 +${R.fame}${egg ? `. 둥지에서 ${ITEMS[egg].name}을(를) 찾아 창고에 넣었다` : ''}.`] });
 }
 /* 지도 노드와 카드 */
 function eventNodes(sel) {
@@ -211,7 +218,7 @@ function eventCard(id) {
   }
   if (ev0.type === 'fest') {
     const D = KINGDOMS[ev0.k], v = S.king && S.king.visit && S.king.visit.k === ev0.k;
-    return `<div class="card hl"><div class="h">${D.name} 축제 <small>D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">축제 동안 ${D.name} 상단이 사 가는 값이 <b>두 배</b>, 가져온 물건과 스킬북은 <b>30% 할인</b>.</div><div class="sub muted">${v ? '지금 상단이 와 있어요 · 상단 창 → 왕국 교역' : '상단이 곧 찾아와요'}</div></div><button type="button" class="btn gold block" data-act="sub" data-id="co_king">왕국 교역 열기</button>`;
+    return `<div class="card hl"><div class="h">${D.name} 축제 <small>D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">축제 동안 ${D.name} 상단이 사 가는 값이 <b>두 배</b>, 가져온 물건과 스킬북은 <b>30% 할인</b>.</div><div class="sub muted">${v ? '지금 상단이 와 있어요 · 길드 창 → 왕국 교역' : '상단이 곧 찾아와요'}</div></div><button type="button" class="btn gold block" data-act="sub" data-id="co_king">왕국 교역 열기</button>`;
   }
   const rows = ev0.stock.map((o, i) => `<div class="li">${iconImg(o.it)}<div class="grow stack"><span>${ITEMS[o.it].name} <span class="muted">· 남은 ${o.n}</span></span><span class="sub">${ITEMS[o.it].desc || ''}${EXCL[o.it] ? `<br><span class="gold-t">전용 · ${exclEffText(o.it)}</span>` : ''}</span></div><button type="button" class="btn sm gold" data-act="merbuy" data-id="${ev0.id}" data-i="${i}"${o.n > 0 && S.gold >= o.price ? '' : ' disabled'}>${fmt(o.price)}G</button></div>`).join('');
   return `<div class="card hl"><div class="h">떠돌이 상인 <small>${FIELDS[ev0.at].name} 근처 · D-${Math.max(0, ev0.end - k)}</small></div><div class="sub">"어디서도 못 구하는 것들이지. 값은 좀 나가네." 알, 룬, 약초와 떠돌이 상인 전용 물건(나침반 · 은화)을 판다.</div></div><div class="list">${rows}</div>`;

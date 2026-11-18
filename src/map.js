@@ -23,7 +23,7 @@ const SKY_MAP_W = 240, SKY_MAP_H = 150;
 const MAP_NODES_SKY = { sky: { x: 118, y: 84, dun: [26, -14] }, thunder: { x: 196, y: 44, dun: [18, -16] }, ruins: { x: 198, y: 118, dun: [-22, -6] }, stargarden: { x: 50, y: 40, dun: [20, -14] } };
 const MAP_KINGS = { inglisia: { x: 22, y: 134 }, frama: { x: 58, y: 186 }, elves: { x: 24, y: 48 }, dwarves: { x: 128, y: 26 }, sarak: { x: 226, y: 178 } };
 const MAP_ORGS = {
-  city:   { x: 120, y: 148, name: '제도 하르겐 · 모험가 길드', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
+  city:   { x: 120, y: 148, name: '미궁도시 하르겐 · 모험가 협회', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
   guild:  { x: 150, y: 192, name: '암살자 길드', c: '#3a3040', c2: '#e04a4a', mark: 'A' }
 };
 // 레이드 몬스터가 나타나는 자리 (그 필드 근처)
@@ -131,7 +131,7 @@ function mapDetail() {
   if (sel.k === 'raid') { fid = 'raid_' + sel.id; F = FIELDS[fid]; const R = RAIDS[sel.id], r = raidRec(sel.id); title = `레이드 · ${R.name}`; sub = `Lv${R.lv} · 남은 HP ${pct(r.hp, r.max)}% · ${R.desc}`; }
   else { F = FIELDS[fid]; const fs = S.fields[fid]; const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length; title = dungeon ? F.dungeon.name : F.name; sub = dungeon ? `${fs.cleared ? '공략 완료 · 다시 들어가면 주인이 기다린다' : '한 번만 공략할 수 있다'} · 몬스터 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)}, 주인 Lv${dungeonBossLv(F)}` : F.raid ? '암살자 길드 지부 토벌 · Lv28+ 권장' : `Lv${F.lv}~${fieldLv(F, FIELD_STAGES)} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`} · ${F.desc}`; }
   const ok = isUnlocked(fid);
-  const why = !ok ? (F.unlock || (F.giant ? '이번 달에는 열리지 않은 레이드' : `상단 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열려요`)) : '';
+  const why = !ok ? (F.unlock || (F.giant ? '이번 달에는 열리지 않은 레이드' : `길드 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열려요`)) : '';
   const note = ok && F.region === 'sky' ? '비행 마차에 그리핀·와이번·페가수스를 맨 파티만 갈 수 있어요. 비행장 창에서도 보낼 수 있어요.' : '';
   const mons = !F.giant && F.mons.length ? `<div class="sub muted">몬스터: ${(dungeon ? F.dungeon.mons : F.mons).map(id => MONS[id].name).join(', ')}${dungeon ? ` · 주인 ${MONS[F.dungeon.boss].name}` : F.bosses ? ` · 우두머리 ${F.bosses.map(id => MONS[id].name).filter((v, i, a) => a.indexOf(v) === i).join(', ')}` : ''}</div>` : '';
   return `<div class="card hl"><div class="h">${esc(title)}</div><div class="sub">${sub}</div>${mons}</div>
@@ -143,7 +143,7 @@ function talkCard(id) {
   const f = K ? favorOf(id) : 0, t = K ? favorTier(f) : 0;
   const v = S.king && S.king.visit && S.king.visit.k === id;
   const q = K ? kqOf(id) : null, nq = K ? kqNext(id) : null;
-  return `<div class="card hl"><div class="row"><img class="emb" src="${emblemURL(id, 1)}" alt=""><div class="grow"><div class="h">${esc(name)}</div><div class="sub">${K ? `${K.race} · ${FAVOR[t].name} (호감 ${Math.round(f)})${v ? ' · <span class="gold-t">상단 방문 중</span>' : ''}` : id === 'city' ? '제국의 수도. 모험가 길드와 상단 길드가 있다.' : '지하수로의 주인. 7번가의 자릿세를 받는다.'}</div></div></div>
+  return `<div class="card hl"><div class="row"><img class="emb" src="${emblemURL(id, 1)}" alt=""><div class="grow"><div class="h">${esc(name)}</div><div class="sub">${K ? `${K.race} · ${FAVOR[t].name} (호감 ${Math.round(f)})${v ? ' · <span class="gold-t">상단 방문 중</span>' : ''}` : id === 'city' ? '파로스 왕국의 수도이자 미궁도시. 모험가 협회와 상인 조합이 있다.' : '지하수로의 주인. 7번가의 자릿세를 받는다.'}</div></div></div>
     ${K ? `<div class="sub">${K.desc}</div>` : ''}
     ${K && !open ? `<div class="sub muted">${FIELDS[K.need] ? FIELDS[K.need].name + '이(가) 열리면 찾아와요.' : ''}</div>` : ''}
     ${K && q ? `<div class="sub">의뢰 진행: ${kqText(q)} <b class="num">${kqProgress(id)}</b></div>` : K && nq ? `<div class="sub muted">받을 수 있는 의뢰가 있어요.</div>` : K ? '<div class="sub ok-t">모든 의뢰를 마쳤어요.</div>' : ''}
@@ -161,10 +161,10 @@ PANELS.map = () => {
 // 이야기 창: 문장과 초상, 선택지
 function talkLines(id) {
   const K = KINGDOMS[id];
-  if (!K) return id === 'city' ? ['"어서 오시오, 상단 주인. 모험가 길드는 라이선스 심사와 명예의 벽을 맡고 있소."', '"라이선스는 모험가 창에서, 3차 직업의 끝에 선 이는 각성으로 용사가 될 수 있다오."'] : ['"……자릿세는 달마다. 토벌하고 싶으면 뒷골목으로 오시오."', '"투기장과 암시장도 우리 손안이지. 코인은 흘러 흘러 결국 이리 온다."'];
+  if (!K) return id === 'city' ? ['"어서 오시오, 길드장. 모험가 협회는 라이선스 심사와 명예의 벽을 맡고 있소."', '"라이선스는 모험가 창에서, 3차 직업의 끝에 선 이는 각성으로 용사가 될 수 있다오."'] : ['"……자릿세는 달마다. 토벌하고 싶으면 뒷골목으로 오시오."', '"투기장과 암시장도 우리 손안이지. 코인은 흘러 흘러 결국 이리 온다."'];
   const t = favorTier(favorOf(id));
   const greet = { inglisia: ['"기사 왕국 잉그리시아의 사절이오."', '"군대는 가죽과 철을 먹고 자라지. 좋은 물건이면 값은 치르겠소."'], frama: ['"프라마의 상인이라오. 남쪽 바다에서 왔소."', '"보석, 비단, 깃털. 반짝이는 것이라면 뭐든."'], elves: ['"실바레아의 순찰자다. 세계수가 그대를 지켜보고 있다."', '"숲의 재료는 숲으로 돌아와야 한다. 값은 넉넉히 주지."'], dwarves: ['"브론하임의 대장장이다. 광석 냄새가 나는군."', '"핵과 광석이라면 자루째 사겠다. 술도 한잔하고."'], sarak: ['"사라크의 상인이오. 모래바다 너머에서."', '"진귀한 것엔 값을 따지지 않소. 술탄의 이름으로."'] }[id];
-  const mood = t >= 3 ? '"동맹의 벗이여, 무엇이든 말하시오."' : t >= 2 ? '"그대 상단은 믿을 만하지."' : t >= 1 ? '"거래는 거래. 서로 손해는 보지 맙시다."' : '"……아직 그대를 잘 모르오. 지켜보겠소."';
+  const mood = t >= 3 ? '"동맹의 벗이여, 무엇이든 말하시오."' : t >= 2 ? '"그대 길드는 믿을 만하지."' : t >= 1 ? '"거래는 거래. 서로 손해는 보지 맙시다."' : '"……아직 그대를 잘 모르오. 지켜보겠소."';
   return greet.concat([mood]);
 }
 PANELS.talk = w => {
@@ -175,7 +175,7 @@ PANELS.talk = w => {
     : w.mode === 'quest' ? ['"지금은 부탁할 일이 없소. 고맙소."'] : talkLines(id);
   const btns = w.mode === 'quest'
     ? (q ? (kqReady(id) ? `<button type="button" class="btn gold" data-act="kqdone" data-id="${id}">납품하기</button>` : `<button type="button" class="btn" data-act="talkmode" data-id="${id}" data-m="">알겠소</button>`) : nq ? `<button type="button" class="btn gold" data-act="kqok" data-id="${id}">수락</button><button type="button" class="btn" data-act="talkmode" data-id="${id}" data-m="">나중에</button>` : `<button type="button" class="btn" data-act="talkmode" data-id="${id}" data-m="">알겠소</button>`)
-    : `${K ? `<button type="button" class="btn gold" data-act="talkmode" data-id="${id}" data-m="quest">의뢰${q ? ' (진행 중)' : nq ? '' : ' (없음)'}</button>` : ''}${K ? `<button type="button" class="btn" data-act="${v ? 'sub' : 'talknote'}" data-id="${v ? 'co_king' : id}">거래${v ? '' : ' (방문 중 아님)'}</button>` : ''}${id === 'guild' ? `<button type="button" class="btn" data-act="sub" data-id="ag">길드 본부</button>` : ''}${id === 'city' ? `<button type="button" class="btn" data-act="sub" data-id="co_rank">상단 랭크</button>` : ''}<button type="button" class="btn" data-act="back">돌아가기</button>`;
+    : `${K ? `<button type="button" class="btn gold" data-act="talkmode" data-id="${id}" data-m="quest">의뢰${q ? ' (진행 중)' : nq ? '' : ' (없음)'}</button>` : ''}${K ? `<button type="button" class="btn" data-act="${v ? 'sub' : 'talknote'}" data-id="${v ? 'co_king' : id}">거래${v ? '' : ' (방문 중 아님)'}</button>` : ''}${id === 'guild' ? `<button type="button" class="btn" data-act="sub" data-id="ag">길드 본부</button>` : ''}${id === 'city' ? `<button type="button" class="btn" data-act="sub" data-id="co_rank">길드 랭크</button>` : ''}<button type="button" class="btn" data-act="back">돌아가기</button>`;
   return `<div class="talk"><div class="talk-top"><div class="talk-por"><img src="${envoyBust(id)}" alt=""></div><div class="grow"><img class="emb big" src="${emblemURL(id, 1)}" alt=""><div class="h">${esc(name)}</div>${K ? `<div class="sub">${K.race} · ${FAVOR[favorTier(favorOf(id))].name}</div>` : ''}</div></div>
     <div class="talk-box">${lines.map(l => `<p>${esc(l)}</p>`).join('')}</div>
     <div class="btns talk-btns">${btns}</div></div>`;
@@ -198,7 +198,7 @@ Object.assign(ACT, {
     const p = S.parties.find(x => !x.exp && !x.raidOnly); if (p && isUnlocked(d.f)) { p.dest = d.f; if (d.d === '1') { const cps = checkpoints(d.f); p.start = cps[cps.length - 1]; p.dmode = 'enter'; } UI.expTab = p.id; } UI.destTab = DEMON_IDS.includes(d.f) ? 'demon' : FIELDS[d.f] && FIELDS[d.f].region === 'sky' ? 'sky' : 'base'; menuOpen('exp'); },
   talk: d => openWin('talk', { who: d.id, mode: '' }),
   talkmode: d => { const top = winTop(); if (top && top.id === 'talk') { top.mode = d.m; renderPanel(true); } },
-  talknote: () => say('지금은 그 왕국 상단이 와 있지 않아요. 찾아오면 지도나 상단 창의 교역에서 거래해요.'),
+  talknote: () => say('지금은 그 왕국 상단이 와 있지 않아요. 찾아오면 지도나 길드 창의 교역에서 거래해요.'),
   kqok: d => { say(kqAccept(d.id)); const top = winTop(); if (top) top.mode = 'quest'; renderPanel(true); },
   kqdone: d => { say(kqTurnIn(d.id)); const top = winTop(); if (top) top.mode = ''; renderPanel(true); },
   back: () => backWin()

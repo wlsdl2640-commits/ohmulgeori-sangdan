@@ -138,17 +138,17 @@ KINGDOMS.dwarves.wants.push('gargoyle_shard', 'imp_horn', 'ogre_crown');
 KINGDOMS.sarak.wants.push('hound_fang', 'evil_eye', 'dracula_cape');
 
 STORY.demon = [
-  '사막 왕릉의 거대 샌드웜이 쓰러진 날, 상단 앞에 검은 깃털이 떨어졌다.',
+  '사막 왕릉의 거대 샌드웜이 쓰러진 날, 길드 앞에 검은 깃털이 떨어졌다.',
   '남쪽 바다 건너, 지도 끝에 「마계」라 적힌 땅이 있다. 늪지대·메마른 땅·백작의 성. 마족과 흡혈귀가 다스리는 곳이다.',
   '원정대 창의 목적지에서 「마계」를 고를 수 있다. 눅눅한 늪지대부터 시작한다.'
 ];
-STORY.swamp = ['늪지의 마녀가 가마솥 안으로 사라졌다. 늪의 안개가 걷히자 메마른 땅으로 가는 길이 드러났다.', '가마솥 바닥에는 마녀가 끓이던 약의 비법이 눌어붙어 있었다. 상단의 물약이 더 잘 듣게 되었다.'];
+STORY.swamp = ['늪지의 마녀가 가마솥 안으로 사라졌다. 늪의 안개가 걷히자 메마른 땅으로 가는 길이 드러났다.', '가마솥 바닥에는 마녀가 끓이던 약의 비법이 눌어붙어 있었다. 길드의 물약이 더 잘 듣게 되었다.'];
 STORY.barren = ['키메라가 연구소와 함께 무너졌다. 재가 날리는 땅 끝에 검은 성이 보인다.', '연구소에서 꺼낸 키메라의 심장은 아직 뛰고 있었다. 모험가들의 몸이 조금 더 튼튼해졌다.'];
-STORY.castle = ['리치 킹이 성물함과 함께 부서졌다. 백작의 성에 아침 햇살이 들었다.', '성물함의 조각은 모험가들에게 죽은 자의 기억을 속삭인다. 싸울 때마다 더 많이 배운다.', '마계 세 땅이 모두 조용해졌다. 제국 사람들은 이제 7번가 입구의 상단을 「마계를 연 상단」이라 부른다.'];
+STORY.castle = ['리치 킹이 성물함과 함께 부서졌다. 백작의 성에 아침 햇살이 들었다.', '성물함의 조각은 모험가들에게 죽은 자의 기억을 속삭인다. 싸울 때마다 더 많이 배운다.', '마계 세 땅이 모두 조용해졌다. 왕국 사람들은 이제 7번가 입구의 길드를 「마계를 연 길드」라 부른다.'];
 
 /* ───────── 전직 조건: 계열마다 맨 앞 2차 직업은 레벨만, 나머지는 저마다 추가 조건 ─────────
-   req: lv(최소 레벨) · fame(상단 명성) · item([부속품, 개수], 전직 때 씀) · itemAny([머리글자, 개수], 어느 단계든) · kills(그 모험가의 처치 수)
-        dexFull(도감 완전 기록 몬스터 수) · bld(시설) · arenaWins(투기장 승리) · relics(유물 수) · cleared(공략한 던전 수) · tkills([몬스터 타입, 수], 상단 도감 기준 처치 수) */
+   req: lv(최소 레벨) · fame(길드 명성) · item([부속품, 개수], 전직 때 씀) · itemAny([머리글자, 개수], 어느 단계든) · kills(그 모험가의 처치 수)
+        dexFull(도감 완전 기록 몬스터 수) · bld(시설) · arenaWins(투기장 승리) · relics(유물 수) · cleared(공략한 던전 수) · tkills([몬스터 타입, 수], 길드 도감 기준 처치 수) */
 CLASSES.gladiator.req = { lv: 30 };
 CLASSES.knight.req = { lv: 30, fame: 1000 };
 CLASSES.berserker.req = { item: ['blood_tear', 1] };
@@ -161,16 +161,16 @@ CLASSES.duelist.req = { arenaWins: 10 };
 CLASSES.treasure.req = { relics: 1 };
 CLASSES.plaguedoc.req = { bld: 'temple' };
 CLASSES.exorcist.req = { cleared: 1 };
-CLASSES.coachman.req = { wagon: 1 };   // 상단에 말이 끄는 마차(짐수레 이상) 한 대
+CLASSES.coachman.req = { wagon: 1 };   // 길드에 말이 끄는 마차(짐수레 이상) 한 대
 CLASSES.scout.req = { trips: 20 };     // 본인 원정 20회
-CLASSES.huntsman.req = { tkills: ['beast', 400] };       // 상단 도감 기준 짐승 처치
-CLASSES.elemancer.req = { tkills: ['elemental', 120] };  // 상단 도감 기준 원소 처치
+CLASSES.huntsman.req = { tkills: ['beast', 400] };       // 길드 도감 기준 짐승 처치
+CLASSES.elemancer.req = { tkills: ['elemental', 120] };  // 길드 도감 기준 원소 처치
 const REQ_NAME = { itemAny: { soul_: '던전 주인의 혼(어느 단계든)' } };
 function jobReqText(c) {
   const R = CLASSES[c] && CLASSES[c].req; if (!R) return '';
   const out = [];
   if (R.lv) out.push(`Lv${R.lv}`);
-  if (R.fame) out.push(`상단 명성 ${fmt(R.fame)}`);
+  if (R.fame) out.push(`길드 명성 ${fmt(R.fame)}`);
   if (R.arena) out.push(`투기장 랭킹 ${fmt(GLADIATOR_SCORE)}점`);
   if (R.item) out.push(`${ITEMS[R.item[0]].name} ${R.item[1]}개`);
   if (R.itemAny) out.push(`${REQ_NAME.itemAny[R.itemAny[0]] || R.itemAny[0]} ${R.itemAny[1]}개`);
@@ -182,7 +182,7 @@ function jobReqText(c) {
   if (R.cleared) out.push(`던전 공략 ${R.cleared}곳`);
   if (R.wagon) out.push('말이 끄는 마차(짐수레 이상) 보유');
   if (R.trips) out.push(`본인 원정 ${R.trips}회`);
-  if (R.tkills) out.push(`${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 (상단 도감)`);
+  if (R.tkills) out.push(`${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 (길드 도감)`);
   if (R.petWolf) out.push(`늑대 펫 Lv${R.petWolf} 하나 (전직할 때 탈것으로 데려간다)`);
   if (R.petWyv) out.push(`와이번 펫 Lv${R.petWyv} 하나 (전직할 때 탈것으로 데려간다)`);
   if (R.petSea) out.push(`해룡 펫 Lv${R.petSea} 하나 (전직할 때 탈것으로 데려간다 — 모습 그대로)`);
@@ -192,7 +192,7 @@ function jobReqText(c) {
 function jobReqWhy(a, c) {
   const R = CLASSES[c] && CLASSES[c].req; if (!R) return '';
   if (R.arena && arenaScore() < GLADIATOR_SCORE) return `투기장 랭킹 점수 ${fmt(GLADIATOR_SCORE)} 필요 (지금 ${fmt(arenaScore())})`;
-  if (R.fame && S.fame < R.fame) return `상단 명성 ${fmt(R.fame)} 필요 (지금 ${fmt(S.fame)})`;
+  if (R.fame && S.fame < R.fame) return `길드 명성 ${fmt(R.fame)} 필요 (지금 ${fmt(S.fame)})`;
   if (R.item && (S.inv[R.item[0]] || 0) < R.item[1]) return `${ITEMS[R.item[0]].name} ${R.item[1]}개 필요 (창고 ${S.inv[R.item[0]] || 0})`;
   if (R.itemAny) { const n = Object.keys(S.inv).filter(k => k.startsWith(R.itemAny[0])).reduce((t, k) => t + (S.inv[k] || 0), 0); if (n < R.itemAny[1]) return `${REQ_NAME.itemAny[R.itemAny[0]] || R.itemAny[0]} ${R.itemAny[1]}개 필요 (창고 ${n})`; }
   if (R.kills && (a.kills || 0) < R.kills) return `본인 처치 ${fmt(R.kills)}마리 필요 (지금 ${fmt(a.kills || 0)})`;
@@ -203,9 +203,9 @@ function jobReqWhy(a, c) {
   if (R.cleared) { const n = TIER_FIELDS.filter(f => S.fields[f] && S.fields[f].cleared).length; if (n < R.cleared) return `던전 공략 ${R.cleared}곳 필요 (지금 ${n}곳)`; }
   if (R.wagon && !S.parties.some(p => p.wagon && WAGONS[p.wagon] && WAGONS[p.wagon].horse)) return '말이 끄는 마차(짐수레 이상)가 있는 파티가 필요해요';
   if (R.trips && (a.trips || 0) < R.trips) return `본인 원정 ${R.trips}회 필요 (지금 ${a.trips || 0}회)`;
-  if (R.tkills) { const n = typeKills(R.tkills[0]); if (n < R.tkills[1]) return `${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 필요 (상단 도감 ${fmt(n)}마리)`; }
-  if (R.petWolf && !wolfMount(R.petWolf)) return `늑대 펫 Lv${R.petWolf} 이상이 상단에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
-  if (R.petWyv && !wyvMount(R.petWyv)) return `와이번 펫 Lv${R.petWyv} 이상이 상단에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
-  if (R.petSea && !seaMount(R.petSea)) return `해룡 펫 Lv${R.petSea} 이상이 상단에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
+  if (R.tkills) { const n = typeKills(R.tkills[0]); if (n < R.tkills[1]) return `${MTYPES[R.tkills[0]].name} 처치 ${fmt(R.tkills[1])}마리 필요 (길드 도감 ${fmt(n)}마리)`; }
+  if (R.petWolf && !wolfMount(R.petWolf)) return `늑대 펫 Lv${R.petWolf} 이상이 길드에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
+  if (R.petWyv && !wyvMount(R.petWyv)) return `와이번 펫 Lv${R.petWyv} 이상이 길드에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
+  if (R.petSea && !seaMount(R.petSea)) return `해룡 펫 Lv${R.petSea} 이상이 길드에 있어야 해요 (파티 · 마차에 매지 않은 것)`;
   return '';
 }

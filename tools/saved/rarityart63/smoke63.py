@@ -19,7 +19,7 @@ with sync_playwright() as pw:
     b = pw.chromium.launch(); pg = b.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=1)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto(URL); pg.wait_for_timeout(900)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1300); skip(pg)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1300); skip(pg)
     for _ in range(20):
         if pg.evaluate(f"() => !!localStorage.getItem('{KEY}')"): break
         pg.wait_for_timeout(300)

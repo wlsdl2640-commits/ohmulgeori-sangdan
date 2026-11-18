@@ -1,6 +1,6 @@
-/* ───────── 빌드 30: 마구간 · 도서관 · 비행장 · 상단 랭킹 · 변경·하늘 지도 그림 ─────────
+/* ───────── 빌드 30: 마구간 · 도서관 · 비행장 · 길드 랭킹 · 변경·하늘 지도 그림 ─────────
    데이터는 data-sky.js, 몬스터 그림은 pxmon3.js, 풍경은 sky.js. 희귀종·둥지·보물 던전의 전투 쪽은 core.js/events.js. */
-Object.assign(WIN_TITLE, { co_league: '상단 랭킹' });
+Object.assign(WIN_TITLE, { co_league: '길드 랭킹' });
 const FLOOR_TXT = {
   stable: () => `말 ${stableHorses().length}/${stableCap()}마리 · 마차 ${S.parties.filter(p => p.wagon).length}대`,
   library: () => `양피지 ${S.inv.parchment || 0} · 먹물 ${S.inv.ink || 0} · 펼칠 스킬북 ${TIER_BOOK_IDS.reduce((n, k) => n + (S.inv[k] || 0), 0)}권`,   // 빌드 63: 스킬북 단계
@@ -199,7 +199,7 @@ BLD_BOX.airfield = () => {
     <div class="sub muted">하늘 지도는 지도 창의 「${SKY_NAME}」 탭에서 봐요. 구름섬 너머로 천둥 봉우리(Lv120) → 천계의 유적 폐허(Lv130) → 별의 정원(Lv140)이 이어지고, 앞 섬의 던전을 공략하면 다음 섬이 열려요.</div>`;
 };
 
-/* ───────── 상단 랭킹: 달마다 이웃 상단들과 겨룬다 ─────────
+/* ───────── 길드 랭킹: 달마다 이웃 길드들과 겨룬다 ─────────
    점수 = 번 돈/50 + 명성 ×15 + 던전 공략 ×400 + 희귀종 ×100 + 보물 던전 ×150 + 둥지 ×120 (이달에 쌓은 만큼). 정산 때 등수 보상 */
 function leagueState() {
   if (!S.league || S.league.month !== S.settleDay) leagueNew();
@@ -217,7 +217,7 @@ function leagueScore() {
 }
 const leagueStand = () => leagueState().rivals.map(r => ({ n: r.n, s: Math.round(r.s), c: r.c })).concat([{ n: S.company, s: leagueScore(), me: 1 }]).sort((x, y) => y.s - x.s);
 const leagueTier = () => Math.max(0, ...TIER_FIELDS.filter(isUnlocked).map(f => FIELDS[f].tier));
-// 날마다: 경쟁 상단들의 점수가 쌓인다 (상단이 간 땅이 높을수록 많이)
+// 날마다: 경쟁 길드들의 점수가 쌓인다 (상단이 간 땅이 높을수록 많이)
 function leagueDay() {
   const L = leagueState(); L.days++;
   const base = LEAGUE.base * (1 + leagueTier() * 0.6) / MONTH_DAYS;
@@ -232,10 +232,10 @@ function leagueMonth(lines) {
     const gold = Math.round(scale * R.gold / 10) * 10;
     S.gold += gold; S.stats.earned += gold; S.fame += R.fame; res.gold = gold; res.fame = R.fame;
     if (my === 0) { L.title = (L.title || 0) + 1; S.stats.leagueWins = (S.stats.leagueWins || 0) + 1; }
-    lines.push(`상단 랭킹 ${my + 1}위! 상금 ${g$(gold)}, 명성 +${R.fame}${my === 0 ? ' · 「이달의 상단」 칭호' : ''}`);
-  } else lines.push(`상단 랭킹 ${my + 1}위. (1위 ${st[0].n} ${fmt(st[0].s)}점, 우리 ${fmt(res.score)}점)`);
+    lines.push(`길드 랭킹 ${my + 1}위! 상금 ${g$(gold)}, 명성 +${R.fame}${my === 0 ? ' · 「이달의 길드」 칭호' : ''}`);
+  } else lines.push(`길드 랭킹 ${my + 1}위. (1위 ${st[0].n} ${fmt(st[0].s)}점, 우리 ${fmt(res.score)}점)`);
   L.result = res;
-  log(`이달의 상단 랭킹: ${my + 1}위 (${fmt(res.score)}점)`, my < 3 ? 'good' : '');
+  log(`이달의 길드 랭킹: ${my + 1}위 (${fmt(res.score)}점)`, my < 3 ? 'good' : '');
 }
 PANELS.co_league = () => {
   const L = leagueState(), st = leagueStand(), my = st.findIndex(x => x.me), s0 = L.start, dd = S.settleDay - today();
@@ -244,11 +244,11 @@ PANELS.co_league = () => {
   const scale = LEAGUE.base * (1 + leagueTier());
   const rew = LEAGUE.rewards.map((R, i) => `<span class="tag">${i + 1}위 ${fmt(Math.round(scale * R.gold / 10) * 10)}G · 명성 +${R.fame}${R.title ? ' · 칭호' : ''}</span>`).join(' ');
   const last = L.last ? `<div class="sec"><b>지난달</b><span>${L.last.rank}위 · ${fmt(L.last.score)}점${L.last.gold ? ` · ${fmt(L.last.gold)}G` : ''}</span></div><div class="card">${L.last.top.map((x, i) => `<div class="row sub${x.me ? ' gold-t' : ''}"><span class="rkn">${i + 1}</span><span class="grow">${esc(x.n)}</span><span class="num">${fmt(x.s)}</span></div>`).join('')}</div>` : '';
-  return `<div class="card hl"><div class="row"><span class="rk">${my + 1}위</span><div class="grow"><div class="h">${esc(S.company)} <small>${fmt(leagueScore())}점</small></div><div class="sub">정산까지 D-${dd} · 이웃 상단 ${L.rivals.length}곳과 겨루는 중${L.title ? ` · 이달의 상단 ${L.title}번` : ''}</div></div></div></div>
-    <div class="sec"><b>이달 순위</b><span>날마다 경쟁 상단 점수가 쌓여요</span></div><div class="card">${rows}</div>
+  return `<div class="card hl"><div class="row"><span class="rk">${my + 1}위</span><div class="grow"><div class="h">${esc(S.company)} <small>${fmt(leagueScore())}점</small></div><div class="sub">정산까지 D-${dd} · 이웃 길드 ${L.rivals.length}곳과 겨루는 중${L.title ? ` · 이달의 길드 ${L.title}번` : ''}</div></div></div></div>
+    <div class="sec"><b>이달 순위</b><span>날마다 경쟁 길드 점수가 쌓여요</span></div><div class="card">${rows}</div>
     <div class="sec"><b>우리 점수</b><span>이달에 쌓은 만큼</span></div><div class="card">${parts.map(([n, v, d]) => `<div class="row sub"><span class="grow">${n} <span class="muted">${d}</span></span><span class="num">${fmt(v)}</span></div>`).join('')}</div>
     <div class="sub">보상: ${rew}</div>${last}
-    <div class="sub muted">점수: 번 돈 50G당 1 · 명성 1당 15 · 던전 공략 400 · 희귀종 100 · 보물 던전 150 · 둥지 소탕 120. 경쟁 상단은 우리가 연 땅이 높을수록 세져요.</div>`;
+    <div class="sub muted">점수: 번 돈 50G당 1 · 명성 1당 15 · 던전 공략 400 · 희귀종 100 · 보물 던전 150 · 둥지 소탕 120. 경쟁 길드는 우리가 연 땅이 높을수록 세져요.</div>`;
 };
 
 /* ───────── 지도 그림 ─────────

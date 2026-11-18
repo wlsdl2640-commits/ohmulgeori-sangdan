@@ -24,7 +24,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=1)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + HOOK); pg.wait_for_timeout(700)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
     EV = lambda code: pg.evaluate(f"() => window.__EV({json.dumps(code)})")
     print(EV(SETUP)); skip(pg)
     EV("typeof openBattle === 'function' ? openBattle(S.parties[0].id) : 0"); pg.wait_for_timeout(500)

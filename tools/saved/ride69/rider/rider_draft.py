@@ -52,7 +52,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 880})
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + PAGE); pg.wait_for_timeout(800)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1000)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1000)
     print(pg.evaluate("s => window.__EV(s)", f"{INJ}({json.dumps(HEADS)}, {json.dumps(EXS)})"))
     rowsimg = []
     for lab, lk, L in LOOKS:

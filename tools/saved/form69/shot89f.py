@@ -36,7 +36,7 @@ with sync_playwright() as pw:
     pg = br.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=2)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + PAGE); pg.wait_for_timeout(800)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
     EV = lambda code: pg.evaluate(f"() => window.__EV({json.dumps(code)})")
     ids = EV(SETUP.replace('%COMPS%', json.dumps(COMPS))); skip(pg); EV("S.modals = []")
     EV("openBattle()"); pg.wait_for_timeout(400)

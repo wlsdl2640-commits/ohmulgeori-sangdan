@@ -27,7 +27,7 @@ with sync_playwright() as p:
     b = p.chromium.launch(); pg = b.new_page(viewport={'width': W, 'height': 860}, device_scale_factor=DPR)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + os.path.abspath(page)); pg.wait_for_timeout(900)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200)
     def skip():
         for _ in range(20):
             sk = pg.locator('.skipall')

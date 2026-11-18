@@ -160,7 +160,7 @@ function typeMul(a, f, s) {
   }
   return (1 + add) * sm;
 }
-// 상단 도감 기준 그 타입 몬스터 처치 수
+// 길드 도감 기준 그 타입 몬스터 처치 수
 const typeKills = ty => Object.entries((S && S.dex && S.dex.kills) || {}).reduce((n, [id, v]) => n + (monTypes(id).includes(ty) ? v : 0), 0);
 // 마지막 공격 결과 (면역·약점·저항) — 전투 화면에 띄운다
 const HIT = { imm: 0, wk: 0, res: 0 };

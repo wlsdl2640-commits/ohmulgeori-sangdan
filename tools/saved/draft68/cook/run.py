@@ -16,7 +16,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=dpr)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + HOOK); pg.wait_for_timeout(700)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200)
     pg.evaluate("ico => { window.__ICO68 = ico; }", ico)
     pg.evaluate(f"async () => {{ window.__EV({json.dumps(code)}); await D68.prep(); D68.setup(); {TL} }}")
     pg.wait_for_timeout(300)

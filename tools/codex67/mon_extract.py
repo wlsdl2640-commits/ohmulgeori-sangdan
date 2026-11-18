@@ -88,7 +88,7 @@ JS = r"""(() => {
 with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + sys.argv[1]); pg.wait_for_timeout(700)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(900)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(900)
     s = pg.evaluate("s => window.__EV(s)", JS); br.close()
 open(sys.argv[2], 'w', encoding='utf-8').write(s)
 d = json.loads(s)

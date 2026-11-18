@@ -32,7 +32,7 @@ SK69('shieldbag', { name: '짐 덜어 주기', kind: 'buff', stat: 'cdr', add: 0
 Object.assign(JOB_TRAITS.conestoga, { desc: '짐 +6 · 피로 10% 덜 쌓임', fatigue: 0.1 }); delete JOB_TRAITS.conestoga.healPow;
 if (TRAITS.j_conestoga) { Object.assign(TRAITS.j_conestoga, { desc: '짐 +6 · 피로 10% 덜 쌓임', fatigue: 0.1 }); delete TRAITS.j_conestoga.healPow; }
 CLASSES.conestoga.desc = '포장마차를 끄는 개척민. 웨건을 세워 파티를 지키고, 웨건 짐칸을 열어 화살 · 암기 · 볼트를 채우고, 긴 채찍으로 적을 묶는다. 짐 +35% · 속도 +10%, 야영 회복 2배.';
-// 웨건 보급: 원정 중에 화살 · 암기 · 볼트를 담는 수의 pct만큼 채운다 (상단에서 채우는 것과 달리 공짜). 채운 수를 돌려준다
+// 웨건 보급: 원정 중에 화살 · 암기 · 볼트를 담는 수의 pct만큼 채운다 (길드에서 채우는 것과 달리 공짜). 채운 수를 돌려준다
 function ammoTop(a, pct) {
   let n = 0;
   for (const [sl] of SLOTS) {

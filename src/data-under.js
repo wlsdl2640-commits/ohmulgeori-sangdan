@@ -54,7 +54,7 @@ const ARENA_SCORE_LOSE = 30;
 const ARENA_PER_DAY = 10;
 const ARENA_TIERS = ['신참', '베테랑', '챔피언'];
 const GLADIATOR_SCORE = 10000;   // 검투사 전직 조건: 투기장 랭킹 점수
-const ARENA_NAMES = ['검은 늪 상단', '황금사자 상단', '푸른 돛 상단', '잿빛 송곳니단', '붉은 모래 용병단', '7번가 토박이들', '브론하임 철벽대', '실바레아 순찰대', '프라마 용병단', '잉그리시아 왕립 원정대', '그림자 상단', '등불 없는 자들'];
+const ARENA_NAMES = ['검은 늪 길드', '황금사자 길드', '푸른 돛 길드', '잿빛 송곳니단', '붉은 모래 용병단', '7번가 토박이들', '브론하임 철벽대', '실바레아 순찰대', '프라마 용병단', '잉그리시아 왕립 원정대', '그림자 길드', '등불 없는 자들'];
 
 // 지하수로 필드와 몬스터
 Object.assign(ITEMS, {
@@ -74,7 +74,7 @@ Object.assign(MONS, {
   sewertroll: { name: '하수도 트롤',   plan: 'giant', body: '#5a7a5a', dark: '#3a5a3a', boss: 1, scale: 2, mh: 5.0, ma: 1.7, md: 1.4, spd: 0.7, aoe: 1, drops: [['troll_fang', 1], ['troll_heart', 1]] }
 });
 FIELDS.sewer = {
-  no: 8, name: '지하수로', lv: 30, bg: 'sewer', tier: 3, unlock: `지하수로 구역이 열리면 (상단 ${RANKS[UNDER_RANK].name}랭크)`,
+  no: 8, name: '지하수로', lv: 30, bg: 'sewer', tier: 3, unlock: `지하수로 구역이 열리면 (길드 ${RANKS[UNDER_RANK].name}랭크)`,
   desc: '7번가 밑을 흐르는 하수도. 범죄자들의 지하 도시 너머로 더 깊은 수로가 이어진다.',
   mons: ['sewerrat', 'sludge', 'sewercroc', 'ratman'],
   dungeon: { name: '지하수로 깊은 곳', bg: 'sewer', mons: ['sewerrat', 'sludge', 'sewercroc', 'ratman'], boss: 'sewertroll' },
@@ -83,8 +83,8 @@ FIELDS.sewer = {
 ALL_FIELDS.push('sewer');
 
 STORY.under = [
-  '상단 랭크가 오르자 7번가 토박이가 귀띔했다. "오물거리 밑에는 또 하나의 거리가 있소. 하수도를 따라가면 등불 없는 도시가 나오지."',
+  '길드 랭크가 오르자 7번가 토박이가 귀띔했다. "오물거리 밑에는 또 하나의 거리가 있소. 하수도를 따라가면 등불 없는 도시가 나오지."',
   '지하수로. 암살자 길드의 본부, 피 냄새 나는 투기장, 물건에 이름표가 없는 암시장, 밤마다 한 점씩만 나오는 경매장. 그리고 더 깊은 수로에는 아무도 돌아오지 않은 곳이 있다.',
   '시설 창에서 「7번가 지하수로」로 내려갈 수 있다. 원정 목적지에도 지하수로가 열렸다.'
 ];
-STORY.sewer = ['지하수로의 트롤이 쓰러졌다. 수로 깊은 곳의 물이 처음으로 맑게 흘렀다.', '트롤의 둥지에는 범죄자들이 잃어버린 금고 열쇠가 있었다. 지하 도시가 상단을 다르게 보기 시작했다.'];
+STORY.sewer = ['지하수로의 트롤이 쓰러졌다. 수로 깊은 곳의 물이 처음으로 맑게 흘렀다.', '트롤의 둥지에는 범죄자들이 잃어버린 금고 열쇠가 있었다. 지하 도시가 길드를 다르게 보기 시작했다.'];

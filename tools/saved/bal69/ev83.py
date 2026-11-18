@@ -16,7 +16,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(); errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + page); pg.wait_for_timeout(900)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
     pg.set_default_timeout(0)
     r = pg.evaluate("s => window.__EV(s)", js)
     print(r if isinstance(r, str) else json.dumps(r, ensure_ascii=False))

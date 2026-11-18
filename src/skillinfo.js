@@ -165,7 +165,7 @@ function speedBreakdown(a) {
 // 스킬북이 어디서 나오는지 (도감·창고)
 function bookFromText(id) {
   const s = SKILLS[id]; if (!s) return '';
-  if (Object.values(CLASSES).some(C => C.innate === id)) return '직업 기본 스킬 (고용·전직하면 바로)';
+  if (Object.values(CLASSES).some(C => C.innate === id)) return '직업 기본 스킬 (영입·전직하면 바로)';
   if (s.awk) return '각성';
   return bookSrcText(id) || '스킬북';   // 빌드 63: 모든 스킬북은 스킬북 단계(찢어진 · 낡은 · 빛바랜 · 신비한 …)를 펼쳐서 (data-store.js)
 }

@@ -7,15 +7,15 @@
     <button type="button" class="spd" id="speed" aria-label="게임 속도">1×</button>
   </header>
 
-  <section class="stage" id="stage" aria-label="상단 본부">
-    <canvas id="hq" aria-label="상단 본부 장소 화면. 옆으로 밀면 다른 장소로 넘어가고, 가구나 사람을 누르면 그 창이 열려요."></canvas>
+  <section class="stage" id="stage" aria-label="길드 본부">
+    <canvas id="hq" aria-label="길드 본부 장소 화면. 옆으로 밀면 다른 장소로 넘어가고, 가구나 사람을 누르면 그 창이 열려요."></canvas>
     <nav class="placebar" id="placebar" aria-label="장소 이동"></nav>
     <nav class="menu" id="menu" aria-label="메뉴">
       <button type="button" class="mbtn mmain" id="menu-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu-board"><img data-px="menu" alt="">메뉴<span class="badge" id="menu-badge" hidden></span></button>
       <div class="mboard" id="menu-board" hidden>
         <h2 class="mb-title">메뉴판</h2>
         <div class="mb-grid">
-          <button type="button" class="mtile" data-open="co"><img data-px="m_house" alt=""><b>상단</b><small>랭크 · 정산</small></button>
+          <button type="button" class="mtile" data-open="co"><img data-px="m_house" alt=""><b>길드</b><small>랭크 · 정산</small></button>
           <button type="button" class="mtile" data-open="fac"><img data-px="m_anvil" alt=""><b>시설</b><small>짓기 · 대장간</small></button>
           <button type="button" class="mtile" data-open="adv"><img data-px="m_person" alt=""><b>모험가</b><small>전직 · 스킬</small></button>
           <button type="button" class="mtile" data-open="map"><img data-px="m_map" alt=""><b>지도</b><small>필드 · 왕국</small></button>
@@ -23,7 +23,7 @@
           <button type="button" class="mtile" data-open="inv"><img data-px="m_box" alt=""><b>창고</b><small>창고 1~10</small></button>
           <button type="button" class="mtile" data-open="req"><img data-px="m_scroll" alt=""><b>의뢰</b><small>의뢰 게시판</small><span class="badge" id="req-badge" hidden></span></button>
         </div>
-        <div class="mb-sub" aria-label="상단 창 바로 가기"><button type="button" class="mchip" data-sub="co_money"><img data-px="c_money" alt="">월말 정산</button><button type="button" class="mchip" data-sub="dex"><img data-px="c_dex" alt="">도감</button><button type="button" class="mchip" data-sub="achv"><img data-px="c_achv" alt="">업적</button><button type="button" class="mchip" data-sub="co_log"><img data-px="c_log" alt="">소식</button><button type="button" class="mchip" data-sub="co_set"><img data-px="c_set" alt="">설정</button></div>
+        <div class="mb-sub" aria-label="길드 창 바로 가기"><button type="button" class="mchip" data-sub="co_money"><img data-px="c_money" alt="">월말 정산</button><button type="button" class="mchip" data-sub="dex"><img data-px="c_dex" alt="">도감</button><button type="button" class="mchip" data-sub="achv"><img data-px="c_achv" alt="">업적</button><button type="button" class="mchip" data-sub="co_log"><img data-px="c_log" alt="">소식</button><button type="button" class="mchip" data-sub="co_set"><img data-px="c_set" alt="">설정</button></div>
       </div>
     </nav>
     <section class="pip" id="pip" aria-label="원정 화면. 누르면 전투 창이 열려요." role="button" tabindex="0">
@@ -83,13 +83,13 @@
     <div class="title-in">
       <div>
         <p class="game-sub" id="t-sub"></p>
-        <h1 class="game-name">판타지<br>상단키우기</h1>
+        <h1 class="game-name">미궁도시</h1>
       </div>
       <div class="intro" id="t-intro"></div>
       <form class="field-in" id="t-form">
-        <label for="t-name">상단 이름</label>
-        <input id="t-name" maxlength="12" autocomplete="off" placeholder="등불 상단">
-        <button type="submit" class="btn gold block" id="t-go">상단 문 열기</button>
+        <label for="t-name">길드 이름</label>
+        <input id="t-name" maxlength="12" autocomplete="off" placeholder="등불 길드">
+        <button type="submit" class="btn gold block" id="t-go">길드 문 열기</button>
       </form>
       <button type="button" class="btn sm" id="t-import">저장 코드로 이어하기</button>
       <p class="credit">글꼴: 갈무리 (SIL Open Font License 1.1)</p>

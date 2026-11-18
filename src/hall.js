@@ -1,5 +1,5 @@
 /* ───────── 명예의 전당: Lv100 모험가를 은퇴시켜 동상을 세운다 ─────────
-   동상마다 상단 전체에 영구 보너스(직업 계열별)와 경험치 +1% (빌드 64: 용사 · 초월 용사 동상의 두 배 · 세 배는 각성과 함께 없앴다). 은퇴한 모험가는 「스승」으로 남아 같은 계열 새 모험가의 봉급을 깎아 준다. */
+   동상마다 길드 전체에 영구 보너스(직업 계열별)와 경험치 +1% (빌드 64: 용사 · 초월 용사 동상의 두 배 · 세 배는 각성과 함께 없앴다). 은퇴한 모험가는 「스승」으로 남아 같은 계열 새 모험가의 봉급을 깎아 준다. */
 const HALL_MAX = 12;
 const HALL_LINE = {
   warrior: { name: '수호의 동상',  desc: 'HP +2% · 방어력 +2%',          hpPct: 0.02, defPct: 0.02 },
@@ -21,7 +21,7 @@ const mentorCut = cls => Math.min(0.15, 0.03 * hallList().filter(h => h.base ===
 function retireWhy(a) {
   if (!a) return '';
   if (a.lv < RETIRE_LV) return `Lv${RETIRE_LV}이 되어야 은퇴할 수 있어요`;
-  if (a.status !== 'idle' || a.post) return '상단에서 쉬고 있을 때만';
+  if (a.status !== 'idle' || a.post) return '길드에서 쉬고 있을 때만';
   if (a.inj) return '다 나은 뒤에';
   if (hallList().length >= HALL_MAX) return `전당이 가득 찼어요 (${HALL_MAX}개)`;
   { const n = SLOTS.filter(([sl]) => a.eq[sl]).length; if (n > whFree(-1)) return `메인 창고에 빈 칸이 ${n}개 있어야 해요 (끼던 장비를 넣을 자리)`; }   // 빌드 63
@@ -40,7 +40,7 @@ function retire(id) {
   S.fame += 30;
   const L = HALL_LINE[h.base];
   log(`${a.name}이(가) 은퇴해 명예의 전당에 ${L.name}이(가) 세워졌다. ${L.desc} · 명성 +30`, 'good');
-  queueModal({ title: '명예의 전당', body: [`${a.name}(${CLASSES[a.cls].name} Lv${a.lv})이(가) 모험을 마치고 상단 앞뜰의 전당에 모셔졌다.`, `${L.name}: ${L.desc} 동상마다 모든 모험가의 경험치도 1%씩 더 오른다.`, `${a.name}은(는) 스승으로 남아 ${CLASSES[h.base].name} 계열 모험가의 봉급을 3%씩 깎아 준다. 함께한 ${fmt(h.kills)}마리의 기록은 전당에 남는다.`] });
+  queueModal({ title: '명예의 전당', body: [`${a.name}(${CLASSES[a.cls].name} Lv${a.lv})이(가) 모험을 마치고 길드 앞뜰의 전당에 모셔졌다.`, `${L.name}: ${L.desc} 동상마다 모든 모험가의 경험치도 1%씩 더 오른다.`, `${a.name}은(는) 스승으로 남아 ${CLASSES[h.base].name} 계열 모험가의 봉급을 3%씩 깎아 준다. 함께한 ${fmt(h.kills)}마리의 기록은 전당에 남는다.`] });
   changed();
   return '';
 }
@@ -55,11 +55,11 @@ PANELS.hall = () => {
   for (const h of list) { const L = HALL_LINE[h.base]; for (const k in L) if (typeof L[k] === 'number') sum[k] = (sum[k] || 0) + L[k]; sum.expPct = (sum.expPct || 0) + 0.01; }
   const HN = { hpPct: 'HP', defPct: '방어력', matkPct: '마법 공격력', expPct: '경험치', crit: '치명타', eva: '회피', healPow: '회복량', rheal: '받는 회복', luck: '전리품', carry: '짐', movePct: '이동 속도', atkPct: '공격력' };
   const sumTxt = Object.entries(sum).map(([k, v]) => `${HN[k] || STAT_NAMES[k] || k} ${k === 'carry' ? '+' + v : '+' + (Math.round(v * 1000) / 10) + '%'}`).join(' · ');
-  return `<div class="card hl"><div class="h">명예의 전당 <small>${list.length}/${HALL_MAX}</small></div><div class="sub">Lv${RETIRE_LV} 이상 모험가를 은퇴시키면 동상이 서고, 상단 전체가 영구히 강해져요. 은퇴한 모험가는 스승으로 남아 같은 계열의 봉급을 깎아 줘요.</div>${list.length ? `<div class="sub gold-t">지금 효과: ${sumTxt}</div>` : ''}</div>
+  return `<div class="card hl"><div class="h">명예의 전당 <small>${list.length}/${HALL_MAX}</small></div><div class="sub">Lv${RETIRE_LV} 이상 모험가를 은퇴시키면 동상이 서고, 길드 전체가 영구히 강해져요. 은퇴한 모험가는 스승으로 남아 같은 계열의 봉급을 깎아 줘요.</div>${list.length ? `<div class="sub gold-t">지금 효과: ${sumTxt}</div>` : ''}</div>
     ${list.map(hallCard).join('') || '<div class="card"><div class="sub muted">아직 동상이 없어요.</div></div>'}
     <div class="sec"><b>은퇴할 수 있는 모험가</b><span>Lv${RETIRE_LV}~</span></div>
     ${cands.map(a => { const why = retireWhy(a); return `<div class="li"><img class="por" src="${portrait(a)}" alt=""><div class="grow stack"><span>${esc(a.name)} <span class="muted">· ${CLASSES[a.cls].name} Lv${a.lv}</span></span><span class="sub">${HALL_LINE[jobBase(a.cls)].name} · ${HALL_LINE[jobBase(a.cls)].desc}</span>${why ? `<span class="sub red-t">${why}</span>` : ''}</div><button type="button" class="btn sm gold" data-act="retire" data-id="${a.id}"${why ? ' disabled' : ''}>은퇴</button></div>`; }).join('') || `<div class="sub muted">Lv${MAX_LV}에 닿은 모험가가 아직 없어요.</div>`}`;
 };
 Object.assign(ACT, {
-  retire: d => { const a = advById(+d.id); if (!a) return; confirmBox('은퇴', `${a.name}을(를) 은퇴시켜 동상을 세울까요? 모험가는 상단을 떠나고, 장비는 창고로 돌아와요. 되돌릴 수 없어요.`, '은퇴', () => { say(retire(+d.id)); renderPanel(true); renderChips(); saveGame(); }, true); }
+  retire: d => { const a = advById(+d.id); if (!a) return; confirmBox('은퇴', `${a.name}을(를) 은퇴시켜 동상을 세울까요? 모험가는 길드를 떠나고, 장비는 창고로 돌아와요. 되돌릴 수 없어요.`, '은퇴', () => { say(retire(+d.id)); renderPanel(true); renderChips(); saveGame(); }, true); }
 });

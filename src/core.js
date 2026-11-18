@@ -398,13 +398,13 @@ function recall(p, why = '') {
   e.mode = 'return'; e.why = why; e.wait = null;
   e.encs = rnd() < 0.5 ? [Math.max(5, Math.floor(e.pos) - ri(15, 30))] : []; e.ei = 0; e.next = null;
   ev(e, 'turn', {});
-  if (why === 'full') log(`${p.name}의 짐이 가득 차서 상단으로 돌아온다.`);
+  if (why === 'full') log(`${p.name}의 짐이 가득 차서 길드로 돌아온다.`);
   if (why === 'danger') { log(`${p.name}은(는) 물약이 떨어지고 부상자가 생겨 발길을 돌렸다.`); HOOKS.toast(`${p.name}: 위험해서 복귀합니다`); }
   if (why === 'loss') log(`${p.name}은(는) 쓰러진 동료를 들것에 싣고 발길을 돌렸다.`);
   if (why === 'ahead') log(`${p.name}은(는) 앞쪽 몬스터가 너무 강해 보여 발길을 돌렸다.`);
-  if (why === 'sleep') log(`${p.name}은(는) 며칠째 제대로 못 자 상단으로 돌아간다.`);
+  if (why === 'sleep') log(`${p.name}은(는) 며칠째 제대로 못 자 길드로 돌아간다.`);
   if (why === 'end') log(`${p.name}이(가) ${FIELDS[e.field].name}의 끝에 닿아 발길을 돌렸다.`, 'good');
-  if (why === 'imm') log(`${p.name}은(는) 공격이 통하지 않는 적을 만나 상단으로 돌아간다.`);
+  if (why === 'imm') log(`${p.name}은(는) 공격이 통하지 않는 적을 만나 길드로 돌아간다.`);
   changed();
 }
 // 던전 입구 앞에서: 들어간다 / 지나간다(돌아간다)
@@ -554,7 +554,7 @@ function stageBack(p, e) {
     else if (FIELDS[e.field].raid) { arrive(p); return; }
     else { e.area = 'field'; e.stage = FIELD_STAGES; }
   } else if (e.stage > (e.home || 1)) e.stage--;
-  else { arrive(p); return; }   // 출발한 거점에 닿으면 마차를 타고 상단으로
+  else { arrive(p); return; }   // 출발한 거점에 닿으면 마차를 타고 길드로
   e.pos = STAGE_LEN; e.ei = 0; e.encs = makeEncs(e); e.next = null;
   changed();
 }
@@ -908,7 +908,7 @@ function cast(e, a, d, id, team, dm, foes) {
 // 화살이 떨어졌다: 원정마다 한 번 알린다
 function noAmmo(e, a, k) {   // 기록은 원정마다 한 번, 전투 화면 말풍선은 8초마다 · k 'shuri'면 표창
   const key = a.id + (k || ''), nm = k === 'shuri' ? '암기' : k === 'bolt' ? '볼트' : '화살';
-  e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[key]) { e.noAmmo[key] = 1; log(`${a.name}의 ${jo(nm, '이', '가')} 떨어졌다. 상단에 돌아가야 다시 채운다.`, 'bad'); }
+  e.noAmmo = e.noAmmo || {}; if (!e.noAmmo[key]) { e.noAmmo[key] = 1; log(`${a.name}의 ${jo(nm, '이', '가')} 떨어졌다. 길드에 돌아가야 다시 채운다.`, 'bad'); }
   e.noAmmoT = e.noAmmoT || {}; const last = e.noAmmoT[key]; if (last == null || S.t - last >= 8) { e.noAmmoT[key] = S.t; ev(e, 'noammo', k ? { s: a.id, k } : { s: a.id }); }
 }
 function basicAct(e, a, d, team, dm, foes) {
@@ -1484,7 +1484,7 @@ function down(p, e, a, f) {
   if (p.safe && e.foes.length && !e.flee) e.flee = 2.5;   // 조심스러운 파티는 들것을 메고 싸움에서 빠져나온다
   changed();
 }
-// 모두 쓰러지면: 길드 구조대가 데려오지만 짐은 잃는다
+// 모두 쓰러지면: 협회 구조대가 데려오지만 짐은 잃는다
 function wipe(p) {
   const e = p.exp, F = FIELDS[e.field];
   if (e.area === 'arena') { arenaWipe(p); return; }
@@ -1494,11 +1494,11 @@ function wipe(p) {
     if (rnd() < 0.25 && a.inj.sev < 3) injure(a, a.inj.sev + 1);
     a.down = false; a.status = 'idle'; a.hp = 1; a.trips++;
   });
-  refillParty(teamOf(p), p.name);   // 상단에서 화살·표창 충전 (쓴 만큼 돈)
+  refillParty(teamOf(p), p.name);   // 길드에서 화살·표창 충전 (쓴 만큼 돈)
   S.stats.wipes = (S.stats.wipes || 0) + 1;
-  log(`${p.name}이(가) ${F.name}에서 전멸했다. 길드 구조대가 모두를 데려왔지만 가져오던 짐과 장비는 잃었다.`, 'bad');
+  log(`${p.name}이(가) ${F.name}에서 전멸했다. 협회 구조대가 모두를 데려왔지만 가져오던 짐과 장비는 잃었다.`, 'bad');
   S.flags.firstInj = 1;
-  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 원정대가 모두 쓰러졌다. 지나가던 길드 구조대 덕분에 목숨은 건졌지만 모두 크게 다쳤고, 가져오던 부속품과 장비, 물약은 잃었다.`, '다친 모험가는 신전에서 치료해야 다시 원정에 나갈 수 있다. 무리하지 말자.'] });
+  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 원정대가 모두 쓰러졌다. 지나가던 협회 구조대 덕분에 목숨은 건졌지만 모두 크게 다쳤고, 가져오던 부속품과 장비, 물약은 잃었다.`, '다친 모험가는 신전에서 치료해야 다시 원정에 나갈 수 있다. 무리하지 말자.'] });
   p.last = { got: {}, gear: 0, kills: e.kills, field: e.field, wiped: 1 };
   p.exp = null;
   changed();
@@ -1513,8 +1513,8 @@ function arrive(p) {
   const team = p.members.map(advById).filter(Boolean);
   const hurt = team.filter(a => a.down || a.inj);
   team.forEach(a => { if (!a.down) a.pf = (a.pf || 0) + 1; a.down = false; a.hp = Math.max(1, a.hp); a.status = 'idle'; a.trips++; clampVitals(a); });
-  refillParty(team, p.name);   // 상단에서 화살·표창 충전 (쓴 만큼 돈, 판 뒤라 판 돈으로 낸다)
-  team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 상단을 떠났다.'));
+  refillParty(team, p.name);   // 길드에서 화살·표창 충전 (쓴 만큼 돈, 판 뒤라 판 돈으로 낸다)
+  team.filter(a => a.quit).forEach(a => leave(a, '밀린 봉급 때문에 길드를 떠났다.'));
   const n = Object.values(got).reduce((s, q) => s + q, 0);
   if (e.area === 'arena') log(`${p.name}이(가) 투기장에서 돌아왔다.`);
   else if (e.area === 'wave') log(`${p.name}이(가) 성문에서 돌아왔다.`);
@@ -1562,7 +1562,7 @@ function dungeonClear(p, e) {
     const RL = RELICS[e.field], newRelic = RL && !(S.relics || []).includes(e.field);
     if (newRelic) (S.relics = S.relics || []).push(e.field);
     log(`${p.name}이(가) ${F.dungeon.name}의 주인 ${MONS[F.dungeon.boss].name}을(를) 쓰러뜨렸다! 보물 ${g$(gold)}, 명성 +${fame}${newRelic ? `, 유물 「${RL.name}」` : ''}`, 'good');
-    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 영웅 장비, 장비 한 점, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 상단 창의 유물에서 볼 수 있다.`] : []) });
+    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 영웅 장비, 장비 한 점, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 길드 창의 유물에서 볼 수 있다.`] : []) });
     if (e.field === 'barren' && STORY.frontier) queueModal({ title: '북쪽 변경', body: STORY.frontier });   // 빌드 30: 안개 묘지가 열린다
     if (e.field === 'roots' && S.bld.airfield && STORY.skyOpen) queueModal({ title: '구름 위의 섬', body: STORY.skyOpen });
     if (e.field === 'passage' && !S.flags.guildHQ) { S.flags.guildHQ = 1; log('암살자 길드 본부가 무너졌다. 이제 자릿세는 없다.', 'good'); HOOKS.toast('암살자 길드 본부 토벌 · 자릿세 끝'); }   // 빌드 70: 진짜 본부 (STORY.passage)
@@ -1591,7 +1591,7 @@ function treasureClear(p, e) {
   changed();
 }
 const raidReady = () => S.fame >= GUILD_RAID.fame && living().length >= GUILD_RAID.advs && spn(GUILD_RAID.sponsor) >= GUILD_RAID.tier;
-// 필드는 상단 랭크가 오르면 하나씩 열린다 (랭크 F = 평원, E = 원시림 …)
+// 필드는 길드 랭크가 오르면 하나씩 열린다 (랭크 F = 평원, E = 원시림 …)
 function isUnlocked(fid) {
   if (fid === 'alley') return !S.flags.guildDown && raidReady();
   if (fid === 'sewer') return (S.rank || 0) >= UNDER_RANK;

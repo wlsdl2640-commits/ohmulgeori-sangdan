@@ -103,7 +103,7 @@ function updateHud() {
 const WHY = { trade: '교역을 마치고 돌아오는 중', imm: '공격이 통하지 않아 복귀 중', over: '레이드가 끝나 복귀 중', raid: '레이드 몬스터를 쓰러뜨리고 복귀 중', time: '레이드에서 물러나 복귀 중', retreat: '레이드에서 빠져나와 복귀 중', full: '짐이 가득 차 복귀 중', danger: '위험해서 복귀 중', loss: '쓰러진 동료를 들것에 싣고 복귀 중', boss: '던전의 주인을 쓰러뜨리고 복귀 중', ahead: '앞이 너무 위험해 복귀 중', order: '명령을 받고 복귀 중', end: '필드 끝에서 복귀 중', sleep: '잠이 모자라 복귀 중' };
 function expStatus(p) {
   const e = p.exp;
-  if (!e) return p.members.length ? '상단에서 대기 중' : '파티원이 없어요';
+  if (!e) return p.members.length ? '길드에서 대기 중' : '파티원이 없어요';
   const F = FIELDS[e.field];
   if (e.area === 'raid' && e.foes.length) return `${RAIDS[e.raid].name}와(과) 싸우는 중! · ${Math.max(0, Math.ceil(RAID_FIGHT - e.rt))}초 · 피해 ${fmt(e.dealt)}`;
   if (e.area === 'raid' && e.mode === 'advance') return `${RAIDS[e.raid].name}에게 다가가는 중`;
@@ -159,10 +159,10 @@ function updateRaidHead() {
 function updateOverlay() {
   updatePipDots(); if (RP.page === 1) updateRaidHead();
   const p = viewParty(), L = $('ov-l'), Rr = $('ov-r'), B = $('ov-b');
-  if (!p) { L.textContent = '오물거리 · 상단 앞'; Rr.hidden = true; B.hidden = true; return; }
+  if (!p) { L.textContent = '오물거리 · 길드 앞'; Rr.hidden = true; B.hidden = true; return; }
   const e = p.exp;
   Rr.hidden = true;
-  if (!e) { L.textContent = `${p.name} · 상단 앞`; B.hidden = true; return; }
+  if (!e) { L.textContent = `${p.name} · 길드 앞`; B.hidden = true; return; }
   L.textContent = `${p.name} · ${whereStr(e)}`;
   const w = wxNow(e); if (!w.indoor) L.textContent += ` · ${wxLabel(w)}`;
   // 작은 창 아래 글은 할 일이 있을 때만 (던전 입구에서 기다리는 중)
@@ -178,7 +178,7 @@ function renderChips() {
 }
 
 /* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
-const WIN_TITLE = { co: '상단', fac: '시설', adv: '모험가', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '상단 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '장비 칸', battle: '전투' };
+const WIN_TITLE = { co: '길드', fac: '시설', adv: '모험가', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '길드 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '장비 칸', battle: '전투' };
 const winTop = () => UI.stack[UI.stack.length - 1] || null;
 function winTitle(w) {
   if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';
@@ -220,7 +220,7 @@ function menuGo(id) {
   if (d > 1 && UI.stack[0].id === id) { UI.stack.length = 1; try { UI.skipPop = 1; history.go(-(d - 1)); } catch (_) {} sfx('open'); showWin(true); return; }
   menuOpen(id);
 }
-// 상단 창 아래의 창(정산 · 도감 · 설정 …)을 바로: 쌓인 창을 [상단, 그 창]으로 바꾼다 (뒤로 가면 상단 창)
+// 길드 창 아래의 창(정산 · 도감 · 설정 …)을 바로: 쌓인 창을 [상단, 그 창]으로 바꾼다 (뒤로 가면 길드 창)
 function menuSub(id) {
   const d = UI.stack.length;
   UI.stack = [{ id: 'co' }, { id }];
@@ -331,7 +331,7 @@ async function saveCode() {
   if (canZip()) { try { return 'OHMUL2:' + b64(await zipU8(u8)); } catch (_) {} }
   return 'OHMUL1:' + b64(u8);
 }
-const SAVE_ERR = { prefix: '저장 코드가 아니에요. 「OHMUL1:」이나 「OHMUL2:」로 시작하는 코드를 통째로 붙여 넣어 주세요.', b64: '코드에 다른 글자가 섞였거나 일부가 빠졌어요. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인해 주세요.', zip: '코드가 중간에 잘렸어요. 끝까지 전부 복사했는지 확인해 주세요.', nozip: '이 브라우저는 압축 저장 코드를 풀 수 없어요. 최신 브라우저나 앱에서 불러와 주세요.', json: '코드가 깨졌어요. 메신저가 긴 글을 자르지 않았는지 확인해 주세요.', shape: '오물거리 상단의 저장 코드가 아니에요.', newer: '더 새로운 판에서 만든 저장이에요. 앱을 업데이트한 뒤 불러와 주세요.' };
+const SAVE_ERR = { prefix: '저장 코드가 아니에요. 「OHMUL1:」이나 「OHMUL2:」로 시작하는 코드를 통째로 붙여 넣어 주세요.', b64: '코드에 다른 글자가 섞였거나 일부가 빠졌어요. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인해 주세요.', zip: '코드가 중간에 잘렸어요. 끝까지 전부 복사했는지 확인해 주세요.', nozip: '이 브라우저는 압축 저장 코드를 풀 수 없어요. 최신 브라우저나 앱에서 불러와 주세요.', json: '코드가 깨졌어요. 메신저가 긴 글을 자르지 않았는지 확인해 주세요.', shape: '미궁도시의 저장 코드가 아니에요.', newer: '더 새로운 판에서 만든 저장이에요. 앱을 업데이트한 뒤 불러와 주세요.' };
 // 저장 코드 → 저장 객체. 못 풀면 Error(SAVE_ERR의 키)
 async function parseSave(txt) {
   txt = String(txt || '').trim();
@@ -368,7 +368,7 @@ async function openExport() {
     <textarea class="code" id="code-out" readonly rows="5">${code}</textarea>
     <div class="btns"><button type="button" class="btn sm gold" id="code-copy">복사하기</button>${canShare() ? '<button type="button" class="btn sm" id="code-share">공유하기</button>' : ''}${isApp() ? '' : '<button type="button" class="btn sm" id="code-file">파일로 저장</button>'}</div>`;
   $('code-copy').onclick = async () => { say((await copyText($('code-out'))) ? '저장 코드를 복사했어요' : '코드를 길게 눌러 전체 선택한 뒤 복사해 주세요'); };
-  if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '판타지상단키우기 저장 코드', text: code }); } catch (_) {} };
+  if ($('code-share')) $('code-share').onclick = async () => { try { await navigator.share({ title: '미궁도시 저장 코드', text: code }); } catch (_) {} };
   // 설치한 앱의 WebView는 내려받기를 못 해서 파일 단추를 숨긴다 (복사·백업 슬롯을 쓴다)
   if ($('code-file')) $('code-file').onclick = async () => {
     const name = `ohmulgeori-save-${new Date().toISOString().slice(0, 10)}.txt`;
@@ -504,7 +504,7 @@ const say = msg => { if (msg) toast(msg); };
 let titleRaf = 0;
 function showTitle() {
   $('title-scr').hidden = false;
-  $('t-sub').textContent = `${WORLD.continent} 대륙 · ${WORLD.empire} · 제도 ${WORLD.capital}`;
+  $('t-sub').textContent = `${WORLD.continent} 대륙 · ${WORLD.empire} · 미궁도시 ${WORLD.capital}`;
   $('t-intro').innerHTML = STORY.intro.map(t => `<p>${esc(t)}</p>`).join('');
   const cv = $('title-cv'), ctx = cv.getContext('2d');
   const [off, g] = mkCanvas(AW * HI, AH * HI);

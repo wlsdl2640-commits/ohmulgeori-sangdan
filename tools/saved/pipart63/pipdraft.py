@@ -11,7 +11,7 @@ FD = '/tmp/claude-0/-home-claude/4368c869-ae47-5efb-8102-510605121dd4/scratchpad
 with sync_playwright() as pw:
     b = pw.chromium.launch(); pg = b.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=DPR)
     pg.goto(URL); pg.wait_for_timeout(800)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1500)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1500)
     for _ in range(12):
         mb = pg.locator('#m-btns button')
         if mb.count() and mb.first.is_visible(): mb.last.click(); pg.wait_for_timeout(150)

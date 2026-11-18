@@ -20,7 +20,7 @@ GIF = [['coachman', 'whip', ['wcrack', 'wside', 'wtwirl'], '채찍'], ['scout', 
        ['elementalist', 'wand', ['vflick', 'vswirl', 'vraise'], '완드'], ['elemancer', 'orb', ['opush', 'olift', 'ospin'], '오브'], ['necromancer', 'necro', ['bkcast', 'bkraise', 'bkshut'], '네크로노미콘']]
 with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 880}); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
-    pg.goto(hook.as_uri()); pg.wait_for_timeout(700); pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1000)
+    pg.goto(hook.as_uri()); pg.wait_for_timeout(700); pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1000)
     pg.evaluate("() => document.fonts.ready")
     print(pg.evaluate(f"() => {{ try {{ window.__EV({json.dumps(code)}); return 'loaded'; }} catch (e) {{ return 'ERR ' + e.stack; }} }}"))
     for fn, title, rows in SHEETS:

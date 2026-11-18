@@ -55,7 +55,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 900, 'height': 1400}, device_scale_factor=2)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + PAGE); pg.wait_for_timeout(900)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200)
     for _ in range(20):
         sk = pg.locator('.skipall')
         if sk.count() and sk.first.is_visible(): sk.first.click(); pg.wait_for_timeout(150); continue

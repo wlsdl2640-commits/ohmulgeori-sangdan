@@ -16,7 +16,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=2)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + PAGE); pg.wait_for_timeout(800)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200); skip(pg)
     EV = lambda code: pg.evaluate(f"() => window.__EV({json.dumps(code)})")
     EV(MOCK); print('setup', EV("RMOCK.setup()")); skip(pg); EV("S.modals = []"); pg.wait_for_timeout(700); skip(pg)
     pg.screenshot(path=D + 'ui_field.png', clip={'x': 0, 'y': 0, 'width': 412, 'height': 300})

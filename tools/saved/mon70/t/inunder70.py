@@ -70,7 +70,7 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 880}, device_scale_factor=DPR)
     errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + os.path.abspath(HOOK)); pg.wait_for_timeout(700)
-    pg.locator('button', has_text='상단 문 열기').first.click(); pg.wait_for_timeout(1200)
+    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200)
     EV = lambda code: pg.evaluate(f"() => window.__EV({json.dumps(code)})")
     print(EV(SETUP)); skip(pg)
     for fn, title, fid, area, st, lv, boss, walk, hold, wait_ev, wait_ms in SHOTS:

@@ -121,7 +121,7 @@ function sellAllMats() {
   let g = 0, n = 0;
   for (const [k, q] of list) { const v = Math.round(ITEMS[k].v * guildRate() * q); addTo(S.inv, k, -q); g += v; n += q; }
   S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
-  log(`부속품 ${n}개를 모험가 길드에 한꺼번에 ${g$(g)}에 팔았다. (의뢰품·보스 부속품·교역품·알은 남겼다)`);
+  log(`부속품 ${n}개를 모험가 협회에 한꺼번에 ${g$(g)}에 팔았다. (의뢰품·보스 부속품·교역품·알은 남겼다)`);
   HOOKS.toast(`부속품 ${n}개 · ${g$(g)}`);
   changed();
   return '';
@@ -151,7 +151,7 @@ Object.assign(ACT, {
   pload: d => { UI.presetOpen = 1; say(loadPreset(+d.id, +d.p)); renderPanel(true); },
   pdel: d => { UI.presetOpen = 1; say(delPreset(+d.p)); renderPanel(true); },
   prep: d => { const p = findP(+d.id); if (!p) return; const k = +d.n; p.repeatSet = k; p.repeatLeft = k ? k : null; changed(); renderPanel(true); },
-  sellallmat: () => confirmBox('부속품 모두 팔기', `부속품을 모두 모험가 길드에 팔까요? 약 ${g$(bulkMatValue())}. 의뢰에 쓸 몫·보스 부속품(증표·핵·혼)·교역품·알·보물 지도는 남겨요.`, '모두 팔기', () => { say(sellAllMats()); renderPanel(true); }),
+  sellallmat: () => confirmBox('부속품 모두 팔기', `부속품을 모두 모험가 협회에 팔까요? 약 ${g$(bulkMatValue())}. 의뢰에 쓸 몫·보스 부속품(증표·핵·혼)·교역품·알·보물 지도는 남겨요.`, '모두 팔기', () => { say(sellAllMats()); renderPanel(true); }),
   selllowgear: () => confirmBox('장비 한꺼번에 팔기', `일반·고급 장비 ${bulkGears().length}점을 팔까요? 약 ${g$(bulkGears().reduce((t, g) => t + Math.round(gearValue(g) * GEAR_SELL), 0))}. 강화했거나 룬을 끼운 장비는 남겨요.`, '팔기', () => { say(sellLowGear()); renderPanel(true); }),
   allgo: () => { say(departAll()); renderPanel(true); },
   allback: () => { say(recallAll()); renderPanel(true); }
