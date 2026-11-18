@@ -357,13 +357,17 @@ function drawSky(g, id, scroll, t, dp) {
   }
   if (T.moon) {
     const x = Math.round(T.moon.x), y = Math.round(T.moon.y), day = S ? (today() % MONTH_DAYS) : 15, ph = Math.abs(day - 15) / 15;
-    disc(g, x, y, 9, 'rgba(220,230,255,0.10)'); disc(g, x, y, 5, '#f2eed8'); R(g, x - 2, y - 1, 2, 2, '#d8d2b8'); R(g, x + 1, y + 2, 2, 1, '#d8d2b8'); R(g, x + 1, y - 3, 1, 1, '#d8d2b8');
+    const hm = b.hdSky && HD.sky ? HD.sky.moon : null;   // 빌드 70: 보름달 그림 (GPT 하늘 판)
+    disc(g, x, y, 9, 'rgba(220,230,255,0.10)'); if (hm) g.drawImage(hm, x - 6, y - 6, 12, 12); else { disc(g, x, y, 5, '#f2eed8'); R(g, x - 2, y - 1, 2, 2, '#d8d2b8'); R(g, x + 1, y + 2, 2, 1, '#d8d2b8'); R(g, x + 1, y - 3, 1, 1, '#d8d2b8'); }
     if (ph > 0.15) disc(g, x + Math.round((1 - ph) * 8) + 2, y - 1, 5, mix(T.sky[0], T.sky[1], 0.3));
   }
   const nC = b.clouds || 0;
   if (nC) {
     const day = DAY_SKY[id] || DAY_SKY.plains, warm = mix('#ffffff', T.sky[2], 0.55), c = T.dark[1] > 0.3 ? mix(T.sky[1], '#ffffff', 0.18) : warm, cD = mix(c, T.sky[1], 0.4);
-    for (let i = 0; i < nC; i++) { const w = 18 + (i * 37) % 22, sp = 1.5 + (i % 3), y = 10 + (i * 23) % 40, x = ((i * 97 + t * sp - scroll * 0.05) % (VW + 80) + VW + 80) % (VW + 80) - 40; cloudAt(g, Math.round(x), y, w, c, cD); }
+    for (let i = 0; i < nC; i++) { const w = 18 + (i * 37) % 22, sp = 1.5 + (i % 3), y = 10 + (i * 23) % 40, x = ((i * 97 + t * sp - scroll * 0.05) % (VW + 80) + VW + 80) % (VW + 80) - 40;
+      const hc = b.hdSky && HD.sky ? HD.sky.clouds[i % HD.sky.clouds.length] : null;   // 빌드 70: 구름 그림 — 때(노을 · 밤) 색을 덧입힌다
+      if (hc) { const cw = hc.width / 2, ch = hc.height / 2, X = Math.round(x * 2) / 2, Y = y - ch / 2; g.drawImage(hc, X, Y, cw, ch); g.save(); g.globalAlpha = Math.min(0.8, 0.18 + T.dark[1] * 1.3); g.drawImage(hdTint(hc, T.dark[1] > 0.3 ? T.sky[1] : T.sky[2]), X, Y, cw, ch); g.restore(); }
+      else cloudAt(g, Math.round(x), y, w, c, cD); }
     void day;
   }
   return T;

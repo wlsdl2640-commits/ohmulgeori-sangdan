@@ -6,7 +6,7 @@
    · 1차 스킬 그림 13개: hexURL이 육각 안쪽 34×40을 그린다 (hdSkiCells)
    · 넓은 평원(bg plains_hd): 뒷산 · 중경(언덕 · 농장 · 울타리) · 넓은 땅 · 도는 풍차 날개 — 땅이 화면 아래 40%,
      파티 · 몬스터가 앞뒤로 흩어져 선다 (view.js formSlots · foeSlots · zAt이 V.wide를 본다) */
-const HD = { mon: {}, war: null, front: null, bg: null, spr: new Map(), tint: new WeakMap() };
+const HD = { mon: {}, war: null, wx: {}, sky: null, front: null, bg: null, spr: new Map(), tint: new WeakMap() };
 const HD_EMPTY = (() => { if (typeof document === 'undefined') return null; const [cv] = mkCanvas(1, 1); return { cv, ax: 0, ay: 0, w: 1, h: 1, dx: 0, jy: 0, fo: [0, 0] }; })();
 // 그림 몬스터 동작: 줄 · 장 시간 · 맞히는 장 · 앞으로 나간 거리(논리 픽셀, 장마다) · 쏘는 자리
 const HD_MOT = {
@@ -73,6 +73,8 @@ function hdLoad() {
   const W = D.war;
   img(W.url, im => { HD.war = { m: W, f: hdCut(im, W.w, W.h, W.rows, W.n) }; HD.spr.clear(); });
   img(W.front.url, im => { const [cv, x] = mkCanvas(W.front.w, W.front.h); x.drawImage(im, 0, 0); HD.front = { cv, hs: W.hs || 1, ax: W.front.ax, ay: W.front.ay, w: W.front.w, h: W.front.h }; });
+  for (const rn in W.x || {}) { const m = W.x[rn]; img(m.url, im => { HD.wx[rn] = { m, f: hdCut(im, m.w, m.h, [rn], [m.n])[rn] }; HD.spr.clear(); }); }   // 걷기 · 달리기 · 앉기 · 눕기 (11-18 20:44 판)
+  if (D.sky) { const K = { moon: null, clouds: [] }; let n = D.sky.clouds.length + 1; const done = () => { if (!--n) HD.sky = K; }; img(D.sky.moon, im => { K.moon = im; done(); }); D.sky.clouds.forEach((u, i) => img(u, im => { const [cv, x] = mkCanvas(im.width, im.height); x.drawImage(im, 0, 0); K.clouds[i] = cv; done(); })); }
   const B = D.bg.plains, L = {}; let left = 4;
   for (const k of ['back', 'mid', 'gr', 'blades']) img(B[k].url, im => { L[k] = im; if (--left) return; HD.bg = L; if (typeof BG !== 'undefined') delete BG.plains_hd; });
 }
@@ -106,7 +108,9 @@ const hdWarOn = a => !!(HD.war && a && a.cls === 'warrior');
 // 모험가 동작(pxs.js) → 리마스터 줄
 const HDW_ROW = { down: 'slash', side: 'slash', hack: 'slash', smash: 'slash', toss: 'slash', up: 'upper', thrust: 'thrust', taunt: 'thrust', bash: 'bash', block: 'guard', guard: 'guard', parry: 'guard', ready: 'guard', raise: 'guard', salute: 'guard' };
 function hdWarSpr(a, pose, fr, t, o) {   // art.js drawAdv가 부른다 (null이면 예전 그림)
-  if (pose === 'sit' || pose === 'sleep') return null;
+  const X = (rn, i) => { const Q = HD.wx[rn]; if (!Q) return null; const key = 'X|' + rn + '|' + i + '|' + (FLASH || ''); let s = HD.spr.get(key); if (!s) { const m = Q.m; s = { cv: FLASH ? hdTint(Q.f[i], FLASH) : Q.f[i], hs: m.hs, ax: m.ax, ay: m.ay, w: m.w, h: m.h }; HD.spr.set(key, s); } return s; };
+  if (pose === 'sit' || pose === 'sleep') return X(pose, Math.floor(t * 1.6 + (o.ph || 0)) % 4);   // 야영: 앉아 쉬기 · 누워 자기 (숨쉬기 4장)
+  if (o.side && pose === 'walk' && o.die == null) { const h0 = typeof V !== 'undefined' && V.flash0 && a.id != null ? V.flash0['a' + a.id] : null; if (!(h0 != null && t - h0 >= 0 && t - h0 < 0.4)) { const rn = o.run ? 'run' : 'walk', s = X(rn, Math.floor(t * (o.run ? 11 : 8) + (o.ph || 0) * 3) % 8); if (s) return s; } }
   if (!o.side) { if (!HD.front) return null; const F = HD.front; return FLASH ? { cv: hdTint(F.cv, FLASH), hs: F.hs, ax: F.ax, ay: F.ay, w: F.w, h: F.h } : F; }
   const H = HD.war, ph = o.ph || 0;
   let row = 'idle', i = Math.floor(t * 6 + ph * 2) % 8, fl = FLASH;
@@ -148,7 +152,7 @@ function buildPlainsHD() {
   const bw = B.blades.w, bl = [];
   for (let i = 0; i < B.blades.n; i++) { const [c, x] = mkCanvas(bw, bw); x.drawImage(L.blades, i * bw, 0, bw, bw, 0, 0, bw, bw); bl.push(c); }
   const W2 = mid.width / q, bx = B.blades.x, by = B.blades.y;
-  return { tall: 1, wide: 1, back, far: null, mid, gr, gy: B.gr.y, clouds: 7, ambient: 'meadow', skyOy: B.skyOy, gateY: B.gateY,
+  return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y, clouds: 7, ambient: 'meadow', skyOy: B.skyOy, gateY: B.gateY,
     props(g, off, t) {   // 풍차 날개 (뒤집힌 짝은 거꾸로 돈다)
       const fi = Math.floor(t * 8) % bl.length;
       for (const [x0, flip] of [[bx, 0], [W2 - bx, 1]]) {

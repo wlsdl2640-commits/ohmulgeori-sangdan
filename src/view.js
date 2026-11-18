@@ -484,7 +484,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
       if (falling && !hw) { const k = Math.max(0, Math.min(1, (t - ft) / 0.3)); g.rotate(-k * k * Math.PI / 2); }
       FLASH = (V.flash['a' + a.id] || 0) > t && (V.flash0['a' + a.id] || 0) <= t ? '#ffffff' : null;
-      drawAdv(g, a, t, { walk: walking && !falling, ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / 0.5)) : null });
+      drawAdv(g, a, t, { walk: walking && !falling, run: e.mode === 'return', ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / 0.5)) : null });
       FLASH = null; g.restore();
     } });
     if (ORBIT[a.cls]) post.push(g => { const [c1, c2] = ORBIT[a.cls]; for (let k = 0; k < 2; k++) { const ang = t * 3 + k * Math.PI; R(g, Math.round((x0 + Math.cos(ang) * 12) * 2) / 2, Math.round((y - PH * 0.55 + Math.sin(ang) * 4) * 2) / 2, 1.5, 1.5, k ? c2 : c1); } });

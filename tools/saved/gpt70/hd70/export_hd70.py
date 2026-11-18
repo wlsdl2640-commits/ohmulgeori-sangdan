@@ -105,7 +105,15 @@ bg = {'k': K, 'hs': HS,
       'back': {'url': png_url(back, 'bg_back'), 'y': round(95 - back.height / HS, 1)},
       'blades': {'url': png_url(bsh, 'bg_blades'), 'w': bw, 'n': 12, 'x': round(1387 * K, 1), 'y': round(Y(188), 1)},
       'skyOy': -58, 'gateY': 150}
-D = {'mon': mon, 'war': war, 'ski': ski, 'bg': {'plains': bg}}
+# ── 2b. 전사 추가 줄 (걷기 · 달리기 · 앉기 · 눕기 — extract_war2.py) · 하늘(보름달 · 구름 — extract_sky.py)
+W2 = json.load(open('out_war2/meta.json')); war['x'] = {}
+for rn, m in W2.items():
+    sh = Image.new('RGBA', (m['w'] * m['n'], m['h']), (0, 0, 0, 0))
+    for i in range(m['n']): sh.alpha_composite(Image.open(f'out_war2/{rn}_{i}.png').convert('RGBA'), (i * m['w'], 0))
+    war['x'][rn] = dict(m, url=png_url(sh, 'war_' + rn))
+SK = json.load(open('out_sky/meta.json'))
+sky = {'hs': 2, 'moon': png_url(Image.open('out_sky/' + SK['moon'][0][0])), 'clouds': [png_url(Image.open('out_sky/' + f)) for f, _, _ in SK['cloud']]}
+D = {'sky': sky, 'mon': mon, 'war': war, 'ski': ski, 'bg': {'plains': bg}}
 js = ('/* 빌드 70 시험: 곡창지대 평원 리마스터 그림 (GPT 그림 판에서 오림) — 손으로 고치지 말 것.\n'
       '   다시 뽑기: tools/saved/gpt70/hd70/export_hd70.py (extract_mon.py · extract_war.py · extract_sk.py 다음에) */\n'
       'const HD70_DATA = ' + json.dumps(D, ensure_ascii=False, separators=(',', ':')) + ';\n')

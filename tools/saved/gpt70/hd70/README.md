@@ -43,3 +43,7 @@ python3 export_hd70.py <src/data-hd70.js> [미리보기 폴더]
 
 ## 확인 (시험 묶음 아님 — 세션 작업 폴더 경로를 쓴다)
 `mkhook70.py`(훅 페이지) · `cap70.py <폴더> <stage> <적,…> [초] [간격ms] [lv]`(실제 게임 고리로 싸움을 찍는다 · `cap70p`는 작은 창) · `scen70.py <폴더> [boss night camp die]` · `ui70.py`(모험가 창 · 스킬 탭 · 길드 앞) · `ui70b.py`(지도 · 원정대 · 도감).
+
+## 11-18 20:44 추가 판 (사용자 「만들어 왔다 … 시간, 날씨 바뀌는 것도 받음」)
+- `sheets/warrior1_walk · _run · _sit · _sleep`(마젠타 · 한 줄씩) → `extract_war2.py` → out_war2 → data-hd70.js `war.x` → hd70.js `HD.wx`: 걷기(똑바로 선 8장 — 옛 숙인 걷기 줄 대신) · 달리기(복귀 길 `o.run`) · 앉기 · 눕기(야영, 숨쉬기 4장 · 판이 크게 그려져 0.75 · 0.85배).
+- `sheets/sky_magenta · sky_dark` → `extract_sky.py` → 보름달 · 구름 11개(scene.js drawSky가 `bg.hdSky`면 그림 구름에 때 색을 덧입힘). **아직 안 쓴 것**: 해(빛 번짐이 마젠타와 섞여 알맹이가 깨짐 — 게임 해 그대로) · 초승달(안에 별 — 쓰지 않음) · 날씨 하늘 칸(맑음 · 흐림 · 비 · 눈 · 바람 8장씩) · 비 · 눈 · 바람 낱장(어두운 판).
