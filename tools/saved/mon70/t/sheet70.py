@@ -25,7 +25,7 @@ for fn in FILES:
 INJ = r"""((D) => {
   for (const [k, d] of Object.entries(D)) {
     const p = Object.assign({}, d); for (const x of ['act', 'mon', 'label', 'desc', 'field', 'area', 'show']) delete p[x];
-    PXU[k] = p; MONS[k] = Object.assign({}, MONS[d.mon.base], { name: d.label, drops: [] }); PXU_ACT[k] = d.act;
+    PXU[k] = p; MONS[k] = Object.assign({}, MONS[d.mon.base], d.mon.col || {}, { name: d.label, drops: [] }); PXU_ACT[k] = d.act;   // mon.col: 미궁 변종처럼 몸 색만 바꾼 시안 (빌드 70 지하미궁)
     delete MON_DIM[k]; if (typeof MON_BACK !== 'undefined') delete MON_BACK[k];
   }
   PXC.clear(); return Object.keys(D).length;
