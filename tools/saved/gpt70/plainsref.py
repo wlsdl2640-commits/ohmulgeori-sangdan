@@ -29,7 +29,7 @@ SCENE = r"""((r) => {
 LAYERS = r"""(() => { const b = buildPlains(), out = {};
   for (const k of ['back', 'far', 'mid', 'gr', 'fore']) out[k] = b[k].toDataURL();
   const c = document.createElement('canvas'); c.width = 480; c.height = 128; const g = c.getContext('2d');
-  b.props(g, 0, 0.6, 0); out.props = c.toDataURL(); return JSON.stringify(out); })()"""
+  g.translate(200, 0); b.props(g, 200, 0.33, 0); out.props = c.toDataURL(); return JSON.stringify(out); })()"""   # props는 화면(240) 안에서만 그린다 → 겹을 200 민 화면으로 그리고 되돌림 · 날개 22.5°
 SPR = r"""((list, Z) => {
   const sp = list.map(([id, mk, f]) => pxuSprite(id, mk, f));
   const up = Math.max(...sp.map(s => s.ay)), dn = Math.max(...sp.map(s => s.h - s.ay));
@@ -82,6 +82,7 @@ text(d, (20, y), '평원 — 지금 게임 그림 (GPT 그래픽 업그레이드
 text(d, (20, y), '① 실제 화면 (2배) — 파티는 왼쪽에서 오른쪽으로 걷고, 몬스터는 오른쪽에서 왼쪽을 본다. 하늘 · 해 · 달 · 구름 · 밤 어둠은 게임이 시간대마다 그린다.', 15, SUB); y += 30
 for _, title, im in parts:
     S.paste(im, (20, y)); text(d, (20, y + im.height + 4), title, 16); y += im.height + 44
+Y2 = y - 14
 text(d, (20, y), '② 배경 겹 다섯 (2배로 보임 · 원본 크기 표시) — 좌우 끝이 이어져 끝없이 흐른다. 빈 곳은 투명(하늘은 그리지 않음).', 17, GOLD, True); y += 34
 SPD = {'back': '먼 산 · 480×128 · 가장 느리게(×0.08) · 게임이 하늘빛 안개 42%를 덮음', 'far': '먼 언덕 · 480×128 · ×0.2 · 안개 18%', 'mid': '중경 들판(밀밭 · 나무 · 울타리 · 농가 · 풍차 몸통 · 건초) · 480×128 · ×0.5',
        'gr': '땅 띠 · 480×28 · 화면 y100부터 · ×1 (캐릭터가 걷는 길 — 흙길)', 'fore': '앞 풀 · 480×28 · 캐릭터 앞에 그려짐 · ×1.15'}
@@ -95,8 +96,9 @@ for k in ['back', 'far', 'mid', 'gr', 'fore']:
     S.paste(base.convert('RGB'), (20, y)); text(d, (20, y + big.height + 4), SPD[k], 15); y += big.height + 52
 comp = Image.new('RGBA', (480, 128), (150, 190, 230, 255))
 for k in ['back', 'far', 'mid']: comp.alpha_composite(L[k])
-comp.alpha_composite(L['props']); comp.alpha_composite(L['gr'], (0, 100)); comp.alpha_composite(L['fore'], (0, 100))
+comp.alpha_composite(L['gr'], (0, 100)); comp.alpha_composite(L['fore'], (0, 100))
 S.paste(comp.resize((960, 256), Image.NEAREST).convert('RGB'), (20, y)); text(d, (20, y + 260), '다섯 겹을 겹친 모습 (풍차 날개는 따로 돈다 · 하늘색은 예시)', 15); y += 128 * LZ + 52
+Y3 = y - 14
 text(d, (20, y), '③ 몬스터 여섯 (4배) — 서 있기 두 장(숨쉬기) + 동작 장', 17, GOLD, True); y += 28
 text(d, (20, y), '그림은 오른쪽을 본다(게임이 뒤집어 왼쪽을 보게 그림) · 한 칸 = 게임 화면 2×2 픽셀(배경 한 픽셀의 두 배) · 바닥 줄 = 발 높이', 15, SUB); y += 30
 for (nm, how, im), (k, *_ ) in zip(mons, MONS6):
@@ -104,3 +106,15 @@ for (nm, how, im), (k, *_ ) in zip(mons, MONS6):
     text(d, (20, y), f'{nm} — 칸 {w}×{h} · {how}', 16); y += 26
     S.paste(im.convert('RGB'), (20, y)); y += im.height + 44
 S = S.crop((0, 0, W, y + 10)); out = os.path.join(OUT, 'plains_ref.png'); S.save(out); print('wrote', out, S.size)
+# GPT에 붙일 것: 참고 판을 셋으로 (한 장이 너무 길면 GPT가 줄여 보아 도트가 뭉개진다)
+for nm, (a, b) in [('plains_1_screens', (0, Y2)), ('plains_2_layers', (Y2, Y3)), ('plains_3_monsters', (Y3, S.height))]:
+    S.crop((0, a, W, b)).save(os.path.join(OUT, nm + '.png'))
+# 업그레이드할 원본 — 겹을 4배(날개는 8배)로, 투명 자리는 단색 마젠타(GPT가 바둑판을 그리지 않게)
+MAG = (255, 0, 255, 255)
+def on_mag(im, z):
+    big = im.resize((im.width * z, im.height * z), Image.NEAREST)
+    base = Image.new('RGBA', big.size, MAG); base.alpha_composite(big); return base.convert('RGB')
+for k, nm in [('back', 'back'), ('far', 'far'), ('mid', 'mid'), ('gr', 'ground'), ('fore', 'fore')]:
+    on_mag(L[k], 4).save(os.path.join(OUT, f'gpt_in_{nm}.png'))
+# 풍차 날개 원본은 주지 않는다(네 날개 바람개비 꼴) — 부탁 글에서 다섯 날개로 따로 그리게 한다. 날개 축은 겹 좌표 (326, 56)
+print('split', Y2, Y3, 'inputs ok')
