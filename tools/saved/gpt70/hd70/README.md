@@ -1,0 +1,42 @@
+# 곡창지대 평원 리마스터 — 시험판 (빌드 70 · 11-18 18:42 사용자)
+
+사용자: 「자 몬스터, 여기 곡창지대에서 나올 몬스터 들이야. 그리고 1차전사 리마스터버전, 스킬까지도.」 ·
+답 「이름은 곡창지대, 평원으로 할거고, 슬라임 고블린은 다른 곳으로 옴길거야」 · 「곡창지대 평원 후반에 나오게 하자. 몬스터 LV 디자인은 1~30까지 하자.」 ·
+「우선 전사 1차만 적용시켜서 전사 1차만 투입해서 시험 아티펙트 하나 만들어서 보여줘 내가 시험 해볼깨」 · 허수아비 「그대로 넣기」.
+
+## 받은 판 (`sheets/` — 받은 그대로, 무손실 WebP)
+| 파일 | 내용 |
+|---|---|
+| mon_rat · mon_rabbit · mon_wolf | 마젠타 바탕 · 줄: 서 있기 8 · 물기/돌진 8 · 뛰기 12/10 |
+| mon_scarecrow | 마젠타 바탕 · 서 있기 8 · 어깨 까마귀 발사 8 · 머리 까마귀 발사 8 · 남은 까마귀 발사 8 (줄 이름표는 지운다) |
+| mon_boar · mon_aboar | 검은 바탕 · 서 있기 6/7 · 걷기 8 · 뿔 치켜들기 6 · 박치기 7/8 · 돌진 8 (왼쪽을 봐서 뒤집는다) |
+| warrior1 | 검은 바탕 · 전사 1차 디자인 · 동작 열 줄(서 있기 · 걷기 · 달리기 · 베기 · 올려베기 · 찌르기 · 방패 막기 · 방패 밀치기 · 맞음 · 쓰러짐) |
+| warrior1_skills | 1차 스킬 13개: 그림(왼쪽 칸) · 쓰는 동작 7장 · 효과 예시 |
+
+평원 풍경은 `../plains_wide/`(다 겹친 모습 · 겹 판 · 중경 — 11-18 18:18).
+
+## 다시 뽑기 (작업 폴더에서, 순서대로)
+```
+python3 extract_mon.py      # → out_mon/<id>/<줄>_<i>.png + meta.json (줄마다 몸 크기를 서 있기 줄에 맞춘다 · 뛰는 줄은 칸 안 움직임 그대로)
+python3 extract_war.py      # → out_war/ (키 32 · 쓰러지는 줄은 칸 자리 그대로) + front.png(디자인 칸 「앞」)
+python3 sk_icons.py         # → sk_boxes.json (스킬 그림 칸)
+python3 extract_sk.py       # → out_sk/icon_<id>.png 34×40 (+ 쓰는 동작 띠 — 아래 「안 쓴 것」)
+python3 export_hd70.py <src/data-hd70.js> [미리보기 폴더]
+```
+`preview_mon.py` · `preview_war.py`는 장 판(3 · 2배). 손으로 `src/data-hd70.js`를 고치지 말 것 — 이 폴더 판에서 바이트까지 같게 다시 나온다(11-18 확인).
+
+## 게임 (src/hd70.js — build.py에서 pxplains.js 다음, data-hd70.js 다음)
+- 그림 몬스터: `PXU[id].img` → pxund.js `pxuSprite`가 `hdMonSpr`(그림 장)를, `pxuPick`이 `hdAct`(그림 동작)를. 동작 `HD_MOT['i_<id>_<줄>']` = 장 시간(PXS_MOT_TT) · 맞히는 장(PXS_MOT_HITF) · 앞으로 나간 거리 dx(논리 픽셀) · 쏘는 자리 tip. 허수아비 까마귀는 PXU_CAST(투사체 dart · 「까마귀 떼」는 feathers 광역). art.js `monBase`(`hdMonBase` 그림이 있는 칸) · `drawMon`(서 있기 6 ~ 8장 · 다가올 때 걷기 줄 — 멧돼지 둘). FLASH(흰 번쩍 · 희귀종 · 잔상)는 `hdTint`.
+- 전사 1차(cls warrior만): art.js `drawAdv` → `hdWarSpr`(앉기 · 눕기는 예전 그림) · 모험가 동작 → 줄 `HDW_ROW` · 맞으면 맞음 줄(흰 번쩍은 처음 0.07초) · 쓰러질 때 쓰러짐 줄(view.js `die`) · 들것은 마지막 장. view.js는 이 전사의 기본 무기 자취(뭉툭 칸)를 그리지 않는다(베기 자취가 그림 장에 있다 — 스킬 빛은 그대로). hero.js 영웅 창 · 초상은 앞모습.
+- 스킬 그림: hero.js `hexURL`이 `hdSkiCells(sid)`(34×40, 육각 안쪽 x 7 · y 4부터) — bash · taunt · ironwall · ironskin · sweep · berserk · riposte · resolve · earthsplit · shockwave · warcry · guardian · titanblow.
+- 넓은 평원: bg `plains_hd`(scene.js getBg → `buildPlainsHD`) — 뒷산(초록 언덕 ×0.08, 안개) · 중경(그림 1의 y 134 ~ 392: 언덕 · 농장 · 울타리 ×0.5) · 땅(그림 1의 y 380 ~ 724, 위 세 줄은 바둑 무늬로 엷게) · 풍차 날개(겹 판 오른쪽, 12장 · 72°) — 모두 뒤집어 이어 붙여 이음매가 없다. `gy`(땅 띠 높이) · `skyOy`(하늘 띠를 위로 58) · `gateY`(던전 입구). view.js `V.wide` → `formSlots`(FORM_Y_W · FORM_YO_W · FORM_SKEW_W) · `foeSlots`(SLOT_PW) · `zAt`(y 136 ~ 192).
+- 데이터: FIELDS.plains 이름 「곡창지대 평원」 · bg plains_hd · span 29(Lv1 ~ 30) · 몬스터 들쥐 · 뿔토끼 · 들늑대 · 허수아비(minS 7 = 1-19부터) · 멧돼지(10 = 1-28) · 갑옷 멧돼지(14 = 1-40) · 우두머리 늑대 · 허수아비 · 멧돼지 · 갑옷 멧돼지 · 갑옷 멧돼지. 던전 「버려진 곡물 창고」는 그대로(슬라임 · 고블린은 옮길 곳이 정해질 때까지 여기에만 — span 때문에 던전도 Lv26 ~ 30 · 주인 Lv32). 새 부속품 허수아비 짚단 · 까마귀 깃털 · 멧돼지 엄니 · 멧돼지 가죽 · 갑옷 멧돼지 등판. MON_TAG · MON_SK · MU69에 세 몬스터.
+
+## 안 쓴 것 · 알아 둘 것
+- 스킬 쓰는 동작 띠(warrior1_skills 가운데 7장): 빛이 검은 바탕에 번져 있어 몸과 빛이 갈리지 않는다(밝은 빛만 남기면 몸 둘레에 검은 덩어리) — 게임은 기본 동작 줄 + 엔진 스킬 효과. 마젠타 바탕으로 다시 받으면 넣을 수 있다.
+- 전사 달리기 줄은 아직 안 쓴다(걷기만). 앉기 · 눕기(야영) 그림이 판에 없어 예전 그림.
+- 멧돼지 판 「뿔 치켜들기」는 갑옷 멧돼지 스킬 한 가지에만 쓴다.
+- 1px 그림이라 앞줄(1.25배)에서는 칸 너비가 2 · 3 기기 픽셀로 번갈아 보인다(옛 뭉툭 그림은 칸이 2배라 고르다).
+
+## 확인 (시험 묶음 아님 — 세션 작업 폴더 경로를 쓴다)
+`mkhook70.py`(훅 페이지) · `cap70.py <폴더> <stage> <적,…> [초] [간격ms] [lv]`(실제 게임 고리로 싸움을 찍는다 · `cap70p`는 작은 창) · `scen70.py <폴더> [boss night camp die]` · `ui70.py`(모험가 창 · 스킬 탭 · 길드 앞) · `ui70b.py`(지도 · 원정대 · 도감).

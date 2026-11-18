@@ -547,8 +547,8 @@ function skiCells(id) {
 const HEX_FR = [['#c8a870', '#8a6a3c', '#5a4428'], ['#d89a64', '#9a5e34', '#64381c'], ['#e4e8f0', '#9aa2ae', '#5e6672'], ['#ffe07a', '#c8962c', '#7e5814'], ['#f4f8ff', '#a8b8d8', '#5a6a8a']];
 // 육각 칸 한 장: 글리프(또는 스킬 그림)·종류·숙련 완료 표시·틀 색
 function hexURL(glyph, kind, max, sid, fr = 0) {
-  const art = sid ? skiCells(sid) : null, F = HEX_FR[fr] || HEX_FR[0], on = !!(glyph || art);
-  const key = (art ? '@' + sid : glyph || '-') + '|' + (kind || '') + '|' + (max ? 1 : 0) + '|' + fr;
+  const hd = sid ? hdSkiCells(sid) : null, art = hd || (sid ? skiCells(sid) : null), F = HEX_FR[fr] || HEX_FR[0], on = !!(glyph || art);   // 빌드 70 시험: 전사 1차 스킬 리마스터 그림 (34×40, 육각 안쪽 x 7 · y 4부터)
+  const key = (art ? (hd ? '@hd' : '@') + sid : glyph || '-') + '|' + (kind || '') + '|' + (max ? 1 : 0) + '|' + fr;
   if (HEX_URL[key]) return HEX_URL[key];
   const W = HEX_W, [c, x] = mkCanvas(W, W), cx = W / 2, cy = W / 2, r = 22;
   const span = y => { // 뾰족한 꼭짓점이 위로 간 육각형의 가로 폭
@@ -566,6 +566,7 @@ function hexURL(glyph, kind, max, sid, fr = 0) {
     if (!edge && l + 1 < rr - 1) {
       const tint = on ? HEX_TINT[kind] || HEX_TINT.none : '#141010';
       if (!art) line(y, l + 1, rr - 1, tint);
+      else if (hd) for (let px = l + 1; px < rr - 1; px++) { const ax = px - 7, ay = y - 4; x.fillStyle = ax >= 0 && ax < 34 && ay >= 0 && ay < 40 ? hd[ay * 34 + ax] : tint; x.fillRect(px, y, 1, 1); }
       else for (let px = l + 1; px < rr - 1; px++) { const ax = (px >> 1) - 4, ay = (y >> 1) - 2; x.fillStyle = ax >= 0 && ax < 16 && ay >= 0 && ay < 20 ? art[ay * 16 + ax] : tint; x.fillRect(px, y, 1, 1); }
     }
   }
@@ -600,11 +601,11 @@ function heroDraw(cv, a, now) {
     for (let j = -ry; j <= ry; j++) { const hw = Math.max(1, Math.round(rx * Math.sqrt(Math.max(0, 1 - (j / (ry + 0.5)) ** 2)))); g.fillRect(cx - hw * Z, Math.round(cy + j * Z - Z / 2), hw * 2 * Z, Z); } }
   let pose = 'idle', fr = Math.floor(t * 1.6) % 2;
   if (cyc > 4.3 && cyc < 5.0) { pose = 'atk'; fr = cyc < 4.5 ? 0 : 1; }
-  const ride = rideKind(a) ? rideComp(heroAdv(a), pose, fr, false) : null, s = ride || pxAdvSprite(heroAdv(a), pose, fr);   // 탈것 직업 (빌드 65): 앞모습 탈것에 탄 그림
+  const ride = rideKind(a) ? rideComp(heroAdv(a), pose, fr, false) : null, hw = !ride && hdWarOn(a) && HD.front ? HD.front : null, s = ride || hw || pxAdvSprite(heroAdv(a), pose, fr);   // 탈것 직업 (빌드 65): 앞모습 탈것에 탄 그림 · 빌드 70 시험: 전사 1차 리마스터 앞모습
   // 탈것에 탄 그림은 크니 창에 맞게 줄인다 (기기 픽셀 정수배 — 칸이 고르게)
   const Zs = ride ? Math.max(1 / dpr, Math.floor(Math.min(Z, (W / 2 - 3) / Math.max(s.ax, s.w - s.ax), (gy - 3) / s.ay) * dpr) / dpr) : Z;
   // 휘두를 때 하얀 호
-  if (pose === 'atk' && fr === 1 && !ride) {   // 빌드 63: 매끈한 호 대신 Z칸 네모를 호를 따라 (투명도도 계단)
+  if (pose === 'atk' && fr === 1 && !ride && !hw) {   // 빌드 63: 매끈한 호 대신 Z칸 네모를 호를 따라 (투명도도 계단)
     const mi = pxWSh(a.eq && a.eq.off) ? -1 : 1;   // 빌드 64: 방패를 들면 무기가 오른손(보는 사람 왼쪽) → 호도 왼쪽으로
     const k = (cyc - 4.5) / 0.5, al = Math.ceil((1 - k) * 4) / 4 * 0.8, r = 30 + Math.floor(k * 3) * 4, cx = W / 2 + 26 * mi, cy = gy - 40, seen = new Set();
     g.fillStyle = `rgba(255,255,255,${al})`;
@@ -630,11 +631,11 @@ function heroStart() { if (!HERO.raf) HERO.raf = requestAnimationFrame(heroTick)
 /* 확대한 초상: 썸네일·의상 카드용 */
 const HPOR = {};
 function heroPortrait(a, z, W, H) {
-  const key = advKey(a) + '|' + z + '|' + W + 'x' + H;
+  const hw = hdWarOn(a) && HD.front ? HD.front : null, key = advKey(a) + '|' + z + '|' + W + 'x' + H + (hw ? '|hd' : '');   // 빌드 70 시험: 전사 1차 리마스터 앞모습
   if (HPOR[key]) return HPOR[key];
   const [c, x] = mkCanvas(W, H);
   x.translate(Math.floor(W / 2), H - 3); x.scale(z, z);
-  pxBlit(x, pxAdvSprite(a, 'idle', 0));
+  pxBlit(x, hw || pxAdvSprite(a, 'idle', 0));
   return (HPOR[key] = c.toDataURL());
 }
 

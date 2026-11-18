@@ -29,7 +29,7 @@ const MTYPES = {
 const MTYPE_IDS = Object.keys(MTYPES);
 // 몬스터: 타입(여럿이면 공백) | 속성(여럿이면 공백, 없으면 비움)
 const MON_TAG = {
-  rat: 'beast|', slime: 'monster|', rabbit: 'beast|', wolf: 'beast|', goblin: 'monster|', ratking: 'beast|',
+  rat: 'beast|', slime: 'monster|', rabbit: 'beast|', wolf: 'beast|', goblin: 'monster|', ratking: 'beast|', scarecrow: 'plant|', boar: 'beast|', aboar: 'beast|earth',
   myconid: 'plant monster|', spider: 'monster|', sapling: 'plant|', shaman: 'monster|dark', elder: 'plant|earth',
   lizard: 'beast|earth', bat: 'beast|', kobold: 'monster|', golem: 'construct|earth', giant: 'kaiju construct|earth',
   harpy: 'monster|wind', windwolf: 'beast|wind', griffon: 'beast|wind', wyvern: 'dragon|wind', stormwyvern: 'dragon kaiju|storm',

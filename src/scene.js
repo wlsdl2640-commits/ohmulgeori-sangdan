@@ -331,7 +331,7 @@ function buildTown() {
 
 function getBg(id) {
   if (BG[id]) return BG[id];
-  const make = { plains: buildPlains, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
+  const make = { plains: buildPlains, plains_hd: buildPlainsHD, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
     cellar: () => buildUnder('cellar'), cave: () => buildUnder('cave'), mine: () => buildUnder('mine'),
     valley: buildValley, snow: buildSnow, desert: buildDesert, front: buildFront,
     nest: () => buildUnder('nest'), icetemple: () => buildUnder('icetemple'), tomb: () => buildUnder('tomb'), alley: buildAlley, sewer: () => buildUnder('sewer'), arena: () => buildUnder('arena') }[id] || (typeof BG_MAKERS !== 'undefined' && BG_MAKERS[id]) || buildPlains;
@@ -372,11 +372,11 @@ function drawSky(g, id, scroll, t, dp) {
 /* ───────── 풍경 (어둠은 화면 쪽에서 입힌다) ───────── */
 function haze(g, c, a, tall) { g.save(); g.globalCompositeOperation = 'source-atop'; g.globalAlpha = a; g.fillStyle = c; g.fillRect(0, 0, VW, tall ? SCN_H : VH); g.restore(); }
 function drawLand(g, id, scroll, t, T) {
-  const b = getBg(id), gy = b.tall ? GL - 4 : 100;
+  const b = getBg(id), gy = b.gy != null ? b.gy : b.tall ? GL - 4 : 100;   // 빌드 70: 넓은 땅(plains_hd)은 땅 띠가 높이 b.gy부터
   if (b.under) { tile(g, b.mid, scroll * 0.6, 0); tile(g, b.gr, scroll, gy); return; }
   if (b.town) { g.drawImage(b.back, 0, 0); haze(g, T.sky[2], 0.4); g.drawImage(b.far, 0, 0); haze(g, T.sky[2], 0.12); g.drawImage(b.mid, 0, 0); g.drawImage(b.gr, 0, 100); return; }
   tile(g, b.back, scroll * 0.08, 0); haze(g, T.sky[2], b.tall ? 0.3 : 0.42, b.tall);
-  tile(g, b.far, scroll * 0.2, 0); haze(g, T.sky[2], b.tall ? 0.12 : 0.18, b.tall);
+  if (b.far) { tile(g, b.far, scroll * 0.2, 0); haze(g, T.sky[2], b.tall ? 0.12 : 0.18, b.tall); }
   tile(g, b.mid, scroll * 0.5, 0);
   if (b.props) b.props(g, scroll * 0.5, t, T.dark[1]);
   tile(g, b.gr, scroll, gy);

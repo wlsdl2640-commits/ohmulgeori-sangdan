@@ -48,6 +48,11 @@ const ITEMS = {
   goblin_ear:     { name: '고블린 귀',          v: 12,   w: 1, icon: 'ear',     c: '#7fae4b' },
   rusty_dagger:   { name: '녹슨 단검',          v: 18,   w: 2, icon: 'blade',   c: '#b7774a' },
   ratking_crown:  { name: '들쥐왕의 왕관',      v: 320,  w: 2, icon: 'crown',   c: '#f0c24a' },
+  scare_straw:    { name: '허수아비 짚단',      v: 30,   w: 2, icon: 'hide',    c: '#d8b45a' },   // 빌드 70: 곡창지대 평원 새 몬스터
+  crow_feather:   { name: '까마귀 깃털',        v: 38,   w: 1, icon: 'feather', c: '#4a4a62' },
+  boar_tusk:      { name: '멧돼지 엄니',        v: 46,   w: 1, icon: 'fang',    c: '#efe2c4' },
+  boar_hide:      { name: '멧돼지 가죽',        v: 52,   w: 3, icon: 'hide',    c: '#8a4a32' },
+  aboar_plate:    { name: '갑옷 멧돼지 등판',   v: 90,   w: 3, icon: 'gem',     c: '#b8a890' },
   spore:          { name: '독버섯 포자',        v: 22,   w: 1, icon: 'blob',    c: '#b46ad8' },
   spider_silk:    { name: '거미줄 주머니',      v: 26,   w: 1, icon: 'hide',    c: '#e6e6f0' },
   venom_gland:    { name: '거미 독샘',          v: 34,   w: 1, icon: 'gem',     c: '#9ad83c' },
@@ -99,6 +104,9 @@ const MONS = {
   rabbit:  { name: '뿔토끼',       plan: 'quad', body: '#e6e0d4', dark: '#b9b0a2', len: 8,  h: 5, horn: '#e7cf86', ears: 1, mh: 0.55, ma: 0.7, md: 0, spd: 1.3, eva: 0.08, minS: 2, drops: [['rabbit_horn', 0.6]] },
   wolf:    { name: '들늑대',       plan: 'quad', body: '#8f877d', dark: '#5f5a54', len: 14, h: 7, tail: 1, ear: 1, snout: 1, mh: 0.95, ma: 0.95, md: 0.4, spd: 1.1, minS: 4, drops: [['wolf_pelt', 0.45], ['wolf_fang', 0.5]] },
   goblin:  { name: '고블린',       plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.9, ma: 0.9, md: 0.8, spd: 1.0, minS: 6, drops: [['goblin_ear', 0.7], ['rusty_dagger', 0.15]] },
+  scarecrow: { name: '허수아비',    plan: 'biped', skin: '#c8a060', cloth: '#7a5232', gear: 'staff', mh: 1.0, ma: 1.05, md: 0.6, spd: 0.9, minS: 7, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },   // 빌드 70: 곡창지대 평원 (리마스터 그림 — hd70.js)
+  boar:    { name: '멧돼지',       plan: 'quad', body: '#8a4a32', dark: '#5a2e1e', len: 14, h: 7, tail: 1, ear: 1, mh: 1.3, ma: 1.2, md: 0.8, spd: 0.9, minS: 10, drops: [['boar_hide', 0.5], ['boar_tusk', 0.45]] },
+  aboar:   { name: '갑옷 멧돼지',  plan: 'quad', body: '#7a3a2a', dark: '#4a2418', len: 15, h: 8, tail: 1, ear: 1, mh: 1.8, ma: 1.35, md: 1.6, spd: 0.8, minS: 14, drops: [['aboar_plate', 0.45], ['boar_tusk', 0.5], ['boar_hide', 0.3]] },
   ratking: { name: '들쥐왕',       plan: 'quad', body: '#7a6656', dark: '#4b3d32', len: 9, h: 4, tail: 1, ear: 1, crown: 1, scale: 3, boss: 1, mh: 4, ma: 1.5, md: 1, spd: 0.9, aoe: 1, drops: [['ratking_crown', 1], ['rat_tail', 1, 3]] },
 
   myconid: { name: '독버섯 괴물',  plan: 'shroom', body: '#b46ad8', dark: '#7a3f98', stem: '#e8dcc8', mh: 1.0, ma: 0.8, md: 0.6, spd: 0.8, minS: 1, drops: [['spore', 0.7]] },
@@ -141,9 +149,9 @@ const MONS = {
 /* ───────── 필드 ───────── */
 const FIELDS = {
   plains: {
-    no: 1, name: '평원', lv: 1, bg: 'plains', tier: 0,
-    desc: '왕국의 곡창지대. 원시림과 맞닿은 넓은 들판이다.',
-    mons: ['rat', 'slime', 'rabbit', 'wolf', 'goblin'],
+    no: 1, name: '곡창지대 평원', lv: 1, span: 29, bg: 'plains_hd', tier: 0,   // 빌드 70 (11-18 사용자): 이름 「곡창지대 평원」 · 몬스터 Lv1 ~ 30 · 슬라임 · 고블린은 다른 곳으로 옮길 때까지 던전에만
+    desc: '파로스 왕국의 곡창지대. 밀밭과 풍차 사이 넓은 들판에 들짐승과 허수아비가 돌아다닌다.',
+    mons: ['rat', 'rabbit', 'wolf', 'scarecrow', 'boar', 'aboar'], bosses: ['wolf', 'scarecrow', 'boar', 'aboar', 'aboar'],
     dungeon: { name: '버려진 곡물 창고', bg: 'cellar', mons: ['rat', 'slime', 'goblin', 'wolf'], boss: 'ratking' },
     next: 'forest'
   },

@@ -137,6 +137,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   const F = e && FIELDS[e.field];
   const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg === 'forest' && e.stage > 20 ? 'primeval' : F.bg) : 'front';
   const bg = getBg(id), oy = bg.tall ? 0 : BG_OY;
+  V.wide = !!(e && bg.wide);   // 빌드 70: 넓은 땅 배치 (formSlots · foeSlots · zAt)
   // 옆으로 흐르는 풍경: 간 거리만큼 (길드 앞은 멈춰 있다)
   if (e) { const target = routePos(e) * 1.6; if (Math.abs(target - V.scroll) > 200) V.scroll = target; else V.scroll += (target - V.scroll) * 0.2; } else V.scroll = 0;
   w.clearRect(0, 0, AW, AH);
@@ -144,7 +145,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   const T = todAt(dp, id);
   if (bg.under) R(g, 0, 0, AW, AH, '#000');
   else { R(g, 0, 0, AW, BG_OY + 1, T.sky[0]); if (T.star > 0.02) for (const st of STARS) { const tw = 0.55 + 0.45 * Math.sin(t * (1.5 + st.b * 2) + st.p), a = T.star * tw * (0.5 + st.b * 0.5); if (a > 0.05) R(g, st.x, Math.round(st.y * BG_OY / 70), 1, 1, `rgba(255,250,235,${a.toFixed(2)})`); } }
-  g.save(); g.translate(0, BG_OY); drawSky(g, id, V.scroll, t, dp); g.restore();
+  g.save(); g.translate(0, BG_OY + (bg.skyOy || 0)); drawSky(g, id, V.scroll, t, dp); g.restore();   // 넓은 땅은 지평선이 높아 하늘 띠를 위로
   w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
   if (!bg.under) groundWx(w, wxNow(e || null), oy);   // 겨울 눈 덮인 땅 · 젖은 땅
   else if (e && floodOn(e)) floodFloor(w, V.scroll, t, oy);   // 빌드 70: 물이 찬 스테이지 (under70.js)
@@ -334,6 +335,9 @@ const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168]
 //   줄 사이는 시안의 26 → 34(줄이 넷 이상이면 화면에 들게 좁힌다), 줄 안 깊이도 시안보다 조금 넓게.
 const FORM_X0 = 124, FORM_GAP = 34, FORM_XMIN = 32, FORM_SKEW = 0.9;   // 줄 넷(짐꾼까지 찬 파티)이면 줄 사이 30.7 — 맨 뒤 짐꾼의 등짐이 화면 밖으로 나가지 않게
 const FORM_Y = { 1: [192], 2: [198, 184], 3: [199, 187, 175], 4: [199, 191, 183, 175], 5: [199, 193, 187, 181, 175] };
+// 빌드 70 시험: 넓은 땅(bg.wide — 곡창지대 평원)은 앞뒤로 흩어져 선다 — 줄 안 깊이를 넓게 · 줄마다 깊이를 엇갈리게 · 멀리 선 사람은 조금만 뒤로
+const FORM_Y_W = { 1: [176], 2: [190, 156], 3: [193, 168, 143], 4: [194, 174, 155, 138], 5: [195, 179, 163, 149, 138] }, FORM_SKEW_W = 0.45, FORM_YO_W = [0, -18, 9, -24, 4];
+const SLOT_PW = [[94, 182], [70, 158], [100, 140], [60, 194], [84, 168], [48, 146], [112, 196], [40, 172], [76, 136], [30, 190]];
 function formSlots(team) {
   const cols = [[], [], [], [], []];
   team.forEach((a, i) => { let r = a.down ? 4 : formRank(a.cls), o = 1; if (r === 0 && cols[0].length >= 3) { r = 1; o = 0; } cols[r].push([i, o, rideKind(a) ? 1 : 0]); });
@@ -342,19 +346,19 @@ function formSlots(team) {
   const out = []; let ci = 0, last = FORM_X0;
   for (const L of cols) {
     if (!L.length) continue;
-    const x0 = last = FORM_X0 - gap * ci++, ys = FORM_Y[Math.min(5, L.length)];
-    L.forEach(([ti], k) => { const y = ys[Math.min(k, ys.length - 1)]; out[ti] = [Math.round(x0 - (199 - y) * FORM_SKEW), y]; });
+    const W = V.wide, yo = W ? FORM_YO_W[ci] || 0 : 0, x0 = last = FORM_X0 - gap * ci++, ys = (W ? FORM_Y_W : FORM_Y)[Math.min(5, L.length)];
+    L.forEach(([ti], k) => { const y = Math.max(136, Math.min(196, ys[Math.min(k, ys.length - 1)] + yo)); out[ti] = [Math.round(x0 - (199 - y) * (W ? FORM_SKEW_W : FORM_SKEW)), y]; });
   }
   out.petX = Math.max(8, Math.round(last - 24));   // 펫은 맨 뒤 줄 뒤
   return out;
 }
 const ZS = 1.25;   // 옆모습 배율
 const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
-const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, (y - 166) / 32))));
+const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, V.wide ? (y - 136) / 56 : (y - 166) / 32))));   // 넓은 땅: y 136(먼 곳) ~ 192(앞)
 const SHADOW_R = 9;
 function foeSlots(foes) {
-  if (foes.length === 1) { const f = foes[0]; if (f.giant) { const z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; } return [[150, 194]]; }
-  return foes.map((f, i) => { const [x, y] = SLOT_P[Math.min(5, i)]; return [AW - x + 6 - (f.boss ? 12 : 0), y]; });
+  if (foes.length === 1) { const f = foes[0]; if (f.giant) { const z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; } return [[150, V.wide ? 176 : 194]]; }
+  return foes.map((f, i) => { const [x, y] = (V.wide ? SLOT_PW : SLOT_P)[Math.min(5, i)]; return [AW - x + 6 - (f.boss ? 12 : 0), y]; });
 }
 function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const all = teamOf(p), team = all.filter(a => !a.down).concat(all.filter(a => a.down));   // 들것은 맨 끝
@@ -371,7 +375,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const FS = formSlots(team);
   team.forEach((a, i) => { const [x, y] = FS[i], q = pos['a' + a.id] = [mx(x), y], ru = a.down ? 0 : -rideTop(a); if (ru) q.ru = ru; });   // 탈것 (빌드 65): 숫자 · 알림은 기수 머리 위에
   const pet = petOfParty(p);
-  if (pet) pos['aP' + pet.id] = [mx(FS.petX), 199];
+  if (pet) pos['aP' + pet.id] = [mx(FS.petX), V.wide ? 190 : 199];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   Object.assign(V.last, pos);
   V.hitA = team.map(a => { const q = pos['a' + a.id]; return [a.id, q[0], q[1], q.ru || 0]; });   // 빌드 66: 누르는 자리 (전투 창)
@@ -381,7 +385,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const fs = S.fields[e.field];
   if (e.area === 'field' && fs && !F.raid && (waiting || (e.stage === FIELD_STAGES && e.mode === 'advance' && !fighting && e.pos > 55))) {
     const k = waiting ? 0 : Math.max(0, Math.min(1, (STAGE_LEN - e.pos) / 45));
-    w.save(); w.translate(190 + k * 120, GY + BG_OY); w.scale(1.25, 1.25); drawGate(w, F.dungeon.bg, fs.cleared ? 1 : fs.found ? 0 : 2); w.restore();
+    w.save(); w.translate(190 + k * 120, bg.gateY || GY + BG_OY); w.scale(1.25, 1.25); drawGate(w, F.dungeon.bg, fs.cleared ? 1 : fs.found ? 0 : 2); w.restore();
   }
 
   // 야영 (빌드 65 camp65.js): 모닥불 · 마부 텐트 · 코네스토가 웨건 · 불침번 교대 · 탈것은 내려서
@@ -418,7 +422,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t && (V.flash0['f' + f.uid] || 0) <= t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
       if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 모험가 옆모습
       else { const hl = PXU[did] && PXU[did].hitLook, h0 = V.flash0['f' + f.uid], dd = hl && h0 != null && t >= h0 && t < h0 + (PXU[did].hitT || 0.4) ? hl : did;   // 맞으면 잠깐 다른 모습 (빌드 53: 켈피는 물로 풀렸다 돌아온다)
-        drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
+        const wk = !fighting && appr > 0;   // 빌드 70: 다가오는 동안 걷기 줄 (그림 몬스터 — 멧돼지 둘)
+        drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo, walk: wk }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo, walk: wk }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
       FLASH = null; g.restore();
     } });
     if (f.rare) post.push(g => { const h = eH(f) * z / ZE; for (let k = 0; k < 4; k++) { const ph = t * 1.6 + k * 1.57, sx = x + Math.cos(ph) * (10 + k * 3), sy = y - h * (0.3 + 0.6 * ((Math.sin(ph * 0.7 + k) + 1) / 2)), on = Math.sin(t * 5 + k * 2) > 0; if (on) { R(g, Math.round(sx), Math.round(sy) - 1, 1, 3, '#fff6c0'); R(g, Math.round(sx) - 1, Math.round(sy), 3, 1, '#ffd040'); } } });
@@ -471,14 +476,15 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const msk = mo && mo.sk && SKFX[mo.sk], dashK = msk && msk.dash && mo.f >= 3 && mo.f <= 6 ? 1.8 : 1;   // 스킬 효과 (빌드 41): 돌진은 더 멀리
     const mjy = mo && !rk ? Math.round(motJy(mo) * 2 * z) : 0;   // 도약 찌르기 (빌드 42): 동작이 뛰는 높이를 정한다
     const dx = ((mo ? mF.dx * 2 * z * dashK : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy + mjy;
-    if (mo) post.push(g => motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t));
+    const hw = hdWarOn(a);   // 빌드 70 시험: 전사 1차 리마스터 — 베기 자취 · 불꽃은 그림 장에 있다 (스킬 빛은 그대로)
+    if (mo && (!hw || (mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast))) post.push(g => motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t));
     draws.push({ y: y0, f: g => {
       shadowAt(g, x0 + dx, y0, (rk ? rideShadow(a) : jy || mjy < -4 ? 7 : SHADOW_R) * z / ZS);
       if (msk) skGhosts(g, a, mo, msk, x0 + dx, y, z, dir, t);
       g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
-      if (falling) { const k = Math.max(0, Math.min(1, (t - ft) / 0.3)); g.rotate(-k * k * Math.PI / 2); }
+      if (falling && !hw) { const k = Math.max(0, Math.min(1, (t - ft) / 0.3)); g.rotate(-k * k * Math.PI / 2); }
       FLASH = (V.flash['a' + a.id] || 0) > t && (V.flash0['a' + a.id] || 0) <= t ? '#ffffff' : null;
-      drawAdv(g, a, t, { walk: walking && !falling, ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1 });
+      drawAdv(g, a, t, { walk: walking && !falling, ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / 0.5)) : null });
       FLASH = null; g.restore();
     } });
     if (ORBIT[a.cls]) post.push(g => { const [c1, c2] = ORBIT[a.cls]; for (let k = 0; k < 2; k++) { const ang = t * 3 + k * Math.PI; R(g, Math.round((x0 + Math.cos(ang) * 12) * 2) / 2, Math.round((y - PH * 0.55 + Math.sin(ang) * 4) * 2) / 2, 1.5, 1.5, k ? c2 : c1); } });

@@ -46,7 +46,8 @@ function advPoseOf(t, o) {
 const rideOn = (a, pose, o) => !o.noRide && pose !== 'sit' && pose !== 'sleep' && pose !== 'down' && !!rideKind(a);
 function drawAdv(ctx, a, t, o = {}) {
   const [pose, fr] = advPoseOf(t, o), rs = rideOn(a, pose, o) ? rideComp(a, pose, fr, !!o.side) : null;
-  const s = rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = o.z || 1, lift = rs ? rs.lift : 0;
+  const hs = !rs && hdWarOn(a) ? hdWarSpr(a, pose, fr, t, o) : null;   // 빌드 70 시험: 전사 1차 리마스터 장 (hd70.js — 앉기 · 눕기는 예전 그림)
+  const s = hs || rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = o.z || 1, lift = rs ? rs.lift : 0;
   if (z === 1 && !lift) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(z, z); if (lift) ctx.translate(0, -lift); pxBlit(ctx, s); ctx.restore();
 }
@@ -59,6 +60,7 @@ const MON_DIM = {};
 function monBase(id) {
   if (MON_DIM[id]) return MON_DIM[id];
   if (typeof PXG_DIM !== 'undefined' && PXG_DIM[id]) return (MON_DIM[id] = PXG_DIM[id]);
+  const hb = hdMonBase(id); if (hb) return (MON_DIM[id] = hb);   // 빌드 70 그림 몬스터 (hd70.js — 그림이 있는 칸의 너비 · 닻 위 키)
   if (typeof PXU !== 'undefined' && PXU[id]) { const rows = pxuRows(PXU[id]); return (MON_DIM[id] = [Math.max(...rows.map(r => r.length)) * 2, rows.length * 2]); }
   const M = PXM[id];
   if (!M) return (MON_DIM[id] = [12, 12]);
@@ -78,9 +80,9 @@ function monBack(id) {   // 닻(발 가운데)에서 그림 뒤 끝까지 (z 1 �
   return (MON_BACK[id] = Math.max(0, s.ax - lx) * monSc(MONS[id], 0, id));
 }
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], sc = monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0);
-  const fr = Math.floor(tt * (PXU[id] && PXU[id].ifr || (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5))) % 2;   // ifr: 서 있기 두 장을 바꾸는 빠르기 (빌드 55 키메라 — 염소가 2초마다 앞·뒤를 본다)
-  const s = PXU[id] ? pxuSprite(id, o.mot ? o.mot.mk : 'idle', o.mot ? o.mot.f : fr) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);   // 언데드: 동작 장 (빌드 43)
+  const m = MONS[id], sc = monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0), H = hdMon(id), wk = !!(H && o.walk && !o.mot && H.f.walk);   // 빌드 70 그림 몬스터: 서 있기 6 ~ 8장 · 다가올 때 걷기 줄
+  const fr = H ? (wk ? Math.floor(tt * 10) % H.f.walk.length : Math.floor(tt * (HD_IDLE_FPS[id] || 7)) % hdIdleN(id)) : Math.floor(tt * (PXU[id] && PXU[id].ifr || (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5))) % 2;   // ifr: 서 있기 두 장을 바꾸는 빠르기 (빌드 55 키메라 — 염소가 2초마다 앞·뒤를 본다)
+  const s = PXU[id] ? pxuSprite(id, o.mot ? o.mot.mk : wk ? 'walk' : 'idle', o.mot ? o.mot.f : fr) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);   // 언데드: 동작 장 (빌드 43)
   if (sc === 1) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(sc, sc); pxBlit(ctx, s); ctx.restore();
 }

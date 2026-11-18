@@ -360,6 +360,7 @@ const pxuLowOf = (id, did) => { const L = pxuLowL(id); return (L && L.find(x => 
 const pxuDead = (id, uid) => { const L = pxuLowL(id); return L ? L.reduce((a, b) => (b.hp < a.hp ? b : a)).id : pxuSkin({ id, uid }); };   // 쓰러지는 그림 (HP 0 = 가장 다친 모습)
 const pxuLow = f => { const L = f && pxuLowL(f.id); if (L && f.maxHp) { let b = null; for (const x of L) if (f.hp <= f.maxHp * x.hp && (!b || x.hp < b.hp)) b = x; if (b) return b.id; } return pxuSkin(f); };
 function pxuSprite(id, mk, f) {
+  if (PXU[id] && PXU[id].img) { const hs = hdMonSpr(id, mk, f); if (hs) return hs; }   // 빌드 70 그림 몬스터 (hd70.js)
   const key = 'PU|' + id + '|' + mk + '|' + f, k = pxKeyOf(key), hit = PXC.get(k);
   if (hit) return hit;
   const d = PXU[id], m = MONS[id] || {}, c = pxuGrid(id, mk, f), body = pxRamp(m.body || '#8a8a8a'), dark = m.dark ? pxRamp(m.dark) : null;
@@ -644,7 +645,7 @@ const PXU_CAST = { wspit: 1 };   // 투사체를 쏘는 몬스터 동작 (fmot.j
 const pxuAct = id => PXU_ACT[id] || null;
 // 갈래에서 동작 하나 (앞과 같은 것은 되도록 피한다 · 활 쏘기는 이어도 된다)
 function pxuPick(id, cat, last) {
-  const A = PXU_ACT[id]; if (!A) return null;
+  const A = PXU_ACT[id] && PXU_ACT[id].hd ? hdAct(id) : PXU_ACT[id]; if (!A) return null;   // 빌드 70: 그림 몬스터는 그림 판이 있으면 그림 동작
   const L = A[cat] || (cat === 'skl' ? A.atk || A.mag : cat === 'mag' ? A.atk : A.mag) || ['down'];
   const pool = L.length > 1 ? L.filter(m => m !== last || m === 'bshot') : L;
   return pool[Math.floor(Math.random() * pool.length)] || L[0];

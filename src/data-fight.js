@@ -119,6 +119,7 @@ const MON_SK = {
   // 평원 · 곡물 창고
   rat: [['bite', '앞니 물기']], slime: [['acid', '산성 점액']], rabbit: [['gore', '뿔 들이받기']], wolf: [['bite', '물어뜯기'], ['howl', '울부짖음']], goblin: [['blind', '모래 뿌리기']],
   ratking: [['summon', '쥐 떼 부르기', { mon: ['rat'], n: 2 }], ['bite', '이빨 갈기']],
+  scarecrow: [['blind', '까마귀 쪼기', { mult: 1.2 }]], boar: [['gore', '멧돼지 돌진']], aboar: [['gore', '철갑 돌진', { mult: 1.8 }], ['guard', '등판 웅크리기']],   // 빌드 70: 곡창지대 평원
   // 원시림 · 썩은 뿌리 동굴
   myconid: [['sleep', '잠의 포자']], spider: [['para', '거미줄 쏘기']], sapling: [['para', '뿌리 휘감기']], shaman: [['curse', '저주의 주문'], ['mend', '주술 치유']],
   elder: [['summon', '묘목 부르기', { mon: ['sapling'], n: 2 }], ['sleep', '잠의 꽃가루']],
