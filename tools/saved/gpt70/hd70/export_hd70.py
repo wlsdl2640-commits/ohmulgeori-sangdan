@@ -35,7 +35,7 @@ for mid, m in M.items():
             f = Image.open(f'out_mon/{mid}/{rn}_{i}.png').convert('RGBA')
             if mid in FLIP: f = f.transpose(Image.FLIP_LEFT_RIGHT)
             sh.alpha_composite(f, (i * W, r * H))
-    mon[mid] = {'w': W, 'h': H, 'ax': (W - m['ax']) if mid in FLIP else m['ax'], 'ay': m['ay'], 'rows': rows, 'n': [m['rows'][r] for r in rows], 'url': png_url(sh, 'mon_' + mid)}
+    mon[mid] = {'hs': m['hs'], 'w': W, 'h': H, 'ax': (W - m['ax']) if mid in FLIP else m['ax'], 'ay': m['ay'], 'rows': rows, 'n': [m['rows'][r] for r in rows], 'url': png_url(sh, 'mon_' + mid)}
 
 # ── 2. 전사 1차
 WM = json.load(open('out_war/meta.json')); rows = list(WM['rows'].keys()); W, H = WM['w'], WM['h']
@@ -43,7 +43,7 @@ sh = Image.new('RGBA', (W * 8, H * len(rows)), (0, 0, 0, 0))
 for r, rn in enumerate(rows):
     for i in range(WM['rows'][rn]): sh.alpha_composite(Image.open(f'out_war/{rn}_{i}.png').convert('RGBA'), (i * W, r * H))
 fr = WM['front']
-war = {'w': W, 'h': H, 'ax': WM['ax'], 'ay': WM['ay'], 'rows': rows, 'n': [WM['rows'][r] for r in rows], 'url': png_url(sh, 'warrior'),
+war = {'hs': WM['hs'], 'w': W, 'h': H, 'ax': WM['ax'], 'ay': WM['ay'], 'rows': rows, 'n': [WM['rows'][r] for r in rows], 'url': png_url(sh, 'warrior'),
        'front': {'w': fr['w'], 'h': fr['h'], 'ax': fr['ax'], 'ay': fr['ay'], 'url': png_url(Image.open('out_war/front.png'), 'warrior_front')}}
 
 # ── 3. 스킬 그림 34×40 (육각 안쪽 x 7 ~ 40 · y 4 ~ 43) — 「팔레트|칸」 꼴 (data-skicon.js와 같은 글자)
@@ -78,29 +78,31 @@ def shrink(rgba, k, colors=None):   # 프리멀티플로 줄이고 알파 0/255
 comp = keyed(sheet_path('38f56457'))   # 사용자 그림 1: 다 겹친 모습
 Y = lambda y: 200 - (724 - y) * K           # 그림 1의 y → 무대 y (아래를 맞춘다)
 MID0, CUT, GR0 = 134, 392, 380              # 중경(언덕 · 농장 · 울타리 앞 풀) = 134 ~ 392 · 땅 = 380 ~ 724 (12줄 겹침)
-mid = shrink(comp[MID0:CUT], K, 160); gr = shrink(comp[GR0:], K, 160)
+HS = 2
+mid = shrink(comp[MID0:CUT], K * HS, 200); gr = shrink(comp[GR0:], K * HS, 200)
 g = np.array(gr); g[..., 3] = 255   # 땅은 꽉 차게 · 위 세 줄은 바둑 무늬로 엷게 (중경과 땅이 다른 빠르기로 흐를 때 이음매를 숨긴다)
-for yy, keep in [(0, 4), (1, 2), (2, 4 / 3)]:
+for y2, keep in [(0, 4), (1, 4), (2, 2), (3, 2), (4, 4 / 3), (5, 4 / 3)]:
+    yy = y2
     for xx in range(g.shape[1]):
         if keep >= 4 and (xx + yy) % 4: g[yy, xx, 3] = 0
         elif keep == 2 and (xx + yy) % 2: g[yy, xx, 3] = 0
         elif keep < 2 and (xx + yy) % 4 == 0: g[yy, xx, 3] = 0
 gr = Image.fromarray(g, 'RGBA')
 lay = keyed(sheet_path('4b92ccaf'))     # 사용자 그림 2: 겹 (먼 언덕 · 뒷산 · 땅 띠 · 앞 풀 · 풍차 날개)
-back = shrink(lay[207:428, :1783], K, 96)   # 초록 뒷산
+back = shrink(lay[207:428, :1783], K * HS, 96)   # 초록 뒷산
 bl = lay[150:560, 1786:2172]; hub = (1979 - 1786, 357 - 150)
 blades = []
-BSPAN = 52; bk = BSPAN / 369
+BSPAN = 104; bk = BSPAN / 369
 for i in range(12):   # 날개 다섯 장 → 72°를 12장 (한 바퀴 = 60장 몫)
     im = Image.fromarray(bl, 'RGBA'); big = Image.new('RGBA', (600, 600), (0, 0, 0, 0)); big.alpha_composite(im, (300 - hub[0], 300 - hub[1]))
     rot = big.rotate(-i * 6, resample=Image.BICUBIC, center=(300, 300)).crop((300 - 192, 300 - 192, 300 + 192, 300 + 192))
     blades.append(shrink(np.array(rot), bk))
 bw = blades[0].width; bsh = Image.new('RGBA', (bw * 12, bw), (0, 0, 0, 0))
 for i, b in enumerate(blades): bsh.alpha_composite(b, (i * bw, 0))
-bg = {'k': K,
+bg = {'k': K, 'hs': HS,
       'mid': {'url': png_url(mid, 'bg_mid'), 'y': round(Y(MID0), 1)},
       'gr': {'url': png_url(gr, 'bg_gr'), 'y': round(Y(GR0), 1)},
-      'back': {'url': png_url(back, 'bg_back'), 'y': round(95 - back.height, 1)},
+      'back': {'url': png_url(back, 'bg_back'), 'y': round(95 - back.height / HS, 1)},
       'blades': {'url': png_url(bsh, 'bg_blades'), 'w': bw, 'n': 12, 'x': round(1387 * K, 1), 'y': round(Y(188), 1)},
       'skyOy': -58, 'gateY': 150}
 D = {'mon': mon, 'war': war, 'ski': ski, 'bg': {'plains': bg}}

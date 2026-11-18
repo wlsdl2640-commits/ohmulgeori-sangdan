@@ -338,9 +338,9 @@ function getBg(id) {
   return (BG[id] = make());
 }
 function tile(ctx, img, off, y) {
-  const w = img.width, s = ((Math.floor(off) % w) + w) % w;
-  ctx.drawImage(img, -s, y);
-  if (w - s < VW) ctx.drawImage(img, w - s, y);
+  const k = img.hs || 1, w = img.width / k, h = img.height / k, s = ((Math.floor(off * k) / k % w) + w) % w;   // hs (빌드 70): 화면 픽셀 해상도 겹
+  ctx.drawImage(img, -s, y, w, h);
+  if (w - s < VW) ctx.drawImage(img, w - s, y, w, h);
 }
 
 /* ───────── 하늘 ───────── */

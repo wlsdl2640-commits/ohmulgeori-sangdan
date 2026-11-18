@@ -101,6 +101,7 @@ def best_off(pr, pf, rng=70):   # pf를 pr 위에 놓을 왼쪽 끝 차이 o (pr
     return bo
 
 meta = {}
+HS = 2
 GRID = None
 for mid, cf in CONF.items():
     GRID = cf.get('grid')
@@ -136,7 +137,7 @@ for mid, cf in CONF.items():
     for rname, i, m, brgb, dx, base in allf:
         ys, xs = np.where(m); boxes.append((xs.min() + dx - ref_cx, ys.min() - base, xs.max() + dx - ref_cx, ys.max() - base))
     X0 = min(b[0] for b in boxes); Y0 = min(b[1] for b in boxes); X1 = max(b[2] for b in boxes); Y1 = max(b[3] for b in boxes)
-    ys_ref = np.where(ref.any(axis=1))[0]; k = cf['th'] / (ys_ref.max() - ys_ref.min() + 1)
+    ys_ref = np.where(ref.any(axis=1))[0]; k = cf['th'] * HS * 1.2 / (ys_ref.max() - ys_ref.min() + 1)   # 화면 픽셀 해상도(논리의 2배) · 조금 크게
     W, H = int(np.ceil((X1 - X0 + 1) * k)) + 2, int(np.ceil((Y1 - Y0 + 1) * k)) + 2
     ax, ay = int(round(-X0 * k)) + 1, int(round(-Y0 * k)) + 1
     os.makedirs(f'{OUT}/{mid}', exist_ok=True); frames = {}
@@ -159,7 +160,7 @@ for mid, cf in CONF.items():
         big_list.append(((rname, i), out))
     # 몬스터마다 색 줄이기 (32색) + 검은 바탕 판은 1칸 테두리
     stack = np.concatenate([o[..., :3][o[..., 3] > 0] for _, o in big_list], axis=0)
-    pal_img = Image.fromarray(stack.reshape(-1, 1, 3).astype(np.uint8)).quantize(colors=40, method=Image.Quantize.MEDIANCUT)
+    pal_img = Image.fromarray(stack.reshape(-1, 1, 3).astype(np.uint8)).quantize(colors=72, method=Image.Quantize.MEDIANCUT)
     for (rname, i), o in big_list:
         im = Image.fromarray(o[..., :3]).quantize(palette=pal_img, dither=Image.Dither.NONE).convert('RGB')
         o2 = np.dstack([np.array(im), o[..., 3]])
@@ -168,6 +169,6 @@ for mid, cf in CONF.items():
             o2[edge] = [26, 18, 14, 255]
         Image.fromarray(o2.astype(np.uint8), 'RGBA').save(f'{OUT}/{mid}/{rname}_{i}.png')
         frames.setdefault(rname, []).append(f'{rname}_{i}.png')
-    meta[mid] = {'w': W, 'h': H, 'ax': ax, 'ay': ay, 'k': k, 'rows': {r: len(v) for r, v in frames.items()}}
+    meta[mid] = {'hs': HS, 'w': W, 'h': H, 'ax': ax, 'ay': ay, 'k': k, 'rows': {r: len(v) for r, v in frames.items()}}
     print(mid, 'canvas', W, H, 'anchor', ax, ay, 'k %.3f' % k, meta[mid]['rows'])
 json.dump(meta, open(f'{OUT}/meta.json', 'w'), indent=1)

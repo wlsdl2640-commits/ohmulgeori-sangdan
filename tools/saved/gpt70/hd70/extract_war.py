@@ -7,6 +7,7 @@ from seg import sheet_path, runs
 OUT = 'out_war'; os.makedirs(OUT, exist_ok=True)
 ROWS = [('idle', 8), ('walk', 8), ('run', 8), ('slash', 8), ('upper', 8), ('thrust', 8), ('guard', 8), ('bash', 8), ('hurt', 8), ('death', 8)]
 GRIDROW = {'death'}          # 쓰러지는 줄: 칸 자리 그대로 (몸 맞추기 안 함)
+HEADROW = {'idle', 'walk', 'run', 'guard'}; HEAD_H = 22   # 투구 높이만큼의 윤곽으로 좌우를 맞춘다
 TH = 32                      # 서 있기 첫 장 키 (투구 꼭대기 ~ 발)
 rgb = np.array(Image.open(sheet_path('951d4114')).convert('RGB')).astype(int)
 
@@ -78,15 +79,17 @@ for (rname, n), (y0, y1) in zip(ROWS, B):
     if ref is None:
         ref = mains[0]; ys = np.where(ref.any(axis=1))[0]; xs = np.where(ref.any(axis=0))[0]
         ref_cx = (xs.min() + xs.max()) / 2; ref_h = ys.max() - ys.min() + 1
-        ref_p, ref_x0 = prof_box(ref)
+        ref_p, ref_x0 = prof_box(ref); ref_hp, ref_hx0 = prof_box(ref[ys.min():ys.min() + HEAD_H])
     for i, (m, mm) in enumerate(zip(masks, mains)):
         if rname in GRIDROW and i > 0:
             dx = allf[-i][4] - (idle_c[i] - idle_c[0])   # 첫 장 맞춘 만큼 + 칸 사이 (그 줄 첫 장 dx)
         else:
-            pf, fx0 = prof_box(mm); dx = ref_x0 + best_off(ref_p, pf) - fx0
+            if rname in HEADROW:
+                yy = np.where(mm.any(axis=1))[0]; top = yy.min(); pf, fx0 = prof_box(mm[top:top + HEAD_H]); dx = ref_hx0 + best_off(ref_hp, pf, 40) - fx0
+            else: pf, fx0 = prof_box(mm); dx = ref_x0 + best_off(ref_p, pf) - fx0
         allf.append((rname, i, m, brgb, int(round(dx)), base))
 
-k = TH / ref_h
+k = 1.0   # 판 그대로 (서 있는 키 ≈ 63 = 화면 픽셀 64 — 줄이지 않는다)
 boxes = []
 for rname, i, m, brgb, dx, base in allf:
     ys, xs = np.where(m); boxes.append((xs.min() + dx - ref_cx, ys.min() - base, xs.max() + dx - ref_cx, ys.max() - base))
@@ -118,14 +121,14 @@ fm = mask_of(rgb, 355, 445, 30, 150); fm = main_comp(fm)
 ys, xs = np.where(fm); fb = ys.max(); fcx = (xs.min() + xs.max()) / 2
 crop = np.zeros((ys.max() - ys.min() + 1, xs.max() - xs.min() + 1, 4), float)
 crop[..., :3] = rgb[ys.min():ys.max() + 1, xs.min():xs.max() + 1] * fm[ys.min():ys.max() + 1, xs.min():xs.max() + 1, None]; crop[..., 3] = fm[ys.min():ys.max() + 1, xs.min():xs.max() + 1] * 255.0
-kf = TH / (ys.max() - ys.min() + 1); col, A = shrink(crop, kf)
+kf = ref_h / (ys.max() - ys.min() + 1); col, A = shrink(crop, kf)
 FW, FH = col.shape[1] + 2, col.shape[0] + 2
 fo = np.zeros((FH, FW, 4), np.uint8); fo[1:-1, 1:-1, :3] = col; fo[1:-1, 1:-1, 3] = (A > 100) * 255
 fax, fay = int(round((fcx - xs.min()) * kf)) + 1, FH - 2
 
 # 색 줄이기 + 1칸 테두리
 stack = np.concatenate([o[..., :3][o[..., 3] > 0] for _, o in outs] + [fo[..., :3][fo[..., 3] > 0]], axis=0)
-pal = Image.fromarray(stack.reshape(-1, 1, 3).astype(np.uint8)).quantize(colors=40, method=Image.Quantize.MEDIANCUT)
+pal = Image.fromarray(stack.reshape(-1, 1, 3).astype(np.uint8)).quantize(colors=120, method=Image.Quantize.MEDIANCUT)
 def fin(o):
     im = Image.fromarray(o[..., :3]).quantize(palette=pal, dither=Image.Dither.NONE).convert('RGB')
     o2 = np.dstack([np.array(im), o[..., 3]]).astype(np.uint8)
@@ -135,6 +138,6 @@ rows = {}
 for (rname, i), o in outs:
     Image.fromarray(fin(o), 'RGBA').save(f'{OUT}/{rname}_{i}.png'); rows[rname] = rows.get(rname, 0) + 1
 Image.fromarray(fin(fo), 'RGBA').save(f'{OUT}/front.png')
-meta = {'w': W, 'h': H, 'ax': ax, 'ay': ay, 'k': k, 'rows': rows, 'front': {'w': FW, 'h': FH, 'ax': fax, 'ay': fay}}
+meta = {'hs': 2, 'w': W, 'h': H, 'ax': ax, 'ay': ay, 'k': k, 'rows': rows, 'front': {'w': FW, 'h': FH, 'ax': fax, 'ay': fay}}
 json.dump(meta, open(f'{OUT}/meta.json', 'w'), indent=1)
 print('canvas', W, H, 'anchor', ax, ay, 'k %.3f' % k, rows, 'front', meta['front'])

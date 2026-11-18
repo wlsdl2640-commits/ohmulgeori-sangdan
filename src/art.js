@@ -47,7 +47,7 @@ const rideOn = (a, pose, o) => !o.noRide && pose !== 'sit' && pose !== 'sleep' &
 function drawAdv(ctx, a, t, o = {}) {
   const [pose, fr] = advPoseOf(t, o), rs = rideOn(a, pose, o) ? rideComp(a, pose, fr, !!o.side) : null;
   const hs = !rs && hdWarOn(a) ? hdWarSpr(a, pose, fr, t, o) : null;   // 빌드 70 시험: 전사 1차 리마스터 장 (hd70.js — 앉기 · 눕기는 예전 그림)
-  const s = hs || rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = o.z || 1, lift = rs ? rs.lift : 0;
+  const s = hs || rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = hs ? (o.side ? 1.5 : 1) : o.z || 1, lift = rs ? rs.lift : 0;   // 리마스터 그림은 화면 픽셀 그대로 (깊이 배율로 늘리지 않는다)
   if (z === 1 && !lift) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(z, z); if (lift) ctx.translate(0, -lift); pxBlit(ctx, s); ctx.restore();
 }
@@ -80,7 +80,8 @@ function monBack(id) {   // 닻(발 가운데)에서 그림 뒤 끝까지 (z 1 �
   return (MON_BACK[id] = Math.max(0, s.ax - lx) * monSc(MONS[id], 0, id));
 }
 function drawMon(ctx, id, t, o = {}) {
-  const m = MONS[id], sc = monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0), H = hdMon(id), wk = !!(H && o.walk && !o.mot && H.f.walk);   // 빌드 70 그림 몬스터: 서 있기 6 ~ 8장 · 다가올 때 걷기 줄
+  const H = hdMon(id), m = MONS[id], sc = H ? (monSc(m, o.sc, id) > 1 ? 2 : 1) : monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0),   // 그림 몬스터: 화면 픽셀 그대로 · 우두머리는 꼭 2배
+    wk = !!(H && o.walk && !o.mot && H.f.walk);   // 빌드 70 그림 몬스터: 서 있기 6 ~ 8장 · 다가올 때 걷기 줄
   const fr = H ? (wk ? Math.floor(tt * 10) % H.f.walk.length : Math.floor(tt * (HD_IDLE_FPS[id] || 7)) % hdIdleN(id)) : Math.floor(tt * (PXU[id] && PXU[id].ifr || (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5))) % 2;   // ifr: 서 있기 두 장을 바꾸는 빠르기 (빌드 55 키메라 — 염소가 2초마다 앞·뒤를 본다)
   const s = PXU[id] ? pxuSprite(id, o.mot ? o.mot.mk : wk ? 'walk' : 'idle', o.mot ? o.mot.f : fr) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);   // 언데드: 동작 장 (빌드 43)
   if (sc === 1) { pxBlit(ctx, s); return; }

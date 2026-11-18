@@ -124,7 +124,7 @@ function pxBake(key, g0, pal, ax, ay, pre) {
   if (PXC.size > 1400) PXC.delete(PXC.keys().next().value);
   return s;
 }
-const pxBlit = (ctx, s) => ctx.drawImage(s.cv, -s.ax, -s.ay);
+const pxBlit = (ctx, s) => (s.hs ? ctx.drawImage(s.cv, -s.ax / s.hs, -s.ay / s.hs, s.w / s.hs, s.h / s.hs) : ctx.drawImage(s.cv, -s.ax, -s.ay));   // hs (빌드 70 리마스터 그림): 화면 픽셀 해상도 그림 — 논리 1칸에 hs칸
 
 /* ───────── 모험가 (전투 화면, 앞모습) ─────────
    몸 블록 16칸(가로) × 13줄, 머리 블록 16칸 × 12줄(얼굴은 6~11줄). 작업판 40×48, 몸 블록 왼쪽 위 = (12, 34). */

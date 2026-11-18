@@ -66,13 +66,13 @@ function hdLoad() {
     const m = D.mon[id];
     img(m.url, im => {
       const f = hdCut(im, m.w, m.h, m.rows, m.n), b = hdBox(f[m.rows[0]][0]);
-      HD.mon[id] = { m, f, bb: b ? [b[0] - m.ax, b[1] - m.ax, m.ay - b[2]] : [-10, 10, 20] };   // 닻에서 뒤 끝 · 앞 끝 · 키
+      const q = m.hs || 1; HD.mon[id] = { m, f, bb: b ? [(b[0] - m.ax) / q, (b[1] - m.ax) / q, (m.ay - b[2]) / q] : [-10, 10, 20] };   // 닻에서 뒤 끝 · 앞 끝 · 키
       HD.spr.clear(); if (typeof MON_DIM !== 'undefined') delete MON_DIM[id]; if (typeof MON_BACK !== 'undefined') delete MON_BACK[id];
     });
   }
   const W = D.war;
   img(W.url, im => { HD.war = { m: W, f: hdCut(im, W.w, W.h, W.rows, W.n) }; HD.spr.clear(); });
-  img(W.front.url, im => { const [cv, x] = mkCanvas(W.front.w, W.front.h); x.drawImage(im, 0, 0); HD.front = { cv, ax: W.front.ax, ay: W.front.ay, w: W.front.w, h: W.front.h }; });
+  img(W.front.url, im => { const [cv, x] = mkCanvas(W.front.w, W.front.h); x.drawImage(im, 0, 0); HD.front = { cv, hs: W.hs || 1, ax: W.front.ax, ay: W.front.ay, w: W.front.w, h: W.front.h }; });
   const B = D.bg.plains, L = {}; let left = 4;
   for (const k of ['back', 'mid', 'gr', 'blades']) img(B[k].url, im => { L[k] = im; if (--left) return; HD.bg = L; if (typeof BG !== 'undefined') delete BG.plains_hd; });
 }
@@ -95,7 +95,8 @@ function hdMonSpr(id, mk, f) {   // pxund.js pxuSprite가 부른다 (그림 판�
   const i = M ? Math.max(0, Math.min(L.length - 1, f)) : ((f % L.length) + L.length) % L.length, key = id + '|' + (M ? mk : row) + '|' + i + '|' + (FLASH || '');
   let s = HD.spr.get(key); if (s) return s;
   const m = H.m, cv = FLASH ? hdTint(L[i], FLASH) : L[i];
-  s = { cv, ax: m.ax, ay: m.ay, w: m.w, h: m.h, dx: M && M.dx ? (M.dx[i] || 0) / 2 : 0, jy: 0, fo: [m.ax, m.ay], tip: M && M.tip ? [(m.ax + M.tip[0] - 1) / 2, (m.ay + M.tip[1] - 1) / 2] : [(m.ax + H.bb[1] - 2) / 2, (m.ay - H.bb[2] * 0.6) / 2] };
+  const q = m.hs || 1, lx = m.ax / q, ly = m.ay / q;
+  s = { cv, hs: q, ax: m.ax, ay: m.ay, w: m.w, h: m.h, dx: M && M.dx ? (M.dx[i] || 0) / 2 : 0, jy: 0, fo: [lx, ly], tip: M && M.tip ? [(lx + M.tip[0] - 1) / 2, (ly + M.tip[1] - 1) / 2] : [(lx + H.bb[1] - 2) / 2, (ly - H.bb[2] * 0.6) / 2] };
   HD.spr.set(key, s); if (HD.spr.size > 900) HD.spr.delete(HD.spr.keys().next().value);
   return s;
 }
@@ -106,7 +107,7 @@ const hdWarOn = a => !!(HD.war && a && a.cls === 'warrior');
 const HDW_ROW = { down: 'slash', side: 'slash', hack: 'slash', smash: 'slash', toss: 'slash', up: 'upper', thrust: 'thrust', taunt: 'thrust', bash: 'bash', block: 'guard', guard: 'guard', parry: 'guard', ready: 'guard', raise: 'guard', salute: 'guard' };
 function hdWarSpr(a, pose, fr, t, o) {   // art.js drawAdv가 부른다 (null이면 예전 그림)
   if (pose === 'sit' || pose === 'sleep') return null;
-  if (!o.side) { if (!HD.front) return null; const F = HD.front; return FLASH ? { cv: hdTint(F.cv, FLASH), ax: F.ax, ay: F.ay, w: F.w, h: F.h } : F; }
+  if (!o.side) { if (!HD.front) return null; const F = HD.front; return FLASH ? { cv: hdTint(F.cv, FLASH), hs: F.hs, ax: F.ax, ay: F.ay, w: F.w, h: F.h } : F; }
   const H = HD.war, ph = o.ph || 0;
   let row = 'idle', i = Math.floor(t * 6 + ph * 2) % 8, fl = FLASH;
   if (o.die != null) { row = 'death'; i = Math.max(0, Math.min(7, Math.floor(o.die * 8))); }   // 쓰러지는 때가 맞는 때보다 늦게 잡혀 있으면(V.fall) 첫 장
@@ -116,12 +117,12 @@ function hdWarSpr(a, pose, fr, t, o) {   // art.js drawAdv가 부른다 (null이
   else {
     const h0 = typeof V !== 'undefined' && V.flash0 && a.id != null ? V.flash0['a' + a.id] : null, dt = h0 != null ? t - h0 : -1;
     if (dt >= 0 && dt < 0.4) { row = 'hurt'; i = Math.min(7, Math.floor(dt / 0.4 * 8)); if (fl === '#ffffff' && dt > 0.07) fl = null; }   // 맞음: 흰 번쩍은 처음 한순간만
-    else if (pose === 'walk') { row = 'walk'; i = Math.floor(t * 12 + ph * 3) % 8; }
+    else if (pose === 'walk') { row = 'walk'; i = Math.floor(t * 8 + ph * 3) % 8; }
   }
   const L = H.f[row] || H.f.idle, key = 'W|' + row + '|' + i + '|' + (fl || '');
   if (!L[i]) return null;
   let s = HD.spr.get(key); if (s) return s;
-  const m = H.m; s = { cv: fl ? hdTint(L[i], fl) : L[i], ax: m.ax, ay: m.ay, w: m.w, h: m.h };
+  const m = H.m; s = { cv: fl ? hdTint(L[i], fl) : L[i], hs: m.hs || 1, ax: m.ax, ay: m.ay, w: m.w, h: m.h };
   HD.spr.set(key, s); return s;
 }
 
@@ -141,17 +142,18 @@ function buildPlainsHD() {
   const L = HD.bg;
   if (!L) return Object.assign({ hdWait: 1 }, buildPlains());   // 그림을 풀기 전: 옛 평원 (풀면 BG.plains_hd를 지워 다시 짓는다)
   const B = HD70_DATA.bg.plains;
-  const mir = (im, h, y) => { const [cv, x] = mkCanvas(im.width * 2, h); x.drawImage(im, 0, Math.round(y)); x.save(); x.translate(im.width * 2, 0); x.scale(-1, 1); x.drawImage(im, 0, Math.round(y)); x.restore(); return cv; };   // 뒤집어 이어 붙여 이음매가 없다
-  const back = mir(L.back, AH, B.back.y), mid = mir(L.mid, AH, B.mid.y), gr = mir(L.gr, L.gr.height, 0);
+  const q = B.hs || 1;   // 화면 픽셀 해상도 겹 (scene.js tile이 cv.hs를 본다)
+  const mir = (im, h, y) => { const [cv, x] = mkCanvas(im.width * 2, h); x.drawImage(im, 0, Math.round(y * q)); x.save(); x.translate(im.width * 2, 0); x.scale(-1, 1); x.drawImage(im, 0, Math.round(y * q)); x.restore(); cv.hs = q; return cv; };   // 뒤집어 이어 붙여 이음매가 없다
+  const back = mir(L.back, AH * q, B.back.y), mid = mir(L.mid, AH * q, B.mid.y), gr = mir(L.gr, L.gr.height, 0);
   const bw = B.blades.w, bl = [];
   for (let i = 0; i < B.blades.n; i++) { const [c, x] = mkCanvas(bw, bw); x.drawImage(L.blades, i * bw, 0, bw, bw, 0, 0, bw, bw); bl.push(c); }
-  const W2 = mid.width, bx = B.blades.x, by = B.blades.y;
+  const W2 = mid.width / q, bx = B.blades.x, by = B.blades.y;
   return { tall: 1, wide: 1, back, far: null, mid, gr, gy: B.gr.y, clouds: 7, ambient: 'meadow', skyOy: B.skyOy, gateY: B.gateY,
     props(g, off, t) {   // 풍차 날개 (뒤집힌 짝은 거꾸로 돈다)
       const fi = Math.floor(t * 8) % bl.length;
       for (const [x0, flip] of [[bx, 0], [W2 - bx, 1]]) {
         const x = ((x0 - off) % W2 + W2) % W2;
-        for (const xx of [x, x - W2]) { if (xx < -bw || xx > VW + bw) continue; g.save(); g.translate(Math.round(xx), Math.round(by)); if (flip) g.scale(-1, 1); g.drawImage(bl[fi], -bw / 2, -bw / 2); g.restore(); }
+        for (const xx of [x, x - W2]) { if (xx < -bw / q || xx > VW + bw / q) continue; g.save(); g.translate(Math.round(xx), Math.round(by)); if (flip) g.scale(-1, 1); g.drawImage(bl[fi], -bw / q / 2, -bw / q / 2, bw / q, bw / q); g.restore(); }
       }
     } };
 }
