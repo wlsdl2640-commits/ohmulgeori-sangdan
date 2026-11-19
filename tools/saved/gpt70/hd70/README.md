@@ -27,9 +27,14 @@ python3 extract_war.py                 # → out_war/ (옛 10줄 판 — extract
 python3 sk_icons.py                    # → sk_boxes.json (스킬 그림 칸)
 python3 extract_sk.py                  # → out_sk/icon_<id>.png 34×40
 python3 extract_sky.py                 # → out_sky/ (보름달 · 구름)
-python3 export_hd70.py <src/data-hd70.js> [미리보기 폴더]
+python3 ../mid70/prep_mid.py           # → mid_prep/ (전사 판을 장 · 닻째 원본 크기로 — extract_war16.py 앞부분을 그대로 돌린다)
+python3 ../mid70/extract_mid.py 40      # → out_mid40/ 전사 동작 13가지 · 키 40칸 (hs 1.5)          ┐ 11-20 사용자 「40으로 하자」:
+python3 ../mid70/extract_mid_mon.py     # → out_midmon/ 몬스터 여섯 (hs 1)                          │ 게임은 이 셋을 쓴다 (점 한 칸 = 화면 2픽셀)
+BIG=1 python3 ../mid70/extract_mid_mon.py   # → out_midmon_big/ 우두머리 넷 · 두 배 촘촘히 (hs 2)   ┘ 줄이는 법은 ../mid70/README.md
+python3 export_hd70.py <src/data-hd70.js> [미리보기 폴더]      # 전사 · 몬스터는 WAR_DIR · MON_DIR · MON_BIG(파일 머리)에서 읽는다
 ```
-손으로 `src/data-hd70.js`를 고치지 말 것 — 이 폴더 판에서 바이트까지 같게 다시 나온다(11-19 확인: extract_war16 두 번 → 같은 파일 · export 두 번 → 같은 파일).
+out_war16 · out_mon(빌드 71까지 게임에 들어가던 hs 2 그림)은 이제 export가 읽지 않는다 — extract_war16.py는 닻 규칙의 원본이라 prep_mid.py가 그 앞부분을 돌리고, extract_mon.py도 extract_mid_mon.py가 앞부분을 돌린다.
+손으로 `src/data-hd70.js`를 고치지 말 것 — 이 폴더 판에서 바이트까지 같게 다시 나온다(11-19 확인: extract_war16 두 번 → 같은 파일 · export 두 번 → 같은 파일 / 11-20 확인: 팔레트부터 새로 만든 extract_mid 40 · extract_mid_mon · BIG → 같은 파일, export → 같은 data-hd70.js).
 **긴 출력을 `| head`로 자르지 말 것**: extract_war16.py는 끝에서 파일을 쓰는데 head가 먼저 닫히면 스크립트가 죽어 예전 out_war16이 그대로 남는다(11-19에 이것 때문에 「두 번 돌리면 다르다」로 잘못 봤다).
 
 ## 전사 1차 16장 — 뽑는 규칙 (`extract_war16.py` 머리 주석에 자세히)

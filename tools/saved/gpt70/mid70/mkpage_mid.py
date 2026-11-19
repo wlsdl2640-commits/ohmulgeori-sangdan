@@ -3,6 +3,7 @@
    · solo_<판>.png   걷는 전사 하나 (무대 116×128 그대로)
    · f_<판>.webp     싸움 56장 (352×240 × 8줄 판, 무손실) · w_<판>.webp 걷기 32장 (200×220)
    · mon_<판>.png    전사와 몬스터 여섯이 선 모습 두 칸 (허수아비 · 멧돼지 · 갑옷 멧돼지 / 들늑대 · 들쥐 · 뿔토끼)
+   · hand_war.png · hand_mage.png · hand_scene.png   직접 찍은 견본(hand/mage40.py) — 전사 서 있기 16장(작업 폴더의 out_mid40) 옆에 놓고, 전투 화면에 붙여 본 것
    페이지는 같은 장 번호에서 그림만 바꿔 보여 준다 (모든 판이 같은 싸움 · 같은 때)."""
 import sys, os, json
 import numpy as np
@@ -33,9 +34,23 @@ for v, *_ in VAR:
         size[os.path.basename(p)] = os.path.getsize(p) // 1024
 for v in ('now', 'mid44', 'mid44bg'):
     a, b = fr(v, 'mons', 43, MON), fr(v, 'fight', 2, MON); S = Image.new('RGB', (a.width, a.height + b.height + 4), (21, 23, 28)); S.paste(a, (0, 0)); S.paste(b, (0, a.height + 4)); S.save(f'{OUT}/mon_{v}.png', optimize=True)
+# ── 직접 찍은 견본 ──
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hand')); import mage40
+mf = [mage40.render(mage40.outline(mage40.compose(**f))) for f in mage40.FRAMES]; ms = Image.new('RGBA', (mage40.W * len(mf), mage40.H), (0, 0, 0, 0))
+for i, im in enumerate(mf): ms.alpha_composite(im, (i * mage40.W, 0))
+ms.save(f'{OUT}/hand_mage.png', optimize=True)
+wm = json.load(open('out_mid40/meta.json'))['idle']; ws = Image.new('RGBA', (wm['w'] * wm['n'], wm['h']), (0, 0, 0, 0))
+for i in range(wm['n']): ws.alpha_composite(Image.open(f'out_mid40/idle_{i}.png').convert('RGBA'), (i * wm['w'], 0))
+ws.save(f'{OUT}/hand_war.png', optimize=True)
+base = Image.open(f'{CAP}/mid40/fight_2.png').convert('RGBA'); MX, MY = 140, 372      # 마법사 발 자리 (무대 픽셀 — 파티 뒤 왼쪽)
+sh = Image.new('RGBA', base.size, (0, 0, 0, 0)); from PIL import ImageDraw; ImageDraw.Draw(sh).ellipse((MX - 26, MY - 6, MX + 22, MY + 4), fill=(20, 30, 10, 90)); base.alpha_composite(sh)
+m2 = mf[0].resize((mage40.W * 2, mage40.H * 2), Image.NEAREST); base.alpha_composite(m2, (MX - 19 * 2, MY - mage40.GY * 2))
+scene = base.convert('RGB').crop(FIGHT); scene.save(f'{OUT}/hand_scene.png', optimize=True)
+HAND = {'war': [wm['w'], wm['h'], wm['n'], wm['ay']], 'mage': [mage40.W, mage40.H, len(mf), mage40.GY], 'scene': list(scene.size)}
 print('판 크기(KB)', size, '합', sum(size.values()))
 html = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'page_mid.html'), encoding='utf-8').read()
 html = html.replace('/*VAR*/[]', json.dumps([dict(id=v, name=n, dot=d, cells=k, px=x, note=c) for v, n, d, k, x, c in VAR], ensure_ascii=False))
+html = html.replace('/*HAND*/{}', json.dumps(HAND))
 html = html.replace('/*MON*/[]', json.dumps([MON[2] - MON[0], (MON[3] - MON[1]) * 2 + 4]))
 html = html.replace('/*SCN*/{}', json.dumps({'fight': dict(tag='f', name='싸움', w=FIGHT[2] - FIGHT[0], h=FIGHT[3] - FIGHT[1], n=NF, cols=COLS, fps=15), 'walk': dict(tag='w', name='걷기', w=WALK[2] - WALK[0], h=WALK[3] - WALK[1], n=NW, cols=COLS, fps=15)}, ensure_ascii=False))
 open(f'{OUT}/index.html', 'w', encoding='utf-8').write(html); print('index.html', len(html) // 1024, 'KB', sorted(os.listdir(OUT)))

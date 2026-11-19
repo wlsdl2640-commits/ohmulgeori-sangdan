@@ -71,10 +71,29 @@ td.d { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-s
 
 <main class="wrap">
   <header class="top">
-    <p class="eyebrow">미궁도시 · 그림 시안 · 게임에는 넣지 않았습니다</p>
+    <p class="eyebrow">미궁도시 · 그림 시안 · 11-20 전사 키 40칸으로 정함</p>
     <h1>옛 도트와 지금 도트의 사이 값</h1>
     <p class="lede">받아 둔 그림 판을 점 한 칸이 화면 2픽셀이 되게 다시 줄였습니다. 옛 전사는 점 한 칸이 4픽셀이고 지금 전사는 1.5픽셀입니다. 전사 키는 40 · 44 · 48칸 세 가지로 뽑았고, 평원 몬스터 여섯도 같은 굵기로 맞췄습니다.</p>
+    <p class="note">40칸으로 정해져 전사와 몬스터는 작업 가지에 넣었습니다(APK는 아직). 아래 비교는 고르기 전 시안 그대로 두었습니다.</p>
   </header>
+
+  <section class="sec" aria-labelledby="h-hand">
+    <div class="what">
+      <h2 id="h-hand">제가 직접 찍은 40칸 견본</h2>
+      <p class="note">왼쪽 전사는 GPT가 그린 판을 프로그램으로 40칸에 다시 찍은 것입니다. 오른쪽 마법사는 GPT 그림 없이 제가 처음부터 40칸 크기로 찍었습니다.</p>
+    </div>
+    <div class="stage"><canvas id="hand-cv" width="84" height="54" role="img" aria-label="40칸 전사와 직접 찍은 마법사가 나란히 숨 쉬는 모습"></canvas></div>
+    <div class="row">
+      <button class="btn" type="button" id="hand-zoom" aria-pressed="false">크게 보기</button>
+    </div>
+    <p class="note">숨쉬기는 전사가 GPT 그림 16장, 마법사가 부위(모자 · 머리 · 팔 · 옷자락)를 한 칸씩 옮긴 4장입니다.</p>
+    <div class="stage"><img id="hand-scene" src="hand_scene.png" alt="전투 화면 왼쪽에 직접 찍은 마법사를 붙여 본 모습"></div>
+    <p class="note">전투 화면에 그림만 붙여 본 것입니다. 마법사는 게임에 넣지 않았습니다.</p>
+    <ul class="list">
+      <li>되는 것: 또렷한 윤곽과 재질마다 나뉜 밝기 단계, 장마다 흔들리지 않는 모양. 색이나 장비를 바꾼 변형도 같은 방식으로 만들 수 있습니다.</li>
+      <li>모자란 것: GPT 그림보다 명암 결이 단순합니다. 동작은 부위를 옮기는 식이라 걷기 · 베기 같은 큰 동작은 16장을 새로 그린 것만큼 풍부하지 않습니다.</li>
+    </ul>
+  </section>
 
   <section class="sec" aria-labelledby="h-solo">
     <div class="what">
@@ -148,17 +167,16 @@ td.d { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-s
     <ul class="list">
       <li>비율은 그대로입니다. 머리를 키우거나 몸을 줄이지 않았고, 같은 그림을 굵은 점으로 다시 찍기만 했습니다.</li>
       <li>평균 내어 줄이지 않고, 칸마다 가장 넓은 색을 고르고 어두운 테를 따로 살렸습니다. 그래서 흐려지지는 않지만, 손 · 칼자루 · 허리띠처럼 원래 그림이 점 한 칸보다 가는 곳은 모양이 뭉개집니다. 「크게 보기」로 확인해 주세요.</li>
-      <li>세 키 모두 동작 13가지를 지금 게임과 같은 장 수로 다 뽑아 두었습니다. 위 장면은 게임 엔진에 그림 자료만 바꿔 끼워서 찍은 것이라, 고르시면 같은 방법으로 넣을 수 있습니다.</li>
+      <li>40칸으로 정한 뒤 전사 동작 13가지와 몬스터 여섯을 게임(작업 가지)에 넣었습니다. 우두머리는 두 배로 그려도 점 굵기가 같도록, 판에서 두 배 촘촘히 다시 찍은 그림을 씁니다.</li>
       <li>다른 직업은 아직 옛 뭉툭 도트입니다. 사이 값을 기준으로 삼으면 다른 직업 그림도 이 굵기로 받아야 합니다.</li>
     </ul>
   </section>
 
   <section class="sec" aria-labelledby="h-pick">
-    <h2 id="h-pick">골라 주실 것</h2>
+    <h2 id="h-pick">남은 것</h2>
     <ol class="pick">
-      <li><b>전사 키.</b> 40 · 44 · 48칸 가운데 어느 쪽이 자연스러운지, 아니면 지금 그대로가 나은지.</li>
-      <li><b>배경.</b> 풍경은 지금처럼 가늘게 둘지(사이 44), 풍경까지 같은 굵기로 맞출지(사이 44 + 배경).</li>
-      <li><b>그림.</b> 이렇게 줄인 그림을 그대로 쓸지, 고른 크기로 GPT에 새로 그려 달라고 할지. 새로 받으면 손 · 얼굴이 그 크기에 맞게 또렷해지고 머리 비율도 바꿀 수 있습니다.</li>
+      <li><b>배경.</b> 풍경은 지금처럼 가늘게 둘지, 풍경까지 같은 굵기로 맞출지. 위 보기의 「사이 44 + 배경」 판이 풍경까지 굵게 한 모습입니다.</li>
+      <li><b>다른 직업 그림.</b> GPT가 그린 판을 제가 40칸으로 다시 찍을지, 위 견본처럼 제가 처음부터 찍을지, 직업마다 섞을지.</li>
     </ol>
   </section>
 </main>
@@ -170,6 +188,24 @@ const $ = s => document.querySelector(s);
 const wide = window.matchMedia('(min-width: 760px)').matches;
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const press = (b, on) => b.setAttribute('aria-pressed', on ? 'true' : 'false');
+
+// ── 직접 찍은 견본: 전사(GPT 그림 16장 · 갔다 오기) 옆에 마법사(겹을 옮긴 4장) ──
+(() => {
+  const HAND = /*HAND*/{}, cv = $('#hand-cv'), g = cv.getContext('2d'), war = new Image(), mage = new Image(); let n = 0, z = wide ? 6 : 4;
+  const R = (a, b) => Array.from({ length: Math.abs(b - a) + 1 }, (_, i) => a + (b > a ? i : -i)), PING = [...R(0, 7), ...R(6, 1), ...R(8, 15), ...R(14, 9)];
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches, btn = $('#hand-zoom');
+  const size = () => { cv.style.width = cv.width * z + 'px'; cv.style.height = cv.height * z + 'px'; press(btn, z > 4); };
+  btn.addEventListener('click', () => { z = z > 4 ? 4 : 6; size(); }); size();
+  const sc = $('#hand-scene'); sc.width = HAND.scene[0]; sc.height = HAND.scene[1]; if (wide) { sc.style.width = HAND.scene[0] * 2 + 'px'; sc.style.height = HAND.scene[1] * 2 + 'px'; }
+  function draw(t) {
+    const gy = cv.height - 3, wi = still ? 0 : PING[Math.floor(t * 9) % PING.length], mi = still ? 0 : Math.floor(t * 3.2) % HAND.mage[2];
+    g.fillStyle = '#688e4a'; g.fillRect(0, 0, cv.width, cv.height); g.fillStyle = '#5c8042'; g.fillRect(0, gy - 1, cv.width, 4);
+    g.drawImage(war, wi * HAND.war[0], 0, HAND.war[0], HAND.war[1], 2, gy - HAND.war[3], HAND.war[0], HAND.war[1]);
+    g.drawImage(mage, mi * HAND.mage[0], 0, HAND.mage[0], HAND.mage[1], 44, gy - HAND.mage[3], HAND.mage[0], HAND.mage[1]);
+  }
+  const go = () => { if (++n < 2) return; const loop = now => { draw(now / 1000); if (!still) requestAnimationFrame(loop); }; requestAnimationFrame(loop); };
+  war.onload = go; mage.onload = go; war.src = 'hand_war.png'; mage.src = 'hand_mage.png';
+})();
 
 // ── 걷는 전사 ──
 const solo = $('#solo');
