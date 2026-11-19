@@ -784,6 +784,17 @@
 - 옛 전사 그림(11-19 22:32 사용자 「옛 전사 이미지좀 뽑아줘」): 아티팩트 「옛 전사 그림」 https://claude.ai/artifact/PgEu6tU7LDyF84JzViLMTG (빌드 70까지의 뭉툭 도트 — 낱장 · 생김새 · 동작 · 스킬 장면 · 스킬 그림, 판마다 저장 단추). 자료 · 다시 만들기는 `tools/saved/gpt70/warrior1/`(README · oldpage.py · old/).
 - 답을 기다리는 것(다시 묻되 재촉하지 말 것): 평원 던전 레벨(Lv26 ~ 30) · 날씨 하늘 판 쓰는 법(엔진 하늘 색 + 비 · 눈 · 바람 낱장을 덧그리는 쪽을 권함) · 해는 번짐 없는 판으로 다시 · 우두머리 크기.
 
+## 사이 값 시안 — 점 한 칸 = 화면 2픽셀 (11-19 22:58 사용자 · 고르는 중 · 게임에는 안 넣음)
+- 사용자: 「이 뭉득 전사 토트랑 지금 전사 도트랑 사이 값으로 디자인을 해야 좀더 자연스럽게 될 것 같은데 어떻게 생각해」 → 내 답: 화면에 점 굵기가 셋이라 어색하다(옛 직업 4픽셀 · 지금 전사 1.5픽셀 — hs 2 그림을 1.5배로 그려 1 · 2픽셀이 번갈아 찍힘, **내가 키를 맞추려고 그렇게 했다** · 리마스터 몬스터 · 풍경 1픽셀). 점 한 칸 = 화면 2픽셀(= 논리 1칸)을 권함 · 원래는 그 크기로 그려야 하지만 받아 둔 판으로 먼저 시안 → 23:03 「오키」.
+- 시안 페이지: 아티팩트 「사이 값 전사 시안」 https://claude.ai/artifact/SUPWYRopoQSujv5CgwFVT5 — 걷는 전사 다섯(옛 · 사이 40 · 44 · 48 · 지금) · 같은 싸움 / 걷기를 그 자리에서 그림만 바꿔 보기(여섯 판: + 「사이 44 + 배경」 = 풍경 · 구름까지 굵게) · 몬스터 · 굵기 표. 저장 단추(downloads).
+- **고를 것 셋(답을 기다림)**: ① 전사 키 40 · 44 · 48칸(또는 지금 그대로) ② 풍경은 가늘게 둘지 같은 굵기로 맞출지 ③ 줄인 그림을 그대로 쓸지, 고른 크기로 GPT에 새로 받을지(새로 받으면 손 · 얼굴이 또렷하고 머리 비율도 바꿀 수 있다 — 시안은 비율 그대로).
+- 도구 · 줄이는 법 · 찍는 법은 `tools/saved/gpt70/mid70/`(README · mid70_preview.png): prep_mid.py → extract_mid.py <키> · extract_mid_mon.py → export_mid.py(시험 페이지 · BG=1 풍경도) → cap_mid.py → mkpage_mid.py. 요점:
+  - 평균으로 줄이지 않는다: 재질 묶음(색상 · 채도 12묶음) × 밝기 단계 팔레트 → 칸마다 가장 넓은 재질의 가운데 밝기 색 → 어두운 테는 따로 세어 살림(바깥 테가 사라진 자리는 바깥 칸에 되살림). 점 3픽셀 × 키 32칸은 얼굴 · 손이 무너져 뺐다.
+  - **엔진은 그대로, 그림 자료의 `hs`만**: 전사 hs 1.5(늘 1.5배로 그리니 한 칸 = 논리 1칸) · 몬스터 hs 1 · 풍경 겹 hs 1(구름은 scene.js가 크기를 정해 두어 2×2칸을 뭉친 그림). 자료도 준다(전사 430 → 134KB · 몬스터 702 → 148KB · 풍경까지 하면 data-hd70.js 1,616 → 366KB).
+  - 고르면 넣는 길: `out_mid<키>/` · `out_midmon/`을 hd70/export_hd70.py가 읽게(전사 hs가 2로 박혀 있다) — 넣기 전에 영웅 창 · 초상 · 야영 · 우두머리 2배(점 4픽셀이 됨)를 볼 것.
+- **같은 싸움을 여러 판으로 찍는 법**(cap_mid.py — 다른 비교 시안에도 쓸 것): core.js 첫머리 `const rnd = Math.random;`이 난수를 잡아 두므로 찍는 사본에서만 `() => Math.random()`으로 바꾸고, 게임 고리를 먼저 멈춘 뒤 장면을 차리고, step · drawFrame에 씨앗 난수를 따로 물린다(`acc = 0; vt = 60` · 맑은 날 씨앗). 그러면 그림이 달라도 HP · 자리 · 땅 흐름이 같다.
+- 사용자가 사이 값을 고르면 다른 직업(아직 옛 뭉툭 4픽셀)도 그 굵기로 받아야 한다는 것을 페이지에 적어 둠.
+
 ## 하르겐 지하 3구역 「옛 제국 수로」 · 지하미궁 통로 · 암살자 길드 본부 넣음 (빌드 70, 11-18 09:19 사용자 「사슬 확정 , 누런 매연, 검은두건까지 넣고 다음 ㄱㄱ」 — 가지 wip-70, APK는 시킬 때)
 - 그림: `src/pxaqueduct.js` · `src/pxpassage.js`(build.py에서 pxvault.js 뒤) = `tools/saved/mon70/emitunder70.py`(g/aq3.py · g/pass4.py → t/*.json — **손으로 고치지 말 것**). 고른 모습을 기본 id로(동굴어 · 석상 · 수문장 · 사슬잡이 · 그림자 분신 · 붉은 손은 B 그림이 기본 id), 새 무기 여섯 crowbar · chainball · chook · ratlance · mancatch · lanternst, 길드장 패턴 모습 guildmaster_p1 · _p2는 pxuLook 이름표. 파일 끝 줄(emitunder70.py `POST`): `PXU.guildmaster.low` 문턱 둘 · `PXU_ACT.guildmaster.fx.gas/echo`. 넣으며 바꾼 그림: 길드장 패턴 모습의 등 뒤 분신을 그림자 분신과 같은 **누런 매연**으로(pass4.py 글자 a A z O — 본체 A 그림은 그대로).
 - 데이터 `src/data-under70.js`(build.py에서 data-sea69 다음 — data-elem · data-fight · data-monup69의 load 때 몫(타입 · 속성 · 스킬 목록 · 연타 · 날짐승)을 여기서 바로): 부속품 15 · 몬스터 15(ST70 · TAG70 · MON_SK → msk) · `FIELDS.aqueduct`(no 19 · Lv100 · span 10 · tier 12 · after sewer · bosses 동굴어 · 거머리 · 덩굴 · 석상 · 히드라 · 던전 「옛 제국의 대저수조」 bg cistern 주인 수문장) · `FIELDS.passage`(no 20 · Lv120 · span 20 · tier 13 · after aqueduct · bosses 금고털이 · **쥐의 왕관 두목(fb 2)** · 사슬잡이 · **붉은 손 두목(fb 4)** · **잿빛 장부 두목(fb 5, 통로의 주인)** · 던전 「암살자 길드 본부」 bg guildhq 주인 길드장 검은 두건 · 호위 길드 간부 둘) · 둘 다 `under` · `parts`(core.js bossParts — TIER_FIELDS가 아니어도 그 단계 증표 · 핵 · 혼) · CLIMATE indoor · 유물 둘(`relicFields()` — 유물 창 · 개수) · 왕국 wants · STORY(guild 다시 씀 · aqueduct · passage · guildHalf · v70).
