@@ -17,7 +17,7 @@ with sync_playwright() as pw:
     skip()
     ev = lambda s: pg.evaluate("s => window.__EV(s)", s)
     for _ in range(20):
-        if ev("!!(HD.bg && HD.war && HD.front && Object.keys(HD.mon).length === 6)"): break
+        if ev("!!(HD.bg && HD.war && Object.keys(HD.mon).length === 6)"): break
         pg.wait_for_timeout(300)
     # 전사 하나 만들어 스킬 몇 개 배운 채로
     aid = ev(r"""(() => { const a = makeAdv({ cls: 'warrior', lv: 30 }); a.id = 990; a.status = 'idle'; a.eq.weapon = makeGear('sword', 2, 1); a.eq.off = makeGear('shield', 2, 1);

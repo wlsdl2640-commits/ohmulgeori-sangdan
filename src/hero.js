@@ -601,7 +601,7 @@ function heroDraw(cv, a, now) {
     for (let j = -ry; j <= ry; j++) { const hw = Math.max(1, Math.round(rx * Math.sqrt(Math.max(0, 1 - (j / (ry + 0.5)) ** 2)))); g.fillRect(cx - hw * Z, Math.round(cy + j * Z - Z / 2), hw * 2 * Z, Z); } }
   let pose = 'idle', fr = Math.floor(t * 1.6) % 2;
   if (cyc > 4.3 && cyc < 5.0) { pose = 'atk'; fr = cyc < 4.5 ? 0 : 1; }
-  const ride = rideKind(a) ? rideComp(heroAdv(a), pose, fr, false) : null, hw = !ride && hdWarOn(a) && HD.front ? HD.front : null, s = ride || hw || pxAdvSprite(heroAdv(a), pose, fr);   // 탈것 직업 (빌드 65): 앞모습 탈것에 탄 그림 · 빌드 70 시험: 전사 1차 리마스터 앞모습
+  const ride = rideKind(a) ? rideComp(heroAdv(a), pose, fr, false) : null, hw = !ride && hdWarOn(a) ? hdFront(t) : null, s = ride || hw || pxAdvSprite(heroAdv(a), pose, fr);   // 탈것 직업 (빌드 65): 앞모습 탈것에 탄 그림 · 빌드 70: 전사 1차 리마스터 앞모습 (숨쉬기 16장)
   // 탈것에 탄 그림은 크니 창에 맞게 줄인다 (기기 픽셀 정수배 — 칸이 고르게)
   const Zs = ride ? Math.max(1 / dpr, Math.floor(Math.min(Z, (W / 2 - 3) / Math.max(s.ax, s.w - s.ax), (gy - 3) / s.ay) * dpr) / dpr) : Z;
   // 휘두를 때 하얀 호
@@ -631,7 +631,7 @@ function heroStart() { if (!HERO.raf) HERO.raf = requestAnimationFrame(heroTick)
 /* 확대한 초상: 썸네일·의상 카드용 */
 const HPOR = {};
 function heroPortrait(a, z, W, H) {
-  const hw = hdWarOn(a) && HD.front ? HD.front : null, key = advKey(a) + '|' + z + '|' + W + 'x' + H + (hw ? '|hd' : '');   // 빌드 70 시험: 전사 1차 리마스터 앞모습
+  const hw = hdWarOn(a) ? hdFront() : null, key = advKey(a) + '|' + z + '|' + W + 'x' + H + (hw ? '|hd' : '');   // 빌드 70: 전사 1차 리마스터 앞모습
   if (HPOR[key]) return HPOR[key];
   const [c, x] = mkCanvas(W, H);
   x.translate(Math.floor(W / 2), H - 3); x.scale(z, z);

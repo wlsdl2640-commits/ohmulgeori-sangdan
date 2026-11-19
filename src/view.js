@@ -6,7 +6,7 @@ const PH = 21 * ZP;                                       // 파티원 키 (논�
 const zq = z => Math.max(0.25, Math.round(z * 4) / 4);   // 배율은 1/4 단위 (구운 그림을 다시 쓰게)
 const eW = f => monW(f.id, f.sc) * ZE, eH = f => monH(f.id, f.sc) * ZE;
 const V = { cvs: null, ctx: null, off: null, g: null, wc: null, w: null, lc: null, l: null, bcv: null, bctx: null, bopen: false,
-  mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, fmot: {}, fhit: {}, motLast: {}, skSeen: {}, jump: {}, fall: {}, last: {}, shake: 0, giant: false,
+  mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, fmot: {}, fhit: {}, motLast: {}, skSeen: {}, jump: {}, fall: {}, stand: {}, tail: false, tailT: null, last: {}, shake: 0, giant: false,
   log: [], logN: 0, logP: 0, fname: {} };
 
 function initView(canvas) {
@@ -77,10 +77,10 @@ const clearCallouts = () => ['callouts', 'bcallouts'].forEach(id => { const b = 
    레이드 원정대(같은 e.grp)가 나가 있으면 작은 창을 옆으로 밀어 넘긴다: 첫째 장 = 원정대 창(지금 보는 파티) · 둘째 장 = 파티마다 한 칸(2열).
    칸마다 그 파티의 장면을 V.off에 따로 그린다 — 효과 · 쓰러짐 · 기록 같은 장면 상태(RP_KEYS)는 파티마다 바꿔 끼운다. 다른 칸은 소리 · 글자 없이. */
 const RP = { page: 0, st: {}, main: null, n: 0, cols: 2, rows: 0, ids: '', swiped: 0, k: 0 };
-const RP_KEYS = ['mode', 'lastN', 'lastF', 'scroll', 'fx', 'ghosts', 'flash', 'flash0', 'lunge', 'atk', 'mot', 'fmot', 'fhit', 'motLast', 'skSeen', 'jump', 'fall', 'last', 'shake', 'giant', 'log', 'logN', 'logP', 'fname', 'dir', 'nj', 'hitA', 'lowSt', 'coach', 'coachK'];
+const RP_KEYS = ['mode', 'lastN', 'lastF', 'scroll', 'fx', 'ghosts', 'flash', 'flash0', 'lunge', 'atk', 'mot', 'fmot', 'fhit', 'motLast', 'skSeen', 'jump', 'fall', 'stand', 'tail', 'tailT', 'last', 'shake', 'giant', 'log', 'logN', 'logP', 'fname', 'dir', 'nj', 'hitA', 'lowSt', 'coach', 'coachK'];
 const RP_CROP_Y = 100, RP_CROP_H = 100;   // 칸마다 무대의 이 띠 (파티 발밑 ~ 거인 머리)
 const RP_COL = ['#f0c24a', '#4ad0c8', '#ff7a9a', '#b08aff', '#8ad84a', '#f08a4a'];
-const rpFresh = () => ({ mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, fmot: {}, fhit: {}, motLast: {}, skSeen: {}, jump: {}, fall: {}, last: {}, shake: 0, giant: false, log: [], logN: 0, logP: 0, fname: {} });
+const rpFresh = () => ({ mode: '', lastN: 0, lastF: 0, scroll: 0, fx: [], ghosts: [], flash: {}, flash0: {}, lunge: {}, atk: {}, mot: {}, fmot: {}, fhit: {}, motLast: {}, skSeen: {}, jump: {}, fall: {}, stand: {}, tail: false, tailT: null, last: {}, shake: 0, giant: false, log: [], logN: 0, logP: 0, fname: {} });
 function rpSwap(pid) { RP.main = {}; for (const k of RP_KEYS) RP.main[k] = V[k]; const st = RP.st[pid] || (RP.st[pid] = rpFresh()); for (const k of RP_KEYS) V[k] = st[k]; }
 function rpBack(pid) { const st = RP.st[pid]; for (const k of RP_KEYS) st[k] = V[k]; for (const k of RP_KEYS) V[k] = RP.main[k]; RP.main = null; }
 // 보여 줄 레이드 원정대: 지금 보는 파티가 든 원정대, 없으면 처음 찾은 원정대
@@ -128,7 +128,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   const key = (p ? p.id : 0) + ':' + (e ? 'x' : 'h');
   // 화면을 바꿨거나 오래 멈췄다 돌아오면 밀린 효과는 건너뛴다
   if (key !== V.mode || now - V.lastF > 1000) {
-    if (key !== V.mode) { V.fx = []; V.ghosts = []; V.flash = {}; V.flash0 = {}; V.lunge = {}; V.atk = {}; V.mot = {}; V.fmot = {}; V.fhit = {}; V.jump = {}; V.fall = {}; clearCallouts(); }
+    if (key !== V.mode) { V.fx = []; V.ghosts = []; V.flash = {}; V.flash0 = {}; V.lunge = {}; V.atk = {}; V.mot = {}; V.fmot = {}; V.fhit = {}; V.jump = {}; V.fall = {}; V.stand = {}; clearCallouts(); }
     if (p && V.logP !== p.id) { V.log = []; V.logP = p.id; V.logN = 0; }
     V.mode = key; V.lastN = e ? e.evN : 0;
   }
@@ -139,7 +139,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   const bg = getBg(id), oy = bg.tall ? 0 : BG_OY;
   V.wide = !!(e && bg.wide);   // 빌드 70: 넓은 땅 배치 (formSlots · foeSlots · zAt)
   // 옆으로 흐르는 풍경: 간 거리만큼 (길드 앞은 멈춰 있다)
-  if (e) { const target = routePos(e) * 1.6; if (Math.abs(target - V.scroll) > 200) V.scroll = target; else V.scroll += (target - V.scroll) * 0.2; } else V.scroll = 0;
+  if (e) { const target = routePos(e) * 1.6; if (Math.abs(target - V.scroll) > 200) V.scroll = target; else if (!V.tail) V.scroll += (target - V.scroll) * 0.2; } else { V.scroll = 0; V.tail = false; }
   w.clearRect(0, 0, AW, AH);
   // 옛 240×128 풍경을 무대 아래쪽에 붙이고, 위는 하늘로 잇는다 (키 큰 풍경은 무대 전체)
   const T = todAt(dp, id);
@@ -363,7 +363,7 @@ function foeSlots(foes) {
 function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const all = teamOf(p), team = all.filter(a => !a.down).concat(all.filter(a => a.down));   // 들것은 맨 끝
   const fighting = e.foes.length > 0, camping = !!e.camp && !fighting, waiting = !!e.wait && !fighting;
-  const walking = !fighting && !camping && !waiting;
+  const walking0 = !fighting && !camping && !waiting;
   const F = FIELDS[e.field];
   const gap = !fighting && !camping && e.encs[e.ei] != null ? Math.abs(e.encs[e.ei] - e.pos) : 99;
   const foes = fighting ? e.foes : camping || gap > 30 ? [] : (e.next || []);
@@ -374,12 +374,25 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   V.dir = dir;
   const FS = formSlots(team);
   team.forEach((a, i) => { const [x, y] = FS[i], q = pos['a' + a.id] = [mx(x), y], ru = a.down ? 0 : -rideTop(a); if (ru) q.ru = ru; });   // 탈것 (빌드 65): 숫자 · 알림은 기수 머리 위에
+  // 빌드 70: 쓰러지는 동안은 모두 서 있던 자리 그대로 — 쓰러지면 대형 맨 끝(들것)으로 가고 남은 사람이 앞으로 당겨 서는데, 예전엔 쓰러지는 그림부터 뒤에서 나왔다
+  const inFall = a => { const k = 'a' + a.id, st = V.stand[k], ft = V.fall[k]; return !!(a.down && st && (ft != null && ft >= st[2] - 0.2 ? t - ft < (hdWarOn(a) ? HDW_DIE_T : 0.5) : t - st[2] < 0.3)); };
+  const hold = team.some(inFall);
+  team.forEach(a => {
+    const k = 'a' + a.id, q = pos[k], st = V.stand[k];
+    if (hold && st && (!a.down || inFall(a))) { q[0] = st[0]; q[1] = st[1]; return; }
+    if (!a.down) V.stand[k] = [q[0], q[1], t];
+  });
   const pet = petOfParty(p);
   if (pet) pos['aP' + pet.id] = [mx(FS.petX), V.wide ? 190 : 199];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   Object.assign(V.last, pos);
   V.hitA = team.map(a => { const q = pos['a' + a.id]; return [a.id, q[0], q[1], q.ru || 0]; });   // 빌드 66: 누르는 자리 (전투 창)
   events(e, pos, t, team, p);
+  // 빌드 70: 리마스터 전사가 마지막 한 방을 휘두르는 동안은 걷지 않는다 (싸움은 맞히기 전에 끝나 있다 — 동작이 길어져 휘두르며 미끄러지는 것이 보였다). 땅도 그동안 멈춘다 (drawFrame)
+  const tail0 = walking0 && team.some(a => !a.down && hdWarOn(a) && motNow(a, t, 1));
+  if (!tail0) V.tailT = null; else if (V.tailT == null) V.tailT = t;
+  const tail = tail0 && t - V.tailT < 1.2, walking = walking0 && !tail;
+  V.tail = tail;
 
   // 던전 입구: 1-50 끝에서 길 끝에 서 있다
   const fs = S.fields[e.field];
@@ -463,7 +476,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   // 파티
   team.forEach((a, i) => {
     const [x0, y0] = pos['a' + a.id], z = zAt(y0);
-    const ft = V.fall['a' + a.id], falling = ft && t - ft < 0.5;
+    const hw = hdWarOn(a), fallT = hw ? HDW_DIE_T : 0.5;   // 빌드 70: 전사 1차 리마스터 — 쓰러지는 16장을 1초에 · 베기 자취 · 불꽃은 그림 장에 있다 (스킬 빛은 그대로)
+    const ft = V.fall['a' + a.id], falling = ft && t - ft < fallT;
     if (a.down && !falling) {   // 들것 위에 누워 있다
       draws.push({ y: y0, f: g => { shadowAt(g, x0, y0, 18 * z / ZS); g.save(); g.translate(x0, y0); g.scale(dir * z / ZS, z / ZS); stretcherHi(g, a, t, walking); g.restore(); } });
       return;
@@ -475,16 +489,17 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const mo = !a.down && !falling ? motNow(a, t) : null, mF = mo && (rk ? rideDo(a, () => pxsMotFr(mo.mk, mo.f)) : pxsMotFr(mo.mk, mo.f));   // 공격 동작 (빌드 40)
     const msk = mo && mo.sk && SKFX[mo.sk], dashK = msk && msk.dash && mo.f >= 3 && mo.f <= 6 ? 1.8 : 1;   // 스킬 효과 (빌드 41): 돌진은 더 멀리
     const mjy = mo && !rk ? Math.round(motJy(mo) * 2 * z) : 0;   // 도약 찌르기 (빌드 42): 동작이 뛰는 높이를 정한다
-    const dx = ((mo ? mF.dx * 2 * z * dashK : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy + mjy;
-    const hw = hdWarOn(a);   // 빌드 70 시험: 전사 1차 리마스터 — 베기 자취 · 불꽃은 그림 장에 있다 (스킬 빛은 그대로)
-    if (mo && (!hw || (mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast))) post.push(g => motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t));
+    const dx = ((mo ? (hw ? 0 : mF.dx * 2 * z * dashK) : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy + mjy;   // 리마스터 장은 그림 안에서 몸이 나간다 (뒷발이 닻)
+    if (mo && (!hw || (mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast))) post.push(g => { if (hw) hdSkFx(g, a, mo, SKFX[mo.sk], x0, y, dir, t); else motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t); });   // 리마스터 전사: 스킬 빛을 그림의 칼 자리에 (hd70.js hdSkFx — 엔진 그림 칸에 맞춘 motFx는 자리가 안 맞는다)
     draws.push({ y: y0, f: g => {
-      shadowAt(g, x0 + dx, y0, (rk ? rideShadow(a) : jy || mjy < -4 ? 7 : SHADOW_R) * z / ZS);
+      const O = { walk: walking && !falling, run: e.mode === 'return', ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / fallT)) : null,
+        wph: hw && dir > 0 ? V.scroll / HDW_STRIDE : null };   // 리마스터 걷기: 땅이 흐르는 빠르기만큼 발을 옮긴다 (hd70.js HDW_STRIDE)
+      shadowAt(g, x0 + dx + (hw ? hdWarSx(a, t, O) * dir : 0), y0, (rk ? rideShadow(a) : jy || mjy < -4 ? 7 : SHADOW_R) * z / ZS);
       if (msk) skGhosts(g, a, mo, msk, x0 + dx, y, z, dir, t);
       g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
       if (falling && !hw) { const k = Math.max(0, Math.min(1, (t - ft) / 0.3)); g.rotate(-k * k * Math.PI / 2); }
       FLASH = (V.flash['a' + a.id] || 0) > t && (V.flash0['a' + a.id] || 0) <= t ? '#ffffff' : null;
-      drawAdv(g, a, t, { walk: walking && !falling, run: e.mode === 'return', ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / 0.5)) : null });
+      drawAdv(g, a, t, O);
       FLASH = null; g.restore();
     } });
     if (ORBIT[a.cls]) post.push(g => { const [c1, c2] = ORBIT[a.cls]; for (let k = 0; k < 2; k++) { const ang = t * 3 + k * Math.PI; R(g, Math.round((x0 + Math.cos(ang) * 12) * 2) / 2, Math.round((y - PH * 0.55 + Math.sin(ang) * 4) * 2) / 2, 1.5, 1.5, k ? c2 : c1); } });
@@ -623,7 +638,8 @@ const MOT_SKILL = {
 };
 const MOT_HOLD = 0.08, MOT_CHAIN0 = 2, MOT_PAL = [['#ffffff', '#fff2a0', '#a8a090'], ['#fffbe0', '#ffd84a', '#c8a060']];   // 효과 색: 보통 · 치명타
 const motToHit = q => (q.T || pxsMotT(q.mk)).slice(q.f0 || 0, pxsMotHit(q.mk)).reduce((s, v) => s + v, 0);
-const motT = (mk, hold) => pxsMotT(mk).map((v, f) => v + (f === 2 ? hold || 0 : 0));   // 스킬: 셋째 장(모으기)을 hold초 더 붙잡는다
+const motTA = (a, mk) => hdMotT(a, mk) || pxsMotT(mk);   // 이 모험가의 장마다 초 — 빌드 70: 전사 1차 리마스터(16장)는 동작을 길게 (hd70.js HDW_MOT)
+const motT = (mk, hold, a) => motTA(a, mk).map((v, f) => v + (f === 2 ? hold || 0 : 0));   // 스킬: 셋째 장(모으기)을 hold초 더 붙잡는다
 /* 무기 갈래마다 (빌드 42): 기본 공격 자세 · 그 갈래가 가진 동작 · 다른 갈래 동작을 이 갈래로 바꾸는 표(역할: 내려치기 cut · 올려치기 rise · 휩쓸기 sweep ·
    찌르기 stab · 난도질 flurry · 내려찍기 slam · 쏘기 shoot · 모아 쏘기 cast · 치켜들기 raise) */
 const MOT_POOL = {
@@ -695,7 +711,7 @@ function motPick(a, sid, i, k) {
 function motSwing(a, x, t) {
   if (!a || a.down || !pxsMotOK(a)) return;
   const m0 = V.mot['a' + a.id]; if (m0 && !m0.sw && motNow(a, t + 0.05)) return;
-  const mk = motPick(a, null, 0, x.k), T0 = pxsMotT(mk), hi = pxsMotHit(mk), h0 = T0.slice(0, hi).reduce((s, v) => s + v, 0), w = Math.max(0.05, x.w || 0), hold = Math.max(0, hi - 2);
+  const mk = motPick(a, null, 0, x.k), T0 = motTA(a, mk), hi = pxsMotHit(mk), h0 = T0.slice(0, hi).reduce((s, v) => s + v, 0), w = Math.max(0.05, x.w || 0), hold = Math.max(0, hi - 2);
   const T = w >= h0 ? T0.map((v, f) => (f === hold ? v + w - h0 : v)) : T0.map((v, f) => (f < hi ? v * w / h0 : v));
   V.mot['a' + a.id] = { t: -1, sid: '', n: {}, sw: t + w, q: [{ mk, t0: t, f0: 0, c: 0, sk: null, T }] };
 }
@@ -710,28 +726,47 @@ function motOn(a, x, t) {
   }
   if (x.dot) { if (!m || m.t !== t || !m.dot) return 0; m.lastQ = m.q[0]; return m.q[0].t0 + motToHit(m.q[0]) - t; }   // 지속 피해: skill 사건이 건 동작에 맞춘다
   const sk = x.sid && SKFX[x.sid] && SKFX[x.sid].mot ? x.sid : null;
-  if (!m || m.t !== t || m.sid !== sid) { const mk = motPick(a, x.sid, 0, x.k); m = V.mot[key] = { t, sid, n: {}, q: [{ mk, t0: t, f0: 0, c: x.c, sk, T: motT(mk, sk && SKFX[sk].hold) }] }; }
+  if (!m || m.t !== t || m.sid !== sid) {
+    const mk = motPick(a, x.sid, 0, x.k); let t0 = t, pre = null;
+    if (m && !m.sw && hdWarOn(a)) {   // 빌드 70 리마스터 전사: 동작이 길어서(0.95초) 하던 공격이 맞히기도 전에 새 공격으로 바뀌면 눈에 띈다 — 맞히는 장 조금 뒤까지는 보여 주고 잇는다
+      const q0 = motQ(m, t), keep = q0 && motNow(a, t, 1) ? q0.t0 + motToHit(q0) + HDW_KEEP : 0;
+      if (keep > t) { t0 = keep; pre = [q0]; }
+    }
+    m = V.mot[key] = { t, sid, n: {}, pre, q: [{ mk, t0, f0: 0, c: x.c, sk, T: motT(mk, sk && SKFX[sk].hold, a) }] };
+  }
   const n = (m.n[x.d] = (m.n[x.d] || 0) + 1) - 1;
-  while (m.q.length <= n) { const q = m.q[m.q.length - 1], mk = motPick(a, x.sid, m.q.length, x.k); m.q.push({ mk, t0: q.t0 + motToHit(q) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c, sk, T: pxsMotT(mk) }); }
+  while (m.q.length <= n) { const q = m.q[m.q.length - 1], mk = motPick(a, x.sid, m.q.length, x.k); m.q.push({ mk, t0: q.t0 + motToHit(q) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c, sk, T: motTA(a, mk) }); }
   if (x.c) m.q[n].c = 1;
   m.lastN = n + 1; m.lastQ = m.q[n];
   return Math.max(0.001, m.q[n].t0 + motToHit(m.q[n]) - t);   // 이어받은 기본 공격은 맞히는 장이 이미 지났을 수 있다 (0이면 동작 없는 것으로 본다)
 }
 // 공격이 아닌 동작 (막기·치켜들기·방패 세우기): 다른 동작 중이 아닐 때(휘두르던 무기를 끊지 않는다), 막기는 방패가 있을 때 · 갈래에 맞게 바꾼다
-function motCast(a, mk, t, blk, sk) {
-  if (!a || a.down || !pxsMotOK(a) || motNow(a, t + 0.1)) return;
+function motCast(a, mk, t, blk, sk, now) {   // now: 지금 (t가 나중이면 — 막기는 맞는 때에 맞춰 조금 뒤에 시작한다)
+  if (!a || a.down || !pxsMotOK(a)) return;
   if (blk && !pxsMotShield(a)) return;
+  const m0 = V.mot['a' + a.id], busy = motNow(a, t + 0.1, 1), hw = hdWarOn(a);
+  let t0 = t;
+  if (busy) {
+    // 빌드 70 리마스터 전사: 공격 동작이 길어서(0.95초) 그대로면 막기가 자주 묻힌다 → 하던 공격이 이미 맞혔고 잇는 동작이 없으면, 거두는 장을 끊고 방패를 든다
+    if (!(blk && now != null && hw && hdMotAtk(busy.mk))) return;
+    const q = motQ(m0, t + 0.1), cut = q.t0 + motToHit(q) + HDW_KEEP;
+    if (q !== m0.q[m0.q.length - 1] || m0.after || cut > t + HDW_BLOCK_PRE - 0.05) return;   // 맞는 때(t + HDW_BLOCK_PRE)까지 방패를 들 틈이 없으면 그만둔다
+    t0 = Math.max(t, cut);
+  }
   if (mk === 'guard' && !pxsMotShield(a)) mk = 'raise';
   mk = motFam(a, mk);
-  V.mot['a' + a.id] = { t, sid: '#' + mk, n: {}, q: [{ mk, t0: t, f0: 0, sk: sk || null, T: motT(mk, sk && SKFX[sk] && SKFX[sk].hold) }] };
+  const q = { mk, t0, f0: 0, sk: sk || null, T: motT(mk, sk && SKFX[sk] && SKFX[sk].hold, a) };
+  if (now != null && t0 > now && m0 && hw && motNow(a, now, 1)) { m0.after = q; return; }   // 리마스터 전사: 지금 하던 동작은 그때까지 보이고 그 뒤에 잇는다
+  V.mot['a' + a.id] = { t, sid: '#' + mk, n: {}, q: [q] };
 }
-function motNow(a, t) {
+const motQ = (m, t) => { let q = null; if (m.pre) for (const s of m.pre) if (t >= s.t0) q = s; for (const s of m.q) if (t >= s.t0) q = s; if (m.after && t >= m.after.t0) q = m.after; return q; };   // 지금 하는 동작 칸 (pre: 맞힐 때까지 보여 줄 앞 동작 · after: 다 끝난 뒤에 이을 동작 — 리마스터 전사)
+function motNow(a, t, peek) {   // peek: 보기만 (끝난 동작을 지우지 않는다 — 나중 때를 물을 때)
   const m = V.mot['a' + a.id]; if (!m) return null;
-  let q = null; for (const s of m.q) if (t >= s.t0) q = s;
+  const q = motQ(m, t);
   if (!q) return null;
-  let e = t - q.t0; const T = q.T || pxsMotT(q.mk), q0 = m.q[0];
-  for (let f = q.f0; f < T.length; f++) { if (e < T[f]) return { mk: q.mk, f, p: e / T[f], c: q.c, sk: q.sk, e: t - q0.t0, hit: motToHit(q0), first: q === q0 }; e -= T[f]; }
-  if (q === m.q[m.q.length - 1]) delete V.mot['a' + a.id];
+  let e = t - q.t0; const T = q.T || pxsMotT(q.mk), q0 = m.q.includes(q) ? m.q[0] : q, last = m.after || m.q[m.q.length - 1];
+  for (let f = q.f0; f < T.length; f++) { if (e < T[f]) return { mk: q.mk, f, p: e / T[f], c: q.c, sk: q.sk, e: t - q0.t0, hit: motToHit(q0), first: q === q0, T, f0: q.f0 }; e -= T[f]; }
+  if (!peek && q === last) delete V.mot['a' + a.id];
   return null;
 }
 // 뛰는 높이 (뭉툭 칸, 위 −): 장 사이를 부드럽게
@@ -873,7 +908,7 @@ function events(e, pos, t, team, p) {
       const T1 = t + fd + hd;   // 맞는 때 (언데드는 동작이 닿는 때 · 그 밖은 바로 — 연타는 한 대씩 늦게)
       if (!fd && !hd) V.lunge['f' + x.s] = t + 0.14;
       else if (hd) V.lunge['f' + x.s] = T1 + 0.1;
-      if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: T1, d: 0.6 }); motCast(advOf(x.d), 'block', T1 - 0.1, 1); }
+      if (x.blk) { V.fx.push({ k: 'num', x: aq[0] + 2, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 12, s: 'BLOCK', c: '#c8d8ff', t0: T1, d: 0.6 }); { const ba = advOf(x.d); motCast(ba, 'block', T1 - (hdWarOn(ba) ? HDW_BLOCK_PRE : 0.1), 1, null, t); } }   // 리마스터 전사는 방패를 올리는 장이 길어 더 일찍 시작한다
       V.flash['a' + x.d] = T1 + 0.1; V.flash0['a' + x.d] = T1; V.fhit['a' + x.d] = T1;
       const fm = fmid(x.s);
       if (fd) fmotHitFx(e, x, t, fd, am, aq, at);   // 언데드: 갈래 효과 (투사체 · 맞히기)
@@ -901,7 +936,7 @@ function events(e, pos, t, team, p) {
       const aq = at('a' + x.s), s = SKILLS[x.id], sk = SKFX[x.id], ma = advOf(x.s), mot = ma && pxsMotOK(ma), cast = s && !['dmg', 'mdmg', 'dot'].includes(s.kind);
       if (aq && s) { callout(aq[0], aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 4, s.name, SKILL_CLS[s.kind] || ''); if (!sk || (!sk.cast && !mot)) V.fx.push({ k: 'cast', x: aq[0], y: aq[1], t0: t, d: 0.35, c: s.kind === 'heal' || s.kind === 'regen' ? '#8af08a' : s.kind === 'mdmg' ? '#b48aff' : '#fff2a0' }); }
       if (cast && mot) motCast(ma, sk && sk.mot ? sk.mot : (s.kind === 'buff' && ['def', 'block', 'guard'].includes(s.stat)) || s.kind === 'shield' ? 'guard' : 'raise', t, 0, sk ? x.id : null);
-      else if (s && s.kind === 'dot' && mot && !x.pet) { const mk = motPick(ma, x.id, 0, s.fx || (s.magic ? 'magic' : 'melee')), sk2 = sk && sk.mot ? x.id : null; V.mot['a' + ma.id] = { t, sid: x.id, dot: 1, n: {}, q: [{ mk, t0: t, f0: 0, sk: sk2, T: motT(mk, sk2 && sk.hold) }] }; }   // 지속 피해 스킬도 동작 (빌드 42)
+      else if (s && s.kind === 'dot' && mot && !x.pet) { const mk = motPick(ma, x.id, 0, s.fx || (s.magic ? 'magic' : 'melee')), sk2 = sk && sk.mot ? x.id : null; V.mot['a' + ma.id] = { t, sid: x.id, dot: 1, n: {}, q: [{ mk, t0: t, f0: 0, sk: sk2, T: motT(mk, sk2 && sk.hold, ma) }] }; }   // 지속 피해 스킬도 동작 (빌드 42)
       else if (s && !mot && (s.kind === 'mdmg' || s.kind === 'heal' || s.kind === 'regen')) V.atk['a' + x.s] = t;
       if (cast && sk && sk.cast && aq) V.fx.push({ k: 'skc', id: x.id, x: aq[0], y: aq[1], z: zAt(aq[1]), dir: V.dir || 1, t0: t, d: 1.6, tg: sk.party ? team.filter(m => !m.down && m.id !== x.s).map(m => at('a' + m.id)).filter(Boolean).map(q => [q[0], q[1], zAt(q[1])]) : [] });
     } else if (x.type === 'buff') {

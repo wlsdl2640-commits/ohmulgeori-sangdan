@@ -46,8 +46,8 @@ function advPoseOf(t, o) {
 const rideOn = (a, pose, o) => !o.noRide && pose !== 'sit' && pose !== 'sleep' && pose !== 'down' && !!rideKind(a);
 function drawAdv(ctx, a, t, o = {}) {
   const [pose, fr] = advPoseOf(t, o), rs = rideOn(a, pose, o) ? rideComp(a, pose, fr, !!o.side) : null;
-  const hs = !rs && hdWarOn(a) ? hdWarSpr(a, pose, fr, t, o) : null;   // 빌드 70 시험: 전사 1차 리마스터 장 (hd70.js — 앉기 · 눕기는 예전 그림)
-  const s = hs || rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = hs ? (o.side || pose === 'sit' || pose === 'sleep' ? 1.5 : 1) : o.z || 1, lift = rs ? rs.lift : 0;   // 리마스터 그림은 화면 픽셀 그대로 (깊이 배율로 늘리지 않는다)
+  const hs = !rs && hdWarOn(a) ? hdWarSpr(a, pose, fr, t, o) : null;   // 빌드 70: 전사 1차 리마스터 장 (hd70.js — 동작 13가지 × 16장)
+  const s = hs || rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = hs ? (o.side || o.z || pose === 'sit' || pose === 'sleep' ? 1.5 : 1) : o.z || 1, lift = rs ? rs.lift : 0;   // 리마스터 그림은 늘 1.5배 (깊이 배율로 늘리지 않는다) — 배율 없이 부르는 초상만 그림 그대로
   if (z === 1 && !lift) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(z, z); if (lift) ctx.translate(0, -lift); pxBlit(ctx, s); ctx.restore();
 }
