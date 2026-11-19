@@ -81,8 +81,8 @@ function portrait(a) {
   const hf = hdWarOn(a) ? hdFront() : null, key = advKey(a) + (hf ? '|hd' : '');   // 빌드 70: 전사 1차 리마스터 앞모습 — 그림 판을 풀기 전에 구운 예전 그림과 열쇠를 가른다
   if (POR[key]) return POR[key];
   const [c, x] = mkCanvas(POR_W, POR_H);
-  x.translate(POR_W / 2, hf ? Math.max(POR_H - 2, hf.ay / hf.hs * 2 + 1) : POR_H - 2); x.scale(2, 2);   // 리마스터 그림은 키가 커서 머리 위를 칸에 맞추고 발 쪽을 자른다 (예전엔 투구 위가 잘렸다)
-  drawAdvHi(x, a, 0, { noRide: 1 });   // 탈것 직업도 초상은 내려서 (빌드 65)
+  if (hf) hdBust(x, POR_W, POR_H, 2);   // 리마스터 그림: 한 칸 = 2픽셀 · 머리 위를 칸에 맞추고 발 쪽을 자른다 (hd70.js)
+  else { x.translate(POR_W / 2, POR_H - 2); x.scale(2, 2); drawAdvHi(x, a, 0, { noRide: 1 }); }   // 탈것 직업도 초상은 내려서 (빌드 65)
   return (POR[key] = c.toDataURL());
 }
 const iconImg = (id, cls = 'ico') => `<img class="${cls}" src="${iconURL(id)}" alt="">`;

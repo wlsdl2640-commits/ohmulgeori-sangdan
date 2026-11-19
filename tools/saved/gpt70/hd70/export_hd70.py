@@ -1,5 +1,8 @@
 """빌드 70 시험: 곡창지대 평원 리마스터 그림 → src/data-hd70.js (손으로 고치지 말 것 — 이 스크립트로 다시 뽑는다)
-   몬스터 6종 동작 장(out_mon — extract_mon.py) · 전사 1차 16장 동작(out_war16 — extract_war16.py) · 1차 스킬 그림(out_sk — extract_sk.py) · 하늘(out_sky — extract_sky.py)
+   몬스터 6종 동작 장 · 전사 1차 16장 동작 · 1차 스킬 그림(out_sk — extract_sk.py) · 하늘(out_sky — extract_sky.py)
+   **11-20 사용자 「40으로 하자」: 전사 · 몬스터는 「사이 값」 그림을 쓴다 — 점 한 칸 = 논리 1칸(화면 2픽셀) · 전사 키 40칸**
+     전사 = WAR_DIR(../mid70/extract_mid.py 40 — hs 1.5) · 몬스터 = MON_DIR(../mid70/extract_mid_mon.py — hs 1) · 우두머리용 두 배 촘촘한 그림 = MON_BIG(BIG=1 — hs 2)
+     (빌드 71까지: out_war16(extract_war16.py · 64칸 · hs 2) · out_mon(extract_mon.py · hs 2) — 그 꼴로 되돌리려면 아래 세 이름만 바꾼다)
    · 넓은 평원 풍경 겹(사용자 그림: 다 겹친 모습 38f56457 · 겹 4b92ccaf)
    python3 export_hd70.py <src/data-hd70.js> [미리보기 폴더]"""
 import json, base64, io, sys, os
@@ -9,6 +12,7 @@ from seg import sheet_path
 OUT = sys.argv[1]; PRE = sys.argv[2] if len(sys.argv) > 2 else None
 if PRE: os.makedirs(PRE, exist_ok=True)
 SKI_A = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_'
+WAR_DIR, MON_DIR, MON_BIG = 'out_mid40', 'out_midmon', 'out_midmon_big'
 
 def png_url(im, name=None):   # 색이 255개 이하면 팔레트 PNG (투명 한 칸)
     im = im.convert('RGBA'); a = np.array(im); al = a[..., 3] > 0
@@ -26,26 +30,30 @@ def png_url(im, name=None):   # 색이 255개 이하면 팔레트 PNG (투명 �
 
 # ── 1. 몬스터: 줄마다 한 줄, 장은 옆으로 (멧돼지 둘은 왼쪽을 보고 있어서 뒤집는다 — 게임 몬스터 그림은 오른쪽을 본다)
 FLIP = {'boar', 'aboar'}
-M = json.load(open('out_mon/meta.json')); mon = {}
-for mid, m in M.items():
+def mon_sheet(d, mid, m, tag):
     rows = list(m['rows'].keys()); W, H = m['w'], m['h']; mx = max(m['rows'].values())
     sh = Image.new('RGBA', (W * mx, H * len(rows)), (0, 0, 0, 0))
     for r, rn in enumerate(rows):
         for i in range(m['rows'][rn]):
-            f = Image.open(f'out_mon/{mid}/{rn}_{i}.png').convert('RGBA')
+            f = Image.open(f'{d}/{mid}/{rn}_{i}.png').convert('RGBA')
             if mid in FLIP: f = f.transpose(Image.FLIP_LEFT_RIGHT)
             sh.alpha_composite(f, (i * W, r * H))
-    mon[mid] = {'hs': m['hs'], 'w': W, 'h': H, 'ax': (W - m['ax']) if mid in FLIP else m['ax'], 'ay': m['ay'], 'rows': rows, 'n': [m['rows'][r] for r in rows], 'url': png_url(sh, 'mon_' + mid)}
+    return {'hs': m['hs'], 'w': W, 'h': H, 'ax': (W - m['ax']) if mid in FLIP else m['ax'], 'ay': m['ay'], 'rows': rows, 'n': [m['rows'][r] for r in rows], 'url': png_url(sh, tag + mid)}
+M = json.load(open(f'{MON_DIR}/meta.json')); mon = {mid: mon_sheet(MON_DIR, mid, m, 'mon_') for mid, m in M.items()}
+if MON_BIG and os.path.exists(f'{MON_BIG}/meta.json'):   # 우두머리(2배)로 그릴 때 쓰는 그림: 줄 · 장 수는 같고 칸만 두 배 촘촘하다
+    for mid, m in json.load(open(f'{MON_BIG}/meta.json')).items():
+        b = mon_sheet(MON_BIG, mid, m, 'monbig_'); assert b['rows'] == mon[mid]['rows'] and b['n'] == mon[mid]['n'], mid
+        mon[mid]['big'] = {k: b[k] for k in ('hs', 'w', 'h', 'ax', 'ay', 'url')}
 
 # ── 2. 전사 1차: 16장 동작 (extract_war16.py — 동작마다 한 줄, 판 차례 그대로 · 장 차례는 게임 hd70.js HDW_SEQ)
-W16 = json.load(open('out_war16/meta.json')); war = {'hs': 2, 'rows': {}}
+W16 = json.load(open(f'{WAR_DIR}/meta.json')); war = {'hs': next(iter(W16.values()))['hs'], 'rows': {}}
 for rn, m in W16.items():
     sh = Image.new('RGBA', (m['w'] * m['n'], m['h']), (0, 0, 0, 0))
-    for i in range(m['n']): sh.alpha_composite(Image.open(f'out_war16/{rn}_{i}.png').convert('RGBA'), (i * m['w'], 0))
+    for i in range(m['n']): sh.alpha_composite(Image.open(f'{WAR_DIR}/{rn}_{i}.png').convert('RGBA'), (i * m['w'], 0))
     war['rows'][rn] = dict(m, url=png_url(sh, 'war16_' + rn))
     if 'bl' in m:   # 칼날 칸 (스킬 빛)
         bs = Image.new('RGBA', (m['w'] * m['n'], m['h']), (0, 0, 0, 0))
-        for i in range(m['n']): bs.alpha_composite(Image.open(f'out_war16/{rn}_b_{i}.png').convert('RGBA'), (i * m['w'], 0))
+        for i in range(m['n']): bs.alpha_composite(Image.open(f'{WAR_DIR}/{rn}_b_{i}.png').convert('RGBA'), (i * m['w'], 0))
         war['rows'][rn]['blade'] = png_url(bs, 'war16_' + rn + '_blade')
 
 # ── 3. 스킬 그림 34×40 (육각 안쪽 x 7 ~ 40 · y 4 ~ 43) — 「팔레트|칸」 꼴 (data-skicon.js와 같은 글자)

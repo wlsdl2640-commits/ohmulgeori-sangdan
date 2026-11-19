@@ -587,7 +587,7 @@ const mastHexURL = (k, t) => (typeof MASTICON !== 'undefined' && MASTICON[k] ? h
 const mastIco = (k, t) => { const u = mastHexURL(k, t); return u ? `<img class="skico${t ? '' : ' off'}" src="${u}" alt="">` : `<img class="ico lg" src="${mastIconURL(k, t)}" alt="">`; };
 
 /* ───────── 무대 그리기 ───────── */
-const HERO = { raf: 0, W: 132, H: 148, Z: 3, swing: 0 };
+const HERO = { raf: 0, W: 132, H: 148, Z: 3, swing: 0, hdCell: 2.4 };   // hdCell: 리마스터 그림 한 칸의 크기 (40칸 전사 ≈ 100픽셀)
 function heroAdv(a) { return a; }
 function heroDraw(cv, a, now) {
   const dpr = window.devicePixelRatio || 1, { W, H, Z } = HERO;
@@ -603,7 +603,8 @@ function heroDraw(cv, a, now) {
   if (cyc > 4.3 && cyc < 5.0) { pose = 'atk'; fr = cyc < 4.5 ? 0 : 1; }
   const ride = rideKind(a) ? rideComp(heroAdv(a), pose, fr, false) : null, hw = !ride && hdWarOn(a) ? hdFront(t) : null, s = ride || hw || pxAdvSprite(heroAdv(a), pose, fr);   // 탈것 직업 (빌드 65): 앞모습 탈것에 탄 그림 · 빌드 70: 전사 1차 리마스터 앞모습 (숨쉬기 16장)
   // 탈것에 탄 그림은 크니 창에 맞게 줄인다 (기기 픽셀 정수배 — 칸이 고르게)
-  const Zs = ride ? Math.max(1 / dpr, Math.floor(Math.min(Z, (W / 2 - 3) / Math.max(s.ax, s.w - s.ax), (gy - 3) / s.ay) * dpr) / dpr) : Z;
+  const Zs = ride ? Math.max(1 / dpr, Math.floor(Math.min(Z, (W / 2 - 3) / Math.max(s.ax, s.w - s.ax), (gy - 3) / s.ay) * dpr) / dpr)
+    : hw ? Math.max(1, Math.round(HERO.hdCell * dpr)) / dpr * hw.hs : Z;   // 리마스터 전사: 그림 한 칸 = 2.4픽셀쯤(기기 픽셀 정수배) — 다른 직업과 키가 비슷하게(100픽셀쯤)
   // 휘두를 때 하얀 호
   if (pose === 'atk' && fr === 1 && !ride && !hw) {   // 빌드 63: 매끈한 호 대신 Z칸 네모를 호를 따라 (투명도도 계단)
     const mi = pxWSh(a.eq && a.eq.off) ? -1 : 1;   // 빌드 64: 방패를 들면 무기가 오른손(보는 사람 왼쪽) → 호도 왼쪽으로
@@ -634,8 +635,8 @@ function heroPortrait(a, z, W, H) {
   const hw = hdWarOn(a) ? hdFront() : null, key = advKey(a) + '|' + z + '|' + W + 'x' + H + (hw ? '|hd' : '');   // 빌드 70: 전사 1차 리마스터 앞모습
   if (HPOR[key]) return HPOR[key];
   const [c, x] = mkCanvas(W, H);
-  x.translate(Math.floor(W / 2), H - 3); x.scale(z, z);
-  pxBlit(x, hw || pxAdvSprite(a, 'idle', 0));
+  if (hw) hdBust(x, W, H, z);   // 리마스터 전사: 한 칸 = z픽셀 · 머리 위를 칸에 맞춘다
+  else { x.translate(Math.floor(W / 2), H - 3); x.scale(z, z); pxBlit(x, pxAdvSprite(a, 'idle', 0)); }
   return (HPOR[key] = c.toDataURL());
 }
 

@@ -36,9 +36,12 @@ function monIconURL(id, dark) {
   const key = id + (dark ? '|d' : '');
   if (DEXI[key]) return DEXI[key];
   const s = PXU[id] ? pxuSprite(id, 'idle', 0) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', 0), W = 56, H = 44, [c, x] = mkCanvas(W, H);   // 새 그림(언데드·평원 …)이 있으면 그것으로
-  const fit = Math.min((W - 4) / s.w, (H - 4) / s.h), z = fit >= 1 ? Math.floor(fit) : fit;
-  x.imageSmoothingEnabled = false;
-  x.translate(W / 2, H - 2); x.scale(z, z); x.drawImage(s.cv, -s.w / 2, -s.h);
+  // 그림 몬스터(hd70.js): 칸 전체가 아니라 그림이 있는 자리만 맞춘다 (동작 칸이 넓어 그대로 넣으면 작아진다) · 그래도 줄여야 하면 부드럽게(칸을 건너뛰면 도트가 깨진다)
+  const Hm = hdMon(id), q = s.hs || 1, bx = Hm && s.hs ? Math.max(0, Math.round(s.ax + Hm.bb[0] * q)) : 0, bw = Hm && s.hs ? Math.min(s.w - bx, Math.round((Hm.bb[1] - Hm.bb[0]) * q)) : s.w;
+  const by = Hm && s.hs ? Math.max(0, Math.round(s.ay - Hm.bb[2] * q)) : 0, bh = Hm && s.hs ? Math.min(s.h - by, Math.round(Hm.bb[2] * q) + 1) : s.h;
+  const fit = Math.min((W - 4) / bw, (H - 4) / bh), z = fit >= 1 ? Math.floor(fit) : fit;
+  x.imageSmoothingEnabled = fit < 1 && !!Hm; if (x.imageSmoothingEnabled) x.imageSmoothingQuality = 'high';
+  x.translate(W / 2, H - 2); x.scale(z, z); x.drawImage(s.cv, bx, by, bw, bh, -bw / 2, -bh, bw, bh);
   if (dark) { x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = '#2a2a34'; x.fillRect(0, 0, W, H); }
   return (DEXI[key] = c.toDataURL());
 }

@@ -4,10 +4,13 @@
      동작 'i_<id>_<줄>' — 장 시간 PXS_MOT_TT · 맞히는 장 PXS_MOT_HITF · 앞으로 나간 거리 dx(논리 픽셀) · 쏘는 자리 tip(닻에서 논리 픽셀)
    · 전사 1차(cls warrior): drawAdv가 리마스터 장을 그린다 — 동작 13가지 × 16장(서 있기 · 걷기 · 달리기 · 베기 · 올려베기 · 찌르기 · 방패 밀기 · 막기 · 맞음 · 쓰러짐 ·
      앉기 · 눕기 · 앞모습, 11-19 사용자 「전부 16장으로 … 기본배속에서도 잘 보이게」). 공격 동작은 엔진 동작(여덟 장)의 시간을 늘려(0.95초쯤) 16장을 다 보여 준다 (아래 HDW_MOT)
+   · 점 굵기 (11-20 사용자 「40으로 하자」 — 옛 뭉툭 4픽셀과 빌드 71의 1.5픽셀 사이 값): 전사 · 몬스터 그림은 **한 칸 = 논리 1칸 = 화면 2픽셀**.
+     전사 키 40칸(그림 자료 hs 1.5 — drawAdv가 늘 1.5배로 그린다) · 몬스터 hs 1 · 우두머리(2배로 그림)는 두 배 촘촘한 그림(자료의 big · hs 2 — art.js drawMon이 HD.big을 켠다) ·
+     초상 · 썸네일은 hdBust(한 칸 = 2픽셀) · 영웅 창은 한 칸 2.4픽셀쯤(hero.js HERO.hdCell). 그림은 tools/saved/gpt70/mid70(extract_mid.py 40 · extract_mid_mon.py)에서 뽑는다. 풍경 겹은 아직 hs 2(한 칸 1픽셀)
    · 1차 스킬 그림 13개: hexURL이 육각 안쪽 34×40을 그린다 (hdSkiCells)
    · 넓은 평원(bg plains_hd): 뒷산 · 중경(언덕 · 농장 · 울타리) · 넓은 땅 · 도는 풍차 날개 — 땅이 화면 아래 40%,
      파티 · 몬스터가 앞뒤로 흩어져 선다 (view.js formSlots · foeSlots · zAt이 V.wide를 본다) */
-const HD = { mon: {}, war: null, sky: null, bg: null, spr: new Map(), tint: new WeakMap() };
+const HD = { mon: {}, war: null, sky: null, bg: null, spr: new Map(), tint: new WeakMap(), big: false };   // big: 지금 그리는 몬스터가 2배 우두머리 (art.js drawMon이 켰다 끈다)
 const HD_EMPTY = (() => { if (typeof document === 'undefined') return null; const [cv] = mkCanvas(1, 1); return { cv, ax: 0, ay: 0, w: 1, h: 1, dx: 0, jy: 0, fo: [0, 0] }; })();
 // 그림 몬스터 동작: 줄 · 장 시간 · 맞히는 장 · 앞으로 나간 거리(논리 픽셀, 장마다) · 쏘는 자리
 const HD_MOT = {
@@ -61,7 +64,7 @@ function hdBox(cv) {   // 그림이 있는 칸의 테두리 [x0, x1, y0]
   return x1 < 0 ? null : [x0, x1 + 1, y0];
 }
 function hdFeetX(cv, m) {   // 맨 아래 여섯 줄의 가운데 (닻에서, 그림 칸) — 내딛는 동작에서 그림자가 몸을 따라간다
-  const y0 = Math.max(0, m.ay - 6); let x0 = cv.width, x1 = -1;
+  const y0 = Math.max(0, m.ay - Math.max(3, Math.round(3 * (m.hs || 1)))); let x0 = cv.width, x1 = -1;   // 줄 수는 그림 해상도만큼 (hs 2 = 6줄 · hs 1.5 = 5줄)
   try { const d = cv.getContext('2d').getImageData(0, y0, cv.width, Math.min(cv.height, m.ay + 1) - y0), h = d.height; for (let y = 0; y < h; y++) for (let x = 0; x < cv.width; x++) if (d.data[(y * cv.width + x) * 4 + 3]) { if (x < x0) x0 = x; if (x > x1) x1 = x; } } catch (_) { return 0; }
   return x1 < 0 ? 0 : (x0 + x1 + 1) / 2 - m.ax;
 }
@@ -79,6 +82,7 @@ function hdLoad() {
       const f = hdCut(im, m.w, m.h, m.rows, m.n), b = hdBox(f[m.rows[0]][0]);
       const q = m.hs || 1; HD.mon[id] = { m, f, bb: b ? [(b[0] - m.ax) / q, (b[1] - m.ax) / q, (m.ay - b[2]) / q] : [-10, 10, 20] };   // 닻에서 뒤 끝 · 앞 끝 · 키
       HD.spr.clear(); if (typeof MON_DIM !== 'undefined') delete MON_DIM[id]; if (typeof MON_BACK !== 'undefined') delete MON_BACK[id];
+      if (m.big) img(m.big.url, im2 => { const H = HD.mon[id]; H.m2 = Object.assign({ rows: m.rows, n: m.n }, m.big); H.f2 = hdCut(im2, m.big.w, m.big.h, m.rows, m.n); HD.spr.clear(); });   // 우두머리용 두 배 촘촘한 그림 (없으면 작은 그림을 2배로)
     });
   }
   const W = D.war, WR = {}; let wl = Object.keys(W.rows).length;   // 전사 1차: 동작 줄을 다 풀어야 켠다 (그 전에는 예전 그림)
@@ -107,10 +111,11 @@ const hdMonBase = id => { const H = HD.mon[id]; return H ? [H.bb[1] - H.bb[0], H
 function hdMonSpr(id, mk, f) {   // pxund.js pxuSprite가 부른다 (그림 판이 없으면 null)
   const H = HD.mon[id];
   if (!H) return PXU[id] && PXU[id].g === 'C' ? HD_EMPTY : null;
-  const M = HD_MOT[mk] && HD_MOT[mk].id === id ? HD_MOT[mk] : null, row = M ? M.row : mk === 'walk' && H.f.walk ? 'walk' : H.m.rows[0], L = H.f[row];
-  const i = M ? Math.max(0, Math.min(L.length - 1, f)) : ((f % L.length) + L.length) % L.length, key = id + '|' + (M ? mk : row) + '|' + i + '|' + (FLASH || '');
+  const B = HD.big && H.f2 ? 1 : 0, F = B ? H.f2 : H.f;   // B: 2배 우두머리 그림 (같은 줄 · 같은 장 수, hs만 다르다)
+  const M = HD_MOT[mk] && HD_MOT[mk].id === id ? HD_MOT[mk] : null, row = M ? M.row : mk === 'walk' && F.walk ? 'walk' : H.m.rows[0], L = F[row];
+  const i = M ? Math.max(0, Math.min(L.length - 1, f)) : ((f % L.length) + L.length) % L.length, key = id + '|' + (M ? mk : row) + '|' + i + '|' + (FLASH || '') + (B ? '|B' : '');
   let s = HD.spr.get(key); if (s) return s;
-  const m = H.m, cv = FLASH ? hdTint(L[i], FLASH) : L[i];
+  const m = B ? H.m2 : H.m, cv = FLASH ? hdTint(L[i], FLASH) : L[i];
   const q = m.hs || 1, lx = m.ax / q, ly = m.ay / q;
   s = { cv, hs: q, ax: m.ax, ay: m.ay, w: m.w, h: m.h, dx: M && M.dx ? (M.dx[i] || 0) / 2 : 0, jy: 0, fo: [lx, ly], tip: M && M.tip ? [(lx + M.tip[0] - 1) / 2, (ly + M.tip[1] - 1) / 2] : [(lx + H.bb[1] - 2) / 2, (ly - H.bb[2] * 0.6) / 2] };
   HD.spr.set(key, s); if (HD.spr.size > 900) HD.spr.delete(HD.spr.keys().next().value);
@@ -138,6 +143,8 @@ function hdwSpr(k, i, fl) {   // 그림 동작 k의 i번째 장 (fl: 한 색으�
   return s;
 }
 const hdFront = t => (HD.war ? hdwSpr('front', t == null ? 0 : Math.floor(t * HDW_FPS.front)) : null);   // hero.js 영웅 창 · 초상 (앞모습)
+// 초상 · 썸네일: 앞모습을 그림 한 칸 = px 픽셀로 (머리 위를 칸 위쪽에 맞추고, 키가 칸보다 크면 발 쪽이 잘린다)
+function hdBust(x, W, H, px) { const s = hdFront(), k = px * s.hs; x.save(); x.translate(Math.floor(W / 2), Math.max(H - 2, Math.round(s.ay * px) + 1)); x.scale(k, k); pxBlit(x, s); x.restore(); }
 /* 엔진 동작(pxs.js 여덟 장) → 그림 동작. 엔진 동작의 장마다 초를 이 표로 바꿔(view.js motTA → hdMotT) 16장이 기본 배속에서 다 보이게 한다.
    H: 차례 안에서 맞히는(막는) 장 — 엔진의 맞히는 장(pxsMotHit) 앞 장들은 0 ~ H-1, 뒤 장들은 H ~ 끝에 고르게 나눈다(모으는 장을 붙잡으면 그 자세에서 멈춘다)
    time: 맞히는 때가 없는 동작(강화 · 함성 · 방패 세우기) — 걸리는 시간에 고르게 */

@@ -1,6 +1,7 @@
 """사이 값 시안 5단계: 같은 장면 · 같은 때를 그림 자료만 바꿔 가며 찍는다 (시험 묶음 아님 — 게임 고리를 멈추고 손으로 한 걸음씩)
    python3 cap_mid.py <시험 페이지> <폴더> <장면> [장 수] [간격 초] [미리 돌릴 장 수]      환경 OLD=1 이면 리마스터 전사 · 몬스터 그림을 끄고 옛 뭉툭 도트로
    장면: walk 전사 셋이 평원을 걷는다 · solo 전사 하나가 걷는다 · fight 전사 셋이 들늑대 · 들쥐 · 뿔토끼와 싸운다 · mons 전사 하나와 허수아비 · 멧돼지 · 갑옷 멧돼지
+         boss · boss2 우두머리(2배) 들늑대 · 허수아비 / 멧돼지 · 갑옷 멧돼지
    시뮬레이션(step)과 그리기(drawFrame)에 씨앗이 다른 난수를 따로 물려서, 그림이 달라도 싸움은 똑같이 흘러간다. 날씨도 맑은 날로 고정.
    → <폴더>/<장면>_<i>.png (무대 480×400 그대로) · <장면>.json (장마다 전사 · 몬스터 자리)"""
 import sys, os, json, base64, io
@@ -29,6 +30,8 @@ SC = {   # 이름: (stage, lv, 전사 수, 첫 싸움 자리, 더 할 것)
     'fight': (12, 14, 3, 14, FOES(['wolf', 'rat', 'rabbit'], 12, 6000) + TOUGH),
     'mons':  (12, 14, 1, 14, FOES(['scarecrow', 'boar', 'aboar'], 12, 60000) + TOUGH),
     'solo':  (5, 12, 1, 300, ''),
+    'boss':  (12, 14, 3, 14, "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? [10, 20].map(st => { const f = fieldBoss(FIELDS.plains, st, 12); f.maxHp = f.hp = 60000; return f; }) : ro(e2, idx, ex));" + TOUGH),   # 우두머리 들늑대 · 허수아비 (2배)
+    'boss2': (12, 14, 3, 14, "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? [30, 40].map(st => { const f = fieldBoss(FIELDS.plains, st, 12); f.maxHp = f.hp = 60000; return f; }) : ro(e2, idx, ex));" + TOUGH),   # 우두머리 멧돼지 · 갑옷 멧돼지
 }
 stage, lv, nteam, enc, extra = SC[SCN]
 with sync_playwright() as pw:

@@ -1,5 +1,7 @@
 """사이 값 시안 3단계: 평원 몬스터 6종을 같은 굵기(점 한 칸 = 화면 2픽셀 = 논리 1픽셀)로 다시 줄인다
    python3 extract_mid_mon.py [점검판 폴더]   → out_midmon/<id>/<줄>_<i>.png · meta.json  (hd70/out_mon과 같은 꼴 · hs 1)
+   환경 BIG=1: 우두머리로 나오는 몬스터(BOSS)만 두 배 촘촘히(한 칸 = 판 픽셀 절반 · hs 2) → out_midmon_big/ — 게임이 우두머리를 2배로 그릴 때 이 그림을 써서 점 굵기가 그대로다
+   (작은 그림을 두 배로 늘리면 점이 화면 4픽셀이 되고 얼굴이 뭉개진다. 몬스터 판에는 그만큼의 그림이 들어 있다)
    장 나누기 · 닻은 ../hd70/extract_mon.py 그대로(그 파일의 「meta = {}」 앞까지를 돌리고, 닻을 잡는 고리만 여기 옮겨 적었다 — 거기를 고치면 여기도)"""
 import json, os, sys
 import numpy as np
@@ -12,8 +14,10 @@ src = open(os.path.join(HD, 'extract_mon.py'), encoding='utf-8').read().split('\
 ns = {'__name__': 'xmon'}; exec(compile(src, 'extract_mon_head', 'exec'), ns)
 CONF, load, row_bands, frames_of, scale_band, main_comp, prof_box, best_off = (ns[k] for k in ('CONF', 'load', 'row_bands', 'frames_of', 'scale_band', 'main_comp', 'prof_box', 'best_off'))
 CHK = sys.argv[1] if len(sys.argv) > 1 else None
-OUT = 'out_midmon'; os.makedirs(OUT, exist_ok=True); meta = {}
+BIG = bool(os.environ.get('BIG')); BOSS = ('wolf', 'scarecrow', 'boar', 'aboar')   # 곡창지대 평원 우두머리 (src/data.js FIELDS.plains.bosses)
+OUT = 'out_midmon_big' if BIG else 'out_midmon'; os.makedirs(OUT, exist_ok=True); meta = {}
 for mid, cf in CONF.items():
+    if BIG and mid not in BOSS: continue
     ns['GRID'] = cf.get('grid'); GRID = ns['GRID']
     rgb, fg = load(cf); B = row_bands(fg, len(cf['rows'])); assert len(B) == len(cf['rows']), (mid, B)
     allf = []; ref = None; cnt0 = None
@@ -44,6 +48,7 @@ for mid, cf in CONF.items():
         crops.append((rname, i, np.clip(brgb[sl], 0, 255).astype(np.uint8), m[sl], (xs.min() + dx - ref_cx, ys.min() - base - 1)))
     samp = np.vstack([flat_pixels(cr[2], cr[3]) for cr in crops[::2]]); rs = np.random.RandomState(1)
     P = Palette(samp[rs.choice(len(samp), min(len(samp), 120000), replace=False)], groups=9)
+    if BIG: c /= 2
     F = [down(cr[2], cr[3], cr[4], c, P) for cr in crops]
     if cf['bg'] == 'dark':   # 검은 바탕 판은 바깥 테가 바탕에 묻혀 덮개에 없다 → 한 칸 테를 두른다 (extract_mon.py와 같은 뜻)
         for r in F:
@@ -54,7 +59,7 @@ for mid, cf in CONF.items():
     for (rname, i, *_), r in zip(crops, F):
         im = np.zeros((Hh, W, 4), np.uint8); a = to_rgba(r[0], P.pal); x, y = ax - r[1][0], ay - r[1][1]; im[y:y + a.shape[0], x:x + a.shape[1]] = a
         Image.fromarray(im, 'RGBA').save(f'{OUT}/{mid}/{rname}_{i}.png'); rows[rname] = rows.get(rname, 0) + 1
-    meta[mid] = {'hs': 1, 'w': int(W), 'h': int(Hh), 'ax': int(ax), 'ay': int(ay), 'rows': rows}
+    meta[mid] = {'hs': 2 if BIG else 1, 'w': int(W), 'h': int(Hh), 'ax': int(ax), 'ay': int(ay), 'rows': rows}
     print('%-9s 칸 %3d×%3d  닻 %3d,%3d  한 칸 = 판 %.2f픽셀  색 %d' % (mid, W, Hh, ax, ay, c, len(P.pal)), rows)
 json.dump(meta, open(f'{OUT}/meta.json', 'w'), indent=1)
 if CHK:
@@ -63,4 +68,4 @@ if CHK:
         Zm = 4; W, Hh = m['w'], m['h']; mx = max(m['rows'].values()); S = Image.new('RGBA', (mx * W * Zm, len(m['rows']) * (Hh * Zm + 4)), (96, 150, 84, 255))
         for r, (rn, n) in enumerate(m['rows'].items()):
             for i in range(n): S.alpha_composite(Image.open(f'{OUT}/{mid}/{rn}_{i}.png').resize((W * Zm, Hh * Zm), Image.NEAREST), (i * W * Zm, r * (Hh * Zm + 4)))
-        S.convert('RGB').save(f'{CHK}/midmon_{mid}.png')
+        S.convert('RGB').save(f'{CHK}/midmon_{mid}{"_big" if BIG else ""}.png')

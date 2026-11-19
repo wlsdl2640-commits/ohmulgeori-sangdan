@@ -47,7 +47,7 @@ const rideOn = (a, pose, o) => !o.noRide && pose !== 'sit' && pose !== 'sleep' &
 function drawAdv(ctx, a, t, o = {}) {
   const [pose, fr] = advPoseOf(t, o), rs = rideOn(a, pose, o) ? rideComp(a, pose, fr, !!o.side) : null;
   const hs = !rs && hdWarOn(a) ? hdWarSpr(a, pose, fr, t, o) : null;   // 빌드 70: 전사 1차 리마스터 장 (hd70.js — 동작 13가지 × 16장)
-  const s = hs || rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = hs ? (o.side || o.z || pose === 'sit' || pose === 'sleep' ? 1.5 : 1) : o.z || 1, lift = rs ? rs.lift : 0;   // 리마스터 그림은 늘 1.5배 (깊이 배율로 늘리지 않는다) — 배율 없이 부르는 초상만 그림 그대로
+  const s = hs || rs || (o.side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr)), z = hs ? 1.5 : o.z || 1, lift = rs ? rs.lift : 0;   // 리마스터 그림은 늘 1.5배 (깊이 배율로 늘리지 않는다): 그림 자료가 hs 1.5라 그림 한 칸 = 논리 1칸 = 화면 2픽셀 (11-20 「40으로 하자」 — 초상은 ui.js가 hdBust로 따로 그린다)
   if (z === 1 && !lift) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(z, z); if (lift) ctx.translate(0, -lift); pxBlit(ctx, s); ctx.restore();
 }
@@ -83,7 +83,9 @@ function drawMon(ctx, id, t, o = {}) {
   const H = hdMon(id), m = MONS[id], sc = H ? (monSc(m, o.sc, id) > 1 ? 2 : 1) : monSc(m, o.sc, id) * (o.z || 1), tt = t + (o.ph || 0),   // 그림 몬스터: 화면 픽셀 그대로 · 우두머리는 꼭 2배
     wk = !!(H && o.walk && !o.mot && H.f.walk);   // 빌드 70 그림 몬스터: 서 있기 6 ~ 8장 · 다가올 때 걷기 줄
   const fr = H ? (wk ? Math.floor(tt * 10) % H.f.walk.length : Math.floor(tt * (HD_IDLE_FPS[id] || 7)) % hdIdleN(id)) : Math.floor(tt * (PXU[id] && PXU[id].ifr || (m.giant ? 3 : PXU[id] && PXU[id].float ? 2.5 : 5))) % 2;   // ifr: 서 있기 두 장을 바꾸는 빠르기 (빌드 55 키메라 — 염소가 2초마다 앞·뒤를 본다)
+  HD.big = !!(H && sc === 2 && H.f2);   // 우두머리(2배): 두 배 촘촘한 그림을 쓴다 — 작은 그림을 늘리면 점이 화면 4픽셀이 된다 (hd70.js hdMonSpr)
   const s = PXU[id] ? pxuSprite(id, o.mot ? o.mot.mk : wk ? 'walk' : 'idle', o.mot ? o.mot.f : fr) : pxMonSprite(PXM[id] || PXG[id] ? id : 'rat', fr);   // 언데드: 동작 장 (빌드 43)
+  HD.big = false;
   if (sc === 1) { pxBlit(ctx, s); return; }
   ctx.save(); ctx.scale(sc, sc); pxBlit(ctx, s); ctx.restore();
 }
