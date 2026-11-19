@@ -1,7 +1,10 @@
-"""전사 1차 참고 판 그리기: python3 compose96.py <out 폴더(run96 결과)> <출력 폴더>"""
+"""전사 1차 참고 판 그리기: python3 compose96.py <out 폴더(run96 결과)> <출력 폴더> [제목 꼬리표 — 없으면 「지금 게임 그림」]
+   11-19: 전사 1차가 리마스터 그림으로 바뀐 뒤(빌드 71)에는 꼬리표를 「옛 그림 …」으로 준다 · 글자 없는 낱장 판 warrior1_0_sprites.png(투명 바탕)도 함께 낸다
+   (run96.py를 새 빌드에서 다시 돌리면 전투 장면에는 리마스터 전사가 찍힌다 — 옛 그림 판은 11-18에 뽑아 둔 out 폴더로 만든다)"""
 import json, base64, io, sys, os
 from PIL import Image, ImageDraw, ImageFont
 SRC, OUT = sys.argv[1], sys.argv[2]; os.makedirs(OUT, exist_ok=True)
+TAG = sys.argv[3] if len(sys.argv) > 3 else '지금 게임 그림'
 FR = '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'; FB = '/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'
 fnt = lambda n, b=False: ImageFont.truetype(FB if b else FR, n, index=2)
 GOLD, TXT, SUB, BG, PANEL = (240, 196, 90), (236, 230, 220), (160, 156, 148), (21, 23, 28), (44, 48, 58)
@@ -38,7 +41,7 @@ def paste_spr(S, s, X, Y, Z, dx=0):
 Z = 5; poses = [('idle0', '서 있기 1'), ('idle1', '서 있기 2'), ('walk0', '걷기 1'), ('walk1', '걷기 2'), ('walk2', '걷기 3'), ('walk3', '걷기 4'), ('sit0', '앉기 (야영)'), ('sleep0', '자기 (야영)'), ('down0', '쓰러짐')]
 CW, CH = 44 * Z, 40 * Z
 S = Image.new('RGBA', (40 + len(poses) * (CW + 8), 140 + 2 * (CH + 70) + 330), BG + (255,)); d = ImageDraw.Draw(S); y = 18
-d.text((20, y), '전사 (1차) — 지금 게임 그림', font=fnt(30, True), fill=GOLD); y += 46
+d.text((20, y), f'전사 (1차) — {TAG}', font=fnt(30, True), fill=GOLD); y += 46
 d.text((20, y), '「앞에 서서 적의 공격을 받아낸다.」 · 오른손 장검 · 왼손 라운드 실드 · 갑옷(경갑 상 · 하의 · 판금 장갑 · 판금 신발)은 그림에 안 그려진다', font=fnt(16), fill=SUB); y += 26
 d.text((20, y), f'{Z}배로 키움 · 뭉툭 도트 한 칸 = 게임 화면 2×2 픽셀 · 옆모습 서 있기 13×17칸 · 앞모습 16×16칸(무기 · 방패 포함)', font=fnt(16), fill=SUB); y += 40
 for side, title in (('side', '옆모습 — 전투 · 원정 (오른쪽을 본다, 적은 오른쪽)'), ('front', '앞모습 — 길드 앞 · 본부 · 모험가 창')):
@@ -53,6 +56,15 @@ d.text((20, y), '게임 속 실제 크기 (전투 화면 1배 — 폰에서는 �
 sc = img(J('sk_bash.json')['frames'][0]); S.alpha_composite(sc, (20, y)); y += sc.height + 20
 S = S.crop((0, 0, S.width, y)); S.convert('RGB').save(os.path.join(OUT, 'warrior1_1_look.png')); print('look', S.size)
 
+# ── 0. 낱장 (글자 없이 · 투명 바탕 · 8배 — 위 줄 옆모습 · 아래 줄 앞모습, 차례는 1번 판과 같다) ──
+Z0 = 8; C0W, C0H = 44 * Z0, 38 * Z0
+S0 = Image.new('RGBA', (len(poses) * C0W, 2 * C0H), (0, 0, 0, 0))
+for r, side in enumerate(('side', 'front')):
+    for i, (k, _) in enumerate(poses):
+        if side == 'front' and k == 'down0': continue
+        paste_spr(S0, look[side][k], i * C0W + C0W // 2 - 4 * Z0, r * C0H + C0H - 3 * Z0, Z0)
+S0.save(os.path.join(OUT, 'warrior1_0_sprites.png')); print('sprites', S0.size)
+
 # ── 2. 동작 ──
 Z = 3; xs, ys = [], []
 for mk, _, _ in MOTN:
@@ -64,7 +76,7 @@ for mk, _, _ in MOTN:
 x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys); FW, FH = (x1 - x0 + 4) * Z, (y1 - y0 + 4) * Z
 LW = 250; PAL = [(255, 255, 255), (255, 242, 160), (168, 160, 144)]
 S = Image.new('RGBA', (LW + 8 * (FW + 6) + 20, 150 + len(MOTN) * (FH + 34)), BG + (255,)); d = ImageDraw.Draw(S); y = 18
-d.text((20, y), '전사 (1차) — 동작 (옆모습 · 장검 + 라운드 실드)', font=fnt(30, True), fill=GOLD); y += 46
+d.text((20, y), '전사 (1차) — 동작 (옆모습 · 장검 + 라운드 실드)' + ('' if len(sys.argv) <= 3 else ' · ' + TAG), font=fnt(30, True), fill=GOLD); y += 46
 d.text((20, y), f'동작마다 8장 · {Z}배 · 흰 · 노란 칸은 칼 자취(게임이 동작에 붙여 그림) · 장 밑 숫자 = 그 장을 보여 주는 시간(초) · 금색 테 = 맞히는 장(이때 피해 숫자가 뜬다)', font=fnt(16), fill=SUB); y += 26
 d.text((20, y), '서 있기 · 걷기는 1번 판. 탈것 · 쌍검 동작은 전사 1차에 없음.', font=fnt(16), fill=SUB); y += 36
 for mk, nm, use in MOTN:
