@@ -20,7 +20,8 @@ BASE = RNG + r"""
   S.speed = 1; S.t = 0.45 * DAY_SEC + DAY_SEC * 3;
   for (let sd = 1; sd < 400; sd++) { S.wx = { seed: sd }; const w = wxDay(Math.floor(S.t / DAY_SEC)); if (w.sky === 'clear' && !w.wind && !w.heat && !w.cold) break; }   // 맑은 날
   const r = startExp(p, 'plains'); if (r) return 'start: ' + r;
-  const e = p.exp; e.stage = %STAGE%; e.pos = 10; e.encs = [%ENC%, 400, 500]; e.ei = 0; e.next = null; e.foes = [];
+  const e = p.exp; if (%FIELD% !== 'plains') e.field = %FIELD%;   // FIELD=forest: 다른 계층 풍경에서 찍기 (원정은 늘 1계층에서 시작하므로 바꿔 끼운다)
+  e.stage = %STAGE%; e.pos = 10; e.encs = [%ENC%, 400, 500]; e.ei = 0; e.next = null; e.foes = [];
   openBattle(); window.__team = team; window.__p = p; acc = 0; vt = 60; V.scroll = routePos(e) * 1.6; V.tail = false;
 """
 FOES = lambda ids, lv, hp: "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? %s.map(id => { const f = foeFrom(id, %d); f.maxHp = f.hp = %d; return f; }) : ro(e2, idx, ex));" % (json.dumps(ids), lv, hp)
@@ -30,6 +31,7 @@ SC = {   # 이름: (stage, lv, 전사 수, 첫 싸움 자리, 더 할 것)
     'fight': (12, 14, 3, 14, FOES(['wolf', 'rat', 'rabbit'], 12, 6000) + TOUGH),
     'mons':  (12, 14, 1, 14, FOES(['scarecrow', 'boar', 'aboar'], 12, 60000) + TOUGH),
     'solo':  (5, 12, 1, 300, ''),
+    'ffight': (12, 14, 3, 14, FOES(['goblin', 'spider', 'myconid'], 12, 6000) + TOUGH),   # 원시림 싸움 (FIELD=forest)
     'alert': (12, 14, 3, 72, FOES(['wolf', 'rat', 'rabbit'], 12, 6000) + TOUGH),   # 빌드 72: 몬스터가 곧 나온다는 알림 → 화면에 들어옴 → 싸움
     'boss':  (12, 14, 3, 14, "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? [10, 20].map(st => { const f = fieldBoss(FIELDS.plains, st, 12); f.maxHp = f.hp = 60000; return f; }) : ro(e2, idx, ex));" + TOUGH),   # 우두머리 들늑대 · 허수아비 (2배)
     'boss2': (12, 14, 3, 14, "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? [30, 40].map(st => { const f = fieldBoss(FIELDS.plains, st, 12); f.maxHp = f.hp = 60000; return f; }) : ro(e2, idx, ex));" + TOUGH),   # 우두머리 멧돼지 · 갑옷 멧돼지
@@ -58,7 +60,7 @@ with sync_playwright() as pw:
           formSlots = team => { const o = team.map((a, i) => [a.down ? 4 : formRank(a.cls), i]).sort((p, q) => p[0] - q[0] || p[1] - q[1]), n = o.length, gap = Math.min(24, 96 / Math.max(1, n - 1)), out = [];
             o.forEach(([r, i], k) => { out[i] = [Math.round(108 - gap * k), 192]; }); out.petX = Math.max(6, Math.round(108 - gap * n)); return out; };
           [[100, 192], [74, 192], [48, 192], [22, 192], [10, 192], [4, 192]].forEach((q, i) => { SLOT_PW[i] = q; SLOT_P[i] = q; }); return 'ok'; })()"""))
-    js = '(() => {' + BASE.replace('%CLS%', json.dumps(os.environ.get('TEAM', 'warrior').split(','))).replace('%LV%', str(lv)).replace('%STAGE%', str(stage)).replace('%TEAM%', str(nteam)).replace('%ENC%', str(enc)) + extra + " Math.random = window.__r0; return 'ok ' + wxDay(Math.floor(S.t / DAY_SEC)).sky + ' seed ' + S.wx.seed; })()"
+    js = '(() => {' + BASE.replace('%CLS%', json.dumps(os.environ.get('TEAM', 'warrior').split(','))).replace('%FIELD%', json.dumps(os.environ.get('FIELD', 'plains'))).replace('%LV%', str(lv)).replace('%STAGE%', str(stage)).replace('%TEAM%', str(nteam)).replace('%ENC%', str(enc)) + extra + " Math.random = window.__r0; return 'ok ' + wxDay(Math.floor(S.t / DAY_SEC)).sky + ' seed ' + S.wx.seed; })()"
     ev("window.requestAnimationFrame = () => 0"); pg.wait_for_timeout(200)   # 게임 고리를 먼저 멈춘다 (걸려 있던 한 장이 지나가게 기다린 뒤 장면을 차린다 — 그 사이에 고리가 돌면 싸움이 달라진다)
     print(SCN, ev(js))
     ev("""(() => {

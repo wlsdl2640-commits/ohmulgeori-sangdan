@@ -156,9 +156,9 @@ const FIELDS = {
     next: 'forest'
   },
   forest: {
-    no: 2, name: '원시림', lv: 9, bg: 'forest', tier: 1,
+    no: 2, name: '원시림', lv: 9, bg: 'forest_hd', tier: 1,   // 빌드 72: 새 풍경 (hd70.js buildForestHD)
     desc: '중앙에 세계수가 솟은 숲. 엘프 왕국의 영역이다.',
-    mons: ['myconid', 'spider', 'sapling', 'shaman'],
+    mons: ['goblin', 'myconid', 'spider', 'sapling', 'shaman'],   // 빌드 72 (11-20 16:56 사용자 「고블린들 추가」): 고블린 — 주술사는 원래 있었다
     dungeon: { name: '썩은 뿌리 동굴', bg: 'cave', mons: ['myconid', 'spider', 'sapling', 'shaman'], boss: 'elder' },
     next: 'mountain'
   },

@@ -331,7 +331,7 @@ function buildTown() {
 
 function getBg(id) {
   if (BG[id]) return BG[id];
-  const make = { plains: buildPlains, plains_hd: buildPlainsHD, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
+  const make = { plains: buildPlains, plains_hd: buildPlainsHD, forest_hd: buildForestHD, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
     cellar: () => buildUnder('cellar'), cave: () => buildUnder('cave'), mine: () => buildUnder('mine'),
     valley: buildValley, snow: buildSnow, desert: buildDesert, front: buildFront,
     nest: () => buildUnder('nest'), icetemple: () => buildUnder('icetemple'), tomb: () => buildUnder('tomb'), alley: buildAlley, sewer: () => buildUnder('sewer'), arena: () => buildUnder('arena') }[id] || (typeof BG_MAKERS !== 'undefined' && BG_MAKERS[id]) || buildPlains;

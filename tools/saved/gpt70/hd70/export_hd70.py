@@ -151,10 +151,45 @@ bg = {'k': K, 'hs': HS,
       'back': {'url': png_url(back, 'bg_back'), 'y': round(95 - back.height / HS, 1)},
       'blades': {'url': png_url(bsh, 'bg_blades'), 'w': bw, 'n': 12, 'x': round(1387 * K, 1), 'y': round(Y(188), 1)},
       'skyOy': -58, 'gateY': 150}
+# ── 4-2. 원시림 풍경 (미궁 2계층 · 11-20 16:56 사용자 그림 둘: ../forest_wide/forest_gpt_composite.png · forest_gpt_layers.png — 평원과 같은 크기 · 화풍)
+#   먼 숲(겹 그림 첫 띠 + 아래를 같은 색으로 채움) · 가운데 숲(겹 그림 둘째 띠 — 나무 사이가 막혀 있다) · 땅(다 겹친 그림 440줄부터) + 이음매에 낱개 12개 촘촘히 · 큰 낱개 넷(통나무 · 바위 · 돌기둥 · 고목 밑동) 띄엄띄엄
+#   ld: 한 줄 배치에서 풍경을 내리는 칸 수(평원 55 · hd70.js buildWideHD) — 원시림은 흙길 가운데(535줄)가 발 줄(192)에 오게 34
+from scipy import ndimage as _ndi
+FW = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'forest_wide')
+fcomp = keyed(f'{FW}/forest_gpt_composite.png'); flay = keyed(f'{FW}/forest_gpt_layers.png'); FXR = 1776
+_w = (np.array(Image.open(f'{FW}/forest_gpt_layers.png').convert('RGB')).min(-1) > 235); flay[_w, 3] = 0   # 칸 나눔 흰 줄
+FGR0, FPAD, FLD = 440, 104, 34
+fback_a = flay[16:160, :FXR].copy(); row = fback_a[-14:-4].reshape(-1, 4); row = row[row[:, 3] > 0][:, :3]; fill = np.zeros((60, FXR, 4), np.uint8); fill[..., :3] = np.median(row, axis=0).astype(np.uint8); fill[..., 3] = 255
+fback = shrink(np.vstack([fback_a, fill]), K * HS, 96); fmid = shrink(flay[188:371, :FXR], K * HS, 200)
+def comps(a, y0, y1, x0, x1, minpx):
+    al = a[y0:y1, x0:x1, 3] > 0; lab, n = _ndi.label(_ndi.binary_dilation(al, iterations=3)); out = []
+    for i, sl in enumerate(_ndi.find_objects(lab)):
+        if (lab[sl] == i + 1).sum() < minpx: continue
+        c = a[y0 + sl[0].start:y0 + sl[0].stop, x0 + sl[1].start:x0 + sl[1].stop].copy(); c[lab[sl] != i + 1, 3] = 0
+        ys = np.where((c[..., 3] > 0).any(1))[0]; out.append((sl[1].start, shrink(c[ys.min():ys.max() + 1], K * HS)))
+    return [im for _, im in sorted(out, key=lambda o: o[0])]
+fsmall = comps(flay, 600, 700, 0, FXR, 300); fbig = comps(flay, 60, 640, FXR + 6, 2170, 3000); print('원시림 낱개', len(fsmall), '큰 낱개', len(fbig))
+fg0 = np.array(shrink(fcomp[FGR0:], K * HS, 200)); fg0[..., 3] = 255
+FG = Image.new('RGBA', (fg0.shape[1], fg0.shape[0] + FPAD), (0, 0, 0, 0)); FG.paste(Image.fromarray(fg0, 'RGBA'), (0, FPAD)); rs = np.random.RandomState(11); order = []
+x = 40
+while x < FG.width - 60:   # 큰 낱개: 띄엄띄엄 (뒤에 그린다)
+    pr = fbig[rs.randint(len(fbig))]; order.append((x, FPAD + 5 - pr.height, pr, 0)); x += pr.width + 110 + rs.randint(0, 90)
+x = -6
+while x < FG.width:
+    pr = fsmall[rs.randint(len(fsmall))]; order.append((x, FPAD + 3 + rs.randint(0, 5) - pr.height, pr, 1)); x += int(pr.width * (0.55 + 0.3 * rs.rand()))
+for x, y, pr, _ in sorted(order, key=lambda o: (o[3], o[1] + o[2].height)):
+    FG.alpha_composite(pr if x >= 0 else pr.crop((-x, 0, pr.width, pr.height)), (max(0, x), max(0, y)))
+fa = np.array(FG); fq = FG.convert('RGB').quantize(colors=220, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB'); fgr = Image.fromarray(np.dstack([np.array(fq), fa[..., 3]]).astype(np.uint8), 'RGBA')
+fmid_y = Y(445) - (371 - 188) * K
+fbg = {'k': K, 'hs': HS, 'ld': FLD,
+       'mid': {'url': png_url(fmid, 'fbg_mid'), 'y': round(fmid_y, 1)},
+       'gr': {'url': png_url(fgr, 'fbg_gr'), 'y': round(Y(FGR0) - FPAD / HS, 1)},
+       'back': {'url': png_url(fback, 'fbg_back'), 'y': round(fmid_y - 30, 1)},
+       'skyOy': -58, 'gateY': 150}
 # ── 5. 하늘 (보름달 · 구름 — extract_sky.py)
 SK = json.load(open('out_sky/meta.json'))
 sky = {'hs': 2, 'moon': png_url(Image.open('out_sky/' + SK['moon'][0][0])), 'clouds': [png_url(Image.open('out_sky/' + f)) for f, _, _ in SK['cloud']]}
-D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage, 'archer': archer, 'cleric': cleric, 'rogue': rogue, 'porter': porter}, 'ski': ski, 'bg': {'plains': bg}}
+D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage, 'archer': archer, 'cleric': cleric, 'rogue': rogue, 'porter': porter}, 'ski': ski, 'bg': {'plains': bg, 'forest': fbg}}
 js = ('/* 빌드 70 시험: 곡창지대 평원 리마스터 그림 (GPT 그림 판에서 오림) — 손으로 고치지 말 것.\n'
       '   다시 뽑기: tools/saved/gpt70/hd70/export_hd70.py (extract_mon.py · extract_war16.py · extract_sk.py · extract_sky.py 다음에) */\n'
       'const HD70_DATA = ' + json.dumps(D, ensure_ascii=False, separators=(',', ':')) + ';\n')
