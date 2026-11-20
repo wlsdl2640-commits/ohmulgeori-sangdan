@@ -35,8 +35,9 @@ function newParty(name, members) {
   return { id: nid(), name, members, sup: { pot_s: 3 }, auto: true, safe: true, repeat: false, dest: 'plains', exp: null, last: null, wagon: null, horse: null, wagonPlus: 0, dmode: 'ask', campNight: true, start: 1, pet: null };
 }
 function starterGear(a) { a.eq.weapon = makeGear(weaponOf(a.cls, 0), 0, 0); const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp; }
+function assocOpen() { for (const id of ASSOC_BLD) if ((S.bld[id] || 0) < BUILDINGS[id].max) { const was = S.bld[id] || 0; S.bld[id] = BUILDINGS[id].max; if (id === 'temple' && !was && !S.bless) blessRoll(); } }   // 협회 시설을 모두 연다 (새 게임 · 불러올 때마다)
 function newGame(company) {
-  S = blankState(company);
+  S = blankState(company); assocOpen();
   const w = makeAdv({ cls: 'warrior', name: '브람', bio: '라비린토스에서 나고 자란 덩치. 당신의 첫 길드원이다.' });
   const ar = makeAdv({ cls: 'archer', name: '리네', bio: '평원 마을에서 올라온 궁수. 빚을 갚을 때까지 일하기로 했다.' });
   const cl = makeAdv({ cls: 'cleric', name: '테오', bio: '무료 진료소에서 일하던 성직자. 당신을 따라왔다.' });
@@ -1253,7 +1254,8 @@ function loadFrom(v) {
     heal69();                     // 빌드 69 회복 개편: 이제 못 배우는 응급 처치 · 치유의 찬가 · 재기를 지우고 스킬북 · 수업료를 돌려준다 (불러올 때마다)
     raid69();                     // 빌드 69 레이드 개편: 레이드대를 풀고(원정 중이면 돌아온 뒤) 레이드를 목적지로 둔 파티는 평원으로 (불러올 때마다)
     sal69();                      // 빌드 69: 봉급을 지금 레벨 · 차수 · 라이선스로 다시 매긴다 (불러올 때마다)
-    if (S.bld.warehouse == null) S.bld.warehouse = 1;   // 빌드 72: 창고 건물 (옛 저장은 1단계)
+    if (S.bld.warehouse == null) S.bld.warehouse = 1;
+    assocOpen();   // 빌드 72: 창고 건물 (옛 저장은 1단계)
     concept70();                  // 빌드 70 미궁도시 개편 첫 단계: 길드 이름 꼬리 · 경쟁 길드 이름 · 성문 방어전 없앰 (불러올 때마다)
     slot69();                     // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }

@@ -265,7 +265,7 @@ function bldCard(id, full) {
   const B = BUILDINGS[id], lv = S.bld[id], max = lv >= B.max, c = B.cost[lv], need = BUILD_RANK[id] || 0;
   if (!lv && (S.rank || 0) < need) return `<div class="card dim"><div class="row"><div class="grow"><div class="h">${B.name} <small>잠김</small></div><div class="sub">${B.desc}</div></div><span class="sub muted">${RANKS[need].name}랭크에 열림</span></div></div>`;
   const fr = id === 'farm' && lv && !max ? FARM.rank[lv] : 0;   // 빌드 65: 재배소는 한 동씩 (2동 C랭크 · 3동 A랭크)
-  const btn = max ? '<span class="sub muted">최고 단계</span>' : fr && (S.rank || 0) < fr ? `<span class="sub muted">${lv + 1}동: ${RANKS[fr].name}랭크에 열림</span>` : `<button type="button" class="btn sm${lv ? '' : ' gold'}" data-act="build" data-id="${id}"${S.gold < c ? ' disabled' : ''}>${id === 'farm' && lv ? `${lv + 1}동 짓기` : lv ? '확장' : '건설'} ${fmt(c)}G</button>`;
+  const btn = ASSOC_BLD.includes(id) ? '<span class="sub ok-t">협회 시설 · 무료</span>' : max ? '<span class="sub muted">최고 단계</span>' : fr && (S.rank || 0) < fr ? `<span class="sub muted">${lv + 1}동: ${RANKS[fr].name}랭크에 열림</span>` : `<button type="button" class="btn sm${lv ? '' : ' gold'}" data-act="build" data-id="${id}"${S.gold < c ? ' disabled' : ''}>${id === 'farm' && lv ? `${lv + 1}동 짓기` : lv ? '확장' : '건설'} ${fmt(c)}G</button>`;
   let body = '';
   if (id === 'warehouse') body = `<div class="sub">메인 창고 ${whUsed(-1)}/${whCap(-1)}칸${lv < B.max ? ` · 다음 단계 ${whCap(-1) + WH_BLD_CAP}칸` : ''}</div>${full ? '<button type="button" class="btn block" data-act="sub" data-id="inv">창고 열기</button>' : ''}`;
   if (full && lv && id === 'smithy') body = smithyBox();
@@ -283,7 +283,7 @@ function bldCard(id, full) {
   const sum = !full && lv && id === 'temple' && patients().length ? `<span class="sub red-t">환자 ${patients().length}명</span>` : '';
   return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? (id === 'farm' ? lv + '동' : 'Lv' + lv) : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}${open || sum ? `<div class="row">${sum}<span class="grow"></span>${open}</div>` : ''}</div>`;
 }
-PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
+PANELS.fac = () => BUILD_ORDER.filter(id => !ASSOC_BLD.includes(id)).map(id => bldCard(id, false)).join('') + `<div class="card dim"><div class="sub">대장간 · 도서관 · 대신전 · 마탑은 미궁탑에 있는 모험가 협회 시설이에요. 처음부터 열려 있고 이용료가 없어요.</div></div>`;
 PANELS.b = w => bldCard(w.b, true);
 // 빌드 72: 모험가 협회 로비 (미궁탑) — 길드 랭크 심사 · 의뢰 게시판 · 길드 랭킹으로 가는 창
 PANELS.assoc = () => `<div class="card"><div class="h">라비린토스 모험가 협회</div><div class="sub">오래전 이 도시에 처음 생긴 열세 길드가 뭉쳐 세운 기관. 모든 모험가 길드는 협회에 가입한다.</div></div>

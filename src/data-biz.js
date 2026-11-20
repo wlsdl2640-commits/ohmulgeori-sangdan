@@ -14,10 +14,12 @@ const BUILDINGS = {
     desc: '능력치를 단련하고, 스킬북으로 스킬을 배우고, 전직한다.', eff: lv => `능력치 훈련 · 스킬 배우기 · 전직${lv > 1 ? ` · 훈련비 -${(lv - 1) * 12}%` : ''}` },
   tower:    { name: '마탑',        max: 5,  cost: [4000, 15000, 40000, 100000, 250000],
     desc: '마법을 연구해 길드 전체를 강하게 만든다.', eff: lv => `마법 연구${lv > 1 ? ` · 연구비 -${(lv - 1) * 10}% · 연구 ${(lv - 1)}일 단축` : ''}` },
-  temple:   { name: '신전',        max: 8,  cost: [1000, 4000, 10000, 22000, 45000, 85000, 150000, 260000],
+  temple:   { name: '대신전',        max: 8,  cost: [1000, 4000, 10000, 22000, 45000, 85000, 150000, 260000],
     desc: '다친 길드원를 치료하고, 매달 신의 축복을 내려 준다.', eff: lv => `자연 치료 하루 ${4 + 4 * lv} · 치유사 ${Math.min(4, lv)}명 · 매달 축복` }
 };
 const shopStands = lv => 2 + Math.min(lv, 8) + Math.floor(Math.max(0, lv - 8) / 2);   // Lv8까지 한 칸씩, 그 뒤 두 단계마다
+// 빌드 72 (11-21 01:58 사용자 「다 열어둬. 이용료는 없어, 무료야」): 미궁탑의 협회 시설 — 처음부터 가장 높은 단계로 열려 있고 짓지 않는다(econ.js assocOpen)
+const ASSOC_BLD = ['smithy', 'library', 'temple', 'tower'];
 const BUILD_ORDER = ['shop', 'warehouse', 'inn', 'training', 'temple', 'alchemy', 'smithy', 'tower'];   // 빌드 62: 은행을 뺐다
 
 /* ───────── 신전의 축복 (매달 하나) ───────── */
