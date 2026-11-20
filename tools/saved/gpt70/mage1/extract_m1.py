@@ -11,7 +11,7 @@ from mid_core import Palette, flat_pixels, down, to_rgba
 from seg_m1 import key, split, heel
 T = int(sys.argv[1]); CHK = sys.argv[2] if len(sys.argv) > 2 else None
 CLS = os.environ.get('CLS', 'mage')   # 다른 직업: CLS=archer (판 archer1_base · walk · shot · death → out_archer1_<키>/ · 팔레트 archer1_pal.pkl)
-ATK = {'mage': 'cast', 'archer': 'shot'}[CLS]; TAG = 'm1' if CLS == 'mage' else CLS + '1'; OUT = f'out_{TAG}_{T}'; os.makedirs(OUT, exist_ok=True); PALF = f'{TAG}_pal.pkl'
+ATK = {'mage': 'cast', 'archer': 'shot', 'cleric': 'swing'}[CLS]; TAG = 'm1' if CLS == 'mage' else CLS + '1'; OUT = f'out_{TAG}_{T}'; os.makedirs(OUT, exist_ok=True); PALF = f'{TAG}_pal.pkl'
 SH = os.path.join(HERE, '..', 'hd70', 'sheets')
 SHEETS = [('base', 1, 5), ('walk', 2, 8), (ATK, 2, 8), ('death', 2, 8)]
 D = {}

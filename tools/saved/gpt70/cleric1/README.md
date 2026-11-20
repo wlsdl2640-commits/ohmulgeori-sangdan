@@ -10,3 +10,7 @@ KIT=cleric python3 ../mage1/magepage.py out site
 - **생김새를 바꿔 부탁한다**: 지금 게임 성직자는 흰 머리 수건 · 흰 로브 · 이마의 금색 십자 무늬(pxa.js PXL.cleric — coif · holy). 그림 규칙(십자 · 후광 · 흰 옷과 머리 수건을 피함)에 걸려서, 붙이는 그림을 하늘빛 후드 로브로 바꿔 뽑고(LOOK) 부탁 글에 「가슴의 금색 둥근 해 장식 · 십자 무늬 · 후광 · 흰 옷은 그리지 않는다」를 넣었다. 사용자가 다르게 정하면 LOOK과 page_cleric.html의 생김새 글만 바꾼다.
 - 판 넷: 기준 자세 5 · 걷기 16 · 철퇴 내려치기 16(2 ~ 5번째 = 철퇴를 머리 위로 — 치유 · 강화 동작으로도 쓴다 · 7번째 = 맞히는 장) · 쓰러짐 16.
 - 받은 뒤: `CLS=cleric`을 ../mage1/extract_m1.py(ATK 표 · 걷기 닻)와 ../hd70/export_hd70.py · hd70.js HDCFG에 한 줄씩.
+
+## 11-20 12:54 셉터 + 성표 · 13:01 받은 판 → 게임
+- 사용자: 철퇴 대신 셉터, 왼손에 Lv1 성표(holy_lv1.png — 사용자 성표 판에서 오림). 위의 「가슴 해 장식」은 뺐다.
+- `CLS=cleric python3 ../mage1/extract_m1.py 40` → `../hd70/export_hd70.py` → hd70.js HDCFG.cleric. 페이지: `KIT=cleric python3 ../mage1/magepage.py out site - - <cap 폴더>`.
