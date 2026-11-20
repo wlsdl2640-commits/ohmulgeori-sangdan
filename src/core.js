@@ -522,7 +522,7 @@ function stageClear(p, e) {
     if (e.stage >= FIELD_STAGES) {
       e.pos = STAGE_LEN;
       // 1-50의 주인을 쓰러뜨려 던전 입구가 열렸다 (한 번 공략한 던전은 봉인된다)
-      if (!fs.cleared) {
+      if (!fs.cleared && !isLab(e.field)) {   // 빌드 72 (11-20 16:38 사용자 「예전 던전은 없애 나중에 내가 던전을 따로 추가할 거야」): 미궁 계층에서는 옛 던전 입구가 나오지 않는다
         if (!fs.found) { fs.found = true; log(`${p.name}이(가) ${F.no}-${FIELD_STAGES}에서 ${F.dungeon.name} 입구를 열었다!`, 'good'); }
         const mode = p.dmode || 'ask';
         if (mode !== 'skip') {
@@ -535,7 +535,8 @@ function stageClear(p, e) {
         }
       }
       { const ids = LAB_IDS(), nx = ids[ids.indexOf(e.field) + 1];   // 다음 계층으로 내려간다 (열려 있을 때)
-        if (nx && isUnlocked(nx)) { e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].no}계층 ${FIELDS[nx].name}(으)로 내려갔다.`, 'good'); changed(); return; } }
+        if (nx) { e.field = nx;   // 16:38 「다음 계층을 내려가는 권한은 우선 없애자」: 길드 랭크와 상관없이 내려간다
+          e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].no}계층 ${FIELDS[nx].name}(으)로 내려갔다.`, 'good'); changed(); return; } }
       recall(p, 'end');
       return;
     }
