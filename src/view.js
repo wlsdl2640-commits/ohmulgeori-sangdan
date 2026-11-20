@@ -364,10 +364,13 @@ const ZS = 1.25;   // 옆모습 배율
 const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
 const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, V.wide ? (y - 136) / 56 : (y - 166) / 32))));   // 넓은 땅: y 136(먼 곳) ~ 192(앞)
 const SHADOW_R = 9;
+const LINE_FL = 126;   // 적 줄의 왼쪽 끝 (길드원 맨 앞 108 + 몸 반)
 function foeSlots(foes) {
-  if (foes.length === 1) { const f = foes[0]; if (f.giant) { const z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; } return [[150, LINE_Y]]; }
-  const fg = foes.length > 1 ? Math.min(LINE_FGAP, (LINE_FX0 - LINE_FXMIN) / (foes.length - 1)) : LINE_FGAP;   // 빌드 72: 적도 한 줄
-  return foes.map((f, i) => [Math.round(AW - (LINE_FX0 - fg * i) + 6 - (f.boss ? 12 : 0)), LINE_Y]);
+  if (foes.length === 1 && foes[0].giant) { const f = foes[0], z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; }
+  // 빌드 72 (11-20): 적도 한 줄 — 몸 너비만큼 띄운다(이끼 골렘 · 숲의 수호령처럼 넓은 몬스터가 옆 몬스터를 덮지 않게). 자리가 모자라면 고르게 겹친다
+  const W = foes.map(f => Math.max(16, Math.min(90, monW(f.id)))), sum = W.reduce((a, b) => a + b, 0), k = Math.min(1, (AW - 2 - LINE_FL) / sum);
+  if (foes.length === 1) return [[Math.round(Math.min(AW - W[0] / 2, Math.max(150, LINE_FL + W[0] / 2))), LINE_Y]];
+  let x = Math.max(LINE_FL, AW - 2 - sum * k - 16 * (1 - k)); return foes.map((f, i) => { const c = x + W[i] * k / 2; x += W[i] * k; return [Math.round(c), LINE_Y]; });
 }
 function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const all = teamOf(p), team = all.filter(a => !a.down).concat(all.filter(a => a.down));   // 들것은 맨 끝
@@ -421,8 +424,10 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   if (camping) { campScene(w, t, p, e, team, pos, lights, post, dark, bg); return; }
 
   // 쓰러지는 적: 뒤로 넘어지며 사라진다
-  V.ghosts = V.ghosts.filter(gh => t - gh.t0 < 0.9);
+  V.ghosts = V.ghosts.filter(gh => t - gh.t0 < (gh.dm ? 1.5 : 0.9));
   for (const gh of V.ghosts) {
+    if (gh.dm === undefined) gh.dm = !gh.adv && typeof HD_DEATH !== 'undefined' && HD_DEATH[gh.id] && hdMon(gh.id) ? HD_DEATH[gh.id] : null;   // 빌드 72: 쓰러지는 그림이 있는 몬스터(숲의 수호령)
+    if (gh.dm) { const k = t - gh.t0, fade = k < 1.05 ? 1 : Math.max(0, 1 - (k - 1.05) / 0.45), fi = Math.min(9, Math.floor(k / 0.08)); draws.push({ y: gh.y, f: g => { g.save(); g.globalAlpha = fade; g.translate(gh.x, gh.y); g.scale(gh.face, 1); FLASH = k < 0.1 ? '#ffffff' : null; drawMon(g, gh.id, 0, { sc: gh.sc, z: gh.z, mot: { mk: gh.dm, f: fi } }); FLASH = null; g.restore(); } }); continue; }
     const k = t - gh.t0, fall = Math.min(1, k / 0.32), ang = fall * fall * Math.PI / 2, fade = k < 0.45 ? 1 : Math.max(0, 1 - (k - 0.45) / 0.45);
     draws.push({ y: gh.y, f: g => {
       g.save(); g.globalAlpha = fade; g.translate(gh.x, gh.y);

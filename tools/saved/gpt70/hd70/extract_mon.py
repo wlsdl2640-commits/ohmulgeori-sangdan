@@ -15,6 +15,14 @@ CONF = {
  'gobclub':   dict(src='gobclub', bg='mag', rows=[('idle', 8), ('smash', 9), ('walk', 10)], jump=set(), th=27),   # 공격 넷째 칸은 셋째 칸과 붙어 있어 뺐다
  'goblin':    dict(src='goblin', bg='mag', rows=[('idle', 8), ('slash', 10), ('walk', 10), ('thrust', 10)], jump=set(), th=27),
  'gobarcher': dict(src='gobarcher', bg='mag', rows=[('idle', 8), ('shot', 10), ('walk', 10)], jump=set(), th=27),
+ # 원시림 일곱 (11-20 17:34 — 서 있기 8 · 공격 10 · 이동 10. 수호령은 둘째 판(종 울리기 · 앞발 구르기 · 쓰러짐)을 아래에 붙였다)
+ 'vinesnake': dict(src='vinesnake', bg='mag', rows=[('idle', 8), ('bite', 10), ('walk', 10)], jump=set(), th=21),
+ 'cflower':   dict(src='cflower', bg='mag', inner=1, rows=[('idle', 8), ('bite', 10), ('walk', 10)], jump=set(), th=34),
+ 'stump':     dict(src='stump', bg='mag', rows=[('idle', 8), ('bite', 10), ('walk', 10)], jump=set(), th=29),
+ 'spotshroom': dict(src='spotshroom', bg='mag', rows=[('idle', 8), ('spore', 10), ('walk', 10)], jump=set(), th=25),
+ 'ibeetle':   dict(src='ibeetle', bg='mag', rows=[('idle', 8), ('charge', 10), ('walk', 10)], jump=set(), th=27),
+ 'mgolem':    dict(src='mgolem', bg='mag', rows=[('idle', 8), ('smash', 10), ('walk', 10)], jump=set(), th=44),
+ 'fguard':    dict(src='fguard', bg='mag', rows=[('idle', 8), ('charge', 10), ('walk', 10), ('bell', 10), ('stomp', 10), ('death', 10)], jump=set(), th=56),
  'aboar':     dict(src='572486e4', bg='dark', rows=[('idle', 7), ('walk', 8), ('hornup', 6), ('headbutt', 8), ('charge', 8)], jump=set(), th=32, xmin=165),
 }
 
@@ -22,6 +30,9 @@ def load(cf):
     rgb = np.array(Image.open(sheet_path(cf['src'])).convert('RGB')).astype(int)
     if cf['bg'] == 'mag':
         fg = mag_mask(rgb)
+        if cf.get('inner'):   # 몸 안의 자줏빛(식충 꽃 머리)은 바탕이 아니다: 또렷한 마젠타와 이어진 바탕 덩어리만 바탕
+            R, G, B = rgb[..., 0], rgb[..., 1], rgb[..., 2]; core = (R > 225) & (B > 225) & (G < 70); lb, nb = ndimage.label(~fg)
+            keep = np.zeros(nb + 1, bool); keep[np.unique(lb[core])] = True; keep[0] = False; fg = ~keep[lb]
         if cf.get('labels'):   # 줄 이름표(짙은 보라 둥근 판 + 흰 글자): 판 안에 거의 다 들어가는 조각은 지운다
             R, G, B = rgb[..., 0], rgb[..., 1], rgb[..., 2]
             pm = (R > 40) & (R < 150) & (G < 70) & (B > 50) & (B < 160)

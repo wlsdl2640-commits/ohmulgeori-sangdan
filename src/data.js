@@ -60,6 +60,16 @@ const ITEMS = {
   treant_sap:     { name: '트렌트 수액',        v: 30,   w: 2, icon: 'potion',  c: '#d8a13c' },
   bark:           { name: '단단한 나무껍질',    v: 20,   w: 3, icon: 'hide',    c: '#7a5634' },
   shaman_feather: { name: '주술 깃털',          v: 40,   w: 1, icon: 'feather', c: '#e05a4a' },
+  // 빌드 72: 원시림 새 몬스터 일곱
+  vine_thorn:     { name: '덩굴 뱀 가시',        v: 24,   w: 1, icon: 'fang',    c: '#8aa83c' },
+  flower_nectar:  { name: '식충 꽃 꿀',          v: 30,   w: 1, icon: 'potion',  c: '#d84a8a' },
+  stump_ring:     { name: '나이테 조각',         v: 34,   w: 2, icon: 'hide',    c: '#b98a52' },
+  spot_cap:       { name: '점박이 갓',           v: 40,   w: 1, icon: 'blob',    c: '#e0483a' },
+  beetle_shell:   { name: '철갑 등딱지',         v: 52,   w: 3, icon: 'hide',    c: '#4a7a7a' },
+  beetle_horn:    { name: '풍뎅이 뿔',           v: 60,   w: 2, icon: 'horn',    c: '#6a8a8a' },
+  moss_core:      { name: '이끼 낀 돌 심장',     v: 78,   w: 3, icon: 'gem',     c: '#8ac84a' },
+  guard_bell:     { name: '수호령의 종',         v: 820,  w: 2, icon: 'gem',     c: '#e0b84a' },
+  guard_antler:   { name: '수호령의 뿔 조각',    v: 180,  w: 3, icon: 'horn',    c: '#a87a4a' },
   elder_heart:    { name: '늙은 트렌트의 심장', v: 760,  w: 4, icon: 'heart',   c: '#5fbf7a' },
   lizard_scale:   { name: '바위도마뱀 비늘',    v: 40,   w: 1, icon: 'gem',     c: '#7f8fa8' },
   iron_ore:       { name: '철광석',             v: 28,   w: 4, icon: 'ore',     c: '#9a8f86' },
@@ -106,6 +116,14 @@ const MONS = {
   wolf:    { name: '들늑대',       plan: 'quad', body: '#8f877d', dark: '#5f5a54', len: 14, h: 7, tail: 1, ear: 1, snout: 1, mh: 0.95, ma: 0.95, md: 0.4, spd: 1.1, minS: 4, drops: [['wolf_pelt', 0.45], ['wolf_fang', 0.5]] },
   goblin:  { name: '고블린',       plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.85, ma: 1.0, md: 0.6, spd: 1.15, eva: 0.06, minS: 4, drops: [['goblin_ear', 0.7], ['rusty_dagger', 0.15]] },   // 빌드 72: 단검 고블린 (리마스터 그림) — 원시림 2-10부터
   // 빌드 72 (11-20 17:08 사용자 「몽둥이, 단검, 궁수 순서로 LV」): 원시림 고블린 셋 — 몽둥이꾼 2-1(Lv9)~ · 단검 고블린 2-10(Lv11)~ · 궁수 2-19(Lv13)~ (레벨은 필드가 정한다: fieldLv · minS)
+  // 빌드 72 (11-20 17:34 사용자 「이 순서대로 강함을 기준잡아서 넣자」): 원시림 여섯 + 2-50 주인 숲의 수호령 — 덩굴 뱀 2-1(Lv9)~ · 식충 꽃 2-7(Lv10)~ · 걷는 그루터기 2-13(Lv12)~ · 점박이 버섯 2-22(Lv14)~ · 철갑 풍뎅이 2-31(Lv16)~ · 이끼 골렘 2-40(Lv18)~
+  vinesnake: { name: '덩굴 뱀', plan: 'worm', body: '#8a9a3a', dark: '#4a5a22', mh: 0.8, ma: 0.85, md: 0.4, spd: 1.15, eva: 0.06, minS: 1, drops: [['vine_thorn', 0.65]] },
+  cflower: { name: '식충 꽃', plan: 'tree', body: '#6b8a2e', leaf: '#c83a6a', mh: 1.0, ma: 1.0, md: 0.5, spd: 0.95, minS: 3, drops: [['flower_nectar', 0.6]] },
+  stump:   { name: '걷는 그루터기', plan: 'tree', body: '#7a5634', leaf: '#4f8f3c', mh: 1.3, ma: 1.05, md: 0.9, spd: 0.85, minS: 5, drops: [['stump_ring', 0.55], ['bark', 0.4]] },
+  spotshroom: { name: '점박이 버섯', plan: 'shroom', body: '#e0483a', dark: '#a02a22', stem: '#f0e4c8', mh: 1.15, ma: 1.2, md: 0.6, spd: 0.9, magic: 1, minS: 8, drops: [['spot_cap', 0.55], ['spore', 0.4]] },
+  ibeetle: { name: '철갑 풍뎅이', plan: 'bug', body: '#4a7a7a', dark: '#2a4a4a', eye: '#101010', mh: 1.6, ma: 1.15, md: 1.8, spd: 0.75, minS: 11, drops: [['beetle_shell', 0.5], ['beetle_horn', 0.3]] },
+  mgolem:  { name: '이끼 골렘', plan: 'golem', body: '#8a8a72', dark: '#5a5a48', mh: 2.2, ma: 1.4, md: 1.5, spd: 0.65, minS: 14, drops: [['moss_core', 0.45], ['bark', 0.3]] },
+  fguard:  { name: '숲의 수호령', plan: 'quad', body: '#6a5232', dark: '#3a2c1a', len: 16, h: 9, boss: 1, mh: 4.6, ma: 1.55, md: 1.3, spd: 0.8, aoe: 1, drops: [['guard_bell', 1], ['guard_antler', 1, 2]] },
   gobclub: { name: '고블린 몽둥이꾼', plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 1.0, ma: 0.85, md: 0.7, spd: 0.85, minS: 1, drops: [['goblin_ear', 0.7]] },
   gobarcher: { name: '고블린 궁수', plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.75, ma: 1.1, md: 0.4, spd: 0.95, eva: 0.08, minS: 7, drops: [['goblin_ear', 0.6], ['goblin_fletch', 0.45]] },
   scarecrow: { name: '허수아비',    plan: 'biped', skin: '#c8a060', cloth: '#7a5232', gear: 'staff', mh: 1.0, ma: 1.05, md: 0.6, spd: 0.9, minS: 7, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },   // 빌드 70: 곡창지대 평원 (리마스터 그림 — hd70.js)
@@ -162,7 +180,7 @@ const FIELDS = {
   forest: {
     no: 2, name: '원시림', lv: 9, bg: 'forest_hd', tier: 1,   // 빌드 72: 새 풍경 (hd70.js buildForestHD)
     desc: '중앙에 세계수가 솟은 숲. 엘프 왕국의 영역이다.',
-    mons: ['gobclub', 'goblin', 'gobarcher'],   // 빌드 72 (11-20 17:14 사용자 「원시림에 추가했던 몬스터는 다 빼버려」): 예전 넷(독버섯 괴물 · 거대 거미 · 트렌트 묘목 · 고블린 주술사)을 뺐다 — 지금은 고블린 셋. 다음: 덩굴 뱀 · 식충 꽃 · 이끼 골렘 · 숲의 수호령 (GPT 판 기다림)
+    mons: ['vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem'],   // 11-20 17:34: 새 여섯(약한 차례) · 고블린 셋은 다음 계층으로 보낸다(사용자 — 지금은 어느 땅에도 안 나온다)   // 빌드 72 (11-20 17:14 사용자 「원시림에 추가했던 몬스터는 다 빼버려」): 예전 넷(독버섯 괴물 · 거대 거미 · 트렌트 묘목 · 고블린 주술사)을 뺐다 — 지금은 고블린 셋. 다음: 덩굴 뱀 · 식충 꽃 · 이끼 골렘 · 숲의 수호령 (GPT 판 기다림)
     dungeon: { name: '썩은 뿌리 동굴', bg: 'cave', mons: ['myconid', 'spider', 'sapling', 'shaman'], boss: 'elder' },
     next: 'mountain'
   },
@@ -294,4 +312,4 @@ const STORY = {
 };
 
 // 빌드 72: 미궁 2계층 원시림 — 1-50의 주인은 늙은 트렌트 (옛 던전 「썩은 뿌리 동굴」의 주인. core.js fieldBoss는 bosses[4]를 쓴다)
-FIELDS.forest.bosses = ['spider', 'sapling', 'shaman', 'shaman', 'elder'];
+FIELDS.forest.bosses = ['stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard'];   // 2-50 주인 = 숲의 수호령 (앞 넷은 쓰지 않는다 — 마지막 필드에만 주인)

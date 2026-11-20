@@ -28,22 +28,34 @@ const HD_MOT = {
   i_aboar_butt:  { id: 'aboar', row: 'headbutt', T: [0.07, 0.07, 0.07, 0.06, 0.08, 0.08, 0.08, 0.08], hit: 4, dx: [0, 0, 1, 3, 6, 8, 5, 2] },
   i_aboar_charge: { id: 'aboar', row: 'charge', T: 0.06, hit: 5, dx: [0, 3, 8, 14, 20, 24, 18, 8] },
   i_aboar_horn:  { id: 'aboar', row: 'hornup', T: 0.08, hit: 3, dx: [0, 0, 1, 3, 2, 0] },
+  // 원시림 일곱 (빌드 72 · 11-20 17:34)
+  i_vinesnake_bite: { id: 'vinesnake', row: 'bite', T: [0.06, 0.07, 0.07, 0.05, 0.06, 0.08, 0.07, 0.06, 0.06, 0.06], hit: 4, dx: [0, 0, 0, 2, 5, 6, 2, 0, 0, 0] },
+  i_cflower_bite: { id: 'cflower', row: 'bite', T: [0.06, 0.07, 0.07, 0.08, 0.08, 0.05, 0.07, 0.08, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 1, 4, 7, 5, 2, 0] },
+  i_stump_bite:  { id: 'stump', row: 'bite', T: [0.06, 0.07, 0.07, 0.08, 0.09, 0.05, 0.07, 0.08, 0.07, 0.06], hit: 6, dx: [0, 0, 1, 2, 4, 6, 8, 6, 2, 0] },
+  i_spotshroom_spore: { id: 'spotshroom', row: 'spore', T: [0.06, 0.08, 0.08, 0.08, 0.08, 0.09, 0.09, 0.08, 0.07, 0.06], hit: 5, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [0, -44] },   // 머리 위 포자 구름에서 날아간다
+  i_ibeetle_charge: { id: 'ibeetle', row: 'charge', T: [0.06, 0.08, 0.08, 0.07, 0.06, 0.06, 0.07, 0.08, 0.07, 0.06], hit: 6, dx: [0, -1, -2, 0, 6, 12, 16, 12, 5, 0] },
+  i_mgolem_smash: { id: 'mgolem', row: 'smash', T: [0.07, 0.08, 0.09, 0.1, 0.1, 0.05, 0.08, 0.1, 0.08, 0.07], hit: 6, dx: [0, 0, 0, 1, 2, 5, 7, 6, 2, 0] },
+  i_fguard_charge: { id: 'fguard', row: 'charge', T: [0.06, 0.08, 0.09, 0.07, 0.06, 0.06, 0.07, 0.08, 0.07, 0.06], hit: 6, dx: [0, -1, -2, 2, 8, 16, 22, 14, 5, 0] },
+  i_fguard_bell: { id: 'fguard', row: 'bell', T: [0.07, 0.08, 0.09, 0.1, 0.1, 0.1, 0.08, 0.07, 0.07, 0.06], hit: 4, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+  i_fguard_stomp: { id: 'fguard', row: 'stomp', T: [0.06, 0.07, 0.08, 0.09, 0.1, 0.09, 0.05, 0.09, 0.08, 0.06], hit: 6, dx: [0, 0, 1, 2, 3, 4, 5, 4, 2, 0] },
+  i_fguard_death: { id: 'fguard', row: 'death', T: 0.08, hit: 9, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },   // 쓰러질 때 (view.js 쓰러지는 적 — HD_DEATH)
   // 원시림 고블린 셋 (빌드 72 · 11-20)
   i_gobclub_smash: { id: 'gobclub', row: 'smash', T: [0.07, 0.08, 0.08, 0.09, 0.05, 0.07, 0.09, 0.07, 0.07], hit: 4, dx: [0, 0, 1, 3, 6, 6, 5, 2, 0] },
   i_goblin_slash: { id: 'goblin', row: 'slash', T: [0.06, 0.07, 0.06, 0.07, 0.07, 0.05, 0.07, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 0, 2, 4, 7, 7, 5, 2, 0] },
   i_goblin_thrust: { id: 'goblin', row: 'thrust', T: [0.06, 0.07, 0.06, 0.06, 0.06, 0.05, 0.08, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 1, 3, 6, 10, 10, 6, 2, 0] },
   i_gobarcher_shot: { id: 'gobarcher', row: 'shot', T: [0.06, 0.07, 0.07, 0.08, 0.09, 0.09, 0.05, 0.07, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [22, -21] }   // 화살은 게임이 그린다 (판의 날아가는 화살은 지웠다)
 };
-const HD_IDLE_FPS = { rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7 };
+const HD_IDLE_FPS = { rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
+const HD_DEATH = { fguard: 'i_fguard_death' };   // 쓰러지는 그림이 따로 있는 몬스터 (넘어뜨려 돌리지 않고 이 줄을 돌린다)
 const HD_WALK = { gobclub: [3, 4, 5, 6], goblin: [3, 4, 5, 6], gobarcher: [3, 4, 5, 6] };   // 걷기 줄에서 도는 장 (고블린 달리기 줄은 서기 → 달리기 → 서기라서 가운데 넉 장만)
 for (const k in HD_MOT) {   // 장 시간 · 맞히는 장을 동작 표에 (fmotOn · pxuMotT · fmotTip이 본다)
   const M = HD_MOT[k], n = (M.dx || []).length || 8;
   PXS_MOT_TT[k] = Array.isArray(M.T) ? M.T : Array.from({ length: n }, () => M.T);
   PXS_MOT_HITF[k] = M.hit;
 }
-Object.assign(PXU_CAST, { i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
+Object.assign(PXU_CAST, { i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1, i_spotshroom_spore: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
 // 새 몬스터 셋은 그림만 있다 (PXU 자리 · 크기 규칙만 빌린다) — 들쥐 · 뿔토끼 · 들늑대는 예전 PXU 그림이 그림 판을 풀기 전까지 그대로 나온다
-for (const id of ['scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
+for (const id of ['scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
 for (const id of ['rat', 'rabbit', 'wolf', 'goblin']) PXU[id].img = 1;
 // 동작 갈래: hd = 그림 판이 있을 때 · 없으면 예전 갈래 (새 몬스터는 같은 것)
 const HD_ACT = {
@@ -54,6 +66,13 @@ const HD_ACT = {
   boar:      { atk: ['i_boar_butt'], skl: ['i_boar_charge'] },
   aboar:     { atk: ['i_aboar_butt'], skl: ['i_aboar_charge', 'i_aboar_horn'] },
   gobclub:   { atk: ['i_gobclub_smash'], skl: ['i_gobclub_smash'] },
+  vinesnake: { atk: ['i_vinesnake_bite'], skl: ['i_vinesnake_bite'] },
+  cflower:   { atk: ['i_cflower_bite'], skl: ['i_cflower_bite'] },
+  stump:     { atk: ['i_stump_bite'], skl: ['i_stump_bite'] },
+  spotshroom: { atk: ['i_spotshroom_spore'], mag: ['i_spotshroom_spore'], skl: ['i_spotshroom_spore'] },
+  ibeetle:   { atk: ['i_ibeetle_charge'], skl: ['i_ibeetle_charge'] },
+  mgolem:    { atk: ['i_mgolem_smash'], skl: ['i_mgolem_smash'] },
+  fguard:    { atk: ['i_fguard_charge'], skl: ['i_fguard_bell', 'i_fguard_stomp'] },
   goblin:    { atk: ['i_goblin_slash', 'i_goblin_thrust'], skl: ['i_goblin_thrust'] },
   gobarcher: { atk: ['i_gobarcher_shot'], skl: ['i_gobarcher_shot'] }
 };
@@ -61,6 +80,13 @@ Object.assign(PXU_ACT, {
   scarecrow: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'claw', p: 'dart' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers' } } }, HD_ACT.scarecrow),
   boar:      Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'star', big: 1, after: 'dust' } } }, HD_ACT.boar),
   aboar:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'war', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.aboar),
+  vinesnake: Object.assign({ fx: { atk: { pal: 'poison', hit: 'bite' }, skl: { pal: 'poison', hit: 'poison', big: 1, after: 'bubbles' } } }, HD_ACT.vinesnake),
+  cflower:   Object.assign({ fx: { atk: { pal: 'nature', hit: 'bite' }, skl: { pal: 'evil', hit: 'bite', big: 1, after: 'drain' } } }, HD_ACT.cflower),
+  stump:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'earth', hit: 'bite' }, skl: { pal: 'earth', hit: 'bite', big: 1, after: 'dust' } } }, HD_ACT.stump),
+  spotshroom: Object.assign({ fx: { atk: { pal: 'poison', hit: 'poison', p: 'orb' }, mag: { pal: 'poison', hit: 'poison', p: 'orb' }, skl: { pal: 'poison', hit: 'poison', p: 'orb', big: 1, after: 'bubbles' } } }, HD_ACT.spotshroom),
+  ibeetle:   Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'steel', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.ibeetle),
+  mgolem:    Object.assign({ tk: 1.1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'quake', big: 1, after: 'dust', aoe: 'roots', shake: 2 } } }, HD_ACT.mgolem),
+  fguard:    Object.assign({ tk: 1.05, fx: { atk: { pal: 'nature', hit: 'star', after: 'dust' }, skl: { pal: 'nature', hit: 'star', big: 1, after: 'petals', aoe: 'roots', shake: 2 } } }, HD_ACT.fguard),
   gobclub:   Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'power', hit: 'star', big: 1, after: 'dust', shake: 2 } } }, HD_ACT.gobclub),
   gobarcher: Object.assign({ fx: { atk: { pal: 'steel', hit: 'star', p: 'arrow' }, skl: { pal: 'blood', hit: 'pierce', p: 'arrow', big: 1 } } }, HD_ACT.gobarcher)
 });

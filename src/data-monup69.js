@@ -33,6 +33,13 @@ const MU69 = {
   aboar:    { sta: ST69('stun', 0.14, 1.2), sk: [['pierce', '엄니 꿰뚫기']] },
   wolf:     { sta: ST69('bleed', 0.18, 5, 0.2), hits: 2 },
   goblin:   { sta: ST69('bleed', 0.15, 4, 0.15), hits: 2, sk: [['lowhit', '급소 찌르기', { mult: 1.4 }]] },   // 빌드 72: 단검 고블린 (몽둥이 후려치기는 몽둥이꾼에게)
+  vinesnake: { sta: ST69('poison', 0.2, 6, 0.15), hits: 2 },
+  cflower:  { sta: ST69('corrode', 0.12, 6) },
+  stump:    { sta: ST69('stun', 0.08, 1) },
+  spotshroom: { sta: ST69('poison', 0.18, 6, 0.18) },
+  ibeetle:  { sta: ST69('stun', 0.1, 1) },
+  mgolem:   { sta: ST69('stun', 0.14, 1.2) },
+  fguard:   { sta: ST69('stun', 0.12, 1.2), sta2: ST69('curse', 0.1, 6) },
   gobclub:  { sta: ST69('stun', 0.1, 1), sk: [['hit', '몽둥이 후려치기', { mult: 1.6, sta: ST69('stun', 0.25, 1.2) }]] },
   gobarcher: { sta: ST69('bleed', 0.12, 4, 0.15), sk: [['lowhit', '약한 자 겨누기'], ['pierce', '꿰뚫는 화살']] },
   ratking:  { sta: ST69('bleed', 0.3, 6, 0.25), sta2: ST69('poison', 0.2, 6, 0.2), hits: 2, sk: [['howl', '왕의 호령'], ['miasma', '병균 구름', { mult: 0.3 }]] },

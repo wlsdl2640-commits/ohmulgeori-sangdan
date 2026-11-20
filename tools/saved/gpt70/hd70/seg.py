@@ -7,6 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # 사용자가 보낸 판 (11-18 18:42 · 18:18) — 이 폴더 sheets/ (받은 그대로, 무손실 WebP) · 평원 풍경 둘은 ../plains_wide/
 SHEETS = {'fb1e9ce5': 'sheets/mon_rat.webp', 'd5946b77': 'sheets/mon_rabbit.webp', 'd7c600ce': 'sheets/mon_wolf.webp', 'c3ff3bc8': 'sheets/mon_scarecrow.webp',
           '96a7568a': 'sheets/mon_boar.webp', '572486e4': 'sheets/mon_aboar.webp', '951d4114': 'sheets/warrior1.webp', '4ea8aeea': 'sheets/warrior1_skills.webp',
+          'vinesnake': 'sheets/mon_vinesnake.webp', 'cflower': 'sheets/mon_cflower.webp', 'stump': 'sheets/mon_stump.webp', 'spotshroom': 'sheets/mon_spotshroom.webp', 'ibeetle': 'sheets/mon_ibeetle.webp', 'mgolem': 'sheets/mon_mgolem.webp', 'fguard': 'sheets/mon_fguard.webp',   # 원시림 일곱 (11-20 17:34 — 받은 그대로는 raw_forest_*.webp · 수호령은 두 판을 위아래로)
           'gobclub': 'sheets/mon_gobclub.webp', 'goblin': 'sheets/mon_goblin.webp', 'gobarcher': 'sheets/mon_gobarcher.webp',   # 원시림 고블린 셋 (11-20 — 받은 그대로는 raw_goblin_*.webp)
           '38f56457': '../plains_wide/plains_gpt_composite.png', '4b92ccaf': '../plains_wide/plains_gpt_layers.png'}
 def sheet_path(k): return os.path.join(HERE, SHEETS[k])

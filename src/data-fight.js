@@ -117,7 +117,9 @@ const MSK = {
 // 몬스터마다: [틀, 이름, 덮어쓸 값]
 const MON_SK = {
   // 평원 · 곡물 창고
-  rat: [['bite', '앞니 물기']], slime: [['acid', '산성 점액']], rabbit: [['gore', '뿔 들이받기']], wolf: [['bite', '물어뜯기'], ['howl', '울부짖음']], goblin: [['blind', '모래 뿌리기']], gobclub: [['hit', '몽둥이 내려찍기', { mult: 1.4 }]], gobarcher: [['blind', '눈 겨누기', { mult: 1.1 }]],
+  rat: [['bite', '앞니 물기']], slime: [['acid', '산성 점액']], rabbit: [['gore', '뿔 들이받기']], wolf: [['bite', '물어뜯기'], ['howl', '울부짖음']], goblin: [['blind', '모래 뿌리기']], gobclub: [['hit', '몽둥이 내려찍기', { mult: 1.4 }]],
+  vinesnake: [['venom', '가시 독니']], cflower: [['drain', '삼키기', { mult: 1.3, heal: 0.5 }]], stump: [['hit', '통째로 물기', { mult: 1.5, sta: { k: 'stun', p: 0.25, d: 1.2 } }]], spotshroom: [['miasma', '독 포자 구름'], ['sleep', '잠의 포자', { mult: 0.3 }]],
+  ibeetle: [['guard', '등딱지 세우기'], ['gore', '뿔 들이받기', { mult: 1.6 }]], mgolem: [['quake', '바위 내려찍기'], ['guard', '이끼 갑옷']], fguard: [['quake', '앞발 구르기', { mult: 0.8 }], ['sleep', '숲의 종소리', { mult: 0.45 }], ['guard', '숲의 가호']], gobarcher: [['blind', '눈 겨누기', { mult: 1.1 }]],
   ratking: [['summon', '쥐 떼 부르기', { mon: ['rat'], n: 2 }], ['bite', '이빨 갈기']],
   scarecrow: [['blind', '까마귀 쪼기', { mult: 1.2 }]], boar: [['gore', '멧돼지 돌진']], aboar: [['gore', '철갑 돌진', { mult: 1.8 }], ['guard', '등판 웅크리기']],   // 빌드 70: 곡창지대 평원
   // 원시림 · 썩은 뿌리 동굴
