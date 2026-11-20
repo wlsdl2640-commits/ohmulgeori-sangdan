@@ -110,15 +110,31 @@ Y = lambda y: 200 - (724 - y) * K           # 그림 1의 y → 무대 y (아래
 MID0, CUT, GR0 = 134, 392, 380              # 중경(언덕 · 농장 · 울타리 앞 풀) = 134 ~ 392 · 땅 = 380 ~ 724 (12줄 겹침)
 HS = 2
 mid = shrink(comp[MID0:CUT], K * HS, 200); gr = shrink(comp[GR0:], K * HS, 200)
-g = np.array(gr); g[..., 3] = 255   # 땅은 꽉 차게 · 위 세 줄은 바둑 무늬로 엷게 (중경과 땅이 다른 빠르기로 흐를 때 이음매를 숨긴다)
-for y2, keep in [(0, 4), (1, 4), (2, 2), (3, 2), (4, 4 / 3), (5, 4 / 3)]:
-    yy = y2
-    for xx in range(g.shape[1]):
-        if keep >= 4 and (xx + yy) % 4: g[yy, xx, 3] = 0
-        elif keep == 2 and (xx + yy) % 2: g[yy, xx, 3] = 0
-        elif keep < 2 and (xx + yy) % 4 == 0: g[yy, xx, 3] = 0
-gr = Image.fromarray(g, 'RGBA')
+g = np.array(gr); g[..., 3] = 255   # 땅은 꽉 차게
 lay = keyed(sheet_path('4b92ccaf'))     # 사용자 그림 2: 겹 (먼 언덕 · 뒷산 · 땅 띠 · 앞 풀 · 풍차 날개)
+# 중경과 땅은 다른 빠르기로 흐른다 → 이음매가 줄로 보인다(빌드 71까지: 위 여섯 줄을 바둑 무늬로 엷게 = 점선이 흘러가는 것처럼 보였다 — 11-20 14:52 사용자
+#   「점선을 사이에 두고 움직이니까 되게 이상하게 … 풀, 잡초 … 배경에 있는 걸 땡겨와서 가려둬봐」).
+# 겹 그림 맨 아랫줄의 풀 · 잡초 · 꽃 · 돌 낱개 12개를 이음매 위에 촘촘히 심는다(땅 겹에 붙어 같이 흐른다). 땅 그림 위로 SEAM_PAD줄을 더 두고 그만큼 올려 그린다.
+SEAM_PAD = 26
+def seam_props():
+    al = lay[645:697, :1783, 3] > 0; cols = al.any(0); out = []; x = 0
+    while x < 1783:
+        if cols[x]:
+            x0 = x
+            while x < 1783 and cols[x]: x += 1
+            if x - x0 > 20:
+                ys = np.where(al[:, x0:x].any(1))[0]; out.append(shrink(lay[645 + ys.min():645 + ys.max() + 1, x0:x], K * HS))
+        else: x += 1
+    return out
+PR = seam_props(); rs = np.random.RandomState(7)
+G2 = Image.new('RGBA', (g.shape[1], g.shape[0] + SEAM_PAD), (0, 0, 0, 0)); G2.paste(Image.fromarray(g, 'RGBA'), (0, SEAM_PAD))
+x = -6; order = []
+while x < G2.width:
+    pr = PR[rs.randint(len(PR))]; order.append((x, SEAM_PAD + 3 + rs.randint(0, 5) - pr.height, pr)); x += int(pr.width * (0.5 + 0.25 * rs.rand()))
+for x, y, pr in sorted(order, key=lambda o: o[1] + o[2].height):
+    G2.alpha_composite(pr, (x, max(0, y))) if x >= 0 else G2.alpha_composite(pr.crop((-x, 0, pr.width, pr.height)), (0, max(0, y)))
+ga = np.array(G2); gq = G2.convert('RGB').quantize(colors=220, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')   # 팔레트 PNG로 들어가게 (색 255개 아래)
+gr = Image.fromarray(np.dstack([np.array(gq), ga[..., 3]]).astype(np.uint8), 'RGBA')
 back = shrink(lay[207:428, :1783], K * HS, 96)   # 초록 뒷산
 bl = lay[150:560, 1786:2172]; hub = (1979 - 1786, 357 - 150)
 blades = []
@@ -131,7 +147,7 @@ bw = blades[0].width; bsh = Image.new('RGBA', (bw * 12, bw), (0, 0, 0, 0))
 for i, b in enumerate(blades): bsh.alpha_composite(b, (i * bw, 0))
 bg = {'k': K, 'hs': HS,
       'mid': {'url': png_url(mid, 'bg_mid'), 'y': round(Y(MID0), 1)},
-      'gr': {'url': png_url(gr, 'bg_gr'), 'y': round(Y(GR0), 1)},
+      'gr': {'url': png_url(gr, 'bg_gr'), 'y': round(Y(GR0) - SEAM_PAD / HS, 1)},
       'back': {'url': png_url(back, 'bg_back'), 'y': round(95 - back.height / HS, 1)},
       'blades': {'url': png_url(bsh, 'bg_blades'), 'w': bw, 'n': 12, 'x': round(1387 * K, 1), 'y': round(Y(188), 1)},
       'skyOy': -58, 'gateY': 150}
