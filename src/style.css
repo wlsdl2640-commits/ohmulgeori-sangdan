@@ -837,3 +837,10 @@ details.skl summary b { color: var(--ink); }
 .t-close { justify-self: end; min-width: 110px; margin-top: 4px; }
 @media (orientation: portrait) { .t-main { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; } .t-logo { justify-self: center; text-align: center; margin-top: 8vh; } .t-menu { grid-column: 1; grid-row: 2; justify-self: center; align-self: end; margin-bottom: 9vh; } .t-bg { object-position: 50% 50%; } }
 @media (max-height: 380px) { .parch { padding-block: 10px 9px; gap: 5px; } .parch-h { font-size: 20px; } .parch-p { font-size: 10.5px; line-height: 1.45; } .game-name { font-size: 42px; } }
+
+/* 빌드 72: 구역 단추 (미궁탑 · 길드 본부 · 도시 시설) — 본부 화면 왼쪽 위 */
+.zonebar { position: absolute; right: calc(72px + env(safe-area-inset-right, 0px)); top: 8px; z-index: 3; display: flex; gap: 4px; }
+.zbtn { min-height: 32px; padding: 3px 12px; font: inherit; font-size: 13px; color: #e8d8b0; background: #3a2816; border: 2px solid #120a04; box-shadow: inset 0 0 0 1px #7a5228, inset 0 -4px 0 rgba(0, 0, 0, .3), 0 3px 0 rgba(0, 0, 0, .5); text-shadow: 1px 1px 0 #000; cursor: pointer; }
+.zbtn.on { color: #ffe9a8; background: #8a2a22; box-shadow: inset 0 0 0 1px #d8a23a, inset 0 -4px 0 rgba(0, 0, 0, .3), 0 3px 0 rgba(0, 0, 0, .5); }
+.zbtn:focus-visible { outline: 2px solid #ffd45a; outline-offset: 1px; }
+.stage.win-open .zonebar { visibility: hidden; }

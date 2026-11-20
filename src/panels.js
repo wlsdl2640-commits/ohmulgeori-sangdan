@@ -267,6 +267,7 @@ function bldCard(id, full) {
   const fr = id === 'farm' && lv && !max ? FARM.rank[lv] : 0;   // 빌드 65: 재배소는 한 동씩 (2동 C랭크 · 3동 A랭크)
   const btn = max ? '<span class="sub muted">최고 단계</span>' : fr && (S.rank || 0) < fr ? `<span class="sub muted">${lv + 1}동: ${RANKS[fr].name}랭크에 열림</span>` : `<button type="button" class="btn sm${lv ? '' : ' gold'}" data-act="build" data-id="${id}"${S.gold < c ? ' disabled' : ''}>${id === 'farm' && lv ? `${lv + 1}동 짓기` : lv ? '확장' : '건설'} ${fmt(c)}G</button>`;
   let body = '';
+  if (id === 'warehouse') body = `<div class="sub">메인 창고 ${whUsed(-1)}/${whCap(-1)}칸${lv < B.max ? ` · 다음 단계 ${whCap(-1) + WH_BLD_CAP}칸` : ''}</div>${full ? '<button type="button" class="btn block" data-act="sub" data-id="inv">창고 열기</button>' : ''}`;
   if (full && lv && id === 'smithy') body = smithyBox();
   if (full && lv && id === 'alchemy') body = `<div class="list">${RECIPES.map((r, i) => `<div class="li">${iconImg(r.out)}<div class="grow"><span>${ITEMS[r.out].name} <span class="muted">창고 ${S.inv[r.out] || 0}</span></span><span class="sub">${S.bld.alchemy >= r.lv ? needStr(r.need) + ` · ${craftFee(r)}G` : '공방 2단계 필요'}</span></div><button type="button" class="btn sm gold" data-act="craft" data-i="${i}"${canCraft(r) ? '' : ' disabled'}>만들기</button></div>`).join('')}</div>`;
   if (lv && id === 'training') body = '<div class="sub">길드원 창에서 능력치를 훈련하고, 스킬을 배우고, 전직할 수 있어요.</div>';
@@ -284,6 +285,9 @@ function bldCard(id, full) {
 }
 PANELS.fac = () => BUILD_ORDER.map(id => bldCard(id, false)).join('');
 PANELS.b = w => bldCard(w.b, true);
+// 빌드 72: 모험가 협회 로비 (미궁탑) — 길드 랭크 심사 · 의뢰 게시판 · 길드 랭킹으로 가는 창
+PANELS.assoc = () => `<div class="card"><div class="h">라비린토스 모험가 협회</div><div class="sub">오래전 이 도시에 처음 생긴 열세 길드가 뭉쳐 세운 기관. 모든 모험가 길드는 협회에 가입한다.</div></div>
+  ${subBtn('co_rank', '길드 랭크 심사', `지금 ${RANKS[S.rank || 0].name}랭크 · ${RANKS[S.rank || 0].title}`)}${subBtn('req', '의뢰 게시판', `받은 의뢰 ${(S.reqs || []).length}건`)}${typeof leagueStand === 'function' ? subBtn('co_league', '길드 랭킹', '이달의 길드 순위') : ''}`;
 
 /* 길드원 */
 function eqIcons(a) { return SLOTS.filter(([s]) => slotShown(a, s)).map(([s, n]) => (a.eq[s] ? gArt(a.eq[s], 1) : `<span class="ico empty" title="${n}"></span>`)).join(''); }
@@ -929,6 +933,7 @@ function bindUI() {
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('menu-board').hidden) { e.stopPropagation(); menuBoard(false); } }, true);
   $('win-back').addEventListener('click', backWin);
   $('win-x').addEventListener('click', closeWins);
+  $('zonebar').addEventListener('click', e => { const b = e.target.closest('[data-zone]'); if (b && S) { sfx('open'); hqZone(b.dataset.zone); renderFloors(); } });   // 빌드 72: 구역 단추
   // 장소 판: 화살표 → 옆 장소, 가운데 이름 판 → 그 시설 창
   $('placebar').addEventListener('click', e => {
     if (!S) return;

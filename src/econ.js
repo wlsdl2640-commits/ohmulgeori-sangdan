@@ -19,7 +19,7 @@ function blankState(company) {
     fields: Object.fromEntries(ALL_FIELDS.map(f => [f, newField()])),
     cands: [], reqs: [], bless: null, autoTreat: true,
     shop: { slots: [] }, sold: { day: -1, n: 0, g: 0 },
-    bld: { shop: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0, salvage: 0, farm: 0 },
+    bld: { shop: 1, warehouse: 1, inn: 1, alchemy: 0, training: 0, smithy: 0, tower: 0, temple: 0, pen: 0, stable: 0, library: 0, airfield: 0, kitchen: 0, salvage: 0, farm: 0 },
     stable: { horses: {} }, league: null, presets: [], wx: { seed: Math.floor(Math.random() * 1e9) },
     settleDay: MONTH_DAYS,
     research: { lv: {}, cur: null },
@@ -1253,6 +1253,7 @@ function loadFrom(v) {
     heal69();                     // 빌드 69 회복 개편: 이제 못 배우는 응급 처치 · 치유의 찬가 · 재기를 지우고 스킬북 · 수업료를 돌려준다 (불러올 때마다)
     raid69();                     // 빌드 69 레이드 개편: 레이드대를 풀고(원정 중이면 돌아온 뒤) 레이드를 목적지로 둔 파티는 평원으로 (불러올 때마다)
     sal69();                      // 빌드 69: 봉급을 지금 레벨 · 차수 · 라이선스로 다시 매긴다 (불러올 때마다)
+    if (S.bld.warehouse == null) S.bld.warehouse = 1;   // 빌드 72: 창고 건물 (옛 저장은 1단계)
     concept70();                  // 빌드 70 미궁도시 개편 첫 단계: 길드 이름 꼬리 · 경쟁 길드 이름 · 성문 방어전 없앰 (불러올 때마다)
     slot69();                     // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }

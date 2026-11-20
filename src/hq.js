@@ -24,37 +24,44 @@ const FLOOR_INFO = {
 };
 const SEATS = 6;   // 여관 한 장소의 자리 (2층 침대 셋)
 
-/* 장소 목록 (왼쪽 → 오른쪽) */
-function hqPlaces() {
-  const b = S.bld, out = [];
-  if (b.salvage) out.push({ id: 'salvage' });
-  if (b.smithy) out.push({ id: 'smithy' });
-  out.push({ id: 'shop' }, { id: 'tavern' }, { id: 'port' });
-  if (b.alchemy) out.push({ id: 'alchemy' });
-  if (b.kitchen) out.push({ id: 'kitchen' });
-  if (b.training) out.push({ id: 'training' });
-  if (b.temple) out.push({ id: 'temple' });
+/* 빌드 72 (11-21 01:45 사용자): 장소를 세 구역으로 — 미궁탑(협회 시설) · 길드 본부(메인) · 도시 시설. 구역 단추(#zonebar)로 넘어가고, 구역 안에서는 옆으로 넘긴다.
+   미궁탑: 모험가 협회 로비 · 대장간 · 도서관 · 대신전 · 마탑 / 길드 본부: 로비 · 창고 · 모험가 숙소 · 주방 · 연금술 연구실 · 훈련소 · 사육장 · 재배소 · 마구간 · 던전 수거소 · 비행장 / 도시: 선술집 · 항구
+   like: 아직 그림이 없는 장소가 빌려 쓰는 장면 (협회 로비 = 상점 장면 · 창고 = 던전 수거소 장면 — 빌린 장면은 어디를 눌러도 그 장소의 창) */
+Object.assign(FLOOR_INFO, {
+  assoc:     { name: '모험가 협회 로비', win: 'assoc', like: 'shop' },
+  warehouse: { name: '창고', win: 'b:warehouse', like: 'salvage' }
+});
+FLOOR_INFO.shop.name = '길드 본부 로비'; FLOOR_INFO.inn.name = '모험가 숙소'; FLOOR_INFO.alchemy.name = '연금술 연구실'; FLOOR_INFO.temple.name = '대신전'; FLOOR_INFO.salvage.under = 0; FLOOR_INFO.smithy.under = 0;
+const HQ_ZONES = {
+  tower: { name: '미궁탑', ids: ['assoc', 'smithy', 'library', 'temple', 'tower'], open: ['assoc', 'smithy', 'library', 'temple', 'tower'] },   // open: 짓지 않았어도 보이는 장소 (누르면 짓기 창)
+  guild: { name: '길드 본부', ids: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy', 'training', 'pen', 'farm', 'stable', 'salvage', 'airfield'], open: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy'] },
+  city:  { name: '도시 시설', ids: ['tavern', 'port'], open: ['tavern', 'port'] }
+};
+const HQ_ZONE_IDS = ['tower', 'guild', 'city'];
+HQ.zone = 'guild';
+const hqZoneOf = id => HQ_ZONE_IDS.find(z => HQ_ZONES[z].ids.includes(id)) || 'guild';
+/* 장소 목록 (왼쪽 → 오른쪽) — zone을 안 주면 지금 구역, 'all'이면 모두 */
+function hqPlaces(zone) {
+  const b = S.bld, out = [], zs = zone === 'all' ? HQ_ZONE_IDS : [zone || HQ.zone];
   const nInn = Math.max(1, Math.ceil(beds() / SEATS));
-  for (let i = 0; i < nInn; i++) out.push({ id: 'inn', i });
-  if (b.pen) out.push({ id: 'pen' });
-  if (b.farm) out.push({ id: 'farm' });
-  if (b.stable) out.push({ id: 'stable' });
-  if (b.library) out.push({ id: 'library' });
-  if (b.tower) out.push({ id: 'tower' });
-  if (b.airfield) out.push({ id: 'airfield' });
+  for (const z of zs) for (const id of HQ_ZONES[z].ids) {
+    if (!(HQ_ZONES[z].open.includes(id) || b[id])) continue;
+    if (id === 'inn') { for (let i = 0; i < nInn; i++) out.push({ id, i, zone: z }); } else out.push({ id, zone: z });
+  }
   out.forEach(f => { f.key = f.id + (f.i || 0); f.under = FLOOR_INFO[f.id].under || 0; f.name = FLOOR_INFO[f.id].name + (f.id === 'inn' && nInn > 1 ? ' ' + (f.i + 1) : ''); });
   return out;
 }
-const hqPlace = key => { const L = hqPlaces(); return L.find(f => f.key === key) || L.find(f => f.id === 'shop'); };
-// 장소 옮기기: 오른쪽 장소면 오른쪽에서 밀려 들어온다 (quiet면 바로)
+const hqPlace = key => { const L = hqPlaces(); return L.find(f => f.key === key) || L[0]; };
+// 장소 옮기기: 오른쪽 장소면 오른쪽에서 밀려 들어온다 (quiet면 바로 · 다른 구역의 장소면 구역도 바뀐다)
 function hqGo(key, quiet) {
-  const L = hqPlaces(), to = L.find(f => f.key === key);
-  if (!to || to.key === HQ.cur) return;
-  const i0 = L.findIndex(f => f.key === HQ.cur), i1 = L.indexOf(to);
-  HQ.anim = quiet || i0 < 0 ? null : { from: HQ.cur, dir: i1 > i0 ? 1 : -1, t0: null, d: 380 };
-  HQ.cur = to.key;
+  const A = hqPlaces('all'), to = A.find(f => f.key === key);
+  if (!to || (to.key === HQ.cur && to.zone === HQ.zone)) return;
+  const same = to.zone === HQ.zone, L = hqPlaces(to.zone), i0 = L.findIndex(f => f.key === HQ.cur), i1 = L.findIndex(f => f.key === key);
+  HQ.anim = quiet || !same || i0 < 0 ? null : { from: HQ.cur, dir: i1 > i0 ? 1 : -1, t0: null, d: 380 };
+  HQ.zone = to.zone; HQ.cur = to.key;
   if (HOOKS.floor) HOOKS.floor();
 }
+function hqZone(z) { if (!HQ_ZONES[z] || z === HQ.zone) return; HQ.mem = HQ.mem || {}; HQ.mem[HQ.zone] = HQ.cur; const L = hqPlaces(z), k = HQ.mem[z] && L.find(f => f.key === HQ.mem[z]) ? HQ.mem[z] : L[0].key; HQ.zone = z; HQ.cur = k; HQ.anim = null; if (HOOKS.floor) HOOKS.floor(); }   // 구역 단추: 그 구역에서 마지막에 보던 장소로
 function hqStep(d) { const L = hqPlaces(), i = L.findIndex(f => f.key === HQ.cur), j = Math.max(0, Math.min(L.length - 1, i + d)); if (j !== i) hqGo(L[j].key); }
 
 /* ───────── 그리기 도구 ───────── */
@@ -1228,7 +1235,7 @@ const A3_SALV = {
 const HQS = { shop: A3_SHOP, tavern: A3_TAVERN, inn: A3_INN, stable: A3_STABLE, smithy: A3_SMITHY, airfield: A3_AIR, alchemy: A3_ALCH, kitchen: A3_KITCHEN, training: A3_TRAIN, temple: A3_TEMPLE, pen: A3_PEN, library: A3_LIB, tower: A3_TOWER, salvage: A3_SALV };
 // 장소 하나를 그 장소 판에 그린다: 벽 · 가구 · 창(바깥 시간)은 시간 칸마다 한 번 구워 두고, 사람 · 물건 · 불빛은 매번. rec면 누르는 자리를 남긴다
 function hqRender(f, t, rec) {
-  const sc = HQS[f.id], K = sc.geo(hqGeo(sc.zoom || 1)), dp = clockDp(), T = todAt(dp, 'town');
+  const LK = FLOOR_INFO[f.id].like, sc = HQS[LK || f.id], K = sc.geo(hqGeo(sc.zoom || 1)), dp = clockDp(), T = todAt(dp, 'town');
   let v = HQ.views[f.key]; if (!v || v[0].width !== K.W || v[0].height !== K.H) { v = mkCanvas(K.W, K.H); HQ.views[f.key] = v; }
   const g = v[1], key = f.key + '|' + K.W + 'x' + K.H + '|' + Math.floor(dp * 64) + '|' + (sc.sig ? sc.sig(K) : '');
   let base = HQ.shells.get(key);
@@ -1238,7 +1245,8 @@ function hqRender(f, t, rec) {
   }
   g.clearRect(0, 0, K.W, K.H); g.drawImage(base, 0, 0);
   K.hits = rec ? [{ x: 0, y: 0, w: K.W, h: K.H, win: FLOOR_INFO[f.id].win }] : null;   // 빈 곳을 누르면 그 장소의 창
-  sc.live(g, K, t, T, f);
+  sc.live(g, K, t, T, LK ? Object.assign({}, f, { id: LK }) : f);
+  if (LK && K.hits) K.hits = [{ x: 0, y: 0, w: K.W, h: K.H, win: FLOOR_INFO[f.id].win }];   // 빌린 장면: 어디를 눌러도 그 장소의 창
   if (rec) { HQ.hits = K.hits; HQ.hitK = K; }
   return v[0];
 }

@@ -178,7 +178,7 @@ function renderChips() {
 }
 
 /* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
-const WIN_TITLE = { co: '길드', fac: '시설', adv: '길드원', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '길드 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '장비 칸', battle: '전투' };
+const WIN_TITLE = { assoc: '모험가 협회', co: '길드', fac: '시설', adv: '길드원', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '길드 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '장비 칸', battle: '전투' };
 const winTop = () => UI.stack[UI.stack.length - 1] || null;
 function winTitle(w) {
   if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';
@@ -290,6 +290,8 @@ function renderFloors() {
   const dots = L.map((f, j) => `<i class="${f.under ? 'u' : ''}${j === i ? ' on' : ''}"></i>`).join('');
   const html = nav(prev, 'prev') + `<button type="button" class="ptab${cur.under ? ' ug' : ''}" data-pwin="${cur.id}" aria-label="${esc(cur.name)} 창 열기"><span class="pnm">${esc(cur.name)}</span><small>${esc(floorInfo(cur))}</small><span class="pdots" aria-hidden="true">${dots}</span></button>` + nav(next, 'next');
   if (html !== UI.pbar) { $('placebar').innerHTML = html; UI.pbar = html; }
+  const zh = HQ_ZONE_IDS.map(z => `<button type="button" class="zbtn${z === HQ.zone ? ' on' : ''}" data-zone="${z}" aria-pressed="${z === HQ.zone}">${HQ_ZONES[z].name}</button>`).join('');   // 빌드 72: 구역 단추 셋
+  if (zh !== UI.zbar) { $('zonebar').innerHTML = zh; UI.zbar = zh; }
   if (typeof hqExtra === 'function') hqExtra(cur);   // 빌드 65: 장소 위 덧그림 (재배소 동 단추 · 항구 표판 글씨)
 }
 // 본부 화면을 눌렀을 때: 가구·사람 → 창

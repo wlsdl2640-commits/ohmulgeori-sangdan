@@ -10,7 +10,7 @@ const bagOf = i => (i < 0 ? S.inv : whState()[i].inv);
 const gearOf = i => (i < 0 ? S.gear : whState()[i].gear);
 const kindsOf = bag => Object.keys(bag).filter(k => ITEMS[k] && bag[k] > 0).length;
 const whUsed = i => kindsOf(bagOf(i)) + gearOf(i).length;
-const whCap = i => (i < 0 ? WH_MAIN_CAP + (S.whPlus || 0) : WH_CAP);   // 왕실 창고 증서만큼 메인이 넓어진다
+const whCap = i => (i < 0 ? WH_MAIN_CAP + (S.whPlus || 0) + WH_BLD_CAP * Math.max(0, (S.bld.warehouse || 1) - 1) : WH_CAP);   // 빌드 72: 창고 건물 단계만큼   // 왕실 창고 증서만큼 메인이 넓어진다
 const whFree = i => whCap(i) - whUsed(i);
 const whName = i => (i < 0 ? '메인 창고' : `창고 ${i + 1}`);
 // 상단 전용 물건 그림 (10×10, ICON_PX 글자)

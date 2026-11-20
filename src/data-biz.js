@@ -2,7 +2,9 @@
 const BUILDINGS = {
   shop:     { name: '상점',        max: 15, cost: [0, 800, 2000, 4500, 9000, 16000, 27000, 44000, 70000, 110000, 170000, 260000, 390000, 580000, 850000],
     desc: '부속품과 장비를 진열해 손님에게 판다.', eff: lv => `진열대 ${shopStands(lv)}칸 · 손님 +${Math.round((lv - 1) * 10)}%${lv > 5 ? ` · 판매가 +${(lv - 5) * 2}%` : ''}` },
-  inn:      { name: '여관',        max: 12, cost: [0, 700, 1800, 4000, 8000, 15000, 26000, 42000, 65000, 100000, 150000, 220000],
+  warehouse: { name: '창고', max: 10, cost: [0, 1500, 4000, 9000, 18000, 36000, 70000, 130000, 240000, 420000],   // 빌드 72 (11-21 01:39 사용자 「창고 건물을 짓고 강화하면 인벤토리가 늘어나는 형식」)
+    desc: '길드가 가진 물건을 보관하는 건물. 키울수록 칸이 늘어난다.', eff: lv => `메인 창고 ${WH_MAIN_CAP + WH_BLD_CAP * Math.max(0, lv - 1)}칸` },
+  inn:      { name: '모험가 숙소',        max: 12, cost: [0, 700, 1800, 4000, 8000, 15000, 26000, 42000, 65000, 100000, 150000, 220000],
     desc: '모험가들의 숙소. 방이 많을수록 더 많이 영입할 수 있다.', eff: lv => `방 ${2 + lv * 2}개 · 숙면 회복 하루 ${20 + 6 * lv}` },
   smithy:   { name: '대장간',      max: 8,  cost: [1500, 3500, 7000, 12000, 22000, 40000, 70000, 120000],
     desc: '부속품으로 장비를 만든다. 넓힐수록 높은 단계와 등급의 장비를 만든다.', eff: lv => `${GTIERS.filter(t => t.smith <= lv).map(t => t.name).join('·')} 장비${lv >= 5 ? ' · 신화' : ''}${lv >= 7 ? '·신성' : ''} · 좋은 품질 +${lv * 3}%` },
@@ -16,7 +18,7 @@ const BUILDINGS = {
     desc: '다친 길드원를 치료하고, 매달 신의 축복을 내려 준다.', eff: lv => `자연 치료 하루 ${4 + 4 * lv} · 치유사 ${Math.min(4, lv)}명 · 매달 축복` }
 };
 const shopStands = lv => 2 + Math.min(lv, 8) + Math.floor(Math.max(0, lv - 8) / 2);   // Lv8까지 한 칸씩, 그 뒤 두 단계마다
-const BUILD_ORDER = ['shop', 'inn', 'training', 'temple', 'alchemy', 'smithy', 'tower'];   // 빌드 62: 은행을 뺐다
+const BUILD_ORDER = ['shop', 'warehouse', 'inn', 'training', 'temple', 'alchemy', 'smithy', 'tower'];   // 빌드 62: 은행을 뺐다
 
 /* ───────── 신전의 축복 (매달 하나) ───────── */
 const BLESSINGS = {
