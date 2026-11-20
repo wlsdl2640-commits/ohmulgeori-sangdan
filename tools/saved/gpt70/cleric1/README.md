@@ -14,3 +14,6 @@ KIT=cleric python3 ../mage1/magepage.py out site
 ## 11-20 12:54 셉터 + 성표 · 13:01 받은 판 → 게임
 - 사용자: 철퇴 대신 셉터, 왼손에 Lv1 성표(holy_lv1.png — 사용자 성표 판에서 오림). 위의 「가슴 해 장식」은 뺐다.
 - `CLS=cleric python3 ../mage1/extract_m1.py 40` → `../hd70/export_hd70.py` → hd70.js HDCFG.cleric. 페이지: `KIT=cleric python3 ../mage1/magepage.py out site - - <cap 폴더>`.
+
+## 11-20 14:22 셉터 판
+사용자가 셉터 21장 판(../../scepter70/)을 만들어 옴 → 부탁 글의 셉터를 Lv1 견습 셉터(scepter_lv1.png · 고리 셋 머리)로. 이미 넣은 판은 파란 구슬 셉터라, 판 넷을 다시 받으면 `hd70/sheets/cleric1_*`를 바꿔 다시 뽑는다.
