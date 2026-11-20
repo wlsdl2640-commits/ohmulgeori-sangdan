@@ -121,7 +121,7 @@ function expStatus(p) {
 function whereStr(e) {
   const F = FIELDS[e.field];
   if (e.area === 'raid') return `레이드 · ${F.name}`;
-  if (e.area === 'wave') return `하르겐 성문 · ${e.wave.cur + 1}/${e.wave.n}번째 무리`;
+  if (e.area === 'wave') return `라비린토스 성문 · ${e.wave.cur + 1}/${e.wave.n}번째 무리`;
   if (e.area === 'arena') return '지하 투기장';
   if (e.area === 'trade') return tradeWhere(e);
   return e.area === 'dungeon' ? `${F.dungeon.name} ${e.stage}층` : `${F.name} ${fno(F)}-${e.stage}`;
@@ -501,30 +501,22 @@ function toast(msg) {
 const say = msg => { if (msg) toast(msg); };
 
 /* ───────── 첫 화면 ───────── */
-let titleRaf = 0;
+let titleRaf = 0;   // (예전 첫 화면의 그리기 고리 — 이제 그림 한 장이라 쓰지 않는다. panels.js가 cancelAnimationFrame에 넘긴다)
+// 빌드 72 (11-21 01:17 사용자): 첫 화면 = 그림 한 장 + 게임시작 · 시스템설정 · 언어설정 → 길드 창립 신청서(양피지)에 길드 이름을 적고 게임시작. 저장이 없을 때(맨 처음)만 나온다.
+function titleSheet(id) { for (const k of ['t-found', 't-opt', 't-lang']) $(k).hidden = k !== id; $('t-main').classList.toggle('dim', !!id); }
+function titleOpt() { $('t-sfx').textContent = AU.sfx ? '켬' : '끔'; $('t-sfx').classList.toggle('on', AU.sfx); $('t-bgm').textContent = AU.bgm ? '켬' : '끔'; $('t-bgm').classList.toggle('on', AU.bgm); $('t-vol').textContent = Math.round(AU.vol * 10); }
 function showTitle() {
-  $('title-scr').hidden = false;
-  $('t-sub').textContent = `${WORLD.continent} 대륙 · ${WORLD.empire} · 미궁도시 ${WORLD.capital}`;
-  $('t-intro').innerHTML = STORY.intro.map(t => `<p>${esc(t)}</p>`).join('');
-  const cv = $('title-cv'), ctx = cv.getContext('2d');
-  const [off, g] = mkCanvas(AW * HI, AH * HI);
-  g.setTransform(HI, 0, 0, HI, 0, 0);
-  const cast = [
-    { cls: 'warrior', look: { hair: '#5a3a22', skin: '#e0ac7e' } },
-    { cls: 'archer', look: { hair: '#c9a04a', skin: '#f1c9a5' } },
-    { cls: 'cleric', look: { hair: '#2b1d16', skin: '#c68a5e' } },
-    { cls: 'mage', look: { hair: '#d8d0c0', skin: '#f1c9a5' } }
-  ];
-  const draw = now => {
-    if ($('title-scr').hidden) return;
-    const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    const w = Math.max(AW * HI, Math.round(r.width * dpr)), h = Math.max(PIP_H * HI, Math.round(r.height * dpr));
-    if (cv.width !== w) { cv.width = w; cv.height = h; }
-    drawStill(g, 'town', cast, now / 1000);
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(off, 0, PIP_Y * HI, AW * HI, PIP_H * HI, 0, 0, cv.width, cv.height);
-    titleRaf = requestAnimationFrame(draw);
-  };
-  cancelAnimationFrame(titleRaf);
-  titleRaf = requestAnimationFrame(draw);
+  $('title-scr').hidden = false; $('t-bg').src = TITLE_ART; titleSheet(null);
+  if (showTitle.bound) return; showTitle.bound = 1;
+  $('t-start').onclick = () => { sfx('open'); titleSheet('t-found'); $('t-err').hidden = true; setTimeout(() => $('t-name').focus(), 60); };
+  $('t-sys').onclick = () => { sfx('open'); titleOpt(); titleSheet('t-opt'); };
+  $('t-langb').onclick = () => { sfx('open'); titleSheet('t-lang'); };
+  $('t-back').onclick = () => titleSheet(null);
+  $('title-scr').querySelectorAll('[data-tclose]').forEach(b => { b.onclick = () => titleSheet(null); });
+  $('title-scr').querySelectorAll('.t-sheet').forEach(sh => sh.addEventListener('pointerdown', e => { if (e.target === sh) titleSheet(null); }));   // 바깥을 누르면 닫힘
+  $('t-sfx').onclick = () => { auSet('sfx', !AU.sfx); sfx('coin'); titleOpt(); };
+  $('t-bgm').onclick = () => { auSet('bgm', !AU.bgm); titleOpt(); };
+  $('t-vdn').onclick = () => { auSet('vol', Math.max(0, Math.round((AU.vol - 0.1) * 10) / 10)); sfx('coin'); titleOpt(); };
+  $('t-vup').onclick = () => { auSet('vol', Math.min(1, Math.round((AU.vol + 0.1) * 10) / 10)); sfx('coin'); titleOpt(); };
+  $('t-name').addEventListener('input', () => { $('t-err').hidden = true; });
 }

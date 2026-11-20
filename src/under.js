@@ -342,9 +342,9 @@ PANELS.au = () => {
     <button type="button" class="btn gold block" data-act="aubid"${!mine && S.gold >= next ? '' : ' disabled'}>${mine ? '최고 입찰 중' : `${fmt(next)}G 부르기`}</button></div>
     <div class="sub muted">경매품은 날마다 한 점, 영웅 장비가 올라와요. 전설부터는 높은 단계 땅의 드랍으로만 나와요.</div>`;
 };
-PANELS.ag = () => `<div class="card hl"><div class="h">암살자 길드</div><div class="sub">하르겐 지하 깊은 곳, 지하미궁으로 내려가는 통로 끝에 길드의 본부가 있다. 7번가 뒷골목의 은신처는 지부일 뿐. 7번가의 모든 가게와 길드는 이들에게 자릿세를 낸다.</div></div>
+PANELS.ag = () => `<div class="card hl"><div class="h">암살자 길드</div><div class="sub">라비린토스 지하 깊은 곳, 지하미궁으로 내려가는 통로 끝에 길드의 본부가 있다. 7번가 뒷골목의 은신처는 지부일 뿐. 7번가의 모든 가게와 길드는 이들에게 자릿세를 낸다.</div></div>
   <div class="card"><div class="row"><span class="grow">매달 자릿세</span><span class="num ${S.flags.guildHQ ? 'ok-t' : 'red-t'}">${S.flags.guildHQ ? '없음 (본부 토벌 완료)' : fmt(rent()) + 'G'}</span></div>
-  <div class="sub">${S.flags.guildHQ ? '길드 본부를 토벌한 뒤로 자릿세를 받으러 오지 않는다.' : `자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3%${S.flags.guildDown ? ', 지부가 무너져 그 절반' : ''} — 이달은 기본 ${fmt(rentBase())}G + 판매액 ${fmt(S.salesM || 0)}G의 몫 ${fmt(rentSales())}G. ${S.flags.guildDown ? '지하미궁 통로(Lv120 ~ 140) 끝의 「암살자 길드 본부」를 토벌하면 자릿세가 끝난다 — 지하수로 깊은 곳 → 옛 제국 수로 → 지하미궁 통로 차례로 열린다.' : `뒷골목의 지부(은신처)를 토벌하면 자릿세가 절반, 하르겐 지하의 본부를 토벌하면 자릿세가 끝난다. 지부 토벌은 명성 ${GUILD_RAID.fame}, 길드원 ${GUILD_RAID.advs}명, 후원 조건을 채운 뒤 원정 창의 「7번가 뒷골목」에서.`}`}</div></div>
+  <div class="sub">${S.flags.guildHQ ? '길드 본부를 토벌한 뒤로 자릿세를 받으러 오지 않는다.' : `자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3%${S.flags.guildDown ? ', 지부가 무너져 그 절반' : ''} — 이달은 기본 ${fmt(rentBase())}G + 판매액 ${fmt(S.salesM || 0)}G의 몫 ${fmt(rentSales())}G. ${S.flags.guildDown ? '지하미궁 통로(Lv120 ~ 140) 끝의 「암살자 길드 본부」를 토벌하면 자릿세가 끝난다 — 지하수로 깊은 곳 → 옛 제국 수로 → 지하미궁 통로 차례로 열린다.' : `뒷골목의 지부(은신처)를 토벌하면 자릿세가 절반, 라비린토스 지하의 본부를 토벌하면 자릿세가 끝난다. 지부 토벌은 명성 ${GUILD_RAID.fame}, 길드원 ${GUILD_RAID.advs}명, 후원 조건을 채운 뒤 원정 창의 「7번가 뒷골목」에서.`}`}</div></div>
   <div class="sub muted">길드원들은 투기장과 암시장도 손에 쥐고 있다. 투기장 코인의 일부는 이들 주머니로 들어간다.</div>`;
 Object.assign(ACT, {
   arparty: d => { UI.arP = +d.id; renderPanel(true); },

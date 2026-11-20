@@ -188,7 +188,7 @@ Object.assign(WIN_TITLE, { co_wx: '날씨' });
 PANELS.co_wx = () => {
   const w = wxNow(null), dn = today();
   const away = S.parties.filter(p => p.exp);
-  return `<div class="card hl"><div class="row">${wxImg(w).replace('class="wxi"', 'class="wxi big"')}<div class="grow"><div class="h">${WORLD.capital || '하르겐'} · ${SEASONS[w.se].name} <small class="${wxTCls(w)}">${wxLabel(w)}</small></div><div class="sub">${wxFxText(w)}</div></div></div></div>
+  return `<div class="card hl"><div class="row">${wxImg(w).replace('class="wxi"', 'class="wxi big"')}<div class="grow"><div class="h">${WORLD.capital || '라비린토스'} · ${SEASONS[w.se].name} <small class="${wxTCls(w)}">${wxLabel(w)}</small></div><div class="sub">${wxFxText(w)}</div></div></div></div>
     <div class="sec"><b>예보</b><span>낮(12시)과 밤(23시)</span></div>
     <div class="list">${[0, 1, 2].map(k => wxDayRow(dn + k)).join('')}</div>
     ${away.length ? `<div class="sec"><b>원정 중인 곳</b><span>땅마다 기후가 달라요</span></div><div class="list">${away.map(p => { const x = wxNow(p.exp), C = wxClim(p.exp); return `<div class="li"><div class="grow stack"><span>${esc(p.name)} <span class="muted">· ${esc(whereStr(p.exp))}</span></span><span class="sub">${wxImg(x)} <span class="${wxTCls(x)}">${wxLabel(x)}</span> · ${wxFxText(x, p)}</span>${C.note ? `<span class="sub muted">${C.note}</span>` : ''}${foodOf(p.exp) ? `<span class="sub gold-t">도시락 ${FOODS[foodOf(p.exp)].name} · ${foodFxText(FOODS[foodOf(p.exp)].fx)}</span>` : ''}</div></div>`; }).join('')}</div>` : ''}

@@ -19,7 +19,7 @@ OUT = Path(os.environ.get('PC_OUT') or ROOT / 'dist' / 'pc')
 TOOLS = Path(os.environ.get('PC_TOOLS') or ROOT / 'build' / 'pctools')
 ELECTRON = os.environ.get('PC_ELECTRON') or '44.9.3'
 PACKAGER = '20.3.0'
-NAME = '미궁도시'
+NAME = '미궁도시 라비린토스'
 KEEP_LOCALES = {'ko.pak', 'en-US.pak'}   # 크로미움 UI 글(오른쪽 단추 메뉴 등) — 한국어와 기본 영어만 남긴다
 
 

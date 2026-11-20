@@ -23,7 +23,7 @@ const SKY_MAP_W = 240, SKY_MAP_H = 150;
 const MAP_NODES_SKY = { sky: { x: 118, y: 84, dun: [26, -14] }, thunder: { x: 196, y: 44, dun: [18, -16] }, ruins: { x: 198, y: 118, dun: [-22, -6] }, stargarden: { x: 50, y: 40, dun: [20, -14] } };
 const MAP_KINGS = { inglisia: { x: 22, y: 134 }, frama: { x: 58, y: 186 }, elves: { x: 24, y: 48 }, dwarves: { x: 128, y: 26 }, sarak: { x: 226, y: 178 } };
 const MAP_ORGS = {
-  city:   { x: 120, y: 148, name: '미궁도시 하르겐 · 길드원 협회', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
+  city:   { x: 120, y: 148, name: '미궁도시 라비린토스 · 모험가 협회', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
   guild:  { x: 150, y: 192, name: '암살자 길드', c: '#3a3040', c2: '#e04a4a', mark: 'A' }
 };
 // 레이드 몬스터가 나타나는 자리 (그 필드 근처)
@@ -117,7 +117,7 @@ function mapNodes(skyMap) {
   }
   if (S.raid) for (const r of S.raid.list) { if (r.done || raidSky(r.id)) continue; const R = RAIDS[r.id], N = MAP_NODES[MAP_RAID[r.id] || 'plains']; out.push(mapNodeHtml('raid', r.id, N.x - 16, N.y - 14, `rd${sel.k === 'raid' && sel.id === r.id ? ' on' : ''}`, `<i class="mn" style="background:${R.c}">☠</i>`, R.name)); }
   for (const k of KINGDOM_IDS) { const P = MAP_KINGS[k], open = kingOpen(k); out.push(mapNodeHtml('king', k, P.x, P.y + 10, `kg${open ? '' : ' lock'}${sel.k === 'king' && sel.id === k ? ' on' : ''}`, `<img src="${emblemURL(k)}" alt="">`, KINGDOMS[k].name.replace(/ .*/, ''))); }
-  for (const o in MAP_ORGS) { const P = MAP_ORGS[o]; if (o === 'guild' && !underOpen()) continue; out.push(mapNodeHtml('org', o, P.x, P.y, `og${sel.k === 'org' && sel.id === o ? ' on' : ''}`, `<img src="${emblemURL(o)}" alt="">`, o === 'city' ? '하르겐' : '암살자 길드')); }
+  for (const o in MAP_ORGS) { const P = MAP_ORGS[o]; if (o === 'guild' && !underOpen()) continue; out.push(mapNodeHtml('org', o, P.x, P.y, `og${sel.k === 'org' && sel.id === o ? ' on' : ''}`, `<img src="${emblemURL(o)}" alt="">`, o === 'city' ? '라비린토스' : '암살자 길드')); }
   out.push(eventNodes(sel));
   return out.join('');
 }

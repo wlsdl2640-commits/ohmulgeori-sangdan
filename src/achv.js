@@ -52,7 +52,7 @@ const ACHV = [
   { id: 'dex1', cat: '살림', name: '도감 수집가', desc: '몬스터 완전 기록 10종', need: 10, get: () => Object.values((S.dex && S.dex.kills) || {}).filter(n => n >= DEX_K[3]).length, rw: { gold: 5000, fame: 10 } },
   { id: 'dex2', cat: '살림', name: '몬스터 박사', desc: '몬스터 완전 기록 30종', need: 30, get: () => Object.values((S.dex && S.dex.kills) || {}).filter(n => n >= DEX_K[3]).length, rw: { gold: 20000, fame: 20, item: ['wizstone', 1] } },
   { id: 'bld', cat: '살림', name: '번듯한 길드', desc: '시설 단계 합 20', need: 20, get: () => Object.values(S.bld || {}).reduce((s, v) => s + (v || 0), 0), rw: { gold: 5000, fame: 10 } },
-  { id: 'bld2', cat: '살림', name: '하르겐의 랜드마크', desc: '시설 단계 합 50', need: 50, get: () => Object.values(S.bld || {}).reduce((s, v) => s + (v || 0), 0), rw: { gold: 40000, fame: 30, item: ['wizstone', 1] } },
+  { id: 'bld2', cat: '살림', name: '라비린토스의 랜드마크', desc: '시설 단계 합 50', need: 50, get: () => Object.values(S.bld || {}).reduce((s, v) => s + (v || 0), 0), rw: { gold: 40000, fame: 30, item: ['wizstone', 1] } },
   // 빌드 31
   { id: 'trade1', cat: '장사', name: '첫 교역', desc: '교역로로 이웃 나라에 한 번 다녀오기', need: 1, get: () => S.stats.trades || 0, rw: { gold: 3000, fame: 5 } },
   { id: 'trade2', cat: '장사', name: '교역의 큰손', desc: '교역 20번', need: 20, get: () => S.stats.trades || 0, rw: { gold: 30000, fame: 20 } },

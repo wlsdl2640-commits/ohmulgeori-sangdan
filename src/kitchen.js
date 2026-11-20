@@ -35,7 +35,7 @@ function cookFood(id, quiet) {
   return '';
 }
 function buyFoodMat(k, n) {
-  if (!S.bld.kitchen && !S.bld.farm) return '주방이나 재배소가 필요해요.';   // 하르겐 시장 (빌드 65: 재배소 모종도)
+  if (!S.bld.kitchen && !S.bld.farm) return '주방이나 재배소가 필요해요.';   // 라비린토스 시장 (빌드 65: 재배소 모종도)
   const price = KITCHEN_BUY[k]; if (!price) return '';
   n = Math.max(1, n || 1);
   if (S.gold < price * n) return '돈이 모자라요.';

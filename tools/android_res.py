@@ -7,7 +7,7 @@ import appart
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / 'android-res'
-NAME = '미궁도시'   # 앱 그림 제목 (빌드 70 이름 「미궁도시」 — 한 줄, 예전 「판타지 / 상단키우기」 두 줄)
+NAME = '미궁도시 라비린토스'   # 빌드 72 · 그 전: 앱 그림 제목 (빌드 70 이름 「미궁도시」 — 한 줄, 예전 「판타지 / 상단키우기」 두 줄)
 
 def save(img, rel):
     p = OUT / rel

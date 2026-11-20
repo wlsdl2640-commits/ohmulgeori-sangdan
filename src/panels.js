@@ -172,11 +172,11 @@ PANELS.co_spon = () => Object.entries(SPONSORS).map(([k, P]) => {
 PANELS.co_goal = () => {
   const R = GUILD_RAID, rd = S.flags.guildDown, hq = S.flags.guildHQ;   // 빌드 70: 뒷골목 은신처 = 지부(자릿세 절반) · 지하미궁 통로의 본부(자릿세 끝)
   const hqCard = !rd ? '' : hq ? '<div class="card hl"><div class="h">암살자 길드 본부 토벌 <small class="ok-t">완료</small></div><div class="sub">오물거리에 더는 자릿세가 없다. 손님도 늘었다.</div></div>'
-    : `<div class="card hl"><div class="h">암살자 길드 본부</div><div class="sub">뒷골목의 검은 두건은 대역이었다. 지부가 무너져 자릿세는 절반이 됐다. 진짜 본부는 하르겐 지하 「지하미궁 통로」(Lv120 ~ 140) 끝의 던전 — 지하수로 깊은 곳 → 옛 제국 수로(Lv100) → 지하미궁 통로 차례로 열린다. 본부를 토벌하면 자릿세가 끝난다.</div>
+    : `<div class="card hl"><div class="h">암살자 길드 본부</div><div class="sub">뒷골목의 검은 두건은 대역이었다. 지부가 무너져 자릿세는 절반이 됐다. 진짜 본부는 라비린토스 지하 「지하미궁 통로」(Lv120 ~ 140) 끝의 던전 — 지하수로 깊은 곳 → 옛 제국 수로(Lv100) → 지하미궁 통로 차례로 열린다. 본부를 토벌하면 자릿세가 끝난다.</div>
       <div class="stats"><span class="${S.fields.sewer && S.fields.sewer.cleared ? 'ok-t' : ''}">지하수로 깊은 곳</span><span class="${S.fields.aqueduct && S.fields.aqueduct.cleared ? 'ok-t' : ''}">옛 제국의 대저수조</span><span class="${S.fields.passage && S.fields.passage.found ? 'ok-t' : ''}">길드 본부 입구</span></div></div>`;
   const raid = rd ? '<div class="card dim"><div class="h">암살자 길드 지부 토벌 <small class="ok-t">완료</small></div><div class="sub">뒷골목 은신처(지부)를 무너뜨려 자릿세가 절반이 됐다.</div></div>' + hqCard
     : `<div class="card${raidReady() ? ' hl' : ''}"><div class="h">암살자 길드 지부 토벌</div>
-      <div class="sub">매달 자릿세를 뜯어 가는 길드의 은신처(7번가 뒷골목)를 쓸어버리면 자릿세가 절반이 돼요. 은신처는 Lv28 이상 파티를 권해요. 길드의 진짜 본부는 하르겐 지하 깊은 곳에 있어요.</div>
+      <div class="sub">매달 자릿세를 뜯어 가는 길드의 은신처(7번가 뒷골목)를 쓸어버리면 자릿세가 절반이 돼요. 은신처는 Lv28 이상 파티를 권해요. 길드의 진짜 본부는 라비린토스 지하 깊은 곳에 있어요.</div>
       <div class="stats"><span class="${S.fame >= R.fame ? 'ok-t' : ''}">명성 ${S.fame}/${R.fame}</span><span class="${living().length >= R.advs ? 'ok-t' : ''}">길드원 ${living().length}/${R.advs}명</span><span class="${spn(R.sponsor) >= R.tier ? 'ok-t' : ''}">시민회 후원 ${spn(R.sponsor)}/${R.tier}단계</span></div>
       ${raidReady() ? '<div class="sub gold-t">준비 완료! 원정 창에서 7번가 뒷골목을 목적지로 고르세요.</div>' : ''}</div>`;
   return `${raid}<div class="card dim"><div class="h">마왕의 봉인 <small>${TIER_FIELDS.filter(f => S.fields[f].cleared).length}/${TIER_FIELDS.length}</small></div><div class="sub">필드마다 10 스테이지마다 필드 보스가 있고, 1-50의 주인을 쓰러뜨리면 던전 입구가 열린다. 던전은 한 번만 공략할 수 있고, 공략하면 큰 보상과 함께 길드 랭크업 조건 하나가 채워진다.</div></div>`;
@@ -1011,6 +1011,7 @@ function bindUI() {
   $('t-import').addEventListener('click', () => openImport(() => { $('title-scr').hidden = true; cancelAnimationFrame(titleRaf); startGame(); }));
   $('t-form').addEventListener('submit', e => {
     e.preventDefault();
+    if (!$('t-name').value.trim()) { $('t-err').hidden = false; $('t-name').focus(); return; }   // 빌드 72: 신청서에 길드 이름을 적어야 한다
     newGame($('t-name').value);
     $('title-scr').hidden = true;
     cancelAnimationFrame(titleRaf);

@@ -1756,14 +1756,14 @@ function notes70b() {
   const extra = [];
   if (C70 && C70.to) extra.push(`길드 이름 끝의 「상단」도 「길드」로 바꾸었다: ${C70.from} → ${C70.to}.`);
   if (C70 && C70.wave) extra.push('지도에 떠 있던 몬스터 웨이브를 치웠다.' + (C70.wave.party ? ' 성문에 나가 있던 파티는 싸움 없이 그대로 돌아온다.' : ''));
-  if (first && (today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '미궁도시 하르겐 · 모험가 길드', body: STORY.v70b.concat(extra) });
+  if (first && (today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '미궁도시 라비린토스 · 모험가 길드', body: STORY.v70b.concat(extra) });
   else if (extra.length) log(extra.join(' '));
   C70 = null;
 }
-function notes70() {   // 빌드 70: 하르겐 지하 3구역 · 지하미궁 통로 · 암살자 길드 지부 / 본부 (data-under70.js)
+function notes70() {   // 빌드 70: 라비린토스 지하 3구역 · 지하미궁 통로 · 암살자 길드 지부 / 본부 (data-under70.js)
   if (S.flags.v70) return;
   S.flags.v70 = 1;
-  if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '하르겐 지하 · 암살자 길드 본부', body: STORY.v70 });
+  if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '라비린토스 지하 · 암살자 길드 본부', body: STORY.v70 });
   if (S.flags.guildDown && !S.flags.guildHQ) { S.modals.push({ title: '암살자 길드의 대역', body: STORY.guildHalf }); log('뒷골목에서 쓰러뜨린 검은 두건은 대역이었다. 암살자 길드가 자릿세를 절반만 다시 걷는다.', 'bad'); }
 }
 function notes69h() { if (!S.flags.v69h) { S.flags.v69h = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '회복 방식 · 스킬 리듬', body: STORY.v69h }); } }   // 빌드 69 (11-15 20:20): data-pace69.js

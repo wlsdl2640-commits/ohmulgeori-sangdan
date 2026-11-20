@@ -52,7 +52,7 @@ with sync_playwright() as pw:
     h = open(PAGE, encoding='utf-8').read(); RN = 'const rnd = Math.random;'; assert h.count(RN) == 1   # core.js는 난수 함수를 처음에 잡아 둔다 → 찍는 사본에서만 그때그때 Math.random을 부르게 바꿔 씨앗 난수가 먹게 한다
     tmp = os.path.abspath(PAGE) + '.cap.html'; open(tmp, 'w', encoding='utf-8').write(h.replace(RN, 'const rnd = () => Math.random();'))
     pg.goto('file://' + tmp); pg.wait_for_timeout(1200)
-    pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1500)
+    pg.evaluate("() => { document.getElementById('t-name').value = '등불 길드'; document.getElementById('t-form').requestSubmit(); }"); pg.wait_for_timeout(1500)
     for _ in range(25):
         sk = pg.locator('.skipall')
         if sk.count() and sk.first.is_visible(): sk.first.click(); pg.wait_for_timeout(120); continue

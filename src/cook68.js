@@ -1,4 +1,4 @@
-/* ───────── 빌드 65 넷째 묶음: 요리 화면 (큰 구리솥) · 레시피 찾기 · 도감 「요리」 · 하르겐 시장 · 레시피 팔기 ─────────
+/* ───────── 빌드 65 넷째 묶음: 요리 화면 (큰 구리솥) · 레시피 찾기 · 도감 「요리」 · 라비린토스 시장 · 레시피 팔기 ─────────
    시안 tools/saved/draft68/cook (사용자 11-12 18:55 「큰 구리솥에 재료를 선택해서 하나씩 넣으면 … 냄비 위에서 나타나서 냄비안으로 퐁당 · 빼기 누르면 다시 창고로」
    · 19:57 「힌트없이 대신 … 레시피 판매 · 1개당 10만」 · 20:34 「다 넣어」).
    상태 S.cook = { known: {요리 id: 찾은 날}, made: {요리 id: 만든 수}, pot: [재료 id …], sus: 수상한 죽 수 }.
@@ -234,7 +234,7 @@ PANELS.cook = () => {
   const C = cookState(), tab = UI.cookTab || 'all';
   const pot = Array.from({ length: POT_MAX }, (_, i) => C.pot[i] ? cookCell(C.pot[i], null, 'potrem', `data-i="${i}" title="빼기"`).replace('</button>', '<b class="qty">빼기</b></button>') : `<span class="cell empty">${rqEmpty(2)}</span>`).join('');
   const mats = COOK_MATS.filter(k => (S.inv[k] || 0) > 0 && (tab === 'all' || cookCat(k) === tab));
-  const st = mats.map(k => cookCell(k, S.inv[k] || 0, 'potadd', `data-k="${k}"`)).join('') || '<div class="sub muted" style="padding:8px">이 갈래의 재료가 창고에 없어요. 하르겐 시장 · 왕국 상단 · 항구 · 재배소에서 구해요.</div>';
+  const st = mats.map(k => cookCell(k, S.inv[k] || 0, 'potadd', `data-k="${k}"`)).join('') || '<div class="sub muted" style="padding:8px">이 갈래의 재료가 창고에 없어요. 라비린토스 시장 · 왕국 상단 · 항구 · 재배소에서 구해요.</div>';
   const R = CKV.res, res = R && R.shown ? (() => {
     const k = R.id ? 'food_' + R.id : 'food_sus', g = itemGrade(k), F = R.id && FOODS[R.id];
     return `<div class="card ckres"><div class="rib${R.id ? '' : ' gray'}">${R.id ? (R.fresh ? '새 레시피 발견!' : '요리 완성') : '레시피에 없는 조합…'}</div>
@@ -256,7 +256,7 @@ PANELS.cook = () => {
     <div data-part="ckst"><div class="tabs inv">${COOK_TABS.map(([id, n]) => `<button type="button" class="tab${tab === id ? ' on' : ''}" data-act="cooktab" data-id="${id}">${n}</button>`).join('')}</div>
     <div class="igrid" id="ck-st">${st}</div>
     <div class="sub muted">재료를 누르면 솥에 하나씩 넣고, 솥 칸을 누르면 빼서 창고로 돌려보내요. 재료와 그 수가 맞으면 요리 — 처음 만든 요리는 도감 「요리」에 적혀요. 틀리면 수상한 죽(재료는 써요).</div></div>
-    <div data-part="ckmk"><details><summary class="sec"><b>하르겐 시장</b><span>늘 열려 있는 재료 가게</span></summary><div class="list">${market}</div></details></div>`;
+    <div data-part="ckmk"><details><summary class="sec"><b>라비린토스 시장</b><span>늘 열려 있는 재료 가게</span></summary><div class="list">${market}</div></details></div>`;
 };
 const cookOpen0 = () => { openWin('cook'); ckKick(); };
 /* ── 주방 창 (시설) ── */
@@ -270,7 +270,7 @@ BLD_BOX.kitchen = () => {
   return `<div class="card hl"><div class="row"><div class="grow"><div class="h">요리 화면</div><div class="sub">큰 구리솥에 재료를 하나씩 넣어 요리해요. 레시피는 직접 찾거나 왕국 상단 · 항구의 배에서 사요 (하나에 ${fmt(RECIPE_PRICE)}G).</div></div><button type="button" class="btn gold" data-act="cookopen">요리하러 가기 ›</button></div>
     <div class="sub muted">찾은 레시피 ${known.length}/${FOOD_IDS.length}${C.pot.length ? ` · 솥 안에 재료 ${C.pot.length}개` : ''} · 도시락은 원정대 창에서 파티마다 골라요 (찾은 레시피만 「떨어지면 만들기」).</div></div>
     ${known.length ? `<div class="sec"><b>찾은 레시피</b><span>「솥에 넣기」로 재료를 한 번에</span></div><div class="list">${rows}</div>` : ''}
-    <div class="sec"><b>하르겐 시장</b><span>늘 열려 있어요 · 가장 싼 재료 ${fmt(Math.min(...Object.values(KITCHEN_BUY)))}G</span></div><div class="list">${market}</div>`;
+    <div class="sec"><b>라비린토스 시장</b><span>늘 열려 있어요 · 가장 싼 재료 ${fmt(Math.min(...Object.values(KITCHEN_BUY)))}G</span></div><div class="list">${market}</div>`;
 };
 /* ── 도감 「요리」 탭 ── */
 DEX_TABS.push(['food', '요리']);

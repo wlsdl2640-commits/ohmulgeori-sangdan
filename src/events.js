@@ -1,8 +1,8 @@
-/* ───────── 지도 이벤트: 왕국 축제 · 떠돌이 상인 · 몬스터 둥지 (하르겐 몬스터 웨이브 방어전은 빌드 70에서 없앴다 — 옛 저장용 길만 남음) ─────────
+/* ───────── 지도 이벤트: 왕국 축제 · 떠돌이 상인 · 몬스터 둥지 (라비린토스 몬스터 웨이브 방어전은 빌드 70에서 없앴다 — 옛 저장용 길만 남음) ─────────
    S.events = [{ id, type: 'wave'|'fest'|'merchant', ... }], S.evNext = { wave, fest, merchant } (다음에 뜨는 날) */
 const EV_GAP = { wave: [9, 14], fest: [10, 16], merchant: [6, 10], nest: [7, 12] };
 const WAVE_FIELD = 'wave';
-FIELDS[WAVE_FIELD] = { no: 0, name: '하르겐 성문', lv: 1, bg: 'front', tier: 0, mons: [], raid: 1, dungeon: null, next: null, event: 1, desc: '미궁도시 하르겐의 성문 앞. 몰려오는 몬스터를 막는다.' };
+FIELDS[WAVE_FIELD] = { no: 0, name: '라비린토스 성문', lv: 1, bg: 'front', tier: 0, mons: [], raid: 1, dungeon: null, next: null, event: 1, desc: '미궁도시 라비린토스의 성문 앞. 몰려오는 몬스터를 막는다.' };
 Object.assign(WIN_TITLE, { merchant: '떠돌이 상인' });
 function evState() { if (!S.events) S.events = []; if (!S.evNext) S.evNext = {}; return S.events; }
 const evOf = id => evState().find(x => x.id === id);
@@ -34,14 +34,14 @@ function waveRetire() {
   for (const p of S.parties || []) { const e = p.exp; if (e && e.area === 'wave' && !e.done) { e.done = 1; e.mode = 'return'; e.why = 'wave'; e.foes = []; e.cd = {}; e.buffs = []; e.taunt = null; r.party++; } }
   return r.ev || r.party ? r : null;
 }
-/* 몬스터 웨이브(빌드 70부터 뜨지 않음): 열린 필드 하나에서 몬스터가 하르겐으로 몰려온다 */
+/* 몬스터 웨이브(빌드 70부터 뜨지 않음): 열린 필드 하나에서 몬스터가 라비린토스으로 몰려온다 */
 function newWave(k) {
   const pool = TIER_FIELDS.filter(f => isUnlocked(f) && FIELDS[f].mons.length);
   if (!pool.length) return null;
   const from = pickOne(pool), F = FIELDS[from], n = 3 + Math.min(2, Math.floor(F.tier / 2));
   const ev0 = { id: nid(), type: 'wave', from, born: k, arrive: k + ri(3, 5), n, lv: F.lv + 8, party: null, done: 0 };
-  log(`${F.name} 쪽에서 몬스터 떼가 하르겐으로 몰려온다! ${ev0.arrive - k}일 뒤 성문에 닿는다. 지도에서 방어전 파티를 보내자.`, 'warn');
-  queueModal({ title: '몬스터 웨이브', body: [`${F.name}의 몬스터들이 떼를 지어 미궁도시 하르겐으로 몰려오고 있다. 성문에 닿기까지 ${ev0.arrive - k}일.`, `모험가 협회가 길드에 방어를 청했다. 지도에서 웨이브를 누르고 파티를 보내면 성문 앞에서 ${n}차례 밀려오는 몬스터를 막는다(Lv${ev0.lv}쯤, 마지막엔 우두머리).`, '막으면 명성과 상금, 전리품을 얻는다. 막지 못하거나 내버려 두면 도시가 어지러워져 사흘 동안 손님이 줄고 명성이 깎인다.'] });
+  log(`${F.name} 쪽에서 몬스터 떼가 라비린토스으로 몰려온다! ${ev0.arrive - k}일 뒤 성문에 닿는다. 지도에서 방어전 파티를 보내자.`, 'warn');
+  queueModal({ title: '몬스터 웨이브', body: [`${F.name}의 몬스터들이 떼를 지어 미궁도시 라비린토스으로 몰려오고 있다. 성문에 닿기까지 ${ev0.arrive - k}일.`, `모험가 협회가 길드에 방어를 청했다. 지도에서 웨이브를 누르고 파티를 보내면 성문 앞에서 ${n}차례 밀려오는 몬스터를 막는다(Lv${ev0.lv}쯤, 마지막엔 우두머리).`, '막으면 명성과 상금, 전리품을 얻는다. 막지 못하거나 내버려 두면 도시가 어지러워져 사흘 동안 손님이 줄고 명성이 깎인다.'] });
   return ev0;
 }
 function waveReward(ev0) { const F = FIELDS[ev0.from]; return { gold: Math.round((F.lv * 60 + 800) * ev0.n / 3 / 10) * 10, fame: 15 + F.tier * 5 }; }
@@ -68,7 +68,7 @@ function startWave(pid, evId) {
   p.exp = e; ev0.party = p.id;
   team.forEach(a => { refillAmmo(a); a.status = 'away'; a.down = false; a.mp = derive(a).maxMp; });
   S.view = p.id;
-  log(`${p.name}이(가) 하르겐 성문으로 나가 몬스터 웨이브를 막는다.`);
+  log(`${p.name}이(가) 라비린토스 성문으로 나가 몬스터 웨이브를 막는다.`);
   changed();
   return '';
 }
@@ -104,7 +104,7 @@ function waveEnd(p, e, win) {
     S.gold += R.gold; S.stats.earned += R.gold; S.fame += R.fame;
     if (ev0) { ev0.done = 1; ev0.won = 1; }
     S.stats.waves = (S.stats.waves || 0) + 1;
-    log(`${p.name}이(가) 하르겐 성문에서 ${F.name}의 몬스터 웨이브를 모두 막아 냈다! 상금 ${g$(R.gold)}, 명성 +${R.fame}`, 'good');
+    log(`${p.name}이(가) 라비린토스 성문에서 ${F.name}의 몬스터 웨이브를 모두 막아 냈다! 상금 ${g$(R.gold)}, 명성 +${R.fame}`, 'good');
     HOOKS.toast(`방어전 승리 · ${g$(R.gold)} · 명성 +${R.fame}`);
     queueModal({ title: '방어전 승리', body: [`${p.name}이(가) 성문 앞에서 ${e.wave.n}차례 밀려온 몬스터를 모두 쓰러뜨렸다. 시민들이 환호한다.`, `길드원 협회의 상금 ${g$(R.gold)}과 명성 +${R.fame}. 전리품은 창고로.`] });
   } else if (ev0 && !ev0.done) waveFail(ev0, `${p.name}이(가) 밀려나`);
@@ -115,8 +115,8 @@ function waveEnd(p, e, win) {
 function waveFail(ev0, how) {
   ev0.done = 1; ev0.won = 0;
   S.fame = Math.max(0, S.fame - 10); S.flags.damaged = today() + 3;
-  log(`${how} 몬스터가 하르겐 거리로 들어왔다. 명성 -10, 사흘 동안 손님이 준다.`, 'bad');
-  queueModal({ title: '방어 실패', body: [`${how} 몬스터 떼가 하르겐 성문을 넘었다. 거리가 어지러워 사흘 동안 상점 손님이 30% 준다. 명성 -10.`] });
+  log(`${how} 몬스터가 라비린토스 거리로 들어왔다. 명성 -10, 사흘 동안 손님이 준다.`, 'bad');
+  queueModal({ title: '방어 실패', body: [`${how} 몬스터 떼가 라비린토스 성문을 넘었다. 거리가 어지러워 사흘 동안 상점 손님이 30% 준다. 명성 -10.`] });
 }
 function waveWipe(p) {
   const e = p.exp;
@@ -208,7 +208,7 @@ function eventCard(id) {
   if (ev0.type === 'wave') {
     const F = FIELDS[ev0.from], R = waveReward(ev0), parties = S.parties.filter(p => !p.exp && !p.raidOnly), sp = parties.find(p => p.id === UI.mapP) || parties[0], why = waveWhy(ev0, sp);
     const picker = parties.length ? `<div class="btns">${parties.map(p => `<button type="button" class="btn sm${sp && sp.id === p.id ? ' on' : ''}" data-act="mapparty" data-id="${p.id}">${esc(p.name)} · ${p.members.length}명 · Lv${Math.round(avgLvOf(p))}</button>`).join('')}</div>` : '<div class="sub red-t">대기 중인 파티가 없어요.</div>';
-    return `<div class="card hl"><div class="h">몬스터 웨이브 <small>성문까지 D-${Math.max(0, ev0.arrive - k)}</small></div><div class="sub">${F.name}의 몬스터 떼가 하르겐으로 몰려온다. ${ev0.n}차례 밀려오고(Lv${ev0.lv}~${ev0.lv + ev0.n * 2}), 마지막엔 우두머리가 온다.</div><div class="sub muted">몬스터: ${F.mons.map(m => MONS[m].name).join(', ')}</div><div class="sub gold-t">막으면 상금 ${fmt(R.gold)}G · 명성 +${R.fame} · 전리품</div></div>
+    return `<div class="card hl"><div class="h">몬스터 웨이브 <small>성문까지 D-${Math.max(0, ev0.arrive - k)}</small></div><div class="sub">${F.name}의 몬스터 떼가 라비린토스으로 몰려온다. ${ev0.n}차례 밀려오고(Lv${ev0.lv}~${ev0.lv + ev0.n * 2}), 마지막엔 우두머리가 온다.</div><div class="sub muted">몬스터: ${F.mons.map(m => MONS[m].name).join(', ')}</div><div class="sub gold-t">막으면 상금 ${fmt(R.gold)}G · 명성 +${R.fame} · 전리품</div></div>
       ${ev0.party ? `<div class="sub ok-t">${esc((findP(ev0.party) || {}).name || '파티')}이(가) 성문에서 싸우는 중</div>` : `<div class="sec"><b>방어전 파티</b><span>보급품은 원정대 창의 설정대로</span></div>${picker}${why ? `<div class="sub red-t">${esc(why)}</div>` : ''}<button type="button" class="btn gold block" data-act="wavego" data-id="${ev0.id}" data-p="${sp ? sp.id : 0}"${why ? ' disabled' : ''}>${sp ? `${esc(sp.name)} 방어전 시작` : '방어전 시작'}</button>`}`;
   }
   if (ev0.type === 'nest') {

@@ -18,7 +18,7 @@ const farmReadyAll = () => (S.farm && S.farm.houses ? S.farm.houses.reduce((n, h
 const farmGet = k => (ITEMS[k].veg ? FARM.vegGet : FARM.herbGet[herbTier(k)]);
 const farmGetTxt = k => { const [a, b] = farmGet(k); return a === b ? `${a}개` : `${a}~${b}개`; };
 const FARM_TIER_TXT = ['하급 약초', '중급 약초', '최상급 약초'];
-const farmKindTxt = k => (ITEMS[k].veg ? (VEG_FROM[k] === 'hargen' ? '하르겐 채소' : `${KINGDOMS[VEG_FROM[k]].name} 채소`) : FARM_TIER_TXT[herbTier(k)]);
+const farmKindTxt = k => (ITEMS[k].veg ? (VEG_FROM[k] === 'hargen' ? '라비린토스 채소' : `${KINGDOMS[VEG_FROM[k]].name} 채소`) : FARM_TIER_TXT[herbTier(k)]);
 function farmLeftTxt(P) {
   const h = Math.max(1, Math.ceil((P.ready - S.t) / DAY_SEC * 24));
   return h >= 24 ? `${Math.floor(h / 24)}일${h % 24 ? ` ${h % 24}시간` : ''}` : `${h}시간`;
@@ -304,8 +304,8 @@ BLD_BOX.farm = () => {
     <div class="sec"><b>심을 것</b><span>모종 = 창고의 그 약초 · 채소 하나${sel != null ? ` · 밭 ${sel + 1}에` : ''}</span></div>
     <div class="tabs inv"><button type="button" class="tab${tab === 'herb' ? ' on' : ''}" data-act="farmtab" data-id="herb">약초</button><button type="button" class="tab${tab === 'veg' ? ' on' : ''}" data-act="farmtab" data-id="veg">채소</button></div>
     <div class="igrid">${pick}</div>
-    <div class="sub muted">약초: 하급 1일 → 3개 · 중급 2일 → 2~3개 (동 Lv2) · 최상급 4일 → 1~2개 (동 Lv3) · 채소: 하르겐 1일 · 왕국 특산 2일 → 3~5개${ph ? ` · 길드에 둔 약초 펫: 수확 +${Math.round(ph * 100)}%` : ''}. 중급 · 최상급 약초는 상점에서 팔지 않아요 — 필드에서 드물게 주운 것을 길러 늘려요.</div>
-    <details class="card"><summary class="sec"><b>모종 사기</b><span>하르겐 시장 · 히포크리초</span></summary><div class="list">${shop}</div><div class="sub muted">왕국 특산 채소는 그 나라 상단이 찾아올 때 팔아요.</div></details>`;
+    <div class="sub muted">약초: 하급 1일 → 3개 · 중급 2일 → 2~3개 (동 Lv2) · 최상급 4일 → 1~2개 (동 Lv3) · 채소: 라비린토스 1일 · 왕국 특산 2일 → 3~5개${ph ? ` · 길드에 둔 약초 펫: 수확 +${Math.round(ph * 100)}%` : ''}. 중급 · 최상급 약초는 상점에서 팔지 않아요 — 필드에서 드물게 주운 것을 길러 늘려요.</div>
+    <details class="card"><summary class="sec"><b>모종 사기</b><span>라비린토스 시장 · 히포크리초</span></summary><div class="list">${shop}</div><div class="sub muted">왕국 특산 채소는 그 나라 상단이 찾아올 때 팔아요.</div></details>`;
 };
 Object.assign(ACT, {
   farmcur: d => { const F = farmState(); F.cur = Math.max(0, Math.min(F.houses.length - 1, +d.h)); UI.farmPlot = null; renderPanel(true); renderFloors(); },

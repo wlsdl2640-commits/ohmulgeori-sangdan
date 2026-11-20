@@ -1376,7 +1376,7 @@ function kill(p, e, f) {
 }
 // 보스 전용 부속품: 우두머리(1-10~1-40)는 증표, 필드의 주인(1-50)은 핵, 던전을 공략한 뒤에는 가끔 혼까지
 function bossParts(p, e, f, inD) {
-  if (!TIER_FIELDS.includes(e.field) && !(FIELDS[e.field] && FIELDS[e.field].parts)) return;   // 빌드 70: 하르겐 지하 3구역 · 통로도 그 단계의 증표 · 핵 · 혼
+  if (!TIER_FIELDS.includes(e.field) && !(FIELDS[e.field] && FIELDS[e.field].parts)) return;   // 빌드 70: 라비린토스 지하 3구역 · 통로도 그 단계의 증표 · 핵 · 혼
   const t = FIELDS[e.field].tier, fs = S.fields[e.field];
   if (f.fb) {
     if (f.fb < 5) loot(p, e, 'crest_' + t, 1 + (rnd() < 0.35 ? 1 : 0));
