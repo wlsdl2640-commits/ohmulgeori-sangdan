@@ -13,6 +13,7 @@ OUT = sys.argv[1]; PRE = sys.argv[2] if len(sys.argv) > 2 else None
 if PRE: os.makedirs(PRE, exist_ok=True)
 SKI_A = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_'
 WAR_DIR, MON_DIR, MON_BIG = 'out_mid40', 'out_midmon', 'out_midmon_big'
+ROGUE_DIR = 'out_rogue1_40'   # 도적 1차 (CLS=rogue — 11-20 판 넷)
 CLERIC_DIR = 'out_cleric1_40'   # 성직자 1차 (CLS=cleric — 11-20 판 넷: 하늘빛 후드 로브 · 셉터 · 성표)
 ARCHER_DIR = 'out_archer1_40'   # 궁수 1차 (CLS=archer ../mage1/extract_m1.py 40 — 11-20 판 넷)
 MAGE_DIR = 'out_m1_40'   # 마법사 1차 (../mage1/extract_m1.py 40 — 11-20 사용자 「40칸」: 모자 끝까지 40칸)
@@ -72,7 +73,7 @@ def cls_rows(d, tag):   # 판 넷짜리 직업 (마법사 · 궁수): 줄마다 
         for i, f in enumerate(fr): sh.alpha_composite(f, (i * m['w'], 0))
         out['rows'][name] = dict(m, n=len(fr), url=png_url(sh, tag + name))
     return out
-mage = cls_rows(MAGE_DIR, 'mage1_'); archer = cls_rows(ARCHER_DIR, 'archer1_'); cleric = cls_rows(CLERIC_DIR, 'cleric1_')
+mage = cls_rows(MAGE_DIR, 'mage1_'); archer = cls_rows(ARCHER_DIR, 'archer1_'); cleric = cls_rows(CLERIC_DIR, 'cleric1_'); rogue = cls_rows(ROGUE_DIR, 'rogue1_')
 
 # ── 3. 스킬 그림 34×40 (육각 안쪽 x 7 ~ 40 · y 4 ~ 43) — 「팔레트|칸」 꼴 (data-skicon.js와 같은 글자)
 ski = {}
@@ -136,7 +137,7 @@ bg = {'k': K, 'hs': HS,
 # ── 5. 하늘 (보름달 · 구름 — extract_sky.py)
 SK = json.load(open('out_sky/meta.json'))
 sky = {'hs': 2, 'moon': png_url(Image.open('out_sky/' + SK['moon'][0][0])), 'clouds': [png_url(Image.open('out_sky/' + f)) for f, _, _ in SK['cloud']]}
-D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage, 'archer': archer, 'cleric': cleric}, 'ski': ski, 'bg': {'plains': bg}}
+D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage, 'archer': archer, 'cleric': cleric, 'rogue': rogue}, 'ski': ski, 'bg': {'plains': bg}}
 js = ('/* 빌드 70 시험: 곡창지대 평원 리마스터 그림 (GPT 그림 판에서 오림) — 손으로 고치지 말 것.\n'
       '   다시 뽑기: tools/saved/gpt70/hd70/export_hd70.py (extract_mon.py · extract_war16.py · extract_sk.py · extract_sky.py 다음에) */\n'
       'const HD70_DATA = ' + json.dumps(D, ensure_ascii=False, separators=(',', ':')) + ';\n')

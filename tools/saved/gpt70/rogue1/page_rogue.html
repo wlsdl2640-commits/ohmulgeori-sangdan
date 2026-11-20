@@ -55,8 +55,24 @@ h3 { font-size: 16px; font-weight: 600 }
   <header class="top">
     <p class="eyebrow">미궁도시 · GPT에 보낼 것</p>
     <h1>도적 부탁 묶음</h1>
-    <p class="lede">지금 게임의 도적 그림과 부탁 글 넷입니다. 궁수 · 사제 때와 같은 순서입니다.</p>
+    <p class="lede">받은 판 넷을 게임에 넣은 모습이 맨 위에 있습니다. 그 아래는 GPT에 보냈던 그림과 부탁 글입니다.</p>
   </header>
+
+  <section class="sec" aria-labelledby="h-game" id="game" hidden>
+    <div class="what item">
+      <h2 id="h-game">게임에 넣은 모습</h2>
+      <p class="note">실제 게임 화면을 찍은 것입니다. 받은 판 넷을 40칸으로 다시 찍어 넣었습니다. 전사 · 도적 · 사제가 들늑대 · 들쥐 · 뿔토끼와 싸우고, 도적 셋이 평원을 걷습니다.</p>
+    </div>
+    <div class="row" role="group" aria-label="장면" id="game-scn"></div>
+    <div class="frame"><canvas id="game-cv" width="352" height="240" style="display:block;image-rendering:pixelated;margin-inline:auto"></canvas></div>
+    <div class="row">
+      <button class="btn" type="button" id="game-play">멈춤</button>
+      <button class="btn" type="button" id="game-prev" aria-label="한 장 앞으로">◀ 한 장</button>
+      <button class="btn" type="button" id="game-next" aria-label="한 장 뒤로">한 장 ▶</button>
+      <button class="btn" type="button" id="game-slow" aria-pressed="false">느리게</button>
+      <button class="btn" type="button" id="game-zoom" aria-pressed="false">크게 보기</button>
+    </div>
+  </section>
 
   <section class="sec" aria-labelledby="h-steps">
     <h2 id="h-steps">순서</h2>
@@ -243,6 +259,49 @@ h3 { font-size: 16px; font-weight: 600 }
 const IMG = /*IMG*/{};
 const $$ = s => Array.from(document.querySelectorAll(s));
 const msgOf = b => b.parentElement.querySelector('.msg');
+// 게임에 넣은 모습: 찍어 둔 장면을 돌린다
+(() => {
+  const G = /*GAME*/null; if (!G) return; document.getElementById('game').hidden = false;
+  const cv = document.getElementById('game-cv'), g = cv.getContext('2d'), wide = window.matchMedia('(min-width: 760px)').matches, im = {};
+  const st = { s: Object.keys(G)[0], f: 0, t: 0, play: !window.matchMedia('(prefers-reduced-motion: reduce)').matches, slow: false, z: wide ? 2 : 1 };
+  const sheet = k => im[k] || (im[k] = Object.assign(new Image(), { src: 'game_' + k + '.webp', onload: draw }));
+  function draw() { const S = G[st.s], s = sheet(st.s); if (s.complete && s.naturalWidth) g.drawImage(s, (st.f % S.cols) * S.w, Math.floor(st.f / S.cols) * S.h, S.w, S.h, 0, 0, S.w, S.h); }
+  const size = () => { const S = G[st.s]; cv.width = S.w; cv.height = S.h; cv.style.width = S.w * st.z + 'px'; cv.style.height = S.h * st.z + 'px'; draw(); };
+  const box = document.getElementById('game-scn'), bs = Object.keys(G).map(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = G[k].name; b.addEventListener('click', () => { st.s = k; st.f = 0; st.t = 0; size(); sync(); }); box.append(b); return [k, b]; });
+  const sync = () => bs.forEach(([k, b]) => b.setAttribute('aria-pressed', k === st.s ? 'true' : 'false')); sync();
+  const pb = document.getElementById('game-play'), ps = () => { pb.textContent = st.play ? '멈춤' : '재생'; }; pb.addEventListener('click', () => { st.play = !st.play; ps(); }); ps();
+  const step = d => { const S = G[st.s]; st.play = false; ps(); st.f = (st.f + d + S.n) % S.n; st.t = st.f / S.fps; draw(); };
+  document.getElementById('game-prev').addEventListener('click', () => step(-1)); document.getElementById('game-next').addEventListener('click', () => step(1));
+  const sb = document.getElementById('game-slow'); sb.addEventListener('click', () => { st.slow = !st.slow; sb.setAttribute('aria-pressed', st.slow ? 'true' : 'false'); });
+  const zb = document.getElementById('game-zoom'); zb.addEventListener('click', () => { st.z = st.z > 1 ? 1 : 2; zb.setAttribute('aria-pressed', st.z > 1 ? 'true' : 'false'); size(); }); zb.setAttribute('aria-pressed', st.z > 1 ? 'true' : 'false'); size();
+  let last = 0; (function loop(now) { if (st.play && last) { const S = G[st.s]; st.t += Math.min(0.1, (now - last) / 1000) * (st.slow ? 0.35 : 1); const f = Math.floor(st.t * S.fps) % S.n; if (f !== st.f) { st.f = f; draw(); } } last = now; requestAnimationFrame(loop); })(0);
+})();
+
+// 받은 판을 줄여 본 것: 전사 옆에서 같은 동작을 돌린다
+(() => {
+  const M1 = /*M1*/null; if (!M1) return; document.getElementById('m1').hidden = false;
+  const cv = document.getElementById('m1-cv'), g = cv.getContext('2d'), sc = document.getElementById('m1-scene'), wide = window.matchMedia('(min-width: 760px)').matches;
+  const st = { T: M1.sizes[1], mot: 'walk', z: wide ? 5 : 2 }, im = {}, load = k => im[k] || (im[k] = Object.assign(new Image(), { src: k + '.png' }));
+  const R = (a, b) => Array.from({ length: Math.abs(b - a) + 1 }, (_, i) => a + (b > a ? i : -i)), PING = [...R(0, 7), ...R(6, 1), ...R(8, 15), ...R(14, 9)];
+  const MOT = { walk: ['걷기', 'walk', 15, 0], cast: ['마법 쏘기', 'slash', 15, 0.6], death: ['쓰러짐', 'death', 15, 1.2], side: ['서 있기', 'idle', 9, 0], front: ['앞모습', 'front', 9, 0], sit: ['앉기', 'sit', 5, 0], sleep: ['눕기', 'sleep', 5, 0], hurt: ['맞음', 'hurt', 15, 0.6] };
+  const grp = (box, items, get, set) => { const bs = items.map(([id, name]) => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = name; b.addEventListener('click', () => { set(id); sync(); }); box.append(b); return [id, b]; }); const sync = () => bs.forEach(([id, b]) => b.setAttribute('aria-pressed', id === get() ? 'true' : 'false')); sync(); };
+  const scene = () => { sc.src = 'm1_scene_' + st.T + '.png'; sc.style.width = M1.scene[0] * (wide ? 2 : 1) + 'px'; };
+  grp(document.getElementById('m1-size'), M1.sizes.map(t => [t, '키 ' + t + '칸']), () => st.T, t => { st.T = t; scene(); });
+  grp(document.getElementById('m1-mot'), Object.keys(MOT).map(k => [k, MOT[k][0]]), () => st.mot, k => { st.mot = k; t0 = performance.now(); });
+  const zb = document.getElementById('m1-zoom'), size = () => { cv.style.width = cv.width * st.z + 'px'; cv.style.height = cv.height * st.z + 'px'; zb.setAttribute('aria-pressed', st.z > 2 ? 'true' : 'false'); };
+  zb.addEventListener('click', () => { st.z = st.z > 2 ? 2 : 5; size(); }); size(); scene();
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; let t0 = performance.now();
+  const fr = (n, fps, hold, t, ping) => { if (still) return 0; if (ping) return PING[Math.floor(t * fps) % PING.length] % n; const T = n / fps + hold, u = t % T; return Math.min(n - 1, Math.floor(u * fps)); };
+  const blit = (k, m, i, x, gy) => { const s = load(k); if (s.complete && s.naturalWidth) g.drawImage(s, i * m.w, 0, m.w, m.h, x - m.ax, gy - m.ay, m.w, m.h); };
+  (function loop(now) {
+    const t = (now - t0) / 1000, [, wk, fps, hold] = MOT[st.mot], gy = cv.height - 3, wm = M1.war[wk], mm = M1.mage[st.T][st.mot];
+    g.fillStyle = '#688e4a'; g.fillRect(0, 0, cv.width, cv.height); g.fillStyle = '#5c8042'; g.fillRect(0, gy - 1, cv.width, 4);
+    blit('m1_war_' + wk, wm, fr(wm.n, wk === 'walk' ? 15 : fps, hold, t, wk === 'idle' || wk === 'front' || wk === 'sit'), 34, gy);
+    blit('m1_' + st.T + '_' + st.mot, mm, fr(mm.n, fps, hold, t, 0), 96, gy);
+    requestAnimationFrame(loop);
+  })(t0);
+})();
+
 // 크게 보기: 그림을 원래 크기로 (옆으로 밀어 본다)
 const W = { 'f-now': IMG.now[0], 'f-style': IMG.style[0], 'f-all': IMG.all[0] };
 $$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');

@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 SRC, OUT = sys.argv[1], sys.argv[2]; os.makedirs(OUT, exist_ok=True); HERE = os.path.dirname(os.path.abspath(__file__))
 KIT = os.environ.get('KIT', 'mage')   # 다른 직업 묶음: KIT=archer (틀 ../archer1/page_archer.html · 그림 이름 archer_now.png …)
 TPL = os.path.join(HERE, 'page_mage.html') if KIT == 'mage' else os.path.join(HERE, '..', KIT + '1', f'page_{KIT}.html')
-KNAME = {'mage': '마법사', 'archer': '궁수', 'cleric': '성직자', 'rogue': '도적'}[KIT]
+KNAME = {'mage': '마법사', 'archer': '궁수', 'cleric': '성직자', 'rogue': '도적', 'porter': '짐꾼'}[KIT]
 FR = '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'; FB = '/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'
 fnt = lambda n, b=False: ImageFont.truetype(FB if b else FR, n, index=2)
 BG, INK, SUB = (200, 204, 214), (26, 29, 37), (86, 93, 110)
@@ -26,7 +26,7 @@ S.convert('RGB').save(f'{OUT}/{KIT}_now.png', optimize=True); now_size = S.size
 
 # ── 2. 자세 · 동작 전부 (이름표) ──
 POSE = [('idle0', '서 있기 1'), ('idle1', '서 있기 2'), ('walk0', '걷기 1'), ('walk1', '걷기 2'), ('walk2', '걷기 3'), ('walk3', '걷기 4'), ('sit0', '앉기'), ('sleep0', '자기'), ('down0', '쓰러짐')]
-MOTN = {'down': '내려베기 (기본 공격)', 'up': '올려베기', 'side': '옆으로 베기', 'thrust': '찌르기', 'hack': '난도질', 'raise': '단검 치켜들기 (강화)', 'toss': '던지기 (모래 · 연막)'} if KIT == 'rogue' else {'down': '내려치기 (기본 공격)', 'up': '올려치기', 'side': '옆으로 휘두르기', 'smash': '내려찍기', 'spush': '앞으로 내밀기 (빛을 쏜다)', 'spushup': '위로 치켜 올리기 (큰 기도)', 'raise': '철퇴 치켜들기 (치유 · 강화)', 'salute': '철퇴 세우기 (치유)'} if KIT == 'cleric' else {'bshot': '쏘기 (기본 공격)', 'bfull': '힘껏 당겨 쏘기', 'bdiag': '비스듬히 위로 쏘기', 'brapid': '잇달아 쏘기', 'bswing': '활로 후려치기', 'braise': '활 치켜들기 (강화)'} if KIT == 'archer' else {'spush': '앞으로 내밀기 (기본 공격 · 마법이 지팡이 끝에서 나간다)', 'sjab': '찌르기', 'spushup': '내밀었다가 위로 들기', 'sswing': '휘두르기', 'scharge': '높이 들어 모았다가 앞으로 (큰 마법)', 'sraise': '치켜들기 (강화 · 보호막)'}
+MOTN = {'down': '내려치기 (기본 공격)', 'up': '올려치기', 'side': '옆으로 휘두르기', 'smash': '내려찍기', 'raise': '몽둥이 치켜들기 (강화)', 'toss': '던지기'} if KIT == 'porter' else {'down': '내려베기 (기본 공격)', 'up': '올려베기', 'side': '옆으로 베기', 'thrust': '찌르기', 'hack': '난도질', 'raise': '단검 치켜들기 (강화)', 'toss': '던지기 (모래 · 연막)'} if KIT == 'rogue' else {'down': '내려치기 (기본 공격)', 'up': '올려치기', 'side': '옆으로 휘두르기', 'smash': '내려찍기', 'spush': '앞으로 내밀기 (빛을 쏜다)', 'spushup': '위로 치켜 올리기 (큰 기도)', 'raise': '철퇴 치켜들기 (치유 · 강화)', 'salute': '철퇴 세우기 (치유)'} if KIT == 'cleric' else {'bshot': '쏘기 (기본 공격)', 'bfull': '힘껏 당겨 쏘기', 'bdiag': '비스듬히 위로 쏘기', 'brapid': '잇달아 쏘기', 'bswing': '활로 후려치기', 'braise': '활 치켜들기 (강화)'} if KIT == 'archer' else {'spush': '앞으로 내밀기 (기본 공격 · 마법이 지팡이 끝에서 나간다)', 'sjab': '찌르기', 'spushup': '내밀었다가 위로 들기', 'sswing': '휘두르기', 'scharge': '높이 들어 모았다가 앞으로 (큰 마법)', 'sraise': '치켜들기 (강화 · 보호막)'}
 Zp, Zm = 6, 4; CW = 44 * Zp; W = 40 + len(POSE) * CW; rows = [k for k in MOTN if k in mots['mk']]
 H = 70 + 2 * (48 * Zp + 34) + 60 + len(rows) * (44 * Zm + 34) + 20
 S = Image.new('RGBA', (W, H), BG + (255,)); d = ImageDraw.Draw(S)

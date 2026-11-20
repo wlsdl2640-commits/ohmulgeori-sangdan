@@ -10,3 +10,6 @@ KIT=rogue python3 ../mage1/magepage.py out site
 - 지금 도적: 짙은 남보라 두건(cowl) · 붉은 머리띠 · 복면 · 어두운 가죽옷 · 금색 버클 · 단검. 옷이 어두워 줄이면 검은 테와 뭉칠 수 있어 부탁 글에 「새까맣게 칠하지 말고 밝은 면 · 어두운 면을 나눠」를 넣었다.
 - 판 넷: 기준 자세 5 · 걷기 16 · 단검 찌르기 16(2 ~ 5번째 = 웅크림 · 7번째 = 맞히는 장) · 쓰러짐 16.
 - 받은 뒤: `CLS=rogue`를 ../mage1/extract_m1.py(ATK 표) · ../hd70/export_hd70.py · hd70.js HDCFG에 한 줄씩.
+
+## 받은 판 → 게임 (11-20 13:17)
+`CLS=rogue python3 ../mage1/extract_m1.py 40` → `../hd70/export_hd70.py` → hd70.js HDCFG.rogue(stab H 6). 판 `../hd70/sheets/rogue1_base · walk · stab · death`. GPT가 등에 작은 갈색 가방을 더 그렸다(그대로 둠). 페이지: `KIT=rogue python3 ../mage1/magepage.py out site - - <cap 폴더>`.
