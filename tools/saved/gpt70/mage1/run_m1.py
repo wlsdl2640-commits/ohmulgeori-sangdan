@@ -9,6 +9,7 @@ with sync_playwright() as pw:
     pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200)
     ev = lambda s: pg.evaluate("s => window.__EV(s)", s)
     if len(sys.argv) > 4: ev('window.M1CFG = ' + json.dumps({'cls': sys.argv[3], 'wpn': sys.argv[4]}))   # 다른 직업: python3 run_m1.py <페이지> <폴더> archer bow
+    if os.environ.get('LOOK'): ev('Object.assign(PXL[%s], %s); typeof PXC !== "undefined" && PXC.clear && PXC.clear()' % (json.dumps(sys.argv[3]), os.environ['LOOK']))   # 부탁용으로 생김새 색 · 덧붙이기를 바꿔 뽑는다 (성직자: 흰 옷 · 이마 무늬를 빼고)
     ev(JS)
     for k in ('look', 'mots', 'info'): json.dump(json.loads(ev(f"JSON.stringify(M1.{k}())")), open(os.path.join(OUT, k + '.json'), 'w'), ensure_ascii=False)
     print('errors', errs[:4]); br.close()
