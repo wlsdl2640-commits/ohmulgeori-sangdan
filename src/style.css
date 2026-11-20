@@ -763,3 +763,25 @@ details.skl summary b { color: var(--ink); }
 .slot9 .s9 { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
 .slot9 .s9.lock { background: #15121a; border: 2px solid #2e2a36; box-sizing: border-box; }
 .slot9 .s9.lock small { font-size: 9px; line-height: 1; color: var(--c); opacity: .85; }
+
+/* ── 빌드 72: 가로 화면 (11-20 15:32 사용자 「게임을 실행시키면 자동으로 가로 화면으로 … 이제 이 게임의 모든 화면은 가로에 맞춰지는 거야」) ──
+   첫 손질: 무대(본부 · 전투)가 화면을 채우고, 창은 오른쪽 서랍으로 연다 — 창 안 내용은 세로 때 너비(440px 안팎) 그대로라 고칠 것이 적다.
+   세로로 든 브라우저(개발 · 찍기 도구)는 예전 배치 그대로 */
+@media (orientation: landscape) {
+  #app { max-width: none; }
+  .pip { width: 30%; min-width: 220px; }
+  .win { left: auto; right: 0; top: 0 !important; bottom: 0 !important; width: min(460px, 54%); z-index: 30; border-top: 0; border-left: 2px solid var(--gold-d); box-shadow: -10px 0 24px rgba(0, 0, 0, .55); padding-right: env(safe-area-inset-right, 0px); }
+  .modal { max-height: 94%; }
+  .mboard { width: min(600px, 72vw); max-height: calc(100vh - 118px); overflow-y: auto; }
+  .mb-grid { grid-template-columns: repeat(4, 1fr); }
+  /* 전투 창: 그림(2.4 : 1)이 화면 전체를 채우고, 제목 · 기록 · 단추는 그림 위(하늘 자리)에 겹친다 */
+  .bwin { position: fixed; inset: 0; z-index: 40; background: #000; }
+  .bwin .win-h { position: absolute; left: 0; right: 0; top: 0; z-index: 3; background: none; border: 0; box-shadow: none; padding: 6px max(8px, env(safe-area-inset-right, 0px)) 0 max(8px, env(safe-area-inset-left, 0px)); pointer-events: none; }
+  .bwin .win-h > * { pointer-events: auto; }
+  .bwin .win-h h2 { background: rgba(10, 12, 18, .62); border: 2px solid #000; padding: 3px 10px; font-size: 13px; }
+  .bw-body { padding: 0; gap: 0; position: relative; align-items: center; justify-content: center; }
+  .bw-frame { width: min(100vw, 240vh); border: 0; box-shadow: none; }
+  .bw-stat { position: absolute; left: 50%; top: 44px; transform: translateX(-50%); z-index: 2; min-width: 180px; padding: 2px 8px; background: rgba(10, 12, 18, .55); }
+  .bw-log { position: absolute; left: max(8px, env(safe-area-inset-left, 0px)); top: 48px; z-index: 2; flex: none; width: 32%; max-height: 34%; min-height: 0; font-size: 11px; line-height: 1.4; background: rgba(10, 12, 18, .58); border-color: rgba(0, 0, 0, .6); box-shadow: none; }
+  .bw-btns { position: absolute; right: max(8px, env(safe-area-inset-right, 0px)); top: 48px; z-index: 2; }
+}

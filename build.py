@@ -98,7 +98,7 @@ appart.fit(_art, 180).save(WEB / 'icons' / 'apple-touch-icon.png')
 manifest = {
     'name': NAME, 'short_name': NAME, 'lang': 'ko', 'version': VERSION,
     'description': '몬스터 부속품을 다루는 상단을 키우는 방치형 경영 게임',
-    'start_url': './', 'scope': './', 'display': 'standalone', 'orientation': 'portrait',
+    'start_url': './', 'scope': './', 'display': 'standalone', 'orientation': 'landscape',
     'background_color': '#0b0d12', 'theme_color': '#0e1118',
     'icons': [
         {'src': 'icons/icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
