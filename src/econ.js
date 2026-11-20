@@ -37,17 +37,16 @@ function newParty(name, members) {
 function starterGear(a) { a.eq.weapon = makeGear(weaponOf(a.cls, 0), 0, 0); const d = derive(a); a.hp = d.maxHp; a.mp = d.maxMp; }
 function newGame(company) {
   S = blankState(company);
-  const w = makeAdv({ cls: 'warrior', name: '브람', bio: '오물거리에서 나고 자란 덩치. 당신의 첫 직원이다.' });
+  const w = makeAdv({ cls: 'warrior', name: '브람', bio: '라비린토스에서 나고 자란 덩치. 당신의 첫 길드원이다.' });
   const ar = makeAdv({ cls: 'archer', name: '리네', bio: '평원 마을에서 올라온 궁수. 빚을 갚을 때까지 일하기로 했다.' });
-  const cl = makeAdv({ cls: 'cleric', name: '테오', bio: '오물거리 무료 진료소에서 일하던 성직자. 당신을 따라왔다.' });
+  const cl = makeAdv({ cls: 'cleric', name: '테오', bio: '무료 진료소에서 일하던 성직자. 당신을 따라왔다.' });
   [w, ar, cl].forEach(starterGear);
   S.advs.push(w, ar, cl);
   S.parties.push(newParty('1팀', [w.id, ar.id, cl.id]));
   S.view = S.parties[0].id;
   rollCands(); genReq(); genReq();
   raidMonth(true);
-  log(`${S.company}이(가) ${WORLD.street} 입구에 문을 열었다.`);
-  queueModal({ title: '검은 두건의 손님', body: STORY.assassin });
+  log(`${S.company}이(가) 모험가 협회에 길드로 등록했다.`);   // 빌드 72 (11-21 01:24): 첫날 밤 암살자 길드 이야기(STORY.assassin)는 띄우지 않는다
 }
 function migrate(v) {
   const s = blankState(v.company);
@@ -140,7 +139,7 @@ function migrate4() {
   if (!S.flags.v05) {
     S.flags.v05 = 1;
     const body = STORY.v05.slice();
-    if (back.length) body.push(`묘지에 이름을 올렸던 ${back.join(', ')}은(는) 사실 오물거리 진료소에 누워 있었다. 크게 다친 채로 길드에 돌아왔으니 신전에서 치료해 주자.`);
+    if (back.length) body.push(`묘지에 이름을 올렸던 ${back.join(', ')}은(는) 사실 진료소에 누워 있었다. 크게 다친 채로 길드에 돌아왔으니 신전에서 치료해 주자.`);
     body.push(`지금까지 공략한 던전에 맞춰 길드는 ${RANKS[S.rank].name}랭크 「${RANKS[S.rank].title}」(으)로 시작한다.`);
     S.modals.push({ title: 'v0.5 업데이트', body });
   }
@@ -969,7 +968,7 @@ function kingArrive(forId, days) {
   const pick = wants.sort(() => rnd() - 0.5).slice(0, 3);
   const order = pick.map(it => ({ it, n: Math.max(1, Math.round(Math.min(40, Math.max(2, 700 / ITEMS[it].v)) * (1 + fv * 0.2))), got: 0 }));
   S.king.visit = { k: id, until: today() + (days || 3), order, m: FAVOR[fv].m, earned: 0, goods: kingGoods(D).map(o => Object.assign(o, { price: Math.round(o.price * festBuyMul(id)) })) };
-  log(`${D.name}의 상단이 오물거리를 찾아왔다. 사흘 동안 물건을 사 간다.`, 'good');
+  log(`${D.name}의 상단이 라비린토스를 찾아왔다. 사흘 동안 물건을 사 간다.`, 'good');
   HOOKS.toast(`${D.name} 상단 방문 · 길드 창의 교역에서 팔 수 있어요`);
   queueModal({ title: `${D.name} 상단 방문`, body: [D.desc, `이번에 사 가려는 것: ${order.map(o => `${ITEMS[o.it].name} ${o.n}개`).join(', ')}. 기준가의 ${Math.round(FAVOR[fv].m * 100)}%를 쳐준다.`, '사흘 안에 길드 창의 「왕국 교역」에서 팔 수 있다. 주문을 다 채우면 왕국과 더 가까워진다.'] });
   changed();
@@ -1107,7 +1106,8 @@ function sponsor(k) {
 // 빌드 69 (11-14 사용자 「이걸로」 — 계획 문서 남은 물음 1): 자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3%
 const RENT_SALES = 0.03;
 // 빌드 70 (계획 문서 「암살자 길드」): 뒷골목 은신처는 지부 — 깨면(guildDown) 절반, 지하미궁 통로의 본부를 깨면(guildHQ) 끝
-const rentMul = () => (S.flags.guildHQ ? 0 : S.flags.guildDown ? 0.5 : 1);
+const RENT_ON = false;   // 빌드 72 (11-21 01:24 사용자 「이건 우선 다 지워. 기억만 해둬」): 암살자 길드 자릿세를 꺼 둔다 (true면 되살아난다 — tools/saved/lore_old/옛설정.md)
+const rentMul = () => (!RENT_ON || S.flags.guildHQ ? 0 : S.flags.guildDown ? 0.5 : 1);
 const rentBase = () => Math.round((300 + 50 * Math.floor(S.fame / 25)) * rentMul());
 const rentSales = () => Math.round((S.salesM || 0) * RENT_SALES * rentMul());
 const rent = () => rentBase() + rentSales();
@@ -1115,7 +1115,8 @@ const salaryOf = a => Math.round(salaryCalc(a) * (1 - mentorCut(a.cls)) / 5) * 5
 const payroll = () => living().reduce((s, a) => s + salaryOf(a), 0);
 function settle() {
   const pm = dateParts(S.t - DAY_SEC).m, lines = [], r = rent();
-  if (S.flags.guildHQ) lines.push('암살자 길드 본부가 무너져 이제 자릿세는 없다.');
+  if (!RENT_ON) { /* 자릿세 없음 */ }
+  else if (S.flags.guildHQ) lines.push('암살자 길드 본부가 무너져 이제 자릿세는 없다.');
   else if (S.gold >= r) { S.gold -= r; lines.push(`암살자 길드에 자릿세 ${g$(r)}을 냈다.${rentSales() ? ` (기본 ${g$(rentBase())} + 이달 상점 판매액 ${g$(S.salesM)}의 ${S.flags.guildDown ? '1.5%' : '3%'} ${g$(rentSales())})` : ''}${S.flags.guildDown ? ' 지부가 무너져 절반만 걷는다.' : ''}`); }
   else {
     const paid = S.gold; S.gold = 0;
@@ -1139,7 +1140,7 @@ function settle() {
   if (warned.length) lines.push(`${warned.join(', ')}에게 봉급을 주지 못했다. 다음 달에도 밀리면 떠난다.`);
   if (gone.length) lines.push(`두 달째 봉급을 못 받은 ${gone.join(', ')}은(는) 길드를 떠난다. 원정 중이면 돌아온 뒤에 떠난다.`);
   S.salesLast = S.salesM || 0; S.salesM = 0;   // 빌드 69: 상점 판매액은 달마다 새로 센다
-  if (!S.flags.guildHQ) lines.push(`다음 달 자릿세는 ${g$(rentBase())}에 그달 상점 판매액의 ${S.flags.guildDown ? '1.5%' : '3%'}를 더한 값이다.${S.flags.guildDown ? ' 지하미궁 통로의 길드 본부를 토벌하면 자릿세가 끝난다.' : ''}`);
+  if (RENT_ON && !S.flags.guildHQ) lines.push(`다음 달 자릿세는 ${g$(rentBase())}에 그달 상점 판매액의 ${S.flags.guildDown ? '1.5%' : '3%'}를 더한 값이다.${S.flags.guildDown ? ' 지하미궁 통로의 길드 본부를 토벌하면 자릿세가 끝난다.' : ''}`);
   if (S.bld.temple) { blessRoll(); lines.push(`신전: 이번 달에는 「${BLESSINGS[S.bless.id].name}」. ${BLESSINGS[S.bless.id].desc}`); }
   leagueMonth(lines);
   log(`${pm}월 정산을 마쳤다.`, unpaid.length ? 'bad' : '');

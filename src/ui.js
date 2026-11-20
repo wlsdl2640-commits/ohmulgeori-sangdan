@@ -159,7 +159,7 @@ function updateRaidHead() {
 function updateOverlay() {
   updatePipDots(); if (RP.page === 1) updateRaidHead();
   const p = viewParty(), L = $('ov-l'), Rr = $('ov-r'), B = $('ov-b');
-  if (!p) { L.textContent = '오물거리 · 길드 앞'; Rr.hidden = true; B.hidden = true; return; }
+  if (!p) { L.textContent = '라비린토스 · 길드 앞'; Rr.hidden = true; B.hidden = true; return; }
   const e = p.exp;
   Rr.hidden = true;
   if (!e) { L.textContent = `${p.name} · 길드 앞`; B.hidden = true; return; }

@@ -297,7 +297,7 @@ PANELS.under = () => {
     ${subBtn('arshop', '투기장 상단', `코인으로만 사는 장비와 전용 물건 · 코인 ${fmt(A.coins)}`)}
     ${subBtn('bm', '암시장', `오늘 물건 ${U.bm.stock.filter(o => !o.sold).length}개 · 새벽 4시에 바뀌어요`)}
     ${subBtn('au', '경매장', au.g ? `<span class="gold-t">${esc(gearName(au.g))}</span> · 지금 ${fmt(au.price)}G${au.top === 'me' ? ' · 우리가 최고' : ''}` : '오늘 경매는 끝났어요', au.g && au.top !== 'me')}
-    ${subBtn('ag', '암살자 길드', S.flags.guildHQ ? '본부 토벌 완료 · 자릿세 없음' : `매달 자릿세 ${fmt(rent())}G${S.flags.guildDown ? ' (지부 토벌 · 절반)' : ''}`)}
+    ${subBtn('ag', '암살자 길드', !RENT_ON ? '지하수로의 주인' : S.flags.guildHQ ? '본부 토벌 완료 · 자릿세 없음' : `매달 자릿세 ${fmt(rent())}G${S.flags.guildDown ? ' (지부 토벌 · 절반)' : ''}`)}
     ${subBtn('exp', '지하수로 던전', `원정 창에서 「지하수로」로 · Lv${FIELDS.sewer.lv}~ · 최고 8-${(S.fields.sewer && S.fields.sewer.best) || 0}`)}
   </div>`;
 };

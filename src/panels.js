@@ -110,7 +110,7 @@ PANELS.co = () => {
   const done = q ? q.filter(x => x.ok).length : 0;
   return `
   <div class="card hl">
-    <div class="row"><span class="rk">${RANKS[S.rank || 0].name}</span><div class="grow"><div class="h">${esc(S.company)}${S.league && S.league.last && S.league.last.rank === 1 ? ' <small class="gold-t">이달의 길드</small>' : ''}</div><div class="sub">${RANKS[S.rank || 0].title} · ${WORLD.capital} ${WORLD.street} 입구 · 왕국력 ${p.y}년</div></div></div>
+    <div class="row"><span class="rk">${RANKS[S.rank || 0].name}</span><div class="grow"><div class="h">${esc(S.company)}${S.league && S.league.last && S.league.last.rank === 1 ? ' <small class="gold-t">이달의 길드</small>' : ''}</div><div class="sub">${RANKS[S.rank || 0].title} · 미궁도시 ${WORLD.capital} · ${p.y}년</div></div></div>
     <div class="stats"><span>길드원 <b>${living().length}/${beds()}</b></span><span>파티 <b>${regularParties().length}/${partyMax()}${raidParty() ? ' + 레이드대' : ''}</b></span><span>처치 <b>${fmt(S.stats.kills)}</b></span><span>부상 <b class="${patients().length ? 'red-t' : ''}">${patients().length}</b></span><span>던전 <b>${TIER_FIELDS.filter(f => S.fields[f].cleared).length}/${TIER_FIELDS.length}</b></span></div>
   </div>
   <div class="submenu">
@@ -154,7 +154,7 @@ PANELS.co_money = () => {
   const dd = S.settleDay - today(), cost = rent() + payroll(), sp = dateParts(S.settleDay * DAY_SEC);
   return `<div class="sec" style="margin-top:0"><b>${sp.m}월 ${sp.d}일 정산</b><span>D-${dd}</span></div>
   <div class="card">
-    <div class="row"><span class="grow">암살자 길드 자릿세${rentSales() ? ` <span class="sub muted">· 기본 ${fmt(rentBase())} + 이달 상점 판매액의 3% ${fmt(rentSales())}</span>` : ''}</span><span class="num ${rent() ? 'red-t' : 'ok-t'}">${rent() ? fmt(rent()) + 'G' : '없음'}</span></div>
+    ${RENT_ON ? '' : '<!--'}<div class="row"><span class="grow">암살자 길드 자릿세${rentSales() ? ` <span class="sub muted">· 기본 ${fmt(rentBase())} + 이달 상점 판매액의 3% ${fmt(rentSales())}</span>` : ''}</span><span class="num ${rent() ? 'red-t' : 'ok-t'}">${rent() ? fmt(rent()) + 'G' : '없음'}</span></div>${RENT_ON ? '' : '-->'}
     <div class="row"><span class="grow">길드원 봉급 ${living().length}명</span><span class="num">${fmt(payroll())}G</span></div>
     <div class="row"><span class="grow"><b>합계</b></span><span class="num ${S.gold >= cost ? 'ok-t' : 'red-t'}">${fmt(cost)}G</span></div>
     <div class="sub">${S.gold >= cost ? '지금 가진 돈으로 낼 수 있어요.' : '돈이 모자라요. 자릿세를 못 내면 창고가 털리고, 봉급이 두 달 밀리면 길드원가 떠나요.'} 날짜는 게임을 켜 둔 동안에만 흘러요.</div>

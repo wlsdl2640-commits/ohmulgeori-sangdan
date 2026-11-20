@@ -143,7 +143,7 @@ function talkCard(id) {
   const f = K ? favorOf(id) : 0, t = K ? favorTier(f) : 0;
   const v = S.king && S.king.visit && S.king.visit.k === id;
   const q = K ? kqOf(id) : null, nq = K ? kqNext(id) : null;
-  return `<div class="card hl"><div class="row"><img class="emb" src="${emblemURL(id, 1)}" alt=""><div class="grow"><div class="h">${esc(name)}</div><div class="sub">${K ? `${K.race} · ${FAVOR[t].name} (호감 ${Math.round(f)})${v ? ' · <span class="gold-t">상단 방문 중</span>' : ''}` : id === 'city' ? '파로스 왕국의 수도이자 미궁도시. 길드원 협회와 상인 조합이 있다.' : '지하수로의 주인. 7번가의 자릿세를 받는다.'}</div></div></div>
+  return `<div class="card hl"><div class="row"><img class="emb" src="${emblemURL(id, 1)}" alt=""><div class="grow"><div class="h">${esc(name)}</div><div class="sub">${K ? `${K.race} · ${FAVOR[t].name} (호감 ${Math.round(f)})${v ? ' · <span class="gold-t">상단 방문 중</span>' : ''}` : id === 'city' ? '지하미궁 위에 선 도시. 모험가 협회가 다스린다.' : '지하수로의 주인. 7번가의 자릿세를 받는다.'}</div></div></div>
     ${K ? `<div class="sub">${K.desc}</div>` : ''}
     ${K && !open ? `<div class="sub muted">${FIELDS[K.need] ? FIELDS[K.need].name + '이(가) 열리면 찾아와요.' : ''}</div>` : ''}
     ${K && q ? `<div class="sub">의뢰 진행: ${kqText(q)} <b class="num">${kqProgress(id)}</b></div>` : K && nq ? `<div class="sub muted">받을 수 있는 의뢰가 있어요.</div>` : K ? '<div class="sub ok-t">모든 의뢰를 마쳤어요.</div>' : ''}

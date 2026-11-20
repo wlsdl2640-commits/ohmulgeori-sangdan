@@ -3,7 +3,7 @@
 const KINGDOMS = {
   inglisia: { name: '잉그리시아 왕국', race: '인간', c: '#3f6aa8', c2: '#e8c060', need: null,
     wants: ['wolf_pelt', 'wolf_fang', 'iron_ore', 'lizard_scale', 'kobold_pick', 'golem_core', 'yeti_fur', 'griffon_claw', 'rh_kaishar', 'rh_tempest'],
-    desc: '파로스 왕국 서쪽의 기사 왕국. 군대에 쓸 가죽과 철을 대량으로 사들인다.' },
+    desc: '서쪽의 기사 왕국. 군대에 쓸 가죽과 철을 대량으로 사들인다.' },
   frama: { name: '프라마 왕국', race: '인간', c: '#a8432f', c2: '#f4f0e0', need: null,
     wants: ['rabbit_horn', 'shaman_feather', 'harpy_feather', 'spider_silk', 'maiden_veil', 'sand_silk', 'ratking_crown', 'giant_gem', 'worm_pearl', 'rh_kingslime', 'rh_griffon'],
     desc: '남쪽 바다의 상업 왕국. 사치품과 보석에 돈을 아끼지 않는다.' },
