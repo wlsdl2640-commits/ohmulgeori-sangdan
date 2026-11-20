@@ -1104,3 +1104,4 @@
 - **도적 부탁 묶음**(11-20 13:09 사용자 「이제 도적」): 아티팩트 「도적 부탁 묶음」 https://claude.ai/artifact/9yXXiwUugvKJN5CuxCRiuu · `tools/saved/gpt70/rogue1/`(README · page_rogue.html · `KIT=rogue` · run_m1.py `rogue dagger`). 지금 생김새 그대로(짙은 남보라 두건 · 붉은 머리띠 · 복면 · 단검), 옷이 어두워 「새까맣게 뭉치지 않게」를 글에 넣음. 공격 판 = 단검 찌르기(7번째 = 맞히는 장). 새 아티팩트를 만들 때 quickstart는 한 대화에서 이미 읽었으면 다시 부르지 않아도 된다(같은 글 — 길어서 맥락만 먹는다).
 - **도적 1차 판 넷을 받아 게임에 넣음**(11-20 13:17 「이거 정리하고 다음 짐꾼」): `hd70/sheets/rogue1_*` → `CLS=rogue extract_m1.py 40` → `adv.rogue` → hd70.js `HDCFG.rogue`(HDR_* · stab H 6). 페이지 맨 위 「게임에 넣은 모습」.
 - **짐꾼 부탁 묶음**(같은 때): 아티팩트 「짐꾼 부탁 묶음」 https://claude.ai/artifact/4ZEuLo3mn3TQMszfETNJud · `tools/saved/gpt70/porter1/`(`KIT=porter` · run_m1.py `porter club`). 공격 판 = 몽둥이 내려치기. 이로써 1차 여섯 직업 가운데 전사 · 마법사 · 궁수 · 성직자 · 도적은 게임에 들어갔고 짐꾼만 판을 기다린다.
+  - 11-20 13:47 사용자(등불 판 「부장비 47」) 「아 짐꾼 손에 이거 들어야 해」 → 짐꾼 부탁 글에 **왼손 Lv1 등불**(porter1/lantern_lv1.png)을 넣음 — 사제의 성표와 같은 길. 직업마다 부장비를 왼손에 드는 것이 기본(사제 성표 · 짐꾼 등불).
