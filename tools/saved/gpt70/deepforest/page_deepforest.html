@@ -1,0 +1,168 @@
+<title>깊은 숲 구상안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 배치: 한 줄 흐름 — 머리 → 순서(번호: 실제 차례) → 붙일 그림 셋(그림 · 크게 보기 · 저장) → 부탁 글 넷(글 · 복사) → 받은 뒤 볼 것.
+   색은 궁수 그림에서: 두건 초록 · 가죽 갈색 · 버클 금색. 그림은 밝은 회색 판 그대로 보인다 */
+:root {
+  --bg: #eeedf4; --surface: #f9f8fc; --panel: #dcd9e8; --fg: #1c1a26; --muted: #5a5770; --line: #c8c4d8;
+  --accent: #2f6a3a; --accent-fg: #ffffff; --label: #7a5a0c; --sheet: #c8ccd6; --code: #f3f1f9;
+  --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark }
+*, *::before, *::after { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 820px; margin-inline: auto; display: grid; gap: 44px; grid-template-columns: minmax(0, 1fr) }
+h1, h2, h3, p, ul, ol, figure, pre { margin: 0 }
+ul, ol { padding: 0; list-style: none }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.15 }
+h1 { font-size: clamp(30px, 7vw, 42px) }
+h2 { font-size: 24px }
+h3 { font-size: 16px; font-weight: 600 }
+.top { display: grid; gap: 10px }
+.eyebrow { color: var(--label); font-size: 13px; font-weight: 600; letter-spacing: .04em }
+.lede { max-width: 36em }
+.sec { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) }
+.note { color: var(--muted); font-size: 14px; max-width: 44em }
+.steps { counter-reset: n; display: grid; gap: 12px; max-width: 46em }
+.steps li { counter-increment: n; padding-left: 34px; position: relative }
+.steps li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font: 400 15px/1 var(--font-display); background: var(--accent); color: var(--accent-fg); border-radius: 4px }
+.item { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) }
+.item .what { display: grid; gap: 2px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.msg { color: var(--muted); font-size: 13px }
+.msg:empty { display: none }
+.btn { font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.btn[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg) }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-fg) }
+.btn:disabled { opacity: .6; cursor: default }
+.btn:focus-visible { outline: 2px solid var(--label); outline-offset: 2px }
+.frame { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px }
+.frame img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.frame.zoomed img { width: var(--zw); max-width: none }
+.frame.soft img { image-rendering: auto }
+.attach { color: var(--label); font-size: 13px; font-weight: 600 }
+.req { font: 13.5px/1.65 var(--font-body); white-space: pre-wrap; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; max-height: 22em; overflow: auto; -webkit-user-select: text; user-select: text }
+.list { display: grid; gap: 10px; max-width: 46em }
+.list li { padding-left: 18px; position: relative }
+.list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; background: var(--label) }
+
+.mock { position: relative; width: 100%; aspect-ratio: 2172 / 724; container-type: inline-size; border: 2px solid #000; overflow: hidden; border-radius: 6px; background: #c9d6c2; }
+.mock .b { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 2.9cqw; line-height: 1.25; color: #f2f4e8; box-sizing: border-box; border-top: 1px dashed rgba(0, 0, 0, .45); padding: 0 1cqw; }
+.pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style><main class="wrap">
+  <header class="top">
+    <p class="eyebrow">미궁도시 · 2계층 미개척지대</p>
+    <h1>깊은 숲 구상안</h1>
+    <p class="lede">세계수 아래의 어두운 숲입니다. 배경 구상, GPT에 보낼 그림 두 장과 부탁 글, 몬스터 아이디어를 담았습니다.</p>
+  </header>
+  <section class="sec" aria-labelledby="h-plan">
+    <h2 id="h-plan">구상</h2>
+    <ul class="list">
+      <li><strong>자리</strong> — 원시림 2-50을 지나면 3계층 개미굴로 내려가거나 깊은 숲으로 들어갑니다. 깊은 숲 필드는 2-2-1부터 2-2-50까지로 셉니다.</li>
+      <li><strong>나무</strong> — 원시림 맨 뒤에 보이던 세계수 바로 아래입니다. 줄기가 화면 맨 위를 넘어가서 꼭대기도 하늘도 보이지 않습니다.</li>
+      <li><strong>빛</strong> — 낮에는 나무 사이로 가는 빛줄기 몇 가닥만 내려옵니다. 밤이 되면 그 빛줄기가 사라지고 야광빛만 남습니다. 빛줄기는 그림에 넣지 않고 게임이 따로 그려서 시간에 따라 켜고 끕니다.</li>
+      <li><strong>야광</strong> — 에테르 이끼와 에테르 버섯이 푸른빛을 냅니다. 그림 자체에 푸른 물이 들어 있고, 밤에는 게임이 그 자리에 빛을 더 얹습니다.</li>
+      <li><strong>길</strong> — 길드원과 몬스터가 묻히지 않게 길과 그 둘레만 조금 밝게 둡니다.</li>
+    </ul>
+  </section>
+  <section class="sec" aria-labelledby="h-imgs">
+    <div class="what item"><h2 id="h-imgs">GPT에 붙일 그림 2장</h2><p class="note">원시림 때 받아 오신 두 장입니다. 크기와 칸 나눔의 기준으로 씁니다. 그림 아래 「저장」을 누르세요.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
+    <div class="item">
+      <div class="what"><h3>원시림 다 겹친 모습</h3><p class="note">부탁 글 1에 붙입니다.</p></div>
+      <div class="frame" id="f-comp"><img src="forest_composite.png" alt="원시림 배경: 먼 세계수 윤곽, 고목 줄기, 흙길, 앞 풀"></div>
+      <div class="row"><button class="btn" type="button" data-zoom="f-comp" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="forest_composite.png" hidden>저장</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>원시림 겹 그림</h3><p class="note">부탁 글 2에 붙입니다.</p></div>
+      <div class="frame" id="f-layers"><img src="forest_layers.png" alt="원시림 겹 그림: 먼 숲 띠, 뒤쪽 숲 띠, 땅 띠, 낱개 그림들"></div>
+      <div class="row"><button class="btn" type="button" data-zoom="f-layers" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="forest_layers.png" hidden>저장</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+  <section class="sec" aria-labelledby="h-req">
+    <div class="what item"><h2 id="h-req">부탁 글</h2><p class="note">1번을 먼저 받고, 마음에 드는 그림이 나오면 그 그림을 붙여 2번을 보냅니다.</p></div>
+    <div class="item">
+      <div class="what"><h3>1. 다 겹친 모습</h3><p class="attach">붙일 그림: 원시림 다 겹친 모습</p></div>
+      <pre class="req" id="req-1" tabindex="0">깊은 숲 배경 — 다 겹친 모습 한 장
+
+붙인 그림은 같은 게임의 「원시림」 배경입니다. 이 그림과 같은 크기, 같은 화풍, 같은 자리 나눔으로 「깊은 숲」 배경을 그려 주세요. 원시림 그림 한가운데 멀리 보이던 아주 큰 나무(세계수)의 바로 아래까지 들어온 곳입니다. 나무들이 너무 높고 굵어서 꼭대기는 보이지 않고, 잎이 하늘을 다 가려 낮에도 어둡습니다. 대신 마나를 머금고 자란 「에테르 이끼」와 「에테르 버섯」이 푸른 야광빛을 내서 숲 바닥이 은은하게 빛납니다. 어둡고 고요하고 신비로운 분위기입니다.
+
+위에서 아래로 (원시림 그림과 같은 높이에서 나눕니다)
+1. 맨 위 띠 (원시림 그림에서 마젠타였던 자리): 이번에는 마젠타가 아니라 그림으로 채운다. 그림 맨 위까지 곧게 솟아 잘려 나가는 거대한 나무 줄기들과, 그 사이를 메운 아주 어두운 남청색 어둠. 하늘도 나무 꼭대기도 보이지 않는다.
+2. 먼 숲: 한가운데에 세계수의 줄기. 그림 너비의 1/4쯤 될 만큼 굵고, 땅에서 맨 위 끝까지 이어져 잘려 나간다(꼭대기 없음). 밑동은 산줄기처럼 넓게 퍼진 뿌리. 그 양옆으로 그보다 가는(그래도 아주 굵은) 거대한 줄기들이 겹겹이, 멀수록 푸르스름하게 흐리다.
+3. 가운데 숲: 집채만 한 나무뿌리가 아치처럼 솟아 있고 그 밑으로 뒤가 보인다. 굵은 줄기 밑동들, 줄기에 층층이 붙은 큰 에테르 버섯(선반 버섯, 푸른빛), 줄기와 뿌리를 덮은 에테르 이끼(청록빛으로 빛남), 늘어진 덩굴, 빛나는 포자 주머니가 달린 고사리.
+4. 땅: 가운데를 가로지르는 길. 검푸른 흙과 굵은 뿌리, 길 가장자리를 따라 에테르 이끼가 띠처럼 빛난다. 캐릭터가 이 길 위에 한 줄로 서므로 길과 그 둘레는 캐릭터가 묻히지 않을 만큼 밝게.
+5. 맨 아래 앞 풀: 에테르 버섯 무리(크고 작은 푸른 버섯), 빛나는 이끼 낀 돌, 고사리, 작은 수정처럼 빛나는 꽃.
+
+색: 바탕은 아주 짙은 남색, 청록, 검은 초록. 빛나는 것(에테르 이끼 · 에테르 버섯)은 하늘색, 청록, 옅은 민트색이고 그 둘레의 줄기와 땅이 푸르게 물든다. 따뜻한 색(붉은색 · 주황색 · 노란색)은 쓰지 않는다. 원시림보다 훨씬 어둡지만 새까맣지 않게, 줄기의 결과 뿌리 모양은 알아볼 수 있게.
+
+공통 규격
+· 그림 크기와 자리 나눔은 붙인 원시림 그림과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율)
+· 도트 그림, 붙인 원시림 그림과 같은 화풍과 같은 점 굵기
+· 빈 자리는 단색 마젠타 #FF00FF
+· 왼쪽 끝과 오른쪽 끝이 이어 붙여도 어색하지 않게 (옆으로 끝없이 흐르는 배경)
+· 캐릭터, 몬스터, 글자는 그리지 않는다
+· 위에서 내려오는 빛줄기, 안개, 떠다니는 빛 가루는 그리지 않는다 (게임이 따로 그려서 밤에는 끕니다). 땅에 떨어진 햇빛 자국도 그리지 않는다
+· 십자 무늬, 사람 얼굴 모양 나무는 그리지 않는다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-1">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>2. 겹 그림</h3><p class="attach">붙일 그림: 받은 깊은 숲 그림 + 원시림 겹 그림</p></div>
+      <pre class="req" id="req-2" tabindex="0">깊은 숲 배경 — 겹 그림 한 장
+
+붙인 그림 두 장: 첫째는 방금 받은 깊은 숲 배경, 둘째는 원시림의 「겹 그림」입니다. 둘째 그림과 똑같은 칸 나눔으로, 첫째 그림(깊은 숲)을 겹마다 따로 그려 주세요. 게임에서 겹마다 다른 빠르기로 흘려서 깊이를 냅니다.
+
+칸 나눔 (원시림 겹 그림과 같은 자리 · 같은 크기)
+1. 맨 위 띠: 먼 숲 — 세계수의 굵은 줄기와 그 양옆의 거대한 줄기들. 이번에는 이 띠를 위 끝부터 아래 끝까지 그림으로 꽉 채운다(마젠타 없음). 줄기 사이는 아주 어두운 남청색.
+2. 둘째 띠: 뒤쪽 숲 — 아치처럼 솟은 큰 뿌리, 줄기 밑동, 에테르 버섯과 에테르 이끼가 붙은 한 겹. 위아래 빈 곳은 마젠타.
+3. 셋째 띠: 땅 — 검푸른 흙길과 길 가장자리의 빛나는 에테르 이끼. 띠 전체가 꽉 차게.
+4. 맨 아래 줄: 낱개 그림 12개를 마젠타 바탕에 띄엄띄엄 한 줄로 — 에테르 버섯 무리 셋(큰 것 · 작은 것 · 길쭉한 것), 빛나는 이끼 낀 돌 둘, 드러난 뿌리 둘, 포자 주머니 고사리 둘, 수정처럼 빛나는 꽃 둘, 이끼 덮인 작은 그루터기. 서로 닿지 않게.
+5. 오른쪽 칸: 큰 낱개 그림 넷을 마젠타 바탕에 — 아치 모양 큰 뿌리, 선반 버섯이 층층이 붙은 굵은 줄기 밑동, 에테르 이끼로 덮인 큰 바위, 속이 빈 쓰러진 고목(안쪽이 푸르게 빛남). 서로 닿지 않게.
+
+공통 규격
+· 그림 크기와 자리 나눔은 붙인 원시림 그림과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율)
+· 도트 그림, 붙인 원시림 그림과 같은 화풍과 같은 점 굵기
+· 빈 자리는 단색 마젠타 #FF00FF
+· 왼쪽 끝과 오른쪽 끝이 이어 붙여도 어색하지 않게 (옆으로 끝없이 흐르는 배경)
+· 캐릭터, 몬스터, 글자는 그리지 않는다
+· 위에서 내려오는 빛줄기, 안개, 떠다니는 빛 가루는 그리지 않는다 (게임이 따로 그려서 밤에는 끕니다). 땅에 떨어진 햇빛 자국도 그리지 않는다
+· 십자 무늬, 사람 얼굴 모양 나무는 그리지 않는다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-2">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+  <section class="sec" aria-labelledby="h-mon">
+    <h2 id="h-mon">몬스터 아이디어</h2>
+    <p class="note">배경이 정해진 뒤 고르시면 부탁 글로 만들겠습니다. 어두운 배경에서 눈에 띄도록 모두 몸 어딘가가 푸르게 빛납니다.</p>
+    <ul class="list"><li><strong>에테르 반딧불 무리</strong> — 푸른 불빛 여럿이 뭉쳐 떠다닌다. 물리 공격이 잘 안 통하는 마법 몬스터.</li><li><strong>빛가루 나방</strong> — 사람만 한 나방. 날개에서 야광 가루를 뿌려 눈멂 · 수면을 건다. 날아다닌다.</li><li><strong>에테르 버섯 장로</strong> — 점박이 버섯의 깊은 숲 판. 푸른 갓에서 포자를 뿜고 동료를 회복시킨다.</li><li><strong>이끼 등 도마뱀</strong> — 등에 에테르 이끼가 자란 큰 도마뱀. 줄기에 붙어 있다가 혀로 끌어당긴다.</li><li><strong>뿌리 지네</strong> — 나무뿌리처럼 생긴 긴 지네. 여러 번 물고 독을 쌓는다.</li><li><strong>속 빈 나무 올빼미</strong> — 고목 구멍에 사는 큰 올빼미. 눈이 푸르게 빛나고 소리 없이 덮친다.</li><li><strong>수정 사슴벌레</strong> — 철갑 풍뎅이의 깊은 숲 판. 턱과 등에 에테르 수정이 돋아 마법을 튕겨 낸다.</li><li><strong>고목 파수꾼</strong> — 이끼와 선반 버섯으로 덮인 큰 나무 거인. 느리지만 가장 단단하다.</li></ul>
+    <h3>2-2-50 주인 후보</h3>
+    <ul class="list"><li><strong>세계수의 뿌리지기</strong> — 세계수 뿌리에서 깨어난 거대한 나무 짐승. 등에 빛나는 버섯 숲이 자라 있다.</li><li><strong>에테르 여왕 나방</strong> — 날개를 펴면 화면 절반을 덮는 야광 나방. 가루 폭풍으로 전체 공격.</li><li><strong>잠든 고룡목</strong> — 용 모양으로 자란 고목. 가슴 속 에테르 심장이 푸르게 뛴다.</li></ul>
+  </section>
+</main>
+<script>
+const $$ = s => Array.from(document.querySelectorAll(s));
+const msgOf = b => b.parentElement.querySelector('.msg');
+const W = { 'f-comp': 2170, 'f-layers': 2170 };
+$$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');
+  b.addEventListener('click', () => { const on = f.classList.toggle('zoomed'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); });
+// 글 복사: 안 되면 글을 골라 둔다
+$$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const pre = document.getElementById(b.dataset.copy), msg = msgOf(b);
+  try { await navigator.clipboard.writeText(pre.textContent); msg.textContent = '복사했습니다.'; }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); pre.focus(); msg.textContent = '여기서는 바로 복사가 안 됩니다. 글을 골라 두었으니 길게 눌러 복사해 주세요.'; }
+}));
+// 저장 (보는 쪽에서 저장을 받아 줄 때만 단추를 보인다)
+(async () => {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+  if (!dl) return;
+  document.getElementById('save-hint').hidden = true;
+  $$('[data-save]').forEach(b => { b.hidden = false; b.addEventListener('click', async () => {
+    const msg = msgOf(b); b.disabled = true; msg.textContent = '';
+    try { const blob = await (await fetch(b.dataset.save)).blob(); await dl.save({ filename: b.dataset.save, data: blob }); msg.textContent = '저장했습니다.'; }
+    catch (e) { const c = e && e.code; msg.textContent = c === 'declined' ? '저장을 취소했습니다.' : c === 'rate_limited' ? '잠시 뒤에 다시 눌러 주세요.' : '여기서는 저장할 수 없습니다. 그림을 길게 눌러 저장해 주세요.'; }
+    b.disabled = false; }); });
+})();
+</script>
