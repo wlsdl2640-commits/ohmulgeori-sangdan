@@ -28,6 +28,25 @@ const HD_MOT = {
   i_aboar_butt:  { id: 'aboar', row: 'headbutt', T: [0.07, 0.07, 0.07, 0.06, 0.08, 0.08, 0.08, 0.08], hit: 4, dx: [0, 0, 1, 3, 6, 8, 5, 2] },
   i_aboar_charge: { id: 'aboar', row: 'charge', T: 0.06, hit: 5, dx: [0, 3, 8, 14, 20, 24, 18, 8] },
   i_aboar_horn:  { id: 'aboar', row: 'hornup', T: 0.08, hit: 3, dx: [0, 0, 1, 3, 2, 0] },
+  // 깊은 숲 여덟 · 세계수 뿌리굴 넷 (빌드 72 · 11-20 23:51)
+  i_ewisp_burst: { id: 'ewisp', row: 'burst', T: [0.06, 0.07, 0.08, 0.08, 0.07, 0.06, 0.07, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [0, -14] },
+  i_emoth_dust:  { id: 'emoth', row: 'dust', T: [0.06, 0.08, 0.09, 0.07, 0.06, 0.07, 0.08, 0.07, 0.06, 0.06], hit: 5, dx: [0, -1, -2, 0, 2, 3, 2, 1, 0, 0], tip: [22, -8] },
+  i_eshroom_spore: { id: 'eshroom', row: 'spore', T: [0.06, 0.08, 0.09, 0.09, 0.08, 0.08, 0.09, 0.08, 0.07, 0.06], hit: 5, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [0, -46] },
+  i_mlizard_tongue: { id: 'mlizard', row: 'tongue', T: [0.06, 0.07, 0.06, 0.05, 0.06, 0.07, 0.07, 0.06, 0.06, 0.06], hit: 4, dx: [0, -1, 1, 3, 4, 4, 3, 1, 0, 0] },
+  i_rcenti_bite: { id: 'rcenti', row: 'bite', T: [0.06, 0.07, 0.08, 0.08, 0.05, 0.06, 0.07, 0.07, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 0, 0, 3, 8, 10, 8, 4, 1, 0] },
+  i_cstag_pinch: { id: 'cstag', row: 'pinch', T: [0.06, 0.07, 0.08, 0.08, 0.05, 0.06, 0.08, 0.07, 0.06, 0.06], hit: 5, dx: [0, -1, -2, -1, 6, 10, 10, 6, 2, 0] },
+  i_sentinel_smash: { id: 'sentinel', row: 'smash', T: [0.07, 0.08, 0.1, 0.1, 0.06, 0.05, 0.09, 0.09, 0.08, 0.07], hit: 5, dx: [0, 0, 0, 1, 3, 6, 6, 4, 1, 0] },
+  i_elddragon_bite: { id: 'elddragon', row: 'bite', T: [0.06, 0.08, 0.09, 0.09, 0.05, 0.06, 0.08, 0.08, 0.07, 0.06], hit: 5, dx: [0, 0, -1, -2, 6, 14, 10, 5, 2, 0] },
+  i_elddragon_breath: { id: 'elddragon', row: 'breath', T: [0.07, 0.08, 0.09, 0.1, 0.1, 0.08, 0.12, 0.1], hit: 6, dx: [0, 0, 0, 0, 0, 1, 2, 1], tip: [52, -50] },
+  i_elddragon_stomp: { id: 'elddragon', row: 'stomp', T: [0.06, 0.07, 0.08, 0.09, 0.1, 0.09, 0.05, 0.09, 0.08, 0.06], hit: 6, dx: [0, 0, 1, 2, 3, 4, 5, 4, 2, 0] },
+  i_elddragon_death: { id: 'elddragon', row: 'death', T: 0.08, hit: 9, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+  i_smandrake_scream: { id: 'smandrake', row: 'scream', T: [0.06, 0.08, 0.09, 0.07, 0.06, 0.1, 0.09, 0.08, 0.07, 0.06], hit: 4, dx: [0, 0, -1, 1, 2, 2, 1, 0, 0, 0], tip: [12, -22] },
+  i_fdryad_whip: { id: 'fdryad', row: 'whip', T: [0.06, 0.07, 0.08, 0.08, 0.05, 0.06, 0.07, 0.07, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 0, 1, 3, 5, 6, 4, 2, 1, 0] },
+  i_fairies_stab: { id: 'fairies', row: 'stab', T: [0.06, 0.07, 0.07, 0.05, 0.05, 0.05, 0.06, 0.07, 0.07, 0.06, 0.06], hit: 5, dx: [0, -1, -2, 3, 9, 14, 14, 9, 4, 1, 0] },
+  i_rahen_slam:  { id: 'rahen', row: 'slam', T: [0.07, 0.08, 0.08, 0.09, 0.1, 0.05, 0.06, 0.09, 0.08, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 0, 3, 5, 5, 3, 1, 0] },
+  i_rahen_cast:  { id: 'rahen', row: 'cast', T: [0.07, 0.08, 0.09, 0.09, 0.09, 0.09, 0.08, 0.07, 0.12], hit: 8, dx: [0, 0, 0, 0, 0, 0, 0, 1, 2], tip: [38, -44] },
+  i_rahen_roots: { id: 'rahen', row: 'roots', T: [0.07, 0.08, 0.08, 0.09, 0.1, 0.12, 0.1, 0.08, 0.07, 0.06], hit: 5, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+  i_rahen_death: { id: 'rahen', row: 'death', T: 0.09, hit: 9, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
   // 원시림 일곱 (빌드 72 · 11-20 17:34)
   i_vinesnake_bite: { id: 'vinesnake', row: 'bite', T: [0.06, 0.07, 0.07, 0.05, 0.06, 0.08, 0.07, 0.06, 0.06, 0.06], hit: 4, dx: [0, 0, 0, 2, 5, 6, 2, 0, 0, 0] },
   i_cflower_bite: { id: 'cflower', row: 'bite', T: [0.06, 0.07, 0.07, 0.08, 0.08, 0.05, 0.07, 0.08, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 1, 4, 7, 5, 2, 0] },
@@ -45,17 +64,18 @@ const HD_MOT = {
   i_goblin_thrust: { id: 'goblin', row: 'thrust', T: [0.06, 0.07, 0.06, 0.06, 0.06, 0.05, 0.08, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 1, 3, 6, 10, 10, 6, 2, 0] },
   i_gobarcher_shot: { id: 'gobarcher', row: 'shot', T: [0.06, 0.07, 0.07, 0.08, 0.09, 0.09, 0.05, 0.07, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [22, -21] }   // 화살은 게임이 그린다 (판의 날아가는 화살은 지웠다)
 };
-const HD_IDLE_FPS = { rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
-const HD_DEATH = { fguard: 'i_fguard_death' };   // 쓰러지는 그림이 따로 있는 몬스터 (넘어뜨려 돌리지 않고 이 줄을 돌린다)
+const HD_IDLE_FPS = { rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, ewisp: 8, emoth: 8, eshroom: 6, mlizard: 6, rcenti: 7, cstag: 6, sentinel: 6, elddragon: 6, smandrake: 7, fdryad: 6, fairies: 9, rahen: 6, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
+const HD_DEATH = { fguard: 'i_fguard_death', elddragon: 'i_elddragon_death', rahen: 'i_rahen_death' };
+const HD_LIFT = { ewisp: 5, emoth: 5, fairies: 6 };   // 떠 있는 몬스터: 몸을 이만큼 띄운다 (뭉툭 칸 — 그림자는 땅에)   // 쓰러지는 그림이 따로 있는 몬스터 (넘어뜨려 돌리지 않고 이 줄을 돌린다)
 const HD_WALK = { gobclub: [3, 4, 5, 6], goblin: [3, 4, 5, 6], gobarcher: [3, 4, 5, 6] };   // 걷기 줄에서 도는 장 (고블린 달리기 줄은 서기 → 달리기 → 서기라서 가운데 넉 장만)
 for (const k in HD_MOT) {   // 장 시간 · 맞히는 장을 동작 표에 (fmotOn · pxuMotT · fmotTip이 본다)
   const M = HD_MOT[k], n = (M.dx || []).length || 8;
   PXS_MOT_TT[k] = Array.isArray(M.T) ? M.T : Array.from({ length: n }, () => M.T);
   PXS_MOT_HITF[k] = M.hit;
 }
-Object.assign(PXU_CAST, { i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1, i_spotshroom_spore: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
+Object.assign(PXU_CAST, { i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1, i_spotshroom_spore: 1, i_ewisp_burst: 1, i_emoth_dust: 1, i_eshroom_spore: 1, i_smandrake_scream: 1, i_elddragon_breath: 1, i_rahen_cast: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
 // 새 몬스터 셋은 그림만 있다 (PXU 자리 · 크기 규칙만 빌린다) — 들쥐 · 뿔토끼 · 들늑대는 예전 PXU 그림이 그림 판을 풀기 전까지 그대로 나온다
-for (const id of ['scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
+for (const id of ['scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard', 'ewisp', 'emoth', 'eshroom', 'mlizard', 'rcenti', 'cstag', 'sentinel', 'elddragon', 'smandrake', 'fdryad', 'fairies', 'rahen']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
 for (const id of ['rat', 'rabbit', 'wolf', 'goblin']) PXU[id].img = 1;
 // 동작 갈래: hd = 그림 판이 있을 때 · 없으면 예전 갈래 (새 몬스터는 같은 것)
 const HD_ACT = {
@@ -66,6 +86,11 @@ const HD_ACT = {
   boar:      { atk: ['i_boar_butt'], skl: ['i_boar_charge'] },
   aboar:     { atk: ['i_aboar_butt'], skl: ['i_aboar_charge', 'i_aboar_horn'] },
   gobclub:   { atk: ['i_gobclub_smash'], skl: ['i_gobclub_smash'] },
+  ewisp: { atk: ['i_ewisp_burst'], mag: ['i_ewisp_burst'], skl: ['i_ewisp_burst'] }, emoth: { atk: ['i_emoth_dust'], mag: ['i_emoth_dust'], skl: ['i_emoth_dust'] }, eshroom: { atk: ['i_eshroom_spore'], mag: ['i_eshroom_spore'], skl: ['i_eshroom_spore'] },
+  mlizard: { atk: ['i_mlizard_tongue'], skl: ['i_mlizard_tongue'] }, rcenti: { atk: ['i_rcenti_bite'], skl: ['i_rcenti_bite'] }, cstag: { atk: ['i_cstag_pinch'], skl: ['i_cstag_pinch'] }, sentinel: { atk: ['i_sentinel_smash'], skl: ['i_sentinel_smash'] },
+  elddragon: { atk: ['i_elddragon_bite'], mag: ['i_elddragon_breath'], skl: ['i_elddragon_breath', 'i_elddragon_stomp'] },
+  smandrake: { atk: ['i_smandrake_scream'], mag: ['i_smandrake_scream'], skl: ['i_smandrake_scream'] }, fdryad: { atk: ['i_fdryad_whip'], skl: ['i_fdryad_whip'] }, fairies: { atk: ['i_fairies_stab'], skl: ['i_fairies_stab'] },
+  rahen: { atk: ['i_rahen_slam'], mag: ['i_rahen_cast'], skl: ['i_rahen_cast', 'i_rahen_roots'] },
   vinesnake: { atk: ['i_vinesnake_bite'], skl: ['i_vinesnake_bite'] },
   cflower:   { atk: ['i_cflower_bite'], skl: ['i_cflower_bite'] },
   stump:     { atk: ['i_stump_bite'], skl: ['i_stump_bite'] },
@@ -87,6 +112,18 @@ Object.assign(PXU_ACT, {
   ibeetle:   Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'steel', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.ibeetle),
   mgolem:    Object.assign({ tk: 1.1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'quake', big: 1, after: 'dust', aoe: 'roots', shake: 2 } } }, HD_ACT.mgolem),
   fguard:    Object.assign({ tk: 1.05, fx: { atk: { pal: 'nature', hit: 'star', after: 'dust' }, skl: { pal: 'nature', hit: 'star', big: 1, after: 'petals', aoe: 'roots', shake: 2 } } }, HD_ACT.fguard),
+  ewisp:     Object.assign({ fx: { atk: { pal: 'water', hit: 'flash', p: 'orb' }, mag: { pal: 'water', hit: 'flash', p: 'orb' }, skl: { pal: 'water', hit: 'burst', p: 'orb', big: 1 } } }, HD_ACT.ewisp),
+  emoth:     Object.assign({ fx: { atk: { pal: 'water', hit: 'flash', p: 'orb' }, mag: { pal: 'water', hit: 'flash', p: 'orb' }, skl: { pal: 'water', hit: 'flash', p: 'orb', big: 1, after: 'motes' } } }, HD_ACT.emoth),
+  eshroom:   Object.assign({ fx: { atk: { pal: 'water', hit: 'poison', p: 'orb' }, mag: { pal: 'water', hit: 'poison', p: 'orb' }, skl: { pal: 'nature', hit: 'poison', p: 'orb', big: 1, after: 'bubbles' } } }, HD_ACT.eshroom),
+  mlizard:   Object.assign({ fx: { atk: { pal: 'nature', hit: 'star' }, skl: { pal: 'nature', hit: 'star', big: 1 } } }, HD_ACT.mlizard),
+  rcenti:    Object.assign({ fx: { atk: { pal: 'poison', hit: 'bite' }, skl: { pal: 'poison', hit: 'poison', big: 1, after: 'bubbles' } } }, HD_ACT.rcenti),
+  cstag:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'water', hit: 'star', after: 'shards' }, skl: { pal: 'water', hit: 'pierce', big: 1, after: 'shards' } } }, HD_ACT.cstag),
+  sentinel:  Object.assign({ tk: 1.1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'quake', big: 1, after: 'dust', aoe: 'roots', shake: 2 } } }, HD_ACT.sentinel),
+  elddragon: Object.assign({ tk: 1.05, fx: { atk: { pal: 'nature', hit: 'bite', after: 'dust' }, mag: { pal: 'water', hit: 'burst', p: 'beam', big: 1 }, skl: { pal: 'water', hit: 'burst', big: 1, after: 'motes', aoe: 'roots', shake: 2 }, i_elddragon_breath: { pal: 'water', hit: 'burst', p: 'beam', big: 1, after: 'motes' } } }, HD_ACT.elddragon),
+  smandrake: Object.assign({ fx: { atk: { pal: 'music', hit: 'notes', p: 'note' }, mag: { pal: 'music', hit: 'notes', p: 'note' }, skl: { pal: 'music', hit: 'stun', p: 'note', big: 1, shake: 1 } } }, HD_ACT.smandrake),
+  fdryad:    Object.assign({ fx: { atk: { pal: 'nature', hit: 'slashes' }, skl: { pal: 'evil', hit: 'slashes', big: 1, after: 'drain' } } }, HD_ACT.fdryad),
+  fairies:   Object.assign({ tk: 0.95, fx: { atk: { pal: 'evil', hit: 'pierce' }, skl: { pal: 'evil', hit: 'pierce', big: 1 } } }, HD_ACT.fairies),
+  rahen:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'earth', hit: 'quake', after: 'dust' }, mag: { pal: 'poison', hit: 'burst', p: 'orb', big: 1 }, skl: { pal: 'poison', hit: 'burst', big: 1, after: 'bubbles', aoe: 'roots', shake: 2 }, i_rahen_cast: { pal: 'poison', hit: 'burst', p: 'orb', big: 1, after: 'bubbles' } } }, HD_ACT.rahen),
   gobclub:   Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'power', hit: 'star', big: 1, after: 'dust', shake: 2 } } }, HD_ACT.gobclub),
   gobarcher: Object.assign({ fx: { atk: { pal: 'steel', hit: 'star', p: 'arrow' }, skl: { pal: 'blood', hit: 'pierce', p: 'arrow', big: 1 } } }, HD_ACT.gobarcher)
 });
@@ -159,7 +196,7 @@ function hdMonSpr(id, mk, f) {   // pxund.js pxuSprite가 부른다 (그림 판�
   let s = HD.spr.get(key); if (s) return s;
   const m = B ? H.m2 : H.m, cv = FLASH ? hdTint(L[i], FLASH) : L[i];
   const q = m.hs || 1, lx = m.ax / q, ly = m.ay / q;
-  s = { cv, hs: q, ax: m.ax, ay: m.ay, w: m.w, h: m.h, dx: M && M.dx ? (M.dx[i] || 0) / 2 : 0, jy: 0, fo: [lx, ly], tip: M && M.tip ? [(lx + M.tip[0] - 1) / 2, (ly + M.tip[1] - 1) / 2] : [(lx + H.bb[1] - 2) / 2, (ly - H.bb[2] * 0.6) / 2] };
+  s = { cv, hs: q, ax: m.ax, ay: m.ay, w: m.w, h: m.h, dx: M && M.dx ? (M.dx[i] || 0) / 2 : 0, jy: -(HD_LIFT[id] || 0), fo: [lx, ly], tip: M && M.tip ? [(lx + M.tip[0] - 1) / 2, (ly + M.tip[1] - 1) / 2] : [(lx + H.bb[1] - 2) / 2, (ly - H.bb[2] * 0.6) / 2] };
   HD.spr.set(key, s); if (HD.spr.size > 900) HD.spr.delete(HD.spr.keys().next().value);
   return s;
 }
@@ -327,7 +364,7 @@ function hdSkiCells(id) {
 }
 
 // ── 넓은 평원 풍경 (scene.js getBg → BG_MAKERS.plains_hd) ──
-const buildPlainsHD = () => buildWideHD('plains', buildPlains), buildForestHD = () => buildWideHD('forest', buildForest), buildDeepHD = () => buildWideHD('deep', buildForest);   // 깊은 숲 (2-2 · 11-20)
+const buildPlainsHD = () => buildWideHD('plains', buildPlains), buildForestHD = () => buildWideHD('forest', buildForest), buildDeepHD = () => buildWideHD('deep', buildForest), buildWtbaseHD = () => buildWideHD('wtbase', buildForest), buildRootcaveHD = () => buildWideHD('rootcave', buildForest);   // 깊은 숲 (2-2 · 11-20)
 function buildWideHD(id, old) {
   const L = HD.bgs && HD.bgs[id];
   if (!L) return Object.assign({ hdWait: 1 }, old());   // 그림을 풀기 전: 옛 평원 (풀면 BG.plains_hd를 지워 다시 짓는다)
@@ -338,7 +375,7 @@ function buildWideHD(id, old) {
   const bw = B.blades ? B.blades.w : 0, bl = [];
   for (let i = 0; B.blades && i < B.blades.n; i++) { const [c, x] = mkCanvas(bw, bw); x.drawImage(L.blades, i * bw, 0, bw, bw, 0, 0, bw, bw); bl.push(c); }
   const W2 = mid.width / q, bx = B.blades ? B.blades.x : 0, by = B.blades ? B.blades.y + LD : 0;
-  return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y + LD, clouds: B.sky ? 0 : 7, ambient: B.sky ? 'deep' : 'meadow', skyOy: B.skyOy + LD, gateY: B.gateY + 40,
+  return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y + LD, clouds: B.sky ? 0 : 7, ambient: B.amb || (B.sky ? 'deep' : 'meadow'), skyOy: B.skyOy + LD, gateY: B.gateY + 40,
     skyFill: B.sky || null, dim: B.dim || 0,   // 깊은 숲: 하늘 대신 어둠 · 낮에도 어둑하다 (view.js)
     noHaze: B.sky ? 1 : 0,
     emit: !B.shafts ? null : function (g, off, t, dark) {

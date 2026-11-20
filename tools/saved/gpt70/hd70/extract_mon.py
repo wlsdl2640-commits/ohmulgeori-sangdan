@@ -23,6 +23,19 @@ CONF = {
  'ibeetle':   dict(src='ibeetle', bg='mag', rows=[('idle', 8), ('charge', 10), ('walk', 10)], jump=set(), th=27),
  'mgolem':    dict(src='mgolem', bg='mag', rows=[('idle', 8), ('smash', 10), ('walk', 10)], jump=set(), th=44),
  'fguard':    dict(src='fguard', bg='mag', rows=[('idle', 8), ('charge', 10), ('walk', 10), ('bell', 10), ('stomp', 10), ('death', 10)], jump=set(), th=56),
+ # 깊은 숲 여덟 · 세계수 뿌리굴 넷 (11-20 23:51 — regrid.py로 다시 놓은 판 · tight: 바탕은 또렷한 마젠타뿐(분홍 날개 · 혀를 살린다))
+ 'ewisp': dict(src='d_wisp', bg='mag', tight=1, rows=[('idle', 8), ('burst', 10), ('walk', 10)], jump=set(), th=26),
+ 'emoth': dict(src='d_emoth', bg='mag', tight=1, rows=[('idle', 8), ('dust', 10), ('walk', 10)], jump=set(), th=36),
+ 'eshroom': dict(src='d_eshroom', bg='mag', tight=1, rows=[('idle', 8), ('spore', 10), ('walk', 11)], jump=set(), th=35),
+ 'mlizard': dict(src='d_mlizard', bg='mag', tight=1, rows=[('idle', 8), ('tongue', 10), ('walk', 10)], jump=set(), th=20),
+ 'rcenti': dict(src='d_rcenti', bg='mag', tight=1, rows=[('idle', 8), ('bite', 11), ('walk', 10)], jump=set(), th=30),
+ 'cstag': dict(src='d_cstag', bg='mag', tight=1, rows=[('idle', 8), ('pinch', 10), ('walk', 10)], jump=set(), th=30),
+ 'sentinel': dict(src='d_sentinel', bg='mag', tight=1, rows=[('idle', 8), ('smash', 10), ('walk', 10)], jump=set(), th=54),
+ 'elddragon': dict(src='d_elddragon', bg='mag', tight=1, rows=[('idle', 8), ('bite', 10), ('walk', 10), ('breath', 8), ('stomp', 10), ('death', 10)], jump=set(), th=50),
+ 'smandrake': dict(src='d_mandrake', bg='mag', tight=1, rows=[('idle', 8), ('scream', 10), ('walk', 10)], jump=set(), th=27),
+ 'fdryad': dict(src='d_dryad', bg='mag', tight=1, rows=[('idle', 8), ('whip', 11), ('walk', 11)], jump=set(), th=37),
+ 'fairies': dict(src='d_fairies', bg='mag', tight=1, rows=[('idle', 8), ('stab', 11), ('walk', 11)], jump=set(), th=34),
+ 'rahen': dict(src='d_rahen', bg='mag', tight=1, rows=[('idle', 8), ('slam', 11), ('walk', 10), ('cast', 9), ('roots', 10), ('death', 10)], jump=set(), th=50),
  'aboar':     dict(src='572486e4', bg='dark', rows=[('idle', 7), ('walk', 8), ('hornup', 6), ('headbutt', 8), ('charge', 8)], jump=set(), th=32, xmin=165),
 }
 
@@ -30,6 +43,7 @@ def load(cf):
     rgb = np.array(Image.open(sheet_path(cf['src'])).convert('RGB')).astype(int)
     if cf['bg'] == 'mag':
         fg = mag_mask(rgb)
+        if cf.get('tight'): fg = ~((rgb[..., 0] > 250) & (rgb[..., 2] > 250) & (rgb[..., 1] < 5))   # regrid.py가 바탕을 (255, 0, 255)로 칠해 둔 판: 그 색만 바탕
         if cf.get('inner'):   # 몸 안의 자줏빛(식충 꽃 머리)은 바탕이 아니다: 또렷한 마젠타와 이어진 바탕 덩어리만 바탕
             R, G, B = rgb[..., 0], rgb[..., 1], rgb[..., 2]; core = (R > 225) & (B > 225) & (G < 70); lb, nb = ndimage.label(~fg)
             keep = np.zeros(nb + 1, bool); keep[np.unique(lb[core])] = True; keep[0] = False; fg = ~keep[lb]

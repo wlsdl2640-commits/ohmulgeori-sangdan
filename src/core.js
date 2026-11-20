@@ -539,7 +539,9 @@ function stageClear(p, e) {
       }
       if (labBranchOn(e.field)) { const nx = labBranchOf(e.field);   // 갈림길: 미개척지대로 (11-20 19:10 — 원시림 2-50 → 깊은 숲 2-2-1)
         e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].name}(으)로 들어섰다. (${fno(FIELDS[nx])}-1)`, 'good'); changed(); return; }
-      if (FIELDS[e.field].branch) { recall(p, 'end'); return; }   // 미개척지대의 끝(2-2-50): 지금은 돌아온다 (세계수 던전이 생기면 그리로)
+      if (FIELDS[e.field].branch) { const nx = labBranchOf(e.field);   // 미개척지대의 끝: 이어지는 곳이 있으면(깊은 숲 2-2-50 → 세계수 뿌리굴 2-3-1) 그리로, 없으면 돌아온다
+        if (nx) { e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].name}(으)로 들어섰다. (${fno(FIELDS[nx])}-1)`, 'good'); changed(); return; }
+        recall(p, 'end'); return; }   // 미개척지대의 끝(2-2-50): 지금은 돌아온다 (세계수 던전이 생기면 그리로)
       { const ids = LAB_IDS(), nx = ids[ids.indexOf(e.field) + 1];   // 다음 계층으로 내려간다 (열려 있을 때)
         if (nx) { e.field = nx;   // 16:38 「다음 계층을 내려가는 권한은 우선 없애자」: 길드 랭크와 상관없이 내려간다
           e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].no}계층 ${FIELDS[nx].name}(으)로 내려갔다.`, 'good'); changed(); return; } }

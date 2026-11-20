@@ -136,7 +136,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   V.lastF = now;
   const g = V.g, w = V.w, dp = clockDp();
   const F = e && FIELDS[e.field];
-  const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg === 'forest' && e.stage > 20 ? 'primeval' : F.bg) : 'front';
+  const id = e ? (e.area === 'dungeon' ? F.dungeon.bg : F.bg === 'forest' && e.stage > 20 ? 'primeval' : F.bgAt && e.stage >= F.bgAt[0] ? F.bgAt[1] : F.bg) : 'front';   // bgAt: 그 필드부터 다른 풍경 (깊은 숲 2-2-41 ~ = 세계수 밑동)
   const bg = getBg(id), oy = bg.tall ? 0 : BG_OY;
   V.wide = !!(e && bg.wide);   // 빌드 70: 넓은 땅 배치 (formSlots · foeSlots · zAt)
   // 옆으로 흐르는 풍경: 간 거리만큼 (길드 앞은 멈춰 있다)

@@ -55,7 +55,7 @@ const DOT_KIND = { poisonarrow: 'poison', venom: 'poison', deadlyvenom: 'poison'
 Object.entries(DOT_KIND).forEach(([id, k]) => { if (SKILLS[id]) SKILLS[id].dk = k; });
 
 /* ── 비행 몬스터 · 공격 속성 ── */
-const FLY = ['bat', 'vbat', 'firebat', 'harpy', 'griffon', 'raidgriffon', 'wyvern', 'stormwyvern', 'tempest', 'skyray', 'thunderbird', 'pegasus', 'thunderhawk', 'stormcloud', 'thunderdragon',
+const FLY = ['ewisp', 'emoth', 'fairies', 'bat', 'vbat', 'firebat', 'harpy', 'griffon', 'raidgriffon', 'wyvern', 'stormwyvern', 'tempest', 'skyray', 'thunderbird', 'pegasus', 'thunderhawk', 'stormcloud', 'thunderdragon',
   'wisp', 'banshee', 'evileye', 'imp', 'succubus', 'fallenangel', 'fallenarch', 'ophan', 'starsprite', 'nebula', 'skyemperor', 'icesprite'];
 FLY.forEach(id => { if (MONS[id]) MONS[id].fly = 1; });
 const isFly = f => !!(f && !f.pvp && MONS[f.id] && MONS[f.id].fly);
@@ -118,6 +118,11 @@ const MSK = {
 const MON_SK = {
   // 평원 · 곡물 창고
   rat: [['bite', '앞니 물기']], slime: [['acid', '산성 점액']], rabbit: [['gore', '뿔 들이받기']], wolf: [['bite', '물어뜯기'], ['howl', '울부짖음']], goblin: [['blind', '모래 뿌리기']], gobclub: [['hit', '몽둥이 내려찍기', { mult: 1.4 }]],
+  ewisp: [['blind', '눈부신 빛']], mlizard: [['hit', '혀로 끌어당기기', { mult: 1.5, sta: { k: 'stun', p: 0.3, d: 1 } }]], rcenti: [['venom', '겹겹의 독니']], emoth: [['sleep', '잠의 빛가루', { mult: 0.4 }], ['blind', '눈부신 가루']],
+  eshroom: [['mend', '포자 돌보기'], ['miasma', '에테르 포자 구름']], cstag: [['guard', '수정 갑옷'], ['gore', '수정 집게', { mult: 1.6 }]], sentinel: [['quake', '고목 내려치기'], ['guard', '두꺼운 껍질']],
+  elddragon: [['quake', '앞발 내려찍기', { mult: 0.85 }], ['hit', '에테르 숨결', { mult: 2.0, magic: 1 }], ['guard', '나이테 갑옷']],
+  smandrake: [['hit', '찢어지는 비명', { mult: 1.3, magic: 1, sta: { k: 'stun', p: 0.35, d: 1.2 } }]], fairies: [['blind', '눈 찌르기', { mult: 1.2 }], ['stab', '약한 자 괴롭히기']], fdryad: [['drain', '생기 빨기', { mult: 1.3, heal: 0.6 }], ['hit', '가지 채찍', { mult: 1.6 }]],
+  rahen: [['quake', '뿌리 부르기', { mult: 0.9 }], ['hit', '썩음의 주문', { mult: 2.1, magic: 1 }], ['mend', '썩은 생명력'], ['guard', '나무껍질 살갗']],
   vinesnake: [['venom', '가시 독니']], cflower: [['drain', '삼키기', { mult: 1.3, heal: 0.5 }]], stump: [['hit', '통째로 물기', { mult: 1.5, sta: { k: 'stun', p: 0.25, d: 1.2 } }]], spotshroom: [['miasma', '독 포자 구름'], ['sleep', '잠의 포자', { mult: 0.3 }]],
   ibeetle: [['guard', '등딱지 세우기'], ['gore', '뿔 들이받기', { mult: 1.6 }]], mgolem: [['quake', '바위 내려찍기'], ['guard', '이끼 갑옷']], fguard: [['quake', '앞발 구르기', { mult: 0.8 }], ['sleep', '숲의 종소리', { mult: 0.45 }], ['guard', '숲의 가호']], gobarcher: [['blind', '눈 겨누기', { mult: 1.1 }]],
   ratking: [['summon', '쥐 떼 부르기', { mon: ['rat'], n: 2 }], ['bite', '이빨 갈기']],

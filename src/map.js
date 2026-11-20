@@ -154,7 +154,7 @@ function talkCard(id) {
 //   왼쪽 = 계층 단추, 오른쪽 = 그 계층의 층 단추 1 ~ 50(밀어서 넘김 — 칸 안에서만 굴러간다). 층을 고르면 아래에 그 층 정보와 「이 층에서 출발」. 옛 대륙 · 하늘 지도는 PANELS.map71로 남김(쓰지 않음)
 const labTiers = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !DEMON_IDS.includes(f) && !SKY_IDS.includes(f) && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley').sort((a, b) => FIELDS[a].no - FIELDS[b].no);
 PANELS.map = () => {
-  const main = labTiers().filter(f => !FIELDS[f].branch), ids = []; for (const f of main) { ids.push(f); const b = labBranchOf(f); if (b) ids.push(b); }   // 갈림길(깊은 숲)은 그 계층 바로 뒤에
+  const main = labTiers().filter(f => !FIELDS[f].branch), ids = []; for (const f of main) { ids.push(f); for (let b = labBranchOf(f); b; b = labBranchOf(b)) ids.push(b); }   // 갈림길(깊은 숲)은 그 계층 바로 뒤에
   const fid = ids.includes(UI.labTier) ? UI.labTier : (labBest() || [ids[0]])[0], F = FIELDS[fid], fs = S.fields[fid] || {}, ok = true, best = fs.best || 0, fn = fno(F);
   const openOf = f => { const T = FIELDS[f], pv = T.branch || main[main.indexOf(f) - 1]; return !pv || ((S.fields[pv] || {}).best || 0) >= FIELD_STAGES; };   // 앞 계층의 50을 넘으면 열린다 (길드 랭크와 상관없이)
   const tiers = ids.map(f => { const T = FIELDS[f], o = openOf(f), b = (S.fields[f] || {}).best || 0, pv = T.branch || main[main.indexOf(f) - 1]; return `<button type="button" class="fbtn${f === fid ? ' on' : ''}${T.branch ? ' front' : ''}" data-act="labtier" data-f="${f}"${o ? '' : ' disabled'}><span>${T.branch ? `${T.no}계층 미개척지대 · ${T.name}` : `${T.no}계층 · ${T.name}`}</span><small>${o ? `Lv${T.lv}~${fieldLv(T, FIELD_STAGES)} · ${b ? `필드 ${fno(T)}-${b}까지 감` : '아직 안 가 봄'}` : `${fno(FIELDS[pv])}-${FIELD_STAGES}을 넘으면 ${T.branch ? '들어가요' : '내려가요'}`}</small></button>`; }).join('');
@@ -164,7 +164,8 @@ PANELS.map = () => {
   const pool = F.mons.filter(id => minStage(MONS[id]) <= sel).map(id => MONS[id].name), idle = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly);
   const lord = sel === FIELD_STAGES && F.bosses && MONS[F.bosses[4]] ? ` · 주인 ${MONS[F.bosses[4]].name}` : '';
   // 갈림길 고르기: 그 계층의 50 다음에 어디로 갈지 (S.labBranch[계층])
-  const bp = F.branch || fid, bf = labBranchOf(bp), nxt = main[main.indexOf(bp) + 1], bon = !!(bf && S.labBranch && S.labBranch[bp]);
+  let bp = fid; while (FIELDS[bp].branch) bp = FIELDS[bp].branch;   // 갈림길은 본줄기 계층에서 고른다
+  const bf = labBranchOf(bp), nxt = main[main.indexOf(bp) + 1], bon = !!(bf && S.labBranch && S.labBranch[bp]);
   const fork = bf ? `<div class="card"><div class="sec"><b>${fno(FIELDS[bp])}-${FIELD_STAGES} 다음 갈림길</b><span>모든 파티에 적용</span></div><div class="btns"><button type="button" class="btn grow${bon ? '' : ' gold'}" data-act="labfork" data-f="${bp}" data-v="0">${nxt ? `${FIELDS[nxt].no}계층 ${FIELDS[nxt].name}(으)로 내려가기` : '돌아오기'}</button><button type="button" class="btn grow${bon ? ' gold' : ''}" data-act="labfork" data-f="${bp}" data-v="1"${openOf(bf) ? '' : ' disabled'}>${FIELDS[bf].name}(으)로 들어가기</button></div><div class="sub muted">${openOf(bf) ? `${FIELDS[bf].name}: 필드 ${fno(FIELDS[bf])}-1 ~ ${fno(FIELDS[bf])}-${FIELD_STAGES} · Lv${FIELDS[bf].lv}~${fieldLv(FIELDS[bf], FIELD_STAGES)}` : `${fno(FIELDS[bp])}-${FIELD_STAGES}의 주인을 쓰러뜨리면 고를 수 있어요.`}</div></div>` : '';
   return `<div class="lab"><div class="lab-t"><div class="sec"><b>미궁 계층</b><span>최종 도달 필드 ${labBestTxt()}</span></div><div class="fields">${tiers}</div></div>
     <div class="lab-f"><div class="sec"><b>${F.branch ? F.name : F.no + '계층'} 필드</b><span>밀어서 넘겨요</span></div><div class="lfls" id="lfls">${floors}</div></div></div>

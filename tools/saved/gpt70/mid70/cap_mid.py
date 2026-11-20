@@ -34,6 +34,12 @@ SC = {   # 이름: (stage, lv, 전사 수, 첫 싸움 자리, 더 할 것)
     'ffight': (12, 14, 3, 14, FOES(['vinesnake', 'cflower', 'stump'], 12, 6000) + TOUGH),
     'ffight2': (12, 14, 3, 14, FOES(['spotshroom', 'ibeetle', 'mgolem'], 12, 6000) + TOUGH),
     'fguard': (12, 14, 3, 14, FOES(['fguard'], 12, int(os.environ.get('GHP', 60000))) + TOUGH),   # HP = 환경 GHP (작게 주면 쓰러지는 그림까지)
+    'dmon1': (12, 14, 3, 14, FOES(['ewisp', 'mlizard', 'rcenti'], 12, 6000) + TOUGH),
+    'dmon2': (12, 14, 3, 14, FOES(['emoth', 'eshroom', 'cstag'], 12, 6000) + TOUGH),
+    'dmon3': (45, 14, 3, 14, FOES(['sentinel', 'ewisp'], 12, 6000) + TOUGH),
+    'dboss': (45, 14, 3, 14, FOES(['elddragon'], 12, int(os.environ.get('GHP', 60000))) + TOUGH),
+    'cmon': (12, 14, 3, 14, FOES(['smandrake', 'fairies', 'fdryad'], 12, 6000) + TOUGH),
+    'cboss': (12, 14, 3, 14, FOES(['rahen'], 12, int(os.environ.get('GHP', 60000))) + TOUGH),
     'fgob':   (12, 14, 3, 14, FOES(['gobclub', 'goblin', 'gobarcher'], 12, 6000) + TOUGH),   # 원시림 싸움 (FIELD=forest)
     'alert': (12, 14, 3, 72, FOES(['wolf', 'rat', 'rabbit'], 12, 6000) + TOUGH),   # 빌드 72: 몬스터가 곧 나온다는 알림 → 화면에 들어옴 → 싸움
     'boss':  (12, 14, 3, 14, "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? [10, 20].map(st => { const f = fieldBoss(FIELDS.plains, st, 12); f.maxHp = f.hp = 60000; return f; }) : ro(e2, idx, ex));" + TOUGH),   # 우두머리 들늑대 · 허수아비 (2배)
