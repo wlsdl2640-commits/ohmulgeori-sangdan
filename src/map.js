@@ -155,16 +155,16 @@ function talkCard(id) {
 const labTiers = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !DEMON_IDS.includes(f) && !SKY_IDS.includes(f) && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley').sort((a, b) => FIELDS[a].no - FIELDS[b].no);
 PANELS.map = () => {
   const ids = labTiers(), fid = ids.includes(UI.labTier) ? UI.labTier : ids.filter(isUnlocked).pop() || ids[0], F = FIELDS[fid], fs = S.fields[fid] || {}, ok = isUnlocked(fid), best = fs.best || 0;
-  const tiers = ids.map(f => { const T = FIELDS[f], o = isUnlocked(f), b = (S.fields[f] || {}).best || 0; return `<button type="button" class="fbtn${f === fid ? ' on' : ''}" data-act="labtier" data-f="${f}"${o ? '' : ' disabled'}><span>${T.no}계층 · ${T.name}</span><small>${o ? `Lv${T.lv}~${fieldLv(T, FIELD_STAGES)} · ${b ? `${b}층까지 감` : '아직 안 가 봄'}` : (T.unlock || `길드 ${RANKS[Math.min(T.no - 1, RANKS.length - 1)].name}랭크에 열림`)}</small></button>`; }).join('');
+  const tiers = ids.map(f => { const T = FIELDS[f], o = isUnlocked(f), b = (S.fields[f] || {}).best || 0; return `<button type="button" class="fbtn${f === fid ? ' on' : ''}" data-act="labtier" data-f="${f}"${o ? '' : ' disabled'}><span>${T.no}계층 · ${T.name}</span><small>${o ? `Lv${T.lv}~${fieldLv(T, FIELD_STAGES)} · ${b ? `필드 ${T.no}-${b}까지 감` : '아직 안 가 봄'}` : (T.unlock || `길드 ${RANKS[Math.min(T.no - 1, RANKS.length - 1)].name}랭크에 열림`)}</small></button>`; }).join('');
   const sel = Math.max(1, Math.min(FIELD_STAGES, UI.labFloor && UI.labFloorOf === fid ? UI.labFloor : Math.min(best + 1, FIELD_STAGES)));
   let floors = '';
-  for (let st = 1; st <= FIELD_STAGES; st++) { const can = ok && st <= best + 1, done = st <= best; floors += `<button type="button" class="lfl${st === sel ? ' on' : ''}${done ? ' done' : ''}${st === FIELD_STAGES ? ' lord' : ''}" data-act="labfloor" data-f="${fid}" data-s="${st}"${can ? '' : ' disabled'}><b>${st}층</b><small>${st === FIELD_STAGES ? '주인' : `Lv${fieldLv(F, st)}`}${done ? ' ✓' : ''}</small></button>`; }
+  for (let st = 1; st <= FIELD_STAGES; st++) { const can = ok && st <= best + 1, done = st <= best; floors += `<button type="button" class="lfl${st === sel ? ' on' : ''}${done ? ' done' : ''}${st === FIELD_STAGES ? ' lord' : ''}" data-act="labfloor" data-f="${fid}" data-s="${st}"${can ? '' : ' disabled'}><b>${F.no}-${st}</b><small>${st === FIELD_STAGES ? '주인' : `Lv${fieldLv(F, st)}`}${done ? ' ✓' : ''}</small></button>`; }
   const pool = F.mons.filter(id => minStage(MONS[id]) <= sel).map(id => MONS[id].name), idle = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly);
   const lord = sel === FIELD_STAGES && F.bosses && MONS[F.bosses[4]] ? ` · 주인 ${MONS[F.bosses[4]].name}` : '';
-  return `<div class="lab"><div class="lab-t"><div class="sec"><b>미궁 계층</b><span>${ids.length}개</span></div><div class="fields">${tiers}</div></div>
-    <div class="lab-f"><div class="sec"><b>${F.no}계층 · ${F.name}</b><span>밀어서 층을 넘겨요</span></div><div class="lfls" id="lfls">${floors}</div></div></div>
-    <div class="card"><div class="sub"><b>${F.no}-${sel} (${sel}층)</b> · Lv${fieldLv(F, sel)}${lord}<br><span class="muted">나오는 몬스터: ${pool.join(' · ') || '?'}</span></div>
-    <button type="button" class="btn gold block" data-act="labgo" data-f="${fid}" data-s="${sel}"${ok && sel <= best + 1 && idle ? '' : ' disabled'}>${idle ? `${idle.name} · 이 층에서 출발 준비 (원정대 창)` : '쉬고 있는 파티가 없어요'}</button></div>`;
+  return `<div class="lab"><div class="lab-t"><div class="sec"><b>미궁 계층</b><span>최종 도달 필드 ${labBestTxt()}</span></div><div class="fields">${tiers}</div></div>
+    <div class="lab-f"><div class="sec"><b>${F.no}계층 필드</b><span>밀어서 넘겨요</span></div><div class="lfls" id="lfls">${floors}</div></div></div>
+    <div class="card"><div class="sub"><b>필드 ${F.no}-${sel}</b> · Lv${fieldLv(F, sel)}${lord}<br><span class="muted">나오는 몬스터: ${pool.join(' · ') || '?'}</span></div>
+    <button type="button" class="btn gold block" data-act="labgo" data-f="${fid}" data-s="1"${idle ? '' : ' disabled'}>${idle ? `${idle.name} · 원정대 창에서 보내기` : '쉬고 있는 파티가 없어요'}</button><div class="sub muted">원정은 늘 1계층 필드 1-1에서 시작해요. 1-50의 주인을 쓰러뜨리면 다음 계층으로 내려가요.</div></div>`;
 };
 PANELS.map71 = () => {
   const skyOpen = !!(S.fields.roots && S.fields.roots.cleared) || (S.bld.airfield || 0) > 0;
@@ -208,7 +208,7 @@ function mapGo(pid, fid, dungeon) {
 Object.assign(ACT, {
   labtier: d => { UI.labTier = d.f; UI.labFloor = null; renderPanel(true); },
   labfloor: d => { const box = document.getElementById('lfls'), y = box ? box.scrollTop : 0; UI.labTier = d.f; UI.labFloorOf = d.f; UI.labFloor = +d.s; renderPanel(true); const b2 = document.getElementById('lfls'); if (b2) b2.scrollTop = y; },
-  labgo: d => { const p = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly); if (!p) { say('쉬고 있는 파티가 없어요.'); return; } p.dest = d.f; p.start = +d.s; UI.expTab = p.id; menuOpen('exp'); },
+  labgo: d => { const p = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly); if (!p) { say('쉬고 있는 파티가 없어요.'); return; } p.dest = LAB_IDS()[0]; p.start = 1; UI.expTab = p.id; menuOpen('exp'); },
   mapsel: d => { UI.mapSel = { k: d.k, id: d.id }; renderPanel(true); },
   maptab: d => { UI.mapTab = d.t; UI.mapSel = null; renderPanel(true); },
   mapparty: d => { UI.mapP = +d.id; renderPanel(true); },

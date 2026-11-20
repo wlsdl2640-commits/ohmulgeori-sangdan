@@ -567,8 +567,9 @@ function partyCard(p) {
   const openR = S.raid ? S.raid.list.filter(r => !r.done) : [];
   const raids = dtab === 'base' && openR.length ? `<button type="button" class="fbtn raid giant" data-act="exptab" data-id="raid"><span>레이드 · ${openR.map(r => RAIDS[r.id].name).join(' · ')}</span><small>Lv${openR.map(r => RAIDS[r.id].lv).join(' · ')} · 「레이드」 탭에서 풀파티 ${RAID_MIN_PARTIES}개 이상을 함께 보내요</small></button>` : '';   // 빌드 69
   const fieldIds = dtab === 'trade' || dtab === 'raid' ? [] : dtab === 'demon' ? demon : dtab === 'sky' ? skyIds : ALL_FIELDS.filter(f => !demon.includes(f) && !skyIds.includes(f) && !FIELDS[f].hidden && (f !== 'alley' || isUnlocked('alley')));
-  const fields = fieldIds.map(fid => {
+  const fields = fieldIds.filter(fid => !isLab(fid) || fid === LAB_IDS()[0]).map(fid => {
     const F = FIELDS[fid], ok = isUnlocked(fid), fs = S.fields[fid];
+    if (isLab(fid)) return `<button type="button" class="fbtn${isLab(dest) ? ' on' : ''}" data-act="dest" data-id="${p.id}" data-f="${fid}"><span>미궁</span><small>늘 1계층 필드 1-1부터 · 최종 도달 필드 ${labBestTxt()}</small></button>`;   // 빌드 72
     const nb = [1, 2, 3, 4, 5].filter(k => fs.boss && fs.boss[k]).length;
     const sub = F.raid ? '암살자 길드 지부 토벌 · Lv28+ 권장' : ok ? `Lv${F.lv}~${fieldLv(F, FIELD_STAGES)} · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}${F.region === 'sky' ? (wagonFly(p) ? ` · ${rigName(p)}` : ' · 비행 마차 필요') : ''}` : (F.unlock || `길드 ${RANKS[Math.min(F.no - 1, RANKS.length - 1)].name}랭크에 열림`);
     return `<button type="button" class="fbtn${dest === fid ? ' on' : ''}${F.raid ? ' raid' : ''}${F.demon ? ' demon' : ''}${F.frontier ? ' front' : ''}${F.under ? ' under' : ''}${F.region === 'sky' ? ' skyf' : ''}" data-act="dest" data-id="${p.id}" data-f="${fid}"${ok ? '' : ' disabled'}><span>${F.raid ? F.name : `${F.no}계층 · ${F.name}`}</span><small>${sub}</small></button>`;
@@ -583,7 +584,7 @@ function partyCard(p) {
     ${S.bld.pen || S.pets.length ? petRow(p) : ''}
     <div class="sec"><b>보급품</b><span>물약과 치료 소모품 · 가져간 것만 써요</span></div>
     ${SUPPLY_IDS.filter(k => (S.inv[k] || 0) > 0 || (p.sup[k] || 0) > 0 || k === 'pot_s').map(k => `<div class="row">${iconImg(k)}<span class="grow sub">${ITEMS[k].name} <span class="muted">창고 ${S.inv[k] || 0}</span></span><span class="step"><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="-1">−</button><span>${p.sup[k] || 0}</span><button type="button" class="btn sm" data-act="sup" data-id="${p.id}" data-it="${k}" data-d="1">+</button></span></div>`).join('')}
-    <div class="sec"><b>미궁 계층</b><span>파티 평균 Lv${avg} · 층은 「지도」에서 골라요</span></div>
+    <div class="sec"><b>목적지</b><span>파티 평균 Lv${avg}</span></div>
     <div class="fields">${fields}${raids}</div>
     ${dtab === 'demon' && !isUnlocked('swamp') ? '<div class="sub muted">마계는 사라크 사막의 왕릉을 공략하면 열려요. 늪지대 → 메마른 땅 → 백작의 성 차례로 열려요.</div>' : ''}
     ${dtab === 'sky' ? `<div class="sub muted">${isUnlocked('sky') ? `구름섬은 비행 마차(비행장에서 제작)에 그리핀·와이번·페가수스를 맨 파티만 가요. ${wagonFly(p) ? `이 파티: ${rigName(p)} ✓` : `이 파티: ${p.wagon ? rigName(p) : '마차 없음'} ✗`}` : '구름섬은 세계수의 심장을 공략하고 비행장을 지으면 열려요. 비행 마차에 그리핀·와이번·페가수스를 매야 날아갈 수 있어요.'}</div>` : ''}

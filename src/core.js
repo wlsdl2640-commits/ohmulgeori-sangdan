@@ -337,9 +337,15 @@ function bstat(e, who, k, v, sid) { const T = e.stats || (e.stats = {}), r = T[w
 function checkpoints(fid) {
   const F = FIELDS[fid], fs = S.fields[fid];
   if (!F || F.raid || !fs) return [1];
+  if (isLab(fid)) return [1];   // 빌드 72: 미궁은 늘 1-1부터
   return [1].concat([1, 2, 3, 4].filter(k => fs.boss && fs.boss[k]).map(k => k * BOSS_EVERY + 1));
 }
-function labStart(fid, st) { const F = FIELDS[fid], fs = S.fields[fid]; if (!F || F.raid || F.trade || F.treasure || !fs) return 1; return Math.max(1, Math.min(st || 1, (fs.best || 0) + 1, FIELD_STAGES)); }
+// 빌드 72 (11-20 16:27 사용자 「원정마다 무조건 1계층의 1-1부터 다시 가야 해」 · 「최종도달 필드 1-50 이런 식으로」): 미궁 원정은 늘 1계층 1-1에서 시작해 1-50을 넘으면 다음 계층 1로 내려간다
+const LAB_IDS = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !FIELDS[f].demon && FIELDS[f].region !== 'sky' && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley').sort((a, b) => FIELDS[a].no - FIELDS[b].no);
+const isLab = fid => LAB_IDS().includes(fid);
+function labBest() { let out = null; for (const f of LAB_IDS()) { const b = (S.fields[f] || {}).best || 0; if (b > 0) out = [f, b]; } return out; }   // 가장 깊이 간 곳 [계층, 필드 번호]
+const labBestTxt = () => { const b = labBest(); return b ? `${FIELDS[b[0]].no}-${b[1]}` : '아직 없음'; };
+function labStart(fid, st) { return 1; }
 function newExp(fid, sup, start = 1) {
   const F = FIELDS[fid];
   const e = { field: fid, area: F.giant ? 'raid' : F.raid ? 'dungeon' : 'field', raid: F.giant || null, rt: 0, dealt: 0, mode: 'advance', stage: start, home: start, pos: 0, ei: 0, encs: [], foes: [], next: null,
@@ -362,6 +368,7 @@ function cantGo(a) {
 const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (jobBase(c) === 'porter') return 3; if (C.act === 'heal') return 2; return C.act === 'melee' ? 0 : 1; };
 function formParty(p) { p.members = p.members.map((id, i) => [id, i]).sort((x, y) => { const a = advById(x[0]), b = advById(y[0]); return (a ? formRank(a.cls) : 2) - (b ? formRank(b.cls) : 2) || x[1] - y[1]; }).map(x => x[0]); }
 function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(빌드 69 — 레이드는 qol.js raidLaunch로 파티 넷 이상이 함께만)
+  if (isLab(fid)) fid = LAB_IDS()[0];   // 빌드 72: 미궁은 늘 1계층부터
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
   if (!team.length || team.length !== p.members.length) return '대기 중인 길드원만 보낼 수 있어요.';
   if (!isUnlocked(fid)) return FIELDS[fid] && FIELDS[fid].giant ? '이번 달에는 열리지 않은 레이드예요.' : '아직 갈 수 없는 곳이에요.';
@@ -527,6 +534,8 @@ function stageClear(p, e) {
           return;
         }
       }
+      { const ids = LAB_IDS(), nx = ids[ids.indexOf(e.field) + 1];   // 다음 계층으로 내려간다 (열려 있을 때)
+        if (nx && isUnlocked(nx)) { e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].no}계층 ${FIELDS[nx].name}(으)로 내려갔다.`, 'good'); changed(); return; } }
       recall(p, 'end');
       return;
     }
