@@ -395,7 +395,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   if (pet) pos['aP' + pet.id] = [mx(FS.petX), LINE_Y];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
   // 빌드 72: 몬스터가 곧 나온다는 알림 — 아직 화면 밖에 있을 때(만날 자리까지 30 ~ 70) 나올 쪽 가장자리에서 깜빡이고, 몬스터가 화면에 들어오면 사라진다
-  if (walking0 && e.next && e.next.length && gap > 30 && gap <= 70) post.push(g => {
+  if (walking0 && e.next && e.next.length && gap > 30 && gap <= 46) post.push(g => {
     const ax = mx(AW - 11), ay = LINE_Y - 30, on = Math.floor(t * 4) % 2 === 0, bob = Math.round(Math.sin(t * 6) * 1.5);
     R(g, ax - 5, ay - 8 + bob, 11, 15, '#1a1420'); R(g, ax - 4, ay - 7 + bob, 9, 13, on ? '#c0392b' : '#8a2a22');
     R(g, ax - 1, ay - 5 + bob, 3, 6, '#ffe46a'); R(g, ax - 1, ay + 2 + bob, 3, 2, '#ffe46a');

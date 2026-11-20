@@ -250,11 +250,11 @@ function areaDef(e) { const F = FIELDS[e.field]; return e.area === 'dungeon' ? F
 // 던전 층수: 보물 던전은 셋, 나머지는 다섯
 const floorsOf = e => (FIELDS[e.field] && FIELDS[e.field].treasure ? TREASURE_FLOORS : DUNGEON_FLOORS);
 function makeEncs(e) {
-  if (e.area === 'trade') return rnd() < (e.mode === 'return' ? 0.45 : 0.6) + (isNight() ? 0.15 : 0) ? [ri(60, 150)] : [];   // 교역로: 산적과 짐승이 가끔
+  if (e.area === 'trade') return rnd() < (e.mode === 'return' ? 0.45 : 0.6) + (isNight() ? 0.15 : 0) ? [ri(20, 52)] : [];   // 교역로: 산적과 짐승이 가끔
   const night = e.area === 'field' && isNight();
-  if (e.mode === 'return') return rnd() < (night ? 0.55 : 0.4) ? [ri(60, 140)] : [];
-  if (e.area === 'dungeon') return e.stage === floorsOf(e) ? [70, 160] : [60, 140];
-  return [50 + ri(-8, 8), 110 + ri(-8, 8), 170 + ri(-8, 8)];   // 빌드 72: STAGE_LEN 200에 맞춰 두 배
+  if (e.mode === 'return') return rnd() < (night ? 0.55 : 0.4) ? [ri(20, 50)] : [];
+  if (e.area === 'dungeon') return e.stage === floorsOf(e) ? [24, 58] : [22, 54];   // 던전은 층마다 두 무리 그대로
+  return [48 + ri(-6, 6)];   // 빌드 72: 스테이지 하나에 한 무리
 }
 function foeFrom(id, lv) {
   const m = MONS[id], U = m.giant ? null : monMul69(lv), hp = Math.round(mHp(m, lv) * DIFF.hp * (U ? U.hp : 1));   // 빌드 69: 레벨마다 몬스터 능력치 배율 (data-monup69.js — 레이드 거인은 RAID69)
@@ -282,7 +282,7 @@ function fieldBoss(F, stage, lv) {
   f.hp = f.maxHp = Math.round(f.maxHp * (3 + 0.9 * k));
   f.atk *= 1.25 + 0.06 * k; f.def *= 1.25;
   f.boss = true; f.fb = k; f.aoe = k >= 3;
-  f.sc = Math.min(3, Math.max(1, Math.round(MONS[id].scale || 1)) + (k >= 5 ? 2 : 1));
+  f.sc = Math.max(1, Math.round(MONS[id].scale || 1));   // 빌드 72: 크게 그리지 않는다 (그 앞: +1 · 주인 +2, 3까지)
   f.name = k >= 5 ? `${F.name}의 주인 ${MONS[id].name}` : `우두머리 ${MONS[id].name}`;
   return f;
 }
@@ -297,7 +297,7 @@ function rollFoes(e, idx, extra = 0) {
   const F = FIELDS[e.field], A = areaDef(e);
   const last = e.mode === 'advance' && idx === e.encs.length - 1;
   const dboss = e.area === 'dungeon' && e.stage === floorsOf(e) && last;
-  const fboss = e.area === 'field' && e.stage % BOSS_EVERY === 0 && last;
+  const fboss = e.area === 'field' && e.stage === FIELD_STAGES && last;   // 빌드 72: 10스테이지마다 나오던 우두머리를 없앰 — 마지막 스테이지(1-50)에만 그 땅에서 가장 센 몬스터가 주인으로
   const lv = e.area === 'dungeon' ? (F.treasure ? Math.max(1, (e.lvo || 10) + e.stage - 3) : F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);   // 보물 던전: 파티 평균 -2 ~ 0
   const pool = A.mons.filter(id => e.area === 'dungeon' || minStage(MONS[id]) <= e.stage);
   const out = [];
@@ -509,6 +509,7 @@ function stageClear(p, e) {
   if (e.area === 'trade') { tradeStage(p, e); return; }
   const fs = S.fields[e.field], F = FIELDS[e.field];
   if (e.area === 'field') {
+    if (e.stage % BOSS_EVERY === 0 && e.stage < FIELD_STAGES) { fs.boss = fs.boss || {}; const k = e.stage / BOSS_EVERY; if (!fs.boss[k]) fs.boss[k] = 1; }   // 빌드 72: 우두머리가 없어져서, 1-10 · 20 · 30 · 40을 지나면 그 다음 스테이지에서 출발할 수 있게 된다(예전엔 우두머리를 잡아야)
     if (e.stage > fs.best) { fs.best = e.stage; if (e.stage % 5 === 0) { S.fame += 1; log(`${p.name}이(가) ${F.no}-${e.stage}까지 처음으로 진출했다. 명성 +1`, 'good'); } }
     if (e.stage >= FIELD_STAGES) {
       e.pos = STAGE_LEN;
@@ -528,7 +529,7 @@ function stageClear(p, e) {
       recall(p, 'end');
       return;
     }
-    if (p.safe && fieldLv(F, e.stage + 1) + ((e.stage + 1) % BOSS_EVERY === 0 ? 2 : 0) > avgLvOf(p) + 3) { e.stage++; e.pos = 0; e.ei = 0; e.encs = []; e.next = null; recall(p, 'ahead'); return; }
+    if (p.safe && fieldLv(F, e.stage + 1) + (e.stage + 1 === FIELD_STAGES ? 2 : 0) > avgLvOf(p) + 3) { e.stage++; e.pos = 0; e.ei = 0; e.encs = []; e.next = null; recall(p, 'ahead'); return; }
     e.stage++;
   } else if (e.stage < floorsOf(e)) { if (F.treasure) treasureChest(p, e); e.stage++; }
   e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
