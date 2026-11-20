@@ -1,6 +1,6 @@
 /* ───────── 스킬 설명: 계수·대기시간·확률·증가율을 전부 숫자로 ─────────
    skillSpec(id)        — 스킬북·도감·상점용 (계수 그대로)
-   skillSpec(id, a)     — 모험가 창용 (그 모험가의 공격력·숙련·재사용 감소를 넣은 실제 수치)
+   skillSpec(id, a)     — 길드원 창용 (그 길드원의 공격력·숙련·재사용 감소를 넣은 실제 수치)
    basicSpec(a)         — 기본 공격 (빌드 69 밤: 쿨타임 8초 − 쿨타임 감소 + 실행 1.5초 ÷ 공격 속도, 공격력 ×3.5) */
 const SK_TGT = { front: '앞의 적', low: '가장 약한 적', strong: '가장 센 적', pierce: '맨 앞 적과 그 뒤 적 (꿰뚫기)', all: '모든 적', self: '자신', party: '파티 전원' };
 const SK_TGT_ALLY = Object.assign({}, SK_TGT, { low: '가장 다친 동료', ally: '가장 다친 동료', low2: '가장 다친 동료 둘', danger: `HP ${Math.round(HEAL_DANGER * 100)}% 아래 동료 모두` });   // 빌드 69: 치유 · 재생 · 보호막 · 강화의 low는 가장 다친 동료 (예전엔 「가장 약한 적」으로 나왔다)
@@ -117,7 +117,7 @@ function skillSpec(id, a) {
   return out;
 }
 const skillSpecLine = (id, a) => `<span class="sk-spec">${skillSpec(id, a).join(' · ')}</span>`;
-// 기본 공격 설명 (모험가 창)
+// 기본 공격 설명 (길드원 창)
 function basicSpec(a) {
   const d = derive(a), T = TR(a), magic = basicIsMagic(a), cd = basicCd(a, d, null), ex = basicExec(a, d), out = [];
   const base = magic ? d.matk * BASIC_MAGIC : d.atk * BASIC_MULT + (T.hybrid ? d.matk * T.hybrid * BASIC_MULT : 0);
@@ -171,7 +171,7 @@ function bookFromText(id) {
 }
 
 /* ───────── 전투 통계 (DPS 미터) ───────── */
-// stats = e.stats(원정 중) 또는 p.last.stats(지난 원정), names = {id: 이름} (떠난 모험가용)
+// stats = e.stats(원정 중) 또는 p.last.stats(지난 원정), names = {id: 이름} (떠난 길드원용)
 const SK_SRC = { basic: '기본 공격', counter: '반격', pet: '펫 행동', companion: '동물 동료', dot: '지속 피해', shuri: '암기', bolt: '손목 석궁', rsw: '속성 대검', mast: '숙련', reflect: '마석 반사', etc: '그 밖' };
 function bstatName(who, names) {
   if (String(who).charAt(0) === 'P') { const pt = petById(+String(who).slice(1)); return pt ? `펫 ${pt.name}` : '펫'; }

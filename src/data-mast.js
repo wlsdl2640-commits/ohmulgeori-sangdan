@@ -45,7 +45,7 @@ function mastFx(a) {
 // 장비 고르기에서 숙련한 무기·갑옷을 조금 더 쳐준다 (단계마다 +3, 장비 한 단계 = 10)
 const mastGearBonus = (a, g) => { if (!a || !g || !a.mast) return 0; let t = 0; for (const k in a.mast) { const M = MASTERY[k]; if (M && M.w && M.w.includes(g.base)) t = Math.max(t, mastTier(a, k)); } return t * 3; };
 STORY.v37 = [
-  '빌드 37: 스킬 307개의 그림이 모두 새로 그려졌다(모험가 창의 스킬 육각 · 스킬 탭 목록).',
+  '빌드 37: 스킬 307개의 그림이 모두 새로 그려졌다(길드원 창의 스킬 육각 · 스킬 탭 목록).',
   '숙련이 생겼다. 검술·도끼술·둔기술·창술·궁술·단검술·연주법·갑옷 숙련은 그 무기·갑옷을 끼고 있을 때, 마법 지식·신성학·방패술·운반술은 늘 켜진다. 스킬 칸을 차지하지 않는다.',
-  `훈련소에서 한 단계씩 배운다: ${MAST_TIERS.map(T => `${T.name} Lv${T.lv}${T.job > 1 ? '·' + T.job + '차 전직' : ''}·${T.fee.toLocaleString('ko-KR')}G`).join(' → ')}. 모험가 창 → 스킬 탭 → 숙련.`
+  `훈련소에서 한 단계씩 배운다: ${MAST_TIERS.map(T => `${T.name} Lv${T.lv}${T.job > 1 ? '·' + T.job + '차 전직' : ''}·${T.fee.toLocaleString('ko-KR')}G`).join(' → ')}. 길드원 창 → 스킬 탭 → 숙련.`
 ];

@@ -7,7 +7,7 @@
           'all'  공용 (모든 직업) · 'none' 배울 직업 없음 (보관 스킬 — 데드아이 · 하늘 낙하)
    skTag(id)    짧은 꼬리표 — 스킬북 이름 「스킬북: 투기장 연격 (검투사 2차)」 · 칩 skChip
    skJobTxt(id) 긴 글 — 「전사 계열 · 검투사 (2차)」 「전사 계열 · 전사 (1차 · 공통)」 「공용 · 모든 직업」 (창고 정보창 · 펼친 결과 · 도감 · 상점)
-   skSecOf(a, id) 스킬 탭 칸 — 이 모험가의 직업 길(chainOf)에서 계열 공통 → 2차 → 3차 → 4차 → 공용 → 다른 직업 (panels.js advDetail) */
+   skSecOf(a, id) 스킬 탭 칸 — 이 길드원의 직업 길(chainOf)에서 계열 공통 → 2차 → 3차 → 4차 → 공용 → 다른 직업 (panels.js advDetail) */
 const SKJ = {};
 const skFamName = f => (CLASSES[f] ? CLASSES[f].name : f);
 function skJob(id) {
@@ -44,17 +44,17 @@ function skJobTxt(id) {
 const skChip = id => `<span class="skj ${skTierCls(id)}">${skTag(id)}</span>`;
 // 창고 정보창 · 펼친 결과의 한 줄: 왼쪽 띠(차수 색) + 「전사 계열 · 검투사 (2차)」 + 배우는 레벨
 const skJobLine = id => `<span class="skjl ${skTierCls(id)}"><b>${skJobTxt(id)}</b> <span class="muted">· Lv${SKILLS[id].lv}부터</span></span>`;
-// 그 스킬을 지금 배울 수 있는 모험가 · 이미 배운 모험가 (창고 정보창)
+// 그 스킬을 지금 배울 수 있는 길드원 · 이미 배운 길드원 (창고 정보창)
 const skCanNames = id => S.advs.filter(a => !a.skills.includes(id) && canLearn(a, id)).map(a => esc(a.name));
-const skCanTxt = id => { const L = skCanNames(id); return L.length ? ` · <span class="ok-t">배울 수 있는 모험가: ${L.length > 3 ? `${L.slice(0, 3).join(' · ')} 외 ${L.length - 3}명` : L.join(' · ')}</span>` : ''; };   // 펼친 결과 · 합성 결과 줄 끝
+const skCanTxt = id => { const L = skCanNames(id); return L.length ? ` · <span class="ok-t">배울 수 있는 길드원: ${L.length > 3 ? `${L.slice(0, 3).join(' · ')} 외 ${L.length - 3}명` : L.join(' · ')}</span>` : ''; };   // 펼친 결과 · 합성 결과 줄 끝
 function skWhoTxt(id) {
   const cut = L => (L.length > 4 ? `${L.slice(0, 4).join(' · ')} 외 ${L.length - 4}명` : L.join(' · '));
   const can = skCanNames(id);
   const has = S.advs.filter(a => a.skills.includes(id) && skLv(a, id) < SK_LV_MAX).map(a => esc(a.name));
-  return [can.length ? `지금 배울 수 있는 모험가: ${cut(can)}` : '지금 배울 수 있는 모험가가 없어요', has.length ? `배운 모험가(한 권 더 바치면 스킬 단계 ↑): ${cut(has)}` : ''].filter(Boolean).join(' · ');
+  return [can.length ? `지금 배울 수 있는 길드원: ${cut(can)}` : '지금 배울 수 있는 길드원가 없어요', has.length ? `배운 길드원(한 권 더 바치면 스킬 단계 ↑): ${cut(has)}` : ''].filter(Boolean).join(' · ');
 }
 
-// 스킬 탭 칸: 그 모험가의 직업 길에서 이 스킬이 어느 칸인지 — { k: 'line' | 직업 id | 'all' | 'etc', o: 차례, t: 칩 색 칸 }
+// 스킬 탭 칸: 그 길드원의 직업 길에서 이 스킬이 어느 칸인지 — { k: 'line' | 직업 id | 'all' | 'etc', o: 차례, t: 칩 색 칸 }
 function skSecOf(a, id) {
   const J = skJob(id), chain = chainOf(a.cls);
   if (J.kind === 'all') return { k: 'all', o: 8, t: 0 };
@@ -87,6 +87,6 @@ for (const k of Object.keys(ITEMS)) { const I = ITEMS[k]; if (I.book && SKILLS[I
 // 빌드 68 알림 (옛 저장 — econ.js notes68b)
 STORY.v68b = [
   '스킬북마다 계열과 직업이 붙었다 — 이름 끝 꼬리표(검투사 2차 · 전사 공통 · 공용)와 창고 정보창의 「전사 계열 · 검투사 (2차)」 줄. 창고 스킬북 칸 왼쪽 아래 글자는 배우는 차수, 위 칩으로 계열마다 골라 볼 수 있다.',
-  '모험가 창 → 스킬: 배운 스킬 · 배울 수 있는 스킬북 · 스킬 목록이 「전사 (공통)」 「검투사부터」 「챔피언부터」 「공용」 칸으로 나뉜다. 배운 스킬도 「검투사 스킬」 「챔피언 스킬」 칸에 들어간다.',
+  '길드원 창 → 스킬: 배운 스킬 · 배울 수 있는 스킬북 · 스킬 목록이 「전사 (공통)」 「검투사부터」 「챔피언부터」 「공용」 칸으로 나뉜다. 배운 스킬도 「검투사 스킬」 「챔피언 스킬」 칸에 들어간다.',
   '닌자 · 카게닌자 · 코네스토가 · 괴도 · 대도 · 캐러밴 마스터 같은 새 직업 스킬도 이제 스킬 목록 · 도감에 나온다.'
 ];

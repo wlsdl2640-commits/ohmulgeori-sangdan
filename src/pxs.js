@@ -1,4 +1,4 @@
-/* ───────── 옆모습 모험가 (원정·레이드 화면) ─────────
+/* ───────── 옆모습 길드원 (원정·레이드 화면) ─────────
    오른쪽을 본다. 머리 블록 14칸 × 12줄, 몸 블록 12칸 × 13줄. 작업판 40×48, 몸 블록 왼쪽 위 = (12, 34) */
 const SX = 13, SY = 34, SHY = SY - 12;
 // 얼굴 옆: 눈 하나, 코 끝, 볼 터치. 머리카락이 뒤통수를 덮는다
@@ -1260,7 +1260,7 @@ const pxsMotHit = mk => (PXS_MOT_HITF[mk] != null ? PXS_MOT_HITF[mk] : PXS_MOT_H
 // 무기 종류 (그림 갈래): 장검·대검·글라디우스는 칼, 삼지창은 창
 const pxsWk = a => { const w = a && a.eq && a.eq.weapon, base = w ? w.base : (typeof WEAPON_OF !== 'undefined' && a && WEAPON_OF[a.cls]) || 'sword'; return pxWeapon(a ? a.cls : 'warrior', base); };
 const pxsFam = a => PXS_FAMW[pxsWk(a)] || 'sword';
-// 동작을 쓰는 모험가: 빌드 42부터 모든 무기 (펫·모르는 무기는 칼 그림으로)
+// 동작을 쓰는 길드원: 빌드 42부터 모든 무기 (펫·모르는 무기는 칼 그림으로)
 function pxsMotOK(a) {
   return !!(a && a.cls && CLASSES[a.cls]);
 }

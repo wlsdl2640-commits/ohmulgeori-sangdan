@@ -1,6 +1,6 @@
 /* ───────── 특성 · 새 능력치(방어·반격·연타) · 상태이상 · 각성(용사) ───────── */
 
-// 모험가마다 1~3개가 무작위로 붙는다. 값은 derive()와 전투 곳곳에서 더해진다
+// 길드원마다 1~3개가 무작위로 붙는다. 값은 derive()와 전투 곳곳에서 더해진다
 const TRAITS = {
   giant:     { name: '거구',       desc: 'HP +15%',                      hpPct: 0.15 },
   scholar:   { name: '학자',       desc: 'MP +15%',                      mpPct: 0.15 },
@@ -163,7 +163,7 @@ Object.entries(JOB_TRAITS).forEach(([cls, t]) => { TRAITS['j_' + cls] = Object.a
 const jobTraitOf = cls => (JOB_TRAITS[cls] ? 'j_' + cls : null);
 const isJobTrait = id => !!(TRAITS[id] && TRAITS[id].job);
 const ROLL_TRAIT_IDS = TRAIT_IDS.slice();   // 무작위로 붙는 특성(직업 특성 제외)
-ITEMS.wizstone = { name: '마법사의 돌', v: 4000, w: 1, icon: 'gem', c: '#c060e0', use: 'trait', desc: '모험가의 타고난 특성 하나를 골라 다른 특성으로 바꾼다. 직업 특성은 바꿀 수 없다. 모험가 창에서 쓴다.' };
+ITEMS.wizstone = { name: '마법사의 돌', v: 4000, w: 1, icon: 'gem', c: '#c060e0', use: 'trait', desc: '길드원의 타고난 특성 하나를 골라 다른 특성으로 바꾼다. 직업 특성은 바꿀 수 없다. 길드원 창에서 쓴다.' };
 // 특성 하나를 무작위 다른 특성으로. 바뀐 [옛, 새] 또는 null
 function rerollTrait(a, id) {
   if (!a || !(a.traits || []).includes(id) || isJobTrait(id)) return null;
@@ -174,11 +174,11 @@ function rerollTrait(a, id) {
   return [id, nt];
 }
 
-/* ───────── 개화석: 타고난 특성이 3개가 안 되는 모험가에게 새 특성 하나를 피운다 ───────── */
+/* ───────── 개화석: 타고난 특성이 3개가 안 되는 길드원에게 새 특성 하나를 피운다 ───────── */
 const TRAIT_MAX = 3;   // 타고난 특성 자리 (직업 특성은 따로 센다)
 const innateTraits = a => ((a && a.traits) || []).filter(t => !isJobTrait(t));
 const canBloom = a => innateTraits(a).length < TRAIT_MAX;
-ITEMS.bloomstone = { name: '개화석', v: 6000, w: 1, icon: 'gem', c: '#5ae0a8', use: 'bloom', desc: '타고난 특성이 3개가 안 되는 모험가에게 숨은 특성 하나를 피워 낸다. 직업 특성은 세지 않는다. 모험가 창에서 쓴다.' };
+ITEMS.bloomstone = { name: '개화석', v: 6000, w: 1, icon: 'gem', c: '#5ae0a8', use: 'bloom', desc: '타고난 특성이 3개가 안 되는 길드원에게 숨은 특성 하나를 피워 낸다. 직업 특성은 세지 않는다. 길드원 창에서 쓴다.' };
 // 빈 자리에 무작위 새 특성. 새 특성 id 또는 null
 function bloomTrait(a) {
   if (!canBloom(a)) return null;

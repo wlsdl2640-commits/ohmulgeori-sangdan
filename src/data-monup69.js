@@ -6,10 +6,10 @@
    · 능력치: 몬스터 레벨마다 HP · 공격 · 방어 배율 MON_MUL69(monMul69 — core.js foeFrom). 레벨마다 시험해서 맞춘다(scratchpad v90 sim)
    표 MU69[몬스터] = { sta: [상태이상, 확률, 초, 지속 피해 배율] (없으면 그대로) · sta2 (우두머리) · hits 2 | 3 · sk: [[틀, 이름, 덮어쓸 값] …] (MON_SK 뒤에 더함) } */
 Object.assign(MSK, {
-  dispel: { name: '강화 지우기',     kind: 'dispel', mult: 0.45, cd: 22, magic: 1, el: 'self', n: 2 },   // 모두에게 약하게 + 모험가마다 걸린 강화 둘 · 파티 강화는 모두 지운다
+  dispel: { name: '강화 지우기',     kind: 'dispel', mult: 0.45, cd: 22, magic: 1, el: 'self', n: 2 },   // 모두에게 약하게 + 길드원마다 걸린 강화 둘 · 파티 강화는 모두 지운다
   taunt:  { name: '도발',            kind: 'taunt', dur: 6, cd: 24, mul: 1.3 },                          // 6초 동안 한 명을 치는 공격 · 스킬이 이 몬스터에게 + 방어 ×1.3
-  mpburn: { name: '마나 태우기',     kind: 'hit', mult: 1.1, cd: 16, magic: 1, el: 'self', mp: 0.25, tg: 'mp' },   // MP가 가장 많은 모험가 · 최대 MP 25%를 태운다
-  lowhit: { name: '약한 자 노리기',  kind: 'hit', mult: 1.6, cd: 14, tg: 'low' },                        // 가장 다친 모험가를 노린다 (도발 · 엄호는 그대로 든다)
+  mpburn: { name: '마나 태우기',     kind: 'hit', mult: 1.1, cd: 16, magic: 1, el: 'self', mp: 0.25, tg: 'mp' },   // MP가 가장 많은 길드원 · 최대 MP 25%를 태운다
+  lowhit: { name: '약한 자 노리기',  kind: 'hit', mult: 1.6, cd: 14, tg: 'low' },                        // 가장 다친 길드원를 노린다 (도발 · 엄호는 그대로 든다)
   pierce: { name: '꿰뚫기',          kind: 'hit', mult: 1.5, cd: 13, pen: 0.5 }                          // 방어를 절반만 본다
 });
 const HITS_MUL = { 2: 0.55, 3: 0.4 };   // 연타 한 대의 피해 (두 대 합 1.1 · 세 대 합 1.2)

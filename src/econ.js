@@ -58,7 +58,7 @@ function migrate(v) {
   Object.assign(s.flags, v.flags || {}, { v02: 0, v03: 0, v04: 0, v05: 0, v06: 0, v07: 0 });
   Object.assign(s.bld, v.bld || {});
   for (const f of Object.keys(v.fields || {})) if (s.fields[f]) s.fields[f] = v.fields[f];
-  // 모험가는 지금 레벨에 맞춰 능력치를 새로 만든다
+  // 길드원는 지금 레벨에 맞춰 능력치를 새로 만든다
   s.v = 1;
   s.advs = (v.advs || []).filter(a => a.status !== 'dead').map(o => {
     const a = makeAdv({ cls: o.cls, lv: o.lv || 1, name: o.name, bio: o.bio, hero: o.hero, salary: o.salary });
@@ -114,7 +114,7 @@ function migrate4() {
     for (let k = 1; k <= 4; k++) if ((fs.best || 0) >= k * BOSS_EVERY && !fs.boss[k]) fs.boss[k] = 1;   // 이미 지나온 구간은 거점으로 쓴다
   });
   S.advs.forEach(a => { a.pf = a.pf != null ? a.pf : Math.round((a.kills || 0) / 25 + a.lv * 1.5); a.rank = a.rank || 0; a.sleep = 0; a.inj = null; a.post = null; a.down = false; });
-  // 묘지에 있던 모험가: 사실 오물거리 진료소에 누워 있었다
+  // 묘지에 있던 길드원: 사실 오물거리 진료소에 누워 있었다
   const back = [];
   for (const g of S.graves || []) {
     if (living().length >= beds()) break;
@@ -198,7 +198,7 @@ function rollCands() {
   const n = 3 + (spn('guild') >= 3 ? 1 : 0);
   for (let i = 0; i < n; i++) S.cands.push(makeCand());
   if (!living().length) {
-    const a = makeAdv({ cls: pickOne(['warrior', 'archer', 'cleric']), lv: 1, bio: '모험가 협회가 보낸 견습생. 계약금 없이 일하겠다고 한다.' });
+    const a = makeAdv({ cls: pickOne(['warrior', 'archer', 'cleric']), lv: 1, bio: '길드원 협회가 보낸 견습생. 계약금 없이 일하겠다고 한다.' });
     a.fee = 0; a.salK = 0.5; salaryNew(a); starterGear(a); S.cands.unshift(a);   // 견습생은 봉급 절반 (빌드 69: 예전엔 60G로 고정)
   }
 }
@@ -222,8 +222,8 @@ function hire(id) {
 }
 function fire(id) {
   const a = advById(id);
-  if (!a || a.status !== 'idle') return '대기 중인 모험가만 내보낼 수 있어요.';
-  if (a.inj) return '다친 모험가를 내보낼 수는 없어요. 다 나을 때까지 돌봐 주세요.';
+  if (!a || a.status !== 'idle') return '대기 중인 길드원만 내보낼 수 있어요.';
+  if (a.inj) return '다친 길드원를 내보낼 수는 없어요. 다 나을 때까지 돌봐 주세요.';
   leave(a, '길드를 떠났다.');
   changed();
   return '';
@@ -344,7 +344,7 @@ function buyAmmo(base, t, lv = 0) {
 }
 function autoEquip(aid) {
   const a = advById(aid);
-  if (!a || a.status !== 'idle') return '대기 중인 모험가만 장비를 바꿀 수 있어요.';
+  if (!a || a.status !== 'idle') return '대기 중인 길드원만 장비를 바꿀 수 있어요.';
   let n = 0;
   for (const [slot] of SLOTS) {
     const sc = g => gearScore(g) + mastGearBonus(a, g);   // 숙련한 무기·갑옷을 조금 더 쳐준다
@@ -394,7 +394,7 @@ const RUNE_OUT = [100, 400, 1500, 6000];   // 룬을 빼는 값 (빼낸 룬은 �
 function runeIn(gid, rid) {
   const f = findGear(gid);
   if (!f) return '장비를 찾을 수 없어요.';
-  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 길드원의 장비예요.';
   const g = f.g; g.runes = g.runes || [];
   if (!runeSlots(g)) return '화살 · 표창에는 룬 칸이 없어요.';
   if (g.runes.length >= runeSlots(g)) return '룬 칸이 꽉 찼어요.';
@@ -408,7 +408,7 @@ function runeIn(gid, rid) {
 function runeOut(gid, i) {
   const f = findGear(gid);
   if (!f || !f.g.runes || !f.g.runes[i]) return '';
-  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 길드원의 장비예요.';
   const rid = f.g.runes[i], fee = RUNE_OUT[ITEMS[rid].rune[1]];
   if (S.gold < fee) return `룬을 빼려면 ${g$(fee)}이 들어요.`;
   if (!roomItem(rid)) return WH_FULL;
@@ -417,11 +417,11 @@ function runeOut(gid, i) {
   changed();
   return '';
 }
-// 빌드 69 마석: 영웅 이상 장비의 마석 칸(영웅 1 · 전설 2 · 신화부터 3칸)에 끼운다 — 같은 마석을 여럿 껴도 되지만 효과는 모험가마다 여섯 개 몫까지 (data-maseok69.js)
+// 빌드 69 마석: 영웅 이상 장비의 마석 칸(영웅 1 · 전설 2 · 신화부터 3칸)에 끼운다 — 같은 마석을 여럿 껴도 되지만 효과는 길드원마다 여섯 개 몫까지 (data-maseok69.js)
 function msIn(gid, iid) {
   const f = findGear(gid);
   if (!f) return '장비를 찾을 수 없어요.';
-  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 길드원의 장비예요.';
   const g = f.g; g.ms = g.ms || [];
   if (!msSlots(g)) return '마석 칸은 영웅 장비부터 열려요 (영웅 1 · 전설 2 · 신화부터 3칸).';
   if (g.ms.length >= msSlots(g)) return '마석 칸이 꽉 찼어요.';
@@ -435,7 +435,7 @@ function msIn(gid, iid) {
 function msOut(gid, i) {
   const f = findGear(gid);
   if (!f || !f.g.ms || !f.g.ms[i]) return '';
-  if (f.a && f.a.status !== 'idle') return '원정 중인 모험가의 장비예요.';
+  if (f.a && f.a.status !== 'idle') return '원정 중인 길드원의 장비예요.';
   const iid = f.g.ms[i];
   if (S.gold < MASEOK_OUT) return `마석을 빼려면 ${g$(MASEOK_OUT)}이 들어요.`;
   if (!roomItem(iid)) return WH_FULL;
@@ -463,7 +463,7 @@ const learnFee = s => (s.own ? ownFee(s) : s.lv * 30);   // 수업료: 고유 �
 function learnSkill(aid, sid) {
   const a = advById(aid), s = SKILLS[sid];
   if (!S.bld.training) return '훈련소가 있어야 스킬을 배울 수 있어요.';
-  if (!a || a.status !== 'idle') return '대기 중인 모험가만 배울 수 있어요.';
+  if (!a || a.status !== 'idle') return '대기 중인 길드원만 배울 수 있어요.';
   if (a.skills.includes(sid)) return '이미 배운 스킬이에요.';
   if (s.tier && jobTier(a.cls) < s.tier) return `${s.name}은(는) ${s.tier}차 전직 후에 배울 수 있어요.`;
   if (!canLearn(a, sid)) return `${s.name}은(는) ${skJobTxt(sid)} · Lv${s.lv} 이상만 배울 수 있어요.`;   // 빌드 68: 계열 · 직업 글
@@ -550,7 +550,7 @@ const trainCost = a => Math.round((60 + 30 * trainedTotal(a)) * (1 + a.lv / 20) 
 function trainStat(aid, k) {
   const a = advById(aid);
   if (!S.bld.training) return '훈련소가 필요해요.';
-  if (!a || a.status !== 'idle') return '대기 중인 모험가만 훈련할 수 있어요.';
+  if (!a || a.status !== 'idle') return '대기 중인 길드원만 훈련할 수 있어요.';
   if (a.inj) return '다친 몸으로는 훈련할 수 없어요.';
   if (trainedTotal(a) >= trainCap(a)) return `지금 레벨에서는 ${trainCap(a)}번까지 훈련할 수 있어요. 레벨을 올리세요.`;
   if (S.gold < trainCost(a)) return '훈련비가 모자라요.';
@@ -593,7 +593,7 @@ function postHealer(aid, on) {
   if (!S.bld.temple) return '신전이 있어야 해요.';
   if (!isHealer(a.cls)) return '성직자 계열과 성기사만 신전에서 환자를 돌볼 수 있어요.';
   if (a.status !== 'idle') return '원정 중이에요.';
-  if (a.inj) return '다친 모험가는 일할 수 없어요.';
+  if (a.inj) return '다친 길드원는 일할 수 없어요.';
   if (healers().length >= healerSlots()) return `치유사 자리는 ${healerSlots()}명까지예요. 신전을 넓혀 주세요.`;
   const p = partyOf(a.id);
   if (p) { if (p.exp) return '원정 중인 파티에 있어요.'; p.members = p.members.filter(x => x !== a.id); }
@@ -693,7 +693,7 @@ const guildRate = () => GUILD_RATE + (spn('guild') >= 1 ? 0.1 : 0) + 0.02 * (S.r
 function autoSellRun(who) {
   const A = S.autoSell || {}; let total = 0, n = 0;
   for (const k in A) { if (!ITEMS[k] || A[k] == null) continue; const q = (S.inv[k] || 0) - A[k]; if (q > 0) { const g = Math.round(ITEMS[k].v * guildRate() * q); addTo(S.inv, k, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g; total += g; n += q; } }
-  if (n) { log(`자동 판매: 부속품 ${n}개를 모험가 협회에 ${g$(total)}에 팔았다.`); S.stats.autoG = (S.stats.autoG || 0) + total; }
+  if (n) { log(`자동 판매: 부속품 ${n}개를 길드원 협회에 ${g$(total)}에 팔았다.`); S.stats.autoG = (S.stats.autoG || 0) + total; }
 }
 function sellGuild(it, q) {
   q = Math.min(q, S.inv[it] || 0);
@@ -832,8 +832,8 @@ function rankReqs(r = S.rank || 0) {
     { label: '길드 명성', ok: S.fame >= R.fame, cur: S.fame, need: R.fame },
     { label: '끝낸 의뢰', ok: (S.stats.reqs || 0) >= R.reqs, cur: S.stats.reqs || 0, need: R.reqs },
     { label: '누적 판매액', ok: (S.stats.soldG || 0) >= R.sold, cur: S.stats.soldG || 0, need: R.sold, gold: 1 },
-    { label: '소속 모험가', ok: living().length >= R.advs, cur: living().length, need: R.advs },
-    { label: `${LICENSE[R.lic[0]].name} 이상 모험가`, ok: licN >= R.lic[1], cur: licN, need: R.lic[1] }
+    { label: '소속 길드원', ok: living().length >= R.advs, cur: living().length, need: R.advs },
+    { label: `${LICENSE[R.lic[0]].name} 이상 길드원`, ok: licN >= R.lic[1], cur: licN, need: R.lic[1] }
   ];
 }
 const rankReady = () => { const q = rankReqs(); return !!q && q.every(x => x.ok); };
@@ -843,12 +843,12 @@ function rankUp() {
   const R = RANKS[S.rank], fame = 5 * S.rank;
   S.fame += fame;
   log(`${S.company}이(가) ${R.name}랭크 「${R.title}」(으)로 올라섰다! 명성 +${fame}`, 'good');
-  queueModal({ title: `길드 랭크 ${R.name}`, body: [`모험가 협회 심사를 통과했다. 이제 ${S.company}은(는) ${R.name}랭크 「${R.title}」이다. 명성 +${fame}`].concat(rankGifts(S.rank).map(g => '· ' + g)) });
+  queueModal({ title: `길드 랭크 ${R.name}`, body: [`길드원 협회 심사를 통과했다. 이제 ${S.company}은(는) ${R.name}랭크 「${R.title}」이다. 명성 +${fame}`].concat(rankGifts(S.rank).map(g => '· ' + g)) });
   changed();
   return '';
 }
 
-/* ───────── 모험가 라이선스 ───────── */
+/* ───────── 길드원 라이선스 ───────── */
 const licNext = a => LICENSE_UP[a.rank || 0] || null;
 function licenseUp(aid) {
   const a = advById(aid), L = a && licNext(a);
@@ -866,7 +866,7 @@ function licenseUp(aid) {
     log(`${a.name}이(가) 백금 라이선스를 받았다! 길드 명성 +15`, 'good');
     HOOKS.toast(`${a.name} · 백금 라이선스`);
   } else {
-    log(`${a.name}이(가) 모험가 협회 심사를 통과해 ${N.name} 라이선스를 받았다.`, 'good');
+    log(`${a.name}이(가) 길드원 협회 심사를 통과해 ${N.name} 라이선스를 받았다.`, 'good');
     HOOKS.toast(`${a.name} · ${N.name} 라이선스`);
   }
   changed();
@@ -906,7 +906,7 @@ function useStone(aid, tid) {
   changed();
   return '';
 }
-// 개화석: 타고난 특성이 3개가 안 되는 모험가에게 새 특성 하나
+// 개화석: 타고난 특성이 3개가 안 되는 길드원에게 새 특성 하나
 function useBloom(aid) {
   const a = advById(aid);
   if (!a) return '';
@@ -1128,7 +1128,7 @@ function settle() {
   let n = 0, sum = 0;
   const unpaid = [];
   for (const a of living()) { salaryNew(a); const pay = salaryOf(a); if (S.gold >= pay) { S.gold -= pay; n++; sum += pay; a.unpaid = 0; } else unpaid.push(a); }   // 빌드 69: 스승 할인도 실제로 깎는다
-  if (n) lines.push(`모험가 ${n}명에게 봉급 ${g$(sum)}을 줬다.`);
+  if (n) lines.push(`길드원 ${n}명에게 봉급 ${g$(sum)}을 줬다.`);
   const gone = [], warned = [];
   unpaid.forEach(a => {
     a.unpaid = (a.unpaid || 0) + 1;
@@ -1248,7 +1248,7 @@ function loadFrom(v) {
     if (old < 13) runeRename();   // 빌드 64 룬 개편: 옛 룬 이름 → 합친 룬 (창고 정리보다 먼저)
     if (old < 14) refit65();      // 빌드 65 직업 개편: 못 끼게 된 무기를 같은 단계 새 무기로 (migrateS의 unfitGear보다 먼저)
     if (old < 16) lowJob66();     // 빌드 66: 늪지대 아래 단계의 2차 직업 전용 장비 → 같은 단계 1차 장비 (migrateS의 unfitGear보다 먼저)
-    cut69();                      // 빌드 69: 왕국 · 투기장 스킬 빼기 — 배운 모험가 · 스킬북 정리 (불러올 때마다, 남은 게 없으면 아무것도 안 함)
+    cut69();                      // 빌드 69: 왕국 · 투기장 스킬 빼기 — 배운 길드원 · 스킬북 정리 (불러올 때마다, 남은 게 없으면 아무것도 안 함)
     heal69();                     // 빌드 69 회복 개편: 이제 못 배우는 응급 처치 · 치유의 찬가 · 재기를 지우고 스킬북 · 수업료를 돌려준다 (불러올 때마다)
     raid69();                     // 빌드 69 레이드 개편: 레이드대를 풀고(원정 중이면 돌아온 뒤) 레이드를 목적지로 둔 파티는 평원으로 (불러올 때마다)
     sal69();                      // 빌드 69: 봉급을 지금 레벨 · 차수 · 라이선스로 다시 매긴다 (불러올 때마다)
@@ -1331,7 +1331,7 @@ function migrate6() {
   S.v = 6;
   if (n) log(`마구간이 생겼다. 마차를 끌던 말 ${n}마리를 마구간 장부에 올렸다.`);
 }
-// 빌드 31: 날씨 씨앗, 주방, 편성, 파티 인원(짐꾼 계열 빼고 넷), 체질 특성 (자리가 있는 모험가 셋 중 하나꼴)
+// 빌드 31: 날씨 씨앗, 주방, 편성, 파티 인원(짐꾼 계열 빼고 넷), 체질 특성 (자리가 있는 길드원 셋 중 하나꼴)
 function migrate7() {
   S.wx = S.wx || { seed: Math.floor(Math.random() * 1e9) };
   S.bld.kitchen = S.bld.kitchen || 0; S.presets = S.presets || [];
@@ -1340,7 +1340,7 @@ function migrate7() {
   S.v = 7;
   if (cut) log(`파티 인원 규칙이 바뀌었다 (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지). 넘치던 ${cut}명을 대기로 돌렸다.`);
 }
-// 빌드 36: 날씨 특성은 타고난 특성과 따로, 모험가마다 하나(약함만). 특성 칸에 있던 체질(약함·강함)을 빼고,
+// 빌드 36: 날씨 특성은 타고난 특성과 따로, 길드원마다 하나(약함만). 특성 칸에 있던 체질(약함·강함)을 빼고,
 // 약한 체질이 있었으면 그것을, 없으면 무작위 하나를 a.wxt로 준다 (그만큼 특성 칸이 빈다)
 // 빌드 38: 부장비·화살 칸. 활을 쏘는 모험가(손님 포함)에게 무기 단계(없으면 레벨)에 맞는 화살을 준다 — 없으면 기본 공격을 못 하니까
 function migrate9() {
@@ -1353,7 +1353,7 @@ function migrate9() {
   };
   S.advs.forEach(fix); (S.cands || []).forEach(fix);
   S.v = 9;
-  if (n) log(`부장비 칸이 생겼다. 활을 쏘는 모험가 ${n}명에게 화살을 나눠 주었다.`);
+  if (n) log(`부장비 칸이 생겼다. 활을 쏘는 길드원 ${n}명에게 화살을 나눠 주었다.`);
 }
 // 빌드 39: 방패가 네 종류(원형·히터·카이트·탑). 옛 방패는 그때 보이던 모양 그대로(단계 모습 → 종류)로 바꾸고, 방패가 없는 전사·마부 계열에게 방패를 준다
 function migrate10() {
@@ -1396,8 +1396,8 @@ function migrate11() {
   log(`은행을 닫았다. 돌려받은 돈 ${fmt(refund + loan)}G · 돌려준 예금 ${fmt(dep)}G`);
 }
 // 빌드 64 장비 개편 1단계: 카이트 · 탑 방패는 라운드 실드로, 그 단계에 없는 2차 직업 장비(늪지 단계 아래의 글라디우스 · 버클러 · 십자 방패)는 장검 · 라운드 실드로.
-// 옛 방패는 모양만 다른 같은 방패였으니, 모험가가 든 방패는 그 직업의 새 방패로(검투사 버클러 · 기사 십자 · 마검사 에테르, 그 단계에 없으면 라운드 실드) — 등급 · 룬은 그대로.
-// 들고 있던 장비를 더는 못 쓰게 된 모험가(글라디우스를 든 전사 · 쌍검사 등)는 같은 단계 장검으로 바꿔 준다.
+// 옛 방패는 모양만 다른 같은 방패였으니, 길드원가 든 방패는 그 직업의 새 방패로(검투사 버클러 · 기사 십자 · 마검사 에테르, 그 단계에 없으면 라운드 실드) — 등급 · 룬은 그대로.
+// 들고 있던 장비를 더는 못 쓰게 된 길드원(글라디우스를 든 전사 · 쌍검사 등)는 같은 단계 장검으로 바꿔 준다.
 function migrate12() {
   const OLD = { kite: 'shield', tower: 'shield' }, LOW = { gladius: 'sword', great: 'axe', buckler: 'shield', cross: 'shield', ether: 'shield' };
   const baseFix = (b, t) => OLD[b] || (GTYPES[b] && !tierOk(b, t) ? LOW[b] || b : b);
@@ -1424,7 +1424,7 @@ function migrate12() {
     if (o && GTYPES[o.base] && GTYPES[o.base].slot === 'off' && SHIELDS.includes(o.base) && !gearFits(a, o)) o.base = 'shield';
     if (twoHand(a.eq.weapon) && a.eq.off) { S.gear.push(a.eq.off); a.eq.off = null; }
   });
-  // 빌드 64: 각성(용사) · 2차 각성(초월 용사)을 없앴다 — 표시를 지우고 각성기는 스킬 칸에서 뺀다 (이미 오른 능력치 · 레벨은 그대로, 이미 전직한 모험가도 그대로)
+  // 빌드 64: 각성(용사) · 2차 각성(초월 용사)을 없앴다 — 표시를 지우고 각성기는 스킬 칸에서 뺀다 (이미 오른 능력치 · 레벨은 그대로, 이미 전직한 길드원도 그대로)
   let h = 0;
   const AWK = id => /^awk2?_/.test(id);
   [...(S.advs || []), ...(S.cands || []), ...((S.graves || []).map(g => g && g.adv).filter(Boolean))].forEach(a => {
@@ -1525,7 +1525,7 @@ function migrate15() {   // 빌드 65 넷째 묶음: 펫 만렙 30 · 레어도(
   if (!S.port) S.port = { next: today() + 1, ship: null };
 }
 // 빌드 66: 2차 직업만 입는 장비(data-armor65.js JOB2_LOW — 중갑 · 중갑 하의 · 판금 · 판금 하의 · 창 · 류트)는 늪지대 단계부터. 그 아래 단계로 갖고 있던 것은
-// 같은 단계 · 레어도 · 룬 · 옵션 그대로 1차 장비로 (loadFrom에서 migrateS의 unfitGear보다 먼저 — 끼고 있던 것은 그 모험가가 입을 수 있는 같은 칸 장비로)
+// 같은 단계 · 레어도 · 룬 · 옵션 그대로 1차 장비로 (loadFrom에서 migrateS의 unfitGear보다 먼저 — 끼고 있던 것은 그 길드원가 입을 수 있는 같은 칸 장비로)
 let LOW66 = 0, TRI67 = 0;
 function lowJob66() {
   const low = g => !!g && !!JOB2_LOW[g.base] && (LADDER_B[g.base] ? (g.t || 0) < 5 : !tierOk(g.base, g.t));   // 빌드 67: 중갑 · 판금은 사막왕 단계(Lv50 그림)부터 쓴다
@@ -1563,7 +1563,7 @@ function migrate16() {   // 빌드 66 (lowJob66이 먼저 바꿔 둔다)
 function notes67() { if (!S.flags.v67) { S.flags.v67 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '장비 착용 레벨 · 무기 그림 · 룬 합성', body: STORY.v67 }); } }   // 빌드 67
 function notes68() { if (!S.flags.v68) { S.flags.v68 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '펫 · 알 · 재배소 · 식재료 · 요리 · 항구', body: STORY.v68 }); } }
 // 빌드 69: 왕국 · 투기장 스킬 빼기 (data-cut69.js CUT_SK) — 불러올 때마다 (남은 게 없으면 아무것도 안 한다)
-//  배운 모험가에게서 지우고 배울 때 쓴 책 1권 + 스킬 단계마다 1권을 같은 차수 스킬북 단계(찢어진 · 낡은 · 빛바랜)로, 수업료 · 단계 올린 값은 돈으로 돌려준다.
+//  배운 길드원에게서 지우고 배울 때 쓴 책 1권 + 스킬 단계마다 1권을 같은 차수 스킬북 단계(찢어진 · 낡은 · 빛바랜)로, 수업료 · 단계 올린 값은 돈으로 돌려준다.
 //  고용 후보 · 그 밖에 모험가 꼴을 든 곳(명예의 전당 · 투기장 상대 …)에서는 그냥 지운다.
 //  그 스킬북은 어디에 있든(창고 · 창고 1~10 · 진열대 · 원정 짐 · 의뢰 · 암시장 …) 같은 차수 스킬북 단계로 바꾼다 (runeRename과 같은 길 — 열쇠 · 값, 겹치면 개수를 더함)
 let CUT69 = null;   // 불러올 때 정리한 것 (notes69가 알림으로 내보내고 비운다)
@@ -1627,7 +1627,7 @@ function notes69() {
   else if (lines.length) S.modals.push({ title: '왕국 · 투기장 스킬 정리', body: lines });
 }
 // 빌드 69 회복 개편 (data-heal69.js): 이제 못 배우는 응급 처치(성직자 계열만) · 치유의 찬가(성직자 계열 Lv50부터) · 재기(Lv150부터)를 지운다.
-// 모험가에게는 그 스킬북(배울 때 1권 + 스킬 단계마다 1권)과 수업료 · 단계 값(예전 배우는 레벨로 셈)을 돌려준다 — 숙련도(sm)는 남겨 다시 배우면 이어진다.
+// 길드원에게는 그 스킬북(배울 때 1권 + 스킬 단계마다 1권)과 수업료 · 단계 값(예전 배우는 레벨로 셈)을 돌려준다 — 숙련도(sm)는 남겨 다시 배우면 이어진다.
 // 손님 · 투기장 상대 · 전당 같은 다른 모험가 꼴은 그냥 지운다. 불러올 때마다 (남은 게 없으면 아무것도 안 한다)
 let HEAL69R = null;
 function heal69() {
@@ -1674,13 +1674,13 @@ function notes69b() {
 }
 /* ───────── 빌드 69 레이드 개편 · 봉급 (data-raid69.js · data-sal69.js) ───────── */
 let RAID69R = null, SAL69R = null;
-// 레이드대(빌드 36 레이드 전용 파티)를 푼다: 쉬고 있으면 바로, 원정 중이면 돌아온 뒤(arrive) — 모험가는 대기 중으로
+// 레이드대(빌드 36 레이드 전용 파티)를 푼다: 쉬고 있으면 바로, 원정 중이면 돌아온 뒤(arrive) — 길드원는 대기 중으로
 function raidDissolve(p) {
   if (!p || !p.raidOnly || p.exp) return false;
   S.parties = S.parties.filter(x => x !== p);
   if (S.view === p.id) S.view = S.parties[0] ? S.parties[0].id : null;
   (RAID69R || (RAID69R = { n: 0, who: 0 })).n++; RAID69R.who += p.members.length;
-  log(`레이드 전용 파티 「${p.name}」을(를) 풀었다. 모험가 ${p.members.length}명이 대기 중으로 돌아왔다. 이제 레이드는 일반 파티 ${RAID_MIN_PARTIES}개 이상이 함께 나간다.`);
+  log(`레이드 전용 파티 「${p.name}」을(를) 풀었다. 길드원 ${p.members.length}명이 대기 중으로 돌아왔다. 이제 레이드는 일반 파티 ${RAID_MIN_PARTIES}개 이상이 함께 나간다.`);
   return true;
 }
 function raid69() {
@@ -1698,8 +1698,8 @@ function sal69() {
 function notes69c() {
   const R = RAID69R, P = SAL69R; RAID69R = null; SAL69R = null;
   const lines = [];
-  if (R && R.n) lines.push(`레이드대를 풀었다: 모험가 ${R.who}명이 대기 중으로 돌아왔다.`);
-  if (P && P.n) lines.push(`봉급: 모험가 ${P.n}명의 한 달 봉급이 ${fmt(P.before)}G → ${fmt(P.after)}G가 되었다 (명예의 전당 스승 할인을 깎은 값).`);
+  if (R && R.n) lines.push(`레이드대를 풀었다: 길드원 ${R.who}명이 대기 중으로 돌아왔다.`);
+  if (P && P.n) lines.push(`봉급: 길드원 ${P.n}명의 한 달 봉급이 ${fmt(P.before)}G → ${fmt(P.after)}G가 되었다 (명예의 전당 스승 할인을 깎은 값).`);
   const first = !S.flags.v69c; S.flags.v69c = 1;
   if (first && (lines.length || today() > 1 || S.advs.some(a => a.lv > 2))) S.modals.push({ title: '누구나 Lv200 · 레이드 개편 · 봉급', body: STORY.v69c.concat(lines) });
   else if (R && R.n) S.modals.push({ title: '레이드대 정리', body: lines });
@@ -1813,7 +1813,7 @@ function migrate8() {
   };
   S.advs.forEach(fix); (S.cands || []).forEach(fix);
   S.v = 8;
-  if (moved) log(`날씨 특성이 따로 생겼다. 모험가 ${moved}명의 체질을 특성 칸에서 날씨 특성으로 옮겼다.`);
+  if (moved) log(`날씨 특성이 따로 생겼다. 길드원 ${moved}명의 체질을 특성 칸에서 날씨 특성으로 옮겼다.`);
 }
 function notes37() { if (!S.flags.v37) { S.flags.v37 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '숙련 · 새 스킬 그림', body: STORY.v37 }); } }
 function notes36() { if (!S.flags.v36) { S.flags.v36 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '날씨 특성', body: STORY.v36 }); } }
@@ -1822,7 +1822,7 @@ function notes31() { if (!S.flags.v31) { S.flags.v31 = 1; if (today() > 1 || S.a
 function notes30() { if (!S.flags.v30) { S.flags.v30 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '북쪽 변경 · 하늘 · 마구간', body: STORY.v30 }); } }
 // 의상·숙련도 칸 (없으면 만든다)
 function migrateS() { delete S.skins; S.advs.forEach(a => { a.sm = a.sm || {}; delete a.skin; if (!a.traits) a.traits = rollTraits(); }); (S.cands || []).forEach(c => { if (!c.traits) c.traits = rollTraits(); }); migrateU(); dexMigrate(); S.advs.forEach(a => { chainOf(a.cls).forEach(c => { const jt = jobTraitOf(c); if (jt && !(a.traits || []).includes(jt)) a.traits.push(jt); }); }); if ((S.v || 0) >= 12) unfitGear(); migrateSkillIds(); }   // 빌드 64: 옛 저장은 migrate12가 장비를 새 종류로 바꾼 뒤에 본다
-// 모험가가 더는 못 쓰는 장비는 창고로 (불러올 때마다)
+// 길드원가 더는 못 쓰는 장비는 창고로 (불러올 때마다)
 function unfitGear() { S.advs.forEach(a => { SLOTS.forEach(([sl]) => { const g = a.eq[sl]; if (g && !gearFits(a, g)) { S.gear.push(g); a.eq[sl] = null; } }); }); }
 // 겹치던 스킬 id를 갈랐다: 결의(resolve)·치유의 찬가(chant)·유성 낙하(meteorfall). 옛 저장의 스킬·스킬북·숙련도를 옮기고, 라이선스 심사용 처치 수를 어림한다
 function migrateSkillIds() {

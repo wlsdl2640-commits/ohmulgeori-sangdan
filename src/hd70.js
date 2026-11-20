@@ -204,7 +204,7 @@ const HDW_HURT_T = 0.55, HDW_DIE_T = 1.0, HDW_RUN_T = 0.7, HDW_WALK_T = 1.05, HD
    (걷는 길 세 배 WALK_STRETCH) 그대로 맞추면 한 바퀴가 4초 — 느린 그림이 된다. 그래서 보통 빠르기에서 한 바퀴 1초가 되게 잡고, 빠른 파티는 그만큼 발이 빨라지고 느려지면(물 · 냉기) 느려진다 */
 const HDW_STRIDE = 7.5;
 const HDW_TC = {};
-function hdMotT(a, mk) {   // view.js motTA: 이 모험가가 이 동작을 할 때 장마다 초 (null이면 엔진 그대로)
+function hdMotT(a, mk) {   // view.js motTA: 이 길드원가 이 동작을 할 때 장마다 초 (null이면 엔진 그대로)
   if (!hdWarOn(a)) return null;
   hdUse(a); const ck = HDC.id + mk;
   if (HDW_TC[ck]) return HDW_TC[ck];

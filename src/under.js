@@ -1,11 +1,11 @@
 /* ───────── 7번가 지하수로: 투기장 · 투기장 상단 · 암시장 · 경매장 · 암살자 길드 본부 ─────────
    상태는 S.under = { arena, bm, au }. 날이 바뀌면 underDay(k)가 상대·물건·경매품을 새로 뽑는다. */
 
-// 투기장 상대 모험가는 전투 엔진 안에서 '몬스터'로 다뤄진다 (그림은 모험가로)
+// 투기장 상대 길드원는 전투 엔진 안에서 '몬스터'로 다뤄진다 (그림은 길드원로)
 Object.assign(MONS, {
-  pvp:  { name: '모험가', plan: 'human', body: '#8a8a8a', dark: '#5a5a5a', mh: 1, ma: 1, md: 1, spd: 1, minS: 1, drops: [] },
-  pvpm: { name: '모험가', plan: 'human', body: '#8a8a8a', dark: '#5a5a5a', mh: 1, ma: 1, md: 1, spd: 1, minS: 1, magic: 1, drops: [] },
-  pvph: { name: '모험가', plan: 'human', body: '#8a8a8a', dark: '#5a5a5a', mh: 1, ma: 1, md: 1, spd: 1, minS: 1, magic: 1, drops: [] }
+  pvp:  { name: '길드원', plan: 'human', body: '#8a8a8a', dark: '#5a5a5a', mh: 1, ma: 1, md: 1, spd: 1, minS: 1, drops: [] },
+  pvpm: { name: '길드원', plan: 'human', body: '#8a8a8a', dark: '#5a5a5a', mh: 1, ma: 1, md: 1, spd: 1, minS: 1, magic: 1, drops: [] },
+  pvph: { name: '길드원', plan: 'human', body: '#8a8a8a', dark: '#5a5a5a', mh: 1, ma: 1, md: 1, spd: 1, minS: 1, magic: 1, drops: [] }
 });
 MON_DIM.pvp = MON_DIM.pvpm = MON_DIM.pvph = [18, 26];
 ['pvp', 'pvpm', 'pvph'].forEach(id => { MONS[id].ty = ['human']; MONS[id].el = []; });   // 투기장 상대: 인간 (속성 상성은 받지 않는다)
@@ -61,7 +61,7 @@ function underTick() {
 /* ───────── 투기장 ───────── */
 const arenaTier = () => Math.max(2, ...TIER_FIELDS.filter(isUnlocked).map(f => FIELDS[f].tier));
 function arenaLvBase() { const lv = S.parties.length ? Math.max(...S.parties.map(p => avgLvOf(p))) : 1; return Math.max(6, Math.round(lv)); }
-// 상대 모험가 한 명: 급에 맞는 직업과 장비
+// 상대 길드원 한 명: 급에 맞는 직업과 장비
 function fakeAdv(lv, tier) {
   let pool = CLASS_IDS.slice();
   if (tier >= 1 && lv >= JOB_REQ[2].lv) pool = pool.concat(Object.keys(CLASSES).filter(c => jobTier(c) === 2));
@@ -90,7 +90,7 @@ function arenaRefresh(k) {
   });
 }
 const arenaFee = opp => 20 * opp.lv;
-// 상대 모험가 → 전투용 적
+// 상대 길드원 → 전투용 적
 function pvpFoe(a) {
   const d = derive(a), base = jobBase(a.cls), caster = base === 'mage' || base === 'cleric', healer = base === 'cleric';
   // 몬스터 잣대에 맞춘다: 방어는 낮게(몬스터처럼 맞고), 체력은 넉넉히
@@ -106,7 +106,7 @@ function startArena(pid, oi) {
   if (p.exp) return '원정 중인 파티예요.';
   if (U.fights >= ARENA_PER_DAY) return `오늘은 더 싸울 수 없어요 (하루 ${ARENA_PER_DAY}판).`;
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
-  if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 내보낼 수 있어요.';
+  if (!team.length || team.length !== p.members.length) return '대기 중인 길드원만 내보낼 수 있어요.';
   const why = team.map(cantGo).find(Boolean);
   if (why) return why + '.';
   const fee = arenaFee(opp);
@@ -344,7 +344,7 @@ PANELS.au = () => {
 };
 PANELS.ag = () => `<div class="card hl"><div class="h">암살자 길드</div><div class="sub">하르겐 지하 깊은 곳, 지하미궁으로 내려가는 통로 끝에 길드의 본부가 있다. 7번가 뒷골목의 은신처는 지부일 뿐. 7번가의 모든 가게와 길드는 이들에게 자릿세를 낸다.</div></div>
   <div class="card"><div class="row"><span class="grow">매달 자릿세</span><span class="num ${S.flags.guildHQ ? 'ok-t' : 'red-t'}">${S.flags.guildHQ ? '없음 (본부 토벌 완료)' : fmt(rent()) + 'G'}</span></div>
-  <div class="sub">${S.flags.guildHQ ? '길드 본부를 토벌한 뒤로 자릿세를 받으러 오지 않는다.' : `자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3%${S.flags.guildDown ? ', 지부가 무너져 그 절반' : ''} — 이달은 기본 ${fmt(rentBase())}G + 판매액 ${fmt(S.salesM || 0)}G의 몫 ${fmt(rentSales())}G. ${S.flags.guildDown ? '지하미궁 통로(Lv120 ~ 140) 끝의 「암살자 길드 본부」를 토벌하면 자릿세가 끝난다 — 지하수로 깊은 곳 → 옛 제국 수로 → 지하미궁 통로 차례로 열린다.' : `뒷골목의 지부(은신처)를 토벌하면 자릿세가 절반, 하르겐 지하의 본부를 토벌하면 자릿세가 끝난다. 지부 토벌은 명성 ${GUILD_RAID.fame}, 모험가 ${GUILD_RAID.advs}명, 후원 조건을 채운 뒤 원정 창의 「7번가 뒷골목」에서.`}`}</div></div>
+  <div class="sub">${S.flags.guildHQ ? '길드 본부를 토벌한 뒤로 자릿세를 받으러 오지 않는다.' : `자릿세 = 300G + 명성 25마다 50G + 그달 상점(진열대) 판매액의 3%${S.flags.guildDown ? ', 지부가 무너져 그 절반' : ''} — 이달은 기본 ${fmt(rentBase())}G + 판매액 ${fmt(S.salesM || 0)}G의 몫 ${fmt(rentSales())}G. ${S.flags.guildDown ? '지하미궁 통로(Lv120 ~ 140) 끝의 「암살자 길드 본부」를 토벌하면 자릿세가 끝난다 — 지하수로 깊은 곳 → 옛 제국 수로 → 지하미궁 통로 차례로 열린다.' : `뒷골목의 지부(은신처)를 토벌하면 자릿세가 절반, 하르겐 지하의 본부를 토벌하면 자릿세가 끝난다. 지부 토벌은 명성 ${GUILD_RAID.fame}, 길드원 ${GUILD_RAID.advs}명, 후원 조건을 채운 뒤 원정 창의 「7번가 뒷골목」에서.`}`}</div></div>
   <div class="sub muted">길드원들은 투기장과 암시장도 손에 쥐고 있다. 투기장 코인의 일부는 이들 주머니로 들어간다.</div>`;
 Object.assign(ACT, {
   arparty: d => { UI.arP = +d.id; renderPanel(true); },

@@ -289,7 +289,7 @@ PXU_WPN.wheat = (F, d) => { const [hx, hy] = pxsMHand(F), [dx, dy] = pxsDir(F.a 
   for (const [t, s, ch] of [[L + 1, -1, 'o'], [L + 1, 0, 'g'], [L + 1, 1, 'o'], [L + 2, -1, 'g'], [L + 2, 0, 'o'], [L + 2, 1, 'g'], [L + 3, -1, 'o'], [L + 3, 0, 'g'], [L + 3, 1, 'o'], [L + 4, 0, 'o'], [L + 5, 0, 'y'], [L + 4.6, -1.6, 'y'], [L + 4.6, 1.6, 'y']]) at(t, s, ch);
   return out; };
 PXU_FXW.wheat = 'staff';
-// 짐승 동작 (모험가 동작 표와 같은 꼴: h·a는 효과 자리(입에서) · body 다른 몸/조각 · cr 웅크림 · dx 나감 · jy 뜀(뭉툭 칸, 위 −))
+// 짐승 동작 (길드원 동작 표와 같은 꼴: h·a는 효과 자리(입에서) · body 다른 몸/조각 · cr 웅크림 · dx 나감 · jy 뜀(뭉툭 칸, 위 −))
 Object.assign(PXU_MOT, {
   qbite: [   // 물기: 웅크렸다가 입을 벌리며 덮친다
     { h: [1, 0], a: 0 },

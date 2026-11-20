@@ -81,8 +81,8 @@ const RELICS = {
   plains:   { name: '들쥐왕의 금관',          desc: '부속품을 얻을 확률 +10%',                      drop: 0.1 },
   forest:   { name: '세계수의 새싹',          desc: '길드에서 쉬는 동안 회복·치료·숙면 +30%',      rest: 0.3 },
   mountain: { name: '드워프 장인의 망치',     desc: '대장간 제작비 -20%, 좋은 품질이 더 잘 나온다', smith: 0.2 },
-  valley:   { name: '폭풍 와이번의 깃털',     desc: '모험가 이동속도 +10%',                         move: 0.1 },
-  snow:     { name: '설녀 여왕의 얼음 왕관',  desc: '모험가가 받는 피해 -8%',                       guard: 0.08 },
+  valley:   { name: '폭풍 와이번의 깃털',     desc: '길드원 이동속도 +10%',                         move: 0.1 },
+  snow:     { name: '설녀 여왕의 얼음 왕관',  desc: '길드원가 받는 피해 -8%',                       guard: 0.08 },
   desert:   { name: '왕릉의 황금 가면',       desc: '상점 판매 가격 +10%',                          price: 0.1 }
 };
 const relic = k => (S && S.relics ? S.relics.reduce((s, f) => s + ((RELICS[f] && RELICS[f][k]) || 0), 0) : 0);

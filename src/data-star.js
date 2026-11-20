@@ -117,8 +117,8 @@ STAR_IDS.forEach((fid, i) => {
 });
 Object.assign(RELICS, {
   thunder:    { name: '뇌제의 뿔피리',       desc: '전투 경험치 +8%',          exp: 0.08 },
-  ruins:      { name: '대천사의 깃털 망토',  desc: '모험가가 받는 피해 -6%',   guard: 0.06 },
-  stargarden: { name: '별의 여왕의 왕관',    desc: '모험가 최대 체력 +10%',    hp: 0.1 }
+  ruins:      { name: '대천사의 깃털 망토',  desc: '길드원가 받는 피해 -6%',   guard: 0.06 },
+  stargarden: { name: '별의 여왕의 왕관',    desc: '길드원 최대 체력 +10%',    hp: 0.1 }
 });
 KINGDOMS.inglisia.wants.push('tempest_plate', 'seraph_shard');
 KINGDOMS.frama.wants.push('star_dust', 'nebula_jelly', 'ophan_eye');
@@ -128,5 +128,5 @@ KINGDOMS.sarak.wants.push('sphinx_mane', 'bolt_feather', 'raiju_fang');
 
 STORY.sky = (STORY.sky || []).concat(['구름 위 신전 뒤편, 번개가 치는 봉우리로 이어지는 하늘길이 드러났다. 천둥 봉우리(Lv120)가 열렸다.']);
 STORY.thunder = ['뇌제 아스트라가 관을 떨어뜨리자 봉우리의 번개가 멎었다. 먹구름 너머로 무너진 천계의 도시가 보인다.', '뇌제의 뿔피리를 불면 싸움의 기억이 더 또렷해진다. 전투 경험치가 늘었다.'];
-STORY.ruins = ['타락한 대천사가 광륜과 함께 부서졌다. 성소의 천장이 갈라지며 별빛이 쏟아진다. 하늘의 끝, 별의 정원으로 가는 길이 열렸다.', '대천사의 깃털 망토는 모험가들을 감싸 상처를 덜어 준다.'];
-STORY.stargarden = ['별의 여왕 아스테리아가 왕좌에서 내려왔다. "그대들은 하늘의 끝까지 왔구나." 정원의 별꽃이 일제히 피어난다.', '여왕의 왕관은 모험가들에게 별의 생명력을 나누어 준다. 최대 체력이 늘었다.'];
+STORY.ruins = ['타락한 대천사가 광륜과 함께 부서졌다. 성소의 천장이 갈라지며 별빛이 쏟아진다. 하늘의 끝, 별의 정원으로 가는 길이 열렸다.', '대천사의 깃털 망토는 길드원들을 감싸 상처를 덜어 준다.'];
+STORY.stargarden = ['별의 여왕 아스테리아가 왕좌에서 내려왔다. "그대들은 하늘의 끝까지 왔구나." 정원의 별꽃이 일제히 피어난다.', '여왕의 왕관은 길드원들에게 별의 생명력을 나누어 준다. 최대 체력이 늘었다.'];

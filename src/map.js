@@ -23,7 +23,7 @@ const SKY_MAP_W = 240, SKY_MAP_H = 150;
 const MAP_NODES_SKY = { sky: { x: 118, y: 84, dun: [26, -14] }, thunder: { x: 196, y: 44, dun: [18, -16] }, ruins: { x: 198, y: 118, dun: [-22, -6] }, stargarden: { x: 50, y: 40, dun: [20, -14] } };
 const MAP_KINGS = { inglisia: { x: 22, y: 134 }, frama: { x: 58, y: 186 }, elves: { x: 24, y: 48 }, dwarves: { x: 128, y: 26 }, sarak: { x: 226, y: 178 } };
 const MAP_ORGS = {
-  city:   { x: 120, y: 148, name: '미궁도시 하르겐 · 모험가 협회', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
+  city:   { x: 120, y: 148, name: '미궁도시 하르겐 · 길드원 협회', c: '#f0c24a', c2: '#3a2a14', mark: 'G' },
   guild:  { x: 150, y: 192, name: '암살자 길드', c: '#3a3040', c2: '#e04a4a', mark: 'A' }
 };
 // 레이드 몬스터가 나타나는 자리 (그 필드 근처)
@@ -46,7 +46,7 @@ function emblemURL(id, big) {
   g.fillStyle = c2; for (const [x, y, w, h] of m) g.fillRect(x, y, w, h);
   return (EMB[key] = cv.toDataURL());
 }
-// 사절 초상: 왕국 색을 입힌 모험가 흉상
+// 사절 초상: 왕국 색을 입힌 길드원 흉상
 const ENVOY = {};
 const ENVOY_LOOK = { inglisia: { cls: 'knight', c1: '#3f6aa8' }, frama: { cls: 'bard', c1: '#a8432f' }, elves: { cls: 'ranger', c1: '#3f8a4a' }, dwarves: { cls: 'warrior', c1: '#7a5a3a' }, sarak: { cls: 'mage', c1: '#c08a3a' }, city: { cls: 'cleric', c1: '#e8e0c8' }, guild: { cls: 'assassin', c1: '#2a2230' } };
 function envoyBust(id) {
@@ -143,14 +143,30 @@ function talkCard(id) {
   const f = K ? favorOf(id) : 0, t = K ? favorTier(f) : 0;
   const v = S.king && S.king.visit && S.king.visit.k === id;
   const q = K ? kqOf(id) : null, nq = K ? kqNext(id) : null;
-  return `<div class="card hl"><div class="row"><img class="emb" src="${emblemURL(id, 1)}" alt=""><div class="grow"><div class="h">${esc(name)}</div><div class="sub">${K ? `${K.race} · ${FAVOR[t].name} (호감 ${Math.round(f)})${v ? ' · <span class="gold-t">상단 방문 중</span>' : ''}` : id === 'city' ? '파로스 왕국의 수도이자 미궁도시. 모험가 협회와 상인 조합이 있다.' : '지하수로의 주인. 7번가의 자릿세를 받는다.'}</div></div></div>
+  return `<div class="card hl"><div class="row"><img class="emb" src="${emblemURL(id, 1)}" alt=""><div class="grow"><div class="h">${esc(name)}</div><div class="sub">${K ? `${K.race} · ${FAVOR[t].name} (호감 ${Math.round(f)})${v ? ' · <span class="gold-t">상단 방문 중</span>' : ''}` : id === 'city' ? '파로스 왕국의 수도이자 미궁도시. 길드원 협회와 상인 조합이 있다.' : '지하수로의 주인. 7번가의 자릿세를 받는다.'}</div></div></div>
     ${K ? `<div class="sub">${K.desc}</div>` : ''}
     ${K && !open ? `<div class="sub muted">${FIELDS[K.need] ? FIELDS[K.need].name + '이(가) 열리면 찾아와요.' : ''}</div>` : ''}
     ${K && q ? `<div class="sub">의뢰 진행: ${kqText(q)} <b class="num">${kqProgress(id)}</b></div>` : K && nq ? `<div class="sub muted">받을 수 있는 의뢰가 있어요.</div>` : K ? '<div class="sub ok-t">모든 의뢰를 마쳤어요.</div>' : ''}
     <div class="btns"><button type="button" class="btn sm gold" data-act="talk" data-id="${id}">이야기하기</button>${K && v ? `<button type="button" class="btn sm" data-act="sub" data-id="co_king">교역</button>` : ''}${K && open ? `<button type="button" class="btn sm" data-act="tradego" data-k="${id}">교역로로 가기 · ${TRADE[id].dist}구간</button>` : ''}</div></div>`;
 }
 // 지도 창: 대륙 / 하늘 탭. 하늘 지도는 세계수 던전을 공략하면 보인다 (구름섬은 비행장까지 지어야 간다)
+// 빌드 72 (11-20 15:50 사용자 「지도 탭은 미궁의 계층 버튼을 두고, 누르면 1층, 2층 등의 층 버튼이 나오게 … 우선 대략 50층까지만 · 터치로 밀어 내리고 올리면 층 버튼 이동」):
+//   왼쪽 = 계층 단추, 오른쪽 = 그 계층의 층 단추 1 ~ 50(밀어서 넘김 — 칸 안에서만 굴러간다). 층을 고르면 아래에 그 층 정보와 「이 층에서 출발」. 옛 대륙 · 하늘 지도는 PANELS.map71로 남김(쓰지 않음)
+const labTiers = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !DEMON_IDS.includes(f) && !SKY_IDS.includes(f) && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley').sort((a, b) => FIELDS[a].no - FIELDS[b].no);
 PANELS.map = () => {
+  const ids = labTiers(), fid = ids.includes(UI.labTier) ? UI.labTier : ids.filter(isUnlocked).pop() || ids[0], F = FIELDS[fid], fs = S.fields[fid] || {}, ok = isUnlocked(fid), best = fs.best || 0;
+  const tiers = ids.map(f => { const T = FIELDS[f], o = isUnlocked(f), b = (S.fields[f] || {}).best || 0; return `<button type="button" class="fbtn${f === fid ? ' on' : ''}" data-act="labtier" data-f="${f}"${o ? '' : ' disabled'}><span>${T.no}계층 · ${T.name}</span><small>${o ? `Lv${T.lv}~${fieldLv(T, FIELD_STAGES)} · ${b ? `${b}층까지 감` : '아직 안 가 봄'}` : (T.unlock || `길드 ${RANKS[Math.min(T.no - 1, RANKS.length - 1)].name}랭크에 열림`)}</small></button>`; }).join('');
+  const sel = Math.max(1, Math.min(FIELD_STAGES, UI.labFloor && UI.labFloorOf === fid ? UI.labFloor : Math.min(best + 1, FIELD_STAGES)));
+  let floors = '';
+  for (let st = 1; st <= FIELD_STAGES; st++) { const can = ok && st <= best + 1, done = st <= best; floors += `<button type="button" class="lfl${st === sel ? ' on' : ''}${done ? ' done' : ''}${st === FIELD_STAGES ? ' lord' : ''}" data-act="labfloor" data-f="${fid}" data-s="${st}"${can ? '' : ' disabled'}><b>${st}층</b><small>${st === FIELD_STAGES ? '주인' : `Lv${fieldLv(F, st)}`}${done ? ' ✓' : ''}</small></button>`; }
+  const pool = F.mons.filter(id => minStage(MONS[id]) <= sel).map(id => MONS[id].name), idle = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly);
+  const lord = sel === FIELD_STAGES && F.bosses && MONS[F.bosses[4]] ? ` · 주인 ${MONS[F.bosses[4]].name}` : '';
+  return `<div class="lab"><div class="lab-t"><div class="sec"><b>미궁 계층</b><span>${ids.length}개</span></div><div class="fields">${tiers}</div></div>
+    <div class="lab-f"><div class="sec"><b>${F.no}계층 · ${F.name}</b><span>밀어서 층을 넘겨요</span></div><div class="lfls" id="lfls">${floors}</div></div></div>
+    <div class="card"><div class="sub"><b>${F.no}-${sel} (${sel}층)</b> · Lv${fieldLv(F, sel)}${lord}<br><span class="muted">나오는 몬스터: ${pool.join(' · ') || '?'}</span></div>
+    <button type="button" class="btn gold block" data-act="labgo" data-f="${fid}" data-s="${sel}"${ok && sel <= best + 1 && idle ? '' : ' disabled'}>${idle ? `${idle.name} · 이 층에서 출발 준비 (원정대 창)` : '쉬고 있는 파티가 없어요'}</button></div>`;
+};
+PANELS.map71 = () => {
   const skyOpen = !!(S.fields.roots && S.fields.roots.cleared) || (S.bld.airfield || 0) > 0;
   let tab = UI.mapTab || 'land'; if (tab === 'sky' && !skyOpen) tab = 'land';
   const sel = UI.mapSel; if (sel && sel.k === 'field' && FIELDS[sel.id] && FIELDS[sel.id].region === 'sky') tab = 'sky';
@@ -161,7 +177,7 @@ PANELS.map = () => {
 // 이야기 창: 문장과 초상, 선택지
 function talkLines(id) {
   const K = KINGDOMS[id];
-  if (!K) return id === 'city' ? ['"어서 오시오, 길드장. 모험가 협회는 라이선스 심사와 명예의 벽을 맡고 있소."', '"라이선스는 모험가 창에서, 3차 직업의 끝에 선 이는 각성으로 용사가 될 수 있다오."'] : ['"……자릿세는 달마다. 토벌하고 싶으면 뒷골목으로 오시오."', '"투기장과 암시장도 우리 손안이지. 코인은 흘러 흘러 결국 이리 온다."'];
+  if (!K) return id === 'city' ? ['"어서 오시오, 길드장. 길드원 협회는 라이선스 심사와 명예의 벽을 맡고 있소."', '"라이선스는 길드원 창에서, 3차 직업의 끝에 선 이는 각성으로 용사가 될 수 있다오."'] : ['"……자릿세는 달마다. 토벌하고 싶으면 뒷골목으로 오시오."', '"투기장과 암시장도 우리 손안이지. 코인은 흘러 흘러 결국 이리 온다."'];
   const t = favorTier(favorOf(id));
   const greet = { inglisia: ['"기사 왕국 잉그리시아의 사절이오."', '"군대는 가죽과 철을 먹고 자라지. 좋은 물건이면 값은 치르겠소."'], frama: ['"프라마의 상인이라오. 남쪽 바다에서 왔소."', '"보석, 비단, 깃털. 반짝이는 것이라면 뭐든."'], elves: ['"실바레아의 순찰자다. 세계수가 그대를 지켜보고 있다."', '"숲의 재료는 숲으로 돌아와야 한다. 값은 넉넉히 주지."'], dwarves: ['"브론하임의 대장장이다. 광석 냄새가 나는군."', '"핵과 광석이라면 자루째 사겠다. 술도 한잔하고."'], sarak: ['"사라크의 상인이오. 모래바다 너머에서."', '"진귀한 것엔 값을 따지지 않소. 술탄의 이름으로."'] }[id];
   const mood = t >= 3 ? '"동맹의 벗이여, 무엇이든 말하시오."' : t >= 2 ? '"그대 길드는 믿을 만하지."' : t >= 1 ? '"거래는 거래. 서로 손해는 보지 맙시다."' : '"……아직 그대를 잘 모르오. 지켜보겠소."';
@@ -190,6 +206,9 @@ function mapGo(pid, fid, dungeon) {
   return '';
 }
 Object.assign(ACT, {
+  labtier: d => { UI.labTier = d.f; UI.labFloor = null; renderPanel(true); },
+  labfloor: d => { const box = document.getElementById('lfls'), y = box ? box.scrollTop : 0; UI.labTier = d.f; UI.labFloorOf = d.f; UI.labFloor = +d.s; renderPanel(true); const b2 = document.getElementById('lfls'); if (b2) b2.scrollTop = y; },
+  labgo: d => { const p = S.parties.find(x => !x.exp && !x.raidOnly && x.members.length) || S.parties.find(x => !x.exp && !x.raidOnly); if (!p) { say('쉬고 있는 파티가 없어요.'); return; } p.dest = d.f; p.start = +d.s; UI.expTab = p.id; menuOpen('exp'); },
   mapsel: d => { UI.mapSel = { k: d.k, id: d.id }; renderPanel(true); },
   maptab: d => { UI.mapTab = d.t; UI.mapSel = null; renderPanel(true); },
   mapparty: d => { UI.mapP = +d.id; renderPanel(true); },

@@ -1,5 +1,5 @@
 /* ───────── 몬스터 동작 (빌드 43): 공격 · 마법 · 스킬 ─────────
-   PXU 그림이 있는 몬스터(언데드)는 사건마다 동작을 하고, 모험가 쪽 효과·숫자·소리·번쩍임은 맞는 때(동작의 맞히는 장 + 투사체가 나는 시간)에 낸다.
+   PXU 그림이 있는 몬스터(언데드)는 사건마다 동작을 하고, 길드원 쪽 효과·숫자·소리·번쩍임은 맞는 때(동작의 맞히는 장 + 투사체가 나는 시간)에 낸다.
    갈래: 공격(atk) · 마법(mag, 마법 몬스터의 공격) · 스킬(skl — 광역기가 있으면 광역기, 없으면 상태이상을 거는 한 방·치명타).
    V.fmot['f' + uid] = { mk 동작 · cat 갈래 · t0 시작 · T 장마다 초 · hit 맞히는 장까지 초 · fl 투사체 초 · aoe { t, T1, x0, k } } */
 const FMOT_CAST = Object.assign({ spush: 1, sjab: 1, spushup: 1, scharge: 1, sraise: 1, bshot: 1, bfull: 1, bdiag: 1, brapid: 1, braise: 1 }, PXU_CAST);   // 투사체를 쏘는 동작
@@ -64,7 +64,7 @@ function fmotTip(f, m, q, z, dir) {
   const s = pxuSprite(f.id, m.mk, pxsMotHit(m.mk)), tp = s.tip || [s.fo[0] / 2, s.fo[1] / 2 - 8];
   return [q[0] - (2 * tp[0] - s.fo[0] + 1) * z * dir, q[1] + (2 * tp[1] - s.fo[1] + 1 + 2 * (s.jy || 0)) * z];
 }
-// 맞는 자리 효과 (모험가 쪽): 투사체 → 맞히기 · 남은 것
+// 맞는 자리 효과 (길드원 쪽): 투사체 → 맞히기 · 남은 것
 function fmotHitFx(e, x, t, fd, am, aq, at) {
   const f = e.foes.find(o => o.uid === x.s), m = f && V.fmot['f' + f.uid];
   if (!m) return;

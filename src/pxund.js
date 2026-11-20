@@ -1,5 +1,5 @@
 /* ───────── 언데드 몬스터 (빌드 43 시안): 반 해상도로 찍은 몸 + 손·무기는 동작마다 그린다 ─────────
-   몸 격자 g는 오른쪽을 본다(전투에서는 뒤집혀 파티 쪽을 본다). 앞 팔·무기는 빠져 있고, 동작 장(모험가 동작 표 PXS_MOT·PXS_MOTW와 같은 꼴)이
+   몸 격자 g는 오른쪽을 본다(전투에서는 뒤집혀 파티 쪽을 본다). 앞 팔·무기는 빠져 있고, 동작 장(길드원 동작 표 PXS_MOT·PXS_MOTW와 같은 꼴)이
    어깨 sh에서 손 h를 내고 무기 wpn을 그린다. 굽기는 pxUp으로 두 배 → pxBake가 뭉툭으로 되돌리며 B4 손질(가장자리 빛·접촉선·질감)을 한다.
    def: g 몸 · pal 색 · sh 앞 어깨 [x, y] · hip 이 줄 위가 윗몸(lean·cr로 움직인다) · ax 발 가운데 x · arm 팔 글자 [윗팔, 아랫팔] · hand 손 글자
         wpn 무기(sword·great·bow·staff·skull·lance·scythe·claw·none) · float 떠다님(숨쉬기 대신 위아래) · idle 서 있을 때 손 장 · mot { atk, cast, skill } 동작 이름들 */
@@ -298,7 +298,7 @@ function pxuGrid(id, mk, f) {
     rows.forEach((r, y) => [...r].forEach((ch, x) => { if (ch === '.') return; const up = y < hip || d.float; const X = MX + x - gx + (up ? lean : 0), Y = MY + y + (up ? cr + bob : 0); if (Y >= 0 && Y < H && X >= 0 && X < W) c[Y][X] = ch; }));
     const pk = F0 && F0.body && !bk && d.gp && d.gp[F0.body];   // 조각 그림: 벌린 입 같은 것 (바탕 칸 좌표 · '.' 그대로 · '_' 지움)
     if (pk) (pk._rows || (pk._rows = pk.g.split('\n').filter(r => r.length))).forEach((r, j) => [...r].forEach((ch, x) => { if (ch === '.') return; const y = (pk.y || 0) + j, up = y < hip || d.float; const X = MX + x + (up ? lean : 0), Y = MY + y + (up ? cr + bob : 0); if (Y >= 0 && Y < H && X >= 0 && X < W) c[Y][X] = ch === '_' ? '.' : ch; }));
-    // 앞 팔과 무기: 모험가 동작 그리기를 이 몬스터 어깨에 맞춰 빌린다
+    // 앞 팔과 무기: 길드원 동작 그리기를 이 몬스터 어깨에 맞춰 빌린다
     PXS_SH[0] = MX + d.sh[0]; PXS_SH[1] = MY + d.sh[1] + bob;
     const fxw = d.noArm ? d.fxw || 'dagger' : PXU_FXW[d.wpn || 'none'] || d.wpn || 'none', A = pxsMAxis(F, fxw);   // 쏘는 자리: 무기 끝 (활은 활 앞)
     tip = (PXS_FAMW[fxw] || '') === 'bow' ? [A.o[0] + F.dx + A.fwd[0] * 2.5, A.o[1] + A.fwd[1] * 2.5] : [A.o[0] + F.dx + A.u[0] * (A.L1 - 0.6), A.o[1] + A.u[1] * (A.L1 - 0.6)];
@@ -322,7 +322,7 @@ function pxuGrid(id, mk, f) {
   c.anchor = [MX + d.ax, MY + H0 - 1]; c.mfx = fx; c.dx = F.dx || 0; c.jy = F.jy || 0; c.tip = tip;
   return c;
 }
-// 몬스터 무기 (모험가 무기에 없는 것) · 효과 축은 비슷한 모험가 무기로
+// 몬스터 무기 (길드원 무기에 없는 것) · 효과 축은 비슷한 길드원 무기로
 const PXU_FXW = { scythe: 'lance', bscythe: 'lance', claw: 'dagger', none: 'dagger', fist: 'dagger', wrap: 'sword', branch: 'sword', gsword: 'great', lstaff: 'staff' };
 const PXU_WPN = {
   scythe: F => pxuScythe(F), claw: (F, d) => pxuClaw(F, d),
@@ -592,7 +592,7 @@ const PXU_ACT = {
   reaper:      { mag: ['pswing', 'down', 'side'], skl: ['pspin'], tk: 1.15, fx: { mag: { pal: 'shadow', hit: 'slashes' }, skl: { pal: 'dark', hit: 'slashes', big: 2, after: 'motes', aoe: 'spin', shake: 3 } } },
   deathknight: { atk: ['down', 'side', 'up'], skl: ['smash'], tk: 1.25, fx: { atk: { pal: 'shadow', hit: 'star', big: 1 }, skl: { pal: 'dark', hit: 'quake', big: 2, after: 'ring', aoe: 'slam', shake: 4 } } }
 };
-// 몬스터만 쓰는 동작 (모험가 동작 표와 같은 꼴: h 손 · a 방향 · lean · cr · dx 몸이 나간 칸 · fx)
+// 몬스터만 쓰는 동작 (길드원 동작 표와 같은 꼴: h 손 · a 방향 · lean · cr · dx 몸이 나간 칸 · fx)
 const PXU_MOT = {
   bite: [   // 물기: 몸을 뒤로 젖혔다가 머리부터 덮친다
     { h: [2, 1], a: 20 },

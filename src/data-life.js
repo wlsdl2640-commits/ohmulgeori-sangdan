@@ -22,7 +22,7 @@ const WX_SKY_P = [
   [['clear', 0.55], ['cloud', 0.28], ['rain', 0.12], ['fog', 0.05]],
   [['clear', 0.40], ['cloud', 0.25], ['snow', 0.25], ['heavy', 0.10]]
 ];
-// 온도 단계: +2 무더위(해가 지면 열대야) · +1 더움 · 0 온화함 · -1 쌀쌀함 · -2 강추위. 모험가 능력치 배율
+// 온도 단계: +2 무더위(해가 지면 열대야) · +1 더움 · 0 온화함 · -1 쌀쌀함 · -2 강추위. 길드원 능력치 배율
 const WX_T = { '2': { name: '무더위', stat: 0.7 }, '1': { name: '더움', stat: 0.9 }, '0': { name: '온화함', stat: 1.1 }, '-1': { name: '쌀쌀함', stat: 0.9 }, '-2': { name: '강추위', stat: 0.7 } };
 // 땅의 기후 (계절과 상관없이): t 온도 보정 · lo/hi 범위 · dry 비가 안 온다 · sand 강풍이면 모래바람 · snowy 비 대신 눈 · cloudy 비구름이 발밑 · stormy 뇌우가 잦다
 // clear 늘 맑다 · wet 비가 잦다(배율) · wind 강풍이 잦다(배율) · indoor 날씨가 없다
@@ -42,8 +42,8 @@ const CLIMATE = {
 // 던전 안은 날씨가 없지만 몇 곳은 늘 덥거나 춥다 (던전 그림 id → 온도)
 const DUNGEON_CLIMATE = { crater: 2, icetemple: -2, tomb: 1 };
 
-/* 날씨 특성 (빌드 36): 모험가마다 하나씩, 타고난 특성 3칸과 따로 a.wxt에 둔다. 날씨에 약한 것만 있다.
-   추위·더위 디버프는 누구나 받고, 그 날씨에 약한 모험가는 능력치 -10%를 더 받는다 (weather.js wxFx). */
+/* 날씨 특성 (빌드 36): 길드원마다 하나씩, 타고난 특성 3칸과 따로 a.wxt에 둔다. 날씨에 약한 것만 있다.
+   추위·더위 디버프는 누구나 받고, 그 날씨에 약한 길드원는 능력치 -10%를 더 받는다 (weather.js wxFx). */
 Object.assign(TRAITS, {
   coldWeak: { name: '추위에 약함', desc: '쌀쌀함·추위·강추위에 능력치 -10% 더', neg: 1, wxt: 1, wxCold: -0.1 },
   hotWeak:  { name: '더위에 약함', desc: '더움·무더위·열대야에 능력치 -10% 더', neg: 1, wxt: 1, wxHot: -0.1 },
@@ -58,7 +58,7 @@ const WX_OLD_TRAITS = WEAK_TRAIT_IDS.concat(['coldRes', 'hotRes']);   // 예전�
 const rollWxt = () => pickOne(WEAK_TRAIT_IDS);
 STORY.v36 = [
   '빌드 36: 날씨 특성이 타고난 특성과 따로 생겼다. 모험가마다 추위·더위·비·바람 가운데 하나에 약한 날씨 특성을 하나씩 갖는다(모험가 창 · 여관 손님 카드).',
-  '추위·더위 디버프는 누구나 받고, 그 날씨에 약한 모험가는 능력치 -10%를 더 받는다. 추위·더위에 강한 체질은 없어졌고, 특성 칸에 있던 체질은 날씨 특성으로 옮겨 그 칸이 비었다.'
+  '추위·더위 디버프는 누구나 받고, 그 날씨에 약한 길드원는 능력치 -10%를 더 받는다. 추위·더위에 강한 체질은 없어졌고, 특성 칸에 있던 체질은 날씨 특성으로 옮겨 그 칸이 비었다.'
 ];
 
 /* ───────── 요리: 주방에서 만든 도시락을 원정 출발 때 들려 보낸다 ───────── */
@@ -85,7 +85,7 @@ const FOODS = {
   shaveice: { name: '얼음 빙수',       lv: 2, need: { snowherb: 2, honey: 1, slime_jelly: 1 },         fee: 40,  c: '#9ae0ff', fx: { hotRes: 1, move: 0.05 },             desc: '시원한 빙수. 더위 디버프를 받지 않는다.' },
   porridge: { name: '약초죽',          lv: 2, need: { herb: 2, waterherb: 1, flour: 1 },               fee: 30,  c: '#a8c87a', fx: { sta: 0.4, regen: 0.002 },            desc: '쓴 약초를 끓인 죽. 상태이상이 짧고 약해진다.' },
   cookie:   { name: '행운의 쿠키',     lv: 2, need: { flour: 2, honey: 1, moonflower: 1 },             fee: 50,  c: '#f0d070', fx: { luck: 0.15 },                        desc: '속에 쪽지가 든 쿠키. 전리품이 늘어난다.' },
-  platter:  { name: '모험가 정식',     lv: 3, need: { raw_meat: 2, flour: 1, herb: 2, spice: 1 },      fee: 80,  c: '#d8904a', fx: { exp: 0.15, atk: 0.05, matk: 0.05 },  desc: '길드 식당의 대표 메뉴. 경험치가 늘어난다.' },
+  platter:  { name: '길드원 정식',     lv: 3, need: { raw_meat: 2, flour: 1, herb: 2, spice: 1 },      fee: 80,  c: '#d8904a', fx: { exp: 0.15, atk: 0.05, matk: 0.05 },  desc: '길드 식당의 대표 메뉴. 경험치가 늘어난다.' },
   feast:    { name: '용사의 만찬',     lv: 3, need: { raw_meat: 4, spice: 2, mandrake: 1, moonflower: 1, honey: 1 }, fee: 200, c: '#f0c24a', fx: { atk: 0.1, matk: 0.1, def: 0.1, hp: 0.1, exp: 0.1 }, desc: '전설의 만찬. 모든 능력과 경험치가 오른다.' }
 };
 const FOOD_IDS = Object.keys(FOODS);

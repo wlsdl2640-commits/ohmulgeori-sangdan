@@ -164,7 +164,7 @@ const tierOfLv = L => { let t = 0; GTIERS.forEach((T, i) => { if (T.lv <= L) t =
 const tierBookForLv = (L, boss) => tierBookFor(tierOfLv(L), boss);
 // 도서관: 스킬북 단계를 만든다 (양피지 · 먹물)
 const pctTxt = p => (p >= 0.1 ? (p * 100).toFixed(1) : p >= 0.01 ? (p * 100).toFixed(2) : (p * 100).toFixed(3)).replace(/\.?0+$/, '') + '%';
-// 스킬 하나가 어디서 나오는지 (창고 · 도감 · 모험가 창)
+// 스킬 하나가 어디서 나오는지 (창고 · 도감 · 길드원 창)
 function bookSrcText(id) {
   const t = skillBookTier(id);
   if (t < 0 || !BOOK_P[id]) return '';

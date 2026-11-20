@@ -121,7 +121,7 @@ function qEll(g, cx, cy, rx, ry, c) { for (let y = -ry; y <= ry; y++) { const w 
 // 누르는 자리 (장면 판 좌표)
 const hqHitAdd = (K, x, y, w, h, o) => { if (K.hits) K.hits.push(Object.assign({ x, y, w, h }, o)); };
 
-/* ───────── 사람: 모험가 뭉툭 그림을 그대로 (굵은 칸 하나 = 한 픽셀) ───────── */
+/* ───────── 사람: 길드원 뭉툭 그림을 그대로 (굵은 칸 하나 = 한 픽셀) ───────── */
 PX_WPN.none = '\n@\n';   // 빈손 (상인 · 손님 · 일꾼)
 function qAdv(g, a, side, pose, fr, x, y, flip, Lx) {
   const s = side ? pxsAdvSprite(a, pose, fr, Lx) : pxAdvSprite(a, pose, fr, Lx);
@@ -148,7 +148,7 @@ const QPEO = {
   salv3:  { a: { id: 49, cls: 'porter', look: { hair: '#d8d0c0', skin: '#e0ac7e' }, eq: { weapon: hand0 } }, L: { head: 'goggles', body: 'coat', ex: ['pack'], c1: '#4a5a6a', c2: '#c9a04a', c3: '#8a6a3a', hc: '#4a5a6a' } }
 };
 const qPeo = (k, g, side, pose, fr, x, y, flip) => { const p = QPEO[k]; qAdv(g, p.a, side, pose, fr, x, y, flip, Object.assign({}, PXL[p.a.cls], p.L)); };
-// 모험가 (그 사람 그대로)
+// 길드원 (그 사람 그대로)
 function q4Spr(g, a, side, pose, fr, x, y, flip) { if (!a) return; const s = side ? pxsAdvSprite(a, pose, fr) : pxAdvSprite(a, pose, fr); g.save(); g.translate(Math.round(x), Math.round(y)); if (flip) g.scale(-1, 1); g.drawImage(s.cv, -s.ax, -s.ay); g.restore(); }
 // 뒷모습: 앞모습 격자에서 얼굴 글자를 머리칼로 바꿔 굽는다
 const QBK = {};
@@ -186,7 +186,7 @@ function hqMon(g, id, x, y, t, z, flip, ph) {
   g.restore();
 }
 
-/* ───────── 길드에 있는 모험가가 지금 어디에 있는지 ─────────
+/* ───────── 길드에 있는 길드원가 지금 어디에 있는지 ─────────
    원정 안 나간 모험가: 신전(치유사 · 환자) → 여관(졸리거나 다쳤거나 밤) → 훈련소(낮, 넷까지) → 도서관(하나) → 선술집 */
 function hqWhere() {
   const ph = phaseOf(S.t), night = ph === 3 || ph === 0, out = { heal: [], sick: [], inn: new Set(), train: [], lib: [], tav: [] };
@@ -1071,7 +1071,7 @@ const A3_TEMPLE = {
     const { FB } = K, W = hqWhere(), nt = q3Night(T);
     { const f = Math.floor(t * 8) % 3; for (const [dx, h] of [[-5, 4], [-2, 7], [1, 8], [4, 5]]) qF(g, 80 + dx, FB - 34 - h - (dx + f) % 2, 2, h, h > 6 ? '#f8d070' : '#f08a3c'); qF(g, 78, FB - 38, 4, 3, '#fff4c0'); }
     for (const x of [62, 99]) q4Candle(g, x, FB - 32, t);
-    // 환자 침대 둘 (다친 모험가가 누워 쉰다) · 치유사가 곁에 · 사제는 제단 앞에서 뒷모습으로 기도
+    // 환자 침대 둘 (다친 길드원가 누워 쉰다) · 치유사가 곁에 · 사제는 제단 앞에서 뒷모습으로 기도
     const pa = [W.sick[0] || null, W.sick[1] || null];
     q4Bed(g, 8, FB + 30, 40, pa[0], '#a8282a', t, 0); q4Bed(g, 112, FB + 30, 40, pa[1], '#2e4a8a', t, 0.4);
     [[30, FB + 14, 0, 6], [134, FB + 14, 1, 110]].forEach(([x, y, i, bx]) => { if (!pa[i]) return; qP(g, x - 2, y - 4, '#e0503f'); qP(g, x, y - 4, '#e0503f'); qF(g, x - 2, y - 3, 5, 1, '#e0503f'); qF(g, x - 1, y - 2, 3, 1, '#e0503f'); qP(g, x, y - 1, '#e0503f'); hqHitAdd(K, bx, FB + 10, 44, 26, { adv: pa[i].id }); });   // 다친 표시: 작은 하트
@@ -1117,7 +1117,7 @@ const A3_PEN = {
   }
 };
 
-/* ═══ 도서관: 바닥부터 천장까지 책장 · 사다리 · 지구본 · 촛불 책상 · 현자와 책 읽는 모험가 ═══ */
+/* ═══ 도서관: 바닥부터 천장까지 책장 · 사다리 · 지구본 · 촛불 책상 · 현자와 책 읽는 길드원 ═══ */
 const A3_LIB = {
   zoom: 1.25,
   geo(K) { K.FB = K.bot - 44; return K; },

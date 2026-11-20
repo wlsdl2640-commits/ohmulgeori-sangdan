@@ -126,7 +126,7 @@ function elemBase(el, f) {
   if (E.fam === 'dark' && (ty.includes('divine') || ty.includes('human'))) m *= 1.3;   // 어둠 · 악 → 천상 · 인간 (빌드 63)
   return m;
 }
-// 모험가(직업 특성 elw: 약점 피해 · immPierce: 면역 관통)까지 더한 배율
+// 길드원(직업 특성 elw: 약점 피해 · immPierce: 면역 관통)까지 더한 배율
 function elemMul(el, f, a, s) {
   let m = elemBase(el, f);
   if (m === 0 && s && s.armor && (el || 'none') === 'none' && monEls(f.id).includes('steel')) m = 0.8;   // 철갑 화살

@@ -178,11 +178,11 @@ function renderChips() {
 }
 
 /* ───────── 창: 메뉴 → 하위 메뉴 → 창, 뒤로 ───────── */
-const WIN_TITLE = { co: '길드', fac: '시설', adv: '모험가', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '길드 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '장비 칸', battle: '전투' };
+const WIN_TITLE = { co: '길드', fac: '시설', adv: '길드원', exp: '원정대', inv: '창고', req: '의뢰', co_rank: '길드 랭크', co_money: '월말 정산', co_spon: '후원', co_goal: '목표', co_log: '소식', co_set: '설정', co_king: '왕국 교역', co_relic: '유물', raid: '레이드', rune: '장비 칸', battle: '전투' };
 const winTop = () => UI.stack[UI.stack.length - 1] || null;
 function winTitle(w) {
   if (w.id === 'b') return BUILDINGS[w.b] ? BUILDINGS[w.b].name : '시설';
-  if (w.id === 'advd') { const a = S && advById(w.aid); return a ? `${a.name} · ${CLASSES[a.cls].name}` : '모험가'; }
+  if (w.id === 'advd') { const a = S && advById(w.aid); return a ? `${a.name} · ${CLASSES[a.cls].name}` : '길드원'; }
   return WIN_TITLE[w.id] || '';
 }
 function openWin(id, o) {
@@ -272,10 +272,10 @@ function layoutStage() { sizeView(); sizeHQ(); layoutWin(); }
 function floorInfo(f) {
   if (f.id === 'shop') { const sd = S.sold.day === today() ? S.sold : { n: 0, g: 0 }; return `진열대 ${slotCount()}칸 · 오늘 ${sd.n}개 ${fmt(sd.g)}G 판매`; }
   if (f.id === 'tavern') { const n = hqWhere().tav.length; return `찾아온 모험가 ${S.cands.length}명${n ? ` · 쉬는 모험가 ${n}명` : ' · 이틀마다 새 얼굴'}`; }
-  if (f.id === 'inn') return `방 ${living().length}/${beds()} · 자는 모험가 ${hqWhere().inn.size}명`;
+  if (f.id === 'inn') return `방 ${living().length}/${beds()} · 자는 길드원 ${hqWhere().inn.size}명`;
   if (f.id === 'temple') return `환자 ${patients().length}명 · 치유사 ${healers().length}/${healerSlots()}`;
   if (f.id === 'pen') return `펫 ${S.pets.length}/${penCap()} · 품는 알 ${(S.pen && S.pen.inc.length) || 0}`;
-  if (f.id === 'training') { const ph = phaseOf(S.t); return ph === 0 || ph === 3 ? '밤에는 쉬어요' : `훈련하는 모험가 ${hqWhere().train.length}명`; }
+  if (f.id === 'training') { const ph = phaseOf(S.t); return ph === 0 || ph === 3 ? '밤에는 쉬어요' : `훈련하는 길드원 ${hqWhere().train.length}명`; }
   if (f.id === 'alchemy') return `회복 물약 ${(S.inv.pot_s || 0) + (S.inv.pot_m || 0) + (S.inv.pot_l || 0)}개 · 마나 물약 ${MP_POTS.reduce((n, k) => n + (S.inv[k] || 0), 0)}개`;
   if (f.id === 'tower') return S.research.cur ? `연구 중: ${RESEARCH[S.research.cur.k].name}` : '연구를 쉬고 있어요';
   if (f.id === 'smithy') return `보관 중인 장비 ${S.gear.length}개`;
@@ -358,7 +358,7 @@ async function copyText(el) {
   try { el.focus(); el.select(); el.setSelectionRange(0, el.value.length); return document.execCommand('copy'); } catch (_) { return false; }
 }
 const canShare = () => { try { return !!(navigator.share); } catch (_) { return false; } };
-const saveSummary = v => { try { const p = dateParts(v.t || 0); return `${p.m}월 ${p.d}일 · 모험가 ${(v.advs || []).length}명 · ${fmt(Math.round(v.gold || 0))}G · 명성 ${Math.floor(v.fame || 0)}`; } catch (_) { return '저장'; } };
+const saveSummary = v => { try { const p = dateParts(v.t || 0); return `${p.m}월 ${p.d}일 · 길드원 ${(v.advs || []).length}명 · ${fmt(Math.round(v.gold || 0))}G · 명성 ${Math.floor(v.fame || 0)}`; } catch (_) { return '저장'; } };
 async function openExport() {
   openModal('저장 코드', '<p>코드를 만드는 중…</p>', [{ label: '닫기' }]);
   const code = await saveCode();

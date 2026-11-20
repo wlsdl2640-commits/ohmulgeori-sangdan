@@ -1,5 +1,5 @@
-/* ───────── 영웅 화면: 모험가 창 맨 위의 무대 ─────────
-   양피지 판 위에 큰 모험가 한 명(숨 쉬고 가끔 휘두른다), ◀ ▶로 넘기기, Lv·경험치, 육각 스킬 칸(숙련도), 일행, 의상.
+/* ───────── 영웅 화면: 길드원 창 맨 위의 무대 ─────────
+   양피지 판 위에 큰 길드원 한 명(숨 쉬고 가끔 휘두른다), ◀ ▶로 넘기기, Lv·경험치, 육각 스킬 칸(숙련도), 일행, 의상.
    화면 틀(양피지·나무·돌·리본)은 작은 도트 그림을 데이터 URL로 구워 CSS 변수로 넘긴다. */
 
 const FR_PAL = {
@@ -657,7 +657,7 @@ function heroPanel(a) {
     <div class="hero">
       <div class="hero-top">
         <div class="hero-stage">
-          <div class="hero-nav"><button type="button" class="hero-arr" data-mact="hprev" aria-label="이전 모험가">${ARR_L}</button><span class="hero-cls">${esc(CLASSES[a.cls].name)}</span><button type="button" class="hero-arr" data-mact="hnext" aria-label="다음 모험가">${ARR_R}</button></div>
+          <div class="hero-nav"><button type="button" class="hero-arr" data-mact="hprev" aria-label="이전 길드원">${ARR_L}</button><span class="hero-cls">${esc(CLASSES[a.cls].name)}</span><button type="button" class="hero-arr" data-mact="hnext" aria-label="다음 길드원">${ARR_R}</button></div>
           <canvas id="hero-cv" width="${HERO.W}" height="${HERO.H}"></canvas>
           <div class="hero-lv">Lv.${a.lv}</div>
           <div class="hero-xp"><div class="hbar"><i style="width:${(xp * 100).toFixed(1)}%"></i></div><button type="button" class="hero-mag${UI.heroDet === false ? '' : ' on'}" data-mact="hdet" aria-label="자세히"><img src="${pxURL('mag')}" alt=""></button></div>
@@ -669,7 +669,7 @@ function heroPanel(a) {
     </div>
 `;
 }
-// 모험가 창의 버튼 중 영웅 화면 것 (처리했으면 true)
+// 길드원 창의 버튼 중 영웅 화면 것 (처리했으면 true)
 function heroAct(aid, b) {
   const k = b.dataset.mact, top = winTop();
   if (!top || top.id !== 'advd') return false;

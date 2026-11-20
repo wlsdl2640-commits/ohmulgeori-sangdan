@@ -12,4 +12,4 @@ function salaryCalc(a) {
   return Math.max(5, Math.round(v / 5) * 5);
 }
 const salaryNew = a => { if (a) a.salary = salaryCalc(a); return a ? a.salary : 0; };
-STORY.v69c.push('모험가 봉급이 레벨을 따라 오른다: 지금 레벨 · 직업 차수 · 라이선스로 다시 매기고, Lv10마다 +50%. 명예의 전당 스승 할인도 이제 정산에서 실제로 깎인다.');
+STORY.v69c.push('길드원 봉급이 레벨을 따라 오른다: 지금 레벨 · 직업 차수 · 라이선스로 다시 매기고, Lv10마다 +50%. 명예의 전당 스승 할인도 이제 정산에서 실제로 깎인다.');

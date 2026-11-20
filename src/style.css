@@ -785,3 +785,13 @@ details.skl summary b { color: var(--ink); }
   .bw-log { position: absolute; left: max(8px, env(safe-area-inset-left, 0px)); top: 48px; z-index: 2; flex: none; width: 32%; max-height: 34%; min-height: 0; font-size: 11px; line-height: 1.4; background: rgba(10, 12, 18, .58); border-color: rgba(0, 0, 0, .6); box-shadow: none; }
   .bw-btns { position: absolute; right: max(8px, env(safe-area-inset-right, 0px)); top: 48px; z-index: 2; }
 }
+
+/* 빌드 72: 지도 = 미궁 계층 · 층 단추 (map.js PANELS.map) */
+.lab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 8px; align-items: start; }
+.lab .fields { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.lfls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; max-height: min(46vh, 300px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 4px; background: #10131a; border: 2px solid #000; box-shadow: inset 0 0 0 1px var(--line); }
+.lfl { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; min-height: 40px; padding: 6px 9px; font: inherit; color: var(--ink); background: #1c2232; border: 2px solid #000; box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; }
+.lfl small { color: var(--ink-3); font-size: 11px; } .lfl.done { background: #20283a; } .lfl.done small { color: var(--gold); }
+.lfl.lord b { color: #ff9a7a; } .lfl.on { box-shadow: inset 0 0 0 2px var(--gold); background: #2a2416; } .lfl:disabled { opacity: .38; cursor: default; }
+@media (orientation: landscape) { .lfls { max-height: calc(100vh - 250px); } }
+.lfl b, .lfl small { white-space: nowrap; }

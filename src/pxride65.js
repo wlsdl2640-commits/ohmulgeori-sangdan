@@ -4,13 +4,13 @@
    결정(tools/saved/ride65/DECISIONS.md): 옆모습 · 앞모습(길드 앞 줄 · 영웅 창) · 자는 모습(야영 · 마구간) · 전투 대형 맨 뒷줄 ·
    와이번은 떠 있다(그림자는 땅에) · 앉기 · 눕기 · 쓰러짐 · 들것은 내려서.
    그림: data-ride65.js RIDE65 (반 해상도 줄 → pxUp → pxBake — PXU 몬스터 그림과 같은 굽기).
-   기수: 모험가 그림(옆 pxsAdvGrid · pxsMotGrid / 앞 pxAdvGrid)에서 엉덩이 아래 다리 글자(U u B b)만 지우고 걸터앉은 다리를 얹은 뒤,
+   기수: 길드원 그림(옆 pxsAdvGrid · pxsMotGrid / 앞 pxAdvGrid)에서 엉덩이 아래 다리 글자(U u B b)만 지우고 걸터앉은 다리를 얹은 뒤,
          엉덩이(RIDE_HIP)를 탈것 장 seat 칸의 왼쪽 위 모서리에 맞춘다(둘 다 뭉툭 칸 모서리라 칸이 어긋나지 않는다).
          탄 채 하는 동작은 내딛기 · 웅크림 · 몸 나감 · 뛰기를 뺀다(pxs.js PXS_RIDE).
    저장: a.ride = { wolf: { look, name, lv }, wyv: { look } } — 없으면 모습 A. 늑대 이름 · 레벨은 랑기수 전직 때 보낸 늑대 펫의 것. */
 const RIDE_LOOKS = ['A', 'B', 'C', 'D'];
 const RIDE_KIND_NAME = { wolf: '늑대', wyv: '와이번', sea: '해룡' };   // 해룡(빌드 69): 해룡기수(용기수 다음 4차)가 탄다 — 모습은 보낸 해룡 펫 그대로(a.ride.sea.look)
-// 이 모험가가 타는 것 (직업 계열로): 용기수 계열 → 와이번 · 랑기수 계열 → 늑대
+// 이 길드원가 타는 것 (직업 계열로): 용기수 계열 → 와이번 · 랑기수 계열 → 늑대
 function rideKind(a) {
   if (!a || !a.cls || !CLASSES[a.cls]) return null;
   const ch = chainOf(a.cls);

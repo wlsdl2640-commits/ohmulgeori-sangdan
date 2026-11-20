@@ -29,7 +29,7 @@ const spn = k => (S.spons && S.spons[k]) || 0;
 const blessed = id => !!(S && S.bless && S.bless.id === id);
 const isNight = () => phaseOf(S.t) === 3;
 
-/* ───────── 모험가 능력치 ───────── */
+/* ───────── 길드원 능력치 ───────── */
 function expNeed(lv) { return Math.round(30 * Math.pow(lv, 1.8)); }
 function growStats(a, n) {
   const g = CLASSES[a.cls].grow;
@@ -199,7 +199,7 @@ const tentOf = p => Math.max(1, ...teamOf(p).filter(a => !a.down).map(a => TR(a)
 // 쓰러진 동료는 짐을 못 들고, 들것이 자리를 차지한다
 function capOf(p) { const all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + wagonCap(p)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
 function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) + wOf(p.exp.cargo || {}) : wOf(p.sup); }
-// 파티 이동속도 = 가장 빠른(민첩한) 모험가의 속도 × 피로 × 마차
+// 파티 이동속도 = 가장 빠른(민첩한) 길드원의 속도 × 피로 × 마차
 function moveOf(p) { const all = teamOf(p), st = all.filter(a => !a.down), ch = p.exp && p.exp.sta && st.some(a => p.exp.sta[a.id] && p.exp.sta[a.id].chill) ? 0.7 : 1; if (!st.length) return 4 * WALK_MUL; return WALK_MUL * ch * Math.max(4, ...st.map(a => derive(a).move * fatMul(a.fat || 0))) * wagonSpd(p) * (1 + scoutMove(p)) * (st.length < all.length ? 0.8 : 1) * (1 + petHome('move')); }
 const tire = (team, v) => team.forEach(a => { a.fat = Math.max(0, Math.min(100, (a.fat || 0) + v * (v > 0 ? 1 - traitSum(a, 'fatigue') : 1))); });
 function addTo(bag, k, q) { bag[k] = (bag[k] || 0) + q; if (bag[k] <= 0) delete bag[k]; }
@@ -339,6 +339,7 @@ function checkpoints(fid) {
   if (!F || F.raid || !fs) return [1];
   return [1].concat([1, 2, 3, 4].filter(k => fs.boss && fs.boss[k]).map(k => k * BOSS_EVERY + 1));
 }
+function labStart(fid, st) { const F = FIELDS[fid], fs = S.fields[fid]; if (!F || F.raid || F.trade || F.treasure || !fs) return 1; return Math.max(1, Math.min(st || 1, (fs.best || 0) + 1, FIELD_STAGES)); }
 function newExp(fid, sup, start = 1) {
   const F = FIELDS[fid];
   const e = { field: fid, area: F.giant ? 'raid' : F.raid ? 'dungeon' : 'field', raid: F.giant || null, rt: 0, dealt: 0, mode: 'advance', stage: start, home: start, pos: 0, ei: 0, encs: [], foes: [], next: null,
@@ -362,7 +363,7 @@ const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (jobBase(c) =
 function formParty(p) { p.members = p.members.map((id, i) => [id, i]).sort((x, y) => { const a = advById(x[0]), b = advById(y[0]); return (a ? formRank(a.cls) : 2) - (b ? formRank(b.cls) : 2) || x[1] - y[1]; }).map(x => x[0]); }
 function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(빌드 69 — 레이드는 qol.js raidLaunch로 파티 넷 이상이 함께만)
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
-  if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요.';
+  if (!team.length || team.length !== p.members.length) return '대기 중인 길드원만 보낼 수 있어요.';
   if (!isUnlocked(fid)) return FIELDS[fid] && FIELDS[fid].giant ? '이번 달에는 열리지 않은 레이드예요.' : '아직 갈 수 없는 곳이에요.';
   const why = team.map(cantGo).find(Boolean);
   if (why) return why + '.';
@@ -380,7 +381,7 @@ function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(�
   for (const [k, q] of Object.entries(p.sup)) { const take = Math.min(S.inv[k] || 0, q); if (take > 0) { sup[k] = take; addTo(S.inv, k, -take); } }
   team.forEach(a => { const b = pickArrows(a, fid); if (b) log(`${a.name}이(가) ${FIELDS[fid].name}에 맞춰 ${GTYPES[b].name}을(를) 챙겼다.`); });   // 속성 화살 고르기 (빌드 39)
   formParty(p);
-  p.exp = newExp(fid, sup, checkpoints(fid).includes(p.start) ? p.start : 1);
+  p.exp = newExp(fid, sup, labStart(fid, p.start));   // 빌드 72: 가 본 층(최고 층 + 1)까지는 어느 층에서든 출발한다 (예전: 우두머리를 잡은 거점 1 · 11 · 21 …)
   if (o.grp) { p.exp.grp = o.grp; p.exp.grpi = o.grpi || 0; }   // 빌드 69: 레이드 원정대 묶음 (함께 걷고 · 레이드 원정대 창에 함께 나온다)
   p.exp.food = packFood(p);   // 도시락
   boostStart(p.exp);   // 빌드 63: 상단 전용 원정 휴대품 (나침반 · 은화 · 부적 · 미끼 · 깃발 · 월계관 · 이슬 · 방울)
@@ -561,7 +562,7 @@ function stageBack(p, e) {
 }
 
 /* ───────── 상태이상 ───────── */
-// 모험가에게 건다 (특성 저항 반영 · 빌드 63: 맹독 · 부식은 쌓이고, 행동 방해는 냉정함 · 탱커 저항 · 도시락으로 짧아진다)
+// 길드원에게 건다 (특성 저항 반영 · 빌드 63: 맹독 · 부식은 쌓이고, 행동 방해는 냉정함 · 탱커 저항 · 도시락으로 짧아진다)
 function inflictAdv(e, a, o, atk) {
   const k = o.k; if (!STATUS[k]) return;
   e.sta = e.sta || {};
@@ -620,7 +621,7 @@ function staTimers(st, dt) {
   if (st.corrode) { st.corrode.t -= dt; if (st.corrode.t <= 0) delete st.corrode; }
   for (const k in st) if (typeof st[k] === 'number') { st[k] -= dt; if (st[k] <= 0) delete st[k]; }
 }
-// 모험가 상태이상 틱: 독 · 맹독 · 화상 · 출혈 피해, 시간 줄이기
+// 길드원 상태이상 틱: 독 · 맹독 · 화상 · 출혈 피해, 시간 줄이기
 function tickSta(p, e, team, dm, dt) {
   for (const a of team) {
     const st = e.sta[a.id]; if (!st) continue;
@@ -1001,7 +1002,7 @@ const frontFoe = foes => tauntFoe(foes) || foes.find(calmFoe) || foes[0];
 const lowAwake = foes => { const t = tauntFoe(foes); if (t) return t; const c = foes.filter(calmFoe); return lowestFoe(c.length ? c : foes); };
 const pierceFoes = foes => { const f0 = frontFoe(foes), f1 = foes.find(f => f !== f0 && f.hp > 0); return f1 ? [f0, f1] : [f0]; };   // 빌드 69 해룡기수 물살 화살: 맨 앞 적과 그 뒤 적을 꿰뚫는다
 const strongAwake = foes => { const t = tauntFoe(foes); if (t) return t; const c = foes.filter(calmFoe), L = c.length ? c : foes; return L.reduce((x, f) => ((f.boss ? 1e12 : 0) + (f.atk || 0) > (x.boss ? 1e12 : 0) + (x.atk || 0) ? f : x), L[0]); };   // 빌드 69 해룡기수: 가장 센 적 (우두머리 먼저)
-// 모험가 쪽 상태이상이 능력치에 주는 것 (stepExp가 dm에 얹는다)
+// 길드원 쪽 상태이상이 능력치에 주는 것 (stepExp가 dm에 얹는다)
 function staMods(d, st) {
   if (!st) return;
   if (st.fear) { d.atk *= FIGHT.fear; d.matk *= FIGHT.fear; }
@@ -1014,7 +1015,7 @@ function coverOf(e, live, tgt, dm) {
   if (c && rnd() < TR(c).cover) { ev(e, 'cover', { s: c.id, d: tgt.id }); return c; }
   return null;
 }
-// 매혹 · 혼란에 걸린 모험가: 기본 공격이 같은 편에게 (반만 아프고, 쓰러뜨리지는 않는다)
+// 매혹 · 혼란에 걸린 길드원: 기본 공격이 같은 편에게 (반만 아프고, 쓰러뜨리지는 않는다)
 function advAllyHit(e, a, d, team, dm) {
   const others = team.filter(x => x !== a && up(x));
   if (!others.length) return false;
@@ -1046,7 +1047,7 @@ function fTick(e, f, dt) {
   const k = dt * (f.sta && f.sta.chill ? 0.67 : 1);
   for (const id in f.mcd) f.mcd[id] = Math.max(0, f.mcd[id] - k);
 }
-// 빌드 69: 지울 수 있는 모험가 강화 (보호막 · 다음 공격 강화 · 내려앉음은 빼고)
+// 빌드 69: 지울 수 있는 길드원 강화 (보호막 · 다음 공격 강화 · 내려앉음은 빼고)
 const fskBufs = (e, live) => e.buffs.filter(b => !['shield', 'ncrit', 'nmul', 'ground'].includes(b.stat) && (b.to === 'party' || live.some(x => x.id === b.to)));
 function fSkillPick(f, foes, live, dm, e) {
   const L = monSkills(f); if (!L.length || !f.mcd) return null;
@@ -1078,8 +1079,8 @@ function fSkill(p, e, f, foes, live, dm) {
   const O = { skill: 1, ms: 1, magic: !!s.magic, el: mskEl(s, f), sta: mskSta(s, f) || undefined, crit: s.crit || 0, pen: s.pen || 0 };
   if (s.kind === 'hit' || s.kind === 'drain') {
     let tgt = e.taunt ? live.find(x => x.id === e.taunt.aid) || null : null;
-    if (!tgt && s.tg === 'low') tgt = live.slice().sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];   // 빌드 69 약한 자 노리기: 가장 다친 모험가
-    if (!tgt && s.tg === 'mp') tgt = live.slice().sort((x, y) => (y.mp || 0) - (x.mp || 0))[0];                       // 마나 태우기: MP가 가장 많은 모험가
+    if (!tgt && s.tg === 'low') tgt = live.slice().sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];   // 빌드 69 약한 자 노리기: 가장 다친 길드원
+    if (!tgt && s.tg === 'mp') tgt = live.slice().sort((x, y) => (y.mp || 0) - (x.mp || 0))[0];                       // 마나 태우기: MP가 가장 많은 길드원
     if (!tgt) tgt = pickTarget(live, e, dm);
     if (!e.taunt && live.length > 1) tgt = coverOf(e, live, tgt, dm) || tgt;
     for (let h = 0; h < (s.hits || 1); h++) {
@@ -1092,13 +1093,13 @@ function fSkill(p, e, f, foes, live, dm) {
   } else if (s.kind === 'all' || s.kind === 'dispel') {
     ev(e, 'aoe', { s: f.uid, ms: 1 });
     live.forEach(x => hitAdv(p, e, f, x, s.mult, dm, O));
-    if (s.kind === 'dispel') {   // 빌드 69 강화 지우기: 모험가마다 걸린 강화를 n개(나중에 건 것부터) · 파티 전체 강화는 모두
+    if (s.kind === 'dispel') {   // 빌드 69 강화 지우기: 길드원마다 걸린 강화를 n개(나중에 건 것부터) · 파티 전체 강화는 모두
       const gone = new Set(), L = fskBufs(e, live);
       live.forEach(x => L.filter(b => b.to === x.id).slice(-(s.n || 2)).forEach(b => gone.add(b)));
       L.filter(b => b.to === 'party').forEach(b => gone.add(b));
       if (gone.size) { e.buffs = e.buffs.filter(b => !gone.has(b)); ev(e, 'fdispel', { s: f.uid, n: gone.size }); }
     }
-  } else if (s.kind === 'taunt') {   // 빌드 69 도발: 그동안 모험가의 한 명 공격 · 스킬은 이 몬스터에게 (frontFoe · lowAwake) + 방어 강화
+  } else if (s.kind === 'taunt') {   // 빌드 69 도발: 그동안 길드원의 한 명 공격 · 스킬은 이 몬스터에게 (frontFoe · lowAwake) + 방어 강화
     f.ftaunt = s.dur || 6;
     f.fbuf = (f.fbuf || []).filter(b => b.sid !== s.id); f.fbuf.push({ sid: s.id, stat: 'def', mul: s.mul || 1.3, t: s.dur || 6 });
     ev(e, 'ftaunt', { s: f.uid, t: f.ftaunt });
@@ -1268,7 +1269,7 @@ function battle(p, e, team, dm, dt) {
   for (let i = foes.length - 1; i >= 0; i--) if (foes[i].hp <= 0) { const f = foes[i]; foes.splice(i, 1); kill(p, e, f); }
   if (!foes.length) { e.cd = {}; e.buffs = []; e.taunt = null; e.subst = null; e.fc = null; ev(e, 'clear', {}); }
 }
-// 몬스터가 모험가를 친다. o: { skill 스킬(회피 안 듦 · 눈멀면 20% 빗나감) · aoe 광역기 · ms 몬스터 스킬 · magic · el 속성 · sta 상태이상 · crit }
+// 몬스터가 길드원를 친다. o: { skill 스킬(회피 안 듦 · 눈멀면 20% 빗나감) · aoe 광역기 · ms 몬스터 스킬 · magic · el 속성 · sta 상태이상 · crit }
 function hitAdv(p, e, f, x, mult, dm, o) {
   if (!up(x)) return false;
   o = o || {};
@@ -1499,7 +1500,7 @@ function wipe(p) {
   S.stats.wipes = (S.stats.wipes || 0) + 1;
   log(`${p.name}이(가) ${F.name}에서 전멸했다. 협회 구조대가 모두를 데려왔지만 가져오던 짐과 장비는 잃었다.`, 'bad');
   S.flags.firstInj = 1;
-  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 원정대가 모두 쓰러졌다. 지나가던 협회 구조대 덕분에 목숨은 건졌지만 모두 크게 다쳤고, 가져오던 부속품과 장비, 물약은 잃었다.`, '다친 모험가는 신전에서 치료해야 다시 원정에 나갈 수 있다. 무리하지 말자.'] });
+  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 원정대가 모두 쓰러졌다. 지나가던 협회 구조대 덕분에 목숨은 건졌지만 모두 크게 다쳤고, 가져오던 부속품과 장비, 물약은 잃었다.`, '다친 길드원는 신전에서 치료해야 다시 원정에 나갈 수 있다. 무리하지 말자.'] });
   p.last = { got: {}, gear: 0, kills: e.kills, field: e.field, wiped: 1 };
   p.exp = null;
   changed();
@@ -1526,7 +1527,7 @@ function arrive(p) {
   p.last = { got, gear: e.gbag.length, kills: e.kills, field: e.field, hurt: hurt.length, stats: e.stats || null, names: Object.fromEntries(team.map(a => [a.id, a.name])), area: e.area };
   p.exp = null;
   if (p.raidOnly) raidDissolve(p);   // 빌드 69: 옛 저장의 레이드대는 돌아오면 푼다
-  if (trimParty(p)) log(`${p.name}은(는) 인원이 넘쳐 레벨이 낮은 모험가를 대기로 돌렸다. (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지)`);
+  if (trimParty(p)) log(`${p.name}은(는) 인원이 넘쳐 레벨이 낮은 길드원를 대기로 돌렸다. (짐꾼 계열을 빼고 ${PARTY_FIGHTERS}명까지)`);
   if (!S.flags.firstReturn) { S.flags.firstReturn = 1; queueModal({ title: '첫 원정', body: STORY.firstReturn }); }
   if (typeof achvTick === 'function') achvTick();
   changed();
@@ -1534,7 +1535,7 @@ function arrive(p) {
 function leave(a, why) {
   const p = partyOf(a.id);
   if (p) p.members = p.members.filter(id => id !== a.id);
-  SLOTS.forEach(([s]) => { if (a.eq[s]) { stashGear(a.eq[s]); a.eq[s] = null; } });   // 떠난 모험가의 장비 (넘치면 창고 1~10, 그래도 없으면 잃는다)
+  SLOTS.forEach(([s]) => { if (a.eq[s]) { stashGear(a.eq[s]); a.eq[s] = null; } });   // 떠난 길드원의 장비 (넘치면 창고 1~10, 그래도 없으면 잃는다)
   S.advs = S.advs.filter(x => x.id !== a.id);
   log(`${a.name}이(가) ${why}`, 'bad');
 }
@@ -1563,7 +1564,7 @@ function dungeonClear(p, e) {
     const RL = RELICS[e.field], newRelic = RL && !(S.relics || []).includes(e.field);
     if (newRelic) (S.relics = S.relics || []).push(e.field);
     log(`${p.name}이(가) ${F.dungeon.name}의 주인 ${MONS[F.dungeon.boss].name}을(를) 쓰러뜨렸다! 보물 ${g$(gold)}, 명성 +${fame}${newRelic ? `, 유물 「${RL.name}」` : ''}`, 'good');
-    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 영웅 장비, 장비 한 점, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 모험가들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 길드 창의 유물에서 볼 수 있다.`] : []) });
+    queueModal({ title: `${F.dungeon.name} 공략`, body: (STORY[e.field] || []).concat([`보물 상자에서 ${g$(gold)}과 영웅 장비, 장비 한 점, 스킬북, ${ITEMS['soul_' + F.tier].name} 둘, 룬을 찾았다. 명성 +${fame}. 함께 싸운 길드원들의 개인 명성도 크게 올랐다.`], newRelic ? [`유물 「${RL.name}」을(를) 얻었다. ${RL.desc}. 길드 창의 유물에서 볼 수 있다.`] : []) });
     if (e.field === 'barren' && STORY.frontier) queueModal({ title: '북쪽 변경', body: STORY.frontier });   // 빌드 30: 안개 묘지가 열린다
     if (e.field === 'roots' && S.bld.airfield && STORY.skyOpen) queueModal({ title: '구름 위의 섬', body: STORY.skyOpen });
     if (e.field === 'passage' && !S.flags.guildHQ) { S.flags.guildHQ = 1; log('암살자 길드 본부가 무너졌다. 이제 자릿세는 없다.', 'good'); HOOKS.toast('암살자 길드 본부 토벌 · 자릿세 끝'); }   // 빌드 70: 진짜 본부 (STORY.passage)

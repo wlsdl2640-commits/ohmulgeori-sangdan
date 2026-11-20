@@ -13,7 +13,7 @@ const BUILDINGS = {
   tower:    { name: '마탑',        max: 5,  cost: [4000, 15000, 40000, 100000, 250000],
     desc: '마법을 연구해 길드 전체를 강하게 만든다.', eff: lv => `마법 연구${lv > 1 ? ` · 연구비 -${(lv - 1) * 10}% · 연구 ${(lv - 1)}일 단축` : ''}` },
   temple:   { name: '신전',        max: 8,  cost: [1000, 4000, 10000, 22000, 45000, 85000, 150000, 260000],
-    desc: '다친 모험가를 치료하고, 매달 신의 축복을 내려 준다.', eff: lv => `자연 치료 하루 ${4 + 4 * lv} · 치유사 ${Math.min(4, lv)}명 · 매달 축복` }
+    desc: '다친 길드원를 치료하고, 매달 신의 축복을 내려 준다.', eff: lv => `자연 치료 하루 ${4 + 4 * lv} · 치유사 ${Math.min(4, lv)}명 · 매달 축복` }
 };
 const shopStands = lv => 2 + Math.min(lv, 8) + Math.floor(Math.max(0, lv - 8) / 2);   // Lv8까지 한 칸씩, 그 뒤 두 단계마다
 const BUILD_ORDER = ['shop', 'inn', 'training', 'temple', 'alchemy', 'smithy', 'tower'];   // 빌드 62: 은행을 뺐다
@@ -51,7 +51,7 @@ const RESEARCH = {
   mana:     { name: '마나 순환',      max: 2, desc: lv => `MP 회복 +${lv * 30}%`,                      cost: [[700, { spore: 6 }], [3000, { snow_essence: 4 }]], days: [2, 5] },
   potion:   { name: '정제 연금술',    max: 2, desc: lv => `물약 회복량 +${lv * 25}%`,                  cost: [[600, { treant_sap: 4 }], [2500, { frost_crystal: 3 }]], days: [2, 4] },
   carry:    { name: '공간 확장 마법', max: 3, desc: lv => `파티가 드는 짐 +${lv * 10}%`,               cost: [[900, { spider_silk: 6 }], [2600, { bat_wing: 8 }], [6500, { wyvern_scale: 5 }]], days: [2, 4, 7] },
-  ward:     { name: '수호 결계',      max: 2, desc: lv => `모험가 방어력 +${lv * 8}%`,                 cost: [[1200, { lizard_scale: 6 }], [5000, { yeti_fur: 4 }]], days: [3, 6] },
+  ward:     { name: '수호 결계',      max: 2, desc: lv => `길드원 방어력 +${lv * 8}%`,                 cost: [[1200, { lizard_scale: 6 }], [5000, { yeti_fur: 4 }]], days: [3, 6] },
   appraise: { name: '감정술',         max: 2, desc: lv => `장비·스킬북을 얻을 확률 +${lv * 25}%`,      cost: [[1000, { venom_gland: 5 }], [4000, { griffon_claw: 4 }]], days: [3, 5] },
   time:     { name: '시간 결속',      max: 2, desc: lv => `자리를 비운 동안 보상 시간 +${lv}시간`,     cost: [[1500, { golem_core: 2 }], [6000, { maiden_veil: 3 }]], days: [3, 6] }
 };
@@ -61,7 +61,7 @@ const RESEARCH = {
 const SPONSORS = {
   clinic:   { name: '오물거리 무료 진료소',  desc: '가난한 사람을 공짜로 치료하는 곳.', cost: [400, 1500, 4500], fame: [5, 12, 25],
               perks: ['물약 사는 값 20% 할인', '대기 중 회복 속도 두 배', '물약 회복량 +20%'] },
-  guild:    { name: '모험가 협회 신인 지원', desc: '갓 등록한 모험가에게 장비와 숙식을 지원한다.', cost: [600, 2000, 6000], fame: [5, 12, 25],
+  guild:    { name: '길드원 협회 신인 지원', desc: '갓 등록한 길드원에게 장비와 숙식을 지원한다.', cost: [600, 2000, 6000], fame: [5, 12, 25],
               perks: ['협회 매입가 70% → 80%', '선술집 손님 레벨 +2', '선술집 손님 한 명 더, 봉급 10% 할인'] },
   citizens: { name: '하르겐 시민회',         desc: '7번가 상인과 주민의 모임. 암살자 길드에 맞설 힘을 모으고 있다.', cost: [500, 2500, 7000], fame: [6, 15, 30],
               perks: ['상점 손님 +15%', '암살자 길드 토벌 지지', '상점 손님 +15% 더, 특별 의뢰'] },
@@ -103,7 +103,7 @@ function rankGifts(r) {   // 랭크 r에 오르면 받는 것 (설명용)
   return out;
 }
 
-/* ───────── 모험가 라이선스 (개인 랭크) ───────── */
+/* ───────── 길드원 라이선스 (개인 랭크) ───────── */
 const LICENSE = [
   { name: '동장', c: '#c08a5a', mul: 1 }, { name: '은장', c: '#c8ccd4', mul: 1.05 }, { name: '금장', c: '#f0c24a', mul: 1.11 },
   { name: '백은', c: '#e8f4ff', mul: 1.18 }, { name: '백금', c: '#d8f0ff', mul: 1.28 }
@@ -135,7 +135,7 @@ function licReqs(a) {
 const JOB_FAME = { 2: 40, 3: 300 };
 
 /* ───────── 부상과 치료 ───────── */
-// 쓰러진 모험가는 부상을 입고 돌아온다. need = 다 나을 때까지 필요한 치료 점수
+// 쓰러진 길드원는 부상을 입고 돌아온다. need = 다 나을 때까지 필요한 치료 점수
 const INJ = [null, { name: '경상', need: 30, c: '#f0b43c' }, { name: '중상', need: 70, c: '#f08a3c' }, { name: '위중', need: 140, c: '#e0503f' }];
 // 신전에서 환자를 돌볼 수 있는 직업: 성직자 계열과 성기사. 수술은 역병의사·명의만
 const isHealer = c => jobBase(c) === 'cleric' || c === 'paladin';

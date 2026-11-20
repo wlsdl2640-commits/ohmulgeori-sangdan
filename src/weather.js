@@ -71,12 +71,12 @@ function wxSkyName(w) {
 }
 const wxLabel = w => (!w || w.indoor ? '실내' : `${wxSkyName(w)} · ${wxTName(w)}`);
 const wxTCls = w => (!w || w.indoor || w.T == null ? '' : w.T > 0 ? 'wx-hot' : w.T < 0 ? 'wx-cold' : 'wx-ok');
-// 모험가 한 명에게 미치는 날씨 효과: stat(능력치) · move(이동) · sk(스킬 재사용) · ba(기본 공격 대기)
+// 길드원 한 명에게 미치는 날씨 효과: stat(능력치) · move(이동) · sk(스킬 재사용) · ba(기본 공격 대기)
 function wxFx(w, a, ff) {
   if (!w || w.indoor || w.T == null) return null;
   ff = ff || {};
   const coldRes = !!ff.coldRes, hotRes = !!ff.hotRes;   // 도시락(뜨거운 수프·얼음 빙수)만 추위·더위를 막는다
-  const W = (a && a.wxt && TRAITS[a.wxt]) || {};          // 날씨 특성: 모험가마다 하나 (그 날씨에 약하다)
+  const W = (a && a.wxt && TRAITS[a.wxt]) || {};          // 날씨 특성: 길드원마다 하나 (그 날씨에 약하다)
   let T = w.T, res = false;
   if (T < 0 && coldRes) { T = 0; res = true; }
   if (T > 0 && hotRes) { T = 0; res = true; }
@@ -91,7 +91,7 @@ function wxFx(w, a, ff) {
   if (w.wind === 2) stat += W.wxWind || 0;
   return { stat: Math.max(0.4, stat), move, sk, ba, res };
 }
-// 이 날씨에 약한 모험가인가 (날씨 특성) — 도시락이 막아 주면 아니다
+// 이 날씨에 약한 길드원인가 (날씨 특성) — 도시락이 막아 주면 아니다
 function wxtHits(a, w, ff) {
   const W = a && a.wxt && TRAITS[a.wxt]; ff = ff || {};
   if (!W || !w || w.indoor || w.T == null) return false;
@@ -166,7 +166,7 @@ function wxIcon(w) {
   return w.sun ? 'sun' : 'moon';
 }
 const wxImg = w => `<img class="wxi" src="${wxIconURL(wxIcon(w))}" alt="">`;
-// 효과 한 줄 (모험가 없이 일반 체질 기준)
+// 효과 한 줄 (길드원 없이 일반 체질 기준)
 function wxFxText(w, p) {
   if (!w || w.indoor) return '날씨 영향 없음';
   const f = wxFx(w, { traits: [] }, null), out = [];   // 날씨 특성 없이 (누구나 받는 몫)
@@ -198,7 +198,7 @@ PANELS.co_wx = () => {
       <div>더우면 이동 ×0.92(무더위 ×0.85)·스킬 재사용 ×1.1(×1.25). 추우면 이동 ×0.92(×0.85)·기본 공격 대기 ×1.1(×1.25). 비·눈은 걸음을 늦추고, 폭설은 크게 늦춘다.</div>
       <div>땅의 기후: 사막·메마른 땅·화산은 덥고, 설산은 언제나 춥다(여름 한낮에도 쌀쌀함). 늪지대는 비가, 바람계곡은 강풍이 잦다. 던전·지하는 날씨가 없지만 화구는 덥고 얼음 신전은 춥다.</div>
       <div>야영(노숙) 피로 회복: 온화함 ×1.1 · 더움·쌀쌀함 ×0.9 · 그보다 심하면 ×0.7. 비·폭설은 모닥불을 못 피워 ×0.4, 강풍은 모닥불이 약해 ×0.7. 정찰가의 텐트는 비·바람을, 탐험가의 대형 텐트는 추위까지 막는다.</div>
-      <div>날씨 특성: 모험가마다 하나씩 추위·더위·비·바람 가운데 하나에 약하다(타고난 특성 3칸과 따로). 추위·더위 디버프는 누구나 받고, 그 날씨에 약한 모험가는 능력치 -10%를 더 받는다. 뜨거운 수프·얼음 빙수 도시락은 추위·더위 디버프를 막는다.</div>
+      <div>날씨 특성: 길드원마다 하나씩 추위·더위·비·바람 가운데 하나에 약하다(타고난 특성 3칸과 따로). 추위·더위 디버프는 누구나 받고, 그 날씨에 약한 길드원는 능력치 -10%를 더 받는다. 뜨거운 수프·얼음 빙수 도시락은 추위·더위 디버프를 막는다.</div>
     </div></details>`;
 };
 // 땅 위: 겨울에는 눈이 덮이고, 비가 오면 젖어 어둡다 (사람을 그리기 전에)

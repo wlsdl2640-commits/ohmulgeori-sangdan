@@ -62,7 +62,7 @@ Object.assign(GTYPES.quiver, { desc: '궁수 계열이 함께 쓰는 화살통. 
 
 // 새 부장비 · 새 칸 둘(볼트통 · 볼트 — 괴물사냥꾼 계열에게만 보인다)
 SLOTS.splice(SLOTS.findIndex(s => s[0] === 'ammo') + 1, 0, ['bcase', '볼트통'], ['bolt', '볼트']);
-SLOTS65.push('bcase', 'bolt');   // 입을 수 있는 직업에게만 보이는 칸 (slotShown · notes65가 옛 모험가에게 빈 칸을 만든다)
+SLOTS65.push('bcase', 'bolt');   // 입을 수 있는 직업에게만 보이는 칸 (slotShown · notes65가 옛 길드원에게 빈 칸을 만든다)
 Object.assign(GTYPES, {
   lockpick: { name: '락핀', slot: 'off', cls: ['treasure'], st: { agi: 0.7, crit: 0.005, eva: 0.003 }, w: 1, icon: 'blade', mat: [2, 0, 1], who: '보물 사냥꾼 · 대도', desc: '자물쇠 따개 — 갈고리 · 갈퀴 따개, 머리핀, 만능 열쇠.' },
   offer:    { name: '공물', slot: 'off', cls: ['necromancer'], st: { matk: 2.8, int: 0.5, hp: 3, mp: 4 }, w: 1, icon: 'bone', mat: [0, 1, 3], who: '네크로맨서 · 리치', desc: '죽은 자에게 바치는 공물 — 해골 · 잔 · 초 · 뼈.' },

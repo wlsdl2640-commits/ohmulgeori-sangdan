@@ -3,7 +3,7 @@
               ③ 맞히기(적 자리: 번쩍 → 모양 → 흩어짐) ④ 남은 것(먼지·빛 알갱이·땅 울림·화면 흔들림).
    강화·치유·도발: 방패 세우기·칼 치켜들기·칼 세우기(치유)·칼끝 겨누기(도발)·흘려 받기·되치기·모래 뿌리기 동작(pxs.js PXS_MOT_OF)
               + 모으기 → 모양(방벽·막·고리·불꽃·빛) → 퍼짐(파티 스킬이면 동료마다 작은 모양).
-   칸은 모두 2×2 논리 픽셀(뭉툭 칸)에 맞춘다. 그리는 곳: 모험가 몸 쪽(모으기·자취)은 view.js motFx(몸 좌표, 그림 칸에 맞춤),
+   칸은 모두 2×2 논리 픽셀(뭉툭 칸)에 맞춘다. 그리는 곳: 길드원 몸 쪽(모으기·자취)은 view.js motFx(몸 좌표, 그림 칸에 맞춤),
    적·파티 쪽은 fx()의 V.fx 'skh'(맞히기)·'skw'(초승달)·'skq'(땅 금)·'skc'(강화)·'shk'(흔들림). 다른 직업은 skfx2.js (빌드 42). */
 const SK_PAL = {
   power: ['#ffffff', '#ffe066', '#ff9a2e', '#c0501e'],
@@ -101,7 +101,7 @@ const SKFX = {
 const skOf = id => (id && SKFX[id]) || null;
 const SK_WAVE = 260, SK_QUAKE = 240;   // 초승달·땅 금이 나아가는 빠르기 (논리 픽셀/초)
 const skH = (i, k) => { const s = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return s - Math.floor(s); };
-// 뭉툭 칸: 화면(짝수 칸) · 모험가 몸 좌표(그림 칸에 맞춘다: 뭉툭 칸 X → 2X − 19)
+// 뭉툭 칸: 화면(짝수 칸) · 길드원 몸 좌표(그림 칸에 맞춘다: 뭉툭 칸 X → 2X − 19)
 function skQ(g, x, y, c, a) { if (a != null && a <= 0.02) return; if (a != null && a < 1) g.globalAlpha = a; R(g, Math.round(x / 2) * 2, Math.round(y / 2) * 2, 2, 2, c); if (a != null && a < 1) g.globalAlpha = 1; }
 function skL(g, x, y, c, a) { if (a != null && a <= 0.02) return; if (a != null && a < 1) g.globalAlpha = a; R(g, Math.round((x + 19) / 2) * 2 - 19, Math.round((y + 47) / 2) * 2 - 47, 2, 2, c); if (a != null && a < 1) g.globalAlpha = 1; }
 const skCell = (X, Y) => [2 * X - 19, 2 * Y - 47];

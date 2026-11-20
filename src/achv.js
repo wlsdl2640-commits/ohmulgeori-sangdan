@@ -33,18 +33,18 @@ const ACHV = [
   { id: 'fame2', cat: '장사', name: '왕국이 아는 이름', desc: '길드 명성 5,000', need: 5000, get: () => Math.floor(S.fame), rw: { gold: 30000, item: ['wizstone', 1] } },
   { id: 'rankC', cat: '장사', name: '큰 길드', desc: '길드 C랭크', need: 3, get: () => S.rank || 0, rw: { gold: 5000, fame: 10 } },
   { id: 'rankS', cat: '장사', name: '전설의 길드', desc: '길드 S랭크', need: 6, get: () => S.rank || 0, rw: { gold: 100000, fame: 50, item: ['wizstone', 2] } },
-  // 모험가
-  { id: 'lv30', cat: '모험가', name: '한몫하는 모험가', desc: '모험가 Lv30', need: 30, get: maxLv, rw: { gold: 2000 } },
-  { id: 'lv60', cat: '모험가', name: '베테랑', desc: '모험가 Lv60', need: 60, get: maxLv, rw: { gold: 8000, fame: 10 } },
-  { id: 'lv100', cat: '모험가', name: '전설의 모험가', desc: '모험가 Lv100', need: 100, get: maxLv, rw: { gold: 30000, fame: 30, item: ['wizstone', 1] } },
+  // 길드원
+  { id: 'lv30', cat: '길드원', name: '한몫하는 길드원', desc: '길드원 Lv30', need: 30, get: maxLv, rw: { gold: 2000 } },
+  { id: 'lv60', cat: '길드원', name: '베테랑', desc: '길드원 Lv60', need: 60, get: maxLv, rw: { gold: 8000, fame: 10 } },
+  { id: 'lv100', cat: '길드원', name: '전설의 길드원', desc: '길드원 Lv100', need: 100, get: maxLv, rw: { gold: 30000, fame: 30, item: ['wizstone', 1] } },
   { id: 'advs', cat: '모험가', name: '북적이는 여관', desc: '모험가 8명', need: 8, get: () => S.advs.length, rw: { gold: 3000, fame: 5 } },
-  { id: 'job2', cat: '모험가', name: '첫 전직', desc: '2차 직업 모험가 1명', need: 1, get: () => S.advs.filter(a => jobTier(a.cls) >= 2).length, rw: { gold: 3000, fame: 10 } },
-  { id: 'job3', cat: '모험가', name: '정점에 선 자', desc: '3차 직업 모험가 1명', need: 1, get: () => S.advs.filter(a => jobTier(a.cls) >= 3).length, rw: { gold: 10000, fame: 20 } },
-  { id: 'lic', cat: '모험가', name: '백금 라이선스', desc: '백금 라이선스 모험가 1명', need: 1, get: () => S.advs.filter(a => (a.rank || 0) >= LICENSE.length - 1).length, rw: { gold: 20000, fame: 20 } },
-  { id: 'sklv5', cat: '모험가', name: '스킬의 달인', desc: '스킬 하나를 Lv5까지', need: 1, get: () => S.advs.filter(a => a.sl && Object.values(a.sl).some(v => v >= SK_LV_MAX)).length, rw: { gold: 5000, fame: 10 } },
-  { id: 'hall1', cat: '모험가', name: '첫 동상', desc: '명예의 전당 동상 1개', need: 1, get: () => (S.hall || []).length, rw: { gold: 20000, fame: 20 } },
-  { id: 'arena1', cat: '모험가', name: '모래판의 신참', desc: '투기장 10승', need: 10, get: () => (S.under && S.under.arena && S.under.arena.wins) || 0, rw: { gold: 2000 } },
-  { id: 'arena2', cat: '모험가', name: '투기장의 별', desc: '투기장 100승', need: 100, get: () => (S.under && S.under.arena && S.under.arena.wins) || 0, rw: { gold: 15000, fame: 20, item: ['rune_eva_1', 1] } },
+  { id: 'job2', cat: '길드원', name: '첫 전직', desc: '2차 직업 길드원 1명', need: 1, get: () => S.advs.filter(a => jobTier(a.cls) >= 2).length, rw: { gold: 3000, fame: 10 } },
+  { id: 'job3', cat: '길드원', name: '정점에 선 자', desc: '3차 직업 길드원 1명', need: 1, get: () => S.advs.filter(a => jobTier(a.cls) >= 3).length, rw: { gold: 10000, fame: 20 } },
+  { id: 'lic', cat: '길드원', name: '백금 라이선스', desc: '백금 라이선스 길드원 1명', need: 1, get: () => S.advs.filter(a => (a.rank || 0) >= LICENSE.length - 1).length, rw: { gold: 20000, fame: 20 } },
+  { id: 'sklv5', cat: '길드원', name: '스킬의 달인', desc: '스킬 하나를 Lv5까지', need: 1, get: () => S.advs.filter(a => a.sl && Object.values(a.sl).some(v => v >= SK_LV_MAX)).length, rw: { gold: 5000, fame: 10 } },
+  { id: 'hall1', cat: '길드원', name: '첫 동상', desc: '명예의 전당 동상 1개', need: 1, get: () => (S.hall || []).length, rw: { gold: 20000, fame: 20 } },
+  { id: 'arena1', cat: '길드원', name: '모래판의 신참', desc: '투기장 10승', need: 10, get: () => (S.under && S.under.arena && S.under.arena.wins) || 0, rw: { gold: 2000 } },
+  { id: 'arena2', cat: '길드원', name: '투기장의 별', desc: '투기장 100승', need: 100, get: () => (S.under && S.under.arena && S.under.arena.wins) || 0, rw: { gold: 15000, fame: 20, item: ['rune_eva_1', 1] } },
   // 살림
   { id: 'pet1', cat: '살림', name: '첫 펫', desc: '펫 1마리 부화', need: 1, get: () => (S.pets || []).length + (S.dex && S.dex.pets ? Object.keys(S.dex.pets).length : 0), rw: { gold: 2000 } },
   { id: 'pet2', cat: '살림', name: '다 컸구나', desc: '펫 진화 1마리', need: 1, get: () => (S.pets || []).filter(x => x.stage).length, rw: { gold: 8000, fame: 10 } },
@@ -58,14 +58,14 @@ const ACHV = [
   { id: 'trade2', cat: '장사', name: '교역의 큰손', desc: '교역 20번', need: 20, get: () => S.stats.trades || 0, rw: { gold: 30000, fame: 20 } },
   { id: 'cook1', cat: '살림', name: '첫 도시락', desc: '주방에서 요리 10번', need: 10, get: () => S.stats.cooked || 0, rw: { gold: 2000 } },
   { id: 'cook2', cat: '살림', name: '길드의 요리사', desc: '주방에서 요리 200번', need: 200, get: () => S.stats.cooked || 0, rw: { gold: 15000, fame: 10 } },
-  { id: 'lv150', cat: '모험가', name: '별에 닿다', desc: '모험가 Lv150', need: 1, get: () => (S.advs.some(a => a.lv >= 150) || (S.hall || []).some(h => h.lv >= 150) ? 1 : 0), rw: { gold: 100000, fame: 80, item: ['bloomstone', 1] } },
-  { id: 'lv200', cat: '모험가', name: '별 너머로', desc: '모험가 Lv200', need: 1, get: () => (S.advs.some(a => a.lv >= 200) || (S.hall || []).some(h => h.lv >= 200) ? 1 : 0), rw: { gold: 1000000, fame: 150, item: ['bloomstone', 2] } }   // 빌드 69: 누구나 Lv200
+  { id: 'lv150', cat: '길드원', name: '별에 닿다', desc: '길드원 Lv150', need: 1, get: () => (S.advs.some(a => a.lv >= 150) || (S.hall || []).some(h => h.lv >= 150) ? 1 : 0), rw: { gold: 100000, fame: 80, item: ['bloomstone', 1] } },
+  { id: 'lv200', cat: '길드원', name: '별 너머로', desc: '길드원 Lv200', need: 1, get: () => (S.advs.some(a => a.lv >= 200) || (S.hall || []).some(h => h.lv >= 200) ? 1 : 0), rw: { gold: 1000000, fame: 150, item: ['bloomstone', 2] } }   // 빌드 69: 누구나 Lv200
 ];
 ACHV.push(   // 빌드 34: 던전 수거소
   { id: 'salv1', cat: '살림', name: '수거꾼의 첫 짐', desc: '던전 수거소가 부속품 50개 가져오기', need: 50, get: () => S.stats.salvaged || 0, rw: { gold: 3000 } },
   { id: 'salv2', cat: '살림', name: '주인의 흔적', desc: '수거소가 던전 주인 부속품 20개 가져오기', need: 20, get: () => S.stats.salvBoss || 0, rw: { gold: 20000, fame: 15 } }
 );
-const ACHV_CATS = ['사냥', '장사', '모험가', '살림'];
+const ACHV_CATS = ['사냥', '장사', '길드원', '살림'];
 const achvDone = () => Object.keys(S.achv || {}).length;
 function achvCur(A) { try { return Math.min(A.need, A.get() || 0); } catch (_) { return 0; } }
 function achvGrant(A) {

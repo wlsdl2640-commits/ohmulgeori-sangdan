@@ -74,7 +74,7 @@ function plate65(a) {
 // 늪지대 단계(Lv52)부터 — 그 아래 단계로는 떨어지지도 · 만들어지지도 않는다(tierOk의 tmin). 그림은 단계 차례 그대로(늪지 = 7번째 그림부터)
 const JOB2_LOW = { hvarmor: 'larmor', hvpants: 'lpants', plate: 'larmor', ppants: 'lpants', lance: 'sword', lute: 'club', trident: 'sword' };   // 빌드 67: 삼지창(투기장 상단 — 강철 단계부터 팔았다)도   // 옛 저장의 낮은 단계 것 → 같은 단계 1차 장비 (econ.js lowJob66)
 Object.keys(JOB2_LOW).forEach(b => { if (GTYPES[b]) GTYPES[b].tmin = 6; });
-// 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸을 쓰는 모험가 (그 칸에 입을 수 있는 장비가 있을 때만 창에 칸이 보인다 — 장갑 · 신발 · 벨트 · 귀걸이는 모든 직업)
+// 하의 · 장갑 · 신발 · 벨트 · 귀걸이 칸을 쓰는 길드원 (그 칸에 입을 수 있는 장비가 있을 때만 창에 칸이 보인다 — 장갑 · 신발 · 벨트 · 귀걸이는 모든 직업)
 const wearsSlot = (a, s) => !!a && !!CLASSES[a.cls] && GTYPE_IDS.some(b => GTYPES[b].slot === s && clsFits(a, b));   // 계열만 본다(레벨 · 단계와 상관없이 — 볼트통 · 볼트 칸은 늪지 단계 장비뿐이다)
 const hasLegs = a => wearsSlot(a, 'legs');
 const SLOTS65 = ['legs', 'gloves', 'boots', 'belt', 'ear'];   // 빌드 65에 생긴 칸

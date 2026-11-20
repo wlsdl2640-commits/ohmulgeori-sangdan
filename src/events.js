@@ -52,7 +52,7 @@ function waveWhy(ev0, p) {
   if (p.exp) return '원정 중인 파티예요';
   if (p.raidOnly) return '레이드 전용 파티는 레이드에만 나가요';
   const team = p.members.map(advById).filter(a => a && a.status === 'idle');
-  if (!team.length || team.length !== p.members.length) return '대기 중인 모험가만 보낼 수 있어요';
+  if (!team.length || team.length !== p.members.length) return '대기 중인 길드원만 보낼 수 있어요';
   const why = team.map(cantGo).find(Boolean);
   return why || '';
 }
@@ -106,7 +106,7 @@ function waveEnd(p, e, win) {
     S.stats.waves = (S.stats.waves || 0) + 1;
     log(`${p.name}이(가) 하르겐 성문에서 ${F.name}의 몬스터 웨이브를 모두 막아 냈다! 상금 ${g$(R.gold)}, 명성 +${R.fame}`, 'good');
     HOOKS.toast(`방어전 승리 · ${g$(R.gold)} · 명성 +${R.fame}`);
-    queueModal({ title: '방어전 승리', body: [`${p.name}이(가) 성문 앞에서 ${e.wave.n}차례 밀려온 몬스터를 모두 쓰러뜨렸다. 시민들이 환호한다.`, `모험가 협회의 상금 ${g$(R.gold)}과 명성 +${R.fame}. 전리품은 창고로.`] });
+    queueModal({ title: '방어전 승리', body: [`${p.name}이(가) 성문 앞에서 ${e.wave.n}차례 밀려온 몬스터를 모두 쓰러뜨렸다. 시민들이 환호한다.`, `길드원 협회의 상금 ${g$(R.gold)}과 명성 +${R.fame}. 전리품은 창고로.`] });
   } else if (ev0 && !ev0.done) waveFail(ev0, `${p.name}이(가) 밀려나`);
   ev(e, 'arena', { win: win ? 1 : 0 });
   e.done = 1; e.mode = 'return'; e.why = 'wave'; e.foes = []; e.cd = {}; e.buffs = []; e.taunt = null;
@@ -171,7 +171,7 @@ function newNest(k) {
   const ev0 = { id: nid(), type: 'nest', at, born: k, end: k + NEST.days, need: NEST.need, got: 0, done: 0 };
   log(`${F.name}에 몬스터 둥지가 생겼다! ${NEST.days}일 동안 둥지 몬스터(강하고 전리품 두 배)가 섞여 나온다. ${NEST.need}마리 잡으면 둥지를 치운 보상을 받는다.`, 'warn');
   HOOKS.toast(`몬스터 둥지 · ${F.name} · ${NEST.days}일`);
-  queueModal({ title: '몬스터 둥지', body: [`${F.name}에 몬스터 둥지가 생겼다. ${NEST.days}일 동안 그 필드에서 둥지 몬스터가 섞여 나온다. 보통 개체보다 체력 ${Math.round((NEST.hp - 1) * 100)}%·공격 ${Math.round((NEST.atk - 1) * 100)}% 강하고, 전리품을 두 배로 떨어뜨린다.`, `둥지 몬스터를 ${NEST.need}마리 잡으면 둥지를 치운 것으로 보고 모험가 협회가 상금과 명성, 그리고 그 필드의 알을 준다. 원정대 창에서 ${F.name}(으)로 파티를 보내자.`] });
+  queueModal({ title: '몬스터 둥지', body: [`${F.name}에 몬스터 둥지가 생겼다. ${NEST.days}일 동안 그 필드에서 둥지 몬스터가 섞여 나온다. 보통 개체보다 체력 ${Math.round((NEST.hp - 1) * 100)}%·공격 ${Math.round((NEST.atk - 1) * 100)}% 강하고, 전리품을 두 배로 떨어뜨린다.`, `둥지 몬스터를 ${NEST.need}마리 잡으면 둥지를 치운 것으로 보고 길드원 협회가 상금과 명성, 그리고 그 필드의 알을 준다. 원정대 창에서 ${F.name}(으)로 파티를 보내자.`] });
   return ev0;
 }
 function nestReward(ev0) { const F = FIELDS[ev0.at]; return { gold: Math.round((F.lv * 90 + 1200) / 10) * 10, fame: 12 + F.tier * 3 }; }
@@ -187,7 +187,7 @@ function nestKill(p, e, f) {
   teamOf(p).filter(a => !a.down).forEach(a => { a.pf = (a.pf || 0) + 4; });
   log(`${p.name}이(가) ${F.name}의 몬스터 둥지를 치웠다! 상금 ${g$(R.gold)}, 명성 +${R.fame}${egg ? `, ${ITEMS[egg].name}` : ''}`, 'good');
   HOOKS.toast(`둥지 소탕 · ${g$(R.gold)} · 명성 +${R.fame}`);
-  queueModal({ title: '둥지 소탕', body: [`${p.name}이(가) ${F.name}의 둥지 몬스터 ${ev0.need}마리를 잡아 둥지를 치웠다.`, `모험가 협회의 상금 ${g$(R.gold)}과 명성 +${R.fame}${egg ? `. 둥지에서 ${ITEMS[egg].name}을(를) 찾아 창고에 넣었다` : ''}.`] });
+  queueModal({ title: '둥지 소탕', body: [`${p.name}이(가) ${F.name}의 둥지 몬스터 ${ev0.need}마리를 잡아 둥지를 치웠다.`, `길드원 협회의 상금 ${g$(R.gold)}과 명성 +${R.fame}${egg ? `. 둥지에서 ${ITEMS[egg].name}을(를) 찾아 창고에 넣었다` : ''}.`] });
 }
 /* 지도 노드와 카드 */
 function eventNodes(sel) {

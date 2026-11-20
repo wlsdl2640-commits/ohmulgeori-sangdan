@@ -10,7 +10,7 @@
      spiritPct 정령 스킬 피해 + · weakPct 약점 피해 + · immPierce 면역 꿰뚫기 · mdrain 마법 피해 흡수 · dotPct 지속 피해 + · wagonSpd · wagonCap 마차 속도 · 짐 + */
 Object.assign(MASTERY, {
   whip:     { name: '채찍술', w: ['whip'], icon: 'club', fx: [{ atkPct: 0.04 }, { atkPct: 0.08, slowHit: 0.2 }, { atkPct: 0.12, slowHit: 0.3 }, { atkPct: 0.16, slowHit: 0.35, crit: 0.03 }], desc: '끈 끝으로 때리고 휘감는다. 중급부터 기본 공격에 맞은 적이 가끔 1.5초 느려진다.' },
-  wagon:    { name: '마차 몰기', job: ['coachman'], icon: 'bag', fx: [{ wagonSpd: 0.04 }, { wagonSpd: 0.08, wagonCap: 0.1 }, { wagonSpd: 0.12, wagonCap: 0.2 }, { wagonSpd: 0.16, wagonCap: 0.3 }], desc: '고삐를 잡는 요령. 이 모험가가 모는 파티 마차가 빨라지고 짐을 더 싣는다.' },
+  wagon:    { name: '마차 몰기', job: ['coachman'], icon: 'bag', fx: [{ wagonSpd: 0.04 }, { wagonSpd: 0.08, wagonCap: 0.1 }, { wagonSpd: 0.12, wagonCap: 0.2 }, { wagonSpd: 0.16, wagonCap: 0.3 }], desc: '고삐를 잡는 요령. 이 길드원가 모는 파티 마차가 빨라지고 짐을 더 싣는다.' },
   machete:  { name: '정글칼술', w: ['machete'], icon: 'sword', fx: [{ atkPct: 0.03, movePct: 0.03 }, { atkPct: 0.06, movePct: 0.05, bleedHit: 0.1 }, { atkPct: 0.1, movePct: 0.08, bleedHit: 0.15 }, { atkPct: 0.14, movePct: 0.1, bleedHit: 0.2 }], desc: '덤불을 쳐내며 길을 낸다. 중급부터 기본 공격이 가끔 출혈을 남긴다.' },
   cards:    { name: '카드술', w: ['card'], icon: 'dagger', fx: [{ crit: 0.03 }, { crit: 0.05, stealPct: 0.2 }, { crit: 0.08, spdPct: 0.06, stealPct: 0.4 }, { crit: 0.1, spdPct: 0.1, stealPct: 0.6 }], desc: '손끝으로 카드를 날리고 바꿔 친다. 중급부터 훔치는 돈이 늘어난다.' },
   lockpick: { name: '따개 솜씨', w: ['lockpick'], wn: '락핀', icon: 'blade', fx: [{ chestGold: 0.1 }, { chestGold: 0.2, eva: 0.02 }, { chestGold: 0.3, eva: 0.04, chestExtra: 0.15 }, { chestGold: 0.4, eva: 0.06, chestExtra: 0.25 }], desc: '자물쇠를 따는 손. 보물 상자 · 보물고에서 돈을 더 챙기고, 상급부터 보물고 상자를 하나 더 찾는다.' },

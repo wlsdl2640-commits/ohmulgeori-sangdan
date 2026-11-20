@@ -126,7 +126,7 @@ function pxBake(key, g0, pal, ax, ay, pre) {
 }
 const pxBlit = (ctx, s) => (s.hs ? ctx.drawImage(s.cv, -s.ax / s.hs, -s.ay / s.hs, s.w / s.hs, s.h / s.hs) : ctx.drawImage(s.cv, -s.ax, -s.ay));   // hs (빌드 70 리마스터 그림): 화면 픽셀 해상도 그림 — 논리 1칸에 hs칸
 
-/* ───────── 모험가 (전투 화면, 앞모습) ─────────
+/* ───────── 길드원 (전투 화면, 앞모습) ─────────
    몸 블록 16칸(가로) × 13줄, 머리 블록 16칸 × 12줄(얼굴은 6~11줄). 작업판 40×48, 몸 블록 왼쪽 위 = (12, 34). */
 const PXW = 40, PXH = 48, BX = 12, BY = 34, HY = BY - 12;
 // 얼굴: 6줄 이마 · 7~8줄 눈 · 9줄 입 · 10줄 턱 · 11줄 턱끝. 양옆(1·14칸)은 머리카락이나 모자
@@ -1547,7 +1547,7 @@ VW
 ` }
 };
 
-/* 직업 차림: head 머리 장식 · body 옷 · hair 머리 모양(없으면 모험가마다) · ex 덧붙이기
+/* 직업 차림: head 머리 장식 · body 옷 · hair 머리 모양(없으면 길드원마다) · ex 덧붙이기
    c1 옷 · c2 장식 · c3 셋째 · hc 머리 장식 색 · metal · cape · gem · eyes 눈빛 · skin 피부 · pants · boots */
 const PXL = {
   warrior:     { head: 'helm', body: 'chain', ex: ['pauldron', 'tabard'], c1: '#c8403a', c2: '#f2c444', pants: '#5c606c', boots: '#6a4428' },
@@ -1612,7 +1612,7 @@ function pxWeapon(cls, base) {
   if (w === 'hammer' && base === 'mace') return 'hammer';
   return base;
 }
-// 팔레트: 직업 색 + 모험가 생김새
+// 팔레트: 직업 색 + 길드원 생김새
 function pxPal(L, look) {
   const skin = L.skin || look.skin || SKINS[0], hair = look.hair || HAIRS[0];
   const R = pxRamp, sk = R(skin), hr = R(L.hairc || hair), c1 = R(L.c1 || '#8a8a8a'), c2 = R(L.c2 || '#c9a04a'), c3 = R(L.c3 || L.c2 || '#c9a04a');
@@ -1633,7 +1633,7 @@ function pxPal(L, look) {
 const PX_CAPE_KEYS = { R: 'P', r: 'q' };
 function pxTone(rows, map) { return rows.map(r => [...r].map(c => map[c] || c).join('')); }
 
-/* 모험가 한 장 만들기. pose: idle · walk · atk · sit · sleep */
+/* 길드원 한 장 만들기. pose: idle · walk · atk · sit · sleep */
 function pxAdvGrid(a, pose, fr, Lx) {
   const cls = PXL[a.cls] ? a.cls : PXL[jobBase(a.cls)] ? jobBase(a.cls) : 'warrior', L0 = Lx || PXL[cls], [L, Q] = pxOffLook(a, L0);
   const look = a.look || {}, ex = L.ex || [];

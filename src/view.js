@@ -314,7 +314,7 @@ function townScene(w, t, p, lights, post, dark) {
   if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6);
   list = list.slice(0, 6);
   const slots = frontSlots(list.length);
-  V.hitA = list.map((a, i) => [a.id, slots[i][0], slots[i][1], 0]);   // 빌드 66: 전투 창에서 모험가를 누르면 그 모험가 창
+  V.hitA = list.map((a, i) => [a.id, slots[i][0], slots[i][1], 0]);   // 빌드 66: 전투 창에서 길드원를 누르면 그 길드원 창
   list.forEach((a, i) => {
     const [x, y] = slots[i], z = zq(y > 185 ? ZS : ZS * 0.92);
     shadowAt(w, x, y, 9 * z / ZS);
@@ -330,8 +330,8 @@ function staDots(g, st, x, y) {
 }
 /* ───────── 원정 (옆모습): 파티는 왼쪽, 적은 오른쪽. 앞줄이 크고 뒷줄이 작다 ───────── */
 const ORBIT = { elementalist: ['#7ae0a0', '#f0a040'], necromancer: ['#b88aff', '#6a4aa8'] };
-const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168], [36, 196], [26, 184], [44, 172], [16, 176]];   // 적 자리(거울로) — 모험가는 빌드 69부터 formSlots
-// 대형 자리 (빌드 69, 사용자 11-13 21:22 대형 · 11-14 00:42 「모험가들 너무 가까워 거리를 살짝 더줘」): core.js formRank 줄마다 x(앞 → 뒤),
+const SLOT_P = [[98, 198], [66, 192], [90, 186], [58, 180], [82, 174], [50, 168], [36, 196], [26, 184], [44, 172], [16, 176]];   // 적 자리(거울로) — 길드원는 빌드 69부터 formSlots
+// 대형 자리 (빌드 69, 사용자 11-13 21:22 대형 · 11-14 00:42 「길드원들 너무 가까워 거리를 살짝 더줘」): core.js formRank 줄마다 x(앞 → 뒤),
 //   줄 안에서는 가까이(아래) → 멀리(위)로 비스듬히. 근접이 넷 이상이면 넷째부터 가운데 줄 맨 앞, 탈것은 그 줄 먼 칸, 들것은 맨 뒤 줄, 빈 줄은 앞으로 당긴다.
 //   줄 사이는 시안의 26 → 34(줄이 넷 이상이면 화면에 들게 좁힌다), 줄 안 깊이도 시안보다 조금 넓게.
 const FORM_X0 = 124, FORM_GAP = 34, FORM_XMIN = 32, FORM_SKEW = 0.9;   // 줄 넷(짐꾼까지 찬 파티)이면 줄 사이 30.7 — 맨 뒤 짐꾼의 등짐이 화면 밖으로 나가지 않게
@@ -449,7 +449,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       if (jy) g.translate(0, jy);
       g.scale(-dir, 1);
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t && (V.flash0['f' + f.uid] || 0) <= t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
-      if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 모험가 옆모습
+      if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 길드원 옆모습
       else { const hl = PXU[did] && PXU[did].hitLook, h0 = V.flash0['f' + f.uid], dd = hl && h0 != null && t >= h0 && t < h0 + (PXU[did].hitT || 0.4) ? hl : did;   // 맞으면 잠깐 다른 모습 (빌드 53: 켈피는 물로 풀렸다 돌아온다)
         const wk = !fighting && appr > 0;   // 빌드 70: 다가오는 동안 걷기 줄 (그림 몬스터 — 멧돼지 둘)
         drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo, walk: wk }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo, walk: wk }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
@@ -639,7 +639,7 @@ function skGhosts(g, a, mo, sk, x, y, z, dir, t) {
   if (sk.dash && mo.f >= 4 && mo.f <= 6) for (let k = 1; k <= 3; k++) one(-k * 9 * dir, 0, 0.5 - k * 0.12);
   if (sk.charge === 'aura' && mo.first && mo.f >= 1 && mo.f <= 3 && Math.floor(t * 20) % 2) for (const [ox, oy] of [[-2, 0], [2, 0], [0, -2], [0, 2]]) one(ox, oy, 0.55);
 }
-/* 공격 동작 (빌드 40): 칼을 든 모험가는 여러 장 동작(pxs.js PXS_MOT). 기본 공격은 무작위 자세, 스킬은 스킬에 맞는 자세(MOT_SKILL).
+/* 공격 동작 (빌드 40): 칼을 든 길드원는 여러 장 동작(pxs.js PXS_MOT). 기본 공격은 무작위 자세, 스킬은 스킬에 맞는 자세(MOT_SKILL).
    여러 번 치는 스킬은 동작을 잇는다: 앞 동작의 맞히는 장을 MOT_HOLD만큼 보이고 다음 동작은 셋째 장(MOT_CHAIN0)부터.
    적 쪽 효과·숫자·소리·번쩍임은 맞히는 장에 맞춰 늦춘다(motOn이 남은 시간을 돌려준다). 막으면 방패 막기, 치유·강화는 칼 치켜들기/방패 세우기 */
 const MOT_BASIC = ['down', 'up', 'side', 'thrust'];
@@ -654,7 +654,7 @@ const MOT_SKILL = {
 };
 const MOT_HOLD = 0.08, MOT_CHAIN0 = 2, MOT_PAL = [['#ffffff', '#fff2a0', '#a8a090'], ['#fffbe0', '#ffd84a', '#c8a060']];   // 효과 색: 보통 · 치명타
 const motToHit = q => (q.T || pxsMotT(q.mk)).slice(q.f0 || 0, pxsMotHit(q.mk)).reduce((s, v) => s + v, 0);
-const motTA = (a, mk) => hdMotT(a, mk) || pxsMotT(mk);   // 이 모험가의 장마다 초 — 빌드 70: 전사 1차 리마스터(16장)는 동작을 길게 (hd70.js HDW_MOT)
+const motTA = (a, mk) => hdMotT(a, mk) || pxsMotT(mk);   // 이 길드원의 장마다 초 — 빌드 70: 전사 1차 리마스터(16장)는 동작을 길게 (hd70.js HDW_MOT)
 const motT = (mk, hold, a) => motTA(a, mk).map((v, f) => v + (f === 2 ? hold || 0 : 0));   // 스킬: 셋째 장(모으기)을 hold초 더 붙잡는다
 /* 무기 갈래마다 (빌드 42): 기본 공격 자세 · 그 갈래가 가진 동작 · 다른 갈래 동작을 이 갈래로 바꾸는 표(역할: 내려치기 cut · 올려치기 rise · 휩쓸기 sweep ·
    찌르기 stab · 난도질 flurry · 내려찍기 slam · 쏘기 shoot · 모아 쏘기 cast · 치켜들기 raise) */
@@ -702,7 +702,7 @@ const CARD_FR = [['ZZ', 'ZT', 'ZZ'], ['.ZZ', 'ZTZ', 'ZZ.'], ['ZZZ', 'ZTZ'], ['ZZ
   const out = []; for (const [x, y] of px) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const q = (x + dx) + ',' + (y + dy); if (!own.has(q)) { own.add(q); out.push([x + dx, y + dy]); } }
   return { px, out };
 });   // 빌드 65: 카드를 던지는 동작 — 근접 기본 공격이라도 카드가 날아간다 (장 수)
-// 이 모험가가 쓸 동작: 그 갈래에 있으면 그대로, 없으면 역할이 같은 동작
+// 이 길드원가 쓸 동작: 그 갈래에 있으면 그대로, 없으면 역할이 같은 동작
 function motFam(a, mk) {
   const fam = pxsFam(a);
   if (MOT_OWN[fam].includes(mk)) return mk === 'bash' && !pxsMotShield(a) ? MOT_FAMR[fam].stab : mk;
@@ -1011,7 +1011,7 @@ function events(e, pos, t, team, p) {
       const fm = fmid(x.d), ft = ftop(x.d);
       if (fm) { V.fx.push({ k: 'slash', x: fm[0], y: fm[1], t0: t + 0.1, d: 0.2, c: '#ff8ad0', dir: 1 }); V.fx.push({ k: 'num', x: ft[0] + jx(), y: ft[1] + jy(), s: String(x.v), c: '#ffb0e0', t0: t + 0.1, d: 0.7 }); V.flash['f' + x.d] = t + 0.19; V.flash0['f' + x.d] = t + 0.1; }
       V.lunge['f' + x.s] = t + 0.14;
-    } else if (x.type === 'ahit') {     // 홀린 모험가가 같은 편을 친다
+    } else if (x.type === 'ahit') {     // 홀린 길드원가 같은 편을 친다
       const am = amid(x.d), aq = at('a' + x.d);
       if (am && aq) { V.fx.push({ k: 'slash', x: am[0], y: am[1], t0: t + 0.1, d: 0.2, c: '#ff8ad0', dir: -(V.dir || 1) }); V.fx.push({ k: 'num', x: aq[0], y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 6, s: String(x.v), c: '#ffb0e0', t0: t + 0.1, d: 0.7 }); }
       V.atk['a' + x.s] = t;

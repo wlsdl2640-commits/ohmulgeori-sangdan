@@ -27,7 +27,7 @@ function bake(key, w, h, ax, ay, paint, plain) {
 }
 const blit = (ctx, s) => ctx.drawImage(s.cv, -s.ax, -s.ay);
 
-/* ───────── 모험가 (손 도트: pxa.js 앞모습 · pxs.js 옆모습) ───────── */
+/* ───────── 길드원 (손 도트: pxa.js 앞모습 · pxs.js 옆모습) ───────── */
 const ROBED = Object.keys(PXL).filter(c => PXL[c].body === 'robe');
 function advKey(a) {
   const w = a.eq && a.eq.weapon, l = a.look || {};
