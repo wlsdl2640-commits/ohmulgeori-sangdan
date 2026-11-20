@@ -11,6 +11,10 @@ CONF = {
  'wolf':      dict(src='d7c600ce', bg='mag',  rows=[('idle', 8), ('bite', 8), ('leap', 10)], jump={'leap'}, th=25),
  'scarecrow': dict(src='c3ff3bc8', bg='mag',  rows=[('idle', 8), ('crow1', 8), ('crow2', 8), ('crow3', 8)], jump=set(), th=40, labels=1, grid=(120, 220.5), norm=False),
  'boar':      dict(src='96a7568a', bg='dark', rows=[('idle', 6), ('walk', 8), ('hornup', 6), ('headbutt', 7), ('charge', 8)], jump=set(), th=26),
+ # 원시림 고블린 셋 (11-20 17:08 — 판마다 서 있기 8 · 공격 10 · 달리기 10. 단검 고블린은 베기 판 아래에 찌르기 판의 공격 줄을 붙였다 · 줄 사이 흰 줄과 날아가는 화살은 지움)
+ 'gobclub':   dict(src='gobclub', bg='mag', rows=[('idle', 8), ('smash', 9), ('walk', 10)], jump=set(), th=27),   # 공격 넷째 칸은 셋째 칸과 붙어 있어 뺐다
+ 'goblin':    dict(src='goblin', bg='mag', rows=[('idle', 8), ('slash', 10), ('walk', 10), ('thrust', 10)], jump=set(), th=27),
+ 'gobarcher': dict(src='gobarcher', bg='mag', rows=[('idle', 8), ('shot', 10), ('walk', 10)], jump=set(), th=27),
  'aboar':     dict(src='572486e4', bg='dark', rows=[('idle', 7), ('walk', 8), ('hornup', 6), ('headbutt', 8), ('charge', 8)], jump=set(), th=32, xmin=165),
 }
 

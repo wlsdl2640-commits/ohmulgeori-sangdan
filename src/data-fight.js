@@ -117,7 +117,7 @@ const MSK = {
 // 몬스터마다: [틀, 이름, 덮어쓸 값]
 const MON_SK = {
   // 평원 · 곡물 창고
-  rat: [['bite', '앞니 물기']], slime: [['acid', '산성 점액']], rabbit: [['gore', '뿔 들이받기']], wolf: [['bite', '물어뜯기'], ['howl', '울부짖음']], goblin: [['blind', '모래 뿌리기']],
+  rat: [['bite', '앞니 물기']], slime: [['acid', '산성 점액']], rabbit: [['gore', '뿔 들이받기']], wolf: [['bite', '물어뜯기'], ['howl', '울부짖음']], goblin: [['blind', '모래 뿌리기']], gobclub: [['hit', '몽둥이 내려찍기', { mult: 1.4 }]], gobarcher: [['blind', '눈 겨누기', { mult: 1.1 }]],
   ratking: [['summon', '쥐 떼 부르기', { mon: ['rat'], n: 2 }], ['bite', '이빨 갈기']],
   scarecrow: [['blind', '까마귀 쪼기', { mult: 1.2 }]], boar: [['gore', '멧돼지 돌진']], aboar: [['gore', '철갑 돌진', { mult: 1.8 }], ['guard', '등판 웅크리기']],   // 빌드 70: 곡창지대 평원
   // 원시림 · 썩은 뿌리 동굴

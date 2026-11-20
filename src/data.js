@@ -46,6 +46,7 @@ const ITEMS = {
   wolf_pelt:      { name: '들늑대 가죽',        v: 22,   w: 3, icon: 'hide',    c: '#8f877d' },
   wolf_fang:      { name: '들늑대 송곳니',      v: 14,   w: 1, icon: 'fang',    c: '#eee8da' },
   goblin_ear:     { name: '고블린 귀',          v: 12,   w: 1, icon: 'ear',     c: '#7fae4b' },
+  goblin_fletch:  { name: '고블린 화살깃',      v: 16,   w: 1, icon: 'feather', c: '#c8c0b0' },   // 빌드 72: 고블린 궁수
   rusty_dagger:   { name: '녹슨 단검',          v: 18,   w: 2, icon: 'blade',   c: '#b7774a' },
   ratking_crown:  { name: '들쥐왕의 왕관',      v: 320,  w: 2, icon: 'crown',   c: '#f0c24a' },
   scare_straw:    { name: '허수아비 짚단',      v: 30,   w: 2, icon: 'hide',    c: '#d8b45a' },   // 빌드 70: 곡창지대 평원 새 몬스터
@@ -103,7 +104,10 @@ const MONS = {
   slime:   { name: '초록 슬라임',  plan: 'blob', body: '#5fbf5a', dark: '#3f8f3c', w: 10, h: 8, mh: 0.6, ma: 0.45, md: 0.5, spd: 0.8, minS: 1, drops: [['slime_jelly', 0.8]] },
   rabbit:  { name: '뿔토끼',       plan: 'quad', body: '#e6e0d4', dark: '#b9b0a2', len: 8,  h: 5, horn: '#e7cf86', ears: 1, mh: 0.55, ma: 0.7, md: 0, spd: 1.3, eva: 0.08, minS: 2, drops: [['rabbit_horn', 0.6]] },
   wolf:    { name: '들늑대',       plan: 'quad', body: '#8f877d', dark: '#5f5a54', len: 14, h: 7, tail: 1, ear: 1, snout: 1, mh: 0.95, ma: 0.95, md: 0.4, spd: 1.1, minS: 4, drops: [['wolf_pelt', 0.45], ['wolf_fang', 0.5]] },
-  goblin:  { name: '고블린',       plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.9, ma: 0.9, md: 0.8, spd: 1.0, minS: 6, drops: [['goblin_ear', 0.7], ['rusty_dagger', 0.15]] },
+  goblin:  { name: '고블린',       plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.85, ma: 1.0, md: 0.6, spd: 1.15, eva: 0.06, minS: 4, drops: [['goblin_ear', 0.7], ['rusty_dagger', 0.15]] },   // 빌드 72: 단검 고블린 (리마스터 그림) — 원시림 2-10부터
+  // 빌드 72 (11-20 17:08 사용자 「몽둥이, 단검, 궁수 순서로 LV」): 원시림 고블린 셋 — 몽둥이꾼 2-1(Lv9)~ · 단검 고블린 2-10(Lv11)~ · 궁수 2-19(Lv13)~ (레벨은 필드가 정한다: fieldLv · minS)
+  gobclub: { name: '고블린 몽둥이꾼', plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 1.0, ma: 0.85, md: 0.7, spd: 0.85, minS: 1, drops: [['goblin_ear', 0.7]] },
+  gobarcher: { name: '고블린 궁수', plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.75, ma: 1.1, md: 0.4, spd: 0.95, eva: 0.08, minS: 7, drops: [['goblin_ear', 0.6], ['goblin_fletch', 0.45]] },
   scarecrow: { name: '허수아비',    plan: 'biped', skin: '#c8a060', cloth: '#7a5232', gear: 'staff', mh: 1.0, ma: 1.05, md: 0.6, spd: 0.9, minS: 7, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },   // 빌드 70: 곡창지대 평원 (리마스터 그림 — hd70.js)
   boar:    { name: '멧돼지',       plan: 'quad', body: '#8a4a32', dark: '#5a2e1e', len: 14, h: 7, tail: 1, ear: 1, mh: 1.3, ma: 1.2, md: 0.8, spd: 0.9, minS: 10, drops: [['boar_hide', 0.5], ['boar_tusk', 0.45]] },
   aboar:   { name: '갑옷 멧돼지',  plan: 'quad', body: '#7a3a2a', dark: '#4a2418', len: 15, h: 8, tail: 1, ear: 1, mh: 1.8, ma: 1.35, md: 1.6, spd: 0.8, minS: 14, drops: [['aboar_plate', 0.45], ['boar_tusk', 0.5], ['boar_hide', 0.3]] },
@@ -158,7 +162,7 @@ const FIELDS = {
   forest: {
     no: 2, name: '원시림', lv: 9, bg: 'forest_hd', tier: 1,   // 빌드 72: 새 풍경 (hd70.js buildForestHD)
     desc: '중앙에 세계수가 솟은 숲. 엘프 왕국의 영역이다.',
-    mons: ['goblin', 'myconid', 'spider', 'sapling', 'shaman'],   // 빌드 72 (11-20 16:56 사용자 「고블린들 추가」): 고블린 — 주술사는 원래 있었다
+    mons: ['gobclub', 'goblin', 'gobarcher'],   // 빌드 72 (11-20 17:14 사용자 「원시림에 추가했던 몬스터는 다 빼버려」): 예전 넷(독버섯 괴물 · 거대 거미 · 트렌트 묘목 · 고블린 주술사)을 뺐다 — 지금은 고블린 셋. 다음: 덩굴 뱀 · 식충 꽃 · 이끼 골렘 · 숲의 수호령 (GPT 판 기다림)
     dungeon: { name: '썩은 뿌리 동굴', bg: 'cave', mons: ['myconid', 'spider', 'sapling', 'shaman'], boss: 'elder' },
     next: 'mountain'
   },

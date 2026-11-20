@@ -7,6 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # 사용자가 보낸 판 (11-18 18:42 · 18:18) — 이 폴더 sheets/ (받은 그대로, 무손실 WebP) · 평원 풍경 둘은 ../plains_wide/
 SHEETS = {'fb1e9ce5': 'sheets/mon_rat.webp', 'd5946b77': 'sheets/mon_rabbit.webp', 'd7c600ce': 'sheets/mon_wolf.webp', 'c3ff3bc8': 'sheets/mon_scarecrow.webp',
           '96a7568a': 'sheets/mon_boar.webp', '572486e4': 'sheets/mon_aboar.webp', '951d4114': 'sheets/warrior1.webp', '4ea8aeea': 'sheets/warrior1_skills.webp',
+          'gobclub': 'sheets/mon_gobclub.webp', 'goblin': 'sheets/mon_goblin.webp', 'gobarcher': 'sheets/mon_gobarcher.webp',   # 원시림 고블린 셋 (11-20 — 받은 그대로는 raw_goblin_*.webp)
           '38f56457': '../plains_wide/plains_gpt_composite.png', '4b92ccaf': '../plains_wide/plains_gpt_layers.png'}
 def sheet_path(k): return os.path.join(HERE, SHEETS[k])
 ATT = None   # 예전 첨부 폴더 (세션 작업 때) — 이제는 sheet_path

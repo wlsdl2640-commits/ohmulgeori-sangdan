@@ -27,18 +27,24 @@ const HD_MOT = {
   i_boar_charge: { id: 'boar', row: 'charge', T: 0.055, hit: 5, dx: [0, 3, 8, 14, 20, 24, 18, 8] },
   i_aboar_butt:  { id: 'aboar', row: 'headbutt', T: [0.07, 0.07, 0.07, 0.06, 0.08, 0.08, 0.08, 0.08], hit: 4, dx: [0, 0, 1, 3, 6, 8, 5, 2] },
   i_aboar_charge: { id: 'aboar', row: 'charge', T: 0.06, hit: 5, dx: [0, 3, 8, 14, 20, 24, 18, 8] },
-  i_aboar_horn:  { id: 'aboar', row: 'hornup', T: 0.08, hit: 3, dx: [0, 0, 1, 3, 2, 0] }
+  i_aboar_horn:  { id: 'aboar', row: 'hornup', T: 0.08, hit: 3, dx: [0, 0, 1, 3, 2, 0] },
+  // 원시림 고블린 셋 (빌드 72 · 11-20)
+  i_gobclub_smash: { id: 'gobclub', row: 'smash', T: [0.07, 0.08, 0.08, 0.09, 0.05, 0.07, 0.09, 0.07, 0.07], hit: 4, dx: [0, 0, 1, 3, 6, 6, 5, 2, 0] },
+  i_goblin_slash: { id: 'goblin', row: 'slash', T: [0.06, 0.07, 0.06, 0.07, 0.07, 0.05, 0.07, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 0, 2, 4, 7, 7, 5, 2, 0] },
+  i_goblin_thrust: { id: 'goblin', row: 'thrust', T: [0.06, 0.07, 0.06, 0.06, 0.06, 0.05, 0.08, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 1, 3, 6, 10, 10, 6, 2, 0] },
+  i_gobarcher_shot: { id: 'gobarcher', row: 'shot', T: [0.06, 0.07, 0.07, 0.08, 0.09, 0.09, 0.05, 0.07, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [22, -21] }   // 화살은 게임이 그린다 (판의 날아가는 화살은 지웠다)
 };
-const HD_IDLE_FPS = { rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6 };
+const HD_IDLE_FPS = { rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7 };
+const HD_WALK = { gobclub: [3, 4, 5, 6], goblin: [3, 4, 5, 6], gobarcher: [3, 4, 5, 6] };   // 걷기 줄에서 도는 장 (고블린 달리기 줄은 서기 → 달리기 → 서기라서 가운데 넉 장만)
 for (const k in HD_MOT) {   // 장 시간 · 맞히는 장을 동작 표에 (fmotOn · pxuMotT · fmotTip이 본다)
   const M = HD_MOT[k], n = (M.dx || []).length || 8;
   PXS_MOT_TT[k] = Array.isArray(M.T) ? M.T : Array.from({ length: n }, () => M.T);
   PXS_MOT_HITF[k] = M.hit;
 }
-Object.assign(PXU_CAST, { i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
+Object.assign(PXU_CAST, { i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
 // 새 몬스터 셋은 그림만 있다 (PXU 자리 · 크기 규칙만 빌린다) — 들쥐 · 뿔토끼 · 들늑대는 예전 PXU 그림이 그림 판을 풀기 전까지 그대로 나온다
-for (const id of ['scarecrow', 'boar', 'aboar']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
-for (const id of ['rat', 'rabbit', 'wolf']) PXU[id].img = 1;
+for (const id of ['scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
+for (const id of ['rat', 'rabbit', 'wolf', 'goblin']) PXU[id].img = 1;
 // 동작 갈래: hd = 그림 판이 있을 때 · 없으면 예전 갈래 (새 몬스터는 같은 것)
 const HD_ACT = {
   rat:       { atk: ['i_rat_bite', 'i_rat_leap'], skl: ['i_rat_leap'] },
@@ -46,12 +52,17 @@ const HD_ACT = {
   wolf:      { atk: ['i_wolf_bite', 'i_wolf_leap'], skl: ['i_wolf_leap'] },
   scarecrow: { atk: ['i_scarecrow_crow1', 'i_scarecrow_crow2'], skl: ['i_scarecrow_crow3'] },
   boar:      { atk: ['i_boar_butt'], skl: ['i_boar_charge'] },
-  aboar:     { atk: ['i_aboar_butt'], skl: ['i_aboar_charge', 'i_aboar_horn'] }
+  aboar:     { atk: ['i_aboar_butt'], skl: ['i_aboar_charge', 'i_aboar_horn'] },
+  gobclub:   { atk: ['i_gobclub_smash'], skl: ['i_gobclub_smash'] },
+  goblin:    { atk: ['i_goblin_slash', 'i_goblin_thrust'], skl: ['i_goblin_thrust'] },
+  gobarcher: { atk: ['i_gobarcher_shot'], skl: ['i_gobarcher_shot'] }
 };
 Object.assign(PXU_ACT, {
   scarecrow: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'claw', p: 'dart' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers' } } }, HD_ACT.scarecrow),
   boar:      Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'star', big: 1, after: 'dust' } } }, HD_ACT.boar),
-  aboar:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'war', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.aboar)
+  aboar:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'war', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.aboar),
+  gobclub:   Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'power', hit: 'star', big: 1, after: 'dust', shake: 2 } } }, HD_ACT.gobclub),
+  gobarcher: Object.assign({ fx: { atk: { pal: 'steel', hit: 'star', p: 'arrow' }, skl: { pal: 'blood', hit: 'pierce', p: 'arrow', big: 1 } } }, HD_ACT.gobarcher)
 });
 for (const id in HD_ACT) PXU_ACT[id].hd = HD_ACT[id];
 const hdAct = id => { const A = PXU_ACT[id]; return A && A.hd && HD.mon[id] ? A.hd : A; };   // pxund.js pxuPick이 부른다
@@ -118,7 +129,7 @@ function hdMonSpr(id, mk, f) {   // pxund.js pxuSprite가 부른다 (그림 판�
   if (!H) return PXU[id] && PXU[id].g === 'C' ? HD_EMPTY : null;
   const B = HD.big && H.f2 ? 1 : 0, F = B ? H.f2 : H.f;   // B: 2배 우두머리 그림 (같은 줄 · 같은 장 수, hs만 다르다)
   const M = HD_MOT[mk] && HD_MOT[mk].id === id ? HD_MOT[mk] : null, row = M ? M.row : mk === 'walk' && F.walk ? 'walk' : H.m.rows[0], L = F[row];
-  const i = M ? Math.max(0, Math.min(L.length - 1, f)) : ((f % L.length) + L.length) % L.length, key = id + '|' + (M ? mk : row) + '|' + i + '|' + (FLASH || '') + (B ? '|B' : '');
+  const WK = !M && row === 'walk' && HD_WALK[id], i = M ? Math.max(0, Math.min(L.length - 1, f)) : WK ? WK[((f % WK.length) + WK.length) % WK.length] : ((f % L.length) + L.length) % L.length, key = id + '|' + (M ? mk : row) + '|' + i + '|' + (FLASH || '') + (B ? '|B' : '');
   let s = HD.spr.get(key); if (s) return s;
   const m = B ? H.m2 : H.m, cv = FLASH ? hdTint(L[i], FLASH) : L[i];
   const q = m.hs || 1, lx = m.ax / q, ly = m.ay / q;
