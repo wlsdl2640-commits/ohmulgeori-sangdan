@@ -58,7 +58,9 @@ function stashGear(g, quiet) {
 function unloadBag(p, bag, gear, sup) {
   const moved = {}, lost = [], AS = S.autoSell || {};
   for (const [k, q] of Object.entries(sup || {})) { if (stashItem(k, q, true) === 'lost') lost.push(ITEMS[k].name); }   // 남은 보급품
+  const ids = typeof srcAdd === 'function' && p ? teamOf(p).map(a => a.id) : null;
   for (const [k, q] of Object.entries(bag)) {
+    if (ids) srcAdd(k, q, ids);   // 빌드 72: 누가 얻어 왔는지 (협회에 팔리거나 의뢰품으로 나갈 때 개인 명예)
     if (AS[k] != null || S.reqs.some(r => r.item === k)) { addTo(S.inv, k, q); continue; }   // 자동 판매 · 의뢰품은 메인 창고로 (곧 팔거나 전달한다)
     const r = stashItem(k, q, true);
     if (r === 'lost') lost.push(ITEMS[k].name); else if (r.startsWith('wh')) moved[r] = (moved[r] || 0) + 1;
@@ -118,7 +120,7 @@ const whPop = (html, key) => (UI.invPop === key ? `<div class="ipop" role="dialo
 const whCapLine = i => { const u = whUsed(i), c = whCap(i); return `<span class="${u > c ? 'red-t' : u >= c ? 'warn' : ''}">${whName(i)} ${u}/${c}칸${u > c ? ' · 넘침 — 새 물건은 다른 창고로 가요' : ''}</span>`; };
 const whSortBtn = i => `<button type="button" class="btn sm${UI.whMulti ? ' gold' : ''}" data-act="whmulti">${UI.whMulti ? '✓ 고르기 끝내기' : '여러 개 고르기'}</button><button type="button" class="btn sm" data-act="whsort" data-i="${i}">창고 정리 (레어도순)</button>`;
 function whTabs(tab, count, withStand) {
-  return `<div class="tabs inv">${(withStand ? [['stand', '진열대']] : []).concat(INV_CATS).map(([id, n]) => `<button type="button" class="tab${tab === id ? ' on' : ''}" data-act="invtab" data-id="${id}">${n}${count[id] ? `<small>${count[id]}</small>` : ''}</button>`).join('')}</div>`;
+  return `<div class="tabs inv">${(withStand && SHOP_ON ? [['stand', '진열대']] : []).concat(INV_CATS).map(([id, n]) => `<button type="button" class="tab${tab === id ? ' on' : ''}" data-act="invtab" data-id="${id}">${n}${count[id] ? `<small>${count[id]}</small>` : ''}</button>`).join('')}</div>`;
 }
 const whGems = g => (g >= 4 ? '<i class="gem g1"></i>' : '') + (g >= 5 ? '<i class="gem g2"></i>' : '') + (g >= 6 ? '<i class="gem g3"></i>' : '');   // 레어도 보석 (영웅 하나는 ::before)
 const whPicked = k => UI.whMulti && (UI.whPick || []).includes(k);

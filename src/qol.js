@@ -119,7 +119,7 @@ const bulkMatValue = () => Math.round(bulkMats().reduce((t, [k, q]) => t + ITEMS
 function sellAllMats() {
   const list = bulkMats(); if (!list.length) return '팔 부속품이 없어요.';
   let g = 0, n = 0;
-  for (const [k, q] of list) { const v = Math.round(ITEMS[k].v * guildRate() * q); addTo(S.inv, k, -q); g += v; n += q; }
+  for (const [k, q] of list) { const v = Math.round(ITEMS[k].v * guildRate() * q); assocFame(k, q, S.inv[k] || 0, false); addTo(S.inv, k, -q); g += v; n += q; }
   S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
   log(`부속품 ${n}개를 길드원 협회에 한꺼번에 ${g$(g)}에 팔았다. (의뢰품·보스 부속품·교역품·알은 남겼다)`);
   HOOKS.toast(`부속품 ${n}개 · ${g$(g)}`);

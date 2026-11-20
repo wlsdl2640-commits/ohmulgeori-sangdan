@@ -270,6 +270,7 @@ function layoutStage() { sizeView(); sizeHQ(); layoutWin(); }
 
 /* ───────── 장소 판 (아래 가운데 이름 · 양옆 금빛 화살표 · 위치 점) ───────── */
 function floorInfo(f) {
+  if (f.id === 'shop' && !SHOP_ON) return `길드원 ${S.advs.length}명 · 명성 ${Math.floor(S.fame)}`;
   if (f.id === 'shop') { const sd = S.sold.day === today() ? S.sold : { n: 0, g: 0 }; return `진열대 ${slotCount()}칸 · 오늘 ${sd.n}개 ${fmt(sd.g)}G 판매`; }
   if (f.id === 'tavern') { const n = hqWhere().tav.length; return `찾아온 모험가 ${S.cands.length}명${n ? ` · 쉬는 모험가 ${n}명` : ' · 이틀마다 새 얼굴'}`; }
   if (f.id === 'inn') return `방 ${living().length}/${beds()} · 자는 길드원 ${hqWhere().inn.size}명`;

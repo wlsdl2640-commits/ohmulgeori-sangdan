@@ -283,7 +283,7 @@ function bldCard(id, full) {
   const sum = !full && lv && id === 'temple' && patients().length ? `<span class="sub red-t">환자 ${patients().length}명</span>` : '';
   return `<div class="card${lv ? '' : ' dim'}"><div class="row"><div class="grow"><div class="h">${B.name} <small>${lv ? (id === 'farm' ? lv + '동' : 'Lv' + lv) : '미건설'}</small></div><div class="sub">${B.desc}${lv ? ' · 지금: ' + B.eff(lv) : ''}</div></div>${btn}</div>${body}${open || sum ? `<div class="row">${sum}<span class="grow"></span>${open}</div>` : ''}</div>`;
 }
-PANELS.fac = () => BUILD_ORDER.filter(id => !ASSOC_BLD.includes(id)).map(id => bldCard(id, false)).join('') + `<div class="card dim"><div class="sub">대장간 · 도서관 · 대신전 · 마탑은 미궁탑에 있는 모험가 협회 시설이에요. 처음부터 열려 있고 이용료가 없어요.</div></div>`;
+PANELS.fac = () => BUILD_ORDER.filter(id => !ASSOC_BLD.includes(id) && (SHOP_ON || id !== 'shop')).map(id => bldCard(id, false)).join('') + `<div class="card dim"><div class="sub">대장간 · 도서관 · 대신전 · 마탑은 미궁탑에 있는 모험가 협회 시설이에요. 처음부터 열려 있고 이용료가 없어요.</div></div>`;
 PANELS.b = w => bldCard(w.b, true);
 // 빌드 72: 모험가 협회 로비 (미궁탑) — 길드 랭크 심사 · 의뢰 게시판 · 길드 랭킹으로 가는 창
 PANELS.assoc = () => `<div class="card"><div class="h">라비린토스 모험가 협회</div><div class="sub">오래전 이 도시에 처음 생긴 열세 길드가 뭉쳐 세운 기관. 모든 모험가 길드는 협회에 가입한다.</div></div>
@@ -756,7 +756,8 @@ function invDetail(k, rate) {
 
 /* 의뢰 */
 PANELS.req = () => `
-  <div class="sec"><b>의뢰 게시판</b><span>이틀마다 새 의뢰</span></div>
+  <div class="sec"><b>모험가 협회 의뢰</b><span>날마다 06:00에 새 의뢰</span></div>
+  <div class="card"><div class="sub">협회 의뢰로 전달하면 길드 명성이 그냥 팔 때의 2배예요. 그 부속품을 얻어 온 길드원들은 개인 명성을 얻어요(부속품 등급이 높을수록 많이, 의뢰가 판매보다 많이).</div></div>
   <div class="card${autoReqOn() ? ' hl' : ''}"><div class="row"><div class="grow stack"><span>의뢰품 자동 전달 <span class="tag ${autoReqOn() ? 'ok-t' : 'muted'}">${autoReqOn() ? '켬' : '끔'}</span></span><span class="sub">창고에 의뢰품이 다 있으면 원정대가 돌아올 때와 날이 바뀔 때 저절로 전달해요. 장비 의뢰는 일반·고급의 강화 안 한 것만 내주고, 좋은 장비뿐이면 직접 전달해야 해요.</span></div><button type="button" class="btn sm${autoReqOn() ? ' on' : ''}" data-act="autoreq">${autoReqOn() ? '끄기' : '켜기'}</button></div></div>
   ${S.reqs.map(r => { const have = reqHave(r), ok = have >= r.qty, dd = r.due - today();
     const icon = r.gear ? gImg({ base: r.gear.split(':')[0], t: +r.gear.split(':')[1] }, 'ico lg') : iconImg(r.item, 'ico lg');

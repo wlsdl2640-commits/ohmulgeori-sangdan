@@ -692,14 +692,14 @@ const guildRate = () => GUILD_RATE + (spn('guild') >= 1 ? 0.1 : 0) + 0.02 * (S.r
 // 자동 판매: 표시해 둔 부속품은 원정대가 돌아올 때 남길 수만 남기고 길드에 판다
 function autoSellRun(who) {
   const A = S.autoSell || {}; let total = 0, n = 0;
-  for (const k in A) { if (!ITEMS[k] || A[k] == null) continue; const q = (S.inv[k] || 0) - A[k]; if (q > 0) { const g = Math.round(ITEMS[k].v * guildRate() * q); addTo(S.inv, k, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g; total += g; n += q; } }
+  for (const k in A) { if (!ITEMS[k] || A[k] == null) continue; const q = (S.inv[k] || 0) - A[k]; if (q > 0) { const g = Math.round(ITEMS[k].v * guildRate() * q); assocFame(k, q, S.inv[k] || 0, false); addTo(S.inv, k, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g; total += g; n += q; } }
   if (n) { log(`자동 판매: 부속품 ${n}개를 길드원 협회에 ${g$(total)}에 팔았다.`); S.stats.autoG = (S.stats.autoG || 0) + total; }
 }
 function sellGuild(it, q) {
   q = Math.min(q, S.inv[it] || 0);
   if (q <= 0) return;
-  const g = Math.round(ITEMS[it].v * guildRate() * q);
-  addTo(S.inv, it, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
+  const g = Math.round(ITEMS[it].v * guildRate() * q), st0 = S.inv[it] || 0;
+  addTo(S.inv, it, -q); assocFame(it, q, st0, false); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
   HOOKS.toast(`${ITEMS[it].name} ${q}개를 ${g$(g)}에 팔았다`);
   changed();
 }
@@ -715,6 +715,7 @@ function setSlot(i, it, tier) {
 }
 const traffic = () => (1 + S.fame / 150) * (1 + 0.1 * (S.bld.shop - 1)) * (1 + (spn('citizens') >= 1 ? 0.15 : 0) + (spn('citizens') >= 3 ? 0.15 : 0)) * (S.flags.guildDown ? 1.2 : 1) * (S.flags.guildHQ ? 1.1 : 1) * (1 + 0.08 * (S.rank || 0)) * (1 + petHome('traffic')) * (cityDamaged() ? 0.7 : 1);
 function stepShop(dt) {
+  if (typeof SHOP_ON !== 'undefined' && !SHOP_ON) return;   // 빌드 72: 진열하고 파는 기능은 없다
   const n = slotCount(), tr = traffic();
   for (let i = 0; i < n; i++) {
     const s = S.shop.slots[i];
@@ -778,6 +779,7 @@ function upgrade(bid) {
 /* ───────── 의뢰 ───────── */
 function maxGearTier() { let m = 0; GTIERS.forEach((T, i) => { if (S.bld.smithy >= T.smith && isUnlocked(TIER_FIELDS[i])) m = i; }); return m; }
 function genReq() {
+  if (typeof genAssocReq === 'function') { genAssocReq(); return; }   // 빌드 72: 의뢰는 모험가 협회 의뢰뿐 (assoc72.js) — 아래는 옛 의뢰(손님 · 장비)
   if (S.reqs.length >= 4) return;
   const special = (Object.values(S.spons).some(v => v >= 2) && rnd() < 0.25) || (spn('citizens') >= 3 && rnd() < 0.15);
   const client = special ? pickOne(SPECIAL_CLIENTS) : pickOne(CLIENTS);
@@ -804,10 +806,10 @@ function fulfill(id, auto) {
   if (!r) return '';
   if (reqHave(r) < r.qty) return `${reqName(r)}이(가) 모자라요.`;
   if (r.gear) { const it = reqGearPick(r); if (auto && !reqGearCheap(it)) return '좋은 장비뿐이라 자동으로는 내주지 않아요.'; S.gear = S.gear.filter(x => x !== it); }
-  else addTo(S.inv, r.item, -r.qty);
-  S.gold += r.reward; S.fame += r.fame; S.stats.earned += r.reward; S.stats.reqs = (S.stats.reqs || 0) + 1;
+  else { const st = S.inv[r.item] || 0; addTo(S.inv, r.item, -r.qty); if (r.assoc) { const F = assocFame(r.item, r.qty, st, true); r.pn = F.p;   /* 길드 명성은 소수까지 모아서 오른다 (S.fameAcc) */ } }
+  S.gold += r.reward; if (!r.assoc) S.fame += r.fame; S.stats.earned += r.reward; S.stats.reqs = (S.stats.reqs || 0) + 1;
   S.reqs = S.reqs.filter(x => x !== r);
-  log(`${auto ? '창고에 있던 의뢰품을 저절로 전달해 ' : ''}${r.client}의 의뢰를 끝냈다. ${g$(r.reward)}, 명성 +${r.fame}`, 'good');
+  log(`${auto ? '창고에 있던 의뢰품을 저절로 전달해 ' : ''}${r.client}의 의뢰를 끝냈다. ${g$(r.reward)}, 명성 +${r.fame}${r.pn ? ` · 얻어 온 길드원 ${r.pn}명의 개인 명성도 올랐다` : ''}`, 'good');
   HOOKS.toast(`의뢰 완료 · ${g$(r.reward)} · 명성 +${r.fame}`);
   changed();
   return '';
@@ -1156,7 +1158,7 @@ function onNewDay(k) {
   S.ledger = (S.ledger || []).filter(x => x.day > k - 16); S.ledger.push({ day: k, gold: S.gold, earned: S.stats.earned || 0 });   // 수입 그래프용 하루 기록
   if (k % 2 === 0) rollCands();
   S.reqs = S.reqs.filter(r => { if (r.due < k) { log(`${r.client}의 의뢰가 기한을 넘겨 취소됐다.`); return false; } return true; });
-  if (k % 2 === 1 || S.reqs.length < 2) genReq();
+  // 빌드 72: 새 의뢰는 06:00에 (assocTick)
   const salv = salvageDay(k);   // 던전 수거소: 새벽에 수거꾼이 돌아온다 (의뢰 자동 전달보다 먼저)
   autoFulfill();
   if (salv) autoSellRun('수거소');
@@ -1193,7 +1195,7 @@ function stepHome(dt) {
 }
 function stepWorld(dt) {
   for (const p of S.parties) if (p.exp) stepExp(p, dt); else if (p.repeat) autoDepart(p);
-  stepShop(dt);
+  stepShop(dt); assocTick();
   stepHome(dt);
 }
 // 게임을 켜 둔 동안: 날짜가 흐른다
