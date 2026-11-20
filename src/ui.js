@@ -162,7 +162,7 @@ function updateOverlay() {
   if (!p) { L.textContent = '길드 본부 로비'; Rr.hidden = true; B.hidden = true; return; }
   const e = p.exp;
   Rr.hidden = true;
-  if (!e) { L.textContent = `${p.name} · 길드 앞`; B.hidden = true; return; }
+  if (!e) { L.textContent = `${p.name} · 길드 본부 로비`; B.hidden = true; return; }
   L.textContent = `${p.name} · ${whereStr(e)}`;
   const w = wxNow(e); if (!w.indoor) L.textContent += ` · ${wxLabel(w)}`;
   // 작은 창 아래 글은 할 일이 있을 때만 (던전 입구에서 기다리는 중)
