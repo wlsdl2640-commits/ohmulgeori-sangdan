@@ -124,7 +124,7 @@ function whereStr(e) {
   if (e.area === 'wave') return `하르겐 성문 · ${e.wave.cur + 1}/${e.wave.n}번째 무리`;
   if (e.area === 'arena') return '지하 투기장';
   if (e.area === 'trade') return tradeWhere(e);
-  return e.area === 'dungeon' ? `${F.dungeon.name} ${e.stage}층` : `${F.name} ${F.no}-${e.stage}`;
+  return e.area === 'dungeon' ? `${F.dungeon.name} ${e.stage}층` : `${F.name} ${fno(F)}-${e.stage}`;
 }
 /* 빌드 69: 작은 창 넘기기 — 첫째 장 원정대 창 · 둘째 장 레이드 원정대 창 (view.js RP · drawRaidPip) */
 function setPipPage(pg, dir) {

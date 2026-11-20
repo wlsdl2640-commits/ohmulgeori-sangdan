@@ -186,10 +186,39 @@ fbg = {'k': K, 'hs': HS, 'ld': FLD,
        'gr': {'url': png_url(fgr, 'fbg_gr'), 'y': round(Y(FGR0) - FPAD / HS, 1)},
        'back': {'url': png_url(fback, 'fbg_back'), 'y': round(fmid_y - 30, 1)},
        'skyOy': -58, 'gateY': 150}
+# ── 4-3. 깊은 숲 풍경 (2계층 미개척지대 · 11-20 20:00 사용자 그림 둘: ../deepforest/deep_gpt_composite.png · deep_gpt_layers.png)
+#   먼 숲(첫 띠 — 마젠타 없이 꽉 참: 세계수 줄기 · 엘프의 옛 집 · 나무다리) · 가운데 숲(둘째 띠 — 이것도 꽉 찬 그림) · 땅(다 겹친 그림 445줄부터) + 낱개 · 큰 낱개
+#   하늘이 없다: 'sky' = 맨 위를 칠할 어둠 색 (hd70.js buildWideHD skyFill) · 'shafts' = 나무 사이 빛줄기를 게임이 그린다(밤에는 꺼짐) · 'dim' = 낮에도 깔리는 어둠
+DW = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'deepforest')
+dcomp = keyed(f'{DW}/deep_gpt_composite.png'); dlay = keyed(f'{DW}/deep_gpt_layers.png'); DXR = 1745
+_w = (np.array(Image.open(f'{DW}/deep_gpt_layers.png').convert('RGB')).min(-1) > 225); dlay[_w, 3] = 0
+_d = np.array(Image.open(f'{DW}/deep_gpt_layers.png').convert('RGB'))
+DGR0, DPAD, DLD = 448, 104, 34
+db = np.dstack([_d[2:162, :DXR], np.full((160, DXR), 255, np.uint8)]); dm = np.dstack([_d[177:388, :DXR], np.full((211, DXR), 255, np.uint8)])   # 두 띠는 그림 그대로 (어두운 남색을 바탕으로 빼지 않게)
+_t = dm[:46, :, :3].astype(int).sum(-1) < (150 - np.arange(46)[:, None] * 2.2); dm[:46][_t, 3] = 0   # 가운데 숲 띠의 맨 위: 줄기 사이 어둠을 비워 먼 숲이 비치게 (띠 위 끝이 줄로 보이지 않게, 아래로 갈수록 덜)
+dback = shrink(db, K * HS, 120); dmid = shrink(dm, K * HS, 200)
+dsmall = comps(dlay, 566, 712, 0, DXR, 300); dbig = comps(dlay, 4, 712, DXR + 12, 2170, 3000); print('깊은 숲 낱개', len(dsmall), '큰 낱개', len(dbig))
+dg0 = np.array(shrink(np.dstack([np.array(Image.open(f'{DW}/deep_gpt_composite.png').convert('RGB'))[DGR0:], np.full((725 - DGR0, 2170), 255, np.uint8)]), K * HS, 200)); dg0[..., 3] = 255
+DG = Image.new('RGBA', (dg0.shape[1], dg0.shape[0] + DPAD), (0, 0, 0, 0)); DG.paste(Image.fromarray(dg0, 'RGBA'), (0, DPAD)); rs = np.random.RandomState(23); order = []
+x = 30
+while x < DG.width - 60:
+    pr = dbig[rs.randint(len(dbig))]; order.append((x, DPAD + 5 - pr.height, pr, 0)); x += pr.width + 120 + rs.randint(0, 100)
+x = -6
+while x < DG.width:
+    pr = dsmall[rs.randint(len(dsmall))]; order.append((x, DPAD + 3 + rs.randint(0, 5) - pr.height, pr, 1)); x += int(pr.width * (0.6 + 0.35 * rs.rand()))
+for x, y, pr, _ in sorted(order, key=lambda o: (o[3], o[1] + o[2].height)):
+    DG.alpha_composite(pr if x >= 0 else pr.crop((-x, 0, pr.width, pr.height)), (max(0, x), max(0, y)))
+da = np.array(DG); dq = DG.convert('RGB').quantize(colors=220, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB'); dgr = Image.fromarray(np.dstack([np.array(dq), da[..., 3]]).astype(np.uint8), 'RGBA')
+dmid_y = Y(DGR0 + 6) - 211 * K
+dbg = {'k': K, 'hs': HS, 'ld': DLD, 'sky': '#041826', 'shafts': 1, 'dim': 0.3,
+       'mid': {'url': png_url(dmid, 'dbg_mid'), 'y': round(dmid_y, 1)},
+       'gr': {'url': png_url(dgr, 'dbg_gr'), 'y': round(Y(DGR0) - DPAD / HS, 1)},
+       'back': {'url': png_url(dback, 'dbg_back'), 'y': round(dmid_y - 160 * K + 4, 1)},
+       'skyOy': -58, 'gateY': 150}
 # ── 5. 하늘 (보름달 · 구름 — extract_sky.py)
 SK = json.load(open('out_sky/meta.json'))
 sky = {'hs': 2, 'moon': png_url(Image.open('out_sky/' + SK['moon'][0][0])), 'clouds': [png_url(Image.open('out_sky/' + f)) for f, _, _ in SK['cloud']]}
-D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage, 'archer': archer, 'cleric': cleric, 'rogue': rogue, 'porter': porter}, 'ski': ski, 'bg': {'plains': bg, 'forest': fbg}}
+D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage, 'archer': archer, 'cleric': cleric, 'rogue': rogue, 'porter': porter}, 'ski': ski, 'bg': {'plains': bg, 'forest': fbg, 'deep': dbg}}
 js = ('/* 빌드 70 시험: 곡창지대 평원 리마스터 그림 (GPT 그림 판에서 오림) — 손으로 고치지 말 것.\n'
       '   다시 뽑기: tools/saved/gpt70/hd70/export_hd70.py (extract_mon.py · extract_war16.py · extract_sk.py · extract_sky.py 다음에) */\n'
       'const HD70_DATA = ' + json.dumps(D, ensure_ascii=False, separators=(',', ':')) + ';\n')

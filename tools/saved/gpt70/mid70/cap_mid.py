@@ -17,7 +17,7 @@ BASE = RNG + r"""
   S.advs = team.slice(); if (!S.parties.length) S.parties.push(newParty('1팀', []));
   const p = S.parties[0]; p.members = team.map(a => a.id); p.pet = null; p.wagon = null; p.safe = false; p.auto = false; S.view = p.id;
   S.fields.plains = S.fields.plains || {}; S.fields.plains.best = 50;
-  S.speed = 1; S.t = 0.45 * DAY_SEC + DAY_SEC * 3;
+  S.speed = 1; S.t = %TOD% * DAY_SEC + DAY_SEC * 3;   // TOD=0.95: 밤에 찍기
   for (let sd = 1; sd < 400; sd++) { S.wx = { seed: sd }; const w = wxDay(Math.floor(S.t / DAY_SEC)); if (w.sky === 'clear' && !w.wind && !w.heat && !w.cold) break; }   // 맑은 날
   const r = startExp(p, 'plains'); if (r) return 'start: ' + r;
   const e = p.exp; if (%FIELD% !== 'plains') e.field = %FIELD%;   // FIELD=forest: 다른 계층 풍경에서 찍기 (원정은 늘 1계층에서 시작하므로 바꿔 끼운다)
@@ -63,7 +63,7 @@ with sync_playwright() as pw:
           formSlots = team => { const o = team.map((a, i) => [a.down ? 4 : formRank(a.cls), i]).sort((p, q) => p[0] - q[0] || p[1] - q[1]), n = o.length, gap = Math.min(24, 96 / Math.max(1, n - 1)), out = [];
             o.forEach(([r, i], k) => { out[i] = [Math.round(108 - gap * k), 192]; }); out.petX = Math.max(6, Math.round(108 - gap * n)); return out; };
           [[100, 192], [74, 192], [48, 192], [22, 192], [10, 192], [4, 192]].forEach((q, i) => { SLOT_PW[i] = q; SLOT_P[i] = q; }); return 'ok'; })()"""))
-    js = '(() => {' + BASE.replace('%CLS%', json.dumps(os.environ.get('TEAM', 'warrior').split(','))).replace('%FIELD%', json.dumps(os.environ.get('FIELD', 'plains'))).replace('%LV%', str(lv)).replace('%STAGE%', str(stage)).replace('%TEAM%', str(nteam)).replace('%ENC%', str(enc)) + extra + " Math.random = window.__r0; return 'ok ' + wxDay(Math.floor(S.t / DAY_SEC)).sky + ' seed ' + S.wx.seed; })()"
+    js = '(() => {' + BASE.replace('%CLS%', json.dumps(os.environ.get('TEAM', 'warrior').split(','))).replace('%FIELD%', json.dumps(os.environ.get('FIELD', 'plains'))).replace('%TOD%', os.environ.get('TOD', '0.45')).replace('%LV%', str(lv)).replace('%STAGE%', str(stage)).replace('%TEAM%', str(nteam)).replace('%ENC%', str(enc)) + extra + " Math.random = window.__r0; return 'ok ' + wxDay(Math.floor(S.t / DAY_SEC)).sky + ' seed ' + S.wx.seed; })()"
     ev("window.requestAnimationFrame = () => 0"); pg.wait_for_timeout(200)   # 게임 고리를 먼저 멈춘다 (걸려 있던 한 장이 지나가게 기다린 뒤 장면을 차린다 — 그 사이에 고리가 돌면 싸움이 달라진다)
     print(SCN, ev(js))
     ev("""(() => {

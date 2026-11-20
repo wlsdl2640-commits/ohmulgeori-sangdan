@@ -221,7 +221,13 @@ const FIELDS = {
   }
 };
 const FIELD_IDS = ['plains', 'forest', 'mountain', 'valley', 'snow', 'desert'];
-const ALL_FIELDS = FIELD_IDS.concat(['alley']);
+const ALL_FIELDS = FIELD_IDS.concat(['alley', 'deepforest']);
+// 빌드 72 (11-20 19:10 사용자): 2계층의 미개척지대 「깊은 숲」 — 원시림 2-50 다음에 3계층으로 내려가는 대신 들어가는 갈림길(branch). 필드는 2-2-1 ~ 2-2-50(lbl).
+//   몬스터는 GPT 판을 받을 때까지 원시림 것을 빌려 쓴다(정해 둔 여덟: 에테르 반딧불 무리 · 빛가루 나방 · 에테르 버섯 장로 · 이끼 등 도마뱀 · 뿌리 지네 · 수정 사슴벌레 · 고목 파수꾼 · 주인 잠든 고룡목).
+FIELDS.deepforest = { no: 2, lbl: '2-2', branch: 'forest', name: '깊은 숲', lv: 22, bg: 'deep_hd', tier: 1,
+  desc: '세계수 바로 아래의 어두운 숲. 엘프들이 떠난 옛 거주지에 에테르 등불만 남아 있다.',
+  mons: ['vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem'], bosses: ['stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard'] };
+const fno = F => F.lbl || F.no;   // 필드 번호 앞머리: 1 · 2 · 2-2
 const TIER_FIELDS = FIELD_IDS.slice();   // 장비 단계·보스 부속품·유물을 가진 필드 (마계가 뒤에 붙는다)
 
 /* ───────── 사람들 ───────── */

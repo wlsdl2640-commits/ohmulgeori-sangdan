@@ -331,7 +331,7 @@ function buildTown() {
 
 function getBg(id) {
   if (BG[id]) return BG[id];
-  const make = { plains: buildPlains, plains_hd: buildPlainsHD, forest_hd: buildForestHD, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
+  const make = { plains: buildPlains, plains_hd: buildPlainsHD, forest_hd: buildForestHD, deep_hd: buildDeepHD, forest: buildForest, primeval: buildPrimeval, mountain: buildMountain, town: buildTown,
     cellar: () => buildUnder('cellar'), cave: () => buildUnder('cave'), mine: () => buildUnder('mine'),
     valley: buildValley, snow: buildSnow, desert: buildDesert, front: buildFront,
     nest: () => buildUnder('nest'), icetemple: () => buildUnder('icetemple'), tomb: () => buildUnder('tomb'), alley: buildAlley, sewer: () => buildUnder('sewer'), arena: () => buildUnder('arena') }[id] || (typeof BG_MAKERS !== 'undefined' && BG_MAKERS[id]) || buildPlains;
@@ -379,7 +379,7 @@ function drawLand(g, id, scroll, t, T) {
   const b = getBg(id), gy = b.gy != null ? b.gy : b.tall ? GL - 4 : 100;   // 빌드 70: 넓은 땅(plains_hd)은 땅 띠가 높이 b.gy부터
   if (b.under) { tile(g, b.mid, scroll * 0.6, 0); tile(g, b.gr, scroll, gy); return; }
   if (b.town) { g.drawImage(b.back, 0, 0); haze(g, T.sky[2], 0.4); g.drawImage(b.far, 0, 0); haze(g, T.sky[2], 0.12); g.drawImage(b.mid, 0, 0); g.drawImage(b.gr, 0, 100); return; }
-  tile(g, b.back, scroll * 0.08, 0); haze(g, T.sky[2], b.tall ? 0.3 : 0.42, b.tall);
+  tile(g, b.back, scroll * 0.08, 0); if (!b.noHaze) haze(g, T.sky[2], b.tall ? 0.3 : 0.42, b.tall);   // noHaze: 하늘빛 안개를 입히지 않는 풍경(깊은 숲)
   if (b.far) { tile(g, b.far, scroll * 0.2, 0); haze(g, T.sky[2], b.tall ? 0.12 : 0.18, b.tall); }
   tile(g, b.mid, scroll * 0.5, 0);
   if (b.props) b.props(g, scroll * 0.5, t, T.dark[1]);
@@ -406,6 +406,7 @@ function drawAmbient(g, id, scroll, t, T) {
     for (let i = 0; i < 3; i++) { const x = wrap(i * 77 + Math.sin(t * 0.8 + i) * 20 - scroll * 0.8, VW), y = 86 + Math.sin(t * 3 + i * 2) * 4, f = Math.floor(t * 8 + i) % 2; R(g, Math.round(x), Math.round(y), f ? 1 : 2, 2, ['#f0f0f0', '#f7e04a', '#e86a8a'][i]); }
   }
   if (amb === 'forest') for (let i = 0; i < 10; i++) { const x = wrap(i * 53 + t * 6 + Math.sin(t + i) * 10 - scroll * 0.9, VW), y = wrap(i * 29 + t * (10 + i % 4 * 3), 110 + oy); R(g, Math.round(x), Math.round(y), 2, 1, ['#c86a2a', '#d89a3a', '#6aa84f'][i % 3]); }
+  if (amb === 'deep') for (let i = 0; i < 16; i++) { const x = wrap(i * 47 + Math.sin(t * 0.5 + i * 1.7) * 12 - scroll * 0.9, VW), y = wrap(i * 31 - t * (3 + i % 4 * 2), 104) + 96 + oy * 0, a = 0.35 + 0.35 * Math.sin(t * 1.3 + i * 2.1); if (a > 0.1) R(g, Math.round(x), Math.round(y), i % 5 ? 1 : 2, 1, `rgba(${i % 3 ? '130,235,225' : '190,250,235'},${a.toFixed(2)})`); }   // 깊은 숲: 떠다니는 에테르 포자 (푸른 야광 가루)
   if (amb === 'snow') for (let i = 0; i < 40; i++) { const sx = wrap(i * 53 + t * (8 + (i % 5) * 3) + Math.sin(t + i) * 4 - scroll * 0.3, VW), sy = wrap(i * 37 + t * (14 + (i % 4) * 4), 112); R(g, Math.round(sx), Math.round(sy), i % 7 ? 1 : 2, i % 7 ? 1 : 2, '#ffffff'); }
   if (amb === 'wind') {
     for (let i = 0; i < 9; i++) { const wx = wrap(i * 71 - t * 120 - scroll * 0.4, VW + 40) - 20, wy = 12 + (i * 23) % 84; R(g, Math.round(wx), wy, 10 + (i % 3) * 4, 1, 'rgba(255,255,255,0.5)'); }

@@ -146,14 +146,14 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   const T = todAt(dp, id);
   if (bg.under) R(g, 0, 0, AW, AH, '#000');
   else { R(g, 0, 0, AW, BG_OY + 1, T.sky[0]); if (T.star > 0.02) for (const st of STARS) { const tw = 0.55 + 0.45 * Math.sin(t * (1.5 + st.b * 2) + st.p), a = T.star * tw * (0.5 + st.b * 0.5); if (a > 0.05) R(g, st.x, Math.round(st.y * BG_OY / 70), 1, 1, `rgba(255,250,235,${a.toFixed(2)})`); } }
-  g.save(); g.translate(0, BG_OY + (bg.skyOy || 0)); drawSky(g, id, V.scroll, t, dp); g.restore();   // 넓은 땅은 지평선이 높아 하늘 띠를 위로
+  g.save(); g.translate(0, BG_OY + (bg.skyOy || 0)); drawSky(g, id, V.scroll, t, dp); g.restore(); if (bg.skyFill) R(g, 0, 0, AW, AH, bg.skyFill);   // 깊은 숲: 하늘이 안 보인다   // 넓은 땅은 지평선이 높아 하늘 띠를 위로
   w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
   if (!bg.under) groundWx(w, wxNow(e || null), oy);   // 겨울 눈 덮인 땅 · 젖은 땅
   else if (e && floodOn(e)) floodFloor(w, V.scroll, t, oy);   // 빌드 70: 물이 찬 스테이지 (under70.js)
   if (id === 'forest' && !bg.tall) { R(w, 0, 0, AW, BG_OY + 2, '#24472c'); for (let i = 0; i < 16; i++) { const x = ((i * 53 - V.scroll * 0.5) % (AW + 60) + AW + 60) % (AW + 60) - 30, y = BG_OY - 2 - (i % 3) * 7; ell(w, Math.round(x), y, 22, 8, i % 2 ? '#2f5a35' : '#2a5030'); ell(w, Math.round(x) - 6, y - 5, 10, 4, '#3f7a44'); } }   // 숲: 위쪽을 우듬지로 잇는다
   if (bg.under && !bg.tall) { R(w, 0, 0, AW, BG_OY + 1, bg.wall); for (let y = 4; y < BG_OY; y += 8) R(w, 0, y, AW, 1, shade(bg.wall, -0.25)); w.save(); w.beginPath(); w.rect(0, 0, AW, BG_OY); w.clip(); w.translate(0, BG_OY - 128); tile(w, bg.foreTall, V.scroll * 1.25, 0); w.restore(); }
   const lights = [], post = [];
-  const dark = bg.under ? (bg.dark != null ? bg.dark : 0.34) : T.dark[1], dcol = bg.under ? '#05040a' : T.dark[0];
+  const dark = bg.under ? (bg.dark != null ? bg.dark : 0.34) : Math.max(T.dark[1], bg.dim || 0), dcol = bg.under ? '#05040a' : bg.dim && T.dark[1] < bg.dim ? '#020c18' : T.dark[0];   // bg.dim: 낮에도 어둑한 풍경(깊은 숲)
   if (e) fieldScene(w, t, p, e, lights, post, dark, bg); else townScene(w, t, p, lights, post, dark);
   w.save(); w.translate(0, oy); drawFore(w, id, V.scroll); w.restore();
   for (const l of bgLights(id, V.scroll, dark)) lights.push({ x: l.x, y: l.y + oy, r: l.r, c: l.c, glow: l.glow, flick: l.flick });

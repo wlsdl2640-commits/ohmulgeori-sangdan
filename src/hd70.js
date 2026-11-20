@@ -327,7 +327,7 @@ function hdSkiCells(id) {
 }
 
 // ── 넓은 평원 풍경 (scene.js getBg → BG_MAKERS.plains_hd) ──
-const buildPlainsHD = () => buildWideHD('plains', buildPlains), buildForestHD = () => buildWideHD('forest', buildForest);
+const buildPlainsHD = () => buildWideHD('plains', buildPlains), buildForestHD = () => buildWideHD('forest', buildForest), buildDeepHD = () => buildWideHD('deep', buildForest);   // 깊은 숲 (2-2 · 11-20)
 function buildWideHD(id, old) {
   const L = HD.bgs && HD.bgs[id];
   if (!L) return Object.assign({ hdWait: 1 }, old());   // 그림을 풀기 전: 옛 평원 (풀면 BG.plains_hd를 지워 다시 짓는다)
@@ -338,8 +338,16 @@ function buildWideHD(id, old) {
   const bw = B.blades ? B.blades.w : 0, bl = [];
   for (let i = 0; B.blades && i < B.blades.n; i++) { const [c, x] = mkCanvas(bw, bw); x.drawImage(L.blades, i * bw, 0, bw, bw, 0, 0, bw, bw); bl.push(c); }
   const W2 = mid.width / q, bx = B.blades ? B.blades.x : 0, by = B.blades ? B.blades.y + LD : 0;
-  return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y + LD, clouds: 7, ambient: 'meadow', skyOy: B.skyOy + LD, gateY: B.gateY + 40,
-    props(g, off, t) {   // 풍차 날개 (뒤집힌 짝은 거꾸로 돈다)
+  return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y + LD, clouds: B.sky ? 0 : 7, ambient: B.sky ? 'deep' : 'meadow', skyOy: B.skyOy + LD, gateY: B.gateY + 40,
+    skyFill: B.sky || null, dim: B.dim || 0,   // 깊은 숲: 하늘 대신 어둠 · 낮에도 어둑하다 (view.js)
+    noHaze: B.sky ? 1 : 0,
+    emit: !B.shafts ? null : function (g, off, t, dark) {
+      {   // 나무 사이로 스며드는 가는 빛줄기 — 낮에만 (11-20 19:10 사용자 「밤이 되면 나무 사이로 조금 스며들던 빛이 사라지는 거야」)
+        const k = Math.max(0, Math.min(1, 1 - ((dark || 0) - (B.dim || 0)) / 0.12)); /* 어둠을 입힌 뒤에 그린다 — 낮의 어둠(dim)보다 짙어지면(해 질 녘부터) 사라진다 */ if (k > 0.03) { const span = 520, top = 96, bot = B.gr.y + LD + 26;
+          for (const [x0, wd, a] of [[40, 9, 0.11], [150, 5, 0.08], [262, 12, 0.1], [371, 4, 0.09], [452, 8, 0.07]]) { const x = ((x0 - off * 1.4) % span + span) % span - 60, fl = 0.8 + 0.2 * Math.sin(t * 0.6 + x0);
+            for (let y = top; y < bot; y += 2) { const xx = Math.round(x + (y - top) * 0.42); R(g, xx - 3, y, wd + 6, 2, `rgba(150,225,205,${(a * 0.45 * k * fl).toFixed(3)})`); R(g, xx, y, wd, 2, `rgba(205,245,225,${(a * k * fl).toFixed(3)})`); } } } }
+    },
+    props(g, off, t, dark) {   // 풍차 날개 (뒤집힌 짝은 거꾸로 돈다)
       if (!bl.length) return;
       const fi = Math.floor(t * 8) % bl.length;
       for (const [x0, flip] of [[bx, 0], [W2 - bx, 1]]) {

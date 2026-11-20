@@ -341,10 +341,13 @@ function checkpoints(fid) {
   return [1].concat([1, 2, 3, 4].filter(k => fs.boss && fs.boss[k]).map(k => k * BOSS_EVERY + 1));
 }
 // 빌드 72 (11-20 16:27 사용자 「원정마다 무조건 1계층의 1-1부터 다시 가야 해」 · 「최종도달 필드 1-50 이런 식으로」): 미궁 원정은 늘 1계층 1-1에서 시작해 1-50을 넘으면 다음 계층 1로 내려간다
-const LAB_IDS = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !FIELDS[f].demon && FIELDS[f].region !== 'sky' && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley').sort((a, b) => FIELDS[a].no - FIELDS[b].no);
-const isLab = fid => LAB_IDS().includes(fid);
+const LAB_IDS = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !FIELDS[f].demon && FIELDS[f].region !== 'sky' && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley' && !FIELDS[f].branch).sort((a, b) => FIELDS[a].no - FIELDS[b].no);
+const isLab = fid => LAB_IDS().includes(fid) || !!(FIELDS[fid] && FIELDS[fid].branch);   // 갈림길 필드(깊은 숲)도 미궁
+const labBranchOf = fid => ALL_FIELDS.find(f => FIELDS[f].branch === fid) || null;   // 그 계층 끝에서 들어갈 수 있는 미개척지대
+const labBranchOn = fid => { const b = labBranchOf(fid); return !!(b && S.labBranch && S.labBranch[fid]); };   // 지도에서 고른다 (S.labBranch[계층] — 기본은 다음 계층으로)
 function labBest() { let out = null; for (const f of LAB_IDS()) { const b = (S.fields[f] || {}).best || 0; if (b > 0) out = [f, b]; } return out; }   // 가장 깊이 간 곳 [계층, 필드 번호]
 const labBestTxt = () => { const b = labBest(); return b ? `${FIELDS[b[0]].no}-${b[1]}` : '아직 없음'; };
+const fieldTag = (F, st) => `${fno(F)}-${st}`;
 function labStart(fid, st) { return 1; }
 function newExp(fid, sup, start = 1) {
   const F = FIELDS[fid];
@@ -518,7 +521,7 @@ function stageClear(p, e) {
   const fs = S.fields[e.field], F = FIELDS[e.field];
   if (e.area === 'field') {
     if (e.stage % BOSS_EVERY === 0 && e.stage < FIELD_STAGES) { fs.boss = fs.boss || {}; const k = e.stage / BOSS_EVERY; if (!fs.boss[k]) fs.boss[k] = 1; }   // 빌드 72: 우두머리가 없어져서, 1-10 · 20 · 30 · 40을 지나면 그 다음 스테이지에서 출발할 수 있게 된다(예전엔 우두머리를 잡아야)
-    if (e.stage > fs.best) { fs.best = e.stage; if (e.stage % 5 === 0) { S.fame += 1; log(`${p.name}이(가) ${F.no}-${e.stage}까지 처음으로 진출했다. 명성 +1`, 'good'); } }
+    if (e.stage > fs.best) { fs.best = e.stage; if (e.stage % 5 === 0) { S.fame += 1; log(`${p.name}이(가) ${fno(F)}-${e.stage}까지 처음으로 진출했다. 명성 +1`, 'good'); } }
     if (e.stage >= FIELD_STAGES) {
       e.pos = STAGE_LEN;
       // 1-50의 주인을 쓰러뜨려 던전 입구가 열렸다 (한 번 공략한 던전은 봉인된다)
@@ -534,6 +537,9 @@ function stageClear(p, e) {
           return;
         }
       }
+      if (labBranchOn(e.field)) { const nx = labBranchOf(e.field);   // 갈림길: 미개척지대로 (11-20 19:10 — 원시림 2-50 → 깊은 숲 2-2-1)
+        e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].name}(으)로 들어섰다. (${fno(FIELDS[nx])}-1)`, 'good'); changed(); return; }
+      if (FIELDS[e.field].branch) { recall(p, 'end'); return; }   // 미개척지대의 끝(2-2-50): 지금은 돌아온다 (세계수 던전이 생기면 그리로)
       { const ids = LAB_IDS(), nx = ids[ids.indexOf(e.field) + 1];   // 다음 계층으로 내려간다 (열려 있을 때)
         if (nx) { e.field = nx;   // 16:38 「다음 계층을 내려가는 권한은 우선 없애자」: 길드 랭크와 상관없이 내려간다
           e.field = nx; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null; log(`${p.name}이(가) ${FIELDS[nx].no}계층 ${FIELDS[nx].name}(으)로 내려갔다.`, 'good'); changed(); return; } }
@@ -1409,7 +1415,7 @@ function fieldBossDown(p, e, f) {
   const fame = first ? 4 + k * 3 : 1;
   S.fame += fame;
   teamOf(p).filter(a => !a.down).forEach(a => { a.pf = (a.pf || 0) + (first ? 6 : 3); });
-  log(`${p.name}이(가) ${F.no}-${e.stage}의 필드 보스 ${f.name}을(를) 쓰러뜨렸다! 명성 +${fame}`, 'good');
+  log(`${p.name}이(가) ${fno(F)}-${e.stage}의 필드 보스 ${f.name}을(를) 쓰러뜨렸다! 명성 +${fame}`, 'good');
   if (first) HOOKS.toast(`필드 보스 격파 · ${f.name}`);
 }
 function loot(p, e, it, q) {
