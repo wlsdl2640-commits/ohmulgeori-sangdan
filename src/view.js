@@ -142,6 +142,13 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   // 옆으로 흐르는 풍경: 간 거리만큼 (길드 앞은 멈춰 있다)
   if (e) { const target = routePos(e) * 1.6; if (Math.abs(target - V.scroll) > 200) V.scroll = target; else if (!V.tail) V.scroll += (target - V.scroll) * 0.2; } else { V.scroll = 0; V.tail = false; }
   w.clearRect(0, 0, AW, AH);
+  if (!e && typeof HQ_ART !== 'undefined' && HQ_ART.lobby) {   // 빌드 72 (11-21 01:58 사용자): 쉬는 파티는 길드 본부 1층 로비에 서 있다 — 로비 그림의 가운데(바 · 식탁)를 작은 창 크기로
+    const im = HQ_ART.lobby, sw = im.height * AW / PIP_H; g.save(); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; R(g, 0, 0, AW, AH, '#1a0f08'); g.drawImage(im, (im.width - sw) / 2, 0, sw, im.height, 0, PIP_Y, AW, PIP_H); g.restore();
+    let list = p ? teamOf(p) : []; if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6); list = list.slice(0, 6);
+    const slots = frontSlots(list.length); V.hitA = list.map((a, i) => [a.id, slots[i][0], slots[i][1], 0]);
+    list.forEach((a, i) => { const [x, y] = slots[i], z = zq(y > 185 ? ZS : ZS * 0.92); shadowAt(w, x, y, 9 * z / ZS); w.save(); w.translate(x, y); drawAdv(w, a, t, { ph: i * 0.5, z }); w.restore(); });
+    g.drawImage(V.wc, 0, 0, AW, AH); if (pq) return; present(); return;
+  }
   // 옛 240×128 풍경을 무대 아래쪽에 붙이고, 위는 하늘로 잇는다 (키 큰 풍경은 무대 전체)
   const T = todAt(dp, id);
   if (bg.under) R(g, 0, 0, AW, AH, '#000');

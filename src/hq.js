@@ -28,9 +28,18 @@ const SEATS = 6;   // 여관 한 장소의 자리 (2층 침대 셋)
    미궁탑: 모험가 협회 로비 · 대장간 · 도서관 · 대신전 · 마탑 / 길드 본부: 로비 · 창고 · 모험가 숙소 · 주방 · 연금술 연구실 · 훈련소 · 사육장 · 재배소 · 마구간 · 던전 수거소 · 비행장 / 도시: 선술집 · 항구
    like: 아직 그림이 없는 장소가 빌려 쓰는 장면 (협회 로비 = 상점 장면 · 창고 = 던전 수거소 장면 — 빌린 장면은 어디를 눌러도 그 장소의 창) */
 Object.assign(FLOOR_INFO, {
-  assoc:     { name: '모험가 협회 로비', win: 'assoc', like: 'shop' },
-  warehouse: { name: '창고', win: 'b:warehouse', like: 'salvage' }
+  assoc:     { name: '모험가 협회 로비', win: 'assoc', art: 'assoc' },
+  warehouse: { name: '창고', win: 'b:warehouse', art: 'warehouse' }
 });
+FLOOR_INFO.shop.art = 'lobby'; FLOOR_INFO.shop.win = 'co';   // 11-21 02:05: 받은 방 그림 셋 (data-rooms.js) — 그림 장면은 어디를 눌러도 그 장소의 창
+const HQ_ART = {};   // 방 그림 (다 풀리면 장면을 다시 그린다)
+if (typeof ROOM_ART !== 'undefined') for (const k in ROOM_ART) { const im = new Image(); im.onload = () => { HQ_ART[k] = im; HQ.views = {}; }; im.src = ROOM_ART[k]; }
+function hqArtView(f) {   // 그림 장면: 화면을 꽉 채우게 자른 그림 한 장 (기기 화소 그대로 · 아래쪽을 맞춘다)
+  const im = HQ_ART[FLOOR_INFO[f.id].art], W = HQ.cvs.width, H = HQ.cvs.height, key = 'art:' + f.key;
+  let v = HQ.views[key]; if (v && v[0].width === W && v[0].height === H) return v[0];
+  v = mkCanvas(W, H); HQ.views[key] = v; const g = v[1], k = Math.max(W / im.width, H / im.height), sw = W / k, sh = H / k;
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(im, (im.width - sw) / 2, im.height - sh, sw, sh, 0, 0, W, H); return v[0];
+}
 FLOOR_INFO.shop.name = '길드 본부 로비'; FLOOR_INFO.inn.name = '모험가 숙소'; FLOOR_INFO.alchemy.name = '연금술 연구실'; FLOOR_INFO.temple.name = '대신전'; FLOOR_INFO.salvage.under = 0; FLOOR_INFO.smithy.under = 0;
 const HQ_ZONES = {
   tower: { name: '미궁탑', ids: ['assoc', 'smithy', 'library', 'temple', 'tower'], open: ['assoc', 'smithy', 'library', 'temple', 'tower'] },   // open: 짓지 않았어도 보이는 장소 (누르면 짓기 창)
@@ -1235,6 +1244,7 @@ const A3_SALV = {
 const HQS = { shop: A3_SHOP, tavern: A3_TAVERN, inn: A3_INN, stable: A3_STABLE, smithy: A3_SMITHY, airfield: A3_AIR, alchemy: A3_ALCH, kitchen: A3_KITCHEN, training: A3_TRAIN, temple: A3_TEMPLE, pen: A3_PEN, library: A3_LIB, tower: A3_TOWER, salvage: A3_SALV };
 // 장소 하나를 그 장소 판에 그린다: 벽 · 가구 · 창(바깥 시간)은 시간 칸마다 한 번 구워 두고, 사람 · 물건 · 불빛은 매번. rec면 누르는 자리를 남긴다
 function hqRender(f, t, rec) {
+  if (FLOOR_INFO[f.id].art && HQ_ART[FLOOR_INFO[f.id].art]) { const cv = hqArtView(f); if (rec) { HQ.hits = [{ x: 0, y: 0, w: cv.width, h: cv.height, win: FLOOR_INFO[f.id].win }]; HQ.hitK = { W: cv.width, H: cv.height }; } return cv; }
   const LK = FLOOR_INFO[f.id].like, sc = HQS[LK || f.id], K = sc.geo(hqGeo(sc.zoom || 1)), dp = clockDp(), T = todAt(dp, 'town');
   let v = HQ.views[f.key]; if (!v || v[0].width !== K.W || v[0].height !== K.H) { v = mkCanvas(K.W, K.H); HQ.views[f.key] = v; }
   const g = v[1], key = f.key + '|' + K.W + 'x' + K.H + '|' + Math.floor(dp * 64) + '|' + (sc.sig ? sc.sig(K) : '');
@@ -1255,7 +1265,7 @@ function drawHQ(now, vt) {
   const t = vt != null ? vt : now / 1000, f = hqPlace(HQ.cur);
   if (f.key !== HQ.cur) HQ.cur = f.key;
   const c = HQ.ctx, W = HQ.cvs.width, H = HQ.cvs.height, A = HQ.anim;
-  c.imageSmoothingEnabled = false;
+  c.imageSmoothingEnabled = !!(FLOOR_INFO[f.id].art && HQ_ART[FLOOR_INFO[f.id].art]);   // 그림 장면은 부드럽게, 도트 장면은 또렷하게
   if (A) {   // 옆으로 밀며 바뀐다: 새 장소가 그쪽에서 들어온다
     if (A.t0 == null) A.t0 = now;
     const k = Math.min(1, Math.max(0, (now - A.t0) / A.d)), e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2, from = hqPlace(A.from);
