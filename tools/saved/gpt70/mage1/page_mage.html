@@ -58,6 +58,19 @@ h3 { font-size: 16px; font-weight: 600 }
     <p class="lede">지금 게임의 마법사 그림과, 전사 때 통했던 방식으로 쓴 부탁 글 넷입니다. 전사는 판 25장을 받았지만 마법사는 넷이면 됩니다.</p>
   </header>
 
+  <section class="sec" aria-labelledby="h-m1" id="m1" hidden>
+    <div class="what item">
+      <h2 id="h-m1">받은 판을 전사 굵기로 줄여 본 것</h2>
+      <p class="note">왼쪽이 게임의 전사(40칸), 오른쪽이 받은 판 넷을 같은 점 굵기로 다시 찍은 마법사입니다. 게임에는 아직 넣지 않았습니다. 키는 모자 끝까지 잰 칸 수입니다.</p>
+    </div>
+    <div class="row" role="group" aria-label="마법사 키" id="m1-size"></div>
+    <div class="row" role="group" aria-label="동작" id="m1-mot"></div>
+    <div class="frame" style="background:#688e4a"><canvas id="m1-cv" width="150" height="62" style="display:block;image-rendering:pixelated;margin-inline:auto"></canvas></div>
+    <div class="row"><button class="btn" type="button" id="m1-zoom" aria-pressed="false">크게 보기</button></div>
+    <div class="frame"><img id="m1-scene" alt="전투 화면의 파티 뒤에 마법사를 붙여 본 모습" style="width:auto;max-width:none;margin-inline:auto"></div>
+    <p class="note">아래 그림은 전투 화면에 마법사 그림만 붙여 본 것입니다.</p>
+  </section>
+
   <section class="sec" aria-labelledby="h-steps">
     <h2 id="h-steps">순서</h2>
     <ol class="steps">
@@ -240,6 +253,31 @@ h3 { font-size: 16px; font-weight: 600 }
 const IMG = /*IMG*/{};
 const $$ = s => Array.from(document.querySelectorAll(s));
 const msgOf = b => b.parentElement.querySelector('.msg');
+// 받은 판을 줄여 본 것: 전사 옆에서 같은 동작을 돌린다
+(() => {
+  const M1 = /*M1*/null; if (!M1) return; document.getElementById('m1').hidden = false;
+  const cv = document.getElementById('m1-cv'), g = cv.getContext('2d'), sc = document.getElementById('m1-scene'), wide = window.matchMedia('(min-width: 760px)').matches;
+  const st = { T: M1.sizes[1], mot: 'walk', z: wide ? 5 : 2 }, im = {}, load = k => im[k] || (im[k] = Object.assign(new Image(), { src: k + '.png' }));
+  const R = (a, b) => Array.from({ length: Math.abs(b - a) + 1 }, (_, i) => a + (b > a ? i : -i)), PING = [...R(0, 7), ...R(6, 1), ...R(8, 15), ...R(14, 9)];
+  const MOT = { walk: ['걷기', 'walk', 15, 0], cast: ['마법 쏘기', 'slash', 15, 0.6], death: ['쓰러짐', 'death', 15, 1.2], side: ['서 있기', 'idle', 9, 0], front: ['앞모습', 'front', 9, 0], sit: ['앉기', 'sit', 5, 0], sleep: ['눕기', 'sleep', 5, 0], hurt: ['맞음', 'hurt', 15, 0.6] };
+  const grp = (box, items, get, set) => { const bs = items.map(([id, name]) => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = name; b.addEventListener('click', () => { set(id); sync(); }); box.append(b); return [id, b]; }); const sync = () => bs.forEach(([id, b]) => b.setAttribute('aria-pressed', id === get() ? 'true' : 'false')); sync(); };
+  const scene = () => { sc.src = 'm1_scene_' + st.T + '.png'; sc.style.width = M1.scene[0] * (wide ? 2 : 1) + 'px'; };
+  grp(document.getElementById('m1-size'), M1.sizes.map(t => [t, '키 ' + t + '칸']), () => st.T, t => { st.T = t; scene(); });
+  grp(document.getElementById('m1-mot'), Object.keys(MOT).map(k => [k, MOT[k][0]]), () => st.mot, k => { st.mot = k; t0 = performance.now(); });
+  const zb = document.getElementById('m1-zoom'), size = () => { cv.style.width = cv.width * st.z + 'px'; cv.style.height = cv.height * st.z + 'px'; zb.setAttribute('aria-pressed', st.z > 2 ? 'true' : 'false'); };
+  zb.addEventListener('click', () => { st.z = st.z > 2 ? 2 : 5; size(); }); size(); scene();
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; let t0 = performance.now();
+  const fr = (n, fps, hold, t, ping) => { if (still) return 0; if (ping) return PING[Math.floor(t * fps) % PING.length] % n; const T = n / fps + hold, u = t % T; return Math.min(n - 1, Math.floor(u * fps)); };
+  const blit = (k, m, i, x, gy) => { const s = load(k); if (s.complete && s.naturalWidth) g.drawImage(s, i * m.w, 0, m.w, m.h, x - m.ax, gy - m.ay, m.w, m.h); };
+  (function loop(now) {
+    const t = (now - t0) / 1000, [, wk, fps, hold] = MOT[st.mot], gy = cv.height - 3, wm = M1.war[wk], mm = M1.mage[st.T][st.mot];
+    g.fillStyle = '#688e4a'; g.fillRect(0, 0, cv.width, cv.height); g.fillStyle = '#5c8042'; g.fillRect(0, gy - 1, cv.width, 4);
+    blit('m1_war_' + wk, wm, fr(wm.n, wk === 'walk' ? 15 : fps, hold, t, wk === 'idle' || wk === 'front' || wk === 'sit'), 34, gy);
+    blit('m1_' + st.T + '_' + st.mot, mm, fr(mm.n, fps, hold, t, 0), 96, gy);
+    requestAnimationFrame(loop);
+  })(t0);
+})();
+
 // 크게 보기: 그림을 원래 크기로 (옆으로 밀어 본다)
 const W = { 'f-now': IMG.now[0], 'f-style': IMG.style[0], 'f-all': IMG.all[0] };
 $$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');

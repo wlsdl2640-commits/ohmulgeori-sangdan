@@ -49,5 +49,21 @@ st = Image.open(os.path.join(HERE, '..', 'hd70', 'sheets', 'warrior1_walk.webp')
 
 html = open(os.path.join(HERE, 'page_mage.html'), encoding='utf-8').read()
 html = html.replace('/*IMG*/{}', json.dumps({'now': list(now_size), 'all': list(all_size), 'style': list(st.size)}))
+# ── 받은 판을 줄여 본 것 (셋째 인자 = extract_m1.py · ../mid70/extract_mid.py 40 을 돌린 작업 폴더, 넷째 = 전투 화면 한 장) ──
+if len(sys.argv) > 3:
+    WD = sys.argv[3]; SIZES = [48, 44, 40]; M1 = {'sizes': SIZES, 'mage': {}, 'war': {}}
+    def strip(d, rn, m, dst):
+        S = Image.new('RGBA', (m['w'] * m['n'], m['h']), (0, 0, 0, 0))
+        for i in range(m['n']): S.alpha_composite(Image.open(f'{d}/{rn}_{i}.png').convert('RGBA'), (i * m['w'], 0))
+        S.save(f'{OUT}/{dst}.png', optimize=True); return {k: m[k] for k in ('w', 'h', 'ax', 'ay', 'n')}
+    wm = json.load(open(f'{WD}/out_mid40/meta.json'))
+    for rn in ('walk', 'idle', 'front', 'sit', 'sleep', 'hurt', 'slash', 'death'): M1['war'][rn] = strip(f'{WD}/out_mid40', rn, wm[rn], 'm1_war_' + rn)
+    base = Image.open(sys.argv[4]).convert('RGBA'); MX, MY = 140, 372
+    for t in SIZES:
+        mm = json.load(open(f'{WD}/out_m1_{t}/meta.json')); M1['mage'][t] = {rn: strip(f'{WD}/out_m1_{t}', rn, m, f'm1_{t}_{rn}') for rn, m in mm.items()}
+        b = base.copy(); sh = Image.new('RGBA', b.size, (0, 0, 0, 0)); ImageDraw.Draw(sh).ellipse((MX - 24, MY - 6, MX + 22, MY + 4), fill=(20, 30, 10, 90)); b.alpha_composite(sh)
+        m = mm['side']; im = Image.open(f'{WD}/out_m1_{t}/side_0.png').convert('RGBA'); b.alpha_composite(im.resize((im.width * 2, im.height * 2), Image.NEAREST), (MX - 16 - m['ax'] * 2, MY - m['ay'] * 2))
+        sc = b.convert('RGB').crop((96, 160, 448, 400)); sc.save(f'{OUT}/m1_scene_{t}.png', optimize=True); M1['scene'] = list(sc.size)
+    html = html.replace('/*M1*/null', json.dumps(M1))
 open(f'{OUT}/index.html', 'w', encoding='utf-8').write(html)
 print('ok', now_size, all_size, st.size, {f: os.path.getsize(f'{OUT}/{f}') // 1024 for f in sorted(os.listdir(OUT))})
