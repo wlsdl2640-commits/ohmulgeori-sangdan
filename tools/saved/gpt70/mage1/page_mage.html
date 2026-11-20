@@ -58,6 +58,22 @@ h3 { font-size: 16px; font-weight: 600 }
     <p class="lede">지금 게임의 마법사 그림과, 전사 때 통했던 방식으로 쓴 부탁 글 넷입니다. 전사는 판 25장을 받았지만 마법사는 넷이면 됩니다.</p>
   </header>
 
+  <section class="sec" aria-labelledby="h-game" id="game" hidden>
+    <div class="what item">
+      <h2 id="h-game">게임에 넣은 모습</h2>
+      <p class="note">실제 게임 화면을 찍은 것입니다. 전사 하나와 40칸 마법사 둘이 들늑대 · 들쥐 · 뿔토끼와 싸우고, 평원을 걷습니다.</p>
+    </div>
+    <div class="row" role="group" aria-label="장면" id="game-scn"></div>
+    <div class="frame"><canvas id="game-cv" width="352" height="240" style="display:block;image-rendering:pixelated;margin-inline:auto"></canvas></div>
+    <div class="row">
+      <button class="btn" type="button" id="game-play">멈춤</button>
+      <button class="btn" type="button" id="game-prev" aria-label="한 장 앞으로">◀ 한 장</button>
+      <button class="btn" type="button" id="game-next" aria-label="한 장 뒤로">한 장 ▶</button>
+      <button class="btn" type="button" id="game-slow" aria-pressed="false">느리게</button>
+      <button class="btn" type="button" id="game-zoom" aria-pressed="false">크게 보기</button>
+    </div>
+  </section>
+
   <section class="sec" aria-labelledby="h-m1" id="m1" hidden>
     <div class="what item">
       <h2 id="h-m1">받은 판을 전사 굵기로 줄여 본 것</h2>
@@ -253,6 +269,24 @@ h3 { font-size: 16px; font-weight: 600 }
 const IMG = /*IMG*/{};
 const $$ = s => Array.from(document.querySelectorAll(s));
 const msgOf = b => b.parentElement.querySelector('.msg');
+// 게임에 넣은 모습: 찍어 둔 장면을 돌린다
+(() => {
+  const G = /*GAME*/null; if (!G) return; document.getElementById('game').hidden = false;
+  const cv = document.getElementById('game-cv'), g = cv.getContext('2d'), wide = window.matchMedia('(min-width: 760px)').matches, im = {};
+  const st = { s: Object.keys(G)[0], f: 0, t: 0, play: !window.matchMedia('(prefers-reduced-motion: reduce)').matches, slow: false, z: wide ? 2 : 1 };
+  const sheet = k => im[k] || (im[k] = Object.assign(new Image(), { src: 'game_' + k + '.webp', onload: draw }));
+  function draw() { const S = G[st.s], s = sheet(st.s); if (s.complete && s.naturalWidth) g.drawImage(s, (st.f % S.cols) * S.w, Math.floor(st.f / S.cols) * S.h, S.w, S.h, 0, 0, S.w, S.h); }
+  const size = () => { const S = G[st.s]; cv.width = S.w; cv.height = S.h; cv.style.width = S.w * st.z + 'px'; cv.style.height = S.h * st.z + 'px'; draw(); };
+  const box = document.getElementById('game-scn'), bs = Object.keys(G).map(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = G[k].name; b.addEventListener('click', () => { st.s = k; st.f = 0; st.t = 0; size(); sync(); }); box.append(b); return [k, b]; });
+  const sync = () => bs.forEach(([k, b]) => b.setAttribute('aria-pressed', k === st.s ? 'true' : 'false')); sync();
+  const pb = document.getElementById('game-play'), ps = () => { pb.textContent = st.play ? '멈춤' : '재생'; }; pb.addEventListener('click', () => { st.play = !st.play; ps(); }); ps();
+  const step = d => { const S = G[st.s]; st.play = false; ps(); st.f = (st.f + d + S.n) % S.n; st.t = st.f / S.fps; draw(); };
+  document.getElementById('game-prev').addEventListener('click', () => step(-1)); document.getElementById('game-next').addEventListener('click', () => step(1));
+  const sb = document.getElementById('game-slow'); sb.addEventListener('click', () => { st.slow = !st.slow; sb.setAttribute('aria-pressed', st.slow ? 'true' : 'false'); });
+  const zb = document.getElementById('game-zoom'); zb.addEventListener('click', () => { st.z = st.z > 1 ? 1 : 2; zb.setAttribute('aria-pressed', st.z > 1 ? 'true' : 'false'); size(); }); zb.setAttribute('aria-pressed', st.z > 1 ? 'true' : 'false'); size();
+  let last = 0; (function loop(now) { if (st.play && last) { const S = G[st.s]; st.t += Math.min(0.1, (now - last) / 1000) * (st.slow ? 0.35 : 1); const f = Math.floor(st.t * S.fps) % S.n; if (f !== st.f) { st.f = f; draw(); } } last = now; requestAnimationFrame(loop); })(0);
+})();
+
 // 받은 판을 줄여 본 것: 전사 옆에서 같은 동작을 돌린다
 (() => {
   const M1 = /*M1*/null; if (!M1) return; document.getElementById('m1').hidden = false;

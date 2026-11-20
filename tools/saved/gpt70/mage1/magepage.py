@@ -65,5 +65,13 @@ if len(sys.argv) > 3:
         m = mm['side']; im = Image.open(f'{WD}/out_m1_{t}/side_0.png').convert('RGBA'); b.alpha_composite(im.resize((im.width * 2, im.height * 2), Image.NEAREST), (MX - 16 - m['ax'] * 2, MY - m['ay'] * 2))
         sc = b.convert('RGB').crop((96, 160, 448, 400)); sc.save(f'{OUT}/m1_scene_{t}.png', optimize=True); M1['scene'] = list(sc.size)
     html = html.replace('/*M1*/null', json.dumps(M1))
+# ── 게임에 넣은 모습 (다섯째 인자 = ../mid70/cap_mid.py로 찍은 폴더: fight · walk) ──
+if len(sys.argv) > 5:
+    CAP = sys.argv[5]; BOX = (96, 160, 448, 400); G = {}
+    for k, name in (('fight', '싸움'), ('walk', '걷기')):
+        n = len(json.load(open(f'{CAP}/{k}.json'))['frames']); w, h = BOX[2] - BOX[0], BOX[3] - BOX[1]; S = Image.new('RGB', (w * 8, h * ((n + 7) // 8)))
+        for i in range(n): S.paste(Image.open(f'{CAP}/{k}_{i}.png').convert('RGB').crop(BOX), ((i % 8) * w, (i // 8) * h))
+        S.save(f'{OUT}/game_{k}.webp', 'WEBP', lossless=True, quality=100, method=4); G[k] = dict(name=name, w=w, h=h, n=n, cols=8, fps=15)
+    html = html.replace('/*GAME*/null', json.dumps(G, ensure_ascii=False))
 open(f'{OUT}/index.html', 'w', encoding='utf-8').write(html)
 print('ok', now_size, all_size, st.size, {f: os.path.getsize(f'{OUT}/{f}') // 1024 for f in sorted(os.listdir(OUT))})
