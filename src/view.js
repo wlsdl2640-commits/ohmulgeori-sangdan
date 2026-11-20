@@ -748,7 +748,7 @@ function motCast(a, mk, t, blk, sk, now) {   // now: 지금 (t가 나중이면 �
   let t0 = t;
   if (busy) {
     // 빌드 70 리마스터 전사: 공격 동작이 길어서(0.95초) 그대로면 막기가 자주 묻힌다 → 하던 공격이 이미 맞혔고 잇는 동작이 없으면, 거두는 장을 끊고 방패를 든다
-    if (!(blk && now != null && hw && hdMotAtk(busy.mk))) return;
+    if (!(blk && now != null && hw && hdMotAtk(busy.mk, a))) return;
     const q = motQ(m0, t + 0.1), cut = q.t0 + motToHit(q) + HDW_KEEP;
     if (q !== m0.q[m0.q.length - 1] || m0.after || cut > t + HDW_BLOCK_PRE - 0.05) return;   // 맞는 때(t + HDW_BLOCK_PRE)까지 방패를 들 틈이 없으면 그만둔다
     t0 = Math.max(t, cut);

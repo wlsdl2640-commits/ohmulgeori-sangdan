@@ -10,7 +10,7 @@
    · 1차 스킬 그림 13개: hexURL이 육각 안쪽 34×40을 그린다 (hdSkiCells)
    · 넓은 평원(bg plains_hd): 뒷산 · 중경(언덕 · 농장 · 울타리) · 넓은 땅 · 도는 풍차 날개 — 땅이 화면 아래 40%,
      파티 · 몬스터가 앞뒤로 흩어져 선다 (view.js formSlots · foeSlots · zAt이 V.wide를 본다) */
-const HD = { mon: {}, war: null, sky: null, bg: null, spr: new Map(), tint: new WeakMap(), big: false };   // big: 지금 그리는 몬스터가 2배 우두머리 (art.js drawMon이 켰다 끈다)
+const HD = { mon: {}, war: null, cls: {}, sky: null, bg: null, spr: new Map(), tint: new WeakMap(), big: false };   // big: 지금 그리는 몬스터가 2배 우두머리 (art.js drawMon이 켰다 끈다)
 const HD_EMPTY = (() => { if (typeof document === 'undefined') return null; const [cv] = mkCanvas(1, 1); return { cv, ax: 0, ay: 0, w: 1, h: 1, dx: 0, jy: 0, fo: [0, 0] }; })();
 // 그림 몬스터 동작: 줄 · 장 시간 · 맞히는 장 · 앞으로 나간 거리(논리 픽셀, 장마다) · 쏘는 자리
 const HD_MOT = {
@@ -85,13 +85,17 @@ function hdLoad() {
       if (m.big) img(m.big.url, im2 => { const H = HD.mon[id]; H.m2 = Object.assign({ rows: m.rows, n: m.n }, m.big); H.f2 = hdCut(im2, m.big.w, m.big.h, m.rows, m.n); HD.spr.clear(); });   // 우두머리용 두 배 촘촘한 그림 (없으면 작은 그림을 2배로)
     });
   }
-  const W = D.war, WR = {}; let wl = Object.keys(W.rows).length;   // 전사 1차: 동작 줄을 다 풀어야 켠다 (그 전에는 예전 그림)
-  const wdone = () => { if (--wl) return; HD.war = WR; HD.spr.clear(); };
-  for (const rn in W.rows) {
-    const m = W.rows[rn]; if (m.blade) wl++;
-    img(m.url, im => { const f = hdCut(im, m.w, m.h, [rn], [m.n])[rn]; WR[rn] = Object.assign(WR[rn] || {}, { m, f, sx: f.map(cv => hdFeetX(cv, m)), bl: m.bl || null }); wdone(); });
-    if (m.blade) img(m.blade, im => { const bm = hdCut(im, m.w, m.h, [rn], [m.n])[rn]; WR[rn] = Object.assign(WR[rn] || {}, { bm, br: bm.map(hdRing) }); wdone(); });   // 칼날 칸 · 그 둘레 (스킬 빛)
-  }
+  const loadCls = (cls, W) => {   // 직업 하나: 동작 줄을 다 풀어야 켠다 (그 전에는 예전 그림)
+    const WR = {}; let wl = Object.keys(W.rows).length;
+    const wdone = () => { if (--wl) return; HD.cls[cls] = WR; if (cls === 'warrior') HD.war = WR; HD.spr.clear(); };
+    for (const rn in W.rows) {
+      const m = W.rows[rn]; if (m.blade) wl++;
+      img(m.url, im => { const f = hdCut(im, m.w, m.h, [rn], [m.n])[rn]; WR[rn] = Object.assign(WR[rn] || {}, { m, f, sx: f.map(cv => hdFeetX(cv, m)), bl: m.bl || null }); wdone(); });
+      if (m.blade) img(m.blade, im => { const bm = hdCut(im, m.w, m.h, [rn], [m.n])[rn]; WR[rn] = Object.assign(WR[rn] || {}, { bm, br: bm.map(hdRing) }); wdone(); });   // 칼날 칸 · 그 둘레 (스킬 빛)
+    }
+  };
+  loadCls('warrior', D.war);
+  for (const c in D.adv || {}) loadCls(c, D.adv[c]);   // 그 밖의 직업 (마법사 1차 — 11-20)
   if (D.sky) { const K = { moon: null, clouds: [] }; let n = D.sky.clouds.length + 1; const done = () => { if (!--n) HD.sky = K; }; img(D.sky.moon, im => { K.moon = im; done(); }); D.sky.clouds.forEach((u, i) => img(u, im => { const [cv, x] = mkCanvas(im.width, im.height); x.drawImage(im, 0, 0); K.clouds[i] = cv; done(); })); }
   const B = D.bg.plains, L = {}; let left = 4;
   for (const k of ['back', 'mid', 'gr', 'blades']) img(B[k].url, im => { L[k] = im; if (--left) return; HD.bg = L; if (typeof BG !== 'undefined') delete BG.plains_hd; });
@@ -123,7 +127,10 @@ function hdMonSpr(id, mk, f) {   // pxund.js pxuSprite가 부른다 (그림 판�
 }
 
 // ── 전사 1차: 동작 13가지 × 16장 (tools/saved/gpt70/hd70/extract_war16.py — 판 차례 그대로 한 줄씩) ──
-const hdWarOn = a => !!(HD.war && a && a.cls === 'warrior');
+// 리마스터 그림이 있는 직업(전사 1차 · 마법사 1차). 직업마다 줄 표가 달라서, 그리기 전에 hdUse(a)로 「지금 직업」(HD.war · HDC)을 바꿔 끼운다
+const hdWarOn = a => !!(a && HD.cls[a.cls] && HDCFG[a.cls]);
+let HDC = null;
+const hdUse = a => { const c = a && HD.cls[a.cls] ? a.cls : 'warrior'; HD.war = HD.cls[c] || null; HDC = HDCFG[c]; return !!HD.war; };
 const hdRange = (a, b) => Array.from({ length: Math.abs(b - a) + 1 }, (_, i) => a + (b > a ? i : -i));
 const HDW_PING = [...hdRange(0, 7), ...hdRange(6, 1), ...hdRange(8, 15), ...hdRange(14, 9)];   // 앞 판을 갔다 오고 → 뒤 판을 갔다 온다 (두 판의 첫 장이 같은 자세라 숨이 튀지 않는다)
 // 그림 동작 = 줄 + 장 차례 (판 차례 0 ~ 15 그대로가 아닌 것만)
@@ -133,18 +140,18 @@ const HDW_SEQ = {
   guard: ['guard', [...hdRange(0, 7), ...hdRange(15, 8)]],         // 방패를 올리며 웅크림(앞 판) → 방패를 내리며 일어섬(뒤 판 거꾸로)
   raise: ['upper', [...hdRange(15, 8), 7, ...hdRange(8, 15)]]      // 칼 치켜들기(함성 · 강화 · 도발): 올려베기의 칼 내리는 장을 거꾸로 올렸다가 내린다
 };
-const hdwRow = k => HDW_SEQ[k] || [k, null];
+const hdwRow = k => HDC.seq[k] || [k, null];
 const hdwLen = k => { const [rn, seq] = hdwRow(k); return seq ? seq.length : HD.war[rn].f.length; };
 const HDW_SHADOW = { slash: 1, upper: 1, thrust: 1, bash: 1, hurt: 1, death: 1 };   // 몸이 닻에서 나가는 줄: 그림자가 발을 따라간다
 function hdwSpr(k, i, fl) {   // 그림 동작 k의 i번째 장 (fl: 한 색으로 — 흰 번쩍 · 스킬 잔상)
-  const [rn, seq] = hdwRow(k), Q = HD.war[rn], n = seq ? seq.length : Q.f.length, q = ((i % n) + n) % n, j = seq ? seq[q] : q, ck = 'W|' + rn + '|' + j + '|' + (fl || '');
+  const [rn, seq] = hdwRow(k), Q = HD.war[rn], n = seq ? seq.length : Q.f.length, q = ((i % n) + n) % n, j = seq ? seq[q] : q, ck = HDC.id + '|' + rn + '|' + j + '|' + (fl || '');
   let s = HD.spr.get(ck);
-  if (!s) { const m = Q.m; s = { cv: fl ? hdTint(Q.f[j], fl) : Q.f[j], hs: m.hs, ax: m.ax, ay: m.ay, w: m.w, h: m.h, sx: HDW_SHADOW[rn] ? Q.sx[j] : 0 }; HD.spr.set(ck, s); if (HD.spr.size > 900) HD.spr.delete(HD.spr.keys().next().value); }
+  if (!s) { const m = Q.m; s = { cv: fl ? hdTint(Q.f[j], fl) : Q.f[j], hs: m.hs, ax: m.ax, ay: m.ay, w: m.w, h: m.h, sx: HDC.shadow[rn] ? Q.sx[j] : 0 }; HD.spr.set(ck, s); if (HD.spr.size > 900) HD.spr.delete(HD.spr.keys().next().value); }
   return s;
 }
-const hdFront = t => (HD.war ? hdwSpr('front', t == null ? 0 : Math.floor(t * HDW_FPS.front)) : null);   // hero.js 영웅 창 · 초상 (앞모습)
+const hdFront = (t, a) => (hdUse(a) ? hdwSpr('front', t == null ? 0 : Math.floor(t * HDW_FPS.front)) : null);   // hero.js 영웅 창 · 초상 (앞모습)
 // 초상 · 썸네일: 앞모습을 그림 한 칸 = px 픽셀로 (머리 위를 칸 위쪽에 맞추고, 키가 칸보다 크면 발 쪽이 잘린다)
-function hdBust(x, W, H, px) { const s = hdFront(), k = px * s.hs; x.save(); x.translate(Math.floor(W / 2), Math.max(H - 2, Math.round(s.ay * px) + 1)); x.scale(k, k); pxBlit(x, s); x.restore(); }
+function hdBust(x, W, H, px, a) { const s = hdFront(null, a), k = px * s.hs; x.save(); x.translate(Math.floor(W / 2), Math.max(H - 2, Math.round(s.ay * px) + 1)); x.scale(k, k); pxBlit(x, s); x.restore(); }
 /* 엔진 동작(pxs.js 여덟 장) → 그림 동작. 엔진 동작의 장마다 초를 이 표로 바꿔(view.js motTA → hdMotT) 16장이 기본 배속에서 다 보이게 한다.
    H: 차례 안에서 맞히는(막는) 장 — 엔진의 맞히는 장(pxsMotHit) 앞 장들은 0 ~ H-1, 뒤 장들은 H ~ 끝에 고르게 나눈다(모으는 장을 붙잡으면 그 자세에서 멈춘다)
    time: 맞히는 때가 없는 동작(강화 · 함성 · 방패 세우기) — 걸리는 시간에 고르게 */
@@ -159,8 +166,16 @@ const HDW_MOT = {
 };
 const HDW_OF = { down: 'slash', side: 'slash', hack: 'slash', smash: 'slash', up: 'upper', toss: 'upper', thrust: 'thrust', bash: 'bash', block: 'block',
   guard: 'guard', parry: 'guard', ready: 'guard', raise: 'raise', salute: 'raise', taunt: 'raise' };
-const hdwMot = mk => HDW_MOT[HDW_OF[mk] || 'slash'], hdwKey = mk => hdwMot(mk).key || HDW_OF[mk] || 'slash';
-const hdMotAtk = mk => { const M = hdwMot(mk); return !M.time && M !== HDW_MOT.block; };   // 맞히는 때가 있는 공격 동작 (view.js motCast — 막기가 거두는 장을 끊어도 되는 동작)
+const hdwMot = mk => HDC.mot[HDC.of[mk] || HDC.def], hdwKey = mk => hdwMot(mk).key || HDC.of[mk] || HDC.def;
+const hdMotAtk = (mk, a) => { hdUse(a); const M = hdwMot(mk); return !M.time && M !== HDC.mot.block; };
+// 마법사 1차 (tools/saved/gpt70/mage1 — 판 넷): 서 있기 · 앞모습은 두 장(둘째 = 한 칸 내려앉은 장)을 1.5초씩, 달리기 = 걷기, 치켜들기 = 마법 쏘기의 지팡이 올리는 장
+const HDM_SEQ = { idle: ['idle', [...Array(14).fill(0), ...Array(14).fill(1)]], front: ['front', [...Array(14).fill(0), ...Array(14).fill(1)]], run: ['walk', null],
+  raise: ['cast', [0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0]] };
+const HDM_MOT = { cast: { H: 6, T: [0.09, 0.09, 0.12, 0.08, 0.18, 0.15, 0.12, 0.12] },   // 1 ~ 4 지팡이를 머리 위로 · 5 내뻗기 · 6 마법이 나감 · 7 ~ 10 뻗은 채 · 11 ~ 15 거둠
+  raise: { key: 'raise', time: 1, T: [0.1, 0.1, 0.12, 0.1, 0.15, 0.14, 0.13, 0.13] } };
+const HDM_OF = { sraise: 'raise', raise: 'raise', salute: 'raise', taunt: 'raise', guard: 'raise', block: 'raise', parry: 'raise', ready: 'raise' };   // 그 밖(내밀기 · 찌르기 · 휘두르기 · 모아 쏘기)은 마법 쏘기
+const HDCFG = { warrior: { id: 'W', seq: HDW_SEQ, mot: HDW_MOT, of: HDW_OF, def: 'slash', shadow: HDW_SHADOW }, mage: { id: 'M', seq: HDM_SEQ, mot: HDM_MOT, of: HDM_OF, def: 'cast', shadow: { cast: 1, hurt: 1, death: 1 } } };
+HDC = HDCFG.warrior;   // 맞히는 때가 있는 공격 동작 (view.js motCast — 막기가 거두는 장을 끊어도 되는 동작)
 const HDW_FPS = { idle: 9, front: 9, sit: 5.5, sleep: 5 };   // 숨쉬기: 서 있기 · 앞모습 28장 ≈ 3.1초 · 앉기 14장 ≈ 2.5초 · 눕기 16장 3.2초
 const HDW_HURT_T = 0.55, HDW_DIE_T = 1.0, HDW_RUN_T = 0.7, HDW_WALK_T = 1.05, HDW_BLOCK_PRE = 0.2, HDW_KEEP = 0.22;   // 맞음 · 쓰러짐 · 달리기 한 바퀴 · 걷기 한 바퀴(땅이 안 흐르는 곳) · 막기를 맞는 때보다 먼저 시작하는 초 · 새 공격이 와도 하던 공격을 맞힌 뒤 보여 주는 초
 /* 걷기 한 바퀴(두 걸음)에 땅이 흐르는 거리(논리 픽셀). 그림의 보폭대로면 29(발 사이 80칸 × 0.24 × 1.5배 ÷ 2 × 두 걸음)인데, 땅은 초에 7 ~ 8밖에 안 흘러서
@@ -169,11 +184,12 @@ const HDW_STRIDE = 7.5;
 const HDW_TC = {};
 function hdMotT(a, mk) {   // view.js motTA: 이 모험가가 이 동작을 할 때 장마다 초 (null이면 엔진 그대로)
   if (!hdWarOn(a)) return null;
-  if (HDW_TC[mk]) return HDW_TC[mk];
+  hdUse(a); const ck = HDC.id + mk;
+  if (HDW_TC[ck]) return HDW_TC[ck];
   const T = hdwMot(mk).T, n = pxsMotT(mk).length, hi = pxsMotHit(mk);
-  if (n === 8 && hi === 4) return (HDW_TC[mk] = T);
+  if (n === 8 && hi === 4) return (HDW_TC[ck] = T);
   const pre = T.slice(0, 4).reduce((s, v) => s + v, 0), post = T.slice(4).reduce((s, v) => s + v, 0);   // 맞히는 장이 다른 엔진 동작(내려찍기 다섯째 장)은 앞 · 뒤 시간만 지킨다
-  return (HDW_TC[mk] = Array.from({ length: n }, (_, f) => (f < hi ? pre / hi : post / (n - hi))));
+  return (HDW_TC[ck] = Array.from({ length: n }, (_, f) => (f < hi ? pre / hi : post / (n - hi))));
 }
 function hdwMotFrame(mk, fr, mo) {   // 엔진 동작의 지금 자리(mo: view.js motNow — 장 f · 장 안 p · 장마다 초 T · 시작 장 f0) → 그림 동작의 장
   const M = hdwMot(mk), N = hdwLen(hdwKey(mk));
@@ -184,7 +200,7 @@ function hdwMotFrame(mk, fr, mo) {   // 엔진 동작의 지금 자리(mo: view.
   return Math.max(0, Math.min(N - 1, i));
 }
 function hdWarSpr(a, pose, fr, t, o) {   // art.js drawAdv가 부른다 (null이면 예전 그림)
-  if (!HD.war) return null;
+  if (!hdUse(a)) return null;
   const ph = o.ph || 0;
   if (pose === 'sleep') return hdwSpr('sleep', Math.floor(t * HDW_FPS.sleep + ph * 7), FLASH);   // 야영: 누워 자기
   if (pose === 'sit') return hdwSpr('sit', Math.floor(t * HDW_FPS.sit + ph * 5), FLASH);         // 야영: 앉아 쉬기
@@ -192,7 +208,7 @@ function hdWarSpr(a, pose, fr, t, o) {   // art.js drawAdv가 부른다 (null이
   if (o.die != null) return hdwSpr('death', Math.min(15, Math.floor(o.die * 16)), FLASH);        // 쓰러지는 중 (view.js — HDW_DIE_T초)
   if (pose === 'down') return hdwSpr('death', 15, FLASH);                                        // 쓰러져 있다 (들것)
   if (pose.startsWith('m:')) { const mk = pose.slice(2); return hdwSpr(hdwKey(mk), hdwMotFrame(mk, fr, o.mot), FLASH); }
-  if (pose === 'atk') return hdwSpr('slash', fr ? 6 : 4, FLASH);                                 // 예전 두 장 공격 (동작이 없을 때)
+  if (pose === 'atk') return hdwSpr(HDC.def, fr ? 6 : 4, FLASH);                                 // 예전 두 장 공격 (동작이 없을 때)
   const h0 = typeof V !== 'undefined' && V.flash0 && a.id != null ? V.flash0['a' + a.id] : null, dt = h0 != null ? t - h0 : -1;
   if (dt >= 0 && dt < HDW_HURT_T) return hdwSpr('hurt', 1 + Math.min(14, Math.floor(dt / HDW_HURT_T * 15)), FLASH === '#ffffff' && dt > 0.07 ? null : FLASH);   // 맞음: 흰 번쩍은 처음 한순간만
   if (pose === 'walk') return o.run ? hdwSpr('run', Math.floor((t / HDW_RUN_T + ph * 0.37) * 16), FLASH) : hdwSpr('walk', Math.floor(((o.wph != null ? o.wph : t / HDW_WALK_T) + ph * 0.37) * 16), FLASH);
@@ -201,7 +217,7 @@ function hdWarSpr(a, pose, fr, t, o) {   // art.js drawAdv가 부른다 (null이
 /* 스킬 빛 (view.js 파티 그리기 — skfx.js skAdvFx와 같은 뜻을 리마스터 칼 자리에): ① 모으기 = 칼날이 스킬 색으로 달아오르고(칼날 칸 · 둘레), 빛 알갱이가 칼끝으로 모이고,
    온몸 기운(발밑 고리 · 오르는 불티) ② 자취 = 맞히는 장 앞뒤로 칼이 지나간 자리를 스킬 색 초승달로. 칼날 칸이 없는 줄(방패 밀기 · 막기)은 그리지 않는다 */
 function hdSkFx(g, a, mo, sk, x, y, dir, t) {
-  const mk = mo.mk, M = hdwMot(mk), [rn, seq] = hdwRow(hdwKey(mk)), Q = HD.war && HD.war[rn];
+  hdUse(a); const mk = mo.mk, M = hdwMot(mk), [rn, seq] = hdwRow(hdwKey(mk)), Q = HD.war && HD.war[rn];
   if (!sk || !Q || !Q.bl || !Q.bm || M.time) return;
   const N = seq ? seq.length : Q.f.length, at = i => (seq ? seq[i] : i), i = hdwMotFrame(mk, mo.f, mo), j = at(i), m = Q.m, q = m.hs, P = SK_PAL[sk.pal], fl = Math.floor(t * 25) % 2;
   const k = Math.max(0, Math.min(1, mo.e / Math.max(0.01, mo.hit))), U = 4 / 3;   // U: 화면에서 논리 2칸(다른 스킬 빛과 같은 굵기)이 되는 크기 — 그림은 1.5배

@@ -1,5 +1,5 @@
 """사이 값 시안 5단계: 같은 장면 · 같은 때를 그림 자료만 바꿔 가며 찍는다 (시험 묶음 아님 — 게임 고리를 멈추고 손으로 한 걸음씩)
-   python3 cap_mid.py <시험 페이지> <폴더> <장면> [장 수] [간격 초] [미리 돌릴 장 수]      환경 OLD=1 이면 리마스터 전사 · 몬스터 그림을 끄고 옛 뭉툭 도트로
+   python3 cap_mid.py <시험 페이지> <폴더> <장면> [장 수] [간격 초] [미리 돌릴 장 수]      환경 OLD=1 이면 리마스터 전사 · 몬스터 그림을 끄고 옛 뭉툭 도트로 · TEAM=warrior,mage,mage 처럼 파티 직업(기본 전사만)
    장면: walk 전사 셋이 평원을 걷는다 · solo 전사 하나가 걷는다 · fight 전사 셋이 들늑대 · 들쥐 · 뿔토끼와 싸운다 · mons 전사 하나와 허수아비 · 멧돼지 · 갑옷 멧돼지
          boss · boss2 우두머리(2배) 들늑대 · 허수아비 / 멧돼지 · 갑옷 멧돼지
    시뮬레이션(step)과 그리기(drawFrame)에 씨앗이 다른 난수를 따로 물려서, 그림이 달라도 싸움은 똑같이 흘러간다. 날씨도 맑은 날로 고정.
@@ -11,7 +11,7 @@ N = int(sys.argv[4]) if len(sys.argv) > 4 else 60; DT = float(sys.argv[5]) if le
 OLD = os.environ.get('OLD'); os.makedirs(OUT, exist_ok=True)
 RNG = "const mb = s => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; window.__r0 = Math.random; window.__rs = mb(20261119); window.__rd = mb(777); Math.random = window.__rs;"   # 화면 갱신 타이머 같은 다른 코드는 원래 난수(__r0)를 쓴다
 BASE = RNG + r"""
-  const mk = (i, lv) => { const a = makeAdv({ cls: 'warrior', lv }); a.id = 900 + i; a.status = 'idle'; a.wxt = null; a.traits = []; a.eq.weapon = makeGear('sword', 2, 1); a.eq.off = makeGear('shield', 2, 1); a.name = ['브람', '한스', '도윤'][i]; return a; };
+  const CL = %CLS%, mk = (i, lv) => { const c = CL[i % CL.length], a = makeAdv({ cls: c, lv }); a.id = 900 + i; a.status = 'idle'; a.wxt = null; a.traits = []; a.eq.weapon = makeGear(c === 'mage' ? 'staff' : 'sword', 2, 1); a.eq.off = c === 'mage' ? null : makeGear('shield', 2, 1); a.name = ['브람', '한스', '도윤'][i]; return a; };
   const lv = %LV%, team = [0, 1, 2].slice(0, %TEAM%).map(i => mk(i, lv));
   team.forEach(a => { a.hp = derive(a).maxHp; a.mp = derive(a).maxMp; a.fat = 0; a.skills = []; });
   S.advs = team.slice(); if (!S.parties.length) S.parties.push(newParty('1팀', []));
@@ -52,7 +52,7 @@ with sync_playwright() as pw:
         if ev("!!(HD.bg && HD.war && Object.keys(HD.mon).length === 6)"): break
         pg.wait_for_timeout(300)
     if OLD: print('옛 그림으로', ev("(() => { HD.war = null; for (const id of ['rat', 'rabbit', 'wolf']) { delete HD.mon[id]; delete MON_DIM[id]; delete MON_BACK[id]; } HD.spr.clear(); return Object.keys(HD.mon).join(' '); })()"))
-    js = '(() => {' + BASE.replace('%LV%', str(lv)).replace('%STAGE%', str(stage)).replace('%TEAM%', str(nteam)).replace('%ENC%', str(enc)) + extra + " Math.random = window.__r0; return 'ok ' + wxDay(Math.floor(S.t / DAY_SEC)).sky + ' seed ' + S.wx.seed; })()"
+    js = '(() => {' + BASE.replace('%CLS%', json.dumps(os.environ.get('TEAM', 'warrior').split(','))).replace('%LV%', str(lv)).replace('%STAGE%', str(stage)).replace('%TEAM%', str(nteam)).replace('%ENC%', str(enc)) + extra + " Math.random = window.__r0; return 'ok ' + wxDay(Math.floor(S.t / DAY_SEC)).sky + ' seed ' + S.wx.seed; })()"
     ev("window.requestAnimationFrame = () => 0"); pg.wait_for_timeout(200)   # 게임 고리를 먼저 멈춘다 (걸려 있던 한 장이 지나가게 기다린 뒤 장면을 차린다 — 그 사이에 고리가 돌면 싸움이 달라진다)
     print(SCN, ev(js))
     ev("""(() => {
