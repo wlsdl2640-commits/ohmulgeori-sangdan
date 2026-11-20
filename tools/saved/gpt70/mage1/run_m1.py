@@ -7,6 +7,8 @@ with sync_playwright() as pw:
     br = pw.chromium.launch(); pg = br.new_page(viewport={'width': 412, 'height': 860}); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto('file://' + os.path.abspath(PAGE)); pg.wait_for_timeout(900)
     pg.locator('button', has_text='문 열기').first.click(); pg.wait_for_timeout(1200)
-    ev = lambda s: pg.evaluate("s => window.__EV(s)", s); ev(JS)
+    ev = lambda s: pg.evaluate("s => window.__EV(s)", s)
+    if len(sys.argv) > 4: ev('window.M1CFG = ' + json.dumps({'cls': sys.argv[3], 'wpn': sys.argv[4]}))   # 다른 직업: python3 run_m1.py <페이지> <폴더> archer bow
+    ev(JS)
     for k in ('look', 'mots', 'info'): json.dump(json.loads(ev(f"JSON.stringify(M1.{k}())")), open(os.path.join(OUT, k + '.json'), 'w'), ensure_ascii=False)
     print('errors', errs[:4]); br.close()
