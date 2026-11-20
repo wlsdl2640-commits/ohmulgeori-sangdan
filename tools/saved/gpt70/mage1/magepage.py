@@ -76,5 +76,7 @@ if len(sys.argv) > 5:
         for i in range(n): S.paste(Image.open(f'{CAP}/{k}_{i}.png').convert('RGB').crop(BOX), ((i % 8) * w, (i // 8) * h))
         S.save(f'{OUT}/game_{k}.webp', 'WEBP', lossless=True, quality=100, method=4); G[k] = dict(name=name, w=w, h=h, n=n, cols=8, fps=15)
     html = html.replace('/*GAME*/null', json.dumps(G, ensure_ascii=False))
+for f in os.listdir(os.path.dirname(TPL)):   # 직업 폴더의 그 밖의 붙일 그림 (사제: holy_lv1.png)
+    if f.endswith('.png'): Image.open(os.path.join(os.path.dirname(TPL), f)).save(f'{OUT}/{f}')
 open(f'{OUT}/index.html', 'w', encoding='utf-8').write(html)
 print('ok', now_size, all_size, st.size, {f: os.path.getsize(f'{OUT}/{f}') // 1024 for f in sorted(os.listdir(OUT))})
