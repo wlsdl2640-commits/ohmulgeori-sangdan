@@ -292,14 +292,14 @@ function hdSkiCells(id) {
 function buildPlainsHD() {
   const L = HD.bg;
   if (!L) return Object.assign({ hdWait: 1 }, buildPlains());   // 그림을 풀기 전: 옛 평원 (풀면 BG.plains_hd를 지워 다시 짓는다)
-  const B = HD70_DATA.bg.plains;
+  const B = HD70_DATA.bg.plains, LD = 55;   // 빌드 72 한 줄 배치: 풍경을 55칸 내려 땅을 발밑의 얇은 띠로 (전투 창은 무대 아래 절반만 보인다 — view.js BW_Y)
   const q = B.hs || 1;   // 화면 픽셀 해상도 겹 (scene.js tile이 cv.hs를 본다)
   const mir = (im, h, y) => { const [cv, x] = mkCanvas(im.width * 2, h); x.drawImage(im, 0, Math.round(y * q)); x.save(); x.translate(im.width * 2, 0); x.scale(-1, 1); x.drawImage(im, 0, Math.round(y * q)); x.restore(); cv.hs = q; return cv; };   // 뒤집어 이어 붙여 이음매가 없다
-  const back = mir(L.back, AH * q, B.back.y), mid = mir(L.mid, AH * q, B.mid.y), gr = mir(L.gr, L.gr.height, 0);
+  const back = mir(L.back, AH * q, B.back.y + LD), mid = mir(L.mid, AH * q, B.mid.y + LD), gr = mir(L.gr, L.gr.height, 0);
   const bw = B.blades.w, bl = [];
   for (let i = 0; i < B.blades.n; i++) { const [c, x] = mkCanvas(bw, bw); x.drawImage(L.blades, i * bw, 0, bw, bw, 0, 0, bw, bw); bl.push(c); }
-  const W2 = mid.width / q, bx = B.blades.x, by = B.blades.y;
-  return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y, clouds: 7, ambient: 'meadow', skyOy: B.skyOy, gateY: B.gateY,
+  const W2 = mid.width / q, bx = B.blades.x, by = B.blades.y + LD;
+  return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y + LD, clouds: 7, ambient: 'meadow', skyOy: B.skyOy + LD, gateY: B.gateY + 40,
     props(g, off, t) {   // 풍차 날개 (뒤집힌 짝은 거꾸로 돈다)
       const fi = Math.floor(t * 8) % bl.length;
       for (const [x0, flip] of [[bx, 0], [W2 - bx, 1]]) {

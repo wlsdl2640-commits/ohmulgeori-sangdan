@@ -967,7 +967,7 @@ function bindUI() {
   // 빌드 66 (사용자 「여기서 모험가를 눌러도 정보가 안 나오잖아」): 전투 창 그림에서 모험가를 누르면 그 모험가 창
   $('bcv').addEventListener('click', e => {
     if (!S || !V.hitA) return;
-    const r = $('bcv').getBoundingClientRect(), x = (e.clientX - r.left) / r.width * AW, y = (e.clientY - r.top) / r.height * AH;
+    const r = $('bcv').getBoundingClientRect(), x = (e.clientX - r.left) / r.width * AW, y = BW_Y + (e.clientY - r.top) / r.height * BW_H;
     let best = null, bd = 1e9;
     for (const [id, ax, ay, ru] of V.hitA) {
       if (x < ax - 14 || x > ax + 14 || y < ay - 38 + ru || y > ay + 6) continue;

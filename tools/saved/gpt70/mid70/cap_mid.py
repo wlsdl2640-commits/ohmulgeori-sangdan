@@ -30,6 +30,7 @@ SC = {   # 이름: (stage, lv, 전사 수, 첫 싸움 자리, 더 할 것)
     'fight': (12, 14, 3, 14, FOES(['wolf', 'rat', 'rabbit'], 12, 6000) + TOUGH),
     'mons':  (12, 14, 1, 14, FOES(['scarecrow', 'boar', 'aboar'], 12, 60000) + TOUGH),
     'solo':  (5, 12, 1, 300, ''),
+    'alert': (12, 14, 3, 72, FOES(['wolf', 'rat', 'rabbit'], 12, 6000) + TOUGH),   # 빌드 72: 몬스터가 곧 나온다는 알림 → 화면에 들어옴 → 싸움
     'boss':  (12, 14, 3, 14, "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? [10, 20].map(st => { const f = fieldBoss(FIELDS.plains, st, 12); f.maxHp = f.hp = 60000; return f; }) : ro(e2, idx, ex));" + TOUGH),   # 우두머리 들늑대 · 허수아비 (2배)
     'boss2': (12, 14, 3, 14, "const ro = rollFoes; rollFoes = (e2, idx, ex) => (e2 === e ? [30, 40].map(st => { const f = fieldBoss(FIELDS.plains, st, 12); f.maxHp = f.hp = 60000; return f; }) : ro(e2, idx, ex));" + TOUGH),   # 우두머리 멧돼지 · 갑옷 멧돼지
 }
@@ -77,4 +78,5 @@ with sync_playwright() as pw:
         else: runs.append([k, i, i])
     print('motions', ' '.join('%s[%d-%d]' % tuple(r) for r in runs)[:1500])
     print('last', info[-1], 'errors', errs[:4])
+    if os.environ.get('SHOT'): pg.screenshot(path=os.environ['SHOT'])   # 화면(전투 창 · 작은 창 배치) 한 장
     br.close(); os.remove(tmp)

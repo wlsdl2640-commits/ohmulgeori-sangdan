@@ -250,11 +250,11 @@ function areaDef(e) { const F = FIELDS[e.field]; return e.area === 'dungeon' ? F
 // 던전 층수: 보물 던전은 셋, 나머지는 다섯
 const floorsOf = e => (FIELDS[e.field] && FIELDS[e.field].treasure ? TREASURE_FLOORS : DUNGEON_FLOORS);
 function makeEncs(e) {
-  if (e.area === 'trade') return rnd() < (e.mode === 'return' ? 0.45 : 0.6) + (isNight() ? 0.15 : 0) ? [ri(30, 75)] : [];   // 교역로: 산적과 짐승이 가끔
+  if (e.area === 'trade') return rnd() < (e.mode === 'return' ? 0.45 : 0.6) + (isNight() ? 0.15 : 0) ? [ri(60, 150)] : [];   // 교역로: 산적과 짐승이 가끔
   const night = e.area === 'field' && isNight();
-  if (e.mode === 'return') return rnd() < (night ? 0.55 : 0.4) ? [ri(30, 70)] : [];
-  if (e.area === 'dungeon') return e.stage === floorsOf(e) ? [35, 80] : [30, 70];
-  return [25 + ri(-4, 4), 55 + ri(-4, 4), 85 + ri(-4, 4)];
+  if (e.mode === 'return') return rnd() < (night ? 0.55 : 0.4) ? [ri(60, 140)] : [];
+  if (e.area === 'dungeon') return e.stage === floorsOf(e) ? [70, 160] : [60, 140];
+  return [50 + ri(-8, 8), 110 + ri(-8, 8), 170 + ri(-8, 8)];   // 빌드 72: STAGE_LEN 200에 맞춰 두 배
 }
 function foeFrom(id, lv) {
   const m = MONS[id], U = m.giant ? null : monMul69(lv), hp = Math.round(mHp(m, lv) * DIFF.hp * (U ? U.hp : 1));   // 빌드 69: 레벨마다 몬스터 능력치 배율 (data-monup69.js — 레이드 거인은 RAID69)

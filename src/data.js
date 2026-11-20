@@ -7,7 +7,7 @@ const DAY_SEC = 180;            // 게임 속 하루 = 게임을 켜 둔 실제 
 const MONTH_DAYS = 30;
 const START = { year: 1024, month: 3 };
 const OFFLINE_CAP = 2 * 3600;   // 자리를 비운 동안 최대 2시간까지 보상 (마탑 연구로 늘어남)
-const STAGE_LEN = 100;
+const STAGE_LEN = 200;   // 한 스테이지 길이 — 빌드 72(11-20 15:16 사용자 「새로운 몬스터를 만나기 전까지 걸리는 시간을 지금보다 두배로」): 100 → 200, 만나는 자리(core.js makeEncs)도 두 배
 const FIELD_STAGES = 50;        // 필드마다 1-1 ~ 1-50
 const BOSS_EVERY = 10;          // 1-10, 1-20 … 1-50마다 필드 보스. 1-50 보스를 쓰러뜨리면 던전 입구가 열린다
 const DUNGEON_FLOORS = 5;

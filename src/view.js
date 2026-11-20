@@ -1,6 +1,7 @@
 /* ───────── 전투 화면: 원근 무대 위에 적은 가운데 줄, 파티는 아래 줄 ─────────
    무대(240×200)를 한 번 그려서, 작은 창에는 가운데 띠만, 전투 창에는 전체를 보여 준다. */
-const PIP_Y = 64, PIP_H = 128;
+const PIP_Y = 72, PIP_H = 128;
+const BW_Y = 100, BW_H = 100;   // 빌드 72 (11-20 사용자 「새로운 시안대로」): 전투 창은 무대의 아래 절반(가로로 긴 띠)만 보인다 — 모두 한 줄로 서고 땅은 발밑의 얇은 띠
 const ZP = 1.5, ZE = 1.25;                                // 무대 배율: 앞줄 파티는 크게, 적은 조금 작게
 const PH = 21 * ZP;                                       // 파티원 키 (논리 픽셀)
 const zq = z => Math.max(0.25, Math.round(z * 4) / 4);   // 배율은 1/4 단위 (구운 그림을 다시 쓰게)
@@ -27,7 +28,7 @@ function fitCanvas(cv, w, h) {
   if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
   cv.getContext('2d').imageSmoothingEnabled = false;
 }
-function sizeView() { fitCanvas(V.cvs, AW * HI, PIP_H * HI); if (V.bopen) fitCanvas(V.bcv, AW * HI, AH * HI); }
+function sizeView() { fitCanvas(V.cvs, AW * HI, PIP_H * HI); if (V.bopen) fitCanvas(V.bcv, AW * HI, BW_H * HI); }
 const viewParty = () => (S && (S.parties.find(p => p.id === S.view) || S.parties[0])) || null;
 function routePos(e) { return ((e.area === 'dungeon' ? FIELD_STAGES + e.stage : e.stage) - 1) * STAGE_LEN + e.pos; }
 
@@ -53,7 +54,7 @@ function bar(g, x, y, w, f, col, h = 1.5) {
 function callout(x, y, text, cls) {
   if (document.hidden || (RP.page === 1 && !V.bopen)) return;   // 빌드 69: 레이드 원정대 창(네 칸)에는 글자를 띄우지 않는다
   const k = Math.min(2.5, (S && S.speed) || 1), dur = cls === 'boss' || cls === 'rare' ? 2.3 : 1.1;
-  const boxes = V.bopen ? [['bcallouts', 0, AH]] : [['callouts', PIP_Y, PIP_H]];
+  const boxes = V.bopen ? [['bcallouts', BW_Y, BW_H]] : [['callouts', PIP_Y, PIP_H]];
   for (const [id, y0, h] of boxes) {
     const box = $(id);
     if (!box) continue;
@@ -176,7 +177,7 @@ function present() {
     if (sx) { c.fillStyle = '#000'; c.fillRect(0, 0, cv.width, cv.height); }
     c.drawImage(V.off, 0, y0 * HI, AW * HI, h * HI, sx, 0, cv.width, cv.height);
   };
-  if (V.bopen && V.bctx) put(V.bctx, V.bcv, 0, AH);
+  if (V.bopen && V.bctx) put(V.bctx, V.bcv, BW_Y, BW_H);
   else put(V.ctx, V.cvs, PIP_Y, PIP_H);
   V.shake = Math.max(0, V.shake - 0.4);
 }
@@ -338,7 +339,14 @@ const FORM_Y = { 1: [192], 2: [198, 184], 3: [199, 187, 175], 4: [199, 191, 183,
 // 빌드 70 시험: 넓은 땅(bg.wide — 곡창지대 평원)은 앞뒤로 흩어져 선다 — 줄 안 깊이를 넓게 · 줄마다 깊이를 엇갈리게 · 멀리 선 사람은 조금만 뒤로
 const FORM_Y_W = { 1: [176], 2: [190, 156], 3: [193, 168, 143], 4: [194, 174, 155, 138], 5: [195, 179, 163, 149, 138] }, FORM_SKEW_W = 0.45, FORM_YO_W = [0, -18, 9, -24, 4];
 const SLOT_PW = [[94, 182], [70, 158], [100, 140], [60, 194], [84, 168], [48, 146], [112, 196], [40, 172], [76, 136], [30, 190]];
-function formSlots(team) {
+const LINE_Y = 192, LINE_X0 = 108, LINE_GAP = 24, LINE_XMIN = 12, LINE_FX0 = 100, LINE_FGAP = 26, LINE_FXMIN = 14;   // 빌드 72 한 줄 배치: 모두 같은 줄(y) · 앞사람 x · 사람 사이 · 맨 뒤 한계 / 적(거울로): 맨 앞 · 사이 · 맨 뒤
+function formSlots(team) {   // 빌드 72: 한 줄 — 대형 차례(근접 → 원거리 → 힐러 → 짐꾼 → 들것) 그대로 앞에서 뒤로
+  const o = team.map((a, i) => [a.down ? 4 : formRank(a.cls), rideKind(a) ? 1 : 0, i]).sort((p, q) => p[0] - q[0] || p[1] - q[1] || p[2] - q[2]), n = o.length;
+  const gap = n > 1 ? Math.min(LINE_GAP, (LINE_X0 - LINE_XMIN) / (n - 1)) : LINE_GAP, out = [];
+  o.forEach(([, , i], k) => { out[i] = [Math.round(LINE_X0 - gap * k), LINE_Y]; });
+  out.petX = Math.max(6, Math.round(LINE_X0 - gap * n)); return out;
+}
+function formSlots71(team) {   // 빌드 69 ~ 71: 줄마다 깊이로 흩어 서는 대형 (쓰지 않음 — 되돌릴 때를 위해 남김)
   const cols = [[], [], [], [], []];
   team.forEach((a, i) => { let r = a.down ? 4 : formRank(a.cls), o = 1; if (r === 0 && cols[0].length >= 3) { r = 1; o = 0; } cols[r].push([i, o, rideKind(a) ? 1 : 0]); });
   cols.forEach(L => L.sort((p, q) => p[2] - q[2] || p[1] - q[1] || p[0] - q[0]));   // 탈것은 그 줄 먼 칸 · 넘친 근접은 그 줄 맨 앞
@@ -357,8 +365,9 @@ const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
 const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, V.wide ? (y - 136) / 56 : (y - 166) / 32))));   // 넓은 땅: y 136(먼 곳) ~ 192(앞)
 const SHADOW_R = 9;
 function foeSlots(foes) {
-  if (foes.length === 1) { const f = foes[0]; if (f.giant) { const z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; } return [[150, V.wide ? 176 : 194]]; }
-  return foes.map((f, i) => { const [x, y] = (V.wide ? SLOT_PW : SLOT_P)[Math.min(5, i)]; return [AW - x + 6 - (f.boss ? 12 : 0), y]; });
+  if (foes.length === 1) { const f = foes[0]; if (f.giant) { const z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; } return [[150, LINE_Y]]; }
+  const fg = foes.length > 1 ? Math.min(LINE_FGAP, (LINE_FX0 - LINE_FXMIN) / (foes.length - 1)) : LINE_FGAP;   // 빌드 72: 적도 한 줄
+  return foes.map((f, i) => [Math.round(AW - (LINE_FX0 - fg * i) + 6 - (f.boss ? 12 : 0)), LINE_Y]);
 }
 function fieldScene(w, t, p, e, lights, post, dark, bg) {
   const all = teamOf(p), team = all.filter(a => !a.down).concat(all.filter(a => a.down));   // 들것은 맨 끝
@@ -383,8 +392,15 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     if (!a.down) V.stand[k] = [q[0], q[1], t];
   });
   const pet = petOfParty(p);
-  if (pet) pos['aP' + pet.id] = [mx(FS.petX), V.wide ? 190 : 199];
+  if (pet) pos['aP' + pet.id] = [mx(FS.petX), LINE_Y];
   foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
+  // 빌드 72: 몬스터가 곧 나온다는 알림 — 아직 화면 밖에 있을 때(만날 자리까지 30 ~ 70) 나올 쪽 가장자리에서 깜빡이고, 몬스터가 화면에 들어오면 사라진다
+  if (walking0 && e.next && e.next.length && gap > 30 && gap <= 70) post.push(g => {
+    const ax = mx(AW - 11), ay = LINE_Y - 30, on = Math.floor(t * 4) % 2 === 0, bob = Math.round(Math.sin(t * 6) * 1.5);
+    R(g, ax - 5, ay - 8 + bob, 11, 15, '#1a1420'); R(g, ax - 4, ay - 7 + bob, 9, 13, on ? '#c0392b' : '#8a2a22');
+    R(g, ax - 1, ay - 5 + bob, 3, 6, '#ffe46a'); R(g, ax - 1, ay + 2 + bob, 3, 2, '#ffe46a');
+    for (let k = 0; k < 3; k++) R(g, ax + (dir > 0 ? 7 + k * 2 : -9 - k * 2), ay - 1 + bob - (k === 1 ? 0 : 0), 1, 3 - Math.abs(k - 1), on ? '#ffe46a' : '#c0392b');   // 나오는 쪽을 가리키는 잔금
+  });
   Object.assign(V.last, pos);
   V.hitA = team.map(a => { const q = pos['a' + a.id]; return [a.id, q[0], q[1], q.ru || 0]; });   // 빌드 66: 누르는 자리 (전투 창)
   events(e, pos, t, team, p);
@@ -1196,7 +1212,7 @@ function showBattle(on) {
   clearCallouts();
   if (!on) return;
   V.bdrawn = 0; V.bparty = -1; $('bw-log').textContent = '';
-  requestAnimationFrame(() => { fitCanvas(V.bcv, AW * HI, AH * HI); renderBattle(); });
+  requestAnimationFrame(() => { fitCanvas(V.bcv, AW * HI, BW_H * HI); renderBattle(); });
 }
 // 글자 부분: 제목, 진행, 기록 (그림은 drawFrame이 그린다)
 function renderBattle() {
