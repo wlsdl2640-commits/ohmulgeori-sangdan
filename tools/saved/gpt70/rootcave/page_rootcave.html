@@ -1,0 +1,321 @@
+<title>세계수 뿌리굴 부탁</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 배치: 한 줄 흐름 — 머리 → 순서(번호: 실제 차례) → 붙일 그림 셋(그림 · 크게 보기 · 저장) → 부탁 글 넷(글 · 복사) → 받은 뒤 볼 것.
+   색은 궁수 그림에서: 두건 초록 · 가죽 갈색 · 버클 금색. 그림은 밝은 회색 판 그대로 보인다 */
+:root {
+  --bg: #eeedf4; --surface: #f9f8fc; --panel: #dcd9e8; --fg: #1c1a26; --muted: #5a5770; --line: #c8c4d8;
+  --accent: #2f6a3a; --accent-fg: #ffffff; --label: #7a5a0c; --sheet: #c8ccd6; --code: #f3f1f9;
+  --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark }
+*, *::before, *::after { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 820px; margin-inline: auto; display: grid; gap: 44px; grid-template-columns: minmax(0, 1fr) }
+h1, h2, h3, p, ul, ol, figure, pre { margin: 0 }
+ul, ol { padding: 0; list-style: none }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.15 }
+h1 { font-size: clamp(30px, 7vw, 42px) }
+h2 { font-size: 24px }
+h3 { font-size: 16px; font-weight: 600 }
+.top { display: grid; gap: 10px }
+.eyebrow { color: var(--label); font-size: 13px; font-weight: 600; letter-spacing: .04em }
+.lede { max-width: 36em }
+.sec { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) }
+.note { color: var(--muted); font-size: 14px; max-width: 44em }
+.steps { counter-reset: n; display: grid; gap: 12px; max-width: 46em }
+.steps li { counter-increment: n; padding-left: 34px; position: relative }
+.steps li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font: 400 15px/1 var(--font-display); background: var(--accent); color: var(--accent-fg); border-radius: 4px }
+.item { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) }
+.item .what { display: grid; gap: 2px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.msg { color: var(--muted); font-size: 13px }
+.msg:empty { display: none }
+.btn { font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.btn[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg) }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-fg) }
+.btn:disabled { opacity: .6; cursor: default }
+.btn:focus-visible { outline: 2px solid var(--label); outline-offset: 2px }
+.frame { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px }
+.frame img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.frame.zoomed img { width: var(--zw); max-width: none }
+.frame.soft img { image-rendering: auto }
+.attach { color: var(--label); font-size: 13px; font-weight: 600 }
+.req { font: 13.5px/1.65 var(--font-body); white-space: pre-wrap; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; max-height: 22em; overflow: auto; -webkit-user-select: text; user-select: text }
+.list { display: grid; gap: 10px; max-width: 46em }
+.list li { padding-left: 18px; position: relative }
+.list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; background: var(--label) }
+
+.mock { position: relative; width: 100%; aspect-ratio: 2172 / 724; container-type: inline-size; border: 2px solid #000; overflow: hidden; border-radius: 6px; background: #c9d6c2; }
+.mock .b { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 2.9cqw; line-height: 1.25; color: #f2f4e8; box-sizing: border-box; border-top: 1px dashed rgba(0, 0, 0, .45); padding: 0 1cqw; }
+.pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style><main class="wrap">
+  <header class="top">
+    <p class="eyebrow">미궁도시 · 던전</p>
+    <h1>세계수 뿌리굴 부탁 묶음</h1>
+    <p class="lede">세계수 안쪽 뿌리굴의 배경과 몬스터를 GPT에서 뽑을 부탁 글, 함께 붙일 그림 세 장입니다.</p>
+  </header>
+  <section class="sec" aria-labelledby="h-imgs">
+    <div class="what item"><h2 id="h-imgs">GPT에 붙일 그림 3장</h2><p class="note">배경 글에는 깊은 숲 두 장을, 몬스터 글에는 그루터기 판과 깊은 숲 다 겹친 모습을 붙입니다. 그림 아래 「저장」을 누르세요.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
+    <div class="item">
+      <div class="what"><h3>깊은 숲 다 겹친 모습</h3><p class="note">배경 글 1과 모든 몬스터 글에 붙입니다.</p></div>
+      <div class="frame" id="f-comp"><img src="deep_composite.png" alt="깊은 숲 배경 한 장"></div>
+      <div class="row"><button class="btn" type="button" data-zoom="f-comp" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="deep_composite.png" hidden>저장</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>깊은 숲 겹 그림</h3><p class="note">배경 글 2에 붙입니다.</p></div>
+      <div class="frame" id="f-layers"><img src="deep_layers.png" alt="깊은 숲 겹 그림"></div>
+      <div class="row"><button class="btn" type="button" data-zoom="f-layers" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="deep_layers.png" hidden>저장</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>걷는 그루터기 동작 판</h3><p class="note">모든 몬스터 글에 붙입니다. 판 크기와 칸 나눔, 크기의 기준입니다.</p></div>
+      <div class="frame" id="f-sheet"><img src="ref_stump_sheet.png" alt="걷는 그루터기 동작 판: 마젠타 바탕에 세 줄"></div>
+      <div class="row"><button class="btn" type="button" data-zoom="f-sheet" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_stump_sheet.png" hidden>저장</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+  <section class="sec" aria-labelledby="h-bg">
+    <div class="what item"><h2 id="h-bg">배경 부탁 글</h2><p class="note">1번을 먼저 받고, 마음에 드는 그림을 붙여 2번을 보냅니다.</p></div>
+    <div class="item">
+      <div class="what"><h3>1. 뿌리굴 다 겹친 모습</h3><p class="attach">붙일 그림: 깊은 숲 다 겹친 모습</p></div>
+      <pre class="req" id="req-b1" tabindex="0">세계수 뿌리굴 배경 — 다 겹친 모습 한 장
+
+붙인 그림은 같은 게임의 「깊은 숲」 배경입니다. 이 그림과 같은 크기, 같은 화풍, 같은 자리 나눔으로 던전 「세계수 뿌리굴」의 배경을 그려 주세요.
+
+이곳의 이야기
+· 세계수는 맨 아래 뿌리부터 썩어 들어갔고, 썩어 무너진 밑동의 구멍으로 들어오면 이 굴입니다. 세계수의 몸속이자 뿌리 사이의 거대한 빈 공간입니다.
+· 벽과 천장과 기둥이 모두 나무입니다. 돌 동굴이 아니라, 나뭇결이 보이는 살아 있던 나무의 속과 굵은 뿌리들입니다.
+· 원래는 작은 요정과 나무 정령들이 살던 곳이라 뿌리에 손바닥만 한 요정들의 작은 집과 등불이 붙어 있지만, 지금은 모두 버려져 꺼져 있습니다.
+· 썩음이 퍼져 있습니다: 검게 변해 부스러지는 나무, 벽을 타고 흘러내려 굳은 검은 수액, 누런 곰팡이, 창백한 버섯. 썩은 틈에서는 탁한 녹황색 빛이 샙니다.
+· 아직 살아 있는 뿌리도 조금 남아 있어서, 그 속의 수맥이 가늘게 하늘색으로 빛납니다 (깊은 숲의 에테르 빛과 같은 색, 아주 조금만).
+
+위에서 아래로 (깊은 숲 그림과 같은 높이에서 나눕니다)
+1. 맨 위 띠: 그림으로 꽉 채운다 (마젠타 없음, 하늘 없음). 굴의 천장 — 서로 얽힌 굵은 뿌리들과 그 사이의 어둠, 천장에서 커튼처럼 늘어진 잔뿌리.
+2. 먼 곳: 굴이 안쪽으로 깊이 이어진다. 바닥에서 천장까지 닿는 거대한 뿌리 기둥들이 겹겹이 서 있고 멀수록 흐리다. 먼 기둥 몇 개에는 하늘색 수맥이 가늘게 빛나고, 몇 개는 검게 썩어 녹황색 빛이 샌다.
+3. 가운데: 가까운 나무 벽과 뿌리 기둥. 나뭇결과 나이테 무늬가 보이는 벽, 아치처럼 휜 뿌리, 벽을 타고 흘러내린 검은 수액, 층층이 핀 누런 곰팡이와 창백한 버섯. 뿌리 한 곳에 요정들의 버려진 작은 마을(손바닥만 한 둥근 집 여러 채, 실 같은 줄다리, 꺼진 작은 등불).
+4. 땅: 가운데를 가로지르는 길. 다져진 흙과 납작한 뿌리가 섞인 바닥, 군데군데 검은 수액 웅덩이. 캐릭터가 이 길 위에 한 줄로 서므로 길과 그 둘레는 캐릭터가 묻히지 않을 만큼 밝게.
+5. 맨 아래 앞: 땅에서 솟은 잔뿌리, 창백한 버섯 무리, 누런 곰팡이 낀 나무 조각, 흙에 반쯤 묻힌 만드라고라 잎 다발(넓은 잎만 보임).
+
+색: 바탕은 아주 짙은 갈색과 검은 밤색, 어두운 올리브색. 썩은 빛은 탁한 녹황색과 창백한 회백색. 살아 있는 수맥만 하늘색(아주 조금). 깊은 숲보다 따뜻하고 탁한 색이며, 새까맣지 않게 나뭇결과 뿌리 모양은 알아볼 수 있게.
+
+공통 규격
+· 그림 크기와 자리 나눔은 붙인 깊은 숲 그림과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율)
+· 도트 그림, 붙인 깊은 숲 그림과 같은 화풍과 같은 점 굵기
+· 빈 자리는 단색 마젠타 #FF00FF
+· 왼쪽 끝과 오른쪽 끝이 이어 붙여도 어색하지 않게 (옆으로 끝없이 흐르는 배경)
+· 캐릭터, 몬스터, 글자는 그리지 않는다
+· 빛줄기, 안개, 떠다니는 빛 가루, 떨어지는 물방울은 그리지 않는다 (게임이 따로 그립니다)
+· 분홍 · 자주 · 보라색은 쓰지 않는다. 십자 무늬, 사람 얼굴 모양 나무는 그리지 않는다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-b1">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>2. 뿌리굴 겹 그림</h3><p class="attach">붙일 그림: 받은 뿌리굴 그림 + 깊은 숲 겹 그림</p></div>
+      <pre class="req" id="req-b2" tabindex="0">세계수 뿌리굴 배경 — 겹 그림 한 장
+
+붙인 그림 두 장: 첫째는 방금 받은 세계수 뿌리굴 배경, 둘째는 깊은 숲의 「겹 그림」입니다. 둘째 그림과 똑같은 칸 나눔으로, 첫째 그림(세계수 뿌리굴)을 겹마다 따로 그려 주세요.
+
+칸 나눔 (깊은 숲 겹 그림과 같은 자리 · 같은 크기)
+1. 맨 위 띠: 먼 곳 — 굴 천장의 얽힌 뿌리와 안쪽으로 겹겹이 선 거대한 뿌리 기둥들. 띠를 위 끝부터 아래 끝까지 그림으로 꽉 채운다 (마젠타 없음).
+2. 둘째 띠: 가까운 나무 벽 — 나뭇결 벽, 아치처럼 휜 뿌리, 흘러내린 검은 수액, 곰팡이와 버섯, 요정들의 버려진 작은 마을. 이 띠도 그림으로 꽉 채운다.
+3. 셋째 띠: 땅 — 다져진 흙과 납작한 뿌리의 길, 검은 수액 웅덩이. 띠 전체가 꽉 차게.
+4. 맨 아래 줄: 낱개 그림 12개를 마젠타 바탕에 띄엄띄엄 한 줄로 — 창백한 버섯 무리 셋(큰 것 · 작은 것 · 길쭉한 것), 땅에서 솟은 잔뿌리 둘, 누런 곰팡이 낀 나무 조각 둘, 만드라고라 잎 다발 둘, 굳은 검은 수액 덩어리, 꺼진 요정 등불(작은 것, 쓰러짐), 하늘색으로 빛나는 살아 있는 뿌리 한 토막. 서로 닿지 않게.
+5. 오른쪽 칸: 큰 낱개 그림 넷을 마젠타 바탕에 — 바닥에서 솟은 굵은 뿌리 기둥 밑동(검은 수액이 흘러내림), 아치 모양으로 휜 큰 뿌리, 요정의 버려진 작은 집 여러 채가 붙은 뿌리 덩어리, 누런 곰팡이로 뒤덮여 썩어 갈라진 큰 뿌리 토막. 서로 닿지 않게.
+
+공통 규격
+· 그림 크기와 자리 나눔은 붙인 깊은 숲 그림과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율)
+· 도트 그림, 붙인 깊은 숲 그림과 같은 화풍과 같은 점 굵기
+· 빈 자리는 단색 마젠타 #FF00FF
+· 왼쪽 끝과 오른쪽 끝이 이어 붙여도 어색하지 않게 (옆으로 끝없이 흐르는 배경)
+· 캐릭터, 몬스터, 글자는 그리지 않는다
+· 빛줄기, 안개, 떠다니는 빛 가루, 떨어지는 물방울은 그리지 않는다 (게임이 따로 그립니다)
+· 분홍 · 자주 · 보라색은 쓰지 않는다. 십자 무늬, 사람 얼굴 모양 나무는 그리지 않는다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-b2">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+  <section class="sec" aria-labelledby="h-mon">
+    <div class="what item"><h2 id="h-mon">몬스터 부탁 글</h2><p class="note">몬스터 하나에 글 하나, 새 대화에서 보냅니다. 크기는 그루터기를 기준으로 적었습니다.</p></div>
+    <div class="item">
+      <div class="what"><h3>3. 비명치는 만드라고라</h3><p class="attach">붙일 그림: 그루터기 동작 판 + 깊은 숲 다 겹친 모습</p></div>
+      <pre class="req" id="req-mandrake" tabindex="0">세계수 뿌리굴 몬스터 — 비명치는 만드라고라
+
+붙인 그림 두 장: 첫째는 같은 게임의 「걷는 그루터기」 동작 판(판 크기 · 칸 나눔 · 화풍 · 크기의 기준), 둘째는 같은 게임의 배경 그림(화풍의 기준)입니다. 첫째 그림과 같은 판 크기 · 같은 칸 나눔 · 같은 화풍으로 새 몬스터 「비명치는 만드라고라」의 동작 판을 한 장 그려 주세요. 이 몬스터는 썩어 가는 세계수의 뿌리 밑 굴에 삽니다. 굴은 짙은 갈색으로 어둡고, 썩은 곳에서 탁한 녹황색 빛이 납니다.
+
+생김새
+· 땅에서 뽑혀 나온 뿌리 식물 몬스터. 몸은 통통하고 울퉁불퉁한 누런 갈색 뿌리이고, 뿌리가 갈라져 짧은 팔 둘과 다리 둘이 됐다. 잔뿌리 털이 듬성듬성
+· 머리 위에 넓고 짙은 초록 잎 다발과 작은 꽃봉오리 하나
+· 얼굴은 뿌리 몸통에 있다: 찡그린 주름, 꾹 감은 듯한 작은 눈, 그리고 아주 크게 벌어지는 입(안은 어둡고 깊다). 늘 울상
+· 몸 군데군데 검게 썩은 얼룩과 누런 곰팡이
+
+크기: 그루터기보다 조금 작다 (키 0.8배쯤, 잎 끝까지 하면 그루터기와 비슷)
+
+줄 나눔 (위에서 아래로)
+1. 서 있기 8장: 훌쩍이듯 몸을 들썩인다, 잎이 흔들리고 입이 조금 벌어졌다 닫힌다
+2. 비명 공격 10장: 숨을 크게 들이쉬며 몸이 부풀고 뒤로 젖혔다가, 입을 한껏 벌리고 앞으로 몸을 내밀며 비명을 지른다(잎이 뒤로 쏠리고 몸이 떨린다), 그 뒤 축 늘어졌다 되돌아온다
+3. 이동 10장: 짧은 뿌리 다리로 뒤뚱뒤뚱 달린다, 잎이 출렁인다
+
+공통 규격
+· 그림 크기와 칸 나눔은 붙인 그루터기 판과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율, 위에서 아래로 세 줄)
+· 도트 그림, 붙인 그루터기 판과 같은 화풍 · 같은 점 굵기 · 같은 검은 테두리
+· 바탕은 단색 마젠타 #FF00FF 하나로만. 그림자, 땅, 글자, 칸 테두리, 줄 사이 선은 그리지 않는다
+· 모든 장에서 오른쪽을 본다 (옆모습)
+· 한 줄의 모든 장은 같은 크기, 발(바닥) 높이를 한 줄로 맞춘다. 장끼리 서로 닿지 않게 넉넉히 띄운다
+· 줄마다 처음 장과 마지막 장은 서 있는 자세로 이어지게
+· 빛나는 부분은 몸 안의 밝은 색으로만 나타내고, 몸 밖으로 번지는 흐린 빛(반투명 번짐)은 그리지 않는다
+· 몸에 분홍 · 자주 · 보라색은 쓰지 않는다 (바탕색과 섞인다)
+· 공격 효과는 몸에서 떨어지지 않게 작게만. 멀리 날아가는 것(소리 물결, 가루, 가시, 수액)은 그리지 않는다 (게임이 따로 그린다)
+· 십자 무늬, 머리 뒤 둥근 빛 고리는 그리지 않는다. 다른 작품의 캐릭터를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-mandrake">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>4. 타락한 드라이어드</h3><p class="attach">붙일 그림: 그루터기 동작 판 + 깊은 숲 다 겹친 모습</p></div>
+      <pre class="req" id="req-dryad" tabindex="0">세계수 뿌리굴 몬스터 — 타락한 드라이어드
+
+붙인 그림 두 장: 첫째는 같은 게임의 「걷는 그루터기」 동작 판(판 크기 · 칸 나눔 · 화풍 · 크기의 기준), 둘째는 같은 게임의 배경 그림(화풍의 기준)입니다. 첫째 그림과 같은 판 크기 · 같은 칸 나눔 · 같은 화풍으로 새 몬스터 「타락한 드라이어드」의 동작 판을 한 장 그려 주세요. 이 몬스터는 썩어 가는 세계수의 뿌리 밑 굴에 삽니다. 굴은 짙은 갈색으로 어둡고, 썩은 곳에서 탁한 녹황색 빛이 납니다.
+
+생김새
+· 썩음에 물든 나무 정령. 키 큰 여인의 모습이지만 몸은 나무다: 살갗은 매끈한 회갈색 나무껍질이고, 팔뚝과 종아리부터는 가지와 뿌리로 바뀐다. 손가락은 길고 뾰족한 가지
+· 머리카락은 시든 잎과 마른 덩굴이 길게 늘어진 것. 머리에 부러진 가지가 관처럼 돋아 있다
+· 몸은 나무껍질과 겹겹의 마른 잎이 긴 옷처럼 덮고 있다(어깨부터 발목까지)
+· 타락의 흔적: 몸 한쪽이 검게 썩어 갈라졌고, 그 틈과 두 눈이 탁한 녹황색으로 빛난다. 눈에서 검은 수액이 눈물처럼 흘러 굳어 있다
+· 표정은 슬프고 차갑다
+
+크기: 모험가와 비슷한 키 (그루터기의 1.5배쯤), 호리호리하다
+
+줄 나눔 (위에서 아래로)
+1. 서 있기 8장: 고개를 조금 숙이고 서서 머리카락과 잎 옷이 천천히 흔들린다
+2. 가지 채찍 공격 10장: 한 팔을 뒤로 들면 팔이 덩굴 채찍처럼 길어지고, 앞으로 크게 휘둘러 내려친 뒤 팔이 줄어들며 되돌아온다 (채찍 길이는 몸 키만큼까지만)
+3. 이동 10장: 발 대신 뿌리가 땅을 짚으며 미끄러지듯 걷는다, 머리카락이 뒤로 흩날린다
+
+공통 규격
+· 그림 크기와 칸 나눔은 붙인 그루터기 판과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율, 위에서 아래로 세 줄)
+· 도트 그림, 붙인 그루터기 판과 같은 화풍 · 같은 점 굵기 · 같은 검은 테두리
+· 바탕은 단색 마젠타 #FF00FF 하나로만. 그림자, 땅, 글자, 칸 테두리, 줄 사이 선은 그리지 않는다
+· 모든 장에서 오른쪽을 본다 (옆모습)
+· 한 줄의 모든 장은 같은 크기, 발(바닥) 높이를 한 줄로 맞춘다. 장끼리 서로 닿지 않게 넉넉히 띄운다
+· 줄마다 처음 장과 마지막 장은 서 있는 자세로 이어지게
+· 빛나는 부분은 몸 안의 밝은 색으로만 나타내고, 몸 밖으로 번지는 흐린 빛(반투명 번짐)은 그리지 않는다
+· 몸에 분홍 · 자주 · 보라색은 쓰지 않는다 (바탕색과 섞인다)
+· 공격 효과는 몸에서 떨어지지 않게 작게만. 멀리 날아가는 것(소리 물결, 가루, 가시, 수액)은 그리지 않는다 (게임이 따로 그린다)
+· 십자 무늬, 머리 뒤 둥근 빛 고리는 그리지 않는다. 다른 작품의 캐릭터를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-dryad">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>5. 타락한 요정 무리</h3><p class="attach">붙일 그림: 그루터기 동작 판 + 깊은 숲 다 겹친 모습</p></div>
+      <pre class="req" id="req-fairy" tabindex="0">세계수 뿌리굴 몬스터 — 타락한 요정 무리
+
+붙인 그림 두 장: 첫째는 같은 게임의 「걷는 그루터기」 동작 판(판 크기 · 칸 나눔 · 화풍 · 크기의 기준), 둘째는 같은 게임의 배경 그림(화풍의 기준)입니다. 첫째 그림과 같은 판 크기 · 같은 칸 나눔 · 같은 화풍으로 새 몬스터 「타락한 요정 무리」의 동작 판을 한 장 그려 주세요. 이 몬스터는 썩어 가는 세계수의 뿌리 밑 굴에 삽니다. 굴은 짙은 갈색으로 어둡고, 썩은 곳에서 탁한 녹황색 빛이 납니다.
+
+생김새
+· 손바닥만 한 아주 작은 요정 네 마리가 한 무리로 떠 있다. 서로 멀리 떨어지지 않고 한 덩어리로 모여 있다
+· 한 마리 한 마리의 모습: 가늘고 작은 사람 몸, 창백한 회청색 살갗, 헝클어진 짧은 검은 머리, 뾰족한 귀, 시든 꽃잎과 마른 잎을 엮은 누더기 옷. 잠자리 날개 같은 투명한 날개 두 쌍은 찢기고 구멍이 났다
+· 타락의 흔적: 손발과 날개 끝이 검은 수액에 물들었고, 눈이 탁한 녹황색으로 빛난다. 심술궂게 웃는다
+· 저마다 가시(식물 가시)를 창이나 단검처럼 들고 있다. 네 마리의 자세와 머리 모양이 조금씩 다르다
+· 초록 잎 원피스에 금발을 올려 묶은 요정은 그리지 않는다(다른 작품의 캐릭터와 닮지 않게)
+
+크기: 무리 전체가 그루터기의 0.9배쯤 (요정 한 마리는 그루터기 키의 1/4쯤). 땅에서 떠 있다 (무리의 아래 끝이 그루터기 무릎 높이쯤)
+
+줄 나눔 (위에서 아래로)
+1. 떠 있기 8장: 제자리에서 날갯짓하며 위아래로 살짝 흔들린다, 서로 자리를 조금씩 바꾼다
+2. 가시 찌르기 공격 10장: 무리가 뒤로 물러나 가시를 겨눈 뒤, 한꺼번에 앞으로 쏜살같이 달려들어 찌르고 흩어졌다가 다시 모인다
+3. 이동 10장: 앞으로 기울어 날아간다, 뒤쪽 요정이 살짝 뒤처진다
+
+공통 규격
+· 그림 크기와 칸 나눔은 붙인 그루터기 판과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율, 위에서 아래로 세 줄)
+· 도트 그림, 붙인 그루터기 판과 같은 화풍 · 같은 점 굵기 · 같은 검은 테두리
+· 바탕은 단색 마젠타 #FF00FF 하나로만. 그림자, 땅, 글자, 칸 테두리, 줄 사이 선은 그리지 않는다
+· 모든 장에서 오른쪽을 본다 (옆모습)
+· 한 줄의 모든 장은 같은 크기, 발(바닥) 높이를 한 줄로 맞춘다. 장끼리 서로 닿지 않게 넉넉히 띄운다
+· 줄마다 처음 장과 마지막 장은 서 있는 자세로 이어지게
+· 빛나는 부분은 몸 안의 밝은 색으로만 나타내고, 몸 밖으로 번지는 흐린 빛(반투명 번짐)은 그리지 않는다
+· 몸에 분홍 · 자주 · 보라색은 쓰지 않는다 (바탕색과 섞인다)
+· 공격 효과는 몸에서 떨어지지 않게 작게만. 멀리 날아가는 것(소리 물결, 가루, 가시, 수액)은 그리지 않는다 (게임이 따로 그린다)
+· 십자 무늬, 머리 뒤 둥근 빛 고리는 그리지 않는다. 다른 작품의 캐릭터를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-fairy">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>6. 뿌리 갉는 용벌레 (보스 후보)</h3><p class="attach">붙일 그림: 그루터기 동작 판 + 깊은 숲 다 겹친 모습</p><p class="note">보스는 아직 정하지 않으셔서 제가 권한 안으로 적었습니다. 다른 보스로 정하시면 글을 바꾸겠습니다.</p></div>
+      <pre class="req" id="req-wyrm" tabindex="0">세계수 뿌리굴 몬스터 — 뿌리 갉는 용벌레
+
+붙인 그림 두 장: 첫째는 같은 게임의 「걷는 그루터기」 동작 판(판 크기 · 칸 나눔 · 화풍 · 크기의 기준), 둘째는 같은 게임의 배경 그림(화풍의 기준)입니다. 첫째 그림과 같은 판 크기 · 같은 칸 나눔 · 같은 화풍으로 새 몬스터 「뿌리 갉는 용벌레」의 동작 판을 한 장 그려 주세요. 이 몬스터는 썩어 가는 세계수의 뿌리 밑 굴에 삽니다. 굴은 짙은 갈색으로 어둡고, 썩은 곳에서 탁한 녹황색 빛이 납니다.
+
+생김새
+· 세계수의 뿌리를 갉아 먹어 온 거대한 애벌레. 세계수를 썩게 한 장본인이다. 용처럼 크고 사납지만 날개도 다리도 없는 벌레다
+· 몸은 굵고 긴 마디 몸. 창백한 누런 회백색 살에 마디마다 검은 밤색의 딱딱한 등판이 덮여 있다. 배 쪽에 짧은 발톱 다리가 줄지어 있다
+· 머리는 검은 밤색 투구 같은 단단한 머리, 크고 톱니 진 큰 턱 한 쌍(나무를 갉는 턱), 그 안쪽에 겹겹의 작은 이빨. 눈은 작고 여럿이며 탁한 녹황색으로 빛난다. 머리 뒤로 뿔 같은 돌기 몇 개
+· 몸 곳곳에 갉아 먹은 나무 부스러기와 검은 수액이 묻어 있고, 마디 사이에서 녹황색 빛이 샌다
+· 몸 앞쪽 절반을 들어 올린 자세
+
+크기: 이 굴에서 가장 강한 몬스터. 든 머리 높이가 그루터기의 2.2배쯤, 몸길이는 그루터기 너비의 3.5배쯤
+
+줄 나눔 (위에서 아래로)
+1. 서 있기 8장: 앞몸을 들고 천천히 좌우로 흔든다, 턱을 딱딱 맞부딪친다
+2. 물어뜯기 공격 10장: 앞몸을 높이 세우고 턱을 크게 벌렸다가 앞으로 내리꽂듯 덮쳐 물어뜯은 뒤 되돌아온다
+3. 이동 10장: 마디 몸을 물결치듯 꿈틀거리며 기어간다
+
+공통 규격
+· 그림 크기와 칸 나눔은 붙인 그루터기 판과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율, 위에서 아래로 세 줄)
+· 도트 그림, 붙인 그루터기 판과 같은 화풍 · 같은 점 굵기 · 같은 검은 테두리
+· 바탕은 단색 마젠타 #FF00FF 하나로만. 그림자, 땅, 글자, 칸 테두리, 줄 사이 선은 그리지 않는다
+· 모든 장에서 오른쪽을 본다 (옆모습)
+· 한 줄의 모든 장은 같은 크기, 발(바닥) 높이를 한 줄로 맞춘다. 장끼리 서로 닿지 않게 넉넉히 띄운다
+· 줄마다 처음 장과 마지막 장은 서 있는 자세로 이어지게
+· 빛나는 부분은 몸 안의 밝은 색으로만 나타내고, 몸 밖으로 번지는 흐린 빛(반투명 번짐)은 그리지 않는다
+· 몸에 분홍 · 자주 · 보라색은 쓰지 않는다 (바탕색과 섞인다)
+· 공격 효과는 몸에서 떨어지지 않게 작게만. 멀리 날아가는 것(소리 물결, 가루, 가시, 수액)은 그리지 않는다 (게임이 따로 그린다)
+· 십자 무늬, 머리 뒤 둥근 빛 고리는 그리지 않는다. 다른 작품의 캐릭터를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-wyrm">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>7. 뿌리 갉는 용벌레 둘째 판 (스킬)</h3><p class="attach">붙일 그림: 받은 용벌레 판 + 그루터기 동작 판 + 깊은 숲 다 겹친 모습</p><p class="note">6번 그림이 마음에 들게 나온 뒤에 보냅니다.</p></div>
+      <pre class="req" id="req-g2" tabindex="0">세계수 뿌리굴 몬스터 — 뿌리 갉는 용벌레 (둘째 판: 스킬)
+
+붙인 그림 세 장: 첫째는 방금 받은 「뿌리 갉는 용벌레」 동작 판, 둘째는 「걷는 그루터기」 동작 판, 셋째는 같은 게임의 배경 그림입니다. 첫째 그림과 똑같은 생김새 · 같은 크기 · 같은 칸 나눔으로 스킬 동작 판을 한 장 더 그려 주세요.
+
+줄 나눔 (위에서 아래로)
+1. 썩은 수액 뱉기 10장: 몸을 뒤로 당기며 목 마디가 부풀고 녹황색으로 밝아졌다가, 턱을 벌리고 앞으로 고개를 내민다 (입 안이 빛나기만 하고, 뱉어져 날아가는 수액은 그리지 않는다)
+2. 몸통 내려찍기 10장: 앞몸을 한껏 높이 세웠다가 온몸으로 앞 땅을 내려찍는다
+3. 쓰러짐 10장: 몸을 뒤틀다 옆으로 쓰러지고, 마디 사이의 빛이 꺼지며 축 늘어진다
+
+공통 규격
+· 그림 크기와 칸 나눔은 붙인 그루터기 판과 똑같이 (가로로 긴 한 장, 같은 가로세로 비율, 위에서 아래로 세 줄)
+· 도트 그림, 붙인 그루터기 판과 같은 화풍 · 같은 점 굵기 · 같은 검은 테두리
+· 바탕은 단색 마젠타 #FF00FF 하나로만. 그림자, 땅, 글자, 칸 테두리, 줄 사이 선은 그리지 않는다
+· 모든 장에서 오른쪽을 본다 (옆모습)
+· 한 줄의 모든 장은 같은 크기, 발(바닥) 높이를 한 줄로 맞춘다. 장끼리 서로 닿지 않게 넉넉히 띄운다
+· 줄마다 처음 장과 마지막 장은 서 있는 자세로 이어지게
+· 빛나는 부분은 몸 안의 밝은 색으로만 나타내고, 몸 밖으로 번지는 흐린 빛(반투명 번짐)은 그리지 않는다
+· 몸에 분홍 · 자주 · 보라색은 쓰지 않는다 (바탕색과 섞인다)
+· 공격 효과는 몸에서 떨어지지 않게 작게만. 멀리 날아가는 것(소리 물결, 가루, 가시, 수액)은 그리지 않는다 (게임이 따로 그린다)
+· 십자 무늬, 머리 뒤 둥근 빛 고리는 그리지 않는다. 다른 작품의 캐릭터를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-g2">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+</main>
+<script>
+const $$ = s => Array.from(document.querySelectorAll(s));
+const msgOf = b => b.parentElement.querySelector('.msg');
+const W = { 'f-comp': 2170, 'f-layers': 2170, 'f-sheet': 2172 };
+$$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');
+  b.addEventListener('click', () => { const on = f.classList.toggle('zoomed'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); });
+// 글 복사: 안 되면 글을 골라 둔다
+$$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const pre = document.getElementById(b.dataset.copy), msg = msgOf(b);
+  try { await navigator.clipboard.writeText(pre.textContent); msg.textContent = '복사했습니다.'; }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); pre.focus(); msg.textContent = '여기서는 바로 복사가 안 됩니다. 글을 골라 두었으니 길게 눌러 복사해 주세요.'; }
+}));
+// 저장 (보는 쪽에서 저장을 받아 줄 때만 단추를 보인다)
+(async () => {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+  if (!dl) return;
+  document.getElementById('save-hint').hidden = true;
+  $$('[data-save]').forEach(b => { b.hidden = false; b.addEventListener('click', async () => {
+    const msg = msgOf(b); b.disabled = true; msg.textContent = '';
+    try { const blob = await (await fetch(b.dataset.save)).blob(); await dl.save({ filename: b.dataset.save, data: blob }); msg.textContent = '저장했습니다.'; }
+    catch (e) { const c = e && e.code; msg.textContent = c === 'declined' ? '저장을 취소했습니다.' : c === 'rate_limited' ? '잠시 뒤에 다시 눌러 주세요.' : '여기서는 저장할 수 없습니다. 그림을 길게 눌러 저장해 주세요.'; }
+    b.disabled = false; }); });
+})();
+</script>
