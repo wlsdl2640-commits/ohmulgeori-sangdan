@@ -32,7 +32,7 @@ Object.assign(FLOOR_INFO, {
   warehouse: { name: '창고', win: 'b:warehouse', art: 'warehouse' }
 });
 FLOOR_INFO.shop.art = 'lobby'; FLOOR_INFO.shop.win = 'co';
-for (const k of ['smithy', 'library', 'temple', 'tower', 'inn', 'kitchen', 'alchemy', 'pen', 'stable', 'airfield', 'tavern', 'port']) FLOOR_INFO[k].art = k;   // 11-21 02:50: 방 그림 열둘 더 (훈련소 · 재배소는 아직 옛 그림)   // 11-21 02:05: 받은 방 그림 셋 (data-rooms.js) — 그림 장면은 어디를 눌러도 그 장소의 창
+for (const k of ['smithy', 'library', 'temple', 'tower', 'inn', 'kitchen', 'alchemy', 'pen', 'stable', 'airfield', 'tavern', 'port', 'farm', 'training']) FLOOR_INFO[k].art = k;   // 11-21 02:50: 방 그림 열둘 더 (훈련소 · 재배소는 아직 옛 그림)   // 11-21 02:05: 받은 방 그림 셋 (data-rooms.js) — 그림 장면은 어디를 눌러도 그 장소의 창
 const HQ_ART = {};   // 방 그림 (다 풀리면 장면을 다시 그린다)
 if (typeof ROOM_ART !== 'undefined') for (const k in ROOM_ART) { const im = new Image(); im.onload = () => { HQ_ART[k] = im; HQ.views = {}; }; im.src = ROOM_ART[k]; }
 function hqArtView(f) {   // 그림 장면: 화면을 꽉 채우게 자른 그림 한 장 (기기 화소 그대로 · 아래쪽을 맞춘다)
