@@ -60,7 +60,7 @@ function unloadBag(p, bag, gear, sup) {
   for (const [k, q] of Object.entries(sup || {})) { if (stashItem(k, q, true) === 'lost') lost.push(ITEMS[k].name); }   // 남은 보급품
   const ids = typeof srcAdd === 'function' && p ? teamOf(p).map(a => a.id) : null;
   for (const [k, q] of Object.entries(bag)) {
-    if (ids) srcAdd(k, q, ids);   // 빌드 72: 누가 얻어 왔는지 (협회에 팔리거나 의뢰품으로 나갈 때 개인 명예)
+    if (ids) srcAdd(k, q, ids);   // 빌드 72: 누가 얻어 왔는지 (협회에 팔리거나 의뢰품으로 나갈 때 개인 명성)
     if (AS[k] != null || S.reqs.some(r => r.item === k)) { addTo(S.inv, k, q); continue; }   // 자동 판매 · 의뢰품은 메인 창고로 (곧 팔거나 전달한다)
     const r = stashItem(k, q, true);
     if (r === 'lost') lost.push(ITEMS[k].name); else if (r.startsWith('wh')) moved[r] = (moved[r] || 0) + 1;

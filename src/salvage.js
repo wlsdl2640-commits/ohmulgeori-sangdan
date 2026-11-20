@@ -41,7 +41,9 @@ function salvBossParts(f) {
 const salvSoul = f => (TIER_FIELDS.includes(f) && ITEMS['soul_' + FIELDS[f].tier] ? 'soul_' + FIELDS[f].tier : null);
 const salvMatsOf = lv => SALV.mats[lv] * (blessed('harvest') ? 1.15 : 1);   // 풍요신의 축복이면 조금 더
 // 날마다 (새벽): 수거꾼이 던전마다 부속품을 가져온다. 가져온 수를 돌려준다
+const SALV_ON = false;   // 빌드 72 (11-21 02:29 사용자 「던전 수거소 같은 건 삭제」): 꺼 둔다
 function salvageDay(k) {
+  if (!SALV_ON) return 0;
   const lv = S.bld.salvage || 0; if (!lv) return 0;
   const st = salvState(); if (st.day === k) return 0;
   st.day = k;

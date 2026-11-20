@@ -421,7 +421,7 @@ function recall(p, why = '') {
 // 던전 입구 앞에서: 들어간다 / 지나간다(돌아간다)
 function enterDungeon(p) {
   const e = p.exp;
-  if (!e || e.wait !== 'gate' || e.area !== 'field' || S.fields[e.field].cleared) return;
+  if (!e || e.wait !== 'gate' || e.area !== 'field') return;   // 빌드 72: 던전은 다시 들어갈 수 있다
   e.wait = null; e.area = 'dungeon'; e.stage = 1; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
   log(`${p.name}이(가) ${FIELDS[e.field].dungeon.name}에 들어갔다.`);
   ev(e, 'enter', {});
@@ -525,14 +525,14 @@ function stageClear(p, e) {
     if (e.stage >= fstages(F)) {
       e.pos = STAGE_LEN;
       // 1-50의 주인을 쓰러뜨려 던전 입구가 열렸다 (한 번 공략한 던전은 봉인된다)
-      if (!fs.cleared && !isLab(e.field)) {   // 빌드 72 (11-20 16:38 사용자 「예전 던전은 없애 나중에 내가 던전을 따로 추가할 거야」): 미궁 계층에서는 옛 던전 입구가 나오지 않는다
+      if (F.dungeon && !isLab(e.field)) {   // 빌드 72 (11-21 02:29 사용자 「던전은 1회용 아니고 반복 가능하게」): 공략한 던전도 다시 열린다   // 빌드 72 (11-20 16:38 사용자 「예전 던전은 없애 나중에 내가 던전을 따로 추가할 거야」): 미궁 계층에서는 옛 던전 입구가 나오지 않는다
         if (!fs.found) { fs.found = true; log(`${p.name}이(가) ${F.no}-${FIELD_STAGES}에서 ${F.dungeon.name} 입구를 열었다!`, 'good'); }
         const mode = p.dmode || 'ask';
         if (mode !== 'skip') {
           e.wait = 'gate';
           if (mode === 'enter') { enterDungeon(p); return; }
           HOOKS.toast(`${p.name}: ${F.dungeon.name} 입구에 도착`);
-          queueModal({ title: `${F.dungeon.name} 입구`, gate: p.id, body: [`${p.name}이(가) ${F.name}의 주인을 쓰러뜨리고 ${F.dungeon.name} 입구 앞에 섰다.`, `던전은 한 번만 공략할 수 있다. 안에는 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)} 몬스터와 주인 ${MONS[F.dungeon.boss].name}(Lv${dungeonBossLv(F)})이 기다린다. 파티 평균 Lv${Math.round(avgLvOf(p))}.`] });
+          queueModal({ title: `${F.dungeon.name} 입구`, gate: p.id, body: [`${p.name}이(가) ${F.name}의 주인을 쓰러뜨리고 ${F.dungeon.name} 입구 앞에 섰다.`, `안에는 Lv${dungeonLv(F, 1)}~${dungeonLv(F, DUNGEON_FLOORS)} 몬스터와 주인 ${MONS[F.dungeon.boss].name}(Lv${dungeonBossLv(F)})이 기다린다. 파티 평균 Lv${Math.round(avgLvOf(p))}.`] });
           changed();
           return;
         }

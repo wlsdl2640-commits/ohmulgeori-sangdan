@@ -1,0 +1,410 @@
+<title>시설 그림 부탁</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 배치: 한 줄 흐름 — 머리 → 순서(번호: 실제 차례) → 붙일 그림 셋(그림 · 크게 보기 · 저장) → 부탁 글 넷(글 · 복사) → 받은 뒤 볼 것.
+   색은 궁수 그림에서: 두건 초록 · 가죽 갈색 · 버클 금색. 그림은 밝은 회색 판 그대로 보인다 */
+:root {
+  --bg: #eeedf4; --surface: #f9f8fc; --panel: #dcd9e8; --fg: #1c1a26; --muted: #5a5770; --line: #c8c4d8;
+  --accent: #2f6a3a; --accent-fg: #ffffff; --label: #7a5a0c; --sheet: #c8ccd6; --code: #f3f1f9;
+  --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark }
+*, *::before, *::after { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 820px; margin-inline: auto; display: grid; gap: 44px; grid-template-columns: minmax(0, 1fr) }
+h1, h2, h3, p, ul, ol, figure, pre { margin: 0 }
+ul, ol { padding: 0; list-style: none }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.15 }
+h1 { font-size: clamp(30px, 7vw, 42px) }
+h2 { font-size: 24px }
+h3 { font-size: 16px; font-weight: 600 }
+.top { display: grid; gap: 10px }
+.eyebrow { color: var(--label); font-size: 13px; font-weight: 600; letter-spacing: .04em }
+.lede { max-width: 36em }
+.sec { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) }
+.note { color: var(--muted); font-size: 14px; max-width: 44em }
+.steps { counter-reset: n; display: grid; gap: 12px; max-width: 46em }
+.steps li { counter-increment: n; padding-left: 34px; position: relative }
+.steps li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font: 400 15px/1 var(--font-display); background: var(--accent); color: var(--accent-fg); border-radius: 4px }
+.item { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) }
+.item .what { display: grid; gap: 2px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.msg { color: var(--muted); font-size: 13px }
+.msg:empty { display: none }
+.btn { font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.btn[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg) }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-fg) }
+.btn:disabled { opacity: .6; cursor: default }
+.btn:focus-visible { outline: 2px solid var(--label); outline-offset: 2px }
+.frame { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px }
+.frame img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.frame.zoomed img { width: var(--zw); max-width: none }
+.frame.soft img { image-rendering: auto }
+.attach { color: var(--label); font-size: 13px; font-weight: 600 }
+.req { font: 13.5px/1.65 var(--font-body); white-space: pre-wrap; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; max-height: 22em; overflow: auto; -webkit-user-select: text; user-select: text }
+.list { display: grid; gap: 10px; max-width: 46em }
+.list li { padding-left: 18px; position: relative }
+.list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; background: var(--label) }
+
+.mock { position: relative; width: 100%; aspect-ratio: 2172 / 724; container-type: inline-size; border: 2px solid #000; overflow: hidden; border-radius: 6px; background: #c9d6c2; }
+.mock .b { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 2.9cqw; line-height: 1.25; color: #f2f4e8; box-sizing: border-box; border-top: 1px dashed rgba(0, 0, 0, .45); padding: 0 1cqw; }
+.pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style><main class="wrap">
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스</p><h1>시설 그림 부탁 묶음</h1><p class="lede">아직 옛 그림인 시설 열네 곳을 GPT에서 뽑을 부탁 글과 붙일 그림 두 장입니다.</p></header>
+  <section class="sec">
+    <div class="what item"><h2>GPT에 붙일 그림 2장</h2><p class="note">받아 오신 방 그림을 화풍과 구도의 기준으로 씁니다. 크기는 지난번과 같은 가로 3 : 세로 1입니다.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
+    <div class="item">
+      <div class="what"><h3>모험가 협회 로비</h3><p class="note">미궁탑 시설 넷(1~4번)에 붙입니다.</p></div>
+      <div class="frame" id="f-assoc"><img src="ref_assoc.png" alt="모험가 협회 로비 그림"></div>
+      <div class="row"><button class="btn" type="button" data-zoom="f-assoc" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_assoc.png" hidden>저장</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>길드 본부 로비</h3><p class="note">길드 본부 시설 여덟과 도시 시설 둘(5~14번)에 붙입니다.</p></div>
+      <div class="frame" id="f-lobby"><img src="ref_lobby.png" alt="길드 본부 로비 그림"></div>
+      <div class="row"><button class="btn" type="button" data-zoom="f-lobby" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_lobby.png" hidden>저장</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+  <section class="sec"><div class="what item"><h2>미궁탑 (붙일 그림: 모험가 협회 로비)</h2></div>
+    <div class="item">
+      <div class="what"><h3>1. 대장간</h3></div>
+      <pre class="req" id="req-smithy" tabindex="0">대장간
+
+붙인 그림은 같은 게임의 「모험가 협회 로비」(미궁탑 안)입니다. 같은 탑 안의 다른 시설이니, 붙인 그림과 같은 화풍 · 같은 돌기둥과 금빛 장식 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「대장간」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 가운데에 큰 화로(벌건 숯불)와 굴뚝 덮개, 그 앞에 모루와 망치, 물통
+· 벽에 집게와 망치 걸이, 만들어 둔 검 · 도끼 · 방패 · 투구가 걸린 진열 벽
+· 한쪽에 풀무와 쇳덩이 · 석탄 더미, 숫돌 바퀴, 갑옷을 입힌 나무 인형
+· 협회가 운영하는 큰 대장간답게 돌기둥과 아치, 금빛 테 장식. 화로 불빛이 방을 붉게 물들인다
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-smithy">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>2. 도서관</h3></div>
+      <pre class="req" id="req-library" tabindex="0">도서관
+
+붙인 그림은 같은 게임의 「모험가 협회 로비」(미궁탑 안)입니다. 같은 탑 안의 다른 시설이니, 붙인 그림과 같은 화풍 · 같은 돌기둥과 금빛 장식 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「도서관」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 뒷벽 가득 천장까지 닿는 높은 책장과 바퀴 달린 사다리
+· 가운데에 긴 열람 책상(펼친 책, 깃펜, 잉크병, 초록 갓 등불), 독서대 위의 크고 두꺼운 책
+· 한쪽에 두루마리 꽂이와 지구본 같은 천구의, 다른 쪽에 봉인된 유리 책장
+· 높은 아치 창과 샹들리에, 고요하고 장엄한 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-library">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>3. 대신전</h3></div>
+      <pre class="req" id="req-temple" tabindex="0">대신전
+
+붙인 그림은 같은 게임의 「모험가 협회 로비」(미궁탑 안)입니다. 같은 탑 안의 다른 시설이니, 붙인 그림과 같은 화풍 · 같은 돌기둥과 금빛 장식 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「대신전」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 가운데 뒤쪽에 높은 제단과 그 위의 큰 빛나는 수정(또는 물이 흐르는 성수반). 사람 모습의 신상은 두지 않는다
+· 제단 양옆에 촛대 여러 개와 향로, 꽃 장식
+· 양쪽에 치료용 침대 두세 개(흰 천, 약병이 놓인 작은 탁자)
+· 높은 기둥과 색유리창(무늬는 별과 잎 같은 단순한 꼴), 창으로 들어온 색 빛이 바닥에 비친다. 십자 무늬와 머리 뒤 둥근 빛 고리는 그리지 않는다
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-temple">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>4. 마탑</h3></div>
+      <pre class="req" id="req-mage" tabindex="0">마탑
+
+붙인 그림은 같은 게임의 「모험가 협회 로비」(미궁탑 안)입니다. 같은 탑 안의 다른 시설이니, 붙인 그림과 같은 화풍 · 같은 돌기둥과 금빛 장식 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「마탑」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 가운데에 바닥에 새긴 큰 마법진(둥근 고리와 점으로만 된 무늬)과 그 위에 떠 있는 빛나는 구슬
+· 뒷벽에 마법서 책장, 별자리 그림판, 큰 망원경
+· 한쪽에 룬을 새기는 작업대(돌 조각, 끌, 빛나는 룬석), 다른 쪽에 수정 기둥과 플라스크가 놓인 연구 책상
+· 푸른빛과 보랏빛 마법 등불, 신비로운 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-mage">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+  <section class="sec"><div class="what item"><h2>길드 본부 (붙일 그림: 길드 본부 로비)</h2></div>
+    <div class="item">
+      <div class="what"><h3>5. 모험가 숙소</h3></div>
+      <pre class="req" id="req-inn" tabindex="0">모험가 숙소
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「모험가 숙소」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 뒷벽을 따라 2층 침대 세 채(이불과 베개, 침대마다 작은 커튼)
+· 침대 옆마다 개인 사물함과 옷걸이(망토, 가방), 벽 선반에 개인 물건
+· 가운데에 작은 탁자와 의자, 난로, 빨래가 걸린 줄
+· 작은 창과 벽걸이 등불, 포근하고 조용한 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-inn">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>6. 주방</h3></div>
+      <pre class="req" id="req-kitchen" tabindex="0">주방
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「주방」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 뒷벽 가운데에 큰 화덕과 솥(김이 오름), 옆에 빵 굽는 가마
+· 긴 조리대(도마, 칼, 채소, 고기, 밀가루 자루), 천장에 매달린 냄비 · 프라이팬 · 마늘 · 말린 고기
+· 한쪽에 식재료 선반(항아리, 치즈, 과일 바구니)과 물통, 다른 쪽에 접시 찬장
+· 따뜻하고 분주한 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-kitchen">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>7. 연금술 연구실</h3></div>
+      <pre class="req" id="req-alchemy" tabindex="0">연금술 연구실
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「연금술 연구실」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 긴 실험대 위에 플라스크, 증류기, 약절구, 색색의 물약병, 작은 불 위에서 끓는 유리 그릇
+· 뒷벽에 약초 서랍장(작은 서랍이 빽빽함)과 말린 약초 다발, 병이 가득한 선반
+· 한쪽에 큰 가마솥(초록 약이 끓음), 다른 쪽에 처방을 적은 책과 저울
+· 물약 빛(초록 · 파랑 · 주황)이 은은하게 비친다
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-alchemy">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>8. 훈련소</h3></div>
+      <pre class="req" id="req-training" tabindex="0">훈련소
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「훈련소」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 뒷벽에 훈련용 무기 걸이(목검, 창, 활)와 과녁 두세 개
+· 가운데에 허수아비 훈련 인형 두 개(짚과 나무, 낡은 투구), 한쪽에 모래주머니와 역기
+· 벽에 길드 깃발과 훈련 일정판, 구석에 물통과 수건
+· 바닥은 다진 흙이나 모래를 깐 마루, 넓고 탁 트인 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-training">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>9. 사육장</h3></div>
+      <pre class="req" id="req-pen" tabindex="0">사육장
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「사육장」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 뒷벽을 따라 나무 우리 서너 칸(칸마다 짚, 먹이통, 물통. 우리는 비어 있다)
+· 가운데에 알을 품는 둥지(짚 위에 큰 알 두세 개, 그 위에 따뜻한 등불)
+· 한쪽에 먹이 자루와 건초 더미, 솔과 양동이, 다른 쪽에 작은 횃대
+· 동물은 그리지 않는다. 헛간 같은 포근한 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-pen">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>10. 재배소</h3></div>
+      <pre class="req" id="req-farm" tabindex="0">재배소
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「재배소」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 유리 지붕과 유리벽으로 된 온실 안. 창살 사이로 저녁 하늘이 보인다
+· 뒤쪽에 길게 놓인 화단 세 줄(약초, 버섯, 덩굴 채소가 자람), 이름표 팻말(글자 없이)
+· 화분이 놓인 선반, 물뿌리개, 삽과 호미, 씨앗 자루, 물통
+· 초록이 가득하고 등불이 따뜻한 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-farm">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>11. 마구간</h3></div>
+      <pre class="req" id="req-stable" tabindex="0">마구간
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「마구간」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 뒷벽을 따라 말 칸 서너 개(칸막이 문, 건초, 여물통. 칸은 비어 있다)
+· 벽에 안장, 고삐, 편자, 채찍이 걸려 있고, 한쪽에 건초 더미와 쇠스랑
+· 다른 쪽에 짐수레 한 대(바퀴 둘, 덮개 없음)와 나무 통
+· 동물은 그리지 않는다. 등불이 걸린 헛간 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-stable">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>12. 비행장</h3></div>
+      <pre class="req" id="req-airfield" tabindex="0">비행장
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 길드 건물 안의 다른 방이니, 붙인 그림과 같은 화풍 · 같은 나무와 돌 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「비행장」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 길드 건물 옥상의 넓은 나무 갑판. 뒤로 저녁 하늘과 구름, 멀리 미궁탑의 윤곽
+· 한쪽에 날개와 풍선이 달린 비행 마차(작은 비행선) 한 대가 밧줄로 묶여 있다
+· 바람 자루가 달린 깃대, 신호 등불, 밧줄 감개, 짐 상자
+· 난간에 등불이 줄지어 있고, 탁 트이고 바람 부는 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-airfield">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+  <section class="sec"><div class="what item"><h2>도시 시설 (붙일 그림: 길드 본부 로비)</h2></div>
+    <div class="item">
+      <div class="what"><h3>13. 선술집</h3></div>
+      <pre class="req" id="req-tavern" tabindex="0">선술집
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 도시(미궁도시 라비린토스)에 있는 다른 장소이니, 붙인 그림과 같은 화풍 · 같은 등불 빛 · 같은 크기와 구도(정면에서 본 모습, 아래 1/4은 빈 바닥)로 「선술집」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 도시의 큰 선술집. 길드 로비보다 훨씬 넓고 북적이는 곳(사람은 그리지 않는다)
+· 긴 바와 큰 술통이 줄지어 있고, 긴 식탁과 긴 의자가 여러 줄, 식탁마다 잔과 접시
+· 한쪽에 작은 무대(류트와 북), 다른 쪽에 큰 벽난로와 통구이 꼬챙이
+· 벽에 모험가를 구하는 쪽지가 붙은 기둥, 여러 길드의 작은 깃발, 천장에 수레바퀴 샹들리에
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-tavern">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+    <div class="item">
+      <div class="what"><h3>14. 항구</h3></div>
+      <pre class="req" id="req-port" tabindex="0">항구
+
+붙인 그림은 같은 게임의 「길드 본부 로비」입니다. 같은 도시(미궁도시 라비린토스)에 있는 다른 장소이니, 붙인 그림과 같은 화풍 · 같은 등불 빛 · 같은 크기와 구도(정면에서 본 모습, 아래 1/4은 빈 바닥)로 「항구」을(를) 그려 주세요.
+
+이곳에 있는 것
+· 저녁의 부두. 뒤로 바다와 노을, 멀리 등대
+· 부두에 묶인 큰 범선 한 척(돛을 접음)과 작은 배, 나무 기중기
+· 부두 위에 화물 상자와 통, 그물, 밧줄 기둥, 생선 좌판, 항구 사무소의 작은 창구
+· 아래 1/4은 빈 나무 부두 바닥. 가로등이 줄지어 켜져 있다
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 종이에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre>
+      <div class="row"><button class="btn go" type="button" data-copy="req-port">글 복사</button><span class="msg" role="status"></span></div>
+    </div>
+  </section>
+</main>
+<script>
+const $$ = s => Array.from(document.querySelectorAll(s));
+const msgOf = b => b.parentElement.querySelector('.msg');
+const W = { 'f-assoc': 2172, 'f-lobby': 2172 };
+$$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');
+  b.addEventListener('click', () => { const on = f.classList.toggle('zoomed'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); });
+// 글 복사: 안 되면 글을 골라 둔다
+$$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const pre = document.getElementById(b.dataset.copy), msg = msgOf(b);
+  try { await navigator.clipboard.writeText(pre.textContent); msg.textContent = '복사했습니다.'; }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); pre.focus(); msg.textContent = '여기서는 바로 복사가 안 됩니다. 글을 골라 두었으니 길게 눌러 복사해 주세요.'; }
+}));
+// 저장 (보는 쪽에서 저장을 받아 줄 때만 단추를 보인다)
+(async () => {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+  if (!dl) return;
+  document.getElementById('save-hint').hidden = true;
+  $$('[data-save]').forEach(b => { b.hidden = false; b.addEventListener('click', async () => {
+    const msg = msgOf(b); b.disabled = true; msg.textContent = '';
+    try { const blob = await (await fetch(b.dataset.save)).blob(); await dl.save({ filename: b.dataset.save, data: blob }); msg.textContent = '저장했습니다.'; }
+    catch (e) { const c = e && e.code; msg.textContent = c === 'declined' ? '저장을 취소했습니다.' : c === 'rate_limited' ? '잠시 뒤에 다시 눌러 주세요.' : '여기서는 저장할 수 없습니다. 그림을 길게 눌러 저장해 주세요.'; }
+    b.disabled = false; }); });
+})();
+</script>

@@ -43,7 +43,7 @@ function hqArtView(f) {   // 그림 장면: 화면을 꽉 채우게 자른 그�
 FLOOR_INFO.shop.name = '길드 본부 로비'; FLOOR_INFO.inn.name = '모험가 숙소'; FLOOR_INFO.alchemy.name = '연금술 연구실'; FLOOR_INFO.temple.name = '대신전'; FLOOR_INFO.salvage.under = 0; FLOOR_INFO.smithy.under = 0;
 const HQ_ZONES = {
   tower: { name: '미궁탑', ids: ['assoc', 'smithy', 'library', 'temple', 'tower'], open: ['assoc', 'smithy', 'library', 'temple', 'tower'] },   // open: 짓지 않았어도 보이는 장소 (누르면 짓기 창)
-  guild: { name: '길드 본부', ids: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy', 'training', 'pen', 'farm', 'stable', 'salvage', 'airfield'], open: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy'] },
+  guild: { name: '길드 본부', ids: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy', 'training', 'pen', 'farm', 'stable', 'airfield'], open: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy'] },
   city:  { name: '도시 시설', ids: ['tavern', 'port'], open: ['tavern', 'port'] }
 };
 const HQ_ZONE_IDS = ['tower', 'guild', 'city'];
