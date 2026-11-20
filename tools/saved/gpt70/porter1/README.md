@@ -13,3 +13,6 @@ KIT=porter python3 ../mage1/magepage.py out site
 
 ## 11-20 13:47 등불
 사용자(등불 판 「부장비 47」을 보내며) 「짐꾼 손에 이거 들어야 해」 → 왼손에 Lv1 등불(lantern_lv1.png = 판에서 그 그림만 오림). 부탁 글 1에 그림 셋을 붙인다.
+
+## 받은 판 → 게임 (11-20 14:43)
+`CLS=porter python3 ../mage1/extract_m1.py 40` → `../hd70/export_hd70.py` → hd70.js HDCFG.porter. 판 `../hd70/sheets/porter1_*`. 페이지: `TEAM=warrior,porter,cleric`로 찍고(짐꾼은 파티에 하나) `KIT=porter python3 ../mage1/magepage.py out site - - <cap 폴더>`.

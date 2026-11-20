@@ -8,10 +8,10 @@ import numpy as np
 from PIL import Image, ImageDraw
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, '..', 'mid70'))
 from mid_core import Palette, flat_pixels, down, to_rgba
-from seg_m1 import key, split, heel
+from seg_m1 import key, split, heel, face_of
 T = int(sys.argv[1]); CHK = sys.argv[2] if len(sys.argv) > 2 else None
 CLS = os.environ.get('CLS', 'mage')   # 다른 직업: CLS=archer (판 archer1_base · walk · shot · death → out_archer1_<키>/ · 팔레트 archer1_pal.pkl)
-ATK = {'mage': 'cast', 'archer': 'shot', 'cleric': 'swing', 'rogue': 'stab'}[CLS]; TAG = 'm1' if CLS == 'mage' else CLS + '1'; OUT = f'out_{TAG}_{T}'; os.makedirs(OUT, exist_ok=True); PALF = f'{TAG}_pal.pkl'
+ATK = {'mage': 'cast', 'archer': 'shot', 'cleric': 'swing', 'rogue': 'stab', 'porter': 'smash'}[CLS]; TAG = 'm1' if CLS == 'mage' else CLS + '1'; OUT = f'out_{TAG}_{T}'; os.makedirs(OUT, exist_ok=True); PALF = f'{TAG}_pal.pkl'
 SH = os.path.join(HERE, '..', 'hd70', 'sheets')
 SHEETS = [('base', 1, 5), ('walk', 2, 8), (ATK, 2, 8), ('death', 2, 8)]
 D = {}
@@ -32,20 +32,23 @@ def head_x(rgb, m):   # 궁수: 두건(위 35% — 붉은 깃은 빼고)의 가�
     r, g, b = [rgb[..., i].astype(int) for i in range(3)]; hd = m & ~((r > 150) & (r - g > 60)); hd[int(m.shape[0] * 0.35):] = False
     xs = np.where(hd.sum(0) > 2)[0]; return (xs.min() + xs.max()) / 2 if len(xs) else m.shape[1] / 2
 
-WALK_X = brim_x if CLS == 'mage' else head_x
-def eye_fix(rgb, m, o, c, r):
+def face_x(rgb, m):   # 짐꾼: 얼굴(가장 위의 살색 덩어리) 가운데 — 머리띠 · 담요가 둘 다 붉고 등짐이 넓어 두건 가운데를 못 쓴다
+    f = face_of(rgb, m); return (f[2] + f[3]) / 2 if f else head_x(rgb, m)
+
+WALK_X = brim_x if CLS == 'mage' else face_x if CLS == 'porter' else head_x
+def eye_fix(rgb, m, o, c, r, anyshape=False):
     """눈 살리기: 눈(살색에 둘러싸인 가는 어두운 줄)이 칸 경계에 걸리면 양쪽 칸 어느 쪽도 절반을 못 넘어 사라진다(사제 휘두르기 4 · 5번째 장)
        → 판에서 눈을 찾아, 그 자리 칸에 어두운 칸이 하나도 없으면 눈 가운데가 든 칸 줄을 테 색으로"""
     from scipy import ndimage
     R, G, B = [rgb[..., i].astype(int) for i in range(3)]; L = 0.299 * R + 0.587 * G + 0.114 * B
-    skin = m & (R > 170) & (G > 115) & (G < 215) & (B > 75) & (B < 180) & (R - B > 40); dk = m & (L < 75)
-    lab, n = ndimage.label(dk); out, (ax, ay) = r[0], r[1]; fixed = 0
+    skin = m & (R > 170) & (G > 115) & (G < 215) & (B > 75) & (B < 180) & (R - B > 40); dk = m & (L < (95 if anyshape else 75))
+    lab, n = ndimage.label(ndimage.binary_closing(dk, iterations=2) if anyshape else dk); out, (ax, ay) = r[0], r[1]; fixed = 0
     for k in range(1, n + 1):
         comp = lab == k; sz = comp.sum()
-        if sz < 0.25 * c * c or sz > 4 * c * c: continue
+        if sz < (0.12 if anyshape else 0.25) * c * c or sz > 4 * c * c: continue
         ring = ndimage.binary_dilation(comp, iterations=3) & ~comp
         ys, xs = np.where(comp)
-        if skin[ring].mean() < 0.4 or (ys.max() - ys.min() + 1) < 2 * (xs.max() - xs.min() + 1): continue   # 뜬 눈만 (세로로 긴 줄 — 감은 눈 · 손 테는 건드리지 않는다)
+        if skin[ring].mean() < (0.45 if anyshape else 0.4) or (not anyshape and (ys.max() - ys.min() + 1) < 2 * (xs.max() - xs.min() + 1)): continue   # 뜬 눈만 (세로로 긴 줄 — 감은 눈 · 손 테는 건드리지 않는다)
         ci = int(np.floor((o[0] + xs.mean() + 0.5) / c)) + ax
         cj0 = (o[1] + ys.min() + 0.5) / c + ay; cj1 = (o[1] + ys.max() + 0.5) / c + ay
         rows = [j for j in range(int(np.floor(cj0)), int(np.floor(cj1)) + 1) if min(cj1, j + 1) - max(cj0, j) >= 0.4] or [int(np.floor((cj0 + cj1) / 2))]
@@ -62,7 +65,8 @@ for rn, sheet, idx in ROWS:
     for i in idx:
         rgb, m = D[sheet][i]
         ax = WALK_X(rgb, m) if rn == 'walk' else m.shape[1] / 2 if rn in ('front', 'sit', 'sleep') else heel(m)
-        r = down(rgb, m, (-ax, -m.shape[0]), c, P); nfix = 0 if rn in ('death', 'sleep') else eye_fix(rgb, m, (-ax, -m.shape[0]), c, r)   # 누운 장은 눈을 감고 있다
+        r = down(rgb, m, (-ax, -m.shape[0]), c, P); wince = CLS in ('cleric', 'porter') and (rn == 'hurt' or (rn == 'death' and i < 7))   # 찡그린 눈(> < 꼴)도 살린다 — 11-20 사제 · 짐꾼부터(앞 직업 자료는 그대로 둔다)
+        nfix = 0 if rn == 'sleep' or (rn == 'death' and not wince) else eye_fix(rgb, m, (-ax, -m.shape[0]), c, r, wince)   # 누운 장은 눈을 감고 있다
         if nfix: print('  눈 살림', rn, i, nfix)
         F.append(r)
     X0 = min(-r[1][0] for r in F); Y0 = min(-r[1][1] for r in F); X1 = max(r[0].shape[1] - r[1][0] for r in F); Y1 = max(r[0].shape[0] - r[1][1] for r in F)
