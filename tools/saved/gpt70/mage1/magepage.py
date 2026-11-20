@@ -53,7 +53,7 @@ st = Image.open(os.path.join(HERE, '..', 'hd70', 'sheets', 'warrior1_walk.webp')
 html = open(TPL, encoding='utf-8').read()
 html = html.replace('/*IMG*/{}', json.dumps({'now': list(now_size), 'all': list(all_size), 'style': list(st.size)}))
 # ── 받은 판을 줄여 본 것 (셋째 인자 = extract_m1.py · ../mid70/extract_mid.py 40 을 돌린 작업 폴더, 넷째 = 전투 화면 한 장) ──
-if len(sys.argv) > 3:
+if len(sys.argv) > 3 and sys.argv[3] != '-':   # '-' = 건너뜀 (게임에 넣은 모습만 붙일 때)
     WD = sys.argv[3]; SIZES = [48, 44, 40]; M1 = {'sizes': SIZES, 'mage': {}, 'war': {}}
     def strip(d, rn, m, dst):
         S = Image.new('RGBA', (m['w'] * m['n'], m['h']), (0, 0, 0, 0))

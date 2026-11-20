@@ -11,7 +11,7 @@ N = int(sys.argv[4]) if len(sys.argv) > 4 else 60; DT = float(sys.argv[5]) if le
 OLD = os.environ.get('OLD'); os.makedirs(OUT, exist_ok=True)
 RNG = "const mb = s => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; window.__r0 = Math.random; window.__rs = mb(20261119); window.__rd = mb(777); Math.random = window.__rs;"   # 화면 갱신 타이머 같은 다른 코드는 원래 난수(__r0)를 쓴다
 BASE = RNG + r"""
-  const CL = %CLS%, mk = (i, lv) => { const c = CL[i % CL.length], a = makeAdv({ cls: c, lv }); a.id = 900 + i; a.status = 'idle'; a.wxt = null; a.traits = []; a.eq.weapon = makeGear(c === 'mage' ? 'staff' : 'sword', 2, 1); a.eq.off = c === 'mage' ? null : makeGear('shield', 2, 1); a.name = ['브람', '한스', '도윤'][i]; return a; };
+  const CL = %CLS%, mk = (i, lv) => { const c = CL[i % CL.length], a = makeAdv({ cls: c, lv }); a.id = 900 + i; a.status = 'idle'; a.wxt = null; a.traits = []; a.eq.weapon = makeGear(c === 'mage' ? 'staff' : c === 'archer' ? 'bow' : 'sword', 2, 1); a.eq.off = c === 'mage' ? null : makeGear('shield', 2, 1); a.name = ['브람', '한스', '도윤'][i]; return a; };
   const lv = %LV%, team = [0, 1, 2].slice(0, %TEAM%).map(i => mk(i, lv));
   team.forEach(a => { a.hp = derive(a).maxHp; a.mp = derive(a).maxMp; a.fat = 0; a.skills = []; });
   S.advs = team.slice(); if (!S.parties.length) S.parties.push(newParty('1팀', []));

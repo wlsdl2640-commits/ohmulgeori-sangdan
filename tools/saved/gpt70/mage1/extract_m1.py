@@ -9,30 +9,37 @@ from PIL import Image, ImageDraw
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, '..', 'mid70'))
 from mid_core import Palette, flat_pixels, down, to_rgba
 from seg_m1 import key, split, heel
-T = int(sys.argv[1]); CHK = sys.argv[2] if len(sys.argv) > 2 else None; OUT = f'out_m1_{T}'; os.makedirs(OUT, exist_ok=True)
+T = int(sys.argv[1]); CHK = sys.argv[2] if len(sys.argv) > 2 else None
+CLS = os.environ.get('CLS', 'mage')   # 다른 직업: CLS=archer (판 archer1_base · walk · shot · death → out_archer1_<키>/ · 팔레트 archer1_pal.pkl)
+ATK = {'mage': 'cast', 'archer': 'shot'}[CLS]; TAG = 'm1' if CLS == 'mage' else CLS + '1'; OUT = f'out_{TAG}_{T}'; os.makedirs(OUT, exist_ok=True); PALF = f'{TAG}_pal.pkl'
 SH = os.path.join(HERE, '..', 'hd70', 'sheets')
-SHEETS = [('base', 1, 5), ('walk', 2, 8), ('cast', 2, 8), ('death', 2, 8)]
+SHEETS = [('base', 1, 5), ('walk', 2, 8), (ATK, 2, 8), ('death', 2, 8)]
 D = {}
 for name, rows, per in SHEETS:
-    rgb, fg = key(np.array(Image.open(f'{SH}/mage1_{name}.webp').convert('RGB')))
+    rgb, fg = key(np.array(Image.open(f'{SH}/{CLS}1_{name}.webp').convert('RGB')))
     D[name] = [(rgb[y0:y0 + m.shape[0], x0:x0 + m.shape[1]], m) for m, (x0, y0) in split(fg, rows, per)]
-REFH = {'base': D['base'][0][1].shape[0], 'walk': float(np.median([m.shape[0] for _, m in D['walk']])), 'cast': D['cast'][0][1].shape[0], 'death': D['death'][0][1].shape[0]}   # 서 있는 키(판 픽셀)
-if not os.path.exists('m1_pal.pkl'):
+REFH = {'base': D['base'][0][1].shape[0], 'walk': float(np.median([m.shape[0] for _, m in D['walk']])), ATK: D[ATK][0][1].shape[0], 'death': D['death'][0][1].shape[0]}   # 서 있는 키(판 픽셀)
+if not os.path.exists(PALF):
     samp = np.vstack([flat_pixels(r, m) for F in D.values() for r, m in F]); rs = np.random.RandomState(1)
-    pickle.dump(Palette(samp[rs.choice(len(samp), min(len(samp), 200000), replace=False)], groups=11), open('m1_pal.pkl', 'wb'))
-P = pickle.load(open('m1_pal.pkl', 'rb'))
+    pickle.dump(Palette(samp[rs.choice(len(samp), min(len(samp), 200000), replace=False)], groups=11), open(PALF, 'wb'))
+P = pickle.load(open(PALF, 'rb'))
 
 def brim_x(rgb, m):   # 모자 챙의 금 띠 가운데 (머리는 제자리, 발이 돈다)
     r, g, b = [rgb[..., i].astype(int) for i in range(3)]; gold = m & (r > 170) & (g > 120) & (b < 110) & (r - b > 90); gold[int(m.shape[0] * 0.45):] = False
     xs = np.where(gold.any(0))[0]; return (xs.min() + xs.max()) / 2 if len(xs) else m.shape[1] / 2
 
-ROWS = [('side', 'base', [0]), ('front', 'base', [1]), ('sit', 'base', [2]), ('sleep', 'base', [3]), ('hurt', 'base', [4]), ('walk', 'walk', range(16)), ('cast', 'cast', range(16)), ('death', 'death', range(16))]
+def head_x(rgb, m):   # 궁수: 두건(위 35% — 붉은 깃은 빼고)의 가운데
+    r, g, b = [rgb[..., i].astype(int) for i in range(3)]; hd = m & ~((r > 150) & (r - g > 60)); hd[int(m.shape[0] * 0.35):] = False
+    xs = np.where(hd.sum(0) > 2)[0]; return (xs.min() + xs.max()) / 2 if len(xs) else m.shape[1] / 2
+
+WALK_X = brim_x if CLS == 'mage' else head_x
+ROWS = [('side', 'base', [0]), ('front', 'base', [1]), ('sit', 'base', [2]), ('sleep', 'base', [3]), ('hurt', 'base', [4]), ('walk', 'walk', range(16)), (ATK, ATK, range(16)), ('death', 'death', range(16))]
 meta = {}
 for rn, sheet, idx in ROWS:
     c = REFH[sheet] / T; F = []
     for i in idx:
         rgb, m = D[sheet][i]
-        ax = brim_x(rgb, m) if rn == 'walk' else m.shape[1] / 2 if rn in ('front', 'sit', 'sleep') else heel(m)
+        ax = WALK_X(rgb, m) if rn == 'walk' else m.shape[1] / 2 if rn in ('front', 'sit', 'sleep') else heel(m)
         F.append(down(rgb, m, (-ax, -m.shape[0]), c, P))
     X0 = min(-r[1][0] for r in F); Y0 = min(-r[1][1] for r in F); X1 = max(r[0].shape[1] - r[1][0] for r in F); Y1 = max(r[0].shape[0] - r[1][1] for r in F)
     W, H, ax, ay = X1 - X0 + 2, Y1 - Y0 + 2, 1 - X0, 1 - Y0
@@ -48,4 +55,4 @@ if CHK:
         if m['n'] < 2: continue
         S = Image.new('RGBA', (8 * m['w'] * Z, 2 * (m['h'] * Z + 4)), (96, 150, 84, 255))
         for i in range(m['n']): S.alpha_composite(Image.open(f'{OUT}/{rn}_{i}.png').resize((m['w'] * Z, m['h'] * Z), Image.NEAREST), ((i % 8) * m['w'] * Z, (i // 8) * (m['h'] * Z + 4)))
-        S.convert('RGB').save(f'{CHK}/m1_{T}_{rn}.png')
+        S.convert('RGB').save(f'{CHK}/{TAG}_{T}_{rn}.png')

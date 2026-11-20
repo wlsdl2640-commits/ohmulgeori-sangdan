@@ -174,7 +174,14 @@ const HDM_SEQ = { idle: ['idle', [...Array(14).fill(0), ...Array(14).fill(1)]], 
 const HDM_MOT = { cast: { H: 6, T: [0.09, 0.09, 0.12, 0.08, 0.18, 0.15, 0.12, 0.12] },   // 1 ~ 4 지팡이를 머리 위로 · 5 내뻗기 · 6 마법이 나감 · 7 ~ 10 뻗은 채 · 11 ~ 15 거둠
   raise: { key: 'raise', time: 1, T: [0.1, 0.1, 0.12, 0.1, 0.15, 0.14, 0.13, 0.13] } };
 const HDM_OF = { sraise: 'raise', raise: 'raise', salute: 'raise', taunt: 'raise', guard: 'raise', block: 'raise', parry: 'raise', ready: 'raise' };   // 그 밖(내밀기 · 찌르기 · 휘두르기 · 모아 쏘기)은 마법 쏘기
-const HDCFG = { warrior: { id: 'W', seq: HDW_SEQ, mot: HDW_MOT, of: HDW_OF, def: 'slash', shadow: HDW_SHADOW }, mage: { id: 'M', seq: HDM_SEQ, mot: HDM_MOT, of: HDM_OF, def: 'cast', shadow: { cast: 1, hurt: 1, death: 1 } } };
+// 궁수 1차 (tools/saved/gpt70/archer1 — 판 넷): 활쏘기 판은 0 서 있기 · 1 ~ 3 화살을 뽑아 메김 · 4 ~ 7 당김 · 8 ~ 9 화살을 다시 쥔 장(안 씀) · 10 쏜 자세 · 11 ~ 15 거둠
+const HDA_SEQ = { idle: HDM_SEQ.idle, front: HDM_SEQ.front, run: ['walk', null],
+  shot: ['shot', [0, 1, 2, 3, 4, 5, 6, 7, 10, 10, 10, 11, 12, 13, 14, 15]], raise: ['shot', [0, 1, 2, 3, 4, 5, 5, 5, 5, 4, 3, 2, 1, 0]] };
+const HDA_MOT = { shot: { H: 8, T: [0.08, 0.08, 0.1, 0.08, 0.16, 0.14, 0.12, 0.12] },   // 8번째(차례) = 시위를 놓은 장
+  raise: { key: 'raise', time: 1, T: [0.1, 0.1, 0.12, 0.1, 0.15, 0.14, 0.13, 0.13] } };
+const HDA_OF = { braise: 'raise', raise: 'raise', salute: 'raise', taunt: 'raise', guard: 'raise', block: 'raise', parry: 'raise', ready: 'raise' };   // 그 밖(쏘기 · 힘껏 · 비스듬히 · 잇달아 · 후려치기)은 활쏘기
+const HDCFG = { warrior: { id: 'W', seq: HDW_SEQ, mot: HDW_MOT, of: HDW_OF, def: 'slash', shadow: HDW_SHADOW }, mage: { id: 'M', seq: HDM_SEQ, mot: HDM_MOT, of: HDM_OF, def: 'cast', shadow: { cast: 1, hurt: 1, death: 1 } },
+  archer: { id: 'A', seq: HDA_SEQ, mot: HDA_MOT, of: HDA_OF, def: 'shot', shadow: { hurt: 1, death: 1 } } };
 HDC = HDCFG.warrior;   // 맞히는 때가 있는 공격 동작 (view.js motCast — 막기가 거두는 장을 끊어도 되는 동작)
 const HDW_FPS = { idle: 9, front: 9, sit: 5.5, sleep: 5 };   // 숨쉬기: 서 있기 · 앞모습 28장 ≈ 3.1초 · 앉기 14장 ≈ 2.5초 · 눕기 16장 3.2초
 const HDW_HURT_T = 0.55, HDW_DIE_T = 1.0, HDW_RUN_T = 0.7, HDW_WALK_T = 1.05, HDW_BLOCK_PRE = 0.2, HDW_KEEP = 0.22;   // 맞음 · 쓰러짐 · 달리기 한 바퀴 · 걷기 한 바퀴(땅이 안 흐르는 곳) · 막기를 맞는 때보다 먼저 시작하는 초 · 새 공격이 와도 하던 공격을 맞힌 뒤 보여 주는 초

@@ -13,6 +13,7 @@ OUT = sys.argv[1]; PRE = sys.argv[2] if len(sys.argv) > 2 else None
 if PRE: os.makedirs(PRE, exist_ok=True)
 SKI_A = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_'
 WAR_DIR, MON_DIR, MON_BIG = 'out_mid40', 'out_midmon', 'out_midmon_big'
+ARCHER_DIR = 'out_archer1_40'   # 궁수 1차 (CLS=archer ../mage1/extract_m1.py 40 — 11-20 판 넷)
 MAGE_DIR = 'out_m1_40'   # 마법사 1차 (../mage1/extract_m1.py 40 — 11-20 사용자 「40칸」: 모자 끝까지 40칸)
 
 def png_url(im, name=None):   # 색이 255개 이하면 팔레트 PNG (투명 한 칸)
@@ -61,13 +62,16 @@ for rn, m in W16.items():
 #         신발 위 한 줄을 접어 윗몸을 한 칸 내린 장을 하나 더 붙인다 (그림은 그대로 · 게임 hd70.js HDC.mage가 두 장을 번갈아 보인다)
 def bob(im, ay):
     a = np.array(im); b = a.copy(); r = ay - 4; b[1:r + 1] = a[:r]; b[0] = 0; return Image.fromarray(b, 'RGBA')
-M1 = json.load(open(f'{MAGE_DIR}/meta.json')); mage = {'hs': 1.5, 'rows': {}}
-for rn, m in M1.items():
-    fr = [Image.open(f'{MAGE_DIR}/{rn}_{i}.png').convert('RGBA') for i in range(m['n'])]; name = 'idle' if rn == 'side' else rn
-    if rn in ('side', 'front'): fr.append(bob(fr[0], m['ay']))
-    sh = Image.new('RGBA', (m['w'] * len(fr), m['h']), (0, 0, 0, 0))
-    for i, f in enumerate(fr): sh.alpha_composite(f, (i * m['w'], 0))
-    mage['rows'][name] = dict(m, n=len(fr), url=png_url(sh, 'mage1_' + name))
+def cls_rows(d, tag):   # 판 넷짜리 직업 (마법사 · 궁수): 줄마다 한 줄 판 · 서 있기 · 앞모습은 숨쉬기 장을 붙여 두 장
+    out = {'hs': 1.5, 'rows': {}}
+    for rn, m in json.load(open(f'{d}/meta.json')).items():
+        fr = [Image.open(f'{d}/{rn}_{i}.png').convert('RGBA') for i in range(m['n'])]; name = 'idle' if rn == 'side' else rn
+        if rn in ('side', 'front'): fr.append(bob(fr[0], m['ay']))
+        sh = Image.new('RGBA', (m['w'] * len(fr), m['h']), (0, 0, 0, 0))
+        for i, f in enumerate(fr): sh.alpha_composite(f, (i * m['w'], 0))
+        out['rows'][name] = dict(m, n=len(fr), url=png_url(sh, tag + name))
+    return out
+mage = cls_rows(MAGE_DIR, 'mage1_'); archer = cls_rows(ARCHER_DIR, 'archer1_')
 
 # ── 3. 스킬 그림 34×40 (육각 안쪽 x 7 ~ 40 · y 4 ~ 43) — 「팔레트|칸」 꼴 (data-skicon.js와 같은 글자)
 ski = {}
@@ -131,7 +135,7 @@ bg = {'k': K, 'hs': HS,
 # ── 5. 하늘 (보름달 · 구름 — extract_sky.py)
 SK = json.load(open('out_sky/meta.json'))
 sky = {'hs': 2, 'moon': png_url(Image.open('out_sky/' + SK['moon'][0][0])), 'clouds': [png_url(Image.open('out_sky/' + f)) for f, _, _ in SK['cloud']]}
-D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage}, 'ski': ski, 'bg': {'plains': bg}}
+D = {'sky': sky, 'mon': mon, 'war': war, 'adv': {'mage': mage, 'archer': archer}, 'ski': ski, 'bg': {'plains': bg}}
 js = ('/* 빌드 70 시험: 곡창지대 평원 리마스터 그림 (GPT 그림 판에서 오림) — 손으로 고치지 말 것.\n'
       '   다시 뽑기: tools/saved/gpt70/hd70/export_hd70.py (extract_mon.py · extract_war16.py · extract_sk.py · extract_sky.py 다음에) */\n'
       'const HD70_DATA = ' + json.dumps(D, ensure_ascii=False, separators=(',', ':')) + ';\n')
