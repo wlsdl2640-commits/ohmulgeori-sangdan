@@ -52,6 +52,11 @@ with sync_playwright() as pw:
         if ev("!!(HD.bg && HD.war && Object.keys(HD.mon).length === 6)"): break
         pg.wait_for_timeout(300)
     if OLD: print('옛 그림으로', ev("(() => { HD.war = null; for (const id of ['rat', 'rabbit', 'wolf']) { delete HD.mon[id]; delete MON_DIM[id]; delete MON_BACK[id]; } HD.spr.clear(); return Object.keys(HD.mon).join(' '); })()"))
+    if os.environ.get('LINE'):   # 시안: 예전처럼 한 줄로 세우기 (11-20 사용자 「화면을 길게 … 일직선으로」) — 풍경을 55칸 내려 땅을 얇은 띠로, 모두 y 192에 한 줄. 찍은 뒤 아래 100칸(480×200)만 오려 본다
+        print('line', ev("""(() => { const B = HD70_DATA.bg.plains, D = 55; B.gr.y += D; B.mid.y += D; B.back.y += D; B.blades.y += D; B.skyOy += D; delete BG.plains_hd;
+          formSlots = team => { const o = team.map((a, i) => [a.down ? 4 : formRank(a.cls), i]).sort((p, q) => p[0] - q[0] || p[1] - q[1]), n = o.length, gap = Math.min(24, 96 / Math.max(1, n - 1)), out = [];
+            o.forEach(([r, i], k) => { out[i] = [Math.round(108 - gap * k), 192]; }); out.petX = Math.max(6, Math.round(108 - gap * n)); return out; };
+          [[100, 192], [74, 192], [48, 192], [22, 192], [10, 192], [4, 192]].forEach((q, i) => { SLOT_PW[i] = q; SLOT_P[i] = q; }); return 'ok'; })()"""))
     js = '(() => {' + BASE.replace('%CLS%', json.dumps(os.environ.get('TEAM', 'warrior').split(','))).replace('%LV%', str(lv)).replace('%STAGE%', str(stage)).replace('%TEAM%', str(nteam)).replace('%ENC%', str(enc)) + extra + " Math.random = window.__r0; return 'ok ' + wxDay(Math.floor(S.t / DAY_SEC)).sky + ' seed ' + S.wx.seed; })()"
     ev("window.requestAnimationFrame = () => 0"); pg.wait_for_timeout(200)   # 게임 고리를 먼저 멈춘다 (걸려 있던 한 장이 지나가게 기다린 뒤 장면을 차린다 — 그 사이에 고리가 돌면 싸움이 달라진다)
     print(SCN, ev(js))
