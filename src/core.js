@@ -297,7 +297,7 @@ function rollFoes(e, idx, extra = 0) {
   const F = FIELDS[e.field], A = areaDef(e);
   const last = e.mode === 'advance' && idx === e.encs.length - 1;
   const dboss = e.area === 'dungeon' && e.stage === floorsOf(e) && last;
-  const fboss = e.area === 'field' && e.stage === FIELD_STAGES && last;   // 빌드 72: 10스테이지마다 나오던 우두머리를 없앰 — 마지막 스테이지(1-50)에만 그 땅에서 가장 센 몬스터가 주인으로
+  const fboss = e.area === 'field' && e.stage === fstages(FIELDS[e.field]) && last;   // 빌드 72: 10스테이지마다 나오던 우두머리를 없앰 — 마지막 스테이지(1-50)에만 그 땅에서 가장 센 몬스터가 주인으로
   const lv = e.area === 'dungeon' ? (F.treasure ? Math.max(1, (e.lvo || 10) + e.stage - 3) : F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);   // 보물 던전: 파티 평균 -2 ~ 0
   const pool = A.mons.filter(id => e.area === 'dungeon' || minStage(MONS[id]) <= e.stage);
   const out = [];
@@ -433,7 +433,7 @@ function gateChoice(p, choice) {
   if (choice === 'enter') { enterDungeon(p); return; }
   e.wait = null;
   log(`${p.name}은(는) ${FIELDS[e.field].dungeon.name}에 들어가지 않고 돌아섰다.`);
-  if (e.stage >= FIELD_STAGES) { recall(p, 'end'); return; }
+  if (e.stage >= fstages(FIELDS[e.field])) { recall(p, 'end'); return; }
   e.stage++; e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
   changed();
 }
@@ -520,9 +520,9 @@ function stageClear(p, e) {
   if (e.area === 'trade') { tradeStage(p, e); return; }
   const fs = S.fields[e.field], F = FIELDS[e.field];
   if (e.area === 'field') {
-    if (e.stage % BOSS_EVERY === 0 && e.stage < FIELD_STAGES) { fs.boss = fs.boss || {}; const k = e.stage / BOSS_EVERY; if (!fs.boss[k]) fs.boss[k] = 1; }   // 빌드 72: 우두머리가 없어져서, 1-10 · 20 · 30 · 40을 지나면 그 다음 스테이지에서 출발할 수 있게 된다(예전엔 우두머리를 잡아야)
+    if (e.stage % BOSS_EVERY === 0 && e.stage < fstages(F)) { fs.boss = fs.boss || {}; const k = e.stage / BOSS_EVERY; if (!fs.boss[k]) fs.boss[k] = 1; }   // 빌드 72: 우두머리가 없어져서, 1-10 · 20 · 30 · 40을 지나면 그 다음 스테이지에서 출발할 수 있게 된다(예전엔 우두머리를 잡아야)
     if (e.stage > fs.best) { fs.best = e.stage; if (e.stage % 5 === 0) { S.fame += 1; log(`${p.name}이(가) ${fno(F)}-${e.stage}까지 처음으로 진출했다. 명성 +1`, 'good'); } }
-    if (e.stage >= FIELD_STAGES) {
+    if (e.stage >= fstages(F)) {
       e.pos = STAGE_LEN;
       // 1-50의 주인을 쓰러뜨려 던전 입구가 열렸다 (한 번 공략한 던전은 봉인된다)
       if (!fs.cleared && !isLab(e.field)) {   // 빌드 72 (11-20 16:38 사용자 「예전 던전은 없애 나중에 내가 던전을 따로 추가할 거야」): 미궁 계층에서는 옛 던전 입구가 나오지 않는다
@@ -548,7 +548,7 @@ function stageClear(p, e) {
       recall(p, 'end');
       return;
     }
-    if (p.safe && fieldLv(F, e.stage + 1) + (e.stage + 1 === FIELD_STAGES ? 2 : 0) > avgLvOf(p) + 3) { e.stage++; e.pos = 0; e.ei = 0; e.encs = []; e.next = null; recall(p, 'ahead'); return; }
+    if (p.safe && fieldLv(F, e.stage + 1) + (e.stage + 1 === fstages(F) ? 2 : 0) > avgLvOf(p) + 3) { e.stage++; e.pos = 0; e.ei = 0; e.encs = []; e.next = null; recall(p, 'ahead'); return; }
     e.stage++;
   } else if (e.stage < floorsOf(e)) { if (F.treasure) treasureChest(p, e); e.stage++; }
   e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;

@@ -415,7 +415,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
 
   // 던전 입구: 1-50 끝에서 길 끝에 서 있다
   const fs = S.fields[e.field];
-  if (e.area === 'field' && fs && !F.raid && (waiting || (e.stage === FIELD_STAGES && e.mode === 'advance' && !fighting && e.pos > 55))) {
+  if (e.area === 'field' && fs && !F.raid && (waiting || (e.stage === fstages(F) && e.mode === 'advance' && !fighting && e.pos > 55))) {
     const k = waiting ? 0 : Math.max(0, Math.min(1, (STAGE_LEN - e.pos) / 45));
     w.save(); w.translate(190 + k * 120, bg.gateY || GY + BG_OY); w.scale(1.25, 1.25); drawGate(w, F.dungeon.bg, fs.cleared ? 1 : fs.found ? 0 : 2); w.restore();
   }
@@ -1225,7 +1225,7 @@ function renderBattle() {
   const p = viewParty(), e = p && p.exp;
   $('bw-title').textContent = p ? `${p.name} · ${e ? whereStr(e) : '길드 앞'}` : '원정';
   $('bw-st').textContent = !p ? '' : e ? expStatus(p) : p.members.length ? '대기 중 · 원정 메뉴에서 출발' : '파티원이 없어요';
-  const k = e ? (e.stage - 1 + e.pos / STAGE_LEN) / (e.area === 'dungeon' ? DUNGEON_FLOORS : FIELD_STAGES) : 0;
+  const k = e ? (e.stage - 1 + e.pos / STAGE_LEN) / (e.area === 'dungeon' ? DUNGEON_FLOORS : fstages(FIELDS[e.field])) : 0;
   $('bw-prog').style.width = Math.round(Math.max(0, Math.min(1, k)) * 100) + '%';
   $('bw-load').hidden = !e; if (e) $('bw-load').innerHTML = `짐 <span class="${usedOf(p) >= capOf(p) ? 'warn' : 'gold'}">${usedOf(p)}/${capOf(p)}</span>`;
   const rt = $('bw-ret');

@@ -31,7 +31,8 @@ const phaseFrac = t => (((t % DAY_SEC) + DAY_SEC) % DAY_SEC) / (DAY_SEC / 4) % 1
 function clockOf(t) { const f = (((t % DAY_SEC) + DAY_SEC) % DAY_SEC) / DAY_SEC, mins = Math.floor(HOUR0 * 60 + f * 1440) % 1440; return { h: Math.floor(mins / 60), m: mins % 60 }; }
 const clockStr = t => { const c = clockOf(t); return String(c.h).padStart(2, '0') + ':' + String(Math.floor(c.m / 10) * 10).padStart(2, '0'); };
 // 필드 몬스터 레벨: 네 스테이지마다 1씩 오른다 (1-50에서 +12). F.span이 있으면 1-50에서 +span (구름섬 너머의 섬: 10)
-const fieldLv = (F, stage) => F.lv + (F.span ? Math.floor((stage - 1) * F.span / (FIELD_STAGES - 1)) : Math.floor((stage - 1) / 4));
+const fstages = F => (F && F.stages) || FIELD_STAGES;   // 빌드 72 (11-21 00:24 사용자 「던전은 무조건 10단계」): 던전 필드는 F.stages = 10 (세계수 뿌리굴 2-3-1 ~ 2-3-10)
+const fieldLv = (F, stage) => F.lv + (F.span ? Math.floor((stage - 1) * F.span / (FIELD_STAGES - 1)) : F.stages ? stage - 1 : Math.floor((stage - 1) / 4));   // 던전(F.stages)은 한 단계에 한 레벨
 const minStage = m => 1 + ((m.minS || 1) - 1) * 3;
 // 던전 몬스터는 필드 끝(1-50)보다 강하다
 const dungeonLv = (F, floor) => (F.span ? F.lv + F.span - 5 + floor : F.lv + 10 + floor);
@@ -139,8 +140,8 @@ const MONS = {
   sentinel: { name: '고목 파수꾼', plan: 'golem', body: '#6a4a2a', dark: '#3a2a16', mh: 2.8, ma: 1.5, md: 1.8, spd: 0.6, minS: 15, drops: [['old_heartwood', 0.5], ['bark', 0.4]] },
   elddragon: { name: '잠든 고룡목', plan: 'quad', body: '#6a5a2a', dark: '#3a3216', len: 18, h: 10, boss: 1, mh: 5.2, ma: 1.7, md: 1.5, spd: 0.8, aoe: 1, drops: [['ether_heart', 1], ['old_heartwood', 1, 3]] },
   smandrake: { name: '비명치는 만드라고라', plan: 'shroom', body: '#b88a4a', dark: '#6a4a22', stem: '#b88a4a', mh: 1.1, ma: 1.2, md: 0.7, spd: 1.0, magic: 1, minS: 1, drops: [['mandrake_root', 0.55]] },
-  fairies: { name: '타락한 요정 무리', plan: 'bat', body: '#6a4a5a', dark: '#2e1e26', mh: 0.9, ma: 1.3, md: 0.5, spd: 1.3, eva: 0.2, minS: 4, drops: [['rot_petal', 0.55]] },
-  fdryad:  { name: '타락한 드라이어드', plan: 'biped', skin: '#8a7a5a', cloth: '#5a4a2a', gear: 'dagger', mh: 1.6, ma: 1.45, md: 1.0, spd: 0.95, minS: 8, drops: [['dryad_tear', 0.5], ['bark', 0.3]] },
+  fairies: { name: '타락한 요정 무리', plan: 'bat', body: '#6a4a5a', dark: '#2e1e26', mh: 0.9, ma: 1.3, md: 0.5, spd: 1.3, eva: 0.2, minS: 2, drops: [['rot_petal', 0.55]] },
+  fdryad:  { name: '타락한 드라이어드', plan: 'biped', skin: '#8a7a5a', cloth: '#5a4a2a', gear: 'dagger', mh: 1.6, ma: 1.45, md: 1.0, spd: 0.95, minS: 3, drops: [['dryad_tear', 0.5], ['bark', 0.3]] },
   rahen:   { name: '타락한 엘프 드루이드 라헨', plan: 'biped', skin: '#8a9a7a', cloth: '#4a3a1a', gear: 'staff', boss: 1, magic: 1, mh: 5.6, ma: 1.85, md: 1.4, spd: 0.85, aoe: 1, drops: [['rahen_staff', 1], ['dryad_tear', 1, 3]] },
   // 빌드 72 (11-20 17:34 사용자 「이 순서대로 강함을 기준잡아서 넣자」): 원시림 여섯 + 2-50 주인 숲의 수호령 — 덩굴 뱀 2-1(Lv9)~ · 식충 꽃 2-7(Lv10)~ · 걷는 그루터기 2-13(Lv12)~ · 점박이 버섯 2-22(Lv14)~ · 철갑 풍뎅이 2-31(Lv16)~ · 이끼 골렘 2-40(Lv18)~
   vinesnake: { name: '덩굴 뱀', plan: 'worm', body: '#8a9a3a', dark: '#4a5a22', mh: 0.8, ma: 0.85, md: 0.4, spd: 1.15, eva: 0.06, minS: 1, drops: [['vine_thorn', 0.65]] },
@@ -254,8 +255,8 @@ FIELDS.deepforest = { no: 2, lbl: '2-2', branch: 'forest', name: '깊은 숲', l
   desc: '세계수 바로 아래의 어두운 숲. 엘프들이 떠난 옛 거주지에 에테르 등불만 남아 있다.',
   bgAt: [41, 'wtbase_hd'],   // 2-2-41부터 세계수 밑동(썩어 뚫린 굴 입구 · 엘프 왕실 — 11-20 23:51 그림)
   mons: ['ewisp', 'mlizard', 'rcenti', 'emoth', 'eshroom', 'cstag', 'sentinel'], bosses: ['rcenti', 'emoth', 'cstag', 'sentinel', 'elddragon'] };
-// 세계수 뿌리굴 (11-20 21:18 이름 · 22:46 보스 라헨): 깊은 숲 2-2-50 다음에 이어 들어간다. 필드 2-3-1 ~ 2-3-50 (층수 · 레벨은 내 판단 — 사용자가 던전 구성을 정하면 바꾼다)
-FIELDS.rootcave = { no: 2, lbl: '2-3', branch: 'deepforest', name: '세계수 뿌리굴', lv: 35, bg: 'rootcave_hd', tier: 1,
+// 세계수 뿌리굴 (11-20 21:18 이름 · 22:46 보스 라헨): 깊은 숲 2-2-50 다음에 이어 들어간다. 던전이라 10단계: 2-3-1 ~ 2-3-10 (11-21 00:24 사용자 — Lv35 ~ 44, 주인 Lv45)
+FIELDS.rootcave = { no: 2, lbl: '2-3', branch: 'deepforest', dng: 1, stages: 10, name: '세계수 뿌리굴', lv: 35, bg: 'rootcave_hd', tier: 1,
   desc: '썩어 뚫린 세계수의 몸속. 요정들이 떠난 옹이구멍 집과 검은 수액만 남았다.',
   mons: ['smandrake', 'fairies', 'fdryad'], bosses: ['fairies', 'fdryad', 'fdryad', 'fdryad', 'rahen'] };
 const fno = F => F.lbl || F.no;   // 필드 번호 앞머리: 1 · 2 · 2-2

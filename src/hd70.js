@@ -365,6 +365,31 @@ function hdSkiCells(id) {
 
 // ── 넓은 평원 풍경 (scene.js getBg → BG_MAKERS.plains_hd) ──
 const buildPlainsHD = () => buildWideHD('plains', buildPlains), buildForestHD = () => buildWideHD('forest', buildForest), buildDeepHD = () => buildWideHD('deep', buildForest), buildWtbaseHD = () => buildWideHD('wtbase', buildForest), buildRootcaveHD = () => buildWideHD('rootcave', buildForest);   // 깊은 숲 (2-2 · 11-20)
+// 빌드 72 (11-21 00:24 사용자 「원시림, 깊은숲에 햇빛 들어오는 거」): 나무 사이로 내려오는 햇빛 — 어둠을 입힌 뒤에 그린다(scene.js bgEmit)
+//   때에 따라: 아침엔 한쪽으로 길게 눕고 한낮엔 곧게, 저녁엔 반대로 눕는다 · 아침 · 저녁은 빛이 누렇게 · 해가 지면(어둠이 낮보다 짙어지면) 사라진다
+//   빛줄기 = [자리, 너비, 세기] · 줄마다 겹 셋(넓고 흐린 겹 → 가운데 밝은 겹) + 땅에 닿는 자리의 빛 웅덩이 + 빛 속에 떠다니는 먼지. 색은 그림 위에 더한다(lighter)
+const HD_SHAFTS = {
+  forest: { n: [[26, 22, 0.46], [118, 12, 0.32], [190, 30, 0.55], [287, 14, 0.34], [352, 24, 0.48], [448, 10, 0.3], [520, 18, 0.4]], shade: '8,26,22', span: 600, sp: 1.25, noon: [255, 246, 205], warm: [255, 196, 120], pool: 1, motes: 5, top: 110, fade: 0.25 },
+  deep:   { n: [[40, 8, 0.3], [150, 4, 0.22], [262, 11, 0.34], [371, 4, 0.22], [452, 7, 0.26]], span: 520, sp: 1.4, noon: [190, 245, 228], warm: [215, 225, 160], pool: 1, motes: 3, top: 94, fade: 0.12 },
+  wtbase: { n: [[70, 10, 0.26], [215, 6, 0.2], [330, 14, 0.3], [470, 6, 0.2]], span: 560, sp: 1.4, noon: [215, 245, 215], warm: [240, 215, 150], pool: 1, motes: 3, top: 94, fade: 0.12 }
+};
+function hdShafts(g, C, off, t, dark, dim, gy) {
+  const k = Math.max(0, Math.min(1, 1 - ((dark || 0) - dim) / C.fade)); if (k <= 0.03) return;
+  const ph = typeof S !== 'undefined' && S && typeof DAY_SEC !== 'undefined' ? ((S.t / DAY_SEC) % 1 + 1) % 1 : 0.5, d = Math.max(-1, Math.min(1, (0.34 - ph) / 0.24));   // d: 새벽(0.1) +1 … 한낮(0.34) 0 … 해 질 녘(0.58) −1 (scene.js todAt의 낮)
+  const slant = d * 0.7, wm = Math.min(1, d * d * 1.3), col = C.noon.map((v, i) => Math.round(v + (C.warm[i] - v) * wm)), rgb = col.join(','), top = C.top, bot = gy + 30, H = bot - top;
+  if (C.shade) R(g, 0, top - 8, AW, AH, `rgba(${C.shade},${(0.2 * k).toFixed(3)})`);   // 나무 그늘: 숲 전체를 조금 눌러 빛줄기가 도드라지게 (밝은 숲)
+  g.save(); g.globalCompositeOperation = 'lighter';
+  C.n.forEach(([x0, wd, a], bi) => {
+    const fl = 0.82 + 0.18 * Math.sin(t * 0.5 + x0 * 0.7), A = a * k * fl, xb = ((x0 - off * C.sp) % C.span + C.span) % C.span - 70;   // xb: 땅에 닿는 자리 (빛줄기는 거기서 위로 뻗는다)
+    for (let y = top; y < bot; y += 2) { const u = (y - top) / H, xx = Math.round(xb - (bot - y) * slant), w2 = wd * (0.75 + 0.35 * u), f = 0.55 + 0.45 * u;   // 위는 좁고 흐리게, 아래로 갈수록 넓고 또렷하게
+      R(g, Math.round(xx - w2 * 0.9), y, Math.round(w2 * 2.8), 2, `rgba(${rgb},${(A * 0.22 * f).toFixed(3)})`);
+      R(g, Math.round(xx - w2 * 0.25), y, Math.round(w2 * 1.5), 2, `rgba(${rgb},${(A * 0.38 * f).toFixed(3)})`);
+      R(g, xx, y, Math.max(1, Math.round(w2 * 0.6)), 2, `rgba(${rgb},${(A * 0.5 * f).toFixed(3)})`); }
+    if (C.pool) for (let r = 0; r < 4; r++) { const pw = wd * (2.6 - r * 0.5), py = gy + 22 + r * 2; R(g, Math.round(xb + wd * 0.5 - pw / 2), py - 4 + (r === 0 ? 0 : 0), Math.round(pw), 8 - r * 2 > 0 ? 8 - r * 2 : 2, `rgba(${rgb},${(A * 0.2).toFixed(3)})`); }   // 땅의 빛 웅덩이 (겹칠수록 가운데가 밝다)
+    for (let m = 0; m < C.motes; m++) { const u = ((t * (0.035 + m * 0.011) + m * 0.37 + bi * 0.21) % 1 + 1) % 1, y = top + 6 + (1 - u) * (H - 12), xx = xb - (bot - y) * slant + wd * (0.5 + 0.8 * Math.sin(t * 0.7 + m * 2.3 + bi)); const ma = A * 2.2 * Math.sin(u * Math.PI); if (ma > 0.03) R(g, Math.round(xx), Math.round(y), 1, 1, `rgba(${rgb},${Math.min(0.8, ma).toFixed(2)})`); }
+  });
+  g.restore();
+}
 function buildWideHD(id, old) {
   const L = HD.bgs && HD.bgs[id];
   if (!L) return Object.assign({ hdWait: 1 }, old());   // 그림을 풀기 전: 옛 평원 (풀면 BG.plains_hd를 지워 다시 짓는다)
@@ -378,12 +403,7 @@ function buildWideHD(id, old) {
   return { tall: 1, wide: 1, hdSky: 1, back, far: null, mid, gr, gy: B.gr.y + LD, clouds: B.sky ? 0 : 7, ambient: B.amb || (B.sky ? 'deep' : 'meadow'), skyOy: B.skyOy + LD, gateY: B.gateY + 40,
     skyFill: B.sky || null, dim: B.dim || 0,   // 깊은 숲: 하늘 대신 어둠 · 낮에도 어둑하다 (view.js)
     noHaze: B.sky ? 1 : 0,
-    emit: !B.shafts ? null : function (g, off, t, dark) {
-      {   // 나무 사이로 스며드는 가는 빛줄기 — 낮에만 (11-20 19:10 사용자 「밤이 되면 나무 사이로 조금 스며들던 빛이 사라지는 거야」)
-        const k = Math.max(0, Math.min(1, 1 - ((dark || 0) - (B.dim || 0)) / 0.12)); /* 어둠을 입힌 뒤에 그린다 — 낮의 어둠(dim)보다 짙어지면(해 질 녘부터) 사라진다 */ if (k > 0.03) { const span = 520, top = 96, bot = B.gr.y + LD + 26;
-          for (const [x0, wd, a] of [[40, 9, 0.11], [150, 5, 0.08], [262, 12, 0.1], [371, 4, 0.09], [452, 8, 0.07]]) { const x = ((x0 - off * 1.4) % span + span) % span - 60, fl = 0.8 + 0.2 * Math.sin(t * 0.6 + x0);
-            for (let y = top; y < bot; y += 2) { const xx = Math.round(x + (y - top) * 0.42); R(g, xx - 3, y, wd + 6, 2, `rgba(150,225,205,${(a * 0.45 * k * fl).toFixed(3)})`); R(g, xx, y, wd, 2, `rgba(205,245,225,${(a * k * fl).toFixed(3)})`); } } } }
-    },
+    emit: !HD_SHAFTS[id] ? null : function (g, off, t, dark) { hdShafts(g, HD_SHAFTS[id], off, t, dark, B.dim || 0, B.gr.y + LD); },
     props(g, off, t, dark) {   // 풍차 날개 (뒤집힌 짝은 거꾸로 돈다)
       if (!bl.length) return;
       const fi = Math.floor(t * 8) % bl.length;
