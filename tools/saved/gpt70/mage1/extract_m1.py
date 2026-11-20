@@ -33,6 +33,28 @@ def head_x(rgb, m):   # 궁수: 두건(위 35% — 붉은 깃은 빼고)의 가�
     xs = np.where(hd.sum(0) > 2)[0]; return (xs.min() + xs.max()) / 2 if len(xs) else m.shape[1] / 2
 
 WALK_X = brim_x if CLS == 'mage' else head_x
+def eye_fix(rgb, m, o, c, r):
+    """눈 살리기: 눈(살색에 둘러싸인 가는 어두운 줄)이 칸 경계에 걸리면 양쪽 칸 어느 쪽도 절반을 못 넘어 사라진다(사제 휘두르기 4 · 5번째 장)
+       → 판에서 눈을 찾아, 그 자리 칸에 어두운 칸이 하나도 없으면 눈 가운데가 든 칸 줄을 테 색으로"""
+    from scipy import ndimage
+    R, G, B = [rgb[..., i].astype(int) for i in range(3)]; L = 0.299 * R + 0.587 * G + 0.114 * B
+    skin = m & (R > 170) & (G > 115) & (G < 215) & (B > 75) & (B < 180) & (R - B > 40); dk = m & (L < 75)
+    lab, n = ndimage.label(dk); out, (ax, ay) = r[0], r[1]; fixed = 0
+    for k in range(1, n + 1):
+        comp = lab == k; sz = comp.sum()
+        if sz < 0.25 * c * c or sz > 4 * c * c: continue
+        ring = ndimage.binary_dilation(comp, iterations=3) & ~comp
+        ys, xs = np.where(comp)
+        if skin[ring].mean() < 0.4 or (ys.max() - ys.min() + 1) < 2 * (xs.max() - xs.min() + 1): continue   # 뜬 눈만 (세로로 긴 줄 — 감은 눈 · 손 테는 건드리지 않는다)
+        ci = int(np.floor((o[0] + xs.mean() + 0.5) / c)) + ax
+        cj0 = (o[1] + ys.min() + 0.5) / c + ay; cj1 = (o[1] + ys.max() + 0.5) / c + ay
+        rows = [j for j in range(int(np.floor(cj0)), int(np.floor(cj1)) + 1) if min(cj1, j + 1) - max(cj0, j) >= 0.4] or [int(np.floor((cj0 + cj1) / 2))]
+        foot = [(j, i) for j in rows for i in (ci - 1, ci, ci + 1) if 0 <= j < out.shape[0] and 0 <= i < out.shape[1]]
+        if any(out[j, i] in (0, 1) for j, i in foot): continue
+        for j in rows:
+            if 0 <= j < out.shape[0] and 0 <= ci < out.shape[1] and out[j, ci] >= 0: out[j, ci] = 1; fixed += 1
+    return fixed
+
 ROWS = [('side', 'base', [0]), ('front', 'base', [1]), ('sit', 'base', [2]), ('sleep', 'base', [3]), ('hurt', 'base', [4]), ('walk', 'walk', range(16)), (ATK, ATK, range(16)), ('death', 'death', range(16))]
 meta = {}
 for rn, sheet, idx in ROWS:
@@ -40,7 +62,9 @@ for rn, sheet, idx in ROWS:
     for i in idx:
         rgb, m = D[sheet][i]
         ax = WALK_X(rgb, m) if rn == 'walk' else m.shape[1] / 2 if rn in ('front', 'sit', 'sleep') else heel(m)
-        F.append(down(rgb, m, (-ax, -m.shape[0]), c, P))
+        r = down(rgb, m, (-ax, -m.shape[0]), c, P); nfix = 0 if rn in ('death', 'sleep') else eye_fix(rgb, m, (-ax, -m.shape[0]), c, r)   # 누운 장은 눈을 감고 있다
+        if nfix: print('  눈 살림', rn, i, nfix)
+        F.append(r)
     X0 = min(-r[1][0] for r in F); Y0 = min(-r[1][1] for r in F); X1 = max(r[0].shape[1] - r[1][0] for r in F); Y1 = max(r[0].shape[0] - r[1][1] for r in F)
     W, H, ax, ay = X1 - X0 + 2, Y1 - Y0 + 2, 1 - X0, 1 - Y0
     for i, r in enumerate(F):
