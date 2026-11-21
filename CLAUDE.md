@@ -1288,3 +1288,8 @@
 - `tools/saved/gpt70/mini72/mini_sprites.py`: 글자 격자로 적은 그림 — 직업 여섯(`C`: head 9줄 · body 4줄 · legs 3장(서기 · 벌림 · 모음, 로브 직업은 자락 3장) · 팔레트 · 무기 · 자세 `pose` rest/wind/hit = [손 x, 손 y, 각도]) · 무기 · 든 것(`W`: sword · dagger · club · staff · scepter · bow · shield · lantern — 외곽선 자동 · grip) · 몬스터 셋(`M`: wolf · rat · rabbit — body + legs 2장). → `mini_sprites.json` · `mini_preview.png`.
 - `page_mini.html`(아티팩트 「작은 도트 모험가 시안」 https://claude.ai/artifact/… 카드로 전달): 캔버스 260×120 — 세 줄 × 세 자리로 걸어와 싸우고 다시 걷는다. 움직임 규칙(게임에 옮길 때 그대로): 서기 = 머리 · 몸통 한 칸 내려앉기(초당 2.2번) · 걷기 = 다리 장 1 ↔ 2(초당 8장) + 모은 장에서 한 칸 튐 · 공격 0.5초 = 0 ~ 35% 준비(웅크림 · 무기 wind) → 35 ~ 50% 맞힘(무기 hit · 몸 +3칸) → 70%까지 멈춤 → 돌아옴, 무기 각도는 15도 계단 · 맞음 = 흰 번쩍 0.08초 · 쓰러짐 = 납작해지며 사라짐. 뒤로는 가지 않는다.
 - 다음(사용자 답에 따라): 마음에 들면 게임에 옮김 — 길드원 그리기(art.js drawAdv)를 이 그림으로 바꾸는 길과, 장비 겉모습 · 2/3차 직업 · 몬스터 전체를 이 굵기로 다시 찍는 일의 크기를 먼저 알릴 것.
+
+### 작은 도트 모험가 시안 2 (11-22) — 아직 게임에 안 넣음
+- `tools/saved/gpt70/mini72/mini2_sprites.py` → `mini2_sprites.json`: 키 24칸, 몸을 조각(머리 · 몸통 · 팔 · 다리/옷자락 · 등짐 · 무기 · 방패)으로 나눠 찍음. 여섯 직업 + 늑대 · 쥐 · 토끼.
+- `page_mini.html`(아티팩트 「작은 도트 모험가 시안」 같은 주소): 동작 = 자세의 차례 `ACT[name] = [[초, 자세, 이름], …]`, 사이를 잇지 않고 넘김. 자세 값: rx 앞으로 · ry 위로 · cy 윗몸 내려앉음 · fa/ba 앞팔/뒷팔 각도 · wa 무기 각도 · fl/bl 다리 자리 · lift 든 다리. 각도는 22.5도 단위로 끊음.
+- 동작: idle 2 · walk 6 · slash 5 · stab 5 · shoot 5 · cast 5 · heal 4 · hurt 2 · die 3. 몸은 뒤로 물러나지 않음.
