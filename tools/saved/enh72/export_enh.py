@@ -52,7 +52,7 @@ def fx(name, size=168):
 out = {}; prev = {}
 bg = Image.open(D + 'bg.png').convert('RGB'); bg = bg.resize((900, round(900 * bg.height / bg.width)), Image.LANCZOS); out['bg'] = url(bg, 84); prev['bg'] = bg
 hm = Image.fromarray(crop(biggest(key_magenta(Image.open(D + 'hammer.png'))), 4)); hm = hm.resize((256, round(256 * hm.height / hm.width)), Image.LANCZOS); out['hammer'] = url(hm, 90); prev['hammer'] = hm
-for k in ['hit', 'ok', 'fail', 'break', 'save']: s = fx('fx_%s.png' % k); out['fx_' + k] = url(s, 84); prev['fx_' + k] = s
+for k in ['hit', 'ok', 'fail', 'dmg', 'break', 'save']: s = fx('fx_%s.png' % k); out['fx_' + k] = url(s, 84); prev['fx_' + k] = s
 items = {}
 mj = Image.open(D + 'mj6.png'); cw = mj.width // 6
 for i in range(6): im = crystal(mj.crop((i * cw, 0, (i + 1) * cw, mj.height))); items['mj_%d' % i] = url(im, 92); prev['mj_%d' % i] = im

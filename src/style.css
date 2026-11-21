@@ -933,3 +933,4 @@ details.skl summary b { color: var(--ink); }
 .enh-scrap { position: absolute; left: 0; bottom: -6px; width: 60px; height: 60px; opacity: 0; animation: enhScrap .3s steps(3) .7s forwards; }
 @keyframes enhScrap { to { opacity: 1; } }
 .enhst.art .enh-res { z-index: 3; }
+.enh-fx.resfx.rd { width: 200px; height: 200px; margin-left: -100px; top: 64px; --t: .95s; z-index: 1; }

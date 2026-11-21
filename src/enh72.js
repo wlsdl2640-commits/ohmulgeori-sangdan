@@ -92,7 +92,7 @@ function enhStage(f) {
   const L = UI.enhLast, hit = UI.enhAnim ? Math.min(ENH_HIT, (Date.now() - UI.enhAnim) / 1000) : 0, g = f && f.g;
   const art = L && L.res === 'x' ? L.art : g ? gArt(g, 2) : '';
   const parts = L && L.res === 'x' ? [0, 1, 2, 3].map(i => `<span class="enh-pc p${i}">${L.art}</span>`).join('') : '';
-  const fxR = L && !UI.enhAnim ? enhFx({ s: 'ok', f: 'fail', x: 'break', v: 'save' }[L.res] || '-', 'resfx r' + L.res) : '', fxH = UI.enhAnim ? enhFx('hit', 'hitfx k1') + enhFx('hit', 'hitfx k2') + enhFx('hit', 'hitfx k3') : '';
+  const fxR = L && !UI.enhAnim ? enhFx({ s: 'ok', f: 'fail', d: 'dmg', x: 'break', v: 'save' }[L.res] || '-', 'resfx r' + L.res) : '', fxH = UI.enhAnim ? enhFx('hit', 'hitfx k1') + enhFx('hit', 'hitfx k2') + enhFx('hit', 'hitfx k3') : '';
   const scrap = L && L.res === 'x' && typeof ITEM_HD !== 'undefined' && ITEM_HD.scrap ? `<img class="enh-scrap" src="${ITEM_HD.scrap}" alt="">` : '';
   const stars = L && L.res === 's' && !fxR ? [...Array(12)].map((_, i) => `<i class="enh-star" style="--a:${i * 30}deg;--d:${(i % 3) * 0.08}s"></i>`).join('') : '';
   const smoke = L && (L.res === 'f' || L.res === 'x') && !fxR ? [...Array(6)].map((_, i) => `<i class="enh-smoke" style="--x:${(i - 2.5) * 14}px;--d:${i * 0.07}s"></i>`).join('') : '';
@@ -100,7 +100,7 @@ function enhStage(f) {
   const panel = R ? `<div class="enh-res ${R[1]}"><b>${R[0]}</b><span>${esc(L.line)}</span>${L.sub ? `<small>${esc(L.sub)}</small>` : ''}<button type="button" class="btn sm${L.res === 's' ? ' gold' : ''}" data-act="enhok">확인</button></div>` : '';
   return `<div class="enhst${UI.enhAnim ? ' hit' : ''}${R ? ' r-' + L.res : ''}${enhArt('bg') ? ' art' : ''}" style="--el:-${hit.toFixed(1)}s"><div class="enh-bg"${enhArt('bg')}></div>
     ${R && L.res === 's' && !fxR ? '<div class="enh-rays"></div>' : ''}<div class="enh-anvil${enhArt('anvil') ? ' art' : ''}"${enhArt('anvil')}></div>
-    <div class="enh-gear">${scrap}${parts || art || '<span class="enh-empty">장비를 골라요</span>'}${R && L.res === 'd' ? '<i class="enh-crack"></i>' : ''}${R && L.res === 'v' ? '<i class="enh-shield"></i>' : ''}</div>
+    <div class="enh-gear">${scrap}${parts || art || '<span class="enh-empty">장비를 골라요</span>'}${R && L.res === 'd' && !fxR ? '<i class="enh-crack"></i>' : ''}${R && L.res === 'v' ? '<i class="enh-shield"></i>' : ''}</div>
     <div class="enh-hammer${enhArt('hammer') ? ' art' : ''}"${enhArt('hammer')}></div>${fxH || '<i class="enh-spark k1"></i><i class="enh-spark k2"></i><i class="enh-spark k3"></i>'}${fxR}${stars}${smoke}${panel}</div>`;
 }
 function enhBox() {
