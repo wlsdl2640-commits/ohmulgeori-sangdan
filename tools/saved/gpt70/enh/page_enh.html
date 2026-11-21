@@ -1,0 +1,167 @@
+<title>강화 화면 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 배치: 한 줄 흐름 — 머리 → 순서(번호: 실제 차례) → 붙일 그림 셋(그림 · 크게 보기 · 저장) → 부탁 글 넷(글 · 복사) → 받은 뒤 볼 것.
+   색은 궁수 그림에서: 두건 초록 · 가죽 갈색 · 버클 금색. 그림은 밝은 회색 판 그대로 보인다 */
+:root {
+  --bg: #eeedf4; --surface: #f9f8fc; --panel: #dcd9e8; --fg: #1c1a26; --muted: #5a5770; --line: #c8c4d8;
+  --accent: #2f6a3a; --accent-fg: #ffffff; --label: #7a5a0c; --sheet: #c8ccd6; --code: #f3f1f9;
+  --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark }
+*, *::before, *::after { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 820px; margin-inline: auto; display: grid; gap: 44px; grid-template-columns: minmax(0, 1fr) }
+h1, h2, h3, p, ul, ol, figure, pre { margin: 0 }
+ul, ol { padding: 0; list-style: none }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.15 }
+h1 { font-size: clamp(30px, 7vw, 42px) }
+h2 { font-size: 24px }
+h3 { font-size: 16px; font-weight: 600 }
+.top { display: grid; gap: 10px }
+.eyebrow { color: var(--label); font-size: 13px; font-weight: 600; letter-spacing: .04em }
+.lede { max-width: 36em }
+.sec { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) }
+.note { color: var(--muted); font-size: 14px; max-width: 44em }
+.steps { counter-reset: n; display: grid; gap: 12px; max-width: 46em }
+.steps li { counter-increment: n; padding-left: 34px; position: relative }
+.steps li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font: 400 15px/1 var(--font-display); background: var(--accent); color: var(--accent-fg); border-radius: 4px }
+.item { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) }
+.item .what { display: grid; gap: 2px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.msg { color: var(--muted); font-size: 13px }
+.msg:empty { display: none }
+.btn { font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.btn[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg) }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-fg) }
+.btn:disabled { opacity: .6; cursor: default }
+.btn:focus-visible { outline: 2px solid var(--label); outline-offset: 2px }
+.frame { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px }
+.frame img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.frame.zoomed img { width: var(--zw); max-width: none }
+.frame.soft img { image-rendering: auto }
+.attach { color: var(--label); font-size: 13px; font-weight: 600 }
+.req { font: 13.5px/1.65 var(--font-body); white-space: pre-wrap; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; max-height: 22em; overflow: auto; -webkit-user-select: text; user-select: text }
+.list { display: grid; gap: 10px; max-width: 46em }
+.list li { padding-left: 18px; position: relative }
+.list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; background: var(--label) }
+
+.mock { position: relative; width: 100%; aspect-ratio: 2172 / 724; container-type: inline-size; border: 2px solid #000; overflow: hidden; border-radius: 6px; background: #c9d6c2; }
+.mock .b { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 2.9cqw; line-height: 1.25; color: #f2f4e8; box-sizing: border-box; border-top: 1px dashed rgba(0, 0, 0, .45); padding: 0 1cqw; }
+.pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style><main class="wrap">
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 대장간</p><h1>강화 화면 시안</h1><p class="lede">모루 무대와 망치질, 결과 연출 다섯 가지를 게임에 넣은 모습입니다. 모루 · 망치 · 배경은 임시 네모 그림이라, 아래 부탁 글로 GPT에서 뽑아 오시면 바꿔 끼웁니다.</p></header>
+  <section class="sec"><div class="what item"><h2>지금 게임 화면</h2><p class="note">대장간 창의 「강화」 탭입니다. 무대는 위에 붙어 있고, 아래로 내리면 장비 칸이 강화 수치 높은 순으로 나옵니다.</p></div>
+    <div class="item"><div class="what"><h3>장비를 모루에 올린 모습</h3><p class="note">장비 칸에서 고르면 모루 위에 올라가고, 아래에 성공 · 실패 · 손상 · 파괴 확률이 나옵니다.</p></div><div class="frame" id="f-idle"><img src="scr_idle.png" alt="장비를 모루에 올린 모습"></div><div class="row"><button class="btn" type="button" data-zoom="f-idle" aria-pressed="false">크게 보기</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>망치질</h3><p class="note">강화를 누르면 망치가 세 번 내려치고 불꽃이 튑니다. 에테르 주괴 칸에는 들어가는 개수와 보유 개수가 나옵니다.</p></div><div class="frame" id="f-hit"><img src="scr_hit.png" alt="망치질"></div><div class="row"><button class="btn" type="button" data-zoom="f-hit" aria-pressed="false">크게 보기</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>결과 다섯 가지</h3><p class="note">성공(금빛 빛살과 별) · 실패(연기, 장비가 식음) · 손상(붉은 번쩍임과 금) · 파괴(네 조각으로 부서짐) · 에테르 주괴가 막음(푸른 막).</p></div><div class="frame" id="f-res"><img src="scr_results.png" alt="결과 다섯 가지"></div><div class="row"><button class="btn" type="button" data-zoom="f-res" aria-pressed="false">크게 보기</button><span class="msg" role="status"></span></div></div>
+  </section>
+  <section class="sec"><div class="what item"><h2>GPT에 붙일 그림 2장</h2><p class="note">①은 화풍 기준, ②는 크기와 자리 나눔 기준입니다.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
+    <div class="item"><div class="what"><h3>① 대장간 방 그림</h3><p class="note">세 부탁 모두에 붙입니다.</p></div><div class="frame soft" id="f-rs"><img src="ref_smithy.png" alt="① 대장간 방 그림"></div><div class="row"><button class="btn" type="button" data-zoom="f-rs" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_smithy.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>② 지금 강화 무대</h3><p class="note">1번 부탁에만 붙입니다.</p></div><div class="frame" id="f-rt"><img src="ref_stage.png" alt="② 지금 강화 무대"></div><div class="row"><button class="btn" type="button" data-zoom="f-rt" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_stage.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+  </section>
+  <section class="sec"><div class="what item"><h2>부탁 글 3개</h2><p class="note">위에서부터 급한 순서입니다. 1번과 2번만 있어도 화면이 완성되고, 3번은 가방 칸 그림입니다.</p></div>
+    <div class="item"><div class="what"><h3>1. 강화 무대 배경</h3><p class="note">모루가 그려진 배경 한 장. 장비는 게임이 모루 위에 올립니다.</p><p class="attach">붙일 그림: ① 대장간 방 그림 + ② 지금 강화 무대</p></div><pre class="req" id="req-1" tabindex="0">강화 무대 배경 (모루가 있는 대장간 한가운데)
+
+붙인 그림 두 장: ① 같은 게임의 「대장간」 방 그림 — 화풍과 색감의 기준. ② 지금 게임의 강화 화면(임시 네모 그림) — 크기와 자리 나눔의 기준.
+②의 자리 나눔 그대로, ①의 화풍으로 「강화 무대」 한 장을 그려 주세요. 대장간의 모루 앞을 가까이에서 정면으로 본 장면입니다.
+
+그릴 것
+· 화면 한가운데 아래쪽에 크고 묵직한 모루 하나. 모루의 윗면은 평평하고 비어 있다 (게임이 이 위에 장비 그림을 올린다). 모루는 가로 너비의 약 2/5, 윗면이 화면 세로의 가운데보다 조금 아래에 온다
+· 모루 뒤에는 벌건 숯불이 타는 화로 입구가 가운데에 보이고, 그 불빛이 모루 윗면을 뒤에서 비춘다
+· 양옆 벽에는 집게 · 망치 걸이, 쇠사슬, 물통, 쇳덩이 더미 같은 대장간 도구 (가운데 모루 위쪽 공간은 비워 둔다 — 망치와 불꽃 효과가 지나간다)
+· 맨 아래 1/4은 어두운 돌바닥만 (게임의 결과 안내 판이 덮는다)
+· 망치는 그리지 않는다 (따로 그린다)
+
+크기
+· 가로 : 세로 = 5 : 3 (예: 1500 × 900)
+
+공통 규격
+· 도트 그림. 붙인 대장간 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (화로 불빛, 어둑한 실내)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다
+· 십자 무늬는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따른다 (그림 속 내용을 그대로 옮기지 않는다)</pre><div class="row"><button class="btn go" type="button" data-copy="req-1">글 복사</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>2. 망치</h3><p class="note">게임에서 돌려서 내려칠 망치 한 자루.</p><p class="attach">붙일 그림: ① 대장간 방 그림</p></div><pre class="req" id="req-2" tabindex="0">대장장이 망치 한 자루 (움직일 그림)
+
+붙인 그림: 같은 게임의 「대장간」 방 그림 — 화풍과 색감의 기준.
+게임에서 모루 위의 장비를 내려치는 큰 대장장이 망치 한 자루만 그려 주세요.
+
+그릴 것
+· 묵직한 쇠 머리와 나무 자루. 머리는 왼쪽 위, 자루 끝은 오른쪽 아래로 가도록 45도로 기울여 놓는다 (자루 끝을 축으로 돌려 내려친다)
+· 쇠 머리에는 닳은 자국과 가장자리 빛, 자루에는 가죽 끈 감개. 장식은 수수하게
+· 손이나 팔은 그리지 않는다. 망치 하나만, 그림자 없이
+
+바탕과 크기
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 무늬 · 그러데이션 · 테두리 없이 (게임에서 이 색을 지워 투명하게 쓴다)
+· 정사각형 (예: 1024 × 1024), 망치가 화면의 80%쯤 차지하게 가운데에
+
+공통 규격
+· 도트 그림. 붙인 대장간 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (화로 불빛, 어둑한 실내)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다
+· 십자 무늬는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따른다 (그림 속 내용을 그대로 옮기지 않는다)</pre><div class="row"><button class="btn go" type="button" data-copy="req-2">글 복사</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>3. 강화 재료 아이콘</h3><p class="note">마정석 6등급 · 에테르 주괴 · 강화 주괴 · 숫돌 5종 · 깨진 조각.</p><p class="attach">붙일 그림: ① 대장간 방 그림</p></div><pre class="req" id="req-3" tabindex="0">강화 재료 아이콘 14개 (한 장에 모아서)
+
+붙인 그림: 같은 게임의 「대장간」 방 그림 — 화풍과 색감의 기준.
+게임 가방 칸에 들어갈 작은 물건 그림 14개를 한 장에 격자로 그려 주세요. 가로 5칸 × 세로 3줄 (마지막 줄은 4개), 칸마다 물건 하나, 칸 사이는 넉넉히 띄운다.
+
+첫째 줄 — 마정석 6등급 가운데 앞의 다섯 (강한 마나를 머금은 광물. 등급이 오를수록 크고 맑고 빛이 세다)
+1. 최하급 마정석: 탁한 잿빛 돌에 희미한 푸른 점이 박힌 작은 조각
+2. 하급 마정석: 흐린 하늘빛 결정이 돌 틈에 조금 드러난 조각
+3. 중급 마정석: 청록빛 결정 기둥 두세 개가 돋은 원석
+4. 중상급 마정석: 금빛이 도는 맑은 결정 덩이, 안에서 빛이 돈다
+5. 상급 마정석: 주황빛 불씨가 속에서 타는 큰 결정
+
+둘째 줄
+6. 최상급 마정석: 보랏빛과 흰빛이 넘치는 크고 완전한 결정, 둘레에 작은 빛 조각
+7. 에테르 주괴: 옅은 하늘빛으로 빛나는 사다리꼴 금속 주괴 (장비가 부서지는 것을 대신 막아 주는 재료)
+8. 강화 주괴: 달궈진 금빛 주괴, 윗면에 불씨 같은 빛 줄 (강화를 뽑아 담아 둔 주괴)
+9. 숫돌 (가장 작은 것): 거친 회색 네모 숫돌 조각
+10. 숫돌: 조금 더 크고 고운 회갈색 숫돌
+
+셋째 줄
+11. 숫돌: 물기 어린 청회색 숫돌, 나무 받침
+12. 숫돌: 결이 고운 검푸른 숫돌, 쇠 테 받침
+13. 숫돌 (가장 좋은 것): 은은히 빛나는 흰 숫돌, 금 테 받침
+14. (빈 칸 없이) 깨진 장비 조각 더미: 부서진 쇠 조각 몇 개 (파괴 결과에 쓴다)
+
+바탕과 크기
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 없이
+· 가로 : 세로 = 5 : 3 (예: 1500 × 900). 물건마다 비스듬히 위에서 본 같은 각도, 굵은 어두운 테두리, 그림자 없이
+
+공통 규격
+· 도트 그림. 붙인 대장간 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (화로 불빛, 어둑한 실내)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다
+· 십자 무늬는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따른다 (그림 속 내용을 그대로 옮기지 않는다)</pre><div class="row"><button class="btn go" type="button" data-copy="req-3">글 복사</button><span class="msg" role="status"></span></div></div>
+  </section>
+</main>
+<script>
+const $$ = s => Array.from(document.querySelectorAll(s));
+const msgOf = b => b.parentElement.querySelector('.msg');
+const W = { 'f-idle': 824, 'f-hit': 824, 'f-res': 1648, 'f-rs': 2172, 'f-rt': 1400 };
+$$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');
+  b.addEventListener('click', () => { const on = f.classList.toggle('zoomed'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); });
+// 글 복사: 안 되면 글을 골라 둔다
+$$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const pre = document.getElementById(b.dataset.copy), msg = msgOf(b);
+  try { await navigator.clipboard.writeText(pre.textContent); msg.textContent = '복사했습니다.'; }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); pre.focus(); msg.textContent = '여기서는 바로 복사가 안 됩니다. 글을 골라 두었으니 길게 눌러 복사해 주세요.'; }
+}));
+// 저장 (보는 쪽에서 저장을 받아 줄 때만 단추를 보인다)
+(async () => {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+  if (!dl) return;
+  document.getElementById('save-hint').hidden = true;
+  $$('[data-save]').forEach(b => { b.hidden = false; b.addEventListener('click', async () => {
+    const msg = msgOf(b); b.disabled = true; msg.textContent = '';
+    try { const blob = await (await fetch(b.dataset.save)).blob(); await dl.save({ filename: b.dataset.save, data: blob }); msg.textContent = '저장했습니다.'; }
+    catch (e) { const c = e && e.code; msg.textContent = c === 'declined' ? '저장을 취소했습니다.' : c === 'rate_limited' ? '잠시 뒤에 다시 눌러 주세요.' : '여기서는 저장할 수 없습니다. 그림을 길게 눌러 저장해 주세요.'; }
+    b.disabled = false; }); });
+})();
+</script>

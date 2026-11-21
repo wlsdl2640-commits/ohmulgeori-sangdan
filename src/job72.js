@@ -87,7 +87,7 @@ function j1Hold(p, e, team, dt) {
   const por = team.some(isPorter), NP = J1.noPorter;
   e.note = { t: 0.6, txt: por ? '갈무리 중' : '서툰 갈무리 중' }; e.hv = (e.hv || 0) + dt;
   if (e.hv >= J1.harv * (por ? 1 : NP.time)) { e.hv = 0; const C = e.corpses.shift();
-    for (const [it, q] of C.items) { let n = q; if (!por) { n = 0; for (let i = 0; i < q; i++) if (rnd() < NP.rate) n++; } if (n > 0) loot(p, e, it, n); }
+    for (const [it, q] of C.items) { let n = q; if (!por && !ITEMS[it].mj) { n = 0; for (let i = 0; i < q; i++) if (rnd() < NP.rate) n++; } if (n > 0) loot(p, e, it, n); }
     for (const g of C.gear) if (por || rnd() < NP.rate) lootGear(p, e, g); }
   return true;
 }
