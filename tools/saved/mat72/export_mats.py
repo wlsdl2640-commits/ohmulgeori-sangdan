@@ -24,6 +24,12 @@ MEAT = { 'm_plains.png': (4, 2, ['rat', 'rabbit', 'wolf', 'scarecrow', 'boar', '
          'm_deep.png': (4, 2, ['ewisp', 'mlizard', 'rcenti', 'emoth', 'eshroom', 'cstag', 'sentinel', 'elddragon']), 'm_rootcave.png': (3, 1, ['smandrake', 'fairies', 'fdryad']) }
 for f, (c, r, ids) in MEAT.items():
     for im, k in zip(cells(f, c, r, len(ids)), ids): items['mm_' + k] = im
+# 고유 부속품 (u_<지역>.png — 차례는 gpt70/uniq/order.json의 부탁 글 차례)
+UNIQ = { 'u_plains.png': (5, 2, ['rat_tail', 'rabbit_horn', 'wolf_pelt', 'wolf_fang', 'scare_straw', 'crow_feather', 'boar_hide', 'boar_tusk', 'aboar_plate', 'ratking_crown']),
+         'u_forest.png': (4, 3, ['vine_thorn', 'flower_nectar', 'stump_ring', 'bark', 'spot_cap', 'spore', 'beetle_shell', 'beetle_horn', 'moss_core', 'guard_bell', 'guard_antler', 'elder_heart']) }
+for f, (c, r, ids) in UNIQ.items():
+    if not os.path.exists(D + f): continue
+    for im, k in zip(cells(f, c, r, len(ids)), ids): items[k] = im
 js = '/* 등급 부속품 · 마물육 그림 — tools/saved/mat72/export_mats.py로 뽑는다(손으로 고치지 말 것) */\nObject.assign(ITEM_HD, {\n' + ''.join("  %s: '%s',\n" % (k, url(v, 86)) for k, v in items.items()) + '});\n'
 open(sys.argv[1], 'w', encoding='utf-8').write(js); print('items', len(items), 'bytes', len(js))
 if len(sys.argv) > 2:
