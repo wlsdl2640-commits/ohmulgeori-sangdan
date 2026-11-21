@@ -914,3 +914,22 @@ details.skl summary b { color: var(--ink); }
 .enh-go { font-size: 16px; padding: 10px; }
 .enhgrid .cell { cursor: pointer; } .enhq { color: #ffe070 !important; font-size: 11px !important; } .enh-own { position: absolute; left: 2px; top: 0; font-size: 9px; color: #cfe; text-shadow: 1px 1px 0 #000; }
 @media (prefers-reduced-motion: reduce) { .enh-rays, .enh-star, .enh-smoke { animation: none; } }
+
+/* 빌드 72: 강화 화면 — GPT 그림(ENH_ART): 모루가 그려진 배경 · 망치 · 효과 6장 띠 */
+.enhst.art { height: 300px; }
+.enhst.art .enh-bg { background-size: auto 125%; background-position: center top; image-rendering: auto; }
+.enhst.art .enh-anvil { display: none; }
+.enhst.art .enh-gear { bottom: 106px; }
+.enh-hammer.art { left: calc(50% + 2px); top: 10px; bottom: auto; margin: 0; width: 112px; height: 112px; transform-origin: 92% 92%; transform: rotate(18deg); image-rendering: auto; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, .45)); }
+.enhst.hit .enh-hammer.art { animation: enhHamA .4s steps(8) 3 both; animation-delay: var(--el); }
+@keyframes enhHamA { 0% { transform: rotate(18deg); } 50% { transform: rotate(34deg); } 64%, 76% { transform: rotate(-44deg); } 100% { transform: rotate(18deg); } }
+.enh-fx { position: absolute; left: 50%; background-size: 600% 100%; background-repeat: no-repeat; background-position-x: 120%; pointer-events: none; animation: enhFx var(--t, .6s) steps(6) forwards; }
+@keyframes enhFx { from { background-position-x: 0%; } to { background-position-x: 120%; } }
+.enh-fx.hitfx { top: 44px; width: 160px; height: 160px; margin-left: -84px; --t: .34s; }
+.enh-fx.hitfx.k1 { animation-delay: calc(var(--el) + .25s); } .enh-fx.hitfx.k2 { animation-delay: calc(var(--el) + .65s); } .enh-fx.hitfx.k3 { animation-delay: calc(var(--el) + 1.05s); }
+.enh-fx.resfx { top: 14px; width: 300px; height: 300px; margin-left: -150px; --t: .85s; }
+.enh-fx.resfx.rs { animation-iteration-count: 2; --t: .9s; } .enh-fx.resfx.rf { top: -6px; --t: 1.1s; } .enh-fx.resfx.rx { --t: 1s; z-index: 1; } .enh-fx.resfx.rv { width: 220px; height: 220px; margin-left: -110px; top: 54px; --t: 1.1s; }
+.enhst.art.r-x .enh-pc { z-index: 2; }
+.enh-scrap { position: absolute; left: 0; bottom: -6px; width: 60px; height: 60px; opacity: 0; animation: enhScrap .3s steps(3) .7s forwards; }
+@keyframes enhScrap { to { opacity: 1; } }
+.enhst.art .enh-res { z-index: 3; }

@@ -85,7 +85,7 @@ function portrait(a) {
   else { x.translate(POR_W / 2, POR_H - 2); x.scale(2, 2); drawAdvHi(x, a, 0, { noRide: 1 }); }   // 탈것 직업도 초상은 내려서 (빌드 65)
   return (POR[key] = c.toDataURL());
 }
-const iconImg = (id, cls = 'ico') => `<img class="${cls}" src="${iconURL(id)}" alt="">`;
+const iconImg = (id, cls = 'ico') => `<img class="${cls}${itemHD(id) ? ' hr' : ''}" src="${itemHD(id) || iconURL(id)}" alt="">`;   // 빌드 72: 큰 그림이 있는 물건(ITEM_HD — enh72.js itemHD)
 
 /* ───────── 상태줄과 화면 위 글씨 ───────── */
 function updateHud() {
