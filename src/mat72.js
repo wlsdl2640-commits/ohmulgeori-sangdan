@@ -1,12 +1,15 @@
 /* ───────── 등급 부속품 · 마물육 (빌드 72 · 11-21 13:21 사용자) ─────────
    부속품은 세 갈래가 된다:
    ① 등급 부속품 — 마정석과 같은 여섯 등급(최하급 ~ 최상급). 장비를 만드는 바탕 재료. 그 재료가 나올 법한 몬스터 모두가 떨어뜨리고, 등급은 몬스터 레벨대로(Lv 30마다 한 등급 — 마정석과 같음).
-      사용자가 정한 것: 가죽(짐승) · 비늘 셋(파충류 · 용족 · 어류) · 이끼 · 거미줄. 내가 더한 것(「너가 더 추천해서 넣어줘」): 뼈 · 갑각 · 목재 · 섬유 · 깃털.
+      사용자가 정한 것: 가죽(짐승) · 비늘 셋(파충류 · 용족 · 어류) · 이끼 · 거미줄. 광물(골렘 · 광물을 품은 몬스터). 내가 더한 것(「너가 더 추천해서 넣어줘」): 뼈 · 갑각 · 목재 · 섬유 · 깃털.
    ② 마물육 — 몬스터마다 하나씩, 먹을 수 있는 부위(들쥐 고기 · 뿔토끼 안심살 …, 슬라임이면 젤리, 내장일 수도). 허수아비는 벼. 사람 꼴(엘프 라헨)은 없음.
    ③ 고유 부속품 — 그 몬스터의 특징을 보여 주는 예전 부속품(쥐꼬리 · 뿔토끼 뿔 …)은 그대로. 나중에 더해질 수 있다.
-   · 드랍은 core.js kill의 갈무리 안에서 matDrop(짐꾼이 없으면 30% 규칙을 받는다). 확률 MAT72.p는 임시.
+   · 드랍은 core.js kill의 갈무리 안에서 matDrop — 모두 필수 드랍(짐꾼이 없으면 30% 규칙을 받는다).
    · 아직: 이 재료를 쓰는 제작법(장비 제작 손보기 때) · 마물육을 쓰는 요리(지금 요리는 예전 「날고기」 그대로 — 날고기 드랍도 그대로 둠) · 그림(GPT — tools/saved/gpt70/mats/). */
-const MAT72 = { p: [0.45, 0.25], meat: 0.35 };
+const MAT72_ON = true;
+// 11-21 13:32 사용자 「모든 부속품은 필수 드랍 · 마정석도 필수 드랍 · 스킬북이나 다른 종류의 아이템만 확률 드랍」: 몬스터 고유 부속품(MONS.drops 가운데 부속품 칸 물건) · 등급 부속품 · 마물육은 늘 나온다.
+// 약초 · 날고기 · 알 · 스킬북 · 돌 · 지도 같은 것은 예전 확률 그대로. 짐꾼이 없을 때의 30% 규칙(job72.js)은 그대로 받는다(마정석만 빼고).
+const partSure = it => { const I = ITEMS[it]; return !!I && itemCat(it) === 'mat' && !I.herb && !I.trade && !it.startsWith('egg_') && it !== 'tmap' && !I.keep; };
 const MAT_FAM = {
   hide:    { name: '가죽',        icon: 'hide',    c: ['#b8a890', '#a88c68', '#96703e', '#7e5428', '#643a18', '#4a2410'], desc: '짐승의 가죽. 가죽 갑옷 · 장갑 · 신발 · 벨트의 바탕이 된다.' },
   rscale:  { name: '파충류 비늘', icon: 'hide',    c: ['#b4c0a0', '#98b078', '#789c50', '#588434', '#3c6a20', '#245010'], desc: '뱀 · 도마뱀 같은 파충류의 비늘. 가볍고 질긴 비늘 갑옷의 재료.' },
@@ -18,6 +21,7 @@ const MAT_FAM = {
   shell:   { name: '갑각',        icon: 'ore',     c: ['#b0a8a0', '#a09080', '#8c7860', '#786048', '#604834', '#483424'], desc: '곤충 · 갑각 마물의 딱딱한 껍데기. 가벼운 판금과 방패의 재료.' },
   wood:    { name: '목재',        icon: 'branch',  c: ['#c8b898', '#b8a078', '#a48858', '#8c703c', '#745828', '#5c4018'], desc: '나무 마물의 몸에서 얻은 목재. 지팡이 · 활 · 방패 · 자루를 깎는다.' },
   fiber:   { name: '섬유',        icon: 'leaf',    c: ['#d0c8a8', '#c8bc8c', '#bcac6c', '#ac9850', '#988038', '#806824'], desc: '덩굴 · 줄기 · 짚에서 뽑은 식물 섬유. 천과 끈, 속감을 짠다.' },
+  ore:     { name: '광물',        icon: 'ore',     c: ['#b0b0b0', '#a0a8b4', '#8c9cb8', '#7088b8', '#5470b0', '#3c58a0'], desc: '골렘이나 광물을 몸에 품은 마물에게서 캐낸 광물 덩이. 녹여서 쇠붙이 장비를 만든다.' },   // 11-21 13:32 사용자 「광물도 추가 — 골렘이나 광물을 몸에 품은 몬스터에게서」
   feather: { name: '깃털',        icon: 'feather', c: ['#d0d0d0', '#c0c8d8', '#a8bce0', '#8ca8e4', '#6c8ce0', '#4c6cd4'], desc: '날짐승 마물의 깃털. 화살 깃과 가벼운 장식, 망토에 쓴다.' }
 };
 const MAT_FAMS = Object.keys(MAT_FAM), MAT_V = [8, 30, 120, 480, 1900, 7500];
@@ -25,15 +29,16 @@ MAT_FAMS.forEach(k => MJ_GRADES.forEach((gn, i) => { const F = MAT_FAM[k]; ITEMS
 // 몬스터 → 등급 부속품 (리마스터한 땅은 손으로, 나머지는 타입 · 이름으로 어림)
 const MAT_OF = {
   rat: ['hide', 'bone'], rabbit: ['hide', 'bone'], wolf: ['hide', 'bone'], scarecrow: ['fiber'], boar: ['hide', 'bone'], aboar: ['hide', 'bone'], ratking: ['hide', 'bone'],
-  vinesnake: ['rscale', 'fiber'], cflower: ['fiber'], stump: ['wood', 'moss'], spotshroom: ['moss'], ibeetle: ['shell'], mgolem: ['moss'], fguard: ['wood', 'moss'], elder: ['wood', 'moss'],
-  ewisp: [], mlizard: ['rscale', 'moss'], rcenti: ['shell'], emoth: ['web'], eshroom: ['moss'], cstag: ['shell'], sentinel: ['wood', 'moss'], elddragon: ['wood', 'moss'],
+  vinesnake: ['rscale', 'fiber'], cflower: ['fiber'], stump: ['wood', 'moss'], spotshroom: ['moss'], ibeetle: ['shell'], mgolem: ['ore', 'moss'], fguard: ['wood', 'moss'], elder: ['wood', 'moss'],
+  ewisp: [], mlizard: ['rscale', 'moss'], rcenti: ['shell'], emoth: ['web'], eshroom: ['moss'], cstag: ['shell', 'ore'], sentinel: ['wood', 'moss'], elddragon: ['wood', 'moss'],
   smandrake: ['fiber'], fairies: [], fdryad: ['wood', 'fiber'], rahen: []
 };
-const MAT_NAME_RULE = [[/거미/, 'web'], [/도마뱀|뱀|바실리스크|악어|샐러맨더|리자드/, 'rscale'], [/와이번|드래곤|드레이크|히드라|해룡|뇌룡/, 'dscale'], [/하피|그리핀|까마귀|독수리|천둥새|페가수스/, 'feather'], [/세이렌|인어|상어|크라켄|물고기/, 'fscale'], [/풍뎅이|지네|벌레|전갈|사마귀|개미|게$/, 'shell'], [/이끼/, 'moss']];
+const MAT_NAME_RULE = [[/거미/, 'web'], [/도마뱀|뱀|바실리스크|악어|샐러맨더|리자드/, 'rscale'], [/와이번|드래곤|드레이크|히드라|해룡|뇌룡/, 'dscale'], [/하피|그리핀|까마귀|독수리|천둥새|페가수스/, 'feather'], [/세이렌|인어|상어|크라켄|물고기/, 'fscale'], [/풍뎅이|지네|벌레|전갈|사마귀|개미|게$/, 'shell'], [/이끼/, 'moss'], [/골렘|수정|광부|바위|거상|가고일/, 'ore']];
 function matsOf(id) {
   if (MAT_OF[id]) return MAT_OF[id]; const m = MONS[id]; if (!m || m.plan === 'pet') return [];
   if (m._mats) return m._mats; const ty = m.ty || [], out = [];
   for (const [re, k] of MAT_NAME_RULE) if (re.test(m.name) && !out.includes(k)) out.push(k);
+  if (ty.includes('construct') && !out.includes('ore')) out.unshift('ore');
   if (ty.includes('dragon') && !out.includes('dscale')) out.push('dscale');
   if (ty.includes('beast') && !out.length) out.push('hide');
   if (ty.includes('plant') && !out.length) out.push('wood', 'fiber');
@@ -53,6 +58,6 @@ const MMEAT = {
 Object.entries(MMEAT).forEach(([id, [name, desc]]) => { ITEMS['mm_' + id] = { name, v: 12, w: 1, icon: (ITEMS.raw_meat && ITEMS.raw_meat.icon) || 'blob', c: (ITEMS.raw_meat && ITEMS.raw_meat.c) || '#c05848', mmeat: id, desc: `${desc} (마물육 — ${MONS[id] ? MONS[id].name : ''})` }; });
 function matDrop(p, e, f) {
   const big = f.boss || f.fb, gr = Math.max(0, Math.min(5, Math.floor((f.lv || 1) / 30)));
-  matsOf(f.id).forEach((k, i) => { if (big || rnd() < MAT72.p[i]) loot(p, e, `${k}_${gr}`, big ? 2 : 1); });
-  if (ITEMS['mm_' + f.id] && (big || rnd() < MAT72.meat)) { const it = 'mm_' + f.id; loot(p, e, it, 1); ITEMS[it].v = Math.max(ITEMS[it].v, 8 + (f.lv || 1) * 2); }
+  matsOf(f.id).forEach(k => loot(p, e, `${k}_${gr}`, big ? 2 : 1));
+  if (ITEMS['mm_' + f.id]) { const it = 'mm_' + f.id; loot(p, e, it, 1); ITEMS[it].v = Math.max(ITEMS[it].v, 8 + (f.lv || 1) * 2); }
 }
