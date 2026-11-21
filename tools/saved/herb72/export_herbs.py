@@ -28,6 +28,7 @@ for k in BL: ims = three('b_%s.png' % k); art[k] = ims; prev += ims
 ic = Image.open(D + 'icons10.png').convert('RGB'); cw, ch = ic.width / 5, ic.height / 2; icons = {}
 for i, k in enumerate(['bloodshroom', 'moonflower', 'cordy', 'mugwort', 'wolfsbane', 'bladderlotus', 'echoshroom', 'fairybell', 'wtsprout', 'blacktear']):
     c = ic.crop((round((i % 5) * cw), round((i // 5) * ch), round((i % 5 + 1) * cw), round((i // 5 + 1) * ch))); icons[k] = square(crop(biggest(key_magenta(c), 0.004)), 72)
+icons['inkshroom'] = square(crop(biggest(key_magenta(Image.open(D + 'icon_inkshroom.png')), 0.004)), 72)   # 따로 받은 한 장
 js = '/* 약초 군락지 · 피는 약초 · 아이콘 — tools/saved/herb72/export_herbs.py로 뽑는다(손으로 고치지 말 것). 군락지 [소, 중, 대] · 피는 약초 [싹, 봉오리, 활짝] = [그림, 너비, 높이](화면 칸) */\nconst HERB_ART = {\n'
 for k, ims in art.items(): js += '  %s: [%s],\n' % (k, ', '.join("['%s', %s, %s]" % (url(im, 86), round(im.width / K, 1), round(im.height / K, 1)) for im in ims))
 js += '};\nObject.assign(ITEM_HD, {\n' + ''.join("  %s: '%s',\n" % (k, url(v, 86)) for k, v in icons.items()) + '});\n'
