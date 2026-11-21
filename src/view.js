@@ -542,6 +542,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     });
   });
   // 뒤에 선 것부터 그린다
+  herbDraw(draws, e);   // 빌드 72: 약초 군락지 · 피어나는 약초 (herb72.js)
   draws.sort((a, b) => a.y - b.y).forEach(d => d.f(w));
   if (floodOn(e)) floodFeet(w, t, team.filter(a => !a.down).map(a => pos['a' + a.id]).concat(foes.filter(f => !(MONS[f.id] && MONS[f.id].fly)).map(f => pos['f' + f.uid])).filter(Boolean), walking);   // 빌드 70: 물에 잠긴 발목 · 물결 (under70.js)
   if (dark > 0.25 && team.length && !bg.under) { const [px0, py0] = pos['a' + team[0].id], lx = px0 + 11 * dir, ly = py0 - 12; lights.push({ x: lx, y: ly, r: 70, c: '#f0c060', glow: 1, flick: 1 }); post.push(g => { R(g, lx - 1, ly - 1.5, 2.5, 3, '#f7d070'); R(g, lx - 0.5, ly - 0.5, 1, 1, '#ffffff'); }); }

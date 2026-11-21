@@ -15,16 +15,17 @@ Object.assign(ITEMS, {
   echoshroom:   { name: '메아리버섯', v: 20, w: 1, icon: 'blob',   c: '#8ac8e8', herb: 1, desc: '나팔 꼴 갓이 소리를 되울리는 동굴 버섯. 잠 · 혼란 · 공포를 깨운다.' },
   fairybell:    { name: '요정방울꽃', v: 44, w: 1, icon: 'flower', c: '#c8f0ff', herb: 1, desc: '흔들리면 빛가루가 떨어지는 방울 꼴 꽃. 마나를 되돌린다.' },
   wtsprout:     { name: '세계수 새순', v: 160, w: 1, icon: 'leaf',  c: '#c8f070', herb: 1, desc: '금빛 테를 두른 세계수의 연둣빛 새순. 가장 귀한 회복 재료.' },
+  inkshroom:    { name: '저주먹물버섯', v: 48, w: 1, icon: 'blob',  c: '#6a3a9a', herb: 1, desc: '타락한 수액을 빨아 갓에서 검보라 먹물을 뚝뚝 흘리는 버섯. 독과 저주의 재료가 된다.' },   // 11-21 14:39 사용자가 그림을 먼저 가져옴 — 이름은 내가 지음(먹물버섯 바탕)
   blacktear:    { name: '검은눈물이끼', v: 52, w: 1, icon: 'blob',  c: '#5a3a7a', herb: 1, desc: '타락한 수액이 굳은 자리에 끼는 검보라 이끼. 저주의 재료이자 저주를 푸는 약이 된다.' }
 });
-const HERB72_TIER = { herb: 0, mugwort: 0, waterherb: 0, ethermoss: 0, echoshroom: 0, snowherb: 0, fireherb: 0, wolfsbane: 1, fairybell: 1, blacktear: 1, boltbranch: 1, bloodshroom: 1, cordy: 1, moonflower: 2, bladderlotus: 2, wtsprout: 2, mandrake: 2 };
+const HERB72_TIER = { herb: 0, mugwort: 0, waterherb: 0, ethermoss: 0, echoshroom: 0, snowherb: 0, fireherb: 0, wolfsbane: 1, fairybell: 1, blacktear: 1, inkshroom: 1, boltbranch: 1, bloodshroom: 1, cordy: 1, moonflower: 2, bladderlotus: 2, wtsprout: 2, mandrake: 2 };
 const HERB_BLOOM = { bloodshroom: { p: 0.05, boss: 0.3, txt: '피를 빨아들인 자리에 핏빛꽃이 피었다' }, cordy: { p: 0.08, boss: 0.3, fam: ['shell', 'web'], txt: '벌레 껍데기에서 충혼초가 솟았다' } };
 const HERB_NIGHT = { moonflower: 1 };
 const HERB_ONLY = { wtsprout: (F, e) => e.field === 'deepforest' && e.stage >= 41 };   // 세계수 밑동 구간
 Object.assign(FIELDS.plains, { herbs: ['herb', 'mugwort', 'bloodshroom', 'moonflower'] });
 Object.assign(FIELDS.forest, { herbs: ['herb', 'waterherb', 'wolfsbane', 'bloodshroom', 'bladderlotus'] });
 if (FIELDS.deepforest) FIELDS.deepforest.herbs = ['herb', 'ethermoss', 'fairybell', 'cordy', 'wtsprout'];
-if (FIELDS.rootcave) FIELDS.rootcave.herbs = ['echoshroom', 'blacktear', 'mandrake'];
+if (FIELDS.rootcave) FIELDS.rootcave.herbs = ['echoshroom', 'blacktear', 'inkshroom', 'mandrake'];
 // 군락지 후보: 피는 약초 · 밤에만 · 구간 조건을 뺀 그 땅의 약초
 function herbCands(F, e) { return [...new Set(F.herbs || [])].filter(h => ITEMS[h] && !HERB_BLOOM[h] && (!HERB_NIGHT[h] || isNight()) && (!HERB_ONLY[h] || HERB_ONLY[h](F, e))); }
 const herbW = h => HERB72.tierW[HERB72_TIER[h] != null ? HERB72_TIER[h] : 1] || 0.1;
@@ -32,5 +33,16 @@ const herbW = h => HERB72.tierW[HERB72_TIER[h] != null ? HERB72_TIER[h] : 1] || 
 function herbBloom(p, e, C, team) {
   if (!HERB72.on || !C || !C.mon || !team.some(isPorter)) return; const F = FIELDS[e.field]; if (!F || !F.herbs) return;
   for (const h of F.herbs) { const B = HERB_BLOOM[h]; if (!B) continue; if (B.fam && !matsOf(C.mon).some(k => B.fam.includes(k))) continue;
-    if (rnd() < (C.big ? B.boss : B.p)) { loot(p, e, h, 1); e.note = { t: 1.2, txt: `${ITEMS[h].name} 채취` }; e.hold = Math.max(e.hold || 0, 0.8); log(`${p.name}: ${B.txt}. 약초꾼이 캤다.`, 'good'); HOOKS.toast(`${p.name}: ${ITEMS[h].name}!`); } }
+    if (rnd() < (C.big ? B.boss : B.p)) { loot(p, e, h, 1); e.note = { t: 1.5, txt: `${ITEMS[h].name} 채취` }; e.hold = Math.max(e.hold || 0, HERB_BLOOM_T); e.bloomShow = h; log(`${p.name}: ${B.txt}. 약초꾼이 캤다.`, 'good'); HOOKS.toast(`${p.name}: ${ITEMS[h].name}!`); } }
+}
+
+/* 화면: 군락지는 파티 앞 길 위에 선다(캐는 동안), 피는 약초는 멈춰 있는 동안 싹 → 봉오리 → 활짝. 그림 HERB_ART(data-herbart.js) [소, 중, 대] / [싹, 봉오리, 활짝] = [그림, 너비, 높이] */
+const HERB_BLOOM_T = 1.5, HERB_X = 172, HERB_Y = 197, HERB_Z = 1.4, HERB_IMG = {};   // HERB_Z: 캐릭터에 견주어 조금 작아서 키움 (대형이 가슴 높이)
+function herbImg(u) { let m = HERB_IMG[u]; if (!m) { m = HERB_IMG[u] = new Image(); m.src = u; } return m.complete && m.naturalWidth ? m : null; }
+function herbDraw(draws, e) {
+  if (typeof HERB_ART === 'undefined' || !e) return; let A = null;
+  if (e.herbJob && HERB_ART[e.herbJob.id]) A = HERB_ART[e.herbJob.id][{ 소형: 0, 중형: 1, 대형: 2 }[e.herbJob.size] || 0];
+  else if (e.bloomShow && e.hold > 0 && HERB_ART[e.bloomShow]) A = HERB_ART[e.bloomShow][e.hold > HERB_BLOOM_T * 0.66 ? 0 : e.hold > HERB_BLOOM_T * 0.33 ? 1 : 2];
+  if (!A) return; const m = herbImg(A[0]); if (!m) return;
+  draws.push({ y: HERB_Y + 1, f: g => { const s = g.imageSmoothingEnabled; g.imageSmoothingEnabled = true; const W = A[1] * HERB_Z, H = A[2] * HERB_Z; g.drawImage(m, Math.round(HERB_X - W / 2), Math.round(HERB_Y - H + 3), W, H); g.imageSmoothingEnabled = s; } });
 }
