@@ -1,7 +1,8 @@
 /* ───────── 전투 화면: 원근 무대 위에 적은 가운데 줄, 파티는 아래 줄 ─────────
    무대(240×200)를 한 번 그려서, 작은 창에는 가운데 띠만, 전투 창에는 전체를 보여 준다. */
 const PIP_Y = 72, PIP_H = 128;
-const BW_Y = 100, BW_H = 100;   // 빌드 72 (11-20 사용자 「새로운 시안대로」): 전투 창은 무대의 아래 절반(가로로 긴 띠)만 보인다 — 모두 한 줄로 서고 땅은 발밑의 얇은 띠
+const BW_Y = 80, BW_H = 120;   // 11-22 04:43 사용자 「일직선 맵이 아닌 넓은 맵으로」: 전투 창이 무대 아래 120칸(2 : 1)을 본다 — 앞뒤로 흩어 설 땅이 보이게 (한 줄 때는 100 · 100)
+// (아래는 한 줄 배치 때의 설명)   // 빌드 72 (11-20 사용자 「새로운 시안대로」): 전투 창은 무대의 아래 절반(가로로 긴 띠)만 보인다 — 모두 한 줄로 서고 땅은 발밑의 얇은 띠
 const ZP = 1.5, ZE = 1.25;                                // 무대 배율: 앞줄 파티는 크게, 적은 조금 작게
 const PH = 21 * ZP;                                       // 파티원 키 (논리 픽셀)
 const zq = z => Math.max(0.25, Math.round(z * 4) / 4);   // 배율은 1/4 단위 (구운 그림을 다시 쓰게)
@@ -347,7 +348,24 @@ const FORM_Y = { 1: [192], 2: [198, 184], 3: [199, 187, 175], 4: [199, 191, 183,
 const FORM_Y_W = { 1: [176], 2: [190, 156], 3: [193, 168, 143], 4: [194, 174, 155, 138], 5: [195, 179, 163, 149, 138] }, FORM_SKEW_W = 0.45, FORM_YO_W = [0, -18, 9, -24, 4];
 const SLOT_PW = [[94, 182], [70, 158], [100, 140], [60, 194], [84, 168], [48, 146], [112, 196], [40, 172], [76, 136], [30, 190]];
 const LINE_Y = 192, LINE_X0 = 108, LINE_GAP = 24, LINE_XMIN = 12, LINE_FX0 = 100, LINE_FGAP = 26, LINE_FXMIN = 14;   // 빌드 72 한 줄 배치: 모두 같은 줄(y) · 앞사람 x · 사람 사이 · 맨 뒤 한계 / 적(거울로): 맨 앞 · 사이 · 맨 뒤
-function formSlots(team) {   // 빌드 72: 한 줄 — 대형 차례(근접 → 원거리 → 힐러 → 짐꾼 → 들것) 그대로 앞에서 뒤로
+// 넓은 맵 (11-22 04:43 사용자 「일직선 맵이 아닌 넓은 맵으로 … 모험가들이 사선으로도 움직이게」): 넓은 땅(bg.wide)에서는 줄(근접 → 원거리 → 힐러 → 짐꾼)마다 앞뒤(y WIDE_Y0 ~ WIDE_Y1)로 흩어 선다.
+//   싸울 때 근접은 맡은 적 앞까지 걸어가 붙고(fieldScene 「넓은 맵」), 그 밖의 땅은 예전 한 줄 그대로.
+const WIDE_Y0 = 154, WIDE_Y1 = 196, WIDE_YC = 174, WIDE_X0 = 104, WIDE_GAP = 26, WIDE_XMIN = 18, WIDE_DY = 17, WIDE_SKEW = 0.22;
+const WIDE_FOE = [[150, 178], [178, 160], [184, 192], [206, 172], [212, 152], [222, 190], [232, 164], [234, 182]];   // 적 자리 (오른쪽을 보고 갈 때의 x · y)
+function formSlotsWide(team) {
+  const cols = [[], [], [], [], [], [], []];
+  team.forEach((a, i) => { let r = a.down ? 6 : Math.max(0, Math.min(5, formRank(a.cls) || 0)); if (r === 0 && cols[0].length >= 3) r = 1; cols[r].push([i, rideKind(a) ? 1 : 0]); });
+  cols.forEach(L => L.sort((p, q) => p[1] - q[1] || p[0] - q[0]));
+  const used = cols.filter(L => L.length).length, gap = used > 1 ? Math.min(WIDE_GAP, (WIDE_X0 - WIDE_XMIN) / (used - 1)) : WIDE_GAP, out = []; let ci = 0, last = WIDE_X0;
+  for (const L of cols) {
+    if (!L.length) continue;
+    const n = L.length, dy = n > 1 ? Math.min(WIDE_DY, (WIDE_Y1 - WIDE_Y0 - 6) / (n - 1)) : 0, yc = WIDE_YC + (ci % 2 ? 7 : -5), x0 = last = WIDE_X0 - gap * ci++;
+    L.forEach(([ti], k) => { const y = Math.max(WIDE_Y0 + 2, Math.min(WIDE_Y1, Math.round(yc + (k - (n - 1) / 2) * dy))); out[ti] = [Math.round(x0 - (WIDE_Y1 - y) * WIDE_SKEW), y]; });
+  }
+  out.petX = Math.max(8, Math.round(last - 22)); return out;
+}
+function formSlots(team) {   // 빌드 72: 한 줄
+  if (V.wide) return formSlotsWide(team);   // 그 밖의 땅: 대형 차례(근접 → 원거리 → 힐러 → 짐꾼 → 들것) 그대로 앞에서 뒤로
   const o = team.map((a, i) => [a.down ? 4 : formRank(a.cls), rideKind(a) ? 1 : 0, i]).sort((p, q) => p[0] - q[0] || p[1] - q[1] || p[2] - q[2]), n = o.length;
   const gap = n > 1 ? Math.min(LINE_GAP, (LINE_X0 - LINE_XMIN) / (n - 1)) : LINE_GAP, out = [];
   o.forEach(([, , i], k) => { out[i] = [Math.round(LINE_X0 - gap * k), LINE_Y]; });
@@ -369,11 +387,12 @@ function formSlots71(team) {   // 빌드 69 ~ 71: 줄마다 깊이로 흩어 서
 }
 const ZS = 1.25;   // 옆모습 배율
 const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
-const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, V.wide ? (y - 136) / 56 : (y - 166) / 32))));   // 넓은 땅: y 136(먼 곳) ~ 192(앞)
+const zAt = y => zq(ZS * (0.8 + 0.2 * Math.max(0, Math.min(1, V.wide ? (y - WIDE_Y0) / (WIDE_Y1 - WIDE_Y0) : (y - 166) / 32))));   // 넓은 땅: y 136(먼 곳) ~ 192(앞)
 const SHADOW_R = 9;
 const LINE_FL = 126;   // 적 줄의 왼쪽 끝 (길드원 맨 앞 108 + 몸 반)
 function foeSlots(foes) {
   if (foes.length === 1 && foes[0].giant) { const f = foes[0], z = giantZ(f); return [[AW - monW(f.id) * z / 2 - 8, 194]]; }
+  if (V.wide) return foes.length === 1 ? [[168, WIDE_YC]] : foes.map((f, i) => WIDE_FOE[i % WIDE_FOE.length].slice());   // 넓은 맵: 앞뒤로 흩어 선다
   // 빌드 72 (11-20): 적도 한 줄 — 몸 너비만큼 띄운다(이끼 골렘 · 숲의 수호령처럼 넓은 몬스터가 옆 몬스터를 덮지 않게). 자리가 모자라면 고르게 겹친다
   const W = foes.map(f => Math.max(16, Math.min(90, monW(f.id)))), sum = W.reduce((a, b) => a + b, 0), k = Math.min(1, (AW - 2 - LINE_FL) / sum);
   if (foes.length === 1) return [[Math.round(Math.min(AW - W[0] / 2, Math.max(150, LINE_FL + W[0] / 2))), LINE_Y]];
@@ -393,6 +412,29 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
   V.dir = dir;
   const FS = formSlots(team);
   team.forEach((a, i) => { const [x, y] = FS[i], q = pos['a' + a.id] = [mx(x), y], ru = a.down ? 0 : -rideTop(a); if (ru) q.ru = ru; });   // 탈것 (빌드 65): 숫자 · 알림은 기수 머리 위에
+  foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
+  // 넓은 맵 (11-22 04:43): ① 싸울 때 근접 길드원은 맡은 적(마지막으로 때린 적 · 없으면 차례대로) 앞까지 가서 붙는다 ② 자리가 바뀌면 순간 이동하지 않고 걸어서(사선으로도) 간다 — mv.on[k]이면 걷는 그림
+  const mv = V.mv || (V.mv = { t, cur: {}, on: {} }), dtv = Math.max(0, Math.min(0.12, t - mv.t)); mv.t = t;
+  if (V.wide && !camping) {
+    if (fighting) {
+      const live = e.foes.filter(f => f.hp > 0 && !f.giant && pos['f' + f.uid]), cnt = {}; let mi = 0;
+      if (live.length) team.forEach(a => {
+        if (a.down || CLASSES[a.cls].act !== 'melee' || formRank(a.cls) > 1 || rideKind(a)) return;   // 전위(전사 · 도적 계열)만 붙는다 — 짐꾼은 뒤에 남는다
+        const f = live.find(o => o.uid === (V.tgt || {})['a' + a.id]) || live[mi % live.length]; mi++;
+        const fq = pos['f' + f.uid], n = cnt[f.uid] = (cnt[f.uid] || 0) + 1, q = pos['a' + a.id];
+        const reach = Math.min(30, eW(f) * 0.5 * zAt(fq[1]) / ZE) + 13 + (n > 2 ? 6 : 0);
+        q[0] = fq[0] - dir * reach; q[1] = Math.max(WIDE_Y0 + 2, Math.min(WIDE_Y1, fq[1] + [0, 8, -8, 13][Math.min(3, n - 1)]));
+      });
+    }
+    for (const k in pos) {
+      if (k[1] === 'P' || (k[0] === 'f' && !fighting)) { delete mv.cur[k]; mv.on[k] = 0; continue; }
+      const q = pos[k], c = mv.cur[k];
+      if (!c || Math.abs(c[0] - q[0]) > 150) { mv.cur[k] = [q[0], q[1]]; mv.on[k] = 0; continue; }
+      const dx = q[0] - c[0], dy = q[1] - c[1], d = Math.hypot(dx, dy), sp = (k[0] === 'a' ? 78 : 55) * dtv;
+      if (d <= sp || d < 0.6) { c[0] = q[0]; c[1] = q[1]; mv.on[k] = 0; } else { c[0] += dx / d * sp; c[1] += dy / d * sp; mv.on[k] = d > 2 ? 1 : 0; }
+      q[0] = Math.round(c[0] * 2) / 2; q[1] = Math.round(c[1] * 2) / 2;
+    }
+  } else { mv.cur = {}; mv.on = {}; }
   // 빌드 70: 쓰러지는 동안은 모두 서 있던 자리 그대로 — 쓰러지면 대형 맨 끝(들것)으로 가고 남은 사람이 앞으로 당겨 서는데, 예전엔 쓰러지는 그림부터 뒤에서 나왔다
   const inFall = a => { const k = 'a' + a.id, st = V.stand[k], ft = V.fall[k]; return !!(a.down && st && (ft != null && ft >= st[2] - 0.2 ? t - ft < (hdWarOn(a) ? HDW_DIE_T : 0.5) : t - st[2] < 0.3)); };
   const hold = team.some(inFall);
@@ -402,8 +444,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     if (!a.down) V.stand[k] = [q[0], q[1], t];
   });
   const pet = petOfParty(p);
-  if (pet) pos['aP' + pet.id] = [mx(FS.petX), LINE_Y];
-  foeSlots(foes).forEach(([x, y], i) => { pos['f' + foes[i].uid] = [mx(x + appr * 90), y]; });
+  if (pet) pos['aP' + pet.id] = [mx(FS.petX), V.wide ? WIDE_YC + 14 : LINE_Y];
   // 빌드 72: 몬스터가 곧 나온다는 알림 — 아직 화면 밖에 있을 때(만날 자리까지 30 ~ 70) 나올 쪽 가장자리에서 깜빡이고, 몬스터가 화면에 들어오면 사라진다
   if (walking0 && e.next && e.next.length && gap > 30 && gap <= 46) post.push(g => {
     const ax = mx(AW - 11), ay = LINE_Y - 30, on = Math.floor(t * 4) % 2 === 0, bob = Math.round(Math.sin(t * 6) * 1.5);
@@ -463,7 +504,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       FLASH = !f.giant && (V.flash['f' + f.uid] || 0) > t && (V.flash0['f' + f.uid] || 0) <= t ? '#ffffff' : null;   // 레이드 몬스터는 번쩍이지 않는다
       if (f.adv) drawAdv(g, f.adv, t, { side: 1, z, ph: i * 0.5, atk: lg ? 1 : 0 });   // 투기장 상대: 길드원 옆모습
       else { const hl = PXU[did] && PXU[did].hitLook, h0 = V.flash0['f' + f.uid], dd = hl && h0 != null && t >= h0 && t < h0 + (PXU[did].hitT || 0.4) ? hl : did;   // 맞으면 잠깐 다른 모습 (빌드 53: 켈피는 물로 풀렸다 돌아온다)
-        const wk = !fighting && appr > 0;   // 빌드 70: 다가오는 동안 걷기 줄 (그림 몬스터 — 멧돼지 둘)
+        const wk = (!fighting && appr > 0) || !!(V.mv && V.mv.on['f' + f.uid]);   // 빌드 70: 다가오는 동안 걷기 줄 (그림 몬스터 — 멧돼지 둘)
         drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo, walk: wk }); if (f.rare && !FLASH) { FLASH = '#ffd040'; g.globalAlpha = 0.28 + 0.14 * Math.sin(t * 6); drawMon(g, dd, t, { ph: i * 0.37, sc: f.sc, z, mot: fmo, walk: wk }); g.globalAlpha = 1; } }   // 희귀종: 금빛으로 반짝인다
       FLASH = null; g.restore();
     } });
@@ -517,11 +558,12 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const mo = !a.down && !falling ? motNow(a, t) : null, mF = mo && (rk ? rideDo(a, () => pxsMotFr(mo.mk, mo.f)) : pxsMotFr(mo.mk, mo.f));   // 공격 동작 (빌드 40)
     const msk = mo && mo.sk && SKFX[mo.sk], dashK = msk && msk.dash && mo.f >= 3 && mo.f <= 6 ? 1.8 : 1;   // 스킬 효과 (빌드 41): 돌진은 더 멀리
     const mjy = mo && !rk ? Math.round(motJy(mo) * 2 * z) : 0;   // 도약 찌르기 (빌드 42): 동작이 뛰는 높이를 정한다
-    const dx = ((mo ? (hw ? 0 : mF.dx * 2 * z * dashK) : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy + mjy;   // 리마스터 장은 그림 안에서 몸이 나간다 (뒷발이 닻)
+    const rcT = V.flash0['a' + a.id], rc = rcT != null && t >= rcT && t - rcT < 0.18 ? -3 * (1 - (t - rcT) / 0.18) : 0;   // 넓은 맵 (11-22): 맞으면 살짝 뒤로 밀린다
+    const dx = ((mo ? (hw ? 0 : mF.dx * 2 * z * dashK) : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0) + rc) * dir, y = y0 + jy + mjy;   // 리마스터 장은 그림 안에서 몸이 나간다 (뒷발이 닻)
     if (mo && (!hw || (mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast))) post.push(g => { if (hw) hdSkFx(g, a, mo, SKFX[mo.sk], x0, y, dir, t); else motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t); });   // 리마스터 전사: 스킬 빛을 그림의 칼 자리에 (hd70.js hdSkFx — 엔진 그림 칸에 맞춘 motFx는 자리가 안 맞는다)
     if (workDraw(draws, e, a, t)) return;   // 빌드 72: 갈무리 · 약초 캐는 짐꾼은 그 자리에서 작업 자세로 (herb72.js)
     draws.push({ y: y0, f: g => {
-      const O = { walk: walking && !falling, run: e.mode === 'return', ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / fallT)) : null,
+      const O = { walk: (walking || (V.mv && V.mv.on['a' + a.id] && !mo)) && !falling, run: e.mode === 'return', ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / fallT)) : null,
         wph: hw && dir > 0 ? V.scroll / HDW_STRIDE : null };   // 리마스터 걷기: 땅이 흐르는 빠르기만큼 발을 옮긴다 (hd70.js HDW_STRIDE)
       shadowAt(g, x0 + dx + (hw ? hdWarSx(a, t, O) * dir : 0), y0, (rk ? rideShadow(a) : jy || mjy < -4 ? 7 : SHADOW_R) * z / ZS);
       if (msk) skGhosts(g, a, mo, msk, x0 + dx, y, z, dir, t);
@@ -842,6 +884,7 @@ function events(e, pos, t, team, p) {
     if (x.n <= V.lastN) continue;
     if (x.type === 'swing') { V.lastN = x.n; motSwing(advOf(x.s), x, t); continue; }   // 빌드 69 밤: 기본 공격 실행 시작 (동작만)
     if (x.type === 'clear') for (const k in V.mot) if (V.mot[k].sw) delete V.mot[k];   // 싸움이 끝나면 휘두르던 기본 공격은 거둔다
+    if ((x.type === 'hit' || x.type === 'fmiss') && x.s && x.d != null && !x.dot) (V.tgt || (V.tgt = {}))['a' + x.s] = x.d;   // 넓은 맵: 근접이 붙을 적
     const md = x.type === 'hit' || x.type === 'fmiss' ? motOn(advOf(x.s), x, t) : 0;   // 칼 동작: 맞히는 장까지 남은 시간
     const fd = (x.type === 'hurt' && !x.dot) || x.type === 'miss' || x.type === 'aoe' || (x.type === 'shield' && !x.on) ? fmotOn(e, x, t, e.ev[xi + 1], at) : 0;   // 몬스터 동작 (빌드 43): 맞는 때까지
     const hd = !fd && (x.type === 'hurt' || x.type === 'miss') && x.hn ? x.hn * FMOT_HN : 0;   // 빌드 69 몬스터 연타: 예전 그림 몬스터도 한 대씩 늦게 (새 그림은 fmotOn이)

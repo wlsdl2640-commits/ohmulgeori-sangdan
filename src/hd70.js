@@ -131,6 +131,7 @@ for (const id in HD_ACT) PXU_ACT[id].hd = HD_ACT[id];
 const hdAct = id => { const A = PXU_ACT[id]; return A && A.hd && HD.mon[id] ? A.hd : A; };   // pxund.js pxuPick이 부른다
 
 // ── 그림 판 풀기 (data URL → 장마다 캔버스) ──
+const HD_LD_UP = 24;   // 넓은 맵 (11-22): 한 줄 때 내려 둔 풍경을 이만큼 다시 올려 땅을 넓게 (발 줄 150 ~ 196)
 function hdCut(im, w, h, rows, n) { const out = {}; rows.forEach((r, ri) => { out[r] = []; for (let i = 0; i < n[ri]; i++) { const [cv, x] = mkCanvas(w, h); x.drawImage(im, i * w, ri * h, w, h, 0, 0, w, h); out[r].push(cv); } }); return out; }
 function hdBox(cv) {   // 그림이 있는 칸의 테두리 [x0, x1, y0]
   let x0 = cv.width, x1 = -1, y0 = cv.height;
@@ -203,7 +204,9 @@ function hdMonSpr(id, mk, f) {   // pxund.js pxuSprite가 부른다 (그림 판�
 
 // ── 전사 1차: 동작 13가지 × 16장 (tools/saved/gpt70/hd70/extract_war16.py — 판 차례 그대로 한 줄씩) ──
 // 리마스터 그림이 있는 직업(전사 1차 · 마법사 1차). 직업마다 줄 표가 달라서, 그리기 전에 hdUse(a)로 「지금 직업」(HD.war · HDC)을 바꿔 끼운다
-const hdWarOn = a => !!(a && HD.cls[a.cls] && HDCFG[a.cls]);
+// 11-22 04:43 사용자 「GPT한테 받은 모험가 말고 너랑 나랑 만든 모험가 디자인으로 다시 다 바꾸고」: 길드원은 다시 엔진의 뭉툭 도트(pxa.js · pxs*.js — 장비 겉모습 · 무기별 동작이 살아난다). 받은 판 그림은 HD_ADV_ON을 켜면 돌아온다 (자료는 그대로 둠)
+const HD_ADV_ON = false;
+const hdWarOn = a => !!(HD_ADV_ON && a && HD.cls[a.cls] && HDCFG[a.cls]);
 let HDC = null;
 const hdUse = a => { const c = a && HD.cls[a.cls] ? a.cls : 'warrior'; HD.war = HD.cls[c] || null; HDC = HDCFG[c]; return !!HD.war; };
 const hdRange = (a, b) => Array.from({ length: Math.abs(b - a) + 1 }, (_, i) => a + (b > a ? i : -i));
@@ -393,7 +396,7 @@ function hdShafts(g, C, off, t, dark, dim, gy) {
 function buildWideHD(id, old) {
   const L = HD.bgs && HD.bgs[id];
   if (!L) return Object.assign({ hdWait: 1 }, old());   // 그림을 풀기 전: 옛 평원 (풀면 BG.plains_hd를 지워 다시 짓는다)
-  const B = HD70_DATA.bg[id], LD = B.ld != null ? B.ld : 55;   // 빌드 72 한 줄 배치: 풍경을 55칸 내려 땅을 발밑의 얇은 띠로 (전투 창은 무대 아래 절반만 보인다 — view.js BW_Y)
+  const B = HD70_DATA.bg[id], LD = (B.ld != null ? B.ld : 55) - HD_LD_UP;   // 빌드 72 한 줄 배치: 풍경을 55칸 내려 땅을 발밑의 얇은 띠로 (전투 창은 무대 아래 절반만 보인다 — view.js BW_Y)
   const q = B.hs || 1;   // 화면 픽셀 해상도 겹 (scene.js tile이 cv.hs를 본다)
   const mir = (im, h, y) => { const [cv, x] = mkCanvas(im.width * 2, h); x.drawImage(im, 0, Math.round(y * q)); x.save(); x.translate(im.width * 2, 0); x.scale(-1, 1); x.drawImage(im, 0, Math.round(y * q)); x.restore(); cv.hs = q; return cv; };   // 뒤집어 이어 붙여 이음매가 없다
   const back = mir(L.back, AH * q, B.back.y + LD), mid = mir(L.mid, AH * q, B.mid.y + LD), gr = mir(L.gr, L.gr.height, 0);
