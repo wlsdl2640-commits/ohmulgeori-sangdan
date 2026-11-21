@@ -17,10 +17,14 @@
   --ok: #7bd36a;
   --warn: #f08a3c;
   --font: "Galmuri11", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
-  --gut-l: max(16px, calc(env(safe-area-inset-left, 0px) / var(--z, 1)));
-  --gut-r: max(16px, calc(env(safe-area-inset-right, 0px) / var(--z, 1)));
+  --gut-l: 16px;
+  --gut-r: 16px;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* 11-21 17:50 사용자 「아직 저기 버튼에 겹치잖아」: 왼쪽 · 오른쪽 안전 영역(폰 단추 · 카메라 자리)도 맨 바깥에서 비운다 — 게임 화면 전체가 그 안쪽에만 그려진다.
+     그래서 안쪽 규칙에서는 env(safe-area-inset-*)를 쓰지 않는다(겹쳐 비워짐). 화면에 붙박이(position: fixed)인 .bwin만 따로 쓴다. */
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 html { box-sizing: border-box; height: 100%; background: var(--bg); }
 *, *::before, *::after { box-sizing: inherit; }
@@ -148,7 +152,7 @@ img.px, canvas { image-rendering: pixelated; }
 .ov .gold { color: var(--gold); }
 
 /* ── 파티 선택 (아래) ── */
-.chipbar { flex: none; display: flex; align-items: center; gap: 8px; padding-right: var(--gut-r); padding-bottom: calc(env(safe-area-inset-bottom, 0px) / var(--z, 1)); background: #10131a; border-top: 2px solid #000; position: relative; z-index: 21; }
+.chipbar { flex: none; display: flex; align-items: center; gap: 8px; padding-right: var(--gut-r); padding-bottom: 0px; background: #10131a; border-top: 2px solid #000; position: relative; z-index: 21; }
 .pchips { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; padding-block: 8px; padding-left: var(--gut-l); padding-right: 2px; scrollbar-width: none; }
 .spd { flex: none; min-width: 42px; min-height: 30px; margin-block: -4px; padding: 0 7px; font-size: 13px; font-weight: 700; background: var(--panel); color: var(--ink); border: 2px solid #000; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .3); font-variant-numeric: tabular-nums; }
 .spd::before { content: '▶'; font-size: 9px; margin-right: 3px; color: var(--ink-3); }
@@ -765,7 +769,7 @@ details.skl summary b { color: var(--ink); }
 @media (orientation: landscape) {
   #app { max-width: none; }
   .pip { width: 30%; min-width: 220px; }
-  .win { left: auto; right: 0; top: 0 !important; bottom: 0 !important; width: min(460px, 54%); z-index: 30; border-top: 0; border-left: 2px solid var(--gold-d); box-shadow: -10px 0 24px rgba(0, 0, 0, .55); padding-right: calc(env(safe-area-inset-right, 0px) / var(--z, 1)); }
+  .win { left: auto; right: 0; top: 0 !important; bottom: 0 !important; width: min(460px, 54%); z-index: 30; border-top: 0; border-left: 2px solid var(--gold-d); box-shadow: -10px 0 24px rgba(0, 0, 0, .55); padding-right: 0px; }
   .modal { max-height: 94%; }
   .mboard { width: min(600px, calc(72vw / var(--z, 1))); max-height: calc(calc(100vh / var(--z, 1)) - 118px); overflow-y: auto; }
   .mb-grid { grid-template-columns: repeat(4, 1fr); }
@@ -795,7 +799,7 @@ details.skl summary b { color: var(--ink); }
 /* ───────── 첫 화면 (빌드 72 · 11-21): 그림 한 장 + 메뉴 셋 + 길드 창립 신청서 ───────── */
 .title-scr { position: absolute; inset: 0; z-index: 45; background: #0b0d12; overflow: hidden; }
 .t-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
-.t-main { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr auto; padding: max(14px, calc(env(safe-area-inset-top, 0px) / var(--z, 1))) max(22px, var(--gut-r)) 10px max(22px, var(--gut-l)); background: linear-gradient(90deg, rgba(8, 6, 16, .5) 0, rgba(8, 6, 16, 0) 38%, rgba(8, 6, 16, 0) 60%, rgba(8, 6, 16, .45) 100%); transition: opacity .15s steps(3); }
+.t-main { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr auto; padding: max(14px, 0px) max(22px, var(--gut-r)) 10px max(22px, var(--gut-l)); background: linear-gradient(90deg, rgba(8, 6, 16, .5) 0, rgba(8, 6, 16, 0) 38%, rgba(8, 6, 16, 0) 60%, rgba(8, 6, 16, .45) 100%); transition: opacity .15s steps(3); }
 .t-main.dim { opacity: .25; pointer-events: none; }
 .t-logo { grid-column: 1; grid-row: 1; align-self: start; justify-self: start; }
 .t-logo .game-sub { margin: 0 0 2px 3px; font-size: 16px; letter-spacing: .5em; color: #f4e6c0; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; }
@@ -840,7 +844,7 @@ details.skl summary b { color: var(--ink); }
 @media (max-height: 380px) { .parch { padding-block: 10px 9px; gap: 5px; } .parch-h { font-size: 20px; } .parch-p { font-size: 10.5px; line-height: 1.45; } .game-name { font-size: 42px; } }
 
 /* 빌드 72: 구역 단추 (미궁탑 · 길드 본부 · 도시 시설) — 본부 화면 왼쪽 위 */
-.zonebar { position: absolute; right: calc(72px + calc(env(safe-area-inset-right, 0px) / var(--z, 1))); top: 8px; z-index: 3; display: flex; gap: 4px; }
+.zonebar { position: absolute; right: calc(72px + 0px); top: 8px; z-index: 3; display: flex; gap: 4px; }
 .zbtn { min-height: 32px; padding: 3px 12px; font: inherit; font-size: 13px; color: #e8d8b0; background: #3a2816; border: 2px solid #120a04; box-shadow: inset 0 0 0 1px #7a5228, inset 0 -4px 0 rgba(0, 0, 0, .3), 0 3px 0 rgba(0, 0, 0, .5); text-shadow: 1px 1px 0 #000; cursor: pointer; }
 .zbtn.on { color: #ffe9a8; background: #8a2a22; box-shadow: inset 0 0 0 1px #d8a23a, inset 0 -4px 0 rgba(0, 0, 0, .3), 0 3px 0 rgba(0, 0, 0, .5); }
 .zbtn:focus-visible { outline: 2px solid #ffd45a; outline-offset: 1px; }
