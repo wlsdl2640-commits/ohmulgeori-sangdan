@@ -16,7 +16,15 @@ markup = (SRC / 'markup.html').read_text(encoding='utf-8')
 # 빌드 번호(CI에서 넣는다)와 저장소: 설치한 앱이 새 버전을 알아보는 데 쓴다
 BUILD_NO = int(os.environ.get('BUILD_NO', '0') or 0)
 REPO = os.environ.get('GITHUB_REPOSITORY', 'wlsdl2640-commits/ohmulgeori-sangdan')
-js = f"const BUILD_NO = {BUILD_NO}, REPO = {json.dumps(REPO)};\n" + '\n'.join((SRC / f).read_text(encoding='utf-8') for f in JS)
+# 시험 구간 (사용자 11-19 19:19 「APK 만들 때 꼭 필요한 시험구간 까지만」 · CLAUDE.md 「시험 · APK」 절): APK는 새로 넣거나 바꾼 부분까지만 플레이되는 시험판.
+#   리마스터가 늘면 fields · classes를 넓힌다. 게임 전체로 빌드하려면 FULL=1 python3 build.py. 시험판은 저장을 따로 쓴다(key — 원래 저장 paros-sangdan:v1은 안 건드림).
+TEST_SCOPE = None if os.environ.get('FULL') else {
+    'key': 'paros-sangdan:test72',
+    'fields': ['plains', 'forest', 'deepforest', 'rootcave'],
+    'classes': ['warrior', 'rogue', 'archer', 'mage', 'cleric', 'porter'],
+    'label': '1계층 곡창지대 평원 · 2계층 원시림 · 깊은 숲 · 세계수 뿌리굴 / 1차 직업 여섯 / 전직 없음',
+}
+js = f"const BUILD_NO = {BUILD_NO}, REPO = {json.dumps(REPO)}, TEST_SCOPE = {json.dumps(TEST_SCOPE, ensure_ascii=False)};\nconst inScope = f => !TEST_SCOPE || TEST_SCOPE.fields.includes(f);\n" + '\n'.join((SRC / f).read_text(encoding='utf-8') for f in JS)
 script = "(() => {\n'use strict';\n" + js + "\n})();"
 
 # ── 글꼴: 게임에 쓰인 글자 + 자주 쓰는 한글 2,350자만 남겨 크기를 줄인다 ──

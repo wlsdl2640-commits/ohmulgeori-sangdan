@@ -881,6 +881,7 @@ function checkUnlocks() { S.flags.job2 = 1; S.flags.job3 = 1; }   // 빌드 69: 
 function promoWhy(a, cls) {
   const t = jobTier(cls), Q = JOB_REQ[t];
   const R = CLASSES[cls].req || {};
+  if (TEST_SCOPE) return '시험판에서는 전직할 수 없어요';
   if (!S.bld.training) return '훈련소가 필요해요';
   if (a.lv < Math.max(Q.lv, R.lv || 0)) return `Lv${Math.max(Q.lv, R.lv || 0)}부터`;
   const rw = jobReqWhy(a, cls); if (rw) return rw;
@@ -1222,7 +1223,7 @@ function catchUp(sec) {
 }
 
 /* ───────── 저장 ───────── */
-const SAVE_KEY = 'paros-sangdan:v1';
+const SAVE_KEY = TEST_SCOPE ? TEST_SCOPE.key : 'paros-sangdan:v1';   // 시험판(build.py TEST_SCOPE)은 저장을 따로 쓴다 — 원래 저장은 그대로
 const SAVE_V = 16;   // 지금 저장 판 (migrate16까지 옮긴 상태)
 function saveGame() {
   if (!S) return;

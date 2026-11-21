@@ -152,7 +152,7 @@ function talkCard(id) {
 // 지도 창: 대륙 / 하늘 탭. 하늘 지도는 세계수 던전을 공략하면 보인다 (구름섬은 비행장까지 지어야 간다)
 // 빌드 72 (11-20 15:50 사용자 「지도 탭은 미궁의 계층 버튼을 두고, 누르면 1층, 2층 등의 층 버튼이 나오게 … 우선 대략 50층까지만 · 터치로 밀어 내리고 올리면 층 버튼 이동」):
 //   왼쪽 = 계층 단추, 오른쪽 = 그 계층의 층 단추 1 ~ 50(밀어서 넘김 — 칸 안에서만 굴러간다). 층을 고르면 아래에 그 층 정보와 「이 층에서 출발」. 옛 대륙 · 하늘 지도는 PANELS.map71로 남김(쓰지 않음)
-const labTiers = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !DEMON_IDS.includes(f) && !SKY_IDS.includes(f) && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley').sort((a, b) => FIELDS[a].no - FIELDS[b].no);
+const labTiers = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !DEMON_IDS.includes(f) && !SKY_IDS.includes(f) && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley' && inScope(f)).sort((a, b) => FIELDS[a].no - FIELDS[b].no);
 PANELS.map = () => {
   const main = labTiers().filter(f => !FIELDS[f].branch), ids = []; for (const f of main) { ids.push(f); for (let b = labBranchOf(f); b; b = labBranchOf(b)) ids.push(b); }   // 갈림길(깊은 숲)은 그 계층 바로 뒤에
   const fid = ids.includes(UI.labTier) ? UI.labTier : (labBest() || [ids[0]])[0], F = FIELDS[fid], fs = S.fields[fid] || {}, ok = true, best = fs.best || 0, fn = fno(F);

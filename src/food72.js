@@ -127,3 +127,10 @@ STORY.kitchen = [
   '고기는 짐꾼이 몬스터를 갈무리해 얻는 마물육을 쓴다. 소금 · 후추 · 간장 같은 조미료와 밀가루 · 꿀 · 라비린토스 채소는 주방 창의 라비린토스 시장에서 산다. 왕국 특산 채소는 그 나라 상단이, 해산물은 항구의 배가 판다.',
   '파티 창에서 파티마다 도시락을 고르면, 출발할 때 하나씩 들고 가서 원정 내내 효과가 이어진다.'
 ];
+
+/* ───────── 시험판 알림 (build.py TEST_SCOPE — 사용자 11-19 19:19 「APK는 시험 구간까지만」) ─────────
+   첫 화면 단추 아래에 시험 구간을 한 줄로 적는다. 땅 · 직업 · 전직 · 저장 열쇠 막기는 core.js(isUnlocked · LAB_IDS · makeAdv) · map.js(labTiers) · econ.js(promoWhy · SAVE_KEY). */
+if (TEST_SCOPE && typeof document !== 'undefined') {
+  const host = document.getElementById('t-main');
+  if (host) { const d = document.createElement('div'); d.id = 't-scope'; d.style.cssText = 'margin-top:10px;padding:6px 10px;font-size:11px;line-height:1.5;color:#f4e6c0;background:rgba(20,12,6,.72);border:1px solid #8a6a3a;border-radius:6px;text-align:center;max-width:300px'; d.textContent = `시험판${BUILD_NO ? ` (빌드 ${BUILD_NO})` : ''} · ${TEST_SCOPE.label} · 저장은 시험판 전용`; host.appendChild(d); }
+}

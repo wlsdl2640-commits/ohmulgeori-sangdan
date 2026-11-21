@@ -36,7 +36,8 @@ function growStats(a, n) {
   for (let i = 0; i < n; i++) for (const [k] of STATS) { const v = g[k], f = Math.floor(v); a.st[k] += f + (rnd() < v - f ? 1 : 0); }
 }
 function makeAdv(o = {}) {
-  const cls = o.cls || pickOne(CLASS_IDS), C = CLASSES[cls], lv = o.lv || 1;
+  let cls = o.cls || pickOne(CLASS_IDS); if (TEST_SCOPE && !TEST_SCOPE.classes.includes(cls)) cls = pickOne(TEST_SCOPE.classes);   // 시험판: 시험 구간의 직업만
+  const C = CLASSES[cls], lv = o.lv || 1;
   const a = {
     id: nid(), name: o.name || (pickOne(NAME_A) + pickOne(NAME_B)), cls, lv, exp: 0,
     look: { hair: pickOne(HAIRS), skin: pickOne(SKINS) }, bio: o.bio || pickOne(BIOS[cls] || BIOS[jobBase(cls)]),
@@ -341,7 +342,7 @@ function checkpoints(fid) {
   return [1].concat([1, 2, 3, 4].filter(k => fs.boss && fs.boss[k]).map(k => k * BOSS_EVERY + 1));
 }
 // 빌드 72 (11-20 16:27 사용자 「원정마다 무조건 1계층의 1-1부터 다시 가야 해」 · 「최종도달 필드 1-50 이런 식으로」): 미궁 원정은 늘 1계층 1-1에서 시작해 1-50을 넘으면 다음 계층 1로 내려간다
-const LAB_IDS = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !FIELDS[f].demon && FIELDS[f].region !== 'sky' && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley' && !FIELDS[f].branch).sort((a, b) => FIELDS[a].no - FIELDS[b].no);
+const LAB_IDS = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !FIELDS[f].demon && FIELDS[f].region !== 'sky' && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley' && !FIELDS[f].branch && inScope(f)).sort((a, b) => FIELDS[a].no - FIELDS[b].no);
 const isLab = fid => LAB_IDS().includes(fid) || !!(FIELDS[fid] && FIELDS[fid].branch);   // 갈림길 필드(깊은 숲)도 미궁
 const labBranchOf = fid => ALL_FIELDS.find(f => FIELDS[f].branch === fid) || null;   // 그 계층 끝에서 들어갈 수 있는 미개척지대
 const labBranchOn = fid => { const b = labBranchOf(fid); return !!(b && S.labBranch && S.labBranch[fid]); };   // 지도에서 고른다 (S.labBranch[계층] — 기본은 다음 계층으로)
@@ -1624,6 +1625,7 @@ function treasureClear(p, e) {
 const raidReady = () => S.fame >= GUILD_RAID.fame && living().length >= GUILD_RAID.advs && spn(GUILD_RAID.sponsor) >= GUILD_RAID.tier;
 // 필드는 길드 랭크가 오르면 하나씩 열린다 (랭크 F = 평원, E = 원시림 …)
 function isUnlocked(fid) {
+  if (!inScope(fid)) return false;   // 시험판: 시험 구간 밖의 땅은 막는다 (build.py TEST_SCOPE)
   if (fid === 'alley') return !S.flags.guildDown && raidReady();
   if (fid === 'sewer') return (S.rank || 0) >= UNDER_RANK;
   const F = FIELDS[fid];
