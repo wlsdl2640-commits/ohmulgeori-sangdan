@@ -48,6 +48,8 @@ function raidLaunch(rid) {
 function partyWhy(p) {
   if (p.big) { const w = bigWhy(p); if (w) return w; }
   if (portersOf(p).length > porterCap(p)) return '짐꾼 계열은 파티당 한 명만 넣을 수 있어요.';
+  // 11-22 04:59 사용자: 전위 · 중위 · 후위는 줄마다 세 명까지 (원정대 · 레이드대는 빼고)
+  if (!p.big && !isRaidParty(p)) { const n = [0, 0, 0]; p.members.map(advById).filter(Boolean).forEach(a => { n[Math.max(0, Math.min(2, posOf(a)))]++; }); const k = n.findIndex(c => c > 3); if (k >= 0) return `${POS_NAME[k]}는 세 명까지예요. ${n[k] - 3}명을 빼야 출발해요.`; }
   if (fightersOf(p).length > fighterCap(p)) return `${isRaidParty(p) ? '레이드대는' : '파티는'} 짐꾼 계열을 빼고 ${fighterCap(p)}명까지예요. ${fightersOf(p).length - fighterCap(p)}명을 빼야 출발해요.`;
   return '';
 }

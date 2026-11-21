@@ -350,19 +350,25 @@ const SLOT_PW = [[94, 182], [70, 158], [100, 140], [60, 194], [84, 168], [48, 14
 const LINE_Y = 192, LINE_X0 = 108, LINE_GAP = 24, LINE_XMIN = 12, LINE_FX0 = 100, LINE_FGAP = 26, LINE_FXMIN = 14;   // 빌드 72 한 줄 배치: 모두 같은 줄(y) · 앞사람 x · 사람 사이 · 맨 뒤 한계 / 적(거울로): 맨 앞 · 사이 · 맨 뒤
 // 넓은 맵 (11-22 04:43 사용자 「일직선 맵이 아닌 넓은 맵으로 … 모험가들이 사선으로도 움직이게」): 넓은 땅(bg.wide)에서는 줄(근접 → 원거리 → 힐러 → 짐꾼)마다 앞뒤(y WIDE_Y0 ~ WIDE_Y1)로 흩어 선다.
 //   싸울 때 근접은 맡은 적 앞까지 걸어가 붙고(fieldScene 「넓은 맵」), 그 밖의 땅은 예전 한 줄 그대로.
-const WIDE_Y0 = 154, WIDE_Y1 = 196, WIDE_YC = 174, WIDE_X0 = 104, WIDE_GAP = 26, WIDE_XMIN = 18, WIDE_DY = 17, WIDE_SKEW = 0.22;
+const WIDE_Y0 = 154, WIDE_Y1 = 196, WIDE_YC = 174, WIDE_X0 = 104, WIDE_GAP = 26, WIDE_XMIN = 18, WIDE_DY = 17, WIDE_SKEW = 0.12;
 const WIDE_FOE = [[150, 178], [178, 160], [184, 192], [206, 172], [212, 152], [222, 190], [232, 164], [234, 182]];   // 적 자리 (오른쪽을 보고 갈 때의 x · y)
+// 11-22 04:59 사용자 「전위 최대 3 중위 최대 3 후위 최대 3으로 해서 자리를 3곳으로 고정하되, 짐꾼은 후위에서도 항상 중앙」:
+//   줄 셋(전위 · 중위 · 후위 — job72.js posOf) × 자리 셋(위 · 가운데 · 아래). 한 줄에 한 명이면 가운데, 둘이면 위 · 아래, 셋이면 다 채운다. 짐꾼은 늘 후위 가운데.
+//   넷째부터(옛 저장 · 원정대)는 그 줄 뒤에 반 칸 물려 세운다. 쓰러진 사람(들것)은 맨 뒤.
+const WIDE_COLX = [102, 72, 42], WIDE_ROWY = [155, 174, 193], WIDE_ROWDX = [9, 0, 9];   // 위 · 아래 자리는 가운데보다 조금 앞 (‹ 꼴 — 세 사람이 겹쳐 가리지 않게)   // 줄 x(전위 → 후위) · 자리 y(위 · 가운데 · 아래)
 function formSlotsWide(team) {
-  const cols = [[], [], [], [], [], [], []];
-  team.forEach((a, i) => { let r = a.down ? 6 : Math.max(0, Math.min(5, formRank(a.cls) || 0)); if (r === 0 && cols[0].length >= 3) r = 1; cols[r].push([i, rideKind(a) ? 1 : 0]); });
-  cols.forEach(L => L.sort((p, q) => p[1] - q[1] || p[0] - q[0]));
-  const used = cols.filter(L => L.length).length, gap = used > 1 ? Math.min(WIDE_GAP, (WIDE_X0 - WIDE_XMIN) / (used - 1)) : WIDE_GAP, out = []; let ci = 0, last = WIDE_X0;
-  for (const L of cols) {
-    if (!L.length) continue;
-    const n = L.length, dy = n > 1 ? Math.min(WIDE_DY, (WIDE_Y1 - WIDE_Y0 - 6) / (n - 1)) : 0, yc = WIDE_YC + (ci % 2 ? 7 : -5), x0 = last = WIDE_X0 - gap * ci++;
-    L.forEach(([ti], k) => { const y = Math.max(WIDE_Y0 + 2, Math.min(WIDE_Y1, Math.round(yc + (k - (n - 1) / 2) * dy))); out[ti] = [Math.round(x0 - (WIDE_Y1 - y) * WIDE_SKEW), y]; });
-  }
-  out.petX = Math.max(8, Math.round(last - 22)); return out;
+  const cols = [[], [], []], downs = [], out = [];
+  team.forEach((a, i) => { if (a.down) downs.push(i); else cols[Math.max(0, Math.min(2, posOf(a)))].push(i); });
+  const put = (i, x, y) => { out[i] = [Math.round(x - (WIDE_Y1 - y) * WIDE_SKEW), y]; };
+  cols.forEach((L, ci) => {
+    const x = WIDE_COLX[ci], pi = ci === 2 ? L.findIndex(i => jobBase(team[i].cls) === 'porter') : -1;
+    let rest = L.slice(), order;
+    if (pi >= 0) { put(L[pi], x - 4, WIDE_ROWY[1]); rest.splice(pi, 1); order = [0, 2]; }   // 짐꾼은 가운데 · 나머지는 위 → 아래
+    else order = rest.length === 1 ? [1] : rest.length === 2 ? [0, 2] : [0, 1, 2];
+    rest.forEach((i, k) => { if (k < order.length) put(i, x + WIDE_ROWDX[order[k]], WIDE_ROWY[order[k]]); else { const m = k - order.length; put(i, x - 13 - 8 * Math.floor(m / 2), m % 2 ? 182 : 166); } });
+  });
+  downs.forEach((i, k) => put(i, 22 - k * 6, k % 2 ? 186 : 166));
+  out.petX = 30; return out;
 }
 function formSlots(team) {   // 빌드 72: 한 줄
   if (V.wide) return formSlotsWide(team);   // 그 밖의 땅: 대형 차례(근접 → 원거리 → 힐러 → 짐꾼 → 들것) 그대로 앞에서 뒤로
@@ -384,6 +390,22 @@ function formSlots71(team) {   // 빌드 69 ~ 71: 줄마다 깊이로 흩어 서
   }
   out.petX = Math.max(8, Math.round(last - 24));   // 펫은 맨 뒤 줄 뒤
   return out;
+}
+// 과장 동작 (11-22 04:59 사용자 「우선 전사부터 움직임 영상처럼 추가하거나, 수정」 — 사용자가 보여 준 굵은 도트 오토배틀처럼): 그림 장은 그대로 두고 몸 전체를 튀기고 · 찌그리고 · 기울인다.
+//   걷기 = 통통 튐(디딜 때 납작) · 서 있기 = 숨쉬기 · 공격 = 뒤로 젖혔다가 맞히는 때에 쭉 내지르고 늘어남 · 맞음 = 움찔 찌그러짐. JUICE72에 직업(1차 뿌리)을 넣으면 그 직업에 켜진다.
+const JUICE72 = { warrior: { hop: 2.6, step: 8.5, lean: 3.5, lunge: 6, stretch: 0.16 } };
+function juice72(a, i, t, o) {
+  const J = JUICE72[jobBase(a.cls)], r = { dx: 0, dy: 0, sx: 1, sy: 1, rot: 0 };
+  if (o.mo) {   // 공격: e = 시작부터 지난 시간 · hit = 맞히는 때
+    const hit = Math.max(0.12, o.mo.hit || 0.3), u = o.mo.e / hit;
+    if (u < 1) { const k = Math.sin(Math.min(1, u / 0.75) * Math.PI / 2), w = u > 0.75 ? (u - 0.75) / 0.25 : 0;   // 젖히기 → 마지막 1/4에 앞으로 튀어 나감
+      r.dx = -J.lean * k * (1 - w) + J.lunge * w * w; r.rot = -0.10 * k * (1 - w) + 0.07 * w; r.sx = 1 - 0.05 * k * (1 - w) + J.stretch * w; r.sy = 1 + 0.05 * k * (1 - w) - J.stretch * 0.6 * w; }
+    else { const d = Math.min(1, (o.mo.e - hit) / 0.22), k = 1 - d; r.dx = J.lunge * k; r.rot = 0.07 * k; r.sx = 1 + J.stretch * k * (1 - d * 0.5); r.sy = 1 - J.stretch * 0.6 * k; }   // 맞힌 뒤 0.22초에 걸쳐 돌아온다
+  } else if (o.walk) { const ph = t * (o.run ? J.step * 1.25 : J.step) + i * 1.7, h = Math.abs(Math.sin(ph)), land = h < 0.22 ? 1 - h / 0.22 : 0;
+    r.dy = -Math.round(h * J.hop * 2) / 2; r.sy = 1 - 0.07 * land + 0.03 * h; r.sx = 1 + 0.06 * land - 0.02 * h; r.rot = 0.03 * Math.sin(ph); }
+  else { const b = Math.sin(t * (o.fighting ? 5 : 2.6) + i * 1.3); r.sy = 1 + 0.022 * b; r.sx = 1 - 0.014 * b; }
+  if (o.hurt) { const k = Math.min(1, -o.hurt / 3); r.sx *= 1 - 0.10 * k; r.sy *= 1 + 0.08 * k; r.rot -= 0.10 * k; }
+  return r;
 }
 const ZS = 1.25;   // 옆모습 배율
 const giantZ = f => zq(Math.min(1.75, 100 / monW(f.id)));
@@ -562,12 +584,14 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const dx = ((mo ? (hw ? 0 : mF.dx * 2 * z * dashK) : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0) + rc) * dir, y = y0 + jy + mjy;   // 리마스터 장은 그림 안에서 몸이 나간다 (뒷발이 닻)
     if (mo && (!hw || (mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast))) post.push(g => { if (hw) hdSkFx(g, a, mo, SKFX[mo.sk], x0, y, dir, t); else motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t); });   // 리마스터 전사: 스킬 빛을 그림의 칼 자리에 (hd70.js hdSkFx — 엔진 그림 칸에 맞춘 motFx는 자리가 안 맞는다)
     if (workDraw(draws, e, a, t)) return;   // 빌드 72: 갈무리 · 약초 캐는 짐꾼은 그 자리에서 작업 자세로 (herb72.js)
+    const jc = JUICE72[jobBase(a.cls)] ? juice72(a, i, t, { walk: (walking || (V.mv && V.mv.on['a' + a.id] && !mo)) && !falling, mo, fighting, hurt: rc, run: e.mode === 'return' }) : null;
     draws.push({ y: y0, f: g => {
       const O = { walk: (walking || (V.mv && V.mv.on['a' + a.id] && !mo)) && !falling, run: e.mode === 'return', ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / fallT)) : null,
         wph: hw && dir > 0 ? V.scroll / HDW_STRIDE : null };   // 리마스터 걷기: 땅이 흐르는 빠르기만큼 발을 옮긴다 (hd70.js HDW_STRIDE)
       shadowAt(g, x0 + dx + (hw ? hdWarSx(a, t, O) * dir : 0), y0, (rk ? rideShadow(a) : jy || mjy < -4 ? 7 : SHADOW_R) * z / ZS);
       if (msk) skGhosts(g, a, mo, msk, x0 + dx, y, z, dir, t);
-      g.save(); g.translate(x0 + dx, y); g.scale(dir, 1);
+      g.save(); g.translate(x0 + dx + (jc ? jc.dx * dir : 0), y + (jc ? jc.dy : 0)); g.scale(dir, 1);
+      if (jc && !falling) { if (jc.rot) g.rotate(jc.rot); g.scale(jc.sx, jc.sy); }
       if (falling && !hw) { const k = Math.max(0, Math.min(1, (t - ft) / 0.3)); g.rotate(-k * k * Math.PI / 2); }
       FLASH = (V.flash['a' + a.id] || 0) > t && (V.flash0['a' + a.id] || 0) <= t ? '#ffffff' : null;
       drawAdv(g, a, t, O);
