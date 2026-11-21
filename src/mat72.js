@@ -32,7 +32,7 @@ const MAT_PV = [30, 110, 420, 1650, 6500, 25000];
 Object.keys(MAT_PROC).forEach(k => MJ_GRADES.forEach((gn, i) => { ITEMS[`p_${k}_${i}`] = { name: `${gn} ${MAT_PROC[k][0]}`, v: MAT_PV[i], w: 1, icon: MAT_FAM[k].icon, c: MAT_FAM[k].c[i], g: i, pfam: k, keep: 1, desc: MAT_PROC[k][1] }; }));
 // 몬스터 → 등급 부속품 (리마스터한 땅은 손으로, 나머지는 타입 · 이름으로 어림)
 const MAT_OF = {
-  rat: ['hide', 'bone'], rabbit: ['hide', 'bone'], wolf: ['hide', 'bone'], scarecrow: ['fiber'], boar: ['hide', 'bone'], aboar: ['hide', 'bone'], ratking: ['hide', 'bone'],
+  rat: ['hide', 'bone'], rabbit: ['hide', 'bone'], wolf: ['hide', 'bone'], scarecrow: ['fiber', 'feather'],   /* 11-21 23:29: 깃털을 주는 몬스터가 하나도 없어 활 · 화살을 못 만들었다 → 허수아비(까마귀) */ boar: ['hide', 'bone'], aboar: ['hide', 'bone'], ratking: ['hide', 'bone'],
   vinesnake: ['rscale', 'fiber'], cflower: ['fiber'], stump: ['wood', 'moss'], spotshroom: ['moss'], ibeetle: ['shell'], mgolem: ['ore', 'moss'], fguard: ['wood', 'moss'], elder: ['wood', 'moss'],
   ewisp: [], mlizard: ['rscale', 'moss'], rcenti: ['shell'], emoth: ['web'], eshroom: ['moss'], cstag: ['shell', 'ore'], sentinel: ['wood', 'moss'], elddragon: ['wood', 'moss'],
   smandrake: ['fiber'], fairies: [], fdryad: ['wood', 'fiber'], rahen: []

@@ -829,8 +829,10 @@ function rankReqs(r = S.rank || 0) {
   const R = RANK_UP[r];
   if (!R) return null;
   const fs = S.fields[R.dungeon], licN = S.advs.filter(a => (a.rank || 0) >= R.lic[0]).length;
+  // 11-21 23:29 사용자: 옛 던전(버려진 곡물 창고 …)은 미궁에서 없앴는데 조건에 남아 못 올랐다 → 그 계층을 끝까지 돌파했는지로. 아직 없는 계층은 준비 중
+  const F = FIELDS[R.dungeon], lab = typeof isLab === 'function' && isLab(R.dungeon), done = lab ? inScope(R.dungeon) && (fs.best || 0) >= fstages(F) : !!fs.cleared;
   return [
-    { label: `${FIELDS[R.dungeon].dungeon.name} 공략`, ok: !!fs.cleared, cur: fs.cleared ? 1 : 0, need: 1, flag: 1 },
+    { label: !inScope(R.dungeon) ? '미궁 다음 계층 돌파 (아직 준비 중)' : lab ? `미궁 ${F.no}계층 돌파 (${F.no}-${fstages(F)})` : `${F.dungeon.name} 공략`, ok: done, cur: done ? 1 : 0, need: 1, flag: 1 },
     { label: '길드 명성', ok: S.fame >= R.fame, cur: S.fame, need: R.fame },
     { label: '끝낸 의뢰', ok: (S.stats.reqs || 0) >= R.reqs, cur: S.stats.reqs || 0, need: R.reqs },
     { label: '누적 판매액', ok: (S.stats.soldG || 0) >= R.sold, cur: S.stats.soldG || 0, need: R.sold, gold: 1 },

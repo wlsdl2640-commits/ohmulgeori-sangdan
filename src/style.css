@@ -961,3 +961,6 @@ details.skl summary b { color: var(--ink); }
 .lzone { margin: 0 0 6px; } .lzone .chip:disabled { opacity: .4; }
 
 /* 11-21 17:32 사용자 「화면대비 게임의 버튼, 맵등이 너무 큰것 같아 비율을 정상적으로」: 가로 화면은 높이 500px짜리 화면으로 보고 통째로 줄인다 (ui.js fitUI가 --z를 정함 · 안전 영역 · vh는 위에서 / var(--z)로 되돌림) */
+
+/* 11-21 23:29 사용자 녹화: 가로 화면에서는 모루 무대(300px · 위에 붙음)가 창을 다 차지해 아래 장비 칸이 안 보였다 → 가로에서는 무대를 0.6배로 (결과 안내 글씨는 도로 키움) */
+@media (orientation: landscape) { .enhst { zoom: .6; } .enh-res { zoom: 1.5; } .enh-empty { font-size: 16px; } }

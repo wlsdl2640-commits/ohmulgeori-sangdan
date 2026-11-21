@@ -50,14 +50,14 @@ const fatMul = f => (f >= 100 ? 0.65 : f >= 85 ? 0.78 : f >= 60 ? 0.92 : 1);
 
 /* ───────── 마탑 연구 ───────── */
 // cost[n] = [골드, 재료], days[n] = 걸리는 날 (게임 속 날짜)
-const RESEARCH = {
-  power:    { name: '마력 증폭',      max: 3, desc: lv => `마법 피해와 치유량 +${lv * 10}%`,           cost: [[800, { shaman_feather: 4 }], [2400, { golem_core: 3 }], [6000, { harpy_feather: 6 }]], days: [2, 4, 7] },
-  mana:     { name: '마나 순환',      max: 2, desc: lv => `MP 회복 +${lv * 30}%`,                      cost: [[700, { spore: 6 }], [3000, { snow_essence: 4 }]], days: [2, 5] },
-  potion:   { name: '정제 연금술',    max: 2, desc: lv => `물약 회복량 +${lv * 25}%`,                  cost: [[600, { treant_sap: 4 }], [2500, { frost_crystal: 3 }]], days: [2, 4] },
-  carry:    { name: '공간 확장 마법', max: 3, desc: lv => `파티가 드는 짐 +${lv * 10}%`,               cost: [[900, { spider_silk: 6 }], [2600, { bat_wing: 8 }], [6500, { wyvern_scale: 5 }]], days: [2, 4, 7] },
-  ward:     { name: '수호 결계',      max: 2, desc: lv => `길드원 방어력 +${lv * 8}%`,                 cost: [[1200, { lizard_scale: 6 }], [5000, { yeti_fur: 4 }]], days: [3, 6] },
-  appraise: { name: '감정술',         max: 2, desc: lv => `장비·스킬북을 얻을 확률 +${lv * 25}%`,      cost: [[1000, { venom_gland: 5 }], [4000, { griffon_claw: 4 }]], days: [3, 5] },
-  time:     { name: '시간 결속',      max: 2, desc: lv => `자리를 비운 동안 보상 시간 +${lv}시간`,     cost: [[1500, { golem_core: 2 }], [6000, { maiden_veil: 3 }]], days: [3, 6] }
+const RESEARCH = {   // 11-21 23:29 사용자 「조건 달성 할 수도 없게 막혀 있고」: 재료가 옛 몬스터 부속품(주술 깃털 · 골렘 핵 …)이라 연구를 못 했다 → 지금 나오는 고유 부속품으로(1단계 평원 · 원시림 / 2단계 깊은 숲 / 3단계 깊은 숲 · 뿌리굴 — 고른 것은 내 안)
+  power:    { name: '마력 증폭',      max: 3, desc: lv => `마법 피해와 치유량 +${lv * 10}%`,           cost: [[800, { crow_feather: 4 }], [2400, { moss_core: 3 }], [6000, { ether_crystal: 6 }]], days: [2, 4, 7] },
+  mana:     { name: '마나 순환',      max: 2, desc: lv => `MP 회복 +${lv * 30}%`,                      cost: [[700, { spore: 6 }], [3000, { ether_dust: 4 }]], days: [2, 5] },
+  potion:   { name: '정제 연금술',    max: 2, desc: lv => `물약 회복량 +${lv * 25}%`,                  cost: [[600, { flower_nectar: 4 }], [2500, { ether_cap: 3 }]], days: [2, 4] },
+  carry:    { name: '공간 확장 마법', max: 3, desc: lv => `파티가 드는 짐 +${lv * 10}%`,               cost: [[900, { wolf_pelt: 6 }], [2600, { beetle_shell: 8 }], [6500, { moth_scale: 5 }]], days: [2, 4, 7] },
+  ward:     { name: '수호 결계',      max: 2, desc: lv => `길드원 방어력 +${lv * 8}%`,                 cost: [[1200, { aboar_plate: 6 }], [5000, { moss_hide: 4 }]], days: [3, 6] },
+  appraise: { name: '감정술',         max: 2, desc: lv => `스킬북을 얻을 확률 +${lv * 25}%`,           cost: [[1000, { vine_thorn: 5 }], [4000, { root_fang: 4 }]], days: [3, 5] },
+  time:     { name: '시간 결속',      max: 2, desc: lv => `자리를 비운 동안 보상 시간 +${lv}시간`,     cost: [[1500, { stump_ring: 2 }], [6000, { dryad_tear: 3 }]], days: [3, 6] }
 };
 
 /* ───────── 후원 ───────── */
@@ -98,7 +98,6 @@ const rankStands = r => (r >= 2 ? 1 : 0) + (r >= 4 ? 1 : 0) + (r >= 6 ? 1 : 0);
 const rankBeds = r => (r >= 3 ? 2 : 0) + (r >= 5 ? 2 : 0);
 function rankGifts(r) {   // 랭크 r에 오르면 받는 것 (설명용)
   const out = [];
-  if (FIELD_IDS[r]) out.push(`새 필드: ${FIELDS[FIELD_IDS[r]].name}`);
   Object.entries(BUILD_RANK).filter(([, n]) => n === r).forEach(([b]) => out.push(`새 시설: ${BUILDINGS[b].name}`));
   if (PARTY_MAX[r] > PARTY_MAX[r - 1]) out.push(`파티 ${PARTY_MAX[r]}개까지`);
   if (rankStands(r) > rankStands(r - 1)) out.push('매대 +1');
@@ -116,10 +115,11 @@ const LICENSE = [
 // 길드는 레벨만 보지 않는다. 몬스터를 얼마나 잡았고 우두머리를 몇이나 쓰러뜨렸는지, 던전을 공략해 봤는지를 따진다.
 // 빌드 64: 전직 레벨(2차 Lv50 · 3차 Lv100)에 맞춰 금장 Lv35 · 백은 Lv75 · 백금 Lv125 (예전 32 · 48 · 65), 처치 · 우두머리 · 던전 수도 함께 올렸다
 const LICENSE_UP = [
-  { lv: 18,  pf: 100,  fee: 1000,   kills: 300,   bosses: 3 },
-  { lv: 35,  pf: 400,  fee: 5000,   kills: 1500,  bosses: 18,  dungeons: 1 },
-  { lv: 75,  pf: 1500, fee: 30000,  kills: 6000,  bosses: 80,  dungeons: 6 },
-  { lv: 125, pf: 4000, fee: 150000, kills: 15000, bosses: 200, dungeons: 15 }
+  // 11-21 23:29: 우두머리는 이제 계층 마지막 스테이지의 주인뿐(10스테이지마다 나오던 것은 없앰) · 옛 던전도 없음 → 주인 처치 수를 줄이고, 「던전 공략」은 미궁 계층(구역) 돌파로 센다(core.js stageClear)
+  { lv: 18,  pf: 100,  fee: 1000,   kills: 300,   bosses: 1 },
+  { lv: 35,  pf: 400,  fee: 5000,   kills: 1500,  bosses: 5,   dungeons: 3 },
+  { lv: 75,  pf: 1500, fee: 30000,  kills: 6000,  bosses: 25,  dungeons: 15 },
+  { lv: 125, pf: 4000, fee: 150000, kills: 15000, bosses: 70,  dungeons: 40 }
 ];
 // 심사 조건 하나하나 (UI와 심사가 같은 표를 본다)
 function licReqs(a) {
@@ -128,9 +128,9 @@ function licReqs(a) {
     { k: 'lv', label: '레벨', cur: a.lv, need: L.lv, ok: a.lv >= L.lv },
     { k: 'pf', label: '개인 명성', cur: Math.floor(a.pf || 0), need: L.pf, ok: (a.pf || 0) >= L.pf },
     { k: 'kills', label: '처치', cur: a.kills || 0, need: L.kills, ok: (a.kills || 0) >= L.kills },
-    { k: 'bosses', label: '우두머리·주인 처치', cur: a.bosses || 0, need: L.bosses, ok: (a.bosses || 0) >= L.bosses }
+    { k: 'bosses', label: '계층 주인 처치', cur: a.bosses || 0, need: L.bosses, ok: (a.bosses || 0) >= L.bosses }
   ];
-  if (L.dungeons) out.push({ k: 'dungeons', label: '던전·레이드 공략', cur: a.dungeons || 0, need: L.dungeons, ok: (a.dungeons || 0) >= L.dungeons });
+  if (L.dungeons) out.push({ k: 'dungeons', label: '계층 · 구역 돌파', cur: a.dungeons || 0, need: L.dungeons, ok: (a.dungeons || 0) >= L.dungeons });
   return out;
 }
 

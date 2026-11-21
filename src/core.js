@@ -526,6 +526,7 @@ function stageClear(p, e) {
     if (e.stage > fs.best) { fs.best = e.stage; if (e.stage % 5 === 0) { S.fame += 1; log(`${p.name}이(가) ${fno(F)}-${e.stage}까지 처음으로 진출했다. 명성 +1`, 'good'); } }
     if (e.stage >= fstages(F)) {
       e.pos = STAGE_LEN;
+      if (isLab(e.field)) { teamOf(p).filter(a => !a.down).forEach(a => { a.dungeons = (a.dungeons || 0) + 1; }); S.stats.dungeons = (S.stats.dungeons || 0) + 1; }   // 11-21 23:29: 계층(구역)을 끝까지 돌파 = 라이선스 심사의 「돌파」 한 번 (옛 던전 공략 자리)
       // 1-50의 주인을 쓰러뜨려 던전 입구가 열렸다 (한 번 공략한 던전은 봉인된다)
       if (F.dungeon && !isLab(e.field)) {   // 빌드 72 (11-21 02:29 사용자 「던전은 1회용 아니고 반복 가능하게」): 공략한 던전도 다시 열린다   // 빌드 72 (11-20 16:38 사용자 「예전 던전은 없애 나중에 내가 던전을 따로 추가할 거야」): 미궁 계층에서는 옛 던전 입구가 나오지 않는다
         if (!fs.found) { fs.found = true; log(`${p.name}이(가) ${F.no}-${FIELD_STAGES}에서 ${F.dungeon.name} 입구를 열었다!`, 'good'); }
