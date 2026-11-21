@@ -1,5 +1,6 @@
 /* ───────── 대장간 제작: 시간이 걸리는 장비 제작 · 재료 제작 · 대장장이 셋 (빌드 72 · 11-21 15:20 ~ 15:40 사용자) ─────────
-   · 장비는 드랍이 없고 제작(과 구매)으로만 얻는다. 제작은 시간이 걸린다(게임 시간 — 하루 = DAY_SEC).
+   · 장비는 드랍이 없고 제작(과 구매)으로만 얻는다. 제작은 **현실 시간**으로 걸린다(11-21 15:52 사용자 「현실 시간으로 · 게임을 꺼 둬도 지난 시간이 적용되게」 — job.end = Date.now() 밀리초, 배속과 상관없다). 표의 「시간」 1 = 현실 7.5초(FORGE_SEC).
+   · 고유 부속품도 장비 제작에 들어간다 — 전부는 아니다(사용자). FORGE_UNIQ[단계][갈래] = [물건, 개수] (단계 0 평원 · 1 원시림 · 2 깊은 숲 · 3 뿌리굴 — 고른 것은 내 안). 안 쓰는 것(들쥐왕의 왕관 · 식충 꽃 꿀 · 독버섯 포자 · 수호령의 종 · 트렌트의 심장 · 에테르 버섯 갓 · 고룡목의 심장 · 라헨의 옹이 …)은 협회 납품 · 판매용.
    · 재료 제작: 원재료(mat72.js MAT_FAM 열둘) → 가공 재료 p_<갈래>_<등급>. 원재료의 등급을 그대로 물려받는다.
    · 에테르 주괴: 주괴 + 에테르 빛가루 + 마정석. 재료로 쓰는 주괴의 등급이 낮을수록 주괴가 더 많이 든다(FORGE.ether — 사용자).
    · 장비 제작: 가공 재료(장비 종류의 재료 몫 GTYPES.mat [쇠, 가죽, 천] → 주괴 · 무두질한 가죽 · 직물 + 종류마다 덧붙임) + 마정석 + 돈. 재료 등급 = 그 장비 단계의 레벨대(Lv 30마다).
@@ -17,16 +18,30 @@ const SMITHS = [
   { id: 'helga', name: '헬가', title: '숙련 대장장이', star: 2, bonus: 0.12, fee: 1.6, desc: '고급 · 희귀 품질이 더 잘 나온다.' },
   { id: 'baldric', name: '발드릭', title: '명장', star: 3, bonus: 0.28, fee: 2.6, desc: '가장 솜씨가 좋다. 희귀가 잘 나오고 드물게 영웅도 나온다.' }
 ];
-const HOUR_SEC = DAY_SEC / 24;
+const HOUR_SEC = DAY_SEC / 24, FORGE_SEC = 7.5;   // 표의 1 = 현실 7.5초 (예전 게임 1시간과 같은 길이)
+const FORGE_UNIQ = {
+  0: { melee: ['wolf_fang', 1], bow: ['rabbit_horn', 1], staff: ['rabbit_horn', 1], shield: ['aboar_plate', 1], heavy: ['aboar_plate', 1], leather: ['boar_hide', 1], cloth: ['scare_straw', 2], acc: ['boar_tusk', 1], ammo: ['crow_feather', 1], belt: ['rat_tail', 2] },
+  1: { melee: ['beetle_horn', 1], bow: ['vine_thorn', 1], staff: ['stump_ring', 1], shield: ['beetle_shell', 1], heavy: ['beetle_shell', 1], leather: ['bark', 1], cloth: ['spot_cap', 1], acc: ['moss_core', 1], ammo: ['vine_thorn', 1], belt: ['bark', 1] },
+  2: { melee: ['root_fang', 1], bow: ['moth_scale', 1], staff: ['ether_crystal', 1], shield: ['old_heartwood', 1], heavy: ['beetle_shell', 2], leather: ['moss_hide', 1], cloth: ['moth_scale', 1], acc: ['ether_crystal', 1], ammo: ['root_fang', 1], belt: ['moss_hide', 1] },
+  3: { staff: ['mandrake_root', 1], cloth: ['rot_petal', 1], acc: ['dryad_tear', 1] }
+};
+function forgeCat(base) {
+  const T = GTYPES[base], M = T.mat || [1, 1, 0]; if (T.ammo) return 'ammo'; if (typeof SHIELDS !== 'undefined' && SHIELDS.includes(base)) return 'shield';
+  if (T.slot === 'weapon') return T.bow || base === 'bow' || T.icon === 'bow' ? 'bow' : T.icon === 'staff' ? 'staff' : 'melee';
+  if (T.slot === 'belt') return 'belt'; if (T.slot === 'acc' || T.slot === 'ear') return 'acc';
+  return M[2] > M[1] && M[2] >= M[0] ? 'cloth' : M[0] >= 3 ? 'heavy' : 'leather';
+}
+const realTxt = h => { const s = Math.round(h * FORGE_SEC); return s < 60 ? `${s}초` : s % 60 ? `${Math.floor(s / 60)}분 ${s % 60}초` : `${s / 60}분`; };
 const forgeState = () => { if (!S.forge) S.forge = { jobs: [] }; return S.forge; };
 const forgeJobOf = i => forgeState().jobs.find(j => j.sm === i) || null;
 const forgeSel = () => { let i = UI.forgeSm | 0; if (i < 0 || i >= SMITHS.length) i = 0; return i; };
-const hoursTxt = h => (h >= 24 ? `${Math.round(h / 24 * 10) / 10}일` : `${Math.round(h * 10) / 10}시간`);
+const hoursTxt = h => realTxt(h);   // 현실 시간으로 보인다
 const gearGrade = t => Math.max(0, Math.min(5, Math.floor((GTIERS[t] ? GTIERS[t].lv : 1) / 30)));
 // 장비 한 점의 재료
 function forgeNeed(base, t) {
   const T = GTYPES[base], g = gearGrade(t), M = T.mat || [1, 1, 0], n = {}, add = (k, q) => { if (q > 0) n[`p_${k}_${g}`] = (n[`p_${k}_${g}`] || 0) + q; };
   const wood = T.bow || base === 'bow' || T.icon === 'staff' || T.icon === 'bow';
+  const U = FORGE_UNIQ[t] && FORGE_UNIQ[t][forgeCat(base)]; if (U && ITEMS[U[0]]) n[U[0]] = U[1];   // 고유 부속품 (그 단계 땅의 몬스터 것)
   if (T.ammo) { add('wood', 1); add('feather', 1); n['mj_' + g] = 1; return n; }
   add(wood ? 'wood' : 'ore', M[0]); add('hide', M[1]); add('fiber', M[2]);
   if (T.bow || base === 'bow' || T.icon === 'bow') add('web', 1);
@@ -47,7 +62,7 @@ function forgeGearWhy(base, t, lv, sm) {
 }
 function forgeStart(job, need, fee) {
   Object.entries(need).forEach(([k, q]) => addTo(S.inv, k, -q)); S.gold -= fee; S.stats.spent = (S.stats.spent || 0) + fee;
-  job.t0 = S.t; job.end = S.t + job.h * HOUR_SEC; forgeState().jobs.push(job); changed();
+  job.t0 = Date.now(); job.end = job.t0 + job.h * FORGE_SEC * 1000; job.rt = 1; forgeState().jobs.push(job); changed();
 }
 function forgeGear(base, t, lv) {
   const sm = forgeSel(), w = forgeGearWhy(base, t, lv, sm); if (w) return w;
@@ -81,7 +96,7 @@ function forgeEther(g, n) {
 function forgeTick() {
   if (!S || !S.forge || !S.forge.jobs.length) return;
   for (const j of S.forge.jobs.slice()) {
-    if (S.t < j.end) continue; const sm = SMITHS[j.sm] || SMITHS[0];
+    if (j.rt && Date.now() < j.end) continue; const sm = SMITHS[j.sm] || SMITHS[0];
     if (j.kind === 'gear') {
       if (!roomGear(1)) { if (!j.warn) { j.warn = 1; HOOKS.toast('창고가 꽉 차서 다 만든 장비를 못 받아요'); } continue; }
       const g = makeGear(j.base, j.t, rollQuality(sm.bonus + 0.02 * (S.bld.smithy || 0) + (relic('smith') ? 0.05 : 0)), j.lv); S.gear.push(g);
@@ -96,7 +111,7 @@ function forgeTick() {
 // 화면: 대장장이 셋 (고르기 · 실력 · 하는 일)
 function forgeSmithBox() {
   const sel = forgeSel();
-  return `<div class="smiths">${SMITHS.map((s, i) => { const j = forgeJobOf(i), left = j ? Math.max(0, (j.end - S.t) / HOUR_SEC) : 0, pc = j ? Math.max(0, Math.min(100, (S.t - j.t0) / (j.end - j.t0) * 100)) : 0;
+  return `<div class="smiths">${SMITHS.map((s, i) => { const j = forgeJobOf(i), left = j ? Math.max(0, (j.end - Date.now()) / 1000 / FORGE_SEC) : 0, pc = j ? Math.max(0, Math.min(100, (Date.now() - j.t0) / Math.max(1, j.end - j.t0) * 100)) : 0;
     return `<button type="button" class="smith${i === sel ? ' on' : ''}" data-act="forgesm" data-i="${i}"><b>${s.name}</b><small>${s.title}</small><span class="stars">${'★'.repeat(s.star)}${'☆'.repeat(3 - s.star)}</span><small class="muted">삯 ×${s.fee}</small>${j ? `<span class="job"><i style="width:${pc.toFixed(0)}%"></i></span><small class="gold-t">${esc(j.name)} · ${hoursTxt(left)} 남음</small>` : '<small class="ok-t">쉬는 중</small>'}</button>`; }).join('')}</div>
     <div class="sub muted">${SMITHS[sel].title} ${SMITHS[sel].name}: ${SMITHS[sel].desc} 대장장이마다 한 번에 일 하나를 맡아요.</div>`;
 }

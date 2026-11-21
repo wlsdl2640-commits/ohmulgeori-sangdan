@@ -29,6 +29,8 @@ const SEATS = 6;   // 여관 한 장소의 자리 (2층 침대 셋)
    like: 아직 그림이 없는 장소가 빌려 쓰는 장면 (협회 로비 = 상점 장면 · 창고 = 던전 수거소 장면 — 빌린 장면은 어디를 눌러도 그 장소의 창) */
 Object.assign(FLOOR_INFO, {
   assoc:     { name: '모험가 협회 로비', win: 'assoc', art: 'assoc' },
+  gearshop:  { name: '협회 장비 상점', win: 'gearshop', art: 'gearshop' },   // 빌드 72 (11-21 15:52 사용자): 협회 대장장이들이 만든 장비를 판다 (shop72.js — 방 그림이 올 때까지 로비 그림)
+  potshop:   { name: '협회 포션 상점', win: 'potshop', art: 'potshop' },      // 연금술사들이 만든 포션을 판다
   warehouse: { name: '창고', win: 'b:warehouse', art: 'warehouse' }
 });
 FLOOR_INFO.shop.art = 'lobby'; FLOOR_INFO.shop.win = 'co';
@@ -43,7 +45,7 @@ function hqArtView(f) {   // 그림 장면: 화면을 꽉 채우게 자른 그�
 }
 FLOOR_INFO.shop.name = '길드 본부 로비'; FLOOR_INFO.inn.name = '모험가 숙소'; FLOOR_INFO.alchemy.name = '연금술 연구실'; FLOOR_INFO.temple.name = '대신전'; FLOOR_INFO.salvage.under = 0; FLOOR_INFO.smithy.under = 0;
 const HQ_ZONES = {
-  tower: { name: '미궁탑', ids: ['assoc', 'smithy', 'library', 'temple', 'tower'], open: ['assoc', 'smithy', 'library', 'temple', 'tower'] },   // open: 짓지 않았어도 보이는 장소 (누르면 짓기 창)
+  tower: { name: '미궁탑', ids: ['assoc', 'gearshop', 'potshop', 'smithy', 'library', 'temple', 'tower'], open: ['assoc', 'gearshop', 'potshop', 'smithy', 'library', 'temple', 'tower'] },   // open: 짓지 않았어도 보이는 장소 (누르면 짓기 창)
   guild: { name: '길드 본부', ids: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy', 'training', 'pen', 'farm', 'stable', 'airfield'], open: ['shop', 'warehouse', 'inn', 'kitchen', 'alchemy'] },
   city:  { name: '도시 시설', ids: ['tavern', 'port'], open: ['tavern', 'port'] }
 };

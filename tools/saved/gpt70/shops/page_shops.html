@@ -1,0 +1,121 @@
+<title>상점 방 그림</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 배치: 한 줄 흐름 — 머리 → 순서(번호: 실제 차례) → 붙일 그림 셋(그림 · 크게 보기 · 저장) → 부탁 글 넷(글 · 복사) → 받은 뒤 볼 것.
+   색은 궁수 그림에서: 두건 초록 · 가죽 갈색 · 버클 금색. 그림은 밝은 회색 판 그대로 보인다 */
+:root {
+  --bg: #eeedf4; --surface: #f9f8fc; --panel: #dcd9e8; --fg: #1c1a26; --muted: #5a5770; --line: #c8c4d8;
+  --accent: #2f6a3a; --accent-fg: #ffffff; --label: #7a5a0c; --sheet: #c8ccd6; --code: #f3f1f9;
+  --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark }
+*, *::before, *::after { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 820px; margin-inline: auto; display: grid; gap: 44px; grid-template-columns: minmax(0, 1fr) }
+h1, h2, h3, p, ul, ol, figure, pre { margin: 0 }
+ul, ol { padding: 0; list-style: none }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.15 }
+h1 { font-size: clamp(30px, 7vw, 42px) }
+h2 { font-size: 24px }
+h3 { font-size: 16px; font-weight: 600 }
+.top { display: grid; gap: 10px }
+.eyebrow { color: var(--label); font-size: 13px; font-weight: 600; letter-spacing: .04em }
+.lede { max-width: 36em }
+.sec { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) }
+.note { color: var(--muted); font-size: 14px; max-width: 44em }
+.steps { counter-reset: n; display: grid; gap: 12px; max-width: 46em }
+.steps li { counter-increment: n; padding-left: 34px; position: relative }
+.steps li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font: 400 15px/1 var(--font-display); background: var(--accent); color: var(--accent-fg); border-radius: 4px }
+.item { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) }
+.item .what { display: grid; gap: 2px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.msg { color: var(--muted); font-size: 13px }
+.msg:empty { display: none }
+.btn { font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.btn[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg) }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-fg) }
+.btn:disabled { opacity: .6; cursor: default }
+.btn:focus-visible { outline: 2px solid var(--label); outline-offset: 2px }
+.frame { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px }
+.frame img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.frame.zoomed img { width: var(--zw); max-width: none }
+.frame.soft img { image-rendering: auto }
+.attach { color: var(--label); font-size: 13px; font-weight: 600 }
+.req { font: 13.5px/1.65 var(--font-body); white-space: pre-wrap; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; max-height: 22em; overflow: auto; -webkit-user-select: text; user-select: text }
+.list { display: grid; gap: 10px; max-width: 46em }
+.list li { padding-left: 18px; position: relative }
+.list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; background: var(--label) }
+
+.mock { position: relative; width: 100%; aspect-ratio: 2172 / 724; container-type: inline-size; border: 2px solid #000; overflow: hidden; border-radius: 6px; background: #c9d6c2; }
+.mock .b { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 2.9cqw; line-height: 1.25; color: #f2f4e8; box-sizing: border-box; border-top: 1px dashed rgba(0, 0, 0, .45); padding: 0 1cqw; }
+.pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style><main class="wrap">
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 미궁탑</p><h1>상점 방 그림 부탁</h1><p class="lede">미궁탑에 새로 생긴 협회 장비 상점과 협회 포션 상점의 방 그림을 GPT에서 뽑을 부탁 글 두 개입니다. 지금은 협회 로비 그림을 대신 쓰고 있습니다.</p></header>
+  <section class="sec"><div class="what item"><h2>GPT에 붙일 그림 1장</h2><p class="note">지난번 시설 그림과 같은 기준 그림입니다.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
+    <div class="item"><div class="what"><h3>모험가 협회 로비</h3><p class="note">두 부탁 모두에 붙입니다.</p></div><div class="frame soft" id="f-as"><img src="ref_assoc.png" alt="모험가 협회 로비"></div><div class="row"><button class="btn" type="button" data-zoom="f-as" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_assoc.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+  </section>
+  <section class="sec"><div class="what item"><h2>부탁 글 2개</h2></div><div class="item"><div class="what"><h3>1. 협회 장비 상점</h3><p class="attach">붙일 그림: 모험가 협회 로비</p></div><pre class="req" id="req-1" tabindex="0">협회 장비 상점
+
+붙인 그림은 같은 게임의 「모험가 협회 로비」(미궁탑 안)입니다. 같은 탑 안의 다른 시설이니, 붙인 그림과 같은 화풍 · 같은 돌기둥과 금빛 장식 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「협회 장비 상점」을(를) 그려 주세요. 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따릅니다.
+
+이곳에 있는 것
+· 뒷벽 가득 진열 벽: 검 · 도끼 · 창 · 활이 걸린 무기 걸이, 방패가 줄지어 걸린 벽
+· 가운데에 넓은 나무 계산대(금빛 테), 그 위에 저울과 장부, 작은 금고
+· 한쪽에 갑옷을 입힌 나무 인형 서넛(가죽 갑옷 · 판금 · 로브), 다른 쪽에 투구와 장갑 · 장화가 놓인 선반
+· 유리 진열장 속의 반지와 장신구, 천장에서 내려온 협회 깃발(모루 무늬). 잘 정돈되고 번듯한 가게
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 가격표에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-1">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>2. 협회 포션 상점</h3><p class="attach">붙일 그림: 모험가 협회 로비</p></div><pre class="req" id="req-2" tabindex="0">협회 포션 상점
+
+붙인 그림은 같은 게임의 「모험가 협회 로비」(미궁탑 안)입니다. 같은 탑 안의 다른 시설이니, 붙인 그림과 같은 화풍 · 같은 돌기둥과 금빛 장식 · 같은 등불 · 같은 크기와 구도(정면에서 본 방, 아래 1/4은 빈 바닥)로 「협회 포션 상점」을(를) 그려 주세요. 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따릅니다.
+
+이곳에 있는 것
+· 뒷벽 가득 층층 선반: 붉은 · 푸른 · 초록 · 보랏빛 물약 병이 색깔별로 줄지어 있고 병마다 은은히 빛난다
+· 가운데에 넓은 나무 계산대(금빛 테), 그 위에 약 저울과 약절구, 포장한 약 꾸러미
+· 한쪽에 김이 오르는 큰 유리 증류 기구와 작은 화로, 다른 쪽에 말린 약초 다발이 걸린 건조대와 약초 서랍장
+· 천장에 매단 약초 다발과 유리 등, 협회 깃발(플라스크 무늬). 깨끗하고 향긋한 약방 분위기
+
+공통 규격
+· 가로로 아주 긴 그림 한 장. 가로 : 세로 = 3 : 1 (예: 2172 × 724)
+· 도트 그림. 붙인 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (따뜻한 등불 빛, 어둑한 실내)
+· 실내를 정면에서 똑바로 본 그림. 연극 무대처럼 뒷벽이 화면과 나란하고, 방의 왼쪽 끝부터 오른쪽 끝까지 한눈에 보인다. 비스듬한 각도나 위에서 내려다본 각도가 아니다
+· 맨 아래 1/4은 빈 바닥. 게임 캐릭터들이 이 바닥에 한 줄로 서므로 가구, 통, 상자를 놓지 않는다 (깔개나 바닥 무늬는 괜찮다)
+· 사람, 동물, 몬스터, 글자는 그리지 않는다 (간판과 가격표에도 읽히는 글자 없이 무늬만)
+· 왼쪽 위 구석(가로 1/3, 세로 절반)은 게임의 작은 창이 덮고, 오른쪽 위 구석은 단추가 덮는다. 중요한 물건은 그 두 곳을 피해 가운데와 오른쪽 아래쪽에 둔다
+· 십자 무늬는 그리지 않는다. 다른 작품의 장소를 닮지 않게 새로 디자인한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-2">글 복사</button><span class="msg" role="status"></span></div></div></section>
+</main>
+<script>
+const $$ = s => Array.from(document.querySelectorAll(s));
+const msgOf = b => b.parentElement.querySelector('.msg');
+const W = { 'f-as': 2172 };
+$$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');
+  b.addEventListener('click', () => { const on = f.classList.toggle('zoomed'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); });
+// 글 복사: 안 되면 글을 골라 둔다
+$$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const pre = document.getElementById(b.dataset.copy), msg = msgOf(b);
+  try { await navigator.clipboard.writeText(pre.textContent); msg.textContent = '복사했습니다.'; }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); pre.focus(); msg.textContent = '여기서는 바로 복사가 안 됩니다. 글을 골라 두었으니 길게 눌러 복사해 주세요.'; }
+}));
+// 저장 (보는 쪽에서 저장을 받아 줄 때만 단추를 보인다)
+(async () => {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+  if (!dl) return;
+  document.getElementById('save-hint').hidden = true;
+  $$('[data-save]').forEach(b => { b.hidden = false; b.addEventListener('click', async () => {
+    const msg = msgOf(b); b.disabled = true; msg.textContent = '';
+    try { const blob = await (await fetch(b.dataset.save)).blob(); await dl.save({ filename: b.dataset.save, data: blob }); msg.textContent = '저장했습니다.'; }
+    catch (e) { const c = e && e.code; msg.textContent = c === 'declined' ? '저장을 취소했습니다.' : c === 'rate_limited' ? '잠시 뒤에 다시 눌러 주세요.' : '여기서는 저장할 수 없습니다. 그림을 길게 눌러 저장해 주세요.'; }
+    b.disabled = false; }); });
+})();
+</script>
