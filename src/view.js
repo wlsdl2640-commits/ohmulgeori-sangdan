@@ -519,6 +519,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const mjy = mo && !rk ? Math.round(motJy(mo) * 2 * z) : 0;   // 도약 찌르기 (빌드 42): 동작이 뛰는 높이를 정한다
     const dx = ((mo ? (hw ? 0 : mF.dx * 2 * z * dashK) : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy + mjy;   // 리마스터 장은 그림 안에서 몸이 나간다 (뒷발이 닻)
     if (mo && (!hw || (mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast))) post.push(g => { if (hw) hdSkFx(g, a, mo, SKFX[mo.sk], x0, y, dir, t); else motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t); });   // 리마스터 전사: 스킬 빛을 그림의 칼 자리에 (hd70.js hdSkFx — 엔진 그림 칸에 맞춘 motFx는 자리가 안 맞는다)
+    if (workDraw(draws, e, a, t)) return;   // 빌드 72: 갈무리 · 약초 캐는 짐꾼은 그 자리에서 작업 자세로 (herb72.js)
     draws.push({ y: y0, f: g => {
       const O = { walk: walking && !falling, run: e.mode === 'return', ph: i * 0.5, atk: lunging && !mo, atkF, mot: mo, z, side: 1, die: falling && hw ? Math.max(0, Math.min(1, (t - ft) / fallT)) : null,
         wph: hw && dir > 0 ? V.scroll / HDW_STRIDE : null };   // 리마스터 걷기: 땅이 흐르는 빠르기만큼 발을 옮긴다 (hd70.js HDW_STRIDE)

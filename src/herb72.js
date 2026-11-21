@@ -37,7 +37,7 @@ function herbBloom(p, e, C, team) {
 }
 
 /* 화면: 군락지는 파티 앞 길 위에 선다(캐는 동안), 피는 약초는 멈춰 있는 동안 싹 → 봉오리 → 활짝. 그림 HERB_ART(data-herbart.js) [소, 중, 대] / [싹, 봉오리, 활짝] = [그림, 너비, 높이] */
-const HERB_BLOOM_T = 1.5, HERB_X = 172, HERB_Y = 197, HERB_Z = 1.4, HERB_IMG = {};   // HERB_Z: 캐릭터에 견주어 조금 작아서 키움 (대형이 가슴 높이)
+const HERB_BLOOM_T = 1.5, HERB_X = 172, HERB_Y = 197, HERB_Z = 1.25, HERB_IMG = {};   // HERB_Z: 대형 군락지가 캐릭터 가슴 높이쯤
 function herbImg(u) { let m = HERB_IMG[u]; if (!m) { m = HERB_IMG[u] = new Image(); m.src = u; } return m.complete && m.naturalWidth ? m : null; }
 function herbDraw(draws, e) {
   if (typeof HERB_ART === 'undefined' || !e) return; let A = null;
@@ -45,4 +45,16 @@ function herbDraw(draws, e) {
   else if (e.bloomShow && e.hold > 0 && HERB_ART[e.bloomShow]) A = HERB_ART[e.bloomShow][e.hold > HERB_BLOOM_T * 0.66 ? 0 : e.hold > HERB_BLOOM_T * 0.33 ? 1 : 2];
   if (!A) return; const m = herbImg(A[0]); if (!m) return;
   draws.push({ y: HERB_Y + 1, f: g => { const s = g.imageSmoothingEnabled; g.imageSmoothingEnabled = true; const W = A[1] * HERB_Z, H = A[2] * HERB_Z; g.drawImage(m, Math.round(HERB_X - W / 2), Math.round(HERB_Y - H + 3), W, H); g.imageSmoothingEnabled = s; } });
+}
+
+/* 짐꾼 작업 자세 (PORTER_WORK — data-porterwork.js: 갈무리 harv · 약초 캐기 herb, 8장 띠): 일하는 짐꾼(e.workA — job72.js j1Hold)은 군락지 왼쪽 / 파티 앞에 쪼그려 앉아 일한다.
+   그림은 1차 짐꾼 것이라 짐꾼(porter) 직업만 — 다른 짐꾼 계열은 서 있는 그림 그대로. */
+const WORK_X = 150, WORK_FPS = 7, WORK_Z = 0.66;   // WORK_Z: 서 있는 동료와 머리 크기가 같게
+function workDraw(draws, e, a, t) {
+  if (typeof PORTER_WORK === 'undefined' || !e || e.workA !== a.id || a.cls !== 'porter' || a.down || (e.foes || []).some(f => f.hp > 0)) return false;
+  const m = herbImg(PORTER_WORK[e.workK]); if (!m) return false;
+  const P = PORTER_WORK, fi = Math.floor(t * WORK_FPS) % 8, A = e.herbJob && typeof HERB_ART !== 'undefined' && HERB_ART[e.herbJob.id] ? HERB_ART[e.herbJob.id][{ 소형: 0, 중형: 1, 대형: 2 }[e.herbJob.size] || 0] : null;
+  const fw = P.fw * WORK_Z, fh = P.fh * WORK_Z, x = A ? HERB_X - A[1] * HERB_Z / 2 - fw * 0.42 : WORK_X, y = HERB_Y + 1;
+  draws.push({ y: y + 1, f: g => { const s = g.imageSmoothingEnabled; g.imageSmoothingEnabled = true; g.drawImage(m, fi * P.fw * 2, 0, P.fw * 2, P.fh * 2, Math.round(x - fw / 2), Math.round(y - fh + 1), fw, fh); g.imageSmoothingEnabled = s; } });
+  return true;
 }

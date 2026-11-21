@@ -89,17 +89,18 @@ function harvOpen(e) { e.kq = harvOn(e) ? { items: [], gear: [] } : null; }
 function harvClose(e) { const C = e.kq; e.kq = null; if (C && (C.items.length || C.gear.length)) (e.corpses = e.corpses || []).push(C); }
 // 걷기 전에: 함정 · 자물쇠로 멈춰 있는 시간과 갈무리. 참이면 이번 틱은 걷지 않는다
 function j1Hold(p, e, team, dt) {
+  e.workA = null;   // 일하는 짐꾼(그림: herb72.js workDraw)
   if (e.note) { e.note.t -= dt; if (e.note.t <= 0) e.note = null; }
   if (e.hold > 0) { e.hold -= dt; return true; }
   if (e.herbJob) {   // 약초꾼: 군락지 앞에서 하나씩 캔다
-    const H = e.herbJob; e.note = { t: 0.6, txt: `${H.size} 군락지 · ${ITEMS[H.id].name} 채취 중 (${H.got}/${H.n})` }; e.hv2 = (e.hv2 || 0) + dt;
+    const H = e.herbJob; e.workA = (team.find(isPorter) || {}).id; e.workK = 'herb'; e.note = { t: 0.6, txt: `${H.size} 군락지 · ${ITEMS[H.id].name} 채취 중 (${H.got}/${H.n})` }; e.hv2 = (e.hv2 || 0) + dt;
     if (e.hv2 >= HERB72.per) { e.hv2 = 0; loot(p, e, H.id, 1); H.got++; if (H.got >= H.n) { log(`${p.name}: ${H.size} 군락지에서 ${ITEMS[H.id].name} ${H.n}개를 캤다.`, 'good'); e.herbJob = null; } }
     return true;
   }
   if (!e.corpses || !e.corpses.length) return false;
   // 11-21 14:59 사용자 「짐꾼 없는 파티는 갈무리를 못 해서 부속품 자체를 못 얻음」(마정석도) — 11:44의 두 배 시간 · 30%는 없앰
   if (!team.some(isPorter)) { e.corpses = []; if (!e.noHarv) { e.noHarv = 1; log(`${p.name}에는 갈무리할 짐꾼이 없어 쓰러뜨린 몬스터의 부속품을 두고 간다.`, 'bad'); HOOKS.toast(`${p.name}: 짐꾼이 없어 부속품을 못 챙겨요`); } return false; }
-  const por = team.some(isPorter), NP = J1.noPorter;
+  const por = team.some(isPorter), NP = J1.noPorter; e.workA = (team.find(isPorter) || {}).id; e.workK = 'harv';
   e.note = { t: 0.6, txt: por ? '갈무리 중' : '서툰 갈무리 중' }; e.hv = (e.hv || 0) + dt;
   if (e.hv >= J1.harv * (por ? 1 : NP.time)) { e.hv = 0; const C = e.corpses.shift();
     for (const [it, q] of C.items) { let n = q; if (!por && !ITEMS[it].mj) { n = 0; for (let i = 0; i < q; i++) if (rnd() < NP.rate) n++; } if (n > 0) loot(p, e, it, n); }
