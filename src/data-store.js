@@ -20,7 +20,9 @@ const gradeName = g => QUALITY[Math.max(0, Math.min(GRADE_MAX, g))].name;
 const gradeTag = g => `<span class="tag rqt rq${g}">${gradeName(g)}</span>`;
 /* 장비 드랍 (빌드 63 다섯째 묶음, 11-11 15:01 사용자 「모든 레어도가 드랍으로 나오게, 대신 영웅 다음 등급부터는 고등급 필드 · 던전 등에서, 드랍율을 극도로 낮춰.
    애초에 모든 장비의 드랍율을 낮추자. 영웅 다음 단계부터는 더 낮추고」) — 장비가 떨어질 확률은 예전의 절반쯤, 레어도는 rollGrade(core.js)가 이 표로 고른다 */
-const GEAR_DROP = { field: 0.003, dungeon: 0.012, fb: 0.35, boss: 0.6, chest: 0.2 };   // 예전 필드 0.006 · 던전 0.025 · 필드 우두머리 0.6 · 던전 주인 1 · 보물고 상자 0.35
+const GEAR_DROP_ON = false;   // 빌드 72 (11-21 11:44 사용자 「장비드랍은 이제 없어, 장비는 전부 제작 혹은 구매」): 몬스터 · 상자 · 던전 · 보물고 · 레이드 보상에서 장비가 안 나온다 (예전 값은 GEAR_DROP_OLD)
+const GEAR_DROP_OLD = { field: 0.003, dungeon: 0.012, fb: 0.35, boss: 0.6, chest: 0.2 };
+const GEAR_DROP = GEAR_DROP_ON ? GEAR_DROP_OLD : { field: 0, dungeon: 0, fb: 0, boss: 0, chest: 0 };   // 예전 필드 0.006 · 던전 0.025 · 필드 우두머리 0.6 · 던전 주인 1 · 보물고 상자 0.35
 const GRADE_DROP = {
   p: [0, 0.25, 0.05, 0.004, 0.0002, 0.00003, 0.000004, 5e-7, 6e-8],   // 장비 한 점이 그 레어도일 확률 (보통 몬스터) — 일반 · 고급 · 희귀 · 영웅 · 전설 · 신화 · 신성 · (우주 · 창조)
   tier: [0, 0, 0, 0, 6, 9, 12, 14, 15],   // 이 장비 단계 땅부터 나온다 — 전설 늪지대(마계)~ · 신화 안개 묘지(북쪽 변경)~ · 신성 구름섬~ · 우주 천계의 유적 폐허~ · 창조 별의 정원

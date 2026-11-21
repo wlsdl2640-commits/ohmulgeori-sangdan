@@ -59,7 +59,7 @@ const slotCnt = g => [`룬 ${(g.runes || []).length}/${runeSlots(g)}`, msSlots(g
 // 장비 칸 창 맨 위: 9칸 한 줄 (열린 칸 · 끼운 것 · 아직 안 열린 칸은 여는 레어도)
 function slot9Strip(g) {
   if (!runeSlots(g)) return '<div class="sub muted">화살 · 표창에는 장비 칸이 없어요.</div>';
-  const q = g.q || 0, grp = [['룬', 'r'], ['마석', 'm'], ['원천물', 's']].map(([nm, k], gi) => {
+  const q = g.q || 0, grp = [['룬', 'r'], ['마석', 'm'], ['원천물', 's']].map(([nm, k], gi) => { if (k === 'm' && !MASEOK_ON) return '';
     const cells = [0, 1, 2].map(j => {
       const i = gi * 3 + j, id = k === 'r' ? g.runes && g.runes[j] : k === 'm' ? g.ms && g.ms[j] : null;
       if (id && ITEMS[id]) return `<span class="s9 on">${iArt(id, 1)}</span>`;
@@ -256,7 +256,7 @@ function towerBox() {
     <div class="sec"><b>룬 공방</b><span>증표로 새기기</span></div>
     <div class="list">${carve || '<div class="li"><span class="sub">필드 보스가 떨어뜨리는 「우두머리의 증표」로 룬을 새길 수 있어요.</span></div>'}</div>
     ${rfBox()}
-    <details class="card"><summary><b>장비 칸 (룬 · 마석)</b> <span class="muted">· ${runeG.length}점 (레어도마다 한 칸: 룬 3 · 영웅부터 마석 3 · 신성부터 원천물 3)</span></summary><div class="list">${runeG.join('') || '<div class="li"><span class="sub">룬 칸이 있는 장비가 없어요.</span></div>'}</div></details>
+    <details class="card"><summary><b>장비 칸 (룬)</b> <span class="muted">· ${runeG.length}점 (레어도마다 한 칸: 룬 3 · 영웅부터 마석 3 · 신성부터 원천물 3)</span></summary><div class="list">${runeG.join('') || '<div class="li"><span class="sub">룬 칸이 있는 장비가 없어요.</span></div>'}</div></details>
     <details class="card"><summary><b>옵션 재감정</b> <span class="muted">· ${reapG.length}점 (희귀부터 보너스 옵션을 다시 뽑아요)</span></summary><div class="list">${reapG.join('') || '<div class="li"><span class="sub">희귀 이상 장비가 없어요.</span></div>'}</div></details>`;
 }
 const BLD_INNER = { smithy: '대장간에서 장비 만들기', alchemy: '물약 만들기', temple: '치료와 치유사', tower: '마법 연구', pen: '알 품기와 펫 돌보기', stable: '말과 마차', library: '스킬북 만들기', airfield: '비행 마차와 구름섬 원정' };
@@ -596,7 +596,7 @@ function partyCard(p) {
     ${DF.raid || DF.giant || DF.trade ? '' : `<div class="sec"><b>출발 거점</b><span>필드 보스를 쓰러뜨린 구간 다음부터</span></div><div class="btns">${[1, 11, 21, 31, 41].map(x => `<button type="button" class="btn sm${x === st ? ' on' : ''}" data-act="start" data-id="${p.id}" data-s="${x}"${cps.includes(x) ? '' : ' disabled'}>${DF.no}-${x} <span class="muted">Lv${fieldLv(DF, x)}</span></button>`).join('')}</div>`}
     <div class="sub">짐 한도 ${cap} · 물약이 ${supW} 차지${fast ? ` · 이동속도 ${(moveOf(p)).toFixed(1)} (가장 민첩한 ${esc(fast.name)} 기준${wagonOf(p) ? ', 마차 포함' : ''}${scoutMove(p) ? `, 정찰가 +${Math.round(scoutMove(p) * 100)}%` : ''})` : ''}${tentOf(p) > 1 ? ` · 야영은 텐트 (피로 회복 ×${tentOf(p)})` : ''}</div>
     ${wagonWhy(p) ? `<div class="sub red-t">${rigName(p)}: ${wagonWhy(p)}.</div>` : coachOf(p) && wagonOf(p) ? `<div class="sub ok-t">마부 ${esc(coachOf(p).name)}이(가) ${rigName(p)}을(를) 몰아요 · 마차 짐 +${Math.round((TR(coachOf(p)).wagon || 0) * 100)}%${TR(coachOf(p)).wagonSpd ? ` · 마차 속도 +${Math.round(TR(coachOf(p)).wagonSpd * 100)}%` : ''}</div>` : ''}
-    ${!portersOf(p).length ? '<div class="sub red-t">짐꾼 계열이 없으면 쓰러뜨린 몬스터를 갈무리하지 못해 부속품을 못 챙겨요.</div>' : ''}${portersOf(p).length > porterCap(p) ? '<div class="sub red-t">짐꾼 계열은 파티당 한 명만 넣을 수 있어요. 한 명을 빼야 출발해요.</div>' : ''}
+    ${!portersOf(p).length ? '<div class="sub red-t">짐꾼 계열이 없으면 갈무리가 두 배로 오래 걸리고 부속품이 30%만 나와요.</div>' : ''}${portersOf(p).length > porterCap(p) ? '<div class="sub red-t">짐꾼 계열은 파티당 한 명만 넣을 수 있어요. 한 명을 빼야 출발해요.</div>' : ''}
     ${p.raidOnly ? '' : `<div class="row sub"><span class="grow">마차 · ${p.wagon ? `${rigName(p)} (짐 +${wagonCap(p) || WAGONS[p.wagon].cap} · 이동 ×${wagonSpd(p).toFixed(2)}${wagonWhy(p) ? ', 못 끎' : ''})${horseOf(p) ? ` · 끄는 ${horseOf(p).petName ? `펫 ${esc(horseOf(p).petName)}(${horseOf(p).name})` : horseOf(p).name}` : ''}` : '없음'}${rig2Name(p) ? ` · 둘째 ${rig2Name(p)}${rig2Live(p) ? '' : ' (못 끎)'}` : ''}</span>${S.bld.stable ? `<button type="button" class="btn sm" data-act="bopen" data-id="stable" data-p="${p.id}">마구간 ›</button>` : ''}</div>`}
     ${S.bld.stable || p.raidOnly ? '' : `<details class="card"><summary>마차 · 손수레만 살 수 있어요 · 말이 끄는 마차는 마구간에서</summary><div class="sub muted">손수레는 파티가 직접 끌어요. 짐수레부터는 마구간을 짓고 말을 매야 하고, 짐꾼 계열이 파티에 있어야 끌어요.</div><div class="list">${wagonList}</div></details>`}
     ${hurt ? '<div class="sub red-t">다친 길드원가 있어요. 길드에 두면 체력이 서서히 차요.</div>' : ''}
@@ -665,7 +665,7 @@ PANELS.rune = w => {   // 빌드 69: 장비 칸 창 — 룬 · 마석 · 원천�
   const msCur = (g.ms || []).map((id, i) => !ITEMS[id] ? '' : `<div class="li">${iconImg(id)}<div class="grow"><span>${ITEMS[id].name} ${gradeTag(3)}</span><span class="sub">${MASEOK[msKey(id)].eff}${now(msKey(id))}</span></div><button type="button" class="btn sm" data-act="msout" data-g="${g.id}" data-i="${i}"${idle && S.gold >= MASEOK_OUT ? '' : ' disabled'}>빼기 ${fmt(MASEOK_OUT)}G</button></div>`).join('');
   const msInv = MASEOK_IDS.map(k => 'ms_' + k).filter(id => S.inv[id] > 0);
   const msAdd = msInv.map(id => { const k = msKey(id); return `<div class="li">${iconImg(id)}<div class="grow"><span>${ITEMS[id].name} <b class="num">×${S.inv[id]}</b></span><span class="sub">${MASEOK[k].eff} · 합쳐서 ${MASEOK[k].capT}까지${now(k)}</span></div><button type="button" class="btn sm gold" data-act="msin" data-g="${g.id}" data-it="${id}"${idle && nm && (g.ms || []).length < nm ? '' : ' disabled'}>끼우기</button></div>`; }).join('');
-  const msSec = nm
+  const msSec = !MASEOK_ON ? '' : nm
     ? `<div class="sec"><b>끼운 마석</b><span>${(g.ms || []).length}/${nm}칸 · 빼면 창고로</span></div><div class="list">${msCur || '<div class="li"><span class="sub">끼운 마석이 없어요.</span></div>'}</div>
       <div class="sec"><b>창고의 마석</b><span>모두 영웅 등급 · 길드원마다 효과를 더해요</span></div><div class="list">${msAdd || '<div class="li"><span class="sub">마석이 없어요. 마석은 지하미궁에서만 아주 드물게 나와요 (지하미궁은 아직 열리지 않았어요).</span></div>'}</div>`
     : `<div class="sec"><b>마석</b><span>영웅 장비부터</span></div><div class="card"><div class="sub">마석 칸은 영웅 장비부터 열려요 (영웅 1 · 전설 2 · 신화부터 3칸). ${msInv.length ? `창고에 마석 ${msInv.reduce((t, id) => t + S.inv[id], 0)}개가 있어요.` : ''}</div></div>`;

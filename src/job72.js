@@ -11,7 +11,7 @@
 const J1 = {
   cover: [0.2, 0.3], baGuard: [0.15, 0.25], coverShot: 0.15, mpMul: 3,
   feed: { at: 0.3, amt: 0.1, keep: 0.4, cd: 3 }, chant: 20, bless: 1.15, posW: [2, 1, 0.5],
-  harv: 1.0,                                            // 사체 하나를 갈무리하는 초
+  harv: 1.0, noPorter: { time: 2, rate: 0.3 },          // 사체 하나를 갈무리하는 초 · 짐꾼 계열이 없으면 시간 두 배 · 드랍률 30% (11-21 11:44 사용자)
   trap: { p: 0.06, lo: 0.1, hi: 0.3, hold: 3 },         // 함정 지대: 싸움 자리마다 6% · 최대 체력의 10 ~ 30% · 해제하면 3초 멈춤
   mimic: { p: 0.03, gold: 60, gear: 0.35, hold: 2 }
 };
@@ -29,7 +29,7 @@ const JOB1_TXT = {
   archer: [['선제 사격', '싸움이 시작되면 먼저 쏜다'], ['엄호 사격', '전위가 맞으면 15% 확률로 기본 공격을 한 번 더 (전위가 없으면 앞의 중위가 맞을 때)'], ['정밀 사격', '기본 공격이 적의 회피에 빗나가지 않는다']],
   mage: [['마나 공급', '최대 마나 3배 · 마나가 30% 아래인 동료에게 마나를 나눠 준다'], ['무영창', '20초마다 재사용 대기 중인 자기 스킬 하나를 바로 되돌린다 (재사용 시간이 가장 긴 스킬부터)']],
   cleric: [['정화', '치유 스킬을 받은 대상의 약화 하나를 푼다'], ['축복', '앞에 선 동료 중 맨 앞 한 명의 공격력 · 방어력 +15% (쓰러지면 다음 동료에게)']],
-  porter: [['적재', '운반할 수 있는 무게가 크다'], ['갈무리', '쓰러진 몬스터에게서 부속품과 드랍템을 챙긴다 (짐꾼 계열이 없으면 못 챙긴다)']]
+  porter: [['적재', '운반할 수 있는 무게가 크다'], ['갈무리', '쓰러진 몬스터를 제대로 갈무리한다 (짐꾼 계열이 없으면 시간 두 배 · 드랍률 30%)']]
 };
 function job1Traits(a) { const L = (JOB1_TXT[j1Line(a)] || []).map(x => x.slice()); if (j1Line(a) === 'warrior' && j1Tier(a)) L[0] = ['수호자 2', `아군이 받을 공격을 ${Math.round(j1Cover(a) * 100)}% 확률로 대신 받는다 · 받는 기본 공격 피해 −25%`]; return L; }
 const job1Html = a => `<div class="sub"><span class="tag gold-t">${POS_NAME[posOf(a)]}</span> ${job1Traits(a).map(([n, d]) => `<b>${n}</b> <span class="muted">${d}</span>`).join('<br>')}</div>`;
@@ -83,9 +83,12 @@ function j1Hold(p, e, team, dt) {
   if (e.note) { e.note.t -= dt; if (e.note.t <= 0) e.note = null; }
   if (e.hold > 0) { e.hold -= dt; return true; }
   if (!e.corpses || !e.corpses.length) return false;
-  if (!team.some(isPorter)) { const n = e.corpses.length; e.corpses = []; if (!e.noHarv) { e.noHarv = 1; log(`${p.name}에는 갈무리할 짐꾼이 없어 쓰러뜨린 몬스터의 부속품을 두고 간다.`, 'bad'); HOOKS.toast(`${p.name}: 짐꾼이 없어 부속품을 못 챙겨요`); } return n < 0; }
-  e.note = { t: 0.6, txt: '갈무리 중' }; e.hv = (e.hv || 0) + dt;
-  if (e.hv >= J1.harv) { e.hv = 0; const C = e.corpses.shift(); for (const [it, q] of C.items) loot(p, e, it, q); for (const g of C.gear) lootGear(p, e, g); }
+  // 드랍은 갈무리가 끝나는 이때 정해진다: 짐꾼 계열이 하면 기본 드랍률, 다른 사람이 하면 시간 두 배 · 드랍률 30% (하나하나 30%로 다시 굴린다)
+  const por = team.some(isPorter), NP = J1.noPorter;
+  e.note = { t: 0.6, txt: por ? '갈무리 중' : '서툰 갈무리 중' }; e.hv = (e.hv || 0) + dt;
+  if (e.hv >= J1.harv * (por ? 1 : NP.time)) { e.hv = 0; const C = e.corpses.shift();
+    for (const [it, q] of C.items) { let n = q; if (!por) { n = 0; for (let i = 0; i < q; i++) if (rnd() < NP.rate) n++; } if (n > 0) loot(p, e, it, n); }
+    for (const g of C.gear) if (por || rnd() < NP.rate) lootGear(p, e, g); }
   return true;
 }
 // 싸움 자리에 닿았을 때 (core.js stepExp — spawn 대신): 함정 지대 · 미믹 · 보통 싸움
@@ -112,7 +115,7 @@ function j1Enc(p, e) {
 function j1MimicReward(p, e, lv) {
   const g = Math.round(lv * J1.mimic.gold * (0.8 + rnd() * 0.5)); S.gold += g; S.stats.earned += g; let txt = `${g$(g)}`;
   const F = FIELDS[e.field];
-  if (rnd() < J1.mimic.gear) { const kq = e.kq; e.kq = null; const gr = makeGear(dropBase(F.tier || 0), F.tier || 0, rnd() < 0.3 ? 1 : 0); lootGear(p, e, gr); e.kq = kq; txt += ` · 「${gearName(gr)}」`; }
+  if (GEAR_DROP_ON && rnd() < J1.mimic.gear) { const kq = e.kq; e.kq = null; const gr = makeGear(dropBase(F.tier || 0), F.tier || 0, rnd() < 0.3 ? 1 : 0); lootGear(p, e, gr); e.kq = kq; txt += ` · 「${gearName(gr)}」`; }
   return txt;
 }
 /* ───────── 원정대: 더 멀리 가기 위한 큰 파티 (전투원 10 + 짐꾼 2 = 12명) ───────── */

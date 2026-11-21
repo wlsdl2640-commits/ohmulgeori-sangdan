@@ -473,7 +473,8 @@ const QUALITY = [
 const SLOT9_N = 3;
 const slotN = (g, i0) => (g && !(GTYPES[g.base] && GTYPES[g.base].ammo) ? Math.max(0, Math.min(SLOT9_N, (g.q || 0) + 1 - i0)) : 0);
 const runeSlots = g => slotN(g, 0);   // 룬: 일반 1 · 고급 2 · 희귀부터 3
-const msSlots = g => slotN(g, 3);     // 마석: 영웅 1 · 전설 2 · 신화부터 3
+const MASEOK_ON = false;   // 빌드 72 (11-21 11:44 사용자 「장비에 끼우는 보석을 게임에서 삭제하자」): 마석 칸 · 마석을 뺐다 (자료 · 그림은 남김)
+const msSlots = g => (MASEOK_ON ? slotN(g, 3) : 0);     // 마석: 영웅 1 · 전설 2 · 신화부터 3
 const srcSlots = g => slotN(g, 6);    // 원천물: 신성 1 · 우주 2 · 창조 3 (원천물 아이템은 아직 없다)
 const STAT_NAMES = { atk: '공격', matk: '마법', def: '방어', hp: 'HP', mp: 'MP', str: '힘', vit: '체력', agi: '민첩', int: '지능', crit: '치명', eva: '회피', carry: '짐', spdPct: '공격 속도', cdr: '재사용 감소', spd: '공격 속도' };
 const PCT_STATS = ['crit', 'eva'];

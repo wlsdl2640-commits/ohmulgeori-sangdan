@@ -1031,7 +1031,7 @@ function raidReward(rec, i, half) {
   got.push(g$(gold), `명성 +${fame}`);
   const np = Math.max(1, Math.round(W.part * k)); stashItem('rp_' + rec.id, np); got.push(`${ITEMS['rp_' + rec.id].name} ${np}개`);   // 보상: 넘치면 창고 1~10 → 길드 (store.js)
   if (W.heart && !half) { stashItem('rh_' + rec.id, W.heart); got.push(ITEMS['rh_' + rec.id].name); }
-  if (W.gear) { const t = raidTier(R.lv), q = Math.max(Math.max(2, W.gear - (half ? 1 : 0)), rollGrade(t, 'raid')), g = makeGear(dropBase(t), t, q); stashGear(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }   // 1등 영웅 · 2등 희귀 + 아주 드물게 그 위 (빌드 63 다섯째 묶음)
+  if (W.gear && GEAR_DROP_ON) { const t = raidTier(R.lv), q = Math.max(Math.max(2, W.gear - (half ? 1 : 0)), rollGrade(t, 'raid')), g = makeGear(dropBase(t), t, q); stashGear(g); got.push(`${QUALITY[q].name} ${gearName(g)}`); }   // 1등 영웅 · 2등 희귀 + 아주 드물게 그 위 (빌드 63 다섯째 묶음)
   const rl = W.rune - (half ? 1 : 0);
   if (rl >= 0) { const id = runeId(pickOne(RUNE_IDS), rl); stashItem(id, 1); got.push(ITEMS[id].name); }
   // 특성 돌: 개화석은 등수별 개수(몬스터가 떠나면 절반), 마법사의 돌은 등수별 낮은 확률
@@ -1240,7 +1240,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); concept70(); slot69(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); notes71(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); concept70(); slot69(); ms72(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); notes71(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1259,7 +1259,7 @@ function loadFrom(v) {
     if (S.bld.warehouse == null) S.bld.warehouse = 1;
     assocOpen();   // 빌드 72: 창고 건물 (옛 저장은 1단계)
     concept70();                  // 빌드 70 미궁도시 개편 첫 단계: 길드 이름 꼬리 · 경쟁 길드 이름 · 성문 방어전 없앰 (불러올 때마다)
-    slot69();                     // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
+    slot69(); ms72();                     // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();
@@ -1713,6 +1713,9 @@ function notes69c() {
 // 빌드 69 장비 9칸 (data-rpg.js runeSlots · msSlots): 룬은 레어도마다 3칸까지(예전엔 0 ~ 8칸) — 넘친 룬 · 마석을 빼서 메인 창고로 (불러올 때마다).
 //  우리 것(창고 · 창고 1~10 · 원정 짐 · 모험가)은 돌려주고, 고용 후보 · 암시장 · 경매 · 투기장 상대의 장비는 그냥 줄인다.
 let SLOT69 = null;
+// 빌드 72: 마석을 뺐다 — 창고 · 창고 1~10 · 원정 짐의 ms_* 를 지운다 (slot69가 장비에서 뺀 것도). 불러올 때마다
+function ms72() { if (MASEOK_ON) return; const cl = o => { if (o) for (const k of Object.keys(o)) if (k.startsWith('ms_')) delete o[k]; }; cl(S.inv); (S.wh || []).forEach(w => w && cl(w.inv)); (S.parties || []).forEach(p => p.exp && cl(p.exp.bag)); }
+
 function slot69() {
   if (!S) return;
   let n = 0, gn = 0;
