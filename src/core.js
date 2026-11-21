@@ -1361,8 +1361,8 @@ function kill(p, e, f) {
   const luck = Math.max(0, ...team.map(a => TQ(a, 'luck'))), hunt = Math.max(0, ...team.map(a => TQ(a, 'drop')));   // 보물 사냥꾼의 운, 괴물사냥꾼의 손질
   const pet = petOfParty(p), petLuck = (pet ? (PETS[pet.kind].luck || 0) + (pet.trait === 'lucky' ? 0.08 : 0) : 0) + petHome('luck');
   const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt + petLuck + (dexRare(f.id) ? RARE.drop : 0) + (foodFx(e).luck || 0)) * harvest, fbm = f.fb ? 3 : f.nest || f.rare ? 2 : 1;
-  for (const [it, ch, q] of m.drops) { const ht = ITEMS[it] && ITEMS[it].herb ? herbTier(it) : -1; if (partSure(it) || rnd() < Math.min(1, ch * dropMul * fbm * (ht >= 0 ? HERB_DROP_MUL[ht] : 1))) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1)); }   // 빌드 65: 몬스터가 떨어뜨리는 약초도 등급마다 1/6 · 1/60 · 1/600
-  if (e.area === 'field') {   // 약초 줍기 (빌드 65: 예전 12% → 하급 2% · 중급 0.2% · 최상급 0.02%, 우두머리 ×10 — 약초는 재배소에서 기른다)
+  for (const [it, ch, q] of m.drops) { if (HERB72.on && ITEMS[it] && ITEMS[it].herb) continue;   /* 빌드 72: 약초는 드랍이 아니라 군락지에서 */ const ht = ITEMS[it] && ITEMS[it].herb ? herbTier(it) : -1; if (partSure(it) || rnd() < Math.min(1, ch * dropMul * fbm * (ht >= 0 ? HERB_DROP_MUL[ht] : 1))) loot(p, e, it, (q || 1) * (f.fb ? 2 : 1)); }   // 빌드 65: 몬스터가 떨어뜨리는 약초도 등급마다 1/6 · 1/60 · 1/600
+  if (e.area === 'field' && !HERB72.on) {   // 약초 줍기 — 빌드 72부터 군락지 채취(job72.js)로 바뀌어 꺼짐 (빌드 65: 예전 12% → 하급 2% · 중급 0.2% · 최상급 0.02%, 우두머리 ×10 — 약초는 재배소에서 기른다)
     const hs = F.herbs || ['herb'], hb = harvest * (f.fb || f.boss ? HERB_BOSS : 1);
     for (let t = 0; t < HERB_PICK.length; t++) { const L = hs.filter(h => herbTier(h) === t); if (L.length && rnd() < HERB_PICK[t] * hb) loot(p, e, pickOne(L), 1); }
   }

@@ -1,5 +1,5 @@
 """export_enh.py <src/data-enhart.js> [미리보기 폴더] — 강화 화면 그림(GPT 판 → 게임 자료). 손으로 고치지 말 것.
-   bg.png 무대 배경 · hammer.png 망치(자홍 바탕) · mj6.png 마정석 여섯(밑동 돌을 지우고 윗부분을 180° 돌려 붙여 양끝이 뾰족한 결정으로)
+   bg.png 무대 배경 · hammer.png 망치(자홍 바탕) · mj6.png 마정석 여섯(11-21 13:41 GPT가 다듬어 온 판 — 그대로 오린다)
    · mats8.png 재료 여덟(에테르 주괴 · 강화 주괴 · 깨진 조각 · 숫돌 다섯) · fx_*.png 효과 6장(3 × 2, 검은 바탕 → 밝기를 투명도로)."""
 import sys, io, base64, os
 import numpy as np
@@ -55,7 +55,7 @@ hm = Image.fromarray(crop(biggest(key_magenta(Image.open(D + 'hammer.png'))), 4)
 for k in ['hit', 'ok', 'fail', 'dmg', 'break', 'save']: s = fx('fx_%s.png' % k); out['fx_' + k] = url(s, 84); prev['fx_' + k] = s
 items = {}
 mj = Image.open(D + 'mj6.png'); cw = mj.width // 6
-for i in range(6): im = crystal(mj.crop((i * cw, 0, (i + 1) * cw, mj.height))); items['mj_%d' % i] = url(im, 92); prev['mj_%d' % i] = im
+for i in range(6): im = square(crop(biggest(key_magenta(mj.crop((i * cw, 0, (i + 1) * cw, mj.height))), 0.002)), 96); items['mj_%d' % i] = url(im, 92); prev['mj_%d' % i] = im
 mt = Image.open(D + 'mats8.png'); cw, ch = mt.width // 4, mt.height // 2
 for i, k in enumerate(['ether_ingot', 'ingot', 'scrap', 'whet_1', 'whet_3', 'whet_5', 'whet_7', 'whet_10']):
     im = square(crop(biggest(key_magenta(mt.crop(((i % 4) * cw, (i // 4) * ch, (i % 4 + 1) * cw, (i // 4 + 1) * ch))), 0.01)), 96); items[k] = url(im, 92); prev[k] = im

@@ -15,6 +15,15 @@ const J1 = {
   trap: { p: 0.06, lo: 0.1, hi: 0.3, hold: 3 },         // 함정 지대: 싸움 자리마다 6% · 최대 체력의 10 ~ 30% · 해제하면 3초 멈춤
   mimic: { p: 0.03, gold: 60, gear: 0.35, hold: 2 }
 };
+// 약초 군락지 (11-21 13:41 사용자): 약초는 드랍품이 아니다 — 이동 중 싸움 자리에서 소형 10% · 중형 5% · 대형 1%로 군락지를 만나고, 짐꾼 계열(약초꾼)이 그 앞에서 하나씩 캔다
+const HERB72 = { on: true, sizes: [['대형', 0.01, 7, 13], ['중형', 0.05, 3, 7], ['소형', 0.10, 1, 3]], per: 0.8, tierW: [1, 0.3, 0.1] };
+function herbColony(F) {
+  let r = rnd(); const S0 = HERB72.sizes.find(z => (r -= z[1]) < 0); if (!S0) return null;
+  const hs = [...new Set(F.herbs && F.herbs.length ? F.herbs : ['herb'])].filter(h => ITEMS[h]); if (!hs.length) return null;
+  let w = hs.reduce((t, h) => t + (HERB72.tierW[Math.max(0, herbTier(h))] || 0.1), 0) * rnd(), id = hs[0];
+  for (const h of hs) { w -= HERB72.tierW[Math.max(0, herbTier(h))] || 0.1; if (w < 0) { id = h; break; } }
+  return { id, size: S0[0], n: S0[2] + Math.floor(rnd() * (S0[3] - S0[2] + 1)), got: 0 };
+}
 const J1_ORDER = { warrior: 0, rogue: 1, archer: 2, mage: 3, cleric: 4, porter: 5 };
 const POS_NAME = ['전위', '중위', '후위'];
 const j1Line = a => jobBase(a.cls);
@@ -29,7 +38,7 @@ const JOB1_TXT = {
   archer: [['선제 사격', '싸움이 시작되면 먼저 쏜다'], ['엄호 사격', '전위가 맞으면 15% 확률로 기본 공격을 한 번 더 (전위가 없으면 앞의 중위가 맞을 때)'], ['정밀 사격', '기본 공격이 적의 회피에 빗나가지 않는다']],
   mage: [['마나 공급', '최대 마나 3배 · 마나가 30% 아래인 동료에게 마나를 나눠 준다'], ['무영창', '20초마다 재사용 대기 중인 자기 스킬 하나를 바로 되돌린다 (재사용 시간이 가장 긴 스킬부터)']],
   cleric: [['정화', '치유 스킬을 받은 대상의 약화 하나를 푼다'], ['축복', '앞에 선 동료 중 맨 앞 한 명의 공격력 · 방어력 +15% (쓰러지면 다음 동료에게)']],
-  porter: [['적재', '운반할 수 있는 무게가 크다'], ['갈무리', '쓰러진 몬스터를 제대로 갈무리한다 (짐꾼 계열이 없으면 시간 두 배 · 드랍률 30%)']]
+  porter: [['적재', '운반할 수 있는 무게가 크다'], ['약초꾼', '이동 중에 만난 약초 군락지에서 약초를 캔다 (짐꾼 계열이 없으면 지나친다)'], ['갈무리', '쓰러진 몬스터를 제대로 갈무리한다 (짐꾼 계열이 없으면 시간 두 배 · 드랍률 30%)']]
 };
 function job1Traits(a) { const L = (JOB1_TXT[j1Line(a)] || []).map(x => x.slice()); if (j1Line(a) === 'warrior' && j1Tier(a)) L[0] = ['수호자 2', `아군이 받을 공격을 ${Math.round(j1Cover(a) * 100)}% 확률로 대신 받는다 · 받는 기본 공격 피해 −25%`]; return L; }
 const job1Html = a => `<div class="sub"><span class="tag gold-t">${POS_NAME[posOf(a)]}</span> ${job1Traits(a).map(([n, d]) => `<b>${n}</b> <span class="muted">${d}</span>`).join('<br>')}</div>`;
@@ -82,6 +91,11 @@ function harvClose(e) { const C = e.kq; e.kq = null; if (C && (C.items.length ||
 function j1Hold(p, e, team, dt) {
   if (e.note) { e.note.t -= dt; if (e.note.t <= 0) e.note = null; }
   if (e.hold > 0) { e.hold -= dt; return true; }
+  if (e.herbJob) {   // 약초꾼: 군락지 앞에서 하나씩 캔다
+    const H = e.herbJob; e.note = { t: 0.6, txt: `${H.size} 군락지 · ${ITEMS[H.id].name} 채취 중 (${H.got}/${H.n})` }; e.hv2 = (e.hv2 || 0) + dt;
+    if (e.hv2 >= HERB72.per) { e.hv2 = 0; loot(p, e, H.id, 1); H.got++; if (H.got >= H.n) { log(`${p.name}: ${H.size} 군락지에서 ${ITEMS[H.id].name} ${H.n}개를 캤다.`, 'good'); e.herbJob = null; } }
+    return true;
+  }
   if (!e.corpses || !e.corpses.length) return false;
   // 드랍은 갈무리가 끝나는 이때 정해진다: 짐꾼 계열이 하면 기본 드랍률, 다른 사람이 하면 시간 두 배 · 드랍률 30% (하나하나 30%로 다시 굴린다)
   const por = team.some(isPorter), NP = J1.noPorter;
@@ -94,6 +108,14 @@ function j1Hold(p, e, team, dt) {
 // 싸움 자리에 닿았을 때 (core.js stepExp — spawn 대신): 함정 지대 · 미믹 · 보통 싸움
 function j1Enc(p, e) {
   const team = teamOf(p).filter(a => !a.down), F = FIELDS[e.field], plain = (e.area === 'field' || e.area === 'dungeon') && e.mode === 'advance' && !(e.next && e.next.some(f => f.boss || f.fb || f.rare || f.nest));
+  if (plain && HERB72.on && e.area === 'field') {
+    const H = herbColony(F);
+    if (H) {
+      const por = team.find(isPorter);
+      if (por) { e.next = null; e.herbJob = H; HOOKS.toast(`${p.name}: ${ITEMS[H.id].name} ${H.size} 군락지 발견`); changed(); return; }
+      if (!e.noHerb) { e.noHerb = 1; log(`${p.name}: ${ITEMS[H.id].name} 군락지를 지나쳤다. 약초꾼(짐꾼 계열)이 있어야 캘 수 있다.`, 'bad'); }
+    }
+  }
   if (plain) {
     const r = rnd(), rogue = team.find(a => j1Line(a) === 'rogue');
     if (r < J1.trap.p) {
