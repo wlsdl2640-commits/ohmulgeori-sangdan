@@ -1237,6 +1237,7 @@ function renderBattle() {
   const k = e ? (e.stage - 1 + e.pos / STAGE_LEN) / (e.area === 'dungeon' ? DUNGEON_FLOORS : fstages(FIELDS[e.field])) : 0;
   $('bw-prog').style.width = Math.round(Math.max(0, Math.min(1, k)) * 100) + '%';
   $('bw-load').hidden = !e; if (e) $('bw-load').innerHTML = `짐 <span class="${usedOf(p) >= capOf(p) ? 'warn' : 'gold'}">${usedOf(p)}/${capOf(p)}</span>`;
+  { const ps = S.parties.filter(x => !x.raidOnly || x.exp), box = $('bw-pts'), html = ps.length > 1 ? ps.map(x => { const ex = x.exp; return `<button type="button" class="pchip${p && x.id === p.id ? ' on' : ''}" data-view="${x.id}"><i class="dot ${!ex ? '' : ex.foes.length ? 'fight' : ex.camp ? 'camp' : ex.mode === 'return' ? 'back' : 'go'}"></i>${esc(x.name)}${ex ? ' · ' + (ex.area === 'field' ? `${fno(FIELDS[ex.field])}-${ex.stage}` : ex.stage + '층') : ''}</button>`; }).join('') : ''; box.hidden = !html; if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; } }   // 11-21 17:27 사용자 「작은창 키우면 다른 원정대 볼 수도 없고」
   const rt = $('bw-ret');
   rt.hidden = !e || e.mode === 'return'; rt.dataset.id = p ? p.id : '';
   const gate = $('bw-gate');

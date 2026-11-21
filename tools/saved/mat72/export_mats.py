@@ -26,7 +26,9 @@ for f, (c, r, ids) in MEAT.items():
     for im, k in zip(cells(f, c, r, len(ids)), ids): items['mm_' + k] = im
 # 고유 부속품 (u_<지역>.png — 차례는 gpt70/uniq/order.json의 부탁 글 차례)
 UNIQ = { 'u_plains.png': (5, 2, ['rat_tail', 'rabbit_horn', 'wolf_pelt', 'wolf_fang', 'scare_straw', 'crow_feather', 'boar_hide', 'boar_tusk', 'aboar_plate', 'ratking_crown']),
-         'u_forest.png': (4, 3, ['vine_thorn', 'flower_nectar', 'stump_ring', 'bark', 'spot_cap', 'spore', 'beetle_shell', 'beetle_horn', 'moss_core', 'guard_bell', 'guard_antler', 'elder_heart']) }
+         'u_forest.png': (4, 3, ['vine_thorn', 'flower_nectar', 'stump_ring', 'bark', 'spot_cap', 'spore', 'beetle_shell', 'beetle_horn', 'moss_core', 'guard_bell', 'guard_antler', 'elder_heart']),
+         'u_deepforest.png': (4, 2, ['ether_dust', 'moss_hide', 'root_fang', 'moth_scale', 'ether_cap', 'ether_crystal', 'old_heartwood', 'ether_heart']),
+         'u_rootcave.png': (4, 1, ['mandrake_root', 'rot_petal', 'dryad_tear', 'rahen_staff']) }
 for f, (c, r, ids) in UNIQ.items():
     if not os.path.exists(D + f): continue
     for im, k in zip(cells(f, c, r, len(ids)), ids): items[k] = im

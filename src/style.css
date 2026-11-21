@@ -770,15 +770,16 @@ details.skl summary b { color: var(--ink); }
   .mboard { width: min(600px, 72vw); max-height: calc(100vh - 118px); overflow-y: auto; }
   .mb-grid { grid-template-columns: repeat(4, 1fr); }
   /* 전투 창: 그림(2.4 : 1)이 화면 전체를 채우고, 제목 · 기록 · 단추는 그림 위(하늘 자리)에 겹친다 */
-  .bwin { position: fixed; inset: 0; z-index: 40; background: #000; }
-  .bwin .win-h { position: absolute; left: 0; right: 0; top: 0; z-index: 3; background: none; border: 0; box-shadow: none; padding: 6px max(8px, env(safe-area-inset-right, 0px)) 0 max(8px, env(safe-area-inset-left, 0px)); pointer-events: none; }
+  .bwin { position: fixed; inset: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); z-index: 40; background: #000; box-shadow: 0 0 0 100vmax #000; }   /* 11-21 17:27 사용자: 폰의 상태 표시줄 · 단추 자리와 겹치지 않게 — 안전 영역 안에만 그린다 */
+  .bwin .win-h { position: absolute; left: 0; right: 0; top: 0; z-index: 3; background: none; border: 0; box-shadow: none; padding: 6px 8px 0 8px; pointer-events: none; }
   .bwin .win-h > * { pointer-events: auto; }
   .bwin .win-h h2 { background: rgba(10, 12, 18, .62); border: 2px solid #000; padding: 3px 10px; font-size: 13px; }
   .bw-body { padding: 0; gap: 0; position: relative; align-items: center; justify-content: center; }
-  .bw-frame { width: min(100vw, 240vh); border: 0; box-shadow: none; }
+  .bw-frame { width: min(100cqw, 240cqh); border: 0; box-shadow: none; }
   .bw-stat { position: absolute; left: 50%; top: 44px; transform: translateX(-50%); z-index: 2; min-width: 180px; padding: 2px 8px; background: rgba(10, 12, 18, .55); }
-  .bw-log { position: absolute; left: max(8px, env(safe-area-inset-left, 0px)); top: 48px; z-index: 2; flex: none; width: 32%; max-height: 34%; min-height: 0; font-size: 11px; line-height: 1.4; background: rgba(10, 12, 18, .58); border-color: rgba(0, 0, 0, .6); box-shadow: none; }
-  .bw-btns { position: absolute; right: max(8px, env(safe-area-inset-right, 0px)); top: 48px; z-index: 2; }
+  .bw-log { position: absolute; left: 8px; top: 48px; z-index: 2; flex: none; width: 32%; max-height: 34%; min-height: 0; font-size: 11px; line-height: 1.4; background: rgba(10, 12, 18, .58); border-color: rgba(0, 0, 0, .6); box-shadow: none; }
+  .bw-btns { position: absolute; right: 8px; top: 48px; z-index: 2; }
+  .bw-pts { position: absolute; right: 8px; bottom: 6px; z-index: 2; justify-content: flex-end; max-width: 60%; padding: 0; }
 }
 
 /* 빌드 72: 지도 = 미궁 계층 · 층 단추 (map.js PANELS.map) */
@@ -951,3 +952,6 @@ details.skl summary b { color: var(--ink); }
 .smith.on { border-color: var(--gold); background: #2a2414; }
 .smith b { font-size: 14px; } .smith small { font-size: 10px; line-height: 1.25; } .smith .stars { color: #ffd040; font-size: 12px; letter-spacing: 1px; }
 .smith .job { display: block; width: 86%; height: 5px; margin-top: 2px; background: #0c1018; border: 1px solid #2c3446; } .smith .job i { display: block; height: 100%; background: #f0b43c; }
+
+.bw-pts { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 8px; } .bw-pts[hidden] { display: none; }
+.lzone { margin: 0 0 6px; } .lzone .chip:disabled { opacity: .4; }
