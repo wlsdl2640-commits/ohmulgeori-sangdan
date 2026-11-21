@@ -61,10 +61,10 @@ h3 { font-size: 16px; font-weight: 600 }
     <div class="item"><div class="what"><h3>결과 다섯 가지</h3><p class="note">성공(금빛 빛살과 별) · 실패(연기, 장비가 식음) · 손상(붉은 번쩍임과 금) · 파괴(네 조각으로 부서짐) · 에테르 주괴가 막음(푸른 막).</p></div><div class="frame" id="f-res"><img src="scr_results.png" alt="결과 다섯 가지"></div><div class="row"><button class="btn" type="button" data-zoom="f-res" aria-pressed="false">크게 보기</button><span class="msg" role="status"></span></div></div>
   </section>
   <section class="sec"><div class="what item"><h2>GPT에 붙일 그림 2장</h2><p class="note">①은 화풍 기준, ②는 크기와 자리 나눔 기준입니다.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
-    <div class="item"><div class="what"><h3>① 대장간 방 그림</h3><p class="note">세 부탁 모두에 붙입니다.</p></div><div class="frame soft" id="f-rs"><img src="ref_smithy.png" alt="① 대장간 방 그림"></div><div class="row"><button class="btn" type="button" data-zoom="f-rs" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_smithy.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>① 대장간 방 그림</h3><p class="note">네 부탁 모두에 붙입니다.</p></div><div class="frame soft" id="f-rs"><img src="ref_smithy.png" alt="① 대장간 방 그림"></div><div class="row"><button class="btn" type="button" data-zoom="f-rs" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_smithy.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
     <div class="item"><div class="what"><h3>② 지금 강화 무대</h3><p class="note">1번 부탁에만 붙입니다.</p></div><div class="frame" id="f-rt"><img src="ref_stage.png" alt="② 지금 강화 무대"></div><div class="row"><button class="btn" type="button" data-zoom="f-rt" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_stage.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
   </section>
-  <section class="sec"><div class="what item"><h2>부탁 글 3개</h2><p class="note">위에서부터 급한 순서입니다. 1번과 2번만 있어도 화면이 완성되고, 3번은 가방 칸 그림입니다.</p></div>
+  <section class="sec"><div class="what item"><h2>부탁 글 4개</h2><p class="note">위에서부터 급한 순서입니다. 1번과 2번만 있어도 화면이 완성되고, 3번과 4번은 가방 칸 그림입니다.</p></div>
     <div class="item"><div class="what"><h3>1. 강화 무대 배경</h3><p class="note">모루가 그려진 배경 한 장. 장비는 게임이 모루 위에 올립니다.</p><p class="attach">붙일 그림: ① 대장간 방 그림 + ② 지금 강화 무대</p></div><pre class="req" id="req-1" tabindex="0">강화 무대 배경 (모루가 있는 대장간 한가운데)
 
 붙인 그림 두 장: ① 같은 게임의 「대장간」 방 그림 — 화풍과 색감의 기준. ② 지금 게임의 강화 화면(임시 네모 그림) — 크기와 자리 나눔의 기준.
@@ -104,40 +104,62 @@ h3 { font-size: 16px; font-weight: 600 }
 · 사람, 동물, 몬스터, 글자는 그리지 않는다
 · 십자 무늬는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
 · 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따른다 (그림 속 내용을 그대로 옮기지 않는다)</pre><div class="row"><button class="btn go" type="button" data-copy="req-2">글 복사</button><span class="msg" role="status"></span></div></div>
-    <div class="item"><div class="what"><h3>3. 강화 재료 아이콘</h3><p class="note">마정석 6등급 · 에테르 주괴 · 강화 주괴 · 숫돌 5종 · 깨진 조각.</p><p class="attach">붙일 그림: ① 대장간 방 그림</p></div><pre class="req" id="req-3" tabindex="0">강화 재료 아이콘 14개 (한 장에 모아서)
+    <div class="item"><div class="what"><h3>3. 마정석 6등급</h3><p class="note">같은 푸른 수정이 등급마다 점점 진해집니다. 머금은 마나가 늘어나는 느낌입니다.</p><p class="attach">붙일 그림: ① 대장간 방 그림</p></div><pre class="req" id="req-3" tabindex="0">마정석 6등급 (한 장에 나란히)
 
-붙인 그림: 같은 게임의 「대장간」 방 그림 — 화풍과 색감의 기준.
-게임 가방 칸에 들어갈 작은 물건 그림 14개를 한 장에 격자로 그려 주세요. 가로 5칸 × 세로 3줄 (마지막 줄은 4개), 칸마다 물건 하나, 칸 사이는 넉넉히 띄운다.
+붙인 그림: 같은 게임의 「대장간」 방 그림 — 화풍과 점 굵기의 기준.
+게임 가방 칸에 들어갈 「마정석」 여섯 개를 한 장에 가로 한 줄로 그려 주세요. 왼쪽이 가장 낮은 등급, 오른쪽이 가장 높은 등급입니다.
 
-첫째 줄 — 마정석 6등급 가운데 앞의 다섯 (강한 마나를 머금은 광물. 등급이 오를수록 크고 맑고 빛이 세다)
-1. 최하급 마정석: 탁한 잿빛 돌에 희미한 푸른 점이 박힌 작은 조각
-2. 하급 마정석: 흐린 하늘빛 결정이 돌 틈에 조금 드러난 조각
-3. 중급 마정석: 청록빛 결정 기둥 두세 개가 돋은 원석
-4. 중상급 마정석: 금빛이 도는 맑은 결정 덩이, 안에서 빛이 돈다
-5. 상급 마정석: 주황빛 불씨가 속에서 타는 큰 결정
+마정석이란
+· 마나를 머금은 원석. 수정(크리스탈) 같은 돌이다
+· 이 세계의 에너지 자원이다. 마법공학 장치와 생활 속 여러 기구에 끼워 쓰는 배터리 같은 것 — 보석 장신구가 아니라 「힘이 담긴 광물」로 보이게
 
-둘째 줄
-6. 최상급 마정석: 보랏빛과 흰빛이 넘치는 크고 완전한 결정, 둘레에 작은 빛 조각
-7. 에테르 주괴: 옅은 하늘빛으로 빛나는 사다리꼴 금속 주괴 (장비가 부서지는 것을 대신 막아 주는 재료)
-8. 강화 주괴: 달궈진 금빛 주괴, 윗면에 불씨 같은 빛 줄 (강화를 뽑아 담아 둔 주괴)
-9. 숫돌 (가장 작은 것): 거친 회색 네모 숫돌 조각
-10. 숫돌: 조금 더 크고 고운 회갈색 숫돌
-
-셋째 줄
-11. 숫돌: 물기 어린 청회색 숫돌, 나무 받침
-12. 숫돌: 결이 고운 검푸른 숫돌, 쇠 테 받침
-13. 숫돌 (가장 좋은 것): 은은히 빛나는 흰 숫돌, 금 테 받침
-14. (빈 칸 없이) 깨진 장비 조각 더미: 부서진 쇠 조각 몇 개 (파괴 결과에 쓴다)
+여섯 개를 그리는 법
+· 여섯 개 모두 같은 종류의 돌이다: 같은 수정 꼴(육각 기둥 결정 한 덩이, 밑동에 거친 원석이 조금 붙음), 같은 푸른 색 계열, 같은 각도
+· 등급이 오를수록 머금은 마나가 많아진다 → 색이 점점 진해진다. 꼴이나 색 종류를 바꾸지 말고 「진하기」와 「속 빛」만 바꾼다
+1. 최하급: 거의 색이 없는 뿌연 잿빛 수정. 푸른 기운이 아주 옅게 돈다. 속 빛 없음
+2. 하급: 옅은 하늘빛. 속이 반쯤 비친다
+3. 중급: 맑은 하늘색. 속 가운데에 희미한 빛 한 점
+4. 중상급: 또렷한 파랑. 속에서 빛이 은은하게 돈다
+5. 상급: 짙은 청색. 속 빛이 결정 면에 비쳐 가장자리가 밝다
+6. 최상급: 가장 깊고 진한 남청색. 속에 마나가 가득 차 가운데가 환하게 빛나고, 둘레에 작은 빛 조각 두세 개
+· 크기는 여섯 개가 거의 같다 (최상급만 조금 크게 해도 된다). 여섯 개를 나란히 놓으면 옅은 색에서 진한 색으로 한 줄로 이어져 보여야 한다
 
 바탕과 크기
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 없이
-· 가로 : 세로 = 5 : 3 (예: 1500 × 900). 물건마다 비스듬히 위에서 본 같은 각도, 굵은 어두운 테두리, 그림자 없이
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 여섯 개를 같은 간격으로, 서로 닿지 않게
+· 굵은 어두운 테두리, 그림자 없이
 
 공통 규격
-· 도트 그림. 붙인 대장간 그림과 같은 화풍, 같은 점 굵기, 같은 색감 (화로 불빛, 어둑한 실내)
+· 도트 그림. 붙인 대장간 그림과 같은 화풍, 같은 점 굵기
 · 사람, 동물, 몬스터, 글자는 그리지 않는다
 · 십자 무늬는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
 · 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따른다 (그림 속 내용을 그대로 옮기지 않는다)</pre><div class="row"><button class="btn go" type="button" data-copy="req-3">글 복사</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>4. 강화 재료 아이콘</h3><p class="note">에테르 주괴 · 강화 주괴 · 깨진 조각 · 숫돌 5종.</p><p class="attach">붙일 그림: ① 대장간 방 그림</p></div><pre class="req" id="req-4" tabindex="0">강화 재료 아이콘 8개 (한 장에 모아서)
+
+붙인 그림: 같은 게임의 「대장간」 방 그림 — 화풍과 점 굵기의 기준.
+게임 가방 칸에 들어갈 작은 물건 그림 8개를 한 장에 격자로 그려 주세요. 가로 4칸 × 세로 2줄, 칸마다 물건 하나, 칸 사이는 넉넉히 띄운다.
+
+첫째 줄
+1. 에테르 주괴: 옅은 하늘빛으로 빛나는 사다리꼴 금속 주괴 (장비가 부서지는 것을 대신 막아 주는 재료)
+2. 강화 주괴: 달궈진 금빛 주괴, 윗면에 불씨 같은 빛 줄 (강화를 뽑아 담아 둔 주괴)
+3. 깨진 장비 조각 더미: 부서진 쇠 조각 몇 개
+4. 숫돌 (가장 작은 것): 거친 회색 네모 숫돌 조각
+
+둘째 줄 — 숫돌 네 가지, 오른쪽으로 갈수록 좋은 것
+5. 조금 더 크고 고운 회갈색 숫돌
+6. 물기 어린 청회색 숫돌, 나무 받침
+7. 결이 고운 검푸른 숫돌, 쇠 테 받침
+8. 은은히 빛나는 흰 숫돌, 금 테 받침
+
+바탕과 크기
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 없이
+· 가로 : 세로 = 2 : 1 (예: 1600 × 800). 물건마다 비스듬히 위에서 본 같은 각도, 굵은 어두운 테두리, 그림자 없이
+
+공통 규격
+· 도트 그림. 붙인 대장간 그림과 같은 화풍, 같은 점 굵기
+· 사람, 동물, 몬스터, 글자는 그리지 않는다
+· 십자 무늬는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 크기 · 화풍 · 자리 나눔만 따른다 (그림 속 내용을 그대로 옮기지 않는다)</pre><div class="row"><button class="btn go" type="button" data-copy="req-4">글 복사</button><span class="msg" role="status"></span></div></div>
   </section>
 </main>
 <script>
