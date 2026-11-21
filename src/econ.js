@@ -1195,7 +1195,7 @@ function stepHome(dt) {
 }
 function stepWorld(dt) {
   for (const p of S.parties) if (p.exp) stepExp(p, dt); else if (p.repeat) autoDepart(p);
-  stepShop(dt); assocTick();
+  stepShop(dt); assocTick(); forgeTick();   // 빌드 72: 대장간에 맡긴 일 (forge72.js)
   stepHome(dt);
 }
 // 게임을 켜 둔 동안: 날짜가 흐른다

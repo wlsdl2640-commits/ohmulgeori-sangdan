@@ -944,3 +944,10 @@ details.skl summary b { color: var(--ink); }
 .rqa.eg6 { box-shadow: 0 0 0 1px #fff, 0 0 0 2px #ffe070, 0 0 0 3px #ff70c0, 0 0 0 4px #70c0ff; animation: egPulse .8s steps(4) infinite, egHue 2.4s steps(8) infinite; }
 @keyframes egPulse { 50% { filter: brightness(1.35); } }
 @keyframes egHue { to { filter: hue-rotate(360deg) brightness(1.2); } }
+
+/* 빌드 72: 대장장이 셋 */
+.smiths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 6px 0 4px; }
+.smith { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 2px; background: #1a2030; border: 2px solid #2c3446; color: inherit; font: inherit; text-align: center; min-height: 92px; }
+.smith.on { border-color: var(--gold); background: #2a2414; }
+.smith b { font-size: 14px; } .smith small { font-size: 10px; line-height: 1.25; } .smith .stars { color: #ffd040; font-size: 12px; letter-spacing: 1px; }
+.smith .job { display: block; width: 86%; height: 5px; margin-top: 2px; background: #0c1018; border: 1px solid #2c3446; } .smith .job i { display: block; height: 100%; background: #f0b43c; }
