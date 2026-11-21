@@ -213,8 +213,9 @@ function smithyBox() {
   const rows = CRAFT_IDS.flatMap(b => (LADDER_B[b] ? ladderSteps(t).map(L => rowOf(b, L)) : tierOk(b, t) ? [rowOf(b, 0)] : [])).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. ${slot9Txt(q)}.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">일반 제작은 만들 때마다 일반·고급·희귀 품질이 정해져요. 대장간을 넓힐수록 좋은 품질이 잘 나와요.</div>';
-  const st = UI.smithTab === 'fuse' ? 'fuse' : 'make';   // 빌드 64: 강화 탭은 없앴다
-  const tabs = `<div class="tabs">${[['make', '제작'], ['fuse', '합성']].map(([id, n]) => `<button type="button" class="tab${st === id ? ' on' : ''}" data-act="smithTab" data-t="${id}">${n}</button>`).join('')}</div>`;
+  const st = UI.smithTab === 'fuse' ? 'fuse' : UI.smithTab === 'enh' ? 'enh' : 'make';   // 빌드 64: 강화 탭은 없앴다
+  const tabs = `<div class="tabs">${[['make', '제작'], ['fuse', '합성'], ['enh', '강화']].map(([id, n]) => `<button type="button" class="tab${st === id ? ' on' : ''}" data-act="smithTab" data-t="${id}">${n}</button>`).join('')}</div>`;
+  if (st === 'enh') return tabs + enhBox();   // 빌드 72: 강화 +1 ~ +30 (enh72.js)
   if (st === 'fuse') return tabs + fuseBox();   // 빌드 63: 같은 레어도 9점 합성 (store.js)
   return `${tabs}<div class="btns">${chips}</div><div class="btns">${qchips}</div>${note}<div class="list">${rows}</div>`;
 }

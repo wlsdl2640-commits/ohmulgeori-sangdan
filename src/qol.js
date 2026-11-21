@@ -115,7 +115,7 @@ function repeatChips(p) {
   return `<div class="row sub"><span class="grow">다시 출발 · ${p.repeatLeft == null ? '계속' : `${p.repeatLeft}번 남음`}</span></div><div class="chips">${REPEAT_N.map(k => `<button type="button" class="chip${cur === k ? ' on' : ''}" data-act="prep" data-id="${p.id}" data-n="${k}">${k ? `${k}번` : '계속'}</button>`).join('')}</div>`;
 }
 /* 한꺼번에 팔기 */
-const bulkMats = () => Object.keys(S.inv).filter(k => ITEMS[k] && S.inv[k] > 0 && itemCat(k) === 'mat' && !ITEMS[k].boss && !ITEMS[k].trade && !k.startsWith('egg_') && k !== 'tmap').map(k => [k, Math.max(0, S.inv[k] - reqNeed(k))]).filter(([, q]) => q > 0);
+const bulkMats = () => Object.keys(S.inv).filter(k => ITEMS[k] && S.inv[k] > 0 && itemCat(k) === 'mat' && !ITEMS[k].keep && !ITEMS[k].boss && !ITEMS[k].trade && !k.startsWith('egg_') && k !== 'tmap').map(k => [k, Math.max(0, S.inv[k] - reqNeed(k))]).filter(([, q]) => q > 0);
 const bulkMatValue = () => Math.round(bulkMats().reduce((t, [k, q]) => t + ITEMS[k].v * guildRate() * q, 0));
 function sellAllMats() {
   const list = bulkMats(); if (!list.length) return '팔 부속품이 없어요.';

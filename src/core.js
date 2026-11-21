@@ -1356,6 +1356,7 @@ function kill(p, e, f) {
   if (f.sum) return;   // 우두머리가 부른 졸개: 경험치 절반 · 전리품 없음 (빌드 63)
   kqKill(f.id);
   harvOpen(e);   // 빌드 72 갈무리: 여기부터의 전리품은 사체에 남는다
+  if (e.kq) mjDrop(p, e, f);   // 마정석 (임시 드랍 — enh72.js)
   if (f.mimic) { const kq = e.kq; e.kq = null; log(`${p.name}이(가) 미믹을 쓰러뜨리고 속을 털었다. ${j1MimicReward(p, e, f.lv)}`, 'good'); e.kq = kq; }
   const luck = Math.max(0, ...team.map(a => TQ(a, 'luck'))), hunt = Math.max(0, ...team.map(a => TQ(a, 'drop')));   // 보물 사냥꾼의 운, 괴물사냥꾼의 손질
   const pet = petOfParty(p), petLuck = (pet ? (PETS[pet.kind].luck || 0) + (pet.trait === 'lucky' ? 0.08 : 0) : 0) + petHome('luck');

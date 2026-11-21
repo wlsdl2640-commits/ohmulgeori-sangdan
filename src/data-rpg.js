@@ -504,7 +504,7 @@ const gearP = g => (LADDER_B[g.base] && g.lv ? ladderP(g.lv) : GTIERS[g.t].p);
 const ladderIdx = g => { const L = gearReqLv(g); let i = 0; ARM_LADDER.forEach((x, k) => { if (x <= L) i = k; }); return i; };   // 그림 차례
 const gearTierOk = g => (LADDER_B[g.base] ? (g.lv ? ARM_LADDER.includes(g.lv) && ladderOn(g.lv) : (g.t || 0) >= 5) : tierOk(g.base, g.t));
 function gearStats(g) {
-  const T = GTYPES[g.base], t = { p: gearP(g) }, q = QUALITY[g.q || 0].m, out = {};
+  const T = GTYPES[g.base], t = { p: gearP(g) }, q = QUALITY[g.q || 0].m * (g.enh ? enhMul(g) : 1), out = {};   // 빌드 72: 강화 +1마다 +3% (enh72.js)
   for (const [k, v] of Object.entries(T.st)) {
     if (k === 'carry') out.carry = Math.round((6 + v * t.p) * q);
     else if (PCT_STATS.includes(k)) out[k] = Math.min(0.12, Math.round(v * t.p * q * 1000) / 1000);
@@ -532,7 +532,7 @@ const uniqName = g => { const L = typeof WNAME !== 'undefined' && WNAME[g.base];
 // 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에만(세트 효과는 빌드 65에서 없앰). 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
 const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc', 'ear'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이도
 const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}${LADDER_B[g.base] ? ' Lv' + gearReqLv(g) : ''}` : `${GTYPES[g.base].name} Lv${gearReqLv(g)}`);   // 빌드 67: 2차 직업 방어구는 착용 레벨도 · 이름의 Lv = 착용 레벨(2차 직업 창 · 류트는 늪지 단계에서 Lv50)
-const gearName = g => gearBaseName(g);
+const gearName = g => gearBaseName(g) + (g.enh > 0 ? ` +${g.enh}` : '');   // 빌드 72: 강화 수치
 const gearNameOf = (base, t) => { const L = LADDER_B[base] ? ladderSteps(+t) : []; return L.length ? `${tierNamed(base) ? GTIERS[+t].name + ' ' : ''}${GTYPES[base].name} Lv${L[0]}${L.length > 1 ? '~' + L[L.length - 1] : ''}` : gearBaseName({ base, t: +t }); };   // 진열대 · 의뢰 열쇠(종류:단계) 이름 — 빌드 67: 중갑 · 판금은 그 단계의 착용 레벨 대(「늪지 중갑 Lv55~60」)
 const gearKey = g => `${g.base}:${g.t}`;
 const gearValue = g => Math.round((45 * gearP(g) * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).concat(g.ms || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));   // 빌드 69: 끼운 마석도

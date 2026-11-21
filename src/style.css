@@ -844,3 +844,8 @@ details.skl summary b { color: var(--ink); }
 .zbtn.on { color: #ffe9a8; background: #8a2a22; box-shadow: inset 0 0 0 1px #d8a23a, inset 0 -4px 0 rgba(0, 0, 0, .3), 0 3px 0 rgba(0, 0, 0, .5); }
 .zbtn:focus-visible { outline: 2px solid #ffd45a; outline-offset: 1px; }
 .stage.win-open .zonebar { visibility: hidden; }
+
+/* 빌드 72: 강화 확률표 */
+.enht { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
+.enht th, .enht td { padding: 2px 3px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.li.sel { outline: 2px solid var(--gold, #e8b84a); }
