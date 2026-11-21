@@ -55,9 +55,12 @@ h3 { font-size: 16px; font-weight: 600 }
 .pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
 </style><main class="wrap">
   <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 부속품</p><h1>부속품 그림 부탁</h1><p class="lede">등급 재료 열두 가지와 마물육 스물여섯 가지, 약초 군락지 아홉 가지를 GPT에서 뽑을 부탁 글 열아홉 개입니다. 게임에는 이름과 드랍이 먼저 들어가 있고, 그림은 임시입니다.</p></header>
-  <section class="sec"><div class="what item"><h2>GPT에 붙일 그림 2장</h2><p class="note">①은 보내 주신 재료 그림(화풍 기준), ②는 지금 게임의 마정석 여섯 등급(등급이 오르는 방식 기준)입니다.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
+  <section class="sec"><div class="what item"><h2>GPT에 붙일 그림 4장</h2><p class="note">①은 보내 주신 재료 그림(화풍 기준), ②는 지금 게임의 마정석 여섯 등급(등급이 오르는 방식 기준)입니다.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div>
     <div class="item"><div class="what"><h3>① 재료 그림 모음</h3><p class="note">모든 부탁에 붙입니다. 글자는 무시하고 재료 그림의 느낌만 따르라고 적어 두었습니다.</p></div><div class="frame soft" id="f-st"><img src="ref_style.png" alt="① 재료 그림 모음"></div><div class="row"><button class="btn" type="button" data-zoom="f-st" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_style.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
     <div class="item"><div class="what"><h3>② 마정석 여섯 등급</h3><p class="note">등급 재료 부탁(1 ~ 6번)에만 붙입니다.</p></div><div class="frame soft" id="f-gr"><img src="ref_grade.png" alt="② 마정석 여섯 등급"></div><div class="row"><button class="btn" type="button" data-zoom="f-gr" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_grade.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+  
+    <div class="item"><div class="what"><h3>③ 게임 화면 — 평원</h3><p class="note">약초 군락지 부탁(11 ~ 19번)에 붙입니다. 캐릭터 크기와 땅 색, 빛의 기준입니다.</p></div><div class="frame" id="f-fp"><img src="ref_field_plains.png" alt="평원을 걷는 파티 화면"></div><div class="row"><button class="btn" type="button" data-zoom="f-fp" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_field_plains.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>④ 게임 화면 — 원시림</h3><p class="note">숲에서 자라는 약초(수심초 · 에테르 이끼)는 ③ 대신 이 그림을 붙이면 숲 빛에 더 잘 맞습니다.</p></div><div class="frame" id="f-ff"><img src="ref_field_forest.png" alt="원시림을 걷는 파티 화면"></div><div class="row"><button class="btn" type="button" data-zoom="f-ff" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_field_forest.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
   </section>
   <section class="sec"><div class="what item"><h2>등급 재료 (1 ~ 6번)</h2><p class="note">마정석처럼 최하급부터 최상급까지 여섯 등급입니다. 가죽 · 비늘 셋 · 이끼 · 거미줄 · 광물은 말씀하신 것이고, 뼈 · 갑각 · 목재 · 섬유 · 깃털은 제가 더한 것입니다.</p></div><div class="item"><div class="what"><h3>1. 가죽 · 뼈</h3><p class="note">여섯 등급 두 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ② 마정석 여섯 등급</p></div><pre class="req" id="req-1" tabindex="0">등급 재료 그림 — 가죽 · 뼈 (두 줄 × 6개)
 
@@ -291,9 +294,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 물건끼리 닿지 않게 같은 간격으로. 물건마다 크기를 비슷하게
 · 붙인 그림에서는 화풍 · 크기 · 자리 나눔만 따른다 (그림 속 물건을 그대로 옮기지 않는다). ①에 적힌 글자와 금빛 틀은 무시하고 왼쪽의 재료 그림만 본다
 · 다른 작품의 아이콘을 닮지 않게 새로 디자인한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-10">글 복사</button><span class="msg" role="status"></span></div></div></section>
-  <section class="sec"><div class="what item"><h2>약초 군락지 (11 ~ 19번)</h2><p class="note">약초 아홉 가지마다 한 장씩, 소형 · 중형 · 대형 군락지입니다. 받아 오시면 파티가 가는 길 앞에 세우고 짐꾼이 캐는 모습으로 넣습니다.</p></div><div class="item"><div class="what"><h3>11. 히포크리초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-11" tabindex="0">약초 군락지 — 히포크리초 (소형 · 중형 · 대형 3개)
+  <section class="sec"><div class="what item"><h2>약초 군락지 (11 ~ 19번)</h2><p class="note">약초 아홉 가지마다 한 장씩, 소형 · 중형 · 대형 군락지입니다. 받아 오시면 파티가 가는 길 앞에 세우고 짐꾼이 캐는 모습으로 넣습니다.</p></div><div class="item"><div class="what"><h3>11. 히포크리초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-11" tabindex="0">약초 군락지 — 히포크리초 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「히포크리초」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 히포크리초
@@ -313,9 +317,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-11">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>12. 수심초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-12" tabindex="0">약초 군락지 — 수심초 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-11">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>12. 수심초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-12" tabindex="0">약초 군락지 — 수심초 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「수심초」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 수심초
@@ -335,9 +340,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-12">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>13. 설빙초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-13" tabindex="0">약초 군락지 — 설빙초 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-12">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>13. 설빙초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-13" tabindex="0">약초 군락지 — 설빙초 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「설빙초」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 설빙초
@@ -357,9 +363,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-13">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>14. 염화초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-14" tabindex="0">약초 군락지 — 염화초 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-13">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>14. 염화초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-14" tabindex="0">약초 군락지 — 염화초 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「염화초」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 염화초
@@ -379,9 +386,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-14">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>15. 에테르 이끼 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-15" tabindex="0">약초 군락지 — 에테르 이끼 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-14">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>15. 에테르 이끼 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-15" tabindex="0">약초 군락지 — 에테르 이끼 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「에테르 이끼」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 에테르 이끼
@@ -401,9 +409,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-15">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>16. 벼락가지 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-16" tabindex="0">약초 군락지 — 벼락가지 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-15">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>16. 벼락가지 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-16" tabindex="0">약초 군락지 — 벼락가지 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「벼락가지」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 벼락가지
@@ -423,9 +432,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-16">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>17. 만드라고라 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-17" tabindex="0">약초 군락지 — 만드라고라 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-16">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>17. 만드라고라 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-17" tabindex="0">약초 군락지 — 만드라고라 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「만드라고라」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 만드라고라
@@ -445,9 +455,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-17">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>18. 달빛꽃 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-18" tabindex="0">약초 군락지 — 달빛꽃 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-17">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>18. 달빛꽃 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-18" tabindex="0">약초 군락지 — 달빛꽃 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「달빛꽃」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 달빛꽃
@@ -467,9 +478,10 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-18">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>19. 핏빛 버섯 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-19" tabindex="0">약초 군락지 — 핏빛 버섯 (소형 · 중형 · 대형 3개)
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-18">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>19. 핏빛 버섯 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 (숲 약초는 ④)</p></div><pre class="req" id="req-19" tabindex="0">약초 군락지 — 핏빛 버섯 (소형 · 중형 · 대형 3개)
 
-붙인 그림: ① 재료 그림 모음 — 화풍과 점 굵기의 기준.
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 흙길 위, 캐릭터 바로 앞에 세워집니다. ③의 캐릭터 키에 견주어 크기를 잡고, ③의 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (③의 배경 · 캐릭터는 그리지 않는다).
 게임에서 파티가 길을 가다 만나는 「핏빛 버섯」 군락지를 크기 셋으로 그려 주세요. 짐꾼이 그 앞에 서서 약초를 캡니다.
 
 핏빛 버섯
@@ -489,12 +501,12 @@ h3 { font-size: 16px; font-weight: 600 }
 · 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 흙 · 풀 바닥 조각만
 · 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
 · 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
-· 붙인 그림에서는 화풍만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-19">글 복사</button><span class="msg" role="status"></span></div></div></section>
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-19">글 복사</button><span class="msg" role="status"></span></div></div></section>
 </main>
 <script>
 const $$ = s => Array.from(document.querySelectorAll(s));
 const msgOf = b => b.parentElement.querySelector('.msg');
-const W = { 'f-st': 710, 'f-gr': 1150 };
+const W = { 'f-st': 710, 'f-gr': 1150, 'f-fp': 1440, 'f-ff': 1440 };
 $$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');
   b.addEventListener('click', () => { const on = f.classList.toggle('zoomed'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); });
 // 글 복사: 안 되면 글을 골라 둔다
