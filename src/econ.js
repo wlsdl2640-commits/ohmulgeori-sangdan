@@ -40,7 +40,7 @@ function newGame(company) {
   S = blankState(company); assocOpen();
   const w = makeAdv({ cls: 'warrior', name: '브람', bio: '라비린토스에서 나고 자란 덩치. 당신의 첫 길드원이다.' });
   const ar = makeAdv({ cls: 'archer', name: '리네', bio: '평원 마을에서 올라온 궁수. 빚을 갚을 때까지 일하기로 했다.' });
-  const cl = makeAdv({ cls: 'cleric', name: '테오', bio: '무료 진료소에서 일하던 성직자. 당신을 따라왔다.' });
+  const cl = makeAdv({ cls: 'porter', name: '도르', bio: '부두에서 짐을 나르던 짐꾼. 갈무리 솜씨가 좋다.' });   // 빌드 72 (11-21 11:30): 처음 파티는 전사 · 궁수 · 짐꾼 (갈무리에 짐꾼이 있어야 해서)
   [w, ar, cl].forEach(starterGear);
   S.advs.push(w, ar, cl);
   S.parties.push(newParty('1팀', [w.id, ar.id, cl.id]));
@@ -251,7 +251,7 @@ function toggleMember(pid, aid) {
   const p = S.parties.find(x => x.id === pid), a = advById(aid);
   if (!p || !a || p.exp || a.status !== 'idle') return;
   if (!p.members.includes(aid) && a.post) { HOOKS.toast(`${a.name}은(는) 신전에서 일하는 중이에요`); return; }
-  if (!p.members.includes(aid) && isPorter(a) && portersOf(p).length >= 1) { HOOKS.toast('짐꾼 계열은 파티당 한 명만 넣을 수 있어요'); return; }
+  if (!p.members.includes(aid) && isPorter(a) && portersOf(p).length >= porterCap(p)) { HOOKS.toast(p.big ? '파티의 짐꾼 계열은 두 명까지예요' : '짐꾼 계열은 파티당 한 명만 넣을 수 있어요'); return; }
   if (!p.members.includes(aid) && !isPorter(a) && fightersOf(p).length >= fighterCap(p)) { HOOKS.toast(`${p.raidOnly ? '레이드대는' : '파티는'} 짐꾼 계열을 빼고 ${fighterCap(p)}명까지예요`); return; }
   if (p.members.includes(aid)) p.members = p.members.filter(x => x !== aid);
   else { const o = partyOf(aid); if (o) { if (o.exp) return; o.members = o.members.filter(x => x !== aid); } p.members.push(aid); }
@@ -1020,7 +1020,7 @@ function raidMonth(fresh) {
   S.raid = { list: [newRaid(a), newRaid(b)], from: today() };
   const names = S.raid.list.map(r => `${RAIDS[r.id].name}(Lv${RAIDS[r.id].lv})`).join('와(과) ');
   log(`이번 달 레이드: ${names}`, 'good');
-  if (!fresh) queueModal({ title: '이번 달 레이드', body: [`${names} 레이드가 열렸다.`, '다른 길드와 왕국 원정대가 함께 몬스터를 두드린다. 쓰러뜨리면 피해를 많이 준 순서대로 보상을 받고, 달이 바뀔 때까지 못 쓰러뜨리면 몬스터가 떠나 보상이 절반이 된다.', `원정대 창의 「레이드」 탭에서 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내자.`] });   // 빌드 69
+  if (!fresh) queueModal({ title: '이번 달 레이드', body: [`${names} 레이드가 열렸다.`, '다른 길드와 왕국 파티가 함께 몬스터를 두드린다. 쓰러뜨리면 피해를 많이 준 순서대로 보상을 받고, 달이 바뀔 때까지 못 쓰러뜨리면 몬스터가 떠나 보상이 절반이 된다.', `파티 창의 「레이드」 탭에서 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내자.`] });   // 빌드 69
 }
 const raidStand = rec => rec.rivals.map(r => ({ n: r.n, d: r.d, c: r.c })).concat([{ n: S.company, d: rec.me, me: 1 }]).sort((x, y) => y.d - x.d);
 const raidTier = L => GTIERS.reduce((m, T, i) => (T.lv <= L ? i : m), 0);
@@ -1851,7 +1851,7 @@ function notesB() { if (!S.flags.bview) { S.flags.bview = 1; S.modals.push({ tit
 // 빌드 22: 기본 공격 5초·스킬 수치·스킬북 드랍표·라이선스 심사 (한 번만, 새 게임은 건너뛴다)
 function notes29() { if (!S.flags.v29) { S.flags.v29 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '직업 역할 개편', body: STORY.v29 }); } }
 function notes28() { if (!S.flags.v28) { S.flags.v28 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '개화석·레이드 탭·왕국 마차', body: STORY.v28 }); } }
-function notes25() { if (!S.flags.v25) { S.flags.v25 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '원정대 탭·대형·마부·정찰가', body: STORY.v25 }); } }
+function notes25() { if (!S.flags.v25) { S.flags.v25 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '파티 탭·대형·마부·정찰가', body: STORY.v25 }); } }
 function notes23() { if (!S.flags.v23) { S.flags.v23 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '스킬 레벨·업적·전투 통계', body: STORY.v23 }); } }
 function notes22() { if (!S.flags.v22) { S.flags.v22 = 1; if (today() > 1 || S.advs.some(a => a.lv > 2)) S.modals.push({ title: '전투와 협회 심사가 바뀌었어요', body: STORY.v22 }); } }
 // v0.6: 본부 화면 안내 (한 번만)

@@ -49,7 +49,7 @@ function penDay(k) {
   if (res.length === 1) {
     const r = res[0];
     if (!r.pet) queueModal({ title: r.fertile ? '부화에 실패했어요' : '무정란이었어요…', body: [`${r.egg}은(는) ${r.fertile ? '유정란이었지만 깨어나지 못했다' : '깨어나지 않았다'}. 요리 재료 「무정란」 1개를 창고에 넣었다.`, rate] });
-    else queueModal({ title: '유정란이었어요!', pet: r.pet.id, body: [bornTxt(r), PETS[r.pet.kind].desc, '원정대 창에서 파티에 넣으면 함께 싸우고, 길드에 두면 ' + petHomeText(r.pet.kind, r.pet) + '.'] });
+    else queueModal({ title: '유정란이었어요!', pet: r.pet.id, body: [bornTxt(r), PETS[r.pet.kind].desc, '파티 창에서 파티에 넣으면 함께 싸우고, 길드에 두면 ' + petHomeText(r.pet.kind, r.pet) + '.'] });
     return;
   }
   const pets = res.filter(r => r.pet), fails = res.filter(r => !r.pet);

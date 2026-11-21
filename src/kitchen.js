@@ -78,7 +78,7 @@ BLD_BOX.kitchen = () => {
     return `<div class="li${ok ? '' : ' dim'}">${iconImg('food_' + id)}<div class="grow stack"><span>${F.name} <span class="muted">창고 ${have}</span></span><span class="sub">${foodFxText(F.fx)}</span><span class="sub muted">${ok ? `${needStr(F.need)} · ${cookFee(F)}G` : `주방 ${F.lv}단계`}</span></div><button type="button" class="btn sm gold" data-act="cook" data-k="${id}"${why ? ' disabled' : ''}>만들기</button></div>`;
   }).join('');
   const mats = Object.keys(KITCHEN_BUY).map(k => `<div class="li">${iconImg(k)}<div class="grow stack"><span>${ITEMS[k].name} <span class="muted">창고 ${S.inv[k] || 0}</span></span><span class="sub">${KITCHEN_BUY[k]}G${k === 'raw_meat' ? ' · 짐승을 사냥하면 얻어요' : ''}</span></div><div class="btns"><button type="button" class="btn sm" data-act="fbuy" data-k="${k}" data-n="1"${S.gold < KITCHEN_BUY[k] ? ' disabled' : ''}>1</button><button type="button" class="btn sm" data-act="fbuy" data-k="${k}" data-n="10"${S.gold < KITCHEN_BUY[k] * 10 ? ' disabled' : ''}>10</button></div></div>`).join('');
-  return `<div class="sub">도시락은 원정대 창에서 파티마다 골라요. 출발할 때 하나를 들고 가서 돌아올 때까지 효과가 이어져요.</div>
+  return `<div class="sub">도시락은 파티 창에서 파티마다 골라요. 출발할 때 하나를 들고 가서 돌아올 때까지 효과가 이어져요.</div>
     <div class="sec"><b>요리</b><span>Lv${lv} · ${FOOD_IDS.filter(id => FOODS[id].lv <= lv).length}/${FOOD_IDS.length}가지</span></div><div class="list">${rows}</div>
     <div class="sec"><b>재료 사기</b><span>교역로에서 더 싸게</span></div><div class="list">${mats}</div>`;
 };

@@ -123,7 +123,7 @@ function mapNodes(skyMap) {
 }
 function mapDetail() {
   const sel = UI.mapSel;
-  if (!sel) { const evs = evState().filter(x => !x.done); return `<div class="card"><div class="sub">필드·던전·레이드를 누르면 어떤 곳인지 볼 수 있어요. 원정은 원정대 창에서 보내요. 왕국과 단체를 누르면 이야기할 수 있어요.</div>${evs.length ? `<div class="sub gold-t">지금 지도 위: ${evs.map(x => x.type === 'wave' ? `⚔ 몬스터 웨이브 (D-${Math.max(0, x.arrive - today())})` : x.type === 'fest' ? `★ ${KINGDOMS[x.k].name} 축제` : x.type === 'nest' ? `◉ ${FIELDS[x.at].name} 둥지 ${x.got}/${x.need}` : '$ 떠돌이 상인').join(' · ')}</div>` : ''}</div>`; }
+  if (!sel) { const evs = evState().filter(x => !x.done); return `<div class="card"><div class="sub">필드·던전·레이드를 누르면 어떤 곳인지 볼 수 있어요. 원정은 파티 창에서 보내요. 왕국과 단체를 누르면 이야기할 수 있어요.</div>${evs.length ? `<div class="sub gold-t">지금 지도 위: ${evs.map(x => x.type === 'wave' ? `⚔ 몬스터 웨이브 (D-${Math.max(0, x.arrive - today())})` : x.type === 'fest' ? `★ ${KINGDOMS[x.k].name} 축제` : x.type === 'nest' ? `◉ ${FIELDS[x.at].name} 둥지 ${x.got}/${x.need}` : '$ 떠돌이 상인').join(' · ')}</div>` : ''}</div>`; }
   if (sel.k === 'king' || sel.k === 'org') return talkCard(sel.id);
   if (sel.k === 'event') return eventCard(+sel.id);
   // 원정 목적지
@@ -136,7 +136,7 @@ function mapDetail() {
   const mons = !F.giant && F.mons.length ? `<div class="sub muted">몬스터: ${(dungeon ? F.dungeon.mons : F.mons).map(id => MONS[id].name).join(', ')}${dungeon ? ` · 주인 ${MONS[F.dungeon.boss].name}` : F.bosses ? ` · 우두머리 ${F.bosses.map(id => MONS[id].name).filter((v, i, a) => a.indexOf(v) === i).join(', ')}` : ''}</div>` : '';
   return `<div class="card hl"><div class="h">${esc(title)}</div><div class="sub">${sub}</div>${mons}</div>
     ${why ? `<div class="sub red-t">${esc(why)}</div>` : ''}${note ? `<div class="sub gold-t">${esc(note)}</div>` : ''}
-    <button type="button" class="btn gold block" data-act="mapexp" data-f="${fid}" data-d="${dungeon ? 1 : 0}"${ok ? '' : ' disabled'}>원정대 창에서 보내기</button>`;
+    <button type="button" class="btn gold block" data-act="mapexp" data-f="${fid}" data-d="${dungeon ? 1 : 0}"${ok ? '' : ' disabled'}>파티 창에서 보내기</button>`;
 }
 function talkCard(id) {
   const K = KINGDOMS[id], O = MAP_ORGS[id], name = K ? K.name : O.name, open = K ? kingOpen(id) : true;
@@ -170,7 +170,7 @@ PANELS.map = () => {
   return `<div class="lab"><div class="lab-t"><div class="sec"><b>미궁 계층</b><span>최종 도달 필드 ${labBestTxt()}</span></div><div class="fields">${tiers}</div></div>
     <div class="lab-f"><div class="sec"><b>${F.dng ? F.name + ' (던전)' : F.branch ? F.name : F.no + '계층'} 필드</b><span>밀어서 넘겨요</span></div><div class="lfls" id="lfls">${floors}</div></div></div>
     <div class="card"><div class="sub"><b>필드 ${fn}-${sel}</b> · Lv${fieldLv(F, sel)}${lord}<br><span class="muted">나오는 몬스터: ${pool.join(' · ') || '?'}</span></div>
-    <button type="button" class="btn gold block" data-act="labgo" data-f="${fid}" data-s="1"${idle ? '' : ' disabled'}>${idle ? `${idle.name} · 원정대 창에서 보내기` : '쉬고 있는 파티가 없어요'}</button><div class="sub muted">원정은 늘 1계층 필드 1-1에서 시작해요. 1-50의 주인을 쓰러뜨리면 다음 계층으로 내려가요.</div></div>${fork}`;
+    <button type="button" class="btn gold block" data-act="labgo" data-f="${fid}" data-s="1"${idle ? '' : ' disabled'}>${idle ? `${idle.name} · 파티 창에서 보내기` : '쉬고 있는 파티가 없어요'}</button><div class="sub muted">원정은 늘 1계층 필드 1-1에서 시작해요. 1-50의 주인을 쓰러뜨리면 다음 계층으로 내려가요.</div></div>${fork}`;
 };
 PANELS.map71 = () => {
   const skyOpen = !!(S.fields.roots && S.fields.roots.cleared) || (S.bld.airfield || 0) > 0;

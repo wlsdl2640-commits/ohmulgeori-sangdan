@@ -137,8 +137,8 @@ function stepArena(p, e, team, dm, dt, fr) {
   e.pos += v * dt;
   if (e.pos >= STAGE_LEN * 0.35 && opp) {
     e.foes = opp.members.map(pvpFoe); e.cd = {}; e.buffs = []; e.taunt = null;
-    ev(e, 'spawn', { boss: true, name: `${opp.name} 원정대` });
-    log(`${opp.name} 원정대가 모래판 반대편에 섰다. 싸움이 시작됐다!`);
+    ev(e, 'spawn', { boss: true, name: `${opp.name} 파티` });
+    log(`${opp.name} 파티가 모래판 반대편에 섰다. 싸움이 시작됐다!`);
   }
 }
 function arenaEnd(p, e, win) {

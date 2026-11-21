@@ -89,7 +89,7 @@ function deriveBase(a) {
     matk: (T.int * 1.2 + L * 0.4 + (G.matk || 0)) * (1 + rlv('power') * 0.1 + (P.matkPct || 0) + X('matkPct')) * war * lic,
     def: (T.vit * 0.35 + L * 0.2 + (G.def || 0)) * (1 + (P.defPct || 0) + rlv('ward') * 0.08 + X('defPct')) * (earth ? 1.1 : 1) * lic,
     maxHp: Math.round((40 + T.vit * 7 + L * 4 + (G.hp || 0)) * (earth ? 1.15 : 1) * lic * (1 + (P.hpPct || 0) + X('hpPct') + relic('hp'))),   // 유물: 세계수의 씨앗·별의 여왕의 왕관
-    maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (1 + X('mpPct') + (P.mpPct || 0) + Math.min(RUNE_CAP.mpPct, G.mpPct || 0))),   // 마나 룬 (방어구)
+    maxMp: Math.round((8 + T.int * 4 + L + (G.mp || 0)) * (jobBase(a.cls) === 'mage' ? J1.mpMul : 1) * (1 + X('mpPct') + (P.mpPct || 0) + Math.min(RUNE_CAP.mpPct, G.mpPct || 0))),   // 마나 룬 (방어구)
     // 빌드 69 상한(11-14 12:18 사용자 「확률이 붙는건 최대치를 50%까지」): 회피는 모두 더해 50% — 민첩 몫은 35%까지(내 제안), 나머지는 장비 · 룬 · 환영의 문스톤 · 특성 · 스킬로
     eva: Math.min(CAP.eva, Math.min(EVA_AGI_MAX, T.agi * 0.004) + (G.eva || 0) + (P.eva || 0) + (wind ? 0.05 : 0) + X('eva') + msVal(MC, 'moon')),
     crit: Math.min(CAP.crit, crit0),
@@ -111,7 +111,7 @@ function deriveBase(a) {
     mExec: P.exec || 0, mStun: P.stun || 0, mBuff: P.buffDur || 0,   // 숙련: 처형 피해 · 기본 공격 기절 · 강화 지속
     mres: Math.min(FIGHT.mresMax, mresJob(a) + (G.mres || 0) + (P.mres || 0) + X('mres')),   // 마법 저항 (빌드 63): 마법 피해 −%
     res: resOf(G, P, X),                                                                   // 속성 저항: { 불 계열: 0.1, … }
-    critDmg: Math.min(CAP.critDmg, (P.critDmg || 0) + Math.max(0, crit0 - CAP.crit) * CRIT_OVER), critOver: Math.max(0, crit0 - CAP.crit), firstCrit: P.firstCrit || 0, thrownPct: P.thrownPct || 0, petDmg: P.petDmg || 0, pBuff: P.pbuffDur || 0,   // 빌드 65 직업 개편: 치명 피해 · 첫 공격 치명 · 암기 피해 · 탈것 피해 · 파티 강화 지속
+    critDmg: Math.min(CAP.critDmg, (P.critDmg || 0) + Math.max(0, crit0 - CAP.crit) * CRIT_OVER), critOver: Math.max(0, crit0 - CAP.crit), firstCrit: P.firstCrit || (jobBase(a.cls) === 'rogue' ? 1 : 0), thrownPct: P.thrownPct || 0, petDmg: P.petDmg || 0, pBuff: P.pbuffDur || 0,   // 빌드 65 직업 개편: 치명 피해 · 첫 공격 치명 · 암기 피해 · 탈것 피해 · 파티 강화 지속
     baImm: P.baImm || 0, subst: P.subst || 0,                                              // 기본 공격 면역 · 쓰러질 한 방을 한 번 피함 (개편 직업용)
     // 빌드 69 마석: 받는 피해 − (다이아몬드) · 반사 (오팔) · 싸움 시작 보호막 (아쿠아마린) · 버티기 (호박) · 노려질 확률 − (흑요석)
     msDmg: msVal(MC, 'dia'), msRefl: msVal(MC, 'opal'), msShield: msVal(MC, 'aqua'), msEnd: msVal(MC, 'amber'), msHide: msVal(MC, 'obsid'),
@@ -368,7 +368,7 @@ function cantGo(a) {
 // 전투 대형: 근접은 맨 앞, 원거리 딜러는 가운데, 짐꾼·마법사·치유사는 맨 뒤 (출발할 때 줄을 세운다)
 // 대형 (빌드 69, 11-13 21:22 사용자 「근접 맨 앞 셋까지 · 가운데 원거리 · 그 뒤 힐러 · 버퍼 · 짐꾼은 늘 맨 뒤」 · 11-14 00:42 「넣어」):
 //   0 근접 · 1 원거리 · 마법(탈것 직업도) · 2 힐러(act heal) · 3 짐꾼 계열 모두(음유시인 · 정찰가 · 마부 …). C.row는 이제 안 본다. 그리는 자리는 view.js formSlots
-const formRank = c => { const C = CLASSES[c]; if (!C) return 2; if (jobBase(c) === 'porter') return 3; if (C.act === 'heal') return 2; return C.act === 'melee' ? 0 : 1; };
+const formRank = c => { const o = J1_ORDER[jobBase(c)]; return o == null ? 3 : o; };   // 빌드 72 (11-21 11:30): 전사 → 도적(전위) · 궁수 → 마법사(중위) · 사제 → 짐꾼(후위) — job72.js
 function formParty(p) { p.members = p.members.map((id, i) => [id, i]).sort((x, y) => { const a = advById(x[0]), b = advById(y[0]); return (a ? formRank(a.cls) : 2) - (b ? formRank(b.cls) : 2) || x[1] - y[1]; }).map(x => x[0]); }
 function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(빌드 69 — 레이드는 qol.js raidLaunch로 파티 넷 이상이 함께만)
   if (isLab(fid)) fid = LAB_IDS()[0];   // 빌드 72: 미궁은 늘 1계층부터
@@ -379,7 +379,7 @@ function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(�
   if (why) return why + '.';
   const GR = FIELDS[fid].giant && RAIDS[FIELDS[fid].giant];
   if (GR && avgLvOf(p) < GR.lv - RAID_GAP) return `${GR.name} 레이드는 파티 평균 Lv${GR.lv - RAID_GAP} 이상이어야 도전할 수 있어요.`;
-  if (GR && !o.grp) return `레이드는 원정대 창의 「레이드」 탭에서 전투원 넷이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내요.`;
+  if (GR && !o.grp) return `레이드는 파티 창의 「레이드」 탭에서 전투원 넷이 다 찬 파티 ${RAID_MIN_PARTIES}개 이상을 골라 함께 보내요.`;
   if (GR && fightersOf(p).length < PARTY_FIGHTERS) return `레이드에는 전투원 ${PARTY_FIGHTERS}명이 다 찬 파티만 나가요. (지금 ${fightersOf(p).length}명)`;
   if (GR && GR.sky && !S.bld.airfield) return `${GR.name}은(는) 구름섬 하늘에 있어요. 비행장이 있어야 레이드 비행선이 파티를 태워 가요.`;
   const pw = partyWhy(p); if (pw) return pw;
@@ -496,6 +496,7 @@ function stepExp(p, dt) {
   if (e.foes.length) { tire(team, FATIGUE.fight * fr * dt); battle(p, e, team, dm, dt); return; }
   if (e.camp) { stepCamp(p, e, team, dm, dt); return; }
   team.forEach(a => { const d = dm[a.id]; a.hp = Math.min(d.maxHp, a.hp + d.maxHp * 0.008 * dt); a.mp = Math.min(d.maxMp, a.mp + d.maxMp * 0.05 * d.mpRegen * dt); });
+  if (j1Hold(p, e, team, dt)) return;   // 빌드 72: 갈무리 · 함정 해제로 멈춰 있다
   if (e.wait === 'gate') return;   // 던전 입구 앞에서 결정을 기다린다
   if (p.safe && e.mode === 'advance' && !hpPotions(e) && team.some(a => a.hp < dm[a.id].maxHp * 0.7)) recall(p, 'danger');
   if (p.safe && e.mode === 'advance' && e.area === 'field' && all.some(a => (a.sleep || 0) >= SLEEP.max)) recall(p, 'sleep');
@@ -506,12 +507,12 @@ function stepExp(p, dt) {
   const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1) * floodMul(e) / (e.area === 'field' || e.area === 'dungeon' ? WALK_STRETCH : 1);   // 빌드 69 (11-15 12:03 「×3으로」): 필드 · 던전의 걷는 길 세 배 (data-stat69.js) · 빌드 70: 물이 찬 스테이지는 걸음 ×0.7 (data-under70.js)
   if (e.mode === 'advance') {
     const next = e.encs[e.ei], np = e.pos + v * dt;
-    if (next != null && np >= next) { e.pos = next; e.ei++; spawn(p, e); return; }
+    if (next != null && np >= next) { e.pos = next; e.ei++; j1Enc(p, e); return; }
     e.pos = np;
     if (e.pos >= STAGE_LEN) stageClear(p, e);
   } else {
     const next = e.encs[e.ei], np = e.pos - v * dt;
-    if (next != null && np <= next) { e.pos = next; e.ei++; spawn(p, e); return; }
+    if (next != null && np <= next) { e.pos = next; e.ei++; j1Enc(p, e); return; }
     e.pos = np;
     if (e.pos <= 0) stageBack(p, e);
   }
@@ -949,7 +950,7 @@ function basicAct(e, a, d, team, dm, foes) {
     if (T.aoe) foes.filter(o => o !== f).forEach(o => { if (o.hp > 0) { const w = hitFoe(e, o, mk * T.aoe, false, true, a, 'none'); ev(e, 'hit', Object.assign({ s: a.id, d: o.uid, v: w, c: false, k: 'fire', b: 1 }, hitTag())); } });
     return;
   }
-  const f = act === 'arrow' ? lowAwake(foes) : frontFoe(foes);   // 잠든 · 돌이 된 · 홀린 적은 되도록 건드리지 않는다
+  const f = act === 'arrow' ? lowAwake(foes) : jobBase(a.cls) === 'rogue' && !tauntFoe(foes) ? (foes.slice().reverse().find(calmFoe) || foes[foes.length - 1]) : frontFoe(foes);   // 도적 기습: 맨 뒤의 적 · 잠든 · 돌이 된 · 홀린 적은 되도록 건드리지 않는다
   const k = act === 'arrow' ? (a.eq && a.eq.weapon && a.eq.weapon.base === 'lute' ? 'note' : 'arrow') : 'melee';
   const bow = shootsArrows(a), WR = bow ? null : wpnRune(a);   // WR = 속성 대검(빌드 65): 그 속성 추가 피해 · 상태이상
   if (bow && ammoLeft(a.eq.ammo, a) <= 0) { noAmmo(e, a); return; }   // 화살이 없으면 기본 공격을 못 한다
@@ -957,7 +958,7 @@ function basicAct(e, a, d, team, dm, foes) {
   for (let i = 0; i < swings; i++) {
     if (f.hp <= 0) break;
     if (bow && !useAmmo(a.eq.ammo, a, 1)) { noAmmo(e, a); break; }   // 한 발씩
-    if (rnd() < Math.max(0, f.eva - (d.hit || 0)) + (blind ? FIGHT.blind : 0)) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }   // 회피는 기본 공격에만 · 눈멀면 20%p 더 · 바람 룬 명중은 몬스터 회피를 깎는다
+    if (rnd() < (bow && jobBase(a.cls) === 'archer' ? 0 : Math.max(0, f.eva - (d.hit || 0))) + (blind ? FIGHT.blind : 0)) { ev(e, 'fmiss', { s: a.id, d: f.uid }); comboBreak(e, a.id); continue; }   // 회피는 기본 공격에만 · 눈멀면 20%p 더 · 바람 룬 명중은 몬스터 회피를 깎는다
     const cadd = buffAdd(e, a.id, 'crit'), crit = (i === 0 && !!(NX && NX.crit)) || firstCrit(e, a, d) || rnd() < capCrit(d, cadd), cb = crit ? critBonus(d, cadd) : 0;   // 빌드 69: 치명타 50%까지 · 넘친 몫은 치명타 피해로
     const atk = (d.atk * buffMul(e, a.id, 'atk') + (T.hybrid ? d.matk * buffMul(e, a.id, 'matk') * T.hybrid : 0)) * BASIC_MULT * (i === 0 && NX ? NX.mul : 1) * (cb ? 1 + cb / (T.critMul || 1.75) : 1) * (d.mExec && f.hp <= f.maxHp * EXEC_HP ? 1 + d.mExec : 1) * (act === 'melee' && isFly(f) ? FIGHT.fly : 1) * (i === 1 && od ? 1 + od : 1);   // 날아다니는 적: 근접 기본 공격 ×0.7   // 5초에 한 번, 그만큼 세게 (숙련 처형)
     const bel = bow ? arrowEl(a) || 'none' : 'none';   // 속성 화살 (빌드 39)
@@ -982,7 +983,7 @@ function basicAct(e, a, d, team, dm, foes) {
 // 적이 노릴 상대: 앞줄과 방패를 든 직업이 더 자주 맞는다
 function tankW(a) { const t = TR(a).tank; return Math.max(0, (t != null ? t : jobBase(a.cls) === 'warrior' ? 1 : 0) + traitSum(a, 'tank')); }
 function pickTarget(live, e, dm) {
-  const w = live.map((x, i) => (1 + (i === 0 ? 1 : 0) + tankW(x) * 2) * (e && buffAdd(e, x.id, 'hide') > 0 ? 0.25 : 1) * (dm && dm[x.id] && dm[x.id].msHide ? 1 - dm[x.id].msHide : 1)), sum = w.reduce((s2, v) => s2 + v, 0);   // 빌드 69: 은신의 흑요석
+  const w = live.map((x, i) => (1 + (i === 0 ? 1 : 0) + tankW(x) * 2) * J1.posW[posOf(x)] * (e && buffAdd(e, x.id, 'hide') > 0 ? 0.25 : 1) * (dm && dm[x.id] && dm[x.id].msHide ? 1 - dm[x.id].msHide : 1)), sum = w.reduce((s2, v) => s2 + v, 0);   // 빌드 69: 은신의 흑요석
   let r = rnd() * sum;
   for (let i = 0; i < live.length; i++) { r -= w[i]; if (r <= 0) return live[i]; }
   return live[0];
@@ -1029,8 +1030,8 @@ function staMods(d, st) {
 }
 // 엄호 (탱커): 다른 동료가 노려지면 일정 확률로 대신 맞는다 (행동 방해 중이거나 HP 25% 아래면 못 한다)
 function coverOf(e, live, tgt, dm) {
-  const c = live.filter(x => x !== tgt && (TR(x).cover || 0) > 0 && x.hp > dm[x.id].maxHp * 0.25 && !isHard(e.sta && e.sta[x.id])).sort((x, y) => (TR(y).cover || 0) - (TR(x).cover || 0))[0];
-  if (c && rnd() < TR(c).cover) { ev(e, 'cover', { s: c.id, d: tgt.id }); return c; }
+  const c = live.filter(x => x !== tgt && j1Cover(x) > 0 && x.hp > dm[x.id].maxHp * 0.25 && !isHard(e.sta && e.sta[x.id])).sort((x, y) => j1Cover(y) - j1Cover(x))[0];
+  if (c && rnd() < j1Cover(c)) { ev(e, 'cover', { s: c.id, d: tgt.id }); return c; }
   return null;
 }
 // 매혹 · 혼란에 걸린 길드원: 기본 공격이 같은 편에게 (반만 아프고, 쓰러뜨리지는 않는다)
@@ -1211,6 +1212,7 @@ function battle(p, e, team, dm, dt) {
   e.buffs = e.buffs.filter(b => b.t > 0 && !(b.stat === 'shield' && b.hp <= 0));   // 다 깨진 보호막은 걷는다
   if (e.taunt) { e.taunt.t -= dt; if (e.taunt.t <= 0) e.taunt = null; }
   e.gcd = e.gcd || {}; e.rg = e.rg || {};
+  j1Bless(e, team);
   for (const a of team) {
     if (!up(a)) continue;
     const d = dm[a.id], st = e.sta && e.sta[a.id];
@@ -1222,13 +1224,14 @@ function battle(p, e, team, dm, dt) {
     if (isHard(st)) continue;   // 기절 · 수면 · 빙결 · 석화: 모든 대기시간이 멈춘다
     const sc = e.scd[a.id] || (e.scd[a.id] = {}), chill = st && st.chill ? 0.67 : 1;
     for (const k in sc) sc[k] = Math.max(0, sc[k] - dt * chill);
+    j1Tick(e, a, d, team, dm, dt, sc);
     // 스킬: 저마다의 재사용 대기시간이 돌면 나간다 (스킬과 스킬 사이는 CAST_GAP)
     e.gcd[a.id] = Math.max(0, (e.gcd[a.id] || 0) - dt);
     const alive = foes.filter(f => f.hp > 0);
     if (!alive.length) break;
     if (e.gcd[a.id] <= 0) {
       const sk = pickSkill(a, d, team, dm, alive, e);
-      if (sk) { cast(e, a, d, sk, team, dm, alive); e.gcd[a.id] = CAST_GAP; }
+      if (sk) { j1Cast(e, a, d, sk, team, dm, alive); e.gcd[a.id] = CAST_GAP; }
     }
     // 기본 공격 (빌드 69 밤): 쿨타임이 돌면 휘두르기 시작해(실행 — e.cd['w' + id]에 남은 초) 맞히고, 맞힌 뒤부터 다음 쿨타임이 돈다. 스킬과 상관없이 · 넘친 몫은 다음으로 넘긴다
     const wk = 'w' + a.id;
@@ -1298,7 +1301,7 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   const el = o.el || (magic || o.aoe ? fAtkEl(f) : 'none'), fam = elFam(el), xs = e.sta && e.sta[x.id];
   const def = d.def * buffMul(e, x.id, 'def') * (magic ? 0.5 : 1) * (1 - (o.pen || 0));   // 빌드 69: 몬스터 스킬 「꿰뚫기」는 방어를 덜 본다
   const crit = rnd() < (f.boss ? 0.08 : 0.04) + (o.crit || 0);
-  const pet0 = petOfParty(p), guard = Math.min(CAP.guard, TQ(x, 'guard') + relic('guard') + buffAdd(e, x.id, 'guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
+  const pet0 = petOfParty(p), guard = Math.min(CAP.guard, TQ(x, 'guard') + (!o.skill && !o.ms && !o.aoe ? j1BaGuard(x) : 0) + relic('guard') + buffAdd(e, x.id, 'guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
   const blk = rnd() < Math.min(CAP.block, (d.block || 0) + buffAdd(e, x.id, 'block') + (o.skill || o.ms || o.aoe ? 0 : d.bblock || 0));   // 예리함 룬(방어구): 기본 공격만 막는다 (빌드 69: 모두 더해 50%까지)
   const resist = (magic ? 1 - (d.mres || 0) : 1) * (fam !== 'none' ? 1 - ((d.res && d.res[fam]) || 0) : 1);   // 마법 저항 · 속성 저항
   const cut = Math.max(CAP.dmgFloor, (1 - guard) * resist * (1 - (d.msDmg || 0)));   // 빌드 69: 받는 피해 감소 · 저항 · 수호진의 다이아몬드를 곱해도 원래의 20% 아래로는 안 내려간다 (막기 1/4은 따로)
@@ -1319,6 +1322,7 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   if (endure) ev(e, 'endure', { d: x.id, s: f.uid });
   msReflect(e, f, x, d, v0);
   if (x.hp <= 0) { down(p, e, x, f); return true; }
+  j1CoverShot(p, e, x, dm);
   if (!(o.once && o.once.sta)) {   // 빌드 69 연타: 한 번 칠 때 상태이상은 처음 들어간 한 대만
     if (o.once) o.once.sta = 1;
     const ms = o.sta !== undefined ? o.sta : (m.sta || f.inflict);
@@ -1351,6 +1355,8 @@ function kill(p, e, f) {
   if (f.pvp) return;   // 투기장: 전리품 없음
   if (f.sum) return;   // 우두머리가 부른 졸개: 경험치 절반 · 전리품 없음 (빌드 63)
   kqKill(f.id);
+  harvOpen(e);   // 빌드 72 갈무리: 여기부터의 전리품은 사체에 남는다
+  if (f.mimic) { const kq = e.kq; e.kq = null; log(`${p.name}이(가) 미믹을 쓰러뜨리고 속을 털었다. ${j1MimicReward(p, e, f.lv)}`, 'good'); e.kq = kq; }
   const luck = Math.max(0, ...team.map(a => TQ(a, 'luck'))), hunt = Math.max(0, ...team.map(a => TQ(a, 'drop')));   // 보물 사냥꾼의 운, 괴물사냥꾼의 손질
   const pet = petOfParty(p), petLuck = (pet ? (PETS[pet.kind].luck || 0) + (pet.trait === 'lucky' ? 0.08 : 0) : 0) + petHome('luck');
   const dropMul = (1 + (spn('elves') >= 1 ? 0.1 : 0) + relic('drop') + luck + hunt + petLuck + (dexRare(f.id) ? RARE.drop : 0) + (foodFx(e).luck || 0)) * harvest, fbm = f.fb ? 3 : f.nest || f.rare ? 2 : 1;
@@ -1369,6 +1375,7 @@ function kill(p, e, f) {
   bossParts(p, e, f, inD);
   stoneDrops(p, e, f, luck);
   mapDrops(p, e, f, luck);
+  harvClose(e);
   if (f.nest) nestKill(p, e, f);
   if (luck && rnd() < luck) { const g = Math.round(f.lv * (2 + rnd() * 3)); S.gold += g; S.stats.earned += g; }
   if (f.fb) { if (S.fields[e.field]) fieldBossDown(p, e, f); }   // 방어전(wave)의 우두머리는 필드 기록이 없다
@@ -1421,6 +1428,7 @@ function fieldBossDown(p, e, f) {
   if (first) HOOKS.toast(`필드 보스 격파 · ${f.name}`);
 }
 function loot(p, e, it, q) {
+  if (e.kq) { e.kq.items.push([it, q]); return; }
   const room = capOf(p) - usedOf(p);
   const fit = Math.min(q, Math.floor(room / ITEMS[it].w));
   if (fit > 0) { addTo(e.bag, it, fit); ev(e, 'loot', { id: it }); }
@@ -1428,6 +1436,7 @@ function loot(p, e, it, q) {
   if (e.full && p.auto && e.mode === 'advance' && e.area === 'field') recall(p, 'full');
 }
 function lootGear(p, e, g) {
+  if (e.kq) { e.kq.gear.push(g); return; }
   if (capOf(p) - usedOf(p) >= GTYPES[g.base].w) {
     e.gbag.push(g);
     ev(e, 'gear', { base: g.base, t: g.t });
@@ -1518,7 +1527,7 @@ function wipe(p) {
   S.stats.wipes = (S.stats.wipes || 0) + 1;
   log(`${p.name}이(가) ${F.name}에서 전멸했다. 협회 구조대가 모두를 데려왔지만 가져오던 짐과 장비는 잃었다.`, 'bad');
   S.flags.firstInj = 1;
-  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 원정대가 모두 쓰러졌다. 지나가던 협회 구조대 덕분에 목숨은 건졌지만 모두 크게 다쳤고, 가져오던 부속품과 장비, 물약은 잃었다.`, '다친 길드원는 신전에서 치료해야 다시 원정에 나갈 수 있다. 무리하지 말자.'] });
+  queueModal({ title: `${p.name} 전멸`, body: [`${F.name}에서 파티가 모두 쓰러졌다. 지나가던 협회 구조대 덕분에 목숨은 건졌지만 모두 크게 다쳤고, 가져오던 부속품과 장비, 물약은 잃었다.`, '다친 길드원는 신전에서 치료해야 다시 원정에 나갈 수 있다. 무리하지 말자.'] });
   p.last = { got: {}, gear: 0, kills: e.kills, field: e.field, wiped: 1 };
   p.exp = null;
   changed();

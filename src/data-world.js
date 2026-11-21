@@ -53,7 +53,7 @@ const RAID_FOR_TIER = ['kingslime', 'kingslime', 'kaishar', 'griffon', 'tempest'
 // 함께 겨루는 다른 길드와 왕국 원정대
 const RIVALS = [
   { name: '황금사자 길드', c: '#f0c24a' }, { name: '푸른 돛 길드', c: '#4a8ad8' }, { name: '검은 늪 길드', c: '#5a6a4a' },
-  { name: '잉그리시아 왕립 원정대', c: '#3f6aa8', k: 'inglisia' }, { name: '프라마 용병단', c: '#a8432f', k: 'frama' },
+  { name: '잉그리시아 왕립 파티', c: '#3f6aa8', k: 'inglisia' }, { name: '프라마 용병단', c: '#a8432f', k: 'frama' },
   { name: '실바레아 순찰대', c: '#3f8a4a', k: 'elves' }, { name: '브론하임 철벽대', c: '#7a5a3a', k: 'dwarves' }
 ];
 const RAID_REWARD = [

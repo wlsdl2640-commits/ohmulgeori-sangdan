@@ -75,7 +75,7 @@ function callout(x, y, text, cls) {
 const clearCallouts = () => ['callouts', 'bcallouts'].forEach(id => { const b = $(id); if (b) b.textContent = ''; });
 
 /* ───────── 빌드 69: 레이드 원정대 창 — 작은 창 둘째 장 (사용자 「원정창은 밀어서 넘기기」 · 「레이드 원정대 창은 r2로」) ─────────
-   레이드 원정대(같은 e.grp)가 나가 있으면 작은 창을 옆으로 밀어 넘긴다: 첫째 장 = 원정대 창(지금 보는 파티) · 둘째 장 = 파티마다 한 칸(2열).
+   레이드 원정대(같은 e.grp)가 나가 있으면 작은 창을 옆으로 밀어 넘긴다: 첫째 장 = 파티 창(지금 보는 파티) · 둘째 장 = 파티마다 한 칸(2열).
    칸마다 그 파티의 장면을 V.off에 따로 그린다 — 효과 · 쓰러짐 · 기록 같은 장면 상태(RP_KEYS)는 파티마다 바꿔 끼운다. 다른 칸은 소리 · 글자 없이. */
 const RP = { page: 0, st: {}, main: null, n: 0, cols: 2, rows: 0, ids: '', swiped: 0, k: 0 };
 const RP_KEYS = ['mode', 'lastN', 'lastF', 'scroll', 'fx', 'ghosts', 'flash', 'flash0', 'lunge', 'atk', 'mot', 'fmot', 'fhit', 'motLast', 'skSeen', 'jump', 'fall', 'stand', 'tail', 'tailT', 'last', 'shake', 'giant', 'log', 'logN', 'logP', 'fname', 'dir', 'nj', 'hitA', 'lowSt', 'coach', 'coachK'];

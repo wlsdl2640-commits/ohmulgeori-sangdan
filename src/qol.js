@@ -3,12 +3,12 @@
    파티 인원: 짐꾼 계열을 빼고 넷까지, 짐꾼 계열 한 명을 더해 모두 다섯. */
 const fightersOf = p => teamOf(p).filter(a => !isPorter(a));
 /* 레이드 전용 파티(빌드 36 · 짐꾼 포함 10명)는 빌드 69에 없앴다 — 옛 저장의 레이드대는 econ.js raid69 · raidDissolve가 푼다.
-   이제 레이드는 일반 파티 RAID_MIN_PARTIES(4)개 이상이 함께: 원정대 창 「레이드」 탭에서 파티를 골라 raidLaunch. */
+   이제 레이드는 일반 파티 RAID_MIN_PARTIES(4)개 이상이 함께: 파티 창 「레이드」 탭에서 파티를 골라 raidLaunch. */
 const isRaidParty = p => !!(p && p.raidOnly);
-const regularParties = () => S.parties.filter(p => !p.raidOnly);
+const regularParties = () => S.parties.filter(p => !p.raidOnly && !p.big);   // 빌드 72: 원정대(p.big)는 따로 탭
 const raidParty = () => null;
 const raidPartyOpen = () => false;
-const fighterCap = p => (isRaidParty(p) ? RAID_FIGHTERS : PARTY_FIGHTERS);   // 돌아오기 전의 옛 레이드대만 9명
+const fighterCap = p => (p && p.big ? BIG.fighters : isRaidParty(p) ? RAID_FIGHTERS : PARTY_FIGHTERS);   // 돌아오기 전의 옛 레이드대만 9명
 function raidPartyEnsure() { return null; }
 // 파티가 고른 목적지 (레이드는 한 파티의 목적지로 두지 않는다 — 빌드 69)
 const partyDest = p => (p.dest && FIELDS[p.dest] && !FIELDS[p.dest].giant && isUnlocked(p.dest) ? p.dest : 'plains');
@@ -46,7 +46,8 @@ function raidLaunch(rid) {
   return fail.join(' · ');
 }
 function partyWhy(p) {
-  if (portersOf(p).length > 1) return '짐꾼 계열은 파티당 한 명만 넣을 수 있어요.';
+  if (p.big) { const w = bigWhy(p); if (w) return w; }
+  if (portersOf(p).length > porterCap(p)) return '짐꾼 계열은 파티당 한 명만 넣을 수 있어요.';
   if (fightersOf(p).length > fighterCap(p)) return `${isRaidParty(p) ? '레이드대는' : '파티는'} 짐꾼 계열을 빼고 ${fighterCap(p)}명까지예요. ${fightersOf(p).length - fighterCap(p)}명을 빼야 출발해요.`;
   return '';
 }
@@ -57,7 +58,7 @@ function trimParty(p) {
   const f = fightersOf(p).sort((a, b) => b.lv - a.lv);
   f.slice(fighterCap(p)).forEach(a => { p.members = p.members.filter(id => id !== a.id); n++; });
   const ps = portersOf(p).sort((a, b) => b.lv - a.lv);
-  ps.slice(1).forEach(a => { p.members = p.members.filter(id => id !== a.id); n++; });
+  ps.slice(porterCap(p)).forEach(a => { p.members = p.members.filter(id => id !== a.id); n++; });
   return n;
 }
 /* 모두 자동 장착: 대기 중인 길드원 모두 (레벨 높은 사람이 먼저 고른다) */

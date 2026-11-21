@@ -195,7 +195,7 @@ BLD_BOX.airfield = () => {
     return `<div class="row sub rsend"><span class="grow">${esc(p.name)} <span class="muted">· ${team.length}명 · 평균 Lv${avg} · ${p.wagon ? rigName(p) : '마차 없음'}</span>${why ? `<br><span class="red-t">${esc(why)}</span>` : '<br><span class="ok-t">날아갈 준비가 됐어요</span>'}</span><button type="button" class="btn sm gold" data-act="skygo" data-id="${p.id}"${why ? ' disabled' : ''}>${fid === 'sky' ? '구름섬' : F.name} 출발</button></div>${buy ? `<div class="btns" style="margin-top:-2px;margin-bottom:6px">${buy}</div>` : ''}`; }).join('');
   return `<div class="chips">${isles}</div><div class="card hl"><div class="h">${F.name} <small>Lv${F.lv}~${fieldLv(F, FIELD_STAGES)}</small></div><div class="sub">${F.desc}</div><div class="sub ${open ? 'ok-t' : 'red-t'}">${open ? `열림 · 최고 ${F.no}-${fs.best || 0} · ${fs.cleared ? '던전★' : fs.found ? '던전 열림' : `보스 ${nb}/5`}` : F.unlock}</div></div>
     <div class="sub">비행 마차(${fmt(WAGONS.sky.cost)}G · 짐 +${WAGONS.sky.cap} · 이동 ×${WAGONS.sky.spd})는 여기서 만들어요. 마구간에서 그리핀·와이번·페가수스(다 자란 펫)를 매면 그리핀 마차·와이번 마차·페가수스 마차가 되고, 그래야 구름섬으로 날아가요. 비행장 2단계면 비행 마차 짐 +20%.</div>
-    <div class="sec"><b>보낼 파티</b><span>보급품·목적지 거점은 원정대 창에서</span></div>${rows || '<div class="sub muted">파티가 없어요.</div>'}
+    <div class="sec"><b>보낼 파티</b><span>보급품·목적지 거점은 파티 창에서</span></div>${rows || '<div class="sub muted">파티가 없어요.</div>'}
     <div class="sub muted">하늘 지도는 지도 창의 「${SKY_NAME}」 탭에서 봐요. 구름섬 너머로 천둥 봉우리(Lv120) → 천계의 유적 폐허(Lv130) → 별의 정원(Lv140)이 이어지고, 앞 섬의 던전을 공략하면 다음 섬이 열려요.</div>`;
 };
 

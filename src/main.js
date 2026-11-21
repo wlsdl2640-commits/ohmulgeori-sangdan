@@ -7,7 +7,7 @@ function fmtDur(sec) {
 }
 function awayReport(r) {
   if (r.sec < 60) return;
-  const lines = [`${fmtDur(r.sec)} 동안 원정대와 상점이 쉬지 않고 일했어요. 게임 속 날짜는 그대로예요.`];
+  const lines = [`${fmtDur(r.sec)} 동안 파티와 상점이 쉬지 않고 일했어요. 게임 속 날짜는 그대로예요.`];
   lines.push(`골드 ${r.gold >= 0 ? '+' : ''}${fmt(r.gold)}G · 처치 ${fmt(r.kills)}마리 · 상점 판매 ${fmt(r.sales)}개`);
   if (r.gear) lines.push(`장비 ${r.gear}개가 새로 창고에 들어왔어요.`);
   if (r.fame) lines.push(`명성 ${r.fame > 0 ? '+' : ''}${r.fame}`);
