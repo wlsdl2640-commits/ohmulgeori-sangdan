@@ -1,0 +1,468 @@
+<title>약초 그림 부탁</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 배치: 한 줄 흐름 — 머리 → 순서(번호: 실제 차례) → 붙일 그림 셋(그림 · 크게 보기 · 저장) → 부탁 글 넷(글 · 복사) → 받은 뒤 볼 것.
+   색은 궁수 그림에서: 두건 초록 · 가죽 갈색 · 버클 금색. 그림은 밝은 회색 판 그대로 보인다 */
+:root {
+  --bg: #eeedf4; --surface: #f9f8fc; --panel: #dcd9e8; --fg: #1c1a26; --muted: #5a5770; --line: #c8c4d8;
+  --accent: #2f6a3a; --accent-fg: #ffffff; --label: #7a5a0c; --sheet: #c8ccd6; --code: #f3f1f9;
+  --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #5ea852; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark }
+*, *::before, *::after { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 820px; margin-inline: auto; display: grid; gap: 44px; grid-template-columns: minmax(0, 1fr) }
+h1, h2, h3, p, ul, ol, figure, pre { margin: 0 }
+ul, ol { padding: 0; list-style: none }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.15 }
+h1 { font-size: clamp(30px, 7vw, 42px) }
+h2 { font-size: 24px }
+h3 { font-size: 16px; font-weight: 600 }
+.top { display: grid; gap: 10px }
+.eyebrow { color: var(--label); font-size: 13px; font-weight: 600; letter-spacing: .04em }
+.lede { max-width: 36em }
+.sec { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) }
+.note { color: var(--muted); font-size: 14px; max-width: 44em }
+.steps { counter-reset: n; display: grid; gap: 12px; max-width: 46em }
+.steps li { counter-increment: n; padding-left: 34px; position: relative }
+.steps li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font: 400 15px/1 var(--font-display); background: var(--accent); color: var(--accent-fg); border-radius: 4px }
+.item { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) }
+.item .what { display: grid; gap: 2px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.msg { color: var(--muted); font-size: 13px }
+.msg:empty { display: none }
+.btn { font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.btn[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg) }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-fg) }
+.btn:disabled { opacity: .6; cursor: default }
+.btn:focus-visible { outline: 2px solid var(--label); outline-offset: 2px }
+.frame { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px }
+.frame img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.frame.zoomed img { width: var(--zw); max-width: none }
+.frame.soft img { image-rendering: auto }
+.attach { color: var(--label); font-size: 13px; font-weight: 600 }
+.req { font: 13.5px/1.65 var(--font-body); white-space: pre-wrap; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; max-height: 22em; overflow: auto; -webkit-user-select: text; user-select: text }
+.list { display: grid; gap: 10px; max-width: 46em }
+.list li { padding-left: 18px; position: relative }
+.list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; background: var(--label) }
+
+.mock { position: relative; width: 100%; aspect-ratio: 2172 / 724; container-type: inline-size; border: 2px solid #000; overflow: hidden; border-radius: 6px; background: #c9d6c2; }
+.mock .b { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 2.9cqw; line-height: 1.25; color: #f2f4e8; box-sizing: border-box; border-top: 1px dashed rgba(0, 0, 0, .45); padding: 0 1cqw; }
+.pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style><main class="wrap">
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 약초</p><h1>약초 그림 부탁</h1><p class="lede">지금 있는 네 지역에 나오는 약초 열네 가지의 군락지, 피어나는 모습, 가방 아이콘을 GPT에서 뽑을 부탁 글 열다섯 개입니다.</p></header>
+  <section class="sec"><div class="what item"><h2>GPT에 붙일 그림 5장</h2><p class="note">①은 화풍 기준, ② ~ ⑤는 그 약초가 자라는 지역의 게임 화면(캐릭터 크기 · 땅 색 · 빛 기준)입니다.</p><p class="note" id="save-hint">저장 단추가 보이지 않으면 그림을 길게 눌러 저장해 주세요.</p></div><div class="item"><div class="what"><h3>어느 부탁에 어느 그림을 붙이나</h3></div><ul class="list"><li>① 재료 그림 모음 — 모든 부탁</li><li>② 평원 — 1 히포크리초 · 2 은엽쑥 · 3 보름달꽃 · 13 핏빛꽃</li><li>③ 원시림 — 4 수심초 · 5 망령투구꽃 · 6 부레연꽃</li><li>④ 깊은 숲 — 7 에테르 이끼 · 8 요정방울꽃 · 9 세계수 새순 · 14 충혼초</li><li>⑤ 세계수 뿌리굴 — 10 메아리버섯 · 11 검은눈물이끼 · 12 만드라고라</li><li>15 아이콘은 ①만</li></ul></div>
+    
+    <div class="item"><div class="what"><h3>① 재료 그림 모음</h3><p class="note">글자와 틀은 무시하고 재료 그림의 느낌만 따르라고 적어 두었습니다.</p></div><div class="frame soft" id="f-st"><img src="ref_style.png" alt="① 재료 그림 모음"></div><div class="row"><button class="btn" type="button" data-zoom="f-st" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_style.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>② 게임 화면 — 평원</h3><p class="note">평원 약초에 붙입니다.</p></div><div class="frame" id="f-fp"><img src="ref_field_plains.png" alt="② 게임 화면 — 평원"></div><div class="row"><button class="btn" type="button" data-zoom="f-fp" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_field_plains.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>③ 게임 화면 — 원시림</h3><p class="note">원시림 약초에 붙입니다.</p></div><div class="frame" id="f-ff"><img src="ref_field_forest.png" alt="③ 게임 화면 — 원시림"></div><div class="row"><button class="btn" type="button" data-zoom="f-ff" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_field_forest.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>④ 게임 화면 — 깊은 숲</h3><p class="note">깊은 숲 약초에 붙입니다.</p></div><div class="frame" id="f-fd"><img src="ref_field_deep.png" alt="④ 게임 화면 — 깊은 숲"></div><div class="row"><button class="btn" type="button" data-zoom="f-fd" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_field_deep.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+    <div class="item"><div class="what"><h3>⑤ 게임 화면 — 세계수 뿌리굴</h3><p class="note">뿌리굴 약초에 붙입니다.</p></div><div class="frame" id="f-fr"><img src="ref_field_rootcave.png" alt="⑤ 게임 화면 — 세계수 뿌리굴"></div><div class="row"><button class="btn" type="button" data-zoom="f-fr" aria-pressed="false">크게 보기</button><button class="btn go" type="button" data-save="ref_field_rootcave.png" hidden>저장</button><span class="msg" role="status"></span></div></div>
+  </section>
+  <section class="sec"><div class="what item"><h2>부탁 글 15개</h2><p class="note">1 ~ 12번은 군락지(소형 · 중형 · 대형), 13 ~ 14번은 몬스터를 갈무리한 자리에서 피어나는 약초(세 단계), 15번은 가방 칸 아이콘입니다. 부탁 글마다 자라는 곳 설명이 들어 있습니다.</p></div><div class="item"><div class="what"><h3>1. 히포크리초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 1계층 곡창지대 평원.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ② 게임 화면 — 평원</p></div><pre class="req" id="req-1" tabindex="0">약초 군락지 — 히포크리초 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ② 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ② 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 1계층 곡창지대 평원: 밀밭과 풍차가 보이는 볕 좋은 들판, 흙길과 들꽃
+
+히포크리초
+· 마나가 풍부한 곳이면 어디서나 자라는 기본 약초. 잎이 넓고 둥근 초록 풀, 줄기 끝에 작은 흰 꽃
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-1">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>2. 은엽쑥 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 1계층 곡창지대 평원.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ② 게임 화면 — 평원</p></div><pre class="req" id="req-2" tabindex="0">약초 군락지 — 은엽쑥 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ② 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ② 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 1계층 곡창지대 평원: 밀밭과 풍차가 보이는 볕 좋은 들판, 흙길과 들꽃
+
+은엽쑥
+· 쑥을 바탕으로 한 약초. 깃털 꼴로 갈라진 잎의 뒷면이 은빛으로 반짝이고, 잎끝에서 옅은 연기 같은 향이 가늘게 피어오른다
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-2">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>3. 보름달꽃 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 1계층 곡창지대 평원.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ② 게임 화면 — 평원</p></div><pre class="req" id="req-3" tabindex="0">약초 군락지 — 보름달꽃 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ② 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ② 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 1계층 곡창지대 평원: 밀밭과 풍차가 보이는 볕 좋은 들판, 흙길과 들꽃
+
+보름달꽃
+· 밤에만 피는 꽃. 가는 줄기 끝에 보름달처럼 둥근 흰 꽃이 은은하게 빛나고 둘레에 작은 빛 점이 뜬다. 밤 장면에 놓이니 꽃 스스로 빛나게
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-3">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>4. 수심초 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2계층 원시림.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 — 원시림</p></div><pre class="req" id="req-4" tabindex="0">약초 군락지 — 수심초 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2계층 원시림: 굵은 나무와 덩굴이 우거진 어둑한 숲, 이끼 낀 흙길
+
+수심초
+· 물가 깊은 곳에서 자라는 풀. 길고 가는 푸른 잎이 물결처럼 휘고 잎끝에 물방울이 맺힌다. 바닥은 젖은 자갈과 고인 물
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-4">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>5. 망령투구꽃 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2계층 원시림.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 — 원시림</p></div><pre class="req" id="req-5" tabindex="0">약초 군락지 — 망령투구꽃 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2계층 원시림: 굵은 나무와 덩굴이 우거진 어둑한 숲, 이끼 낀 흙길
+
+망령투구꽃
+· 투구꽃을 바탕으로 한 독초. 투구 꼴의 짙은 보랏빛 꽃이 줄기를 따라 줄줄이 달리고, 꽃 속은 어둡게 비어 눈구멍처럼 보인다. 잎은 손바닥처럼 깊게 갈라짐
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-5">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>6. 부레연꽃 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2계층 원시림.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ③ 게임 화면 — 원시림</p></div><pre class="req" id="req-6" tabindex="0">약초 군락지 — 부레연꽃 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ③ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ③ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2계층 원시림: 굵은 나무와 덩굴이 우거진 어둑한 숲, 이끼 낀 흙길
+
+부레연꽃
+· 숲속 물웅덩이에 뜬 연꽃. 넓은 연잎 아래로 투명한 공기주머니가 주렁주렁 달리고 연분홍 꽃이 핀다. 바닥은 작은 물웅덩이
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-6">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>7. 에테르 이끼 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2-2 깊은 숲.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ④ 게임 화면 — 깊은 숲</p></div><pre class="req" id="req-7" tabindex="0">약초 군락지 — 에테르 이끼 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ④ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ④ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2-2 깊은 숲: 옛 엘프 거주지의 흔적과 에테르 등불이 남은 깊고 푸른 숲, 나무 사이로 햇빛 줄기가 든다
+
+에테르 이끼
+· 마력이 고인 이끼. 돌과 나무뿌리를 덮은 옅은 하늘빛 이끼가 은은하게 빛난다
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-7">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>8. 요정방울꽃 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2-2 깊은 숲.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ④ 게임 화면 — 깊은 숲</p></div><pre class="req" id="req-8" tabindex="0">약초 군락지 — 요정방울꽃 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ④ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ④ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2-2 깊은 숲: 옛 엘프 거주지의 흔적과 에테르 등불이 남은 깊고 푸른 숲, 나무 사이로 햇빛 줄기가 든다
+
+요정방울꽃
+· 은방울꽃을 바탕으로 한 꽃. 휜 줄기에 방울 꼴 흰 하늘빛 꽃이 조르르 달리고, 꽃 아래로 빛가루가 떨어진다
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-8">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>9. 세계수 새순 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2-2 깊은 숲.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ④ 게임 화면 — 깊은 숲</p></div><pre class="req" id="req-9" tabindex="0">약초 군락지 — 세계수 새순 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ④ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ④ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2-2 깊은 숲: 옛 엘프 거주지의 흔적과 에테르 등불이 남은 깊고 푸른 숲, 나무 사이로 햇빛 줄기가 든다
+
+세계수 새순
+· 세계수 밑동에서만 돋는 새순. 굵은 뿌리 조각 위에 금빛 테를 두른 연둣빛 새순이 한 쌍씩 돋아 있다. 가장 귀한 약초라 은은한 금빛이 돈다
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-9">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>10. 메아리버섯 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2-3 세계수 뿌리굴.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ⑤ 게임 화면 — 세계수 뿌리굴</p></div><pre class="req" id="req-10" tabindex="0">약초 군락지 — 메아리버섯 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ⑤ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ⑤ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2-3 세계수 뿌리굴: 썩어 가는 세계수의 나무 속, 뒤엉킨 뿌리와 검보라 수액, 햇빛이 들지 않는다
+
+메아리버섯
+· 동굴 버섯. 나팔처럼 벌어진 갓이 위를 향하고 옅은 푸른빛을 낸다. 갓 안쪽에 둥근 물결무늬. 바닥은 축축한 나무 속살
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-10">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>11. 검은눈물이끼 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2-3 세계수 뿌리굴.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ⑤ 게임 화면 — 세계수 뿌리굴</p></div><pre class="req" id="req-11" tabindex="0">약초 군락지 — 검은눈물이끼 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ⑤ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ⑤ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2-3 세계수 뿌리굴: 썩어 가는 세계수의 나무 속, 뒤엉킨 뿌리와 검보라 수액, 햇빛이 들지 않는다
+
+검은눈물이끼
+· 타락한 수액이 굳은 자리에 끼는 이끼. 검보랏빛 이끼 덩이에서 검은 수액이 눈물처럼 방울져 흐른다
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-11">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>12. 만드라고라 군락지</h3><p class="note">소형 · 중형 · 대형 한 줄. 2-3 세계수 뿌리굴.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ⑤ 게임 화면 — 세계수 뿌리굴</p></div><pre class="req" id="req-12" tabindex="0">약초 군락지 — 만드라고라 (소형 · 중형 · 대형 3개)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ⑤ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+군락지는 ⑤ 화면에서 캐릭터들이 서 있는 길 위, 캐릭터 바로 앞에 세워집니다. 캐릭터 키에 견주어 크기를 잡고, 그 땅 위에 놓았을 때 색과 빛이 어울리게 그려 주세요 (배경 · 캐릭터는 그리지 않는다).
+
+자라는 곳
+· 2-3 세계수 뿌리굴: 썩어 가는 세계수의 나무 속, 뒤엉킨 뿌리와 검보라 수액, 햇빛이 들지 않는다
+
+만드라고라
+· 넓은 잎 다발 아래로 통통한 뿌리 윗부분이 땅 위에 조금 드러난다 (얼굴은 그리지 않는다). 뿌리굴에서는 잎이 창백하다
+
+세 개를 그리는 법 (왼쪽부터 소형 · 중형 · 대형)
+· 소형: 한두 포기가 조금 모인 작은 무리. 캐릭터 무릎 높이
+· 중형: 네댓 포기가 뭉친 무리. 캐릭터 허리 높이, 너비는 소형의 두 배쯤
+· 대형: 열 포기쯤이 빽빽한 큰 군락. 캐릭터 가슴 높이, 너비는 소형의 세 배쯤. 가운데 포기가 가장 크다
+· 셋 모두 같은 약초 · 같은 색 · 같은 각도. 포기 수와 크기만 다르다
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-12">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>13. 핏빛꽃 (피어나는 약초)</h3><p class="note">자라는 모습 세 단계. 갈무리가 끝난 자리에서 핍니다.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ② 게임 화면 — 평원</p></div><pre class="req" id="req-13" tabindex="0">피어나는 약초 — 핏빛꽃 (자라는 모습 3단계)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ② 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+이 약초는 군락지가 아니라, 몬스터를 쓰러뜨린 자리에서 한 포기가 곧바로 자라납니다. 자라는 모습 세 단계를 그려 주세요.
+
+자라는 곳
+· 1계층 곡창지대 평원: 밀밭과 풍차가 보이는 볕 좋은 들판, 흙길과 들꽃
+
+핏빛꽃
+· 몬스터가 쓰러진 자리의 피를 빨아들여 곧바로 피어나는 꽃. 검붉은 줄기, 피처럼 짙은 붉은 꽃잎 다섯 장, 꽃술은 검다. 뿌리 둘레 땅이 붉게 젖어 있다
+
+세 단계 (왼쪽부터)
+1. 땅의 붉은 얼룩에서 검붉은 싹이 막 솟음
+2. 줄기가 자라고 붉은 봉오리가 맺힘
+3. 꽃이 활짝 핌 — 꽃잎 끝에서 붉은 방울이 떨어진다
+· 세 단계 모두 같은 자리 · 같은 각도. 다 자란 3번은 캐릭터 무릎에서 허리 사이 높이
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-13">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>14. 충혼초 (피어나는 약초)</h3><p class="note">자라는 모습 세 단계. 갈무리가 끝난 자리에서 핍니다.</p><p class="attach">붙일 그림: ① 재료 그림 모음 + ④ 게임 화면 — 깊은 숲</p></div><pre class="req" id="req-14" tabindex="0">피어나는 약초 — 충혼초 (자라는 모습 3단계)
+
+붙인 그림 두 장: ① 재료 그림 모음 — 화풍과 점 굵기의 기준. ④ 게임 화면 — 캐릭터 크기 · 땅 색 · 빛의 기준.
+이 약초는 군락지가 아니라, 몬스터를 쓰러뜨린 자리에서 한 포기가 곧바로 자라납니다. 자라는 모습 세 단계를 그려 주세요.
+
+자라는 곳
+· 2-2 깊은 숲: 옛 엘프 거주지의 흔적과 에테르 등불이 남은 깊고 푸른 숲, 나무 사이로 햇빛 줄기가 든다
+
+충혼초
+· 동충하초를 바탕으로 한 약초. 죽은 벌레 마물의 껍데기를 뚫고 주황빛 자루가 솟는다. 자루 끝은 곤봉 꼴로 부풀어 은은하게 빛난다
+
+세 단계 (왼쪽부터)
+1. 갈색 벌레 껍데기 조각 위로 작은 주황 돌기가 돋음
+2. 자루 두세 개가 손가락 길이로 자람
+3. 자루 서너 개가 다 자라 끝이 빛나고 빛 포자가 떠오른다
+· 세 단계 모두 같은 자리 · 같은 각도. 다 자란 3번은 캐릭터 무릎에서 허리 사이 높이
+
+크기
+· 가로 : 세로 = 3 : 1 (예: 1800 × 600). 세 개를 가로 한 줄로, 바닥 줄(땅)을 같은 높이에 맞추고 서로 닿지 않게
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 점 굵기 · 굵은 어두운 테두리 · 또렷한 명암
+· 옆에서 본 모습(게임이 옆에서 보는 화면이다). 땅에 뿌리내린 채 서 있고, 밑에는 작은 바닥 조각만
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 사람 · 동물 · 몬스터는 그리지 않는다. 다른 작품의 그림을 닮지 않게 새로 디자인한다
+· 붙인 그림에서는 화풍 · 크기 · 색감만 따른다. ①에 적힌 글자와 금빛 틀은 무시한다</pre><div class="row"><button class="btn go" type="button" data-copy="req-14">글 복사</button><span class="msg" role="status"></span></div></div><div class="item"><div class="what"><h3>15. 새 약초 아이콘</h3><p class="note">가방 칸 그림 열 개.</p><p class="attach">붙일 그림: ① 재료 그림 모음</p></div><pre class="req" id="req-15" tabindex="0">새 약초 아이콘 10개 (한 장에 모아서)
+
+붙인 그림: ① 재료 그림 모음 — 화풍과 크기의 기준.
+게임 가방 칸에 들어갈 약초 그림 10개를 그려 주세요. 캐낸 뒤의 한 포기(뿌리째 뽑았거나 꺾은 것)입니다. 가로 5칸 × 세로 2줄.
+
+첫째 줄
+1. 핏빛꽃: 검붉은 줄기에 피처럼 붉은 꽃 한 송이, 꽃술은 검다
+2. 보름달꽃: 보름달처럼 둥글고 은은히 빛나는 흰 꽃 한 송이
+3. 충혼초: 벌레 껍데기 조각에서 솟은 주황빛 곤봉 꼴 자루 두세 개
+4. 은엽쑥: 깃털 꼴 잎 다발, 잎 뒷면이 은빛
+5. 망령투구꽃: 투구 꼴 보랏빛 꽃이 줄줄이 달린 줄기
+
+둘째 줄
+6. 부레연꽃: 공기주머니가 달린 연잎과 연분홍 꽃
+7. 메아리버섯: 나팔 꼴 갓의 옅은 푸른 버섯 두 송이
+8. 요정방울꽃: 방울 꼴 흰 하늘빛 꽃이 달린 휜 줄기, 빛가루
+9. 세계수 새순: 금빛 테를 두른 연둣빛 새순 한 쌍
+10. 검은눈물이끼: 검보랏빛 이끼 덩이, 검은 방울이 맺힘
+
+크기
+· 가로 : 세로 = 5 : 2 (예: 2000 × 800)
+
+공통 규격
+· 도트 그림. 붙인 ① 재료 그림과 같은 느낌: 굵은 어두운 테두리, 또렷한 명암, 비스듬히 위에서 본 각도
+· 바탕은 한 가지 색으로만 꽉 채운다: 선명한 자홍색 (#FF00FF). 칸 나눔 줄 · 번호 · 글자 · 그림자 없이
+· 물건끼리 닿지 않게 같은 간격으로. 다른 작품의 아이콘을 닮지 않게 새로 디자인한다
+· ①에 적힌 글자와 금빛 틀은 무시하고 왼쪽의 재료 그림만 본다</pre><div class="row"><button class="btn go" type="button" data-copy="req-15">글 복사</button><span class="msg" role="status"></span></div></div></section>
+</main>
+<script>
+const $$ = s => Array.from(document.querySelectorAll(s));
+const msgOf = b => b.parentElement.querySelector('.msg');
+const W = { 'f-st': 710, 'f-fp': 1440, 'f-ff': 1440, 'f-fd': 1440, 'f-fr': 1440 };
+$$('[data-zoom]').forEach(b => { const f = document.getElementById(b.dataset.zoom); f.style.setProperty('--zw', W[b.dataset.zoom] + 'px');
+  b.addEventListener('click', () => { const on = f.classList.toggle('zoomed'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); });
+// 글 복사: 안 되면 글을 골라 둔다
+$$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const pre = document.getElementById(b.dataset.copy), msg = msgOf(b);
+  try { await navigator.clipboard.writeText(pre.textContent); msg.textContent = '복사했습니다.'; }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); pre.focus(); msg.textContent = '여기서는 바로 복사가 안 됩니다. 글을 골라 두었으니 길게 눌러 복사해 주세요.'; }
+}));
+// 저장 (보는 쪽에서 저장을 받아 줄 때만 단추를 보인다)
+(async () => {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+  if (!dl) return;
+  document.getElementById('save-hint').hidden = true;
+  $$('[data-save]').forEach(b => { b.hidden = false; b.addEventListener('click', async () => {
+    const msg = msgOf(b); b.disabled = true; msg.textContent = '';
+    try { const blob = await (await fetch(b.dataset.save)).blob(); await dl.save({ filename: b.dataset.save, data: blob }); msg.textContent = '저장했습니다.'; }
+    catch (e) { const c = e && e.code; msg.textContent = c === 'declined' ? '저장을 취소했습니다.' : c === 'rate_limited' ? '잠시 뒤에 다시 눌러 주세요.' : '여기서는 저장할 수 없습니다. 그림을 길게 눌러 저장해 주세요.'; }
+    b.disabled = false; }); });
+})();
+</script>
