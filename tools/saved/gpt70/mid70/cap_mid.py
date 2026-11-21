@@ -31,6 +31,7 @@ SC = {   # 이름: (stage, lv, 전사 수, 첫 싸움 자리, 더 할 것)
     'fight': (12, 14, 3, 14, FOES(['wolf', 'rat', 'rabbit'], 12, 6000) + TOUGH),
     'mons':  (12, 14, 1, 14, FOES(['scarecrow', 'boar', 'aboar'], 12, 60000) + TOUGH),
     'solo':  (5, 12, 1, 300, ''),
+    'duel':  (12, 14, 1, 34, FOES([os.environ.get('FOE', 'wolf')], 12, int(os.environ.get('GHP', 900))) + ' J1.trap.p = 0; J1.mimic.p = 0;'),   # 전사 하나 · 몬스터 하나 (11-22 사용자 「전사 하나, 몬스터 하나만 넣어서 보여줘」) — 걷기 → 만남 → 싸움 → 쓰러뜨림 → 다시 걷기
     'ffight': (12, 14, 3, 14, FOES(['vinesnake', 'cflower', 'stump'], 12, 6000) + TOUGH),
     'ffight2': (12, 14, 3, 14, FOES(['spotshroom', 'ibeetle', 'mgolem'], 12, 6000) + TOUGH),
     'fguard': (12, 14, 3, 14, FOES(['fguard'], 12, int(os.environ.get('GHP', 60000))) + TOUGH),   # HP = 환경 GHP (작게 주면 쓰러지는 그림까지)

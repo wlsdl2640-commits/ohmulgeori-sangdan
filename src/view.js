@@ -355,7 +355,7 @@ const WIDE_FOE = [[150, 178], [178, 160], [184, 192], [206, 172], [212, 152], [2
 // 11-22 04:59 사용자 「전위 최대 3 중위 최대 3 후위 최대 3으로 해서 자리를 3곳으로 고정하되, 짐꾼은 후위에서도 항상 중앙」:
 //   줄 셋(전위 · 중위 · 후위 — job72.js posOf) × 자리 셋(위 · 가운데 · 아래). 한 줄에 한 명이면 가운데, 둘이면 위 · 아래, 셋이면 다 채운다. 짐꾼은 늘 후위 가운데.
 //   넷째부터(옛 저장 · 원정대)는 그 줄 뒤에 반 칸 물려 세운다. 쓰러진 사람(들것)은 맨 뒤.
-const WIDE_COLX = [102, 72, 42], WIDE_ROWY = [155, 174, 193], WIDE_ROWDX = [9, 0, 9];   // 위 · 아래 자리는 가운데보다 조금 앞 (‹ 꼴 — 세 사람이 겹쳐 가리지 않게)   // 줄 x(전위 → 후위) · 자리 y(위 · 가운데 · 아래)
+const WIDE_COLX = [102, 72, 42], WIDE_ROWY = [155, 174, 193], WIDE_ROWDX = [0, 0, 0];   // 11-22 05:09 사용자 「가려도 상관 없고」 — 세 자리는 한 줄로   // 줄 x(전위 → 후위) · 자리 y(위 · 가운데 · 아래)
 function formSlotsWide(team) {
   const cols = [[], [], []], downs = [], out = [];
   team.forEach((a, i) => { if (a.down) downs.push(i); else cols[Math.max(0, Math.min(2, posOf(a)))].push(i); });
@@ -363,7 +363,7 @@ function formSlotsWide(team) {
   cols.forEach((L, ci) => {
     const x = WIDE_COLX[ci], pi = ci === 2 ? L.findIndex(i => jobBase(team[i].cls) === 'porter') : -1;
     let rest = L.slice(), order;
-    if (pi >= 0) { put(L[pi], x - 4, WIDE_ROWY[1]); rest.splice(pi, 1); order = [0, 2]; }   // 짐꾼은 가운데 · 나머지는 위 → 아래
+    if (pi >= 0) { put(L[pi], x, WIDE_ROWY[1]); rest.splice(pi, 1); order = [0, 2]; }   // 짐꾼은 가운데 · 나머지는 위 → 아래
     else order = rest.length === 1 ? [1] : rest.length === 2 ? [0, 2] : [0, 1, 2];
     rest.forEach((i, k) => { if (k < order.length) put(i, x + WIDE_ROWDX[order[k]], WIDE_ROWY[order[k]]); else { const m = k - order.length; put(i, x - 13 - 8 * Math.floor(m / 2), m % 2 ? 182 : 166); } });
   });
@@ -393,18 +393,20 @@ function formSlots71(team) {   // 빌드 69 ~ 71: 줄마다 깊이로 흩어 서
 }
 // 과장 동작 (11-22 04:59 사용자 「우선 전사부터 움직임 영상처럼 추가하거나, 수정」 — 사용자가 보여 준 굵은 도트 오토배틀처럼): 그림 장은 그대로 두고 몸 전체를 튀기고 · 찌그리고 · 기울인다.
 //   걷기 = 통통 튐(디딜 때 납작) · 서 있기 = 숨쉬기 · 공격 = 뒤로 젖혔다가 맞히는 때에 쭉 내지르고 늘어남 · 맞음 = 움찔 찌그러짐. JUICE72에 직업(1차 뿌리)을 넣으면 그 직업에 켜진다.
-const JUICE72 = { warrior: { hop: 2.6, step: 8.5, lean: 3.5, lunge: 6, stretch: 0.16 } };
+const JUICE72 = { warrior: { hop: 2.2, step: 8.5, crouch: 0.06, lunge: 5, stretch: 0.10 } };
+// 11-22 05:09 사용자 「왜 싸우다가 뒤로 가는 거야?」: 공격 준비로 몸을 뒤로 빼던 것(lean)을 없앴다 — 뒤로는 한 칸도 가지 않는다. 준비 = 제자리에서 살짝 웅크림, 맞히는 때 = 앞으로 내지름, 그 뒤 = 부드럽게 제자리로.
+const j72ease = x => x * x * (3 - 2 * x);
 function juice72(a, i, t, o) {
   const J = JUICE72[jobBase(a.cls)], r = { dx: 0, dy: 0, sx: 1, sy: 1, rot: 0 };
   if (o.mo) {   // 공격: e = 시작부터 지난 시간 · hit = 맞히는 때
-    const hit = Math.max(0.12, o.mo.hit || 0.3), u = o.mo.e / hit;
-    if (u < 1) { const k = Math.sin(Math.min(1, u / 0.75) * Math.PI / 2), w = u > 0.75 ? (u - 0.75) / 0.25 : 0;   // 젖히기 → 마지막 1/4에 앞으로 튀어 나감
-      r.dx = -J.lean * k * (1 - w) + J.lunge * w * w; r.rot = -0.10 * k * (1 - w) + 0.07 * w; r.sx = 1 - 0.05 * k * (1 - w) + J.stretch * w; r.sy = 1 + 0.05 * k * (1 - w) - J.stretch * 0.6 * w; }
-    else { const d = Math.min(1, (o.mo.e - hit) / 0.22), k = 1 - d; r.dx = J.lunge * k; r.rot = 0.07 * k; r.sx = 1 + J.stretch * k * (1 - d * 0.5); r.sy = 1 - J.stretch * 0.6 * k; }   // 맞힌 뒤 0.22초에 걸쳐 돌아온다
-  } else if (o.walk) { const ph = t * (o.run ? J.step * 1.25 : J.step) + i * 1.7, h = Math.abs(Math.sin(ph)), land = h < 0.22 ? 1 - h / 0.22 : 0;
-    r.dy = -Math.round(h * J.hop * 2) / 2; r.sy = 1 - 0.07 * land + 0.03 * h; r.sx = 1 + 0.06 * land - 0.02 * h; r.rot = 0.03 * Math.sin(ph); }
-  else { const b = Math.sin(t * (o.fighting ? 5 : 2.6) + i * 1.3); r.sy = 1 + 0.022 * b; r.sx = 1 - 0.014 * b; }
-  if (o.hurt) { const k = Math.min(1, -o.hurt / 3); r.sx *= 1 - 0.10 * k; r.sy *= 1 + 0.08 * k; r.rot -= 0.10 * k; }
+    const hit = Math.max(0.12, o.mo.hit || 0.3), e = o.mo.e, pre = Math.min(0.22, hit * 0.6);
+    if (e < hit - pre) { const k = j72ease(Math.min(1, e / Math.max(0.05, hit - pre))); r.sy = 1 - J.crouch * k; r.sx = 1 + J.crouch * 0.6 * k; }   // 웅크림 (제자리)
+    else if (e < hit) { const k = j72ease((e - (hit - pre)) / pre); r.dx = J.lunge * k; r.sy = 1 - J.crouch * (1 - k) - J.stretch * 0.5 * k; r.sx = 1 + J.crouch * 0.6 * (1 - k) + J.stretch * k; r.rot = 0.05 * k; }   // 내지름
+    else { const k = 1 - j72ease(Math.min(1, (e - hit) / 0.3)); r.dx = J.lunge * k; r.sx = 1 + J.stretch * k; r.sy = 1 - J.stretch * 0.5 * k; r.rot = 0.05 * k; }   // 돌아옴
+  } else if (o.walk) { const ph = t * (o.run ? J.step * 1.25 : J.step) + i * 1.7, h = Math.abs(Math.sin(ph)), land = h < 0.25 ? 1 - h / 0.25 : 0;
+    r.dy = -h * J.hop; r.sy = 1 - 0.05 * land + 0.02 * h; r.sx = 1 + 0.04 * land - 0.015 * h; }
+  else { const b = Math.sin(t * (o.fighting ? 4.2 : 2.6) + i * 1.3); r.sy = 1 + 0.02 * b; r.sx = 1 - 0.012 * b; }
+  if (o.hurt) { const k = Math.min(1, -o.hurt / 1.2); r.sx *= 1 + 0.07 * k; r.sy *= 1 - 0.08 * k; }   // 맞음: 제자리에서 움찔 (뒤로 밀리지 않는다)
   return r;
 }
 const ZS = 1.25;   // 옆모습 배율
@@ -452,7 +454,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
       if (k[1] === 'P' || (k[0] === 'f' && !fighting)) { delete mv.cur[k]; mv.on[k] = 0; continue; }
       const q = pos[k], c = mv.cur[k];
       if (!c || Math.abs(c[0] - q[0]) > 150) { mv.cur[k] = [q[0], q[1]]; mv.on[k] = 0; continue; }
-      const dx = q[0] - c[0], dy = q[1] - c[1], d = Math.hypot(dx, dy), sp = (k[0] === 'a' ? 78 : 55) * dtv;
+      const dx = q[0] - c[0], dy = q[1] - c[1], d = Math.hypot(dx, dy), sp = (k[0] === 'a' ? 46 : 40) * dtv;   // 걷는 빠르기 (칸/초)
       if (d <= sp || d < 0.6) { c[0] = q[0]; c[1] = q[1]; mv.on[k] = 0; } else { c[0] += dx / d * sp; c[1] += dy / d * sp; mv.on[k] = d > 2 ? 1 : 0; }
       q[0] = Math.round(c[0] * 2) / 2; q[1] = Math.round(c[1] * 2) / 2;
     }
@@ -580,8 +582,8 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
     const mo = !a.down && !falling ? motNow(a, t) : null, mF = mo && (rk ? rideDo(a, () => pxsMotFr(mo.mk, mo.f)) : pxsMotFr(mo.mk, mo.f));   // 공격 동작 (빌드 40)
     const msk = mo && mo.sk && SKFX[mo.sk], dashK = msk && msk.dash && mo.f >= 3 && mo.f <= 6 ? 1.8 : 1;   // 스킬 효과 (빌드 41): 돌진은 더 멀리
     const mjy = mo && !rk ? Math.round(motJy(mo) * 2 * z) : 0;   // 도약 찌르기 (빌드 42): 동작이 뛰는 높이를 정한다
-    const rcT = V.flash0['a' + a.id], rc = rcT != null && t >= rcT && t - rcT < 0.18 ? -3 * (1 - (t - rcT) / 0.18) : 0;   // 넓은 맵 (11-22): 맞으면 살짝 뒤로 밀린다
-    const dx = ((mo ? (hw ? 0 : mF.dx * 2 * z * dashK) : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0) + rc) * dir, y = y0 + jy + mjy;   // 리마스터 장은 그림 안에서 몸이 나간다 (뒷발이 닻)
+    const rcT = V.flash0['a' + a.id], rc = rcT != null && t >= rcT && t - rcT < 0.18 ? -1.2 * (1 - (t - rcT) / 0.18) : 0;   // 맞은 세기 (juice72의 움찔에 쓴다 — 05:09부터 자리는 밀리지 않는다)
+    const dx = ((mo ? (hw ? 0 : mF.dx * 2 * z * dashK) : lunging && melee && atkF ? 8 : 0) + (jy ? 10 : 0)) * dir, y = y0 + jy + mjy;   // 리마스터 장은 그림 안에서 몸이 나간다 (뒷발이 닻)
     if (mo && (!hw || (mo.sk && SKFX[mo.sk] && !SKFX[mo.sk].cast))) post.push(g => { if (hw) hdSkFx(g, a, mo, SKFX[mo.sk], x0, y, dir, t); else motFx(g, a, mo, x0 + ((jy ? 10 : 0) + (dashK > 1 ? mF.dx * 2 * z * (dashK - 1) : 0)) * dir, y, z, dir, t); });   // 리마스터 전사: 스킬 빛을 그림의 칼 자리에 (hd70.js hdSkFx — 엔진 그림 칸에 맞춘 motFx는 자리가 안 맞는다)
     if (workDraw(draws, e, a, t)) return;   // 빌드 72: 갈무리 · 약초 캐는 짐꾼은 그 자리에서 작업 자세로 (herb72.js)
     const jc = JUICE72[jobBase(a.cls)] ? juice72(a, i, t, { walk: (walking || (V.mv && V.mv.on['a' + a.id] && !mo)) && !falling, mo, fighting, hurt: rc, run: e.mode === 'return' }) : null;
