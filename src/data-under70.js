@@ -55,7 +55,7 @@ Object.assign(MONS, {
   ratburglar: { name: '쥐인간 금고털이', plan: 'biped', body: '#7a6a5a', dark: '#4a3e34', skin: '#8a7a6a', mh: 2.0, ma: 2.1, md: 1.1, spd: 1.3, eva: 0.2, minS: 1, hits: 2,
     sta: ST70('stun', 0.12, 1.2), drops: [['burglar_tools', 0.5]] },
   huntdog:    { name: '형제단 사냥개',   plan: 'quad',  body: '#3a3434', dark: '#1c1818', mh: 2.2, ma: 2.2, md: 1.2, spd: 1.5, eva: 0.12, minS: 1, hits: 2,
-    sta: ST70('bleed', 0.25, 6, 0.25), drops: [['spike_collar', 0.5], ['raw_meat', 0.3]] },
+    sta: ST70('bleed', 0.25, 6, 0.25), drops: [['spike_collar', 0.5]] },
   manhunter:  { name: '사슬잡이',        plan: 'biped', body: '#5a4a3e', dark: '#2e241e', skin: '#c89070', mh: 2.8, ma: 2.2, md: 1.8, spd: 0.95, minS: 3,
     sta: ST70('para', 0.2, 2), drops: [['hunter_chain', 0.45]] },
   smuggler:   { name: '짐짝 밀수꾼',     plan: 'biped', body: '#6a5a44', dark: '#3a3024', skin: '#c89a78', mh: 2.4, ma: 2.0, md: 1.6, spd: 1.0, minS: 5,

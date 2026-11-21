@@ -4,7 +4,7 @@
    상태 S.cook = { known: {요리 id: 찾은 날}, made: {요리 id: 만든 수}, pot: [재료 id …], sus: 수상한 죽 수 }.
    솥에 넣은 재료는 창고에서 빠지고, 빼면 돌아간다. 「요리하기」는 솥 안 재료와 그 수가 레시피와 딱 맞아야 그 요리 · 아니면 수상한 죽(재료는 쓴다). */
 const cookState = () => { const C = S.cook || (S.cook = { known: {}, made: {}, pot: [], sus: 0 }); C.known = C.known || {}; C.made = C.made || {}; C.pot = C.pot || []; return C; };
-const knows = id => !!(S && cookState().known[id]);
+const knows = id => !!(S && ((typeof FOOD_START !== 'undefined' && FOOD_START[id]) || cookState().known[id]));   // 빌드 72: 처음부터 아는 레시피 (food72.js)
 function learnRecipe(id, how) {
   const C = cookState(); if (!FOODS[id] || C.known[id]) return false;
   C.known[id] = today() + 1;
@@ -15,7 +15,7 @@ WIN_TITLE.cook = '요리';
 // 솥에 넣을 수 있는 재료 = 어느 레시피에든 들어가는 것 (+ 무정란)
 const COOK_MATS = [...new Set(FOOD_IDS.flatMap(id => Object.keys(FOODS[id].need)).concat(['egg_none']))].filter(k => ITEMS[k]);
 const COOK_TABS = [['all', '전체'], ['meat', '고기'], ['veg', '채소'], ['sea', '해산물'], ['grain', '곡물·양념'], ['egg', '알'], ['herb', '약초'], ['etc', '부속품']];
-const cookCat = k => { const I = ITEMS[k]; if (I.veg) return 'veg'; if (I.sea) return 'sea'; if (k === 'egg_none') return 'egg'; if (k === 'raw_meat' || k === 'frog_leg') return 'meat'; if (I.herb) return 'herb'; if (KITCHEN_BUY[k]) return 'grain'; return 'etc'; };
+const cookCat = k => { const I = ITEMS[k]; if (I.veg) return 'veg'; if (I.sea) return 'sea'; if (k === 'egg_none') return 'egg'; if (I.mmeat) return 'meat'; if (I.herb) return 'herb'; if (KITCHEN_BUY[k]) return 'grain'; return 'etc'; };
 /* ── 장면 (시안 cook68.js를 게임 시계로) ── */
 const CKV = { anims: [], cook: null, res: null, raf: 0, img: {} };
 const CK_W = 196, CK_H = 128, CK_PC = { h: '#ffd8a8', l: '#f4a868', b: '#c8703a', s: '#a45428', d: '#7a3a1c', k: '#4a200e' };

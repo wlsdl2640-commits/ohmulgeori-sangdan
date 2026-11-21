@@ -1847,6 +1847,7 @@ function migrateSkillIds() {
   });
   const inv = S.inv || {};
   [['book_rally', 'book_resolve'], ['book_hymn', 'book_chant']].forEach(([f, t]) => { if (inv[f]) { inv[t] = (inv[t] || 0) + inv[f]; delete inv[f]; } });
+  if (typeof food72Gone === 'function') food72Gone(inv);   // 빌드 72: 날고기 · 향신료 · 옛 도시락은 돈으로 돌려줌
   for (const k in inv) if (!ITEMS[k]) delete inv[k];
 }
 // 새 전투 화면 안내 (한 번만)
