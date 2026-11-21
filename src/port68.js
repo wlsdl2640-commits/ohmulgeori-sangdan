@@ -124,8 +124,8 @@ FLOOR_TXT.port = () => { const P = portState(); return P.ship ? `「${PORT.ship}
 HQX.port = () => { const P = portState(); return P.ship ? '' : `<div class="hqx-sign">다음 배<br>D-${Math.max(0, P.next - today())}</div>`; };
 HQX.place = el => {
   const sg = el.querySelector('.hqx-sign'); if (!sg || !HQ.cvs) return;
-  const K = A3_PORT.geo(hqGeo(A3_PORT.zoom)), cr = HQ.cvs.getBoundingClientRect(), sr = el.getBoundingClientRect(), sc = cr.width / K.W;
-  sg.style.left = Math.round(cr.left - sr.left + 99 * sc) + 'px'; sg.style.top = Math.round(cr.top - sr.top + (K.FB + 8) * sc) + 'px';
+  const K = A3_PORT.geo(hqGeo(A3_PORT.zoom)), cr = HQ.cvs.getBoundingClientRect(), sr = el.getBoundingClientRect(), sc = cr.width / K.W / UIZ;   // UIZ: 줄인 화면 안 픽셀로 (ui.js fitUI)
+  sg.style.left = Math.round((cr.left - sr.left) / UIZ + 99 * sc) + 'px'; sg.style.top = Math.round((cr.top - sr.top) / UIZ + (K.FB + 8) * sc) + 'px';
   sg.style.fontSize = Math.max(9, Math.round(4.6 * sc)) + 'px';
 };
 

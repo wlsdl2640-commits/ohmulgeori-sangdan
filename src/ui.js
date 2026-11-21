@@ -169,6 +169,15 @@ function updateOverlay() {
   // 작은 창 아래 글은 할 일이 있을 때만 (던전 입구에서 기다리는 중)
   B.hidden = e.wait !== 'gate'; if (!B.hidden) B.textContent = '던전 입구 · 눌러서 정하기';
 }
+// 화면 비율 (11-21 17:32 사용자): 가로로 든 폰은 CSS 높이가 400px쯤이라 단추 · 창이 화면에 비해 너무 컸다 → 높이 UI_REF_H짜리 화면으로 보고 #app을 통째로 줄인다
+const UI_REF_H = 500, UI_Z_MIN = 0.72;
+let UIZ = 1;
+function fitUI() {
+  const w = window.innerWidth, h = window.innerHeight;
+  UIZ = w > h ? Math.max(UI_Z_MIN, Math.min(1, h / UI_REF_H)) : 1;
+  document.documentElement.style.setProperty('--z', String(Math.round(UIZ * 1000) / 1000));
+}
+if (typeof window !== 'undefined') { fitUI(); window.addEventListener('resize', fitUI); }
 function renderChips() {
   const html = S.parties.slice().sort((a, b) => (a.raidOnly ? 1 : 0) - (b.raidOnly ? 1 : 0)).map(p => {   // 레이드대는 맨 끝
     const e = p.exp, cls = !e ? '' : e.foes.length ? 'fight' : e.camp ? 'camp' : e.wait ? 'wait' : e.mode === 'return' ? 'back' : 'go';

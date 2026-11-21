@@ -150,7 +150,8 @@ function ckDraw(now) {
   }
   if (CKV.cook && now - CKV.cook.t0 < CK_T.cook && now - CKV.cook.t0 > CK_T.cook - 0.22) { g.globalAlpha = Math.min(1, (now - CKV.cook.t0 - (CK_T.cook - 0.22)) / 0.22) * 0.85; qF(g, 0, 0, CK_W, CK_H, '#fff4d8'); g.globalAlpha = 1; }
   // 글씨 · 날아가는 그림 (화면 위)
-  const fx = document.getElementById('ck-fx'), cr = cv.getBoundingClientRect(), sc = cr.width / CK_W;
+  const fx = document.getElementById('ck-fx'), cr = cv.getBoundingClientRect(), scv = cr.width / CK_W;   // scv = 화면 픽셀(날아가는 그림은 body에) · sc = 줄인 화면 안 픽셀(UIZ)
+  let sc = scv / UIZ;
   if (fx) {
     let html = '';
     for (const a of CKV.anims) { const e = now - a.t0 - (a.type === 'plop' ? CK_T.pop + CK_T.hang + CK_T.fall : 0); if (e >= 0 && e < 0.62) html += `<div class="ckpop" style="left:${(cx + a.dx) * sc}px;top:${((a.type === 'plop' ? 34 : 30) - e * 22) * sc}px;opacity:${e > 0.4 ? 1 - (e - 0.4) / 0.22 : 1}">${a.type === 'plop' ? '퐁당!' : '쏙!'}</div>`; }
@@ -160,6 +161,7 @@ function ckDraw(now) {
   let fly = document.getElementById('ck-fly');
   const rem = CKV.anims.find(a => a.type === 'rem' && now - a.t0 >= CK_T.rise && now - a.t0 < CK_T.rise + CK_T.fly);
   if (rem) {
+    sc = scv;
     if (!fly) { fly = document.createElement('img'); fly.id = 'ck-fly'; fly.className = 'ckfly'; document.body.appendChild(fly); }
     const f = Math.min(1, (now - rem.t0 - CK_T.rise) / CK_T.fly), sx = cr.left + (cx + rem.dx) * sc, sy = cr.top + 22 * sc;
     const cell = document.querySelector(`#ck-st [data-k="${rem.k}"]`), tc = cell ? cell.getBoundingClientRect() : { left: sx, top: sy + 200, width: 0, height: 0 };
