@@ -934,3 +934,13 @@ details.skl summary b { color: var(--ink); }
 @keyframes enhScrap { to { opacity: 1; } }
 .enhst.art .enh-res { z-index: 3; }
 .enh-fx.resfx.rd { width: 200px; height: 200px; margin-left: -100px; top: 64px; --t: .95s; z-index: 1; }
+
+/* 빌드 72: 강화 빛 — +5부터 다섯 강마다 한 단계 (11-21 14:59 사용자). 도트답게 계단 테 + 끊어 깜빡임 */
+.rqa.eg1 { box-shadow: 0 0 0 1px #e8ecf4; }
+.rqa.eg2 { box-shadow: 0 0 0 1px #8ad8ff, 0 0 0 2px #2a6a9a; }
+.rqa.eg3 { box-shadow: 0 0 0 1px #ffe070, 0 0 0 2px #b07a10; animation: egPulse 1.6s steps(4) infinite; }
+.rqa.eg4 { box-shadow: 0 0 0 1px #ffb040, 0 0 0 2px #e05a10, 0 0 0 3px #7a2a08; animation: egPulse 1.3s steps(4) infinite; }
+.rqa.eg5 { box-shadow: 0 0 0 1px #ff7090, 0 0 0 2px #e02050, 0 0 0 3px #8a1040, 0 0 0 4px #40082a; animation: egPulse 1s steps(4) infinite; }
+.rqa.eg6 { box-shadow: 0 0 0 1px #fff, 0 0 0 2px #ffe070, 0 0 0 3px #ff70c0, 0 0 0 4px #70c0ff; animation: egPulse .8s steps(4) infinite, egHue 2.4s steps(8) infinite; }
+@keyframes egPulse { 50% { filter: brightness(1.35); } }
+@keyframes egHue { to { filter: hue-rotate(360deg) brightness(1.2); } }

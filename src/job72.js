@@ -38,7 +38,7 @@ const JOB1_TXT = {
   archer: [['선제 사격', '싸움이 시작되면 먼저 쏜다'], ['엄호 사격', '전위가 맞으면 15% 확률로 기본 공격을 한 번 더 (전위가 없으면 앞의 중위가 맞을 때)'], ['정밀 사격', '기본 공격이 적의 회피에 빗나가지 않는다']],
   mage: [['마나 공급', '최대 마나 3배 · 마나가 30% 아래인 동료에게 마나를 나눠 준다'], ['무영창', '20초마다 재사용 대기 중인 자기 스킬 하나를 바로 되돌린다 (재사용 시간이 가장 긴 스킬부터)']],
   cleric: [['정화', '치유 스킬을 받은 대상의 약화 하나를 푼다'], ['축복', '앞에 선 동료 중 맨 앞 한 명의 공격력 · 방어력 +15% (쓰러지면 다음 동료에게)']],
-  porter: [['적재', '운반할 수 있는 무게가 크다'], ['약초꾼', '이동 중에 만난 약초 군락지에서 약초를 캔다 (짐꾼 계열이 없으면 지나친다)'], ['갈무리', '쓰러진 몬스터를 제대로 갈무리한다 (짐꾼 계열이 없으면 시간 두 배 · 드랍률 30%)']]
+  porter: [['적재', '운반할 수 있는 무게가 크다'], ['약초꾼', '다음 스테이지로 가는 길에 만난 약초 군락지에서 약초를 캔다 (짐꾼 계열이 없으면 지나친다)'], ['갈무리', '쓰러진 몬스터에게서 마정석과 부속품을 챙긴다 (짐꾼 계열이 없으면 아무것도 못 챙긴다)']]
 };
 function job1Traits(a) { const L = (JOB1_TXT[j1Line(a)] || []).map(x => x.slice()); if (j1Line(a) === 'warrior' && j1Tier(a)) L[0] = ['수호자 2', `아군이 받을 공격을 ${Math.round(j1Cover(a) * 100)}% 확률로 대신 받는다 · 받는 기본 공격 피해 −25%`]; return L; }
 const job1Html = a => `<div class="sub"><span class="tag gold-t">${POS_NAME[posOf(a)]}</span> ${job1Traits(a).map(([n, d]) => `<b>${n}</b> <span class="muted">${d}</span>`).join('<br>')}</div>`;
@@ -97,7 +97,8 @@ function j1Hold(p, e, team, dt) {
     return true;
   }
   if (!e.corpses || !e.corpses.length) return false;
-  // 드랍은 갈무리가 끝나는 이때 정해진다: 짐꾼 계열이 하면 기본 드랍률, 다른 사람이 하면 시간 두 배 · 드랍률 30% (하나하나 30%로 다시 굴린다)
+  // 11-21 14:59 사용자 「짐꾼 없는 파티는 갈무리를 못 해서 부속품 자체를 못 얻음」(마정석도) — 11:44의 두 배 시간 · 30%는 없앰
+  if (!team.some(isPorter)) { e.corpses = []; if (!e.noHarv) { e.noHarv = 1; log(`${p.name}에는 갈무리할 짐꾼이 없어 쓰러뜨린 몬스터의 부속품을 두고 간다.`, 'bad'); HOOKS.toast(`${p.name}: 짐꾼이 없어 부속품을 못 챙겨요`); } return false; }
   const por = team.some(isPorter), NP = J1.noPorter;
   e.note = { t: 0.6, txt: por ? '갈무리 중' : '서툰 갈무리 중' }; e.hv = (e.hv || 0) + dt;
   if (e.hv >= J1.harv * (por ? 1 : NP.time)) { e.hv = 0; const C = e.corpses.shift();
@@ -109,14 +110,6 @@ function j1Hold(p, e, team, dt) {
 // 싸움 자리에 닿았을 때 (core.js stepExp — spawn 대신): 함정 지대 · 미믹 · 보통 싸움
 function j1Enc(p, e) {
   const team = teamOf(p).filter(a => !a.down), F = FIELDS[e.field], plain = (e.area === 'field' || e.area === 'dungeon') && e.mode === 'advance' && !(e.next && e.next.some(f => f.boss || f.fb || f.rare || f.nest));
-  if (plain && HERB72.on && (e.area === 'field' || (F.herbs && F.herbs.length))) {
-    const H = herbColony(F, e);
-    if (H) {
-      const por = team.find(isPorter);
-      if (por) { e.next = null; e.herbJob = H; HOOKS.toast(`${p.name}: ${ITEMS[H.id].name} ${H.size} 군락지 발견`); changed(); return; }
-      if (!e.noHerb) { e.noHerb = 1; log(`${p.name}: ${ITEMS[H.id].name} 군락지를 지나쳤다. 약초꾼(짐꾼 계열)이 있어야 캘 수 있다.`, 'bad'); }
-    }
-  }
   if (plain) {
     const r = rnd(), rogue = team.find(a => j1Line(a) === 'rogue');
     if (r < J1.trap.p) {
@@ -134,6 +127,13 @@ function j1Enc(p, e) {
   }
   spawn(p, e);
   for (const a of team) if (j1Line(a) === 'archer') e.cd[a.id] = 0.05;   // 선제 사격
+}
+// 약초 군락지: 스테이지에서 다음 스테이지로 걸어가는 길에만 나온다 (11-21 14:59 사용자 「1-1에서 1-2로 걸어가는 중에만」 — core.js stageClear 끝)
+function herbWalk(p, e) {
+  const F = FIELDS[e.field]; if (!HERB72.on || !F || e.mode !== 'advance' || e.herbJob || !(e.area === 'field' || (F.herbs && F.herbs.length))) return;
+  const H = herbColony(F, e); if (!H) return; const team = teamOf(p).filter(a => !a.down);
+  if (team.some(isPorter)) { e.herbJob = H; HOOKS.toast(`${p.name}: ${ITEMS[H.id].name} ${H.size} 군락지 발견`); }
+  else if (!e.noHerb) { e.noHerb = 1; log(`${p.name}: ${ITEMS[H.id].name} 군락지를 지나쳤다. 약초꾼(짐꾼 계열)이 있어야 캘 수 있다.`, 'bad'); }
 }
 function j1MimicReward(p, e, lv) {
   const g = Math.round(lv * J1.mimic.gold * (0.8 + rnd() * 0.5)); S.gold += g; S.stats.earned += g; let txt = `${g$(g)}`;

@@ -5,12 +5,13 @@
    · 에테르 주괴(id ether_ingot): 강화할 때 넣으면 파괴를 막는다(수치 그대로) — enhDustNeed(n)개 들어간다.
    · 장비마다 강화는 100번까지(시도할 때마다 1번 — 내 판단). 숫돌(+1 · 3 · 5 · 7 · 10회)이 되돌려 준다.
    · 회수로: +N 장비 → 「+N 강화 주괴」 + 장비는 +0. 주괴는 +0 장비에만 써서 +N으로. 회수 · 주괴는 강화 횟수를 안 쓰고 횟수는 장비에 남는다(내 판단).
-   · 임시(사용자가 안 정한 것): 돈 · 마정석 개수 · 마정석 드랍(한 마리에 하나 — 사용자 「무조건」 · 우두머리 2 ~ 3개 · 등급은 몬스터 Lv 30마다) · 숫돌 · 쇳가루 값(대장간에서 삼) — 마정석 · 부속품을 새로 짤 때 다시 정한다. */
+   · 돈은 사용자 표(enhGold) · 에테르 주괴는 +n에 n개이고 팔지 않는다(제작 — 대장간 재료 제작에서 정할 것) · 연속 강화 없음 · 파괴 확률은 화면에 「?」(튜토리얼에서만 알려 줌).
+   · 임시(사용자가 안 정한 것): 마정석 개수 · 마정석 드랍(한 마리에 하나 — 사용자 「무조건」 · 우두머리 2 ~ 3개 · 등급은 몬스터 Lv 30마다) · 숫돌 · 쇳가루 값(대장간에서 삼) — 마정석 · 부속품을 새로 짤 때 다시 정한다. */
 const ENH = { max: 30, per: 0.03, tries: 100, whet: [1, 3, 5, 7, 10], mjDrop: 0.08,
   table: [[100, 0, 0, 0], [95, 5, 0, 0], [90, 10, 0, 0], [85, 15, 0, 0], [80, 20, 0, 0], [75, 25, 0, 0], [70, 30, 0, 0], [65, 33, 2, 0], [60, 36, 4, 0], [55, 39, 6, 0],
     [50, 40, 10, 0], [45, 42, 13, 0], [40, 43, 17, 0], [36, 44, 20, 0], [32, 45, 23, 0], [28, 45, 26, 1], [25, 45, 28, 2], [22, 44, 31, 3], [19, 44, 33, 4], [16, 43, 36, 5],
     [14, 42, 38, 6], [12, 41, 40, 7], [10, 40, 42, 8], [8, 39, 44, 9], [7, 37, 46, 10], [6, 35, 47, 12], [5, 33, 48, 14], [4, 31, 49, 16], [3, 29, 50, 18], [2, 27, 51, 20]],
-  shop: { ether_ingot: 5000, whet_1: 800, whet_3: 2200, whet_5: 3500, whet_7: 4700, whet_10: 6500 } };
+  shop: { whet_1: 800, whet_3: 2200, whet_5: 3500, whet_7: 4700, whet_10: 6500 } };
 const MJ_GRADES = ['최하급', '하급', '중급', '중상급', '상급', '최상급'];
 const MJ_V = [30, 120, 500, 2000, 8000, 30000], MJ_C = ['#c4ccd6', '#a8d0ec', '#78b8ec', '#4890e0', '#2860c8', '#1838a0'];   // 같은 푸른 수정 — 등급이 오를수록 진해진다 (머금은 마나가 늘어남 · 11-21 12:39 사용자)
 MJ_GRADES.forEach((n, i) => { ITEMS['mj_' + i] = { name: `${n} 마정석`, v: MJ_V[i], w: 1, icon: 'ore', c: MJ_C[i], g: i, mj: i + 1, keep: 1, desc: `마나를 머금은 원석. ${['마나가 아주 조금 스며 있어 빛깔이 거의 없다.', '옅은 하늘빛이 돈다.', '맑은 하늘색으로 물들었다.', '또렷한 파란빛이 돈다.', '짙은 청색 속에서 빛이 비친다.', '마나가 가득 차 가장 깊은 남청색으로 빛난다.'][i]} 마법공학 장치와 생활 속 여러 기구를 움직이는 에너지 자원으로, 미궁 밖 세상이 이것으로 돌아간다. 대장간에서는 장비 강화에 쓴다.` }; });
@@ -19,10 +20,12 @@ ENH.whet.forEach(n => { ITEMS['whet_' + n] = { name: `숫돌 (+${n}회)`, v: 200
 for (let n = 1; n <= ENH.max; n++) ITEMS['ingot_' + n] = { name: `+${n} 강화 주괴`, v: 500 * n * n, w: 2, icon: 'ore', c: '#e8c060', g: Math.min(6, Math.floor((n - 1) / 5) + 1), keep: 1, ingot: n, desc: `회수로에서 뽑아낸 강화. +0인 장비에 쓰면 그 장비가 바로 +${n}이 된다.` };
 const enhOf = g => (g && g.enh) | 0;
 function enhMul(g) { return 1 + ENH.per * enhOf(g); }
+const enhGlow = g => Math.min(6, Math.floor(enhOf(g) / 5));   // 강화 빛: +5부터 다섯 강마다 한 단계 (rarity.js gArt → CSS .rqa.eg1 ~ eg6)
 const enhLeft = g => Math.max(0, ENH.tries - ((g.enhN) | 0));
 const enhAble = g => g && GTYPES[g.base] && !GTYPES[g.base].ammo;
 const enhMj = n => ({ id: 'mj_' + Math.floor((n - 1) / 5), q: 1 + ((n - 1) % 5) });   // +n으로 올릴 때
-const enhGold = (g, n) => Math.round(gearValue(Object.assign({}, g, { runes: [], ms: [] })) * (0.15 + 0.05 * n) / 10) * 10;
+// 11-21 14:59 사용자: +1 ~ 5는 한 강마다 500G씩, +6 ~ 10은 1,000G씩, +11 ~ 15는 1,500G씩 … 다섯 강마다 오르는 폭이 500G씩 커진다 (+1 500 · +5 2,500 · +10 7,500 · +15 15,000 · +20 25,000 · +30 52,500)
+const enhGold = (g, n) => { let c = 0; for (let i = 1; i <= n; i++) c += 500 * (Math.floor((i - 1) / 5) + 1); return c; };
 function enhWhy(f) {
   if (!f) return '장비를 찾을 수 없어요.'; const g = f.g;
   if (!S.bld.smithy) return '대장간이 있어야 해요.';
@@ -83,7 +86,7 @@ const enhPct = v => (v ? `${v}%` : '—');
    모루 · 망치 · 배경은 ENH_ART(bg · anvil · hammer — GPT 그림이 오면 data-enhart.js로)에 있으면 그 그림, 없으면 임시 네모 그림. */
 const ENH_HIT = 1.3;   // 망치질 초
 const ENH_RES = { s: ['강화 성공!', 'ok'], f: ['강화 실패', 'fail'], d: ['손상', 'dmg'], x: ['파괴', 'brk'], v: ['파괴를 막았다', 'save'] };
-const enhDustNeed = n => (ENH.table[n - 1][3] ? Math.floor((n - 16) / 5) + 1 : 0);   // 에테르 주괴: +16 ~ 20 하나 · +21 ~ 25 둘 · +26 ~ 30 셋 (파괴가 없는 단계는 못 넣음 — 내 판단)
+const enhDustNeed = n => n;   // 에테르 주괴: 강화 +1마다 하나씩 더 (+n 도전에 n개 — 11-21 14:59 사용자). 파괴 확률은 화면에 안 보이므로(튜토리얼에서만 알려 줌) 어느 단계든 넣을 수 있다
 // 큰 그림이 있는 물건(ITEM_HD — data-enhart.js: 마정석 · 에테르 주괴 · 강화 주괴 · 숫돌): 칸에 굽지 않고 얹는 그림(HR_URL)
 function itemHD(id) { if (typeof ITEM_HD === 'undefined') return ''; const I = ITEMS[id], k = ITEM_HD[id] ? id : I && I.ingot ? 'ingot' : ''; if (!k) return ''; HR_URL.add(ITEM_HD[k]); return ITEM_HD[k]; }
 const enhFx = (k, cls) => (typeof ENH_ART !== 'undefined' && ENH_ART['fx_' + k] ? `<i class="enh-fx ${cls}" style="background-image:url(${ENH_ART['fx_' + k]})"></i>` : '');
@@ -112,21 +115,21 @@ function enhBox() {
     const whets = ENH.whet.filter(k => have('whet_' + k)).map(k => `<button type="button" class="btn sm" data-act="enhwhet" data-g="${g.id}" data-n="${k}"${base || busy || !(g.enhN > 0) ? ' disabled' : ''}>숫돌 +${k}회 (${have('whet_' + k)})</button>`).join('');
     const ingots = cur ? '' : Object.keys(S.inv).filter(k => ITEMS[k] && ITEMS[k].ingot && S.inv[k] > 0).sort((x, y) => ITEMS[y].ingot - ITEMS[x].ingot).map(k => `<button type="button" class="btn sm gold" data-act="enhingot" data-g="${g.id}" data-n="${ITEMS[k].ingot}"${base || busy ? ' disabled' : ''}>${ITEMS[k].name} 쓰기 (${S.inv[k]})</button>`).join('');
     ctl = `<div class="enh-name"><b>${gearName(g)}</b> ${qTag(g)}<span class="sub">${statLine(gearStats(g))}</span><span class="sub">${f.a ? esc(f.a.name) : '창고'} · 남은 강화 횟수 <b class="${enhLeft(g) ? '' : 'red-t'}">${enhLeft(g)}/${ENH.tries}</b></span></div>
-      ${top ? '<div class="sub gold-t" style="text-align:center">가장 높은 강화예요.</div>' : `<div class="enh-rates"><span class="s"><small>성공</small><b>${enhPct(T[0])}</b></span><span class="f"><small>실패</small><b>${enhPct(T[1])}</b></span><span class="d"><small>손상 −1</small><b>${enhPct(T[2])}</b></span><span class="x"><small>파괴</small><b>${enhPct(UI.enhDust && dn ? 0 : T[3])}</b></span></div>
+      ${top ? '<div class="sub gold-t" style="text-align:center">가장 높은 강화예요.</div>' : `<div class="enh-rates"><span class="s"><small>성공</small><b>${enhPct(T[0])}</b></span><span class="f"><small>실패</small><b>${enhPct(T[1])}</b></span><span class="d"><small>손상 −1</small><b>${enhPct(T[2])}</b></span><span class="x"><small>파괴</small><b>${UI.enhDust && dn ? '막음' : '?'}</b></span></div>
       <div class="sub" style="text-align:center">+${cur} → <b class="gold-t">+${n}</b> (능력치 +${n * 3}%) · ${fmt(enhGold(g, n))}G · ${iconImg(M.id)} ${ITEMS[M.id].name} ${M.q}개 <span class="${have(M.id) >= M.q ? 'muted' : 'red-t'}">(보유 ${have(M.id)})</span></div>
-      <label class="enh-dust${dn ? '' : ' off'}"><input type="checkbox" data-act="enhdust"${UI.enhDust && dn ? ' checked' : ''}${dn && have('ether_ingot') >= dn && !busy ? '' : ' disabled'}>${iconImg('ether_ingot')}<span>에테르 주괴 사용 ${dn ? `<b>${dn}개</b> 들어감` : '<span class="muted">— 파괴 확률이 없는 단계</span>'} · 보유 <b class="${dn && have('ether_ingot') < dn ? 'red-t' : ''}">${have('ether_ingot')}개</b></span></label>
+      <label class="enh-dust${dn ? '' : ' off'}"><input type="checkbox" data-act="enhdust"${UI.enhDust && dn ? ' checked' : ''}${dn && have('ether_ingot') >= dn && !busy ? '' : ' disabled'}>${iconImg('ether_ingot')}<span>에테르 주괴 사용 <b>${dn}개</b> 들어감 · 보유 <b class="${dn && have('ether_ingot') < dn ? 'red-t' : ''}">${have('ether_ingot')}개</b></span></label>
       <button type="button" class="btn gold block enh-go" data-act="enhgo" data-g="${g.id}"${why || busy ? ' disabled' : ''}>${why ? esc(why) : `강화 +${n}`}</button>`}
       <div class="btns" style="margin-top:6px;justify-content:center">${cur ? `<button type="button" class="btn sm" data-act="enhreclaim" data-g="${g.id}"${base || busy ? ' disabled' : ''}>회수로: +${cur} 강화 주괴로 뽑기</button>` : ''}${whets}${ingots}</div>`;
   }
   const cells = all.map(x => `<button type="button" class="cell${f && f.g === x.g ? ' on' : ''}${x.owner && x.owner.status !== 'idle' ? ' zero' : ''}" data-act="enhsel" data-g="${x.g.id}"${busy ? ' disabled' : ''} aria-label="${esc(gearName(x.g))}">${gArt(x.g, 2)}${enhOf(x.g) ? `<span class="qty enhq">+${enhOf(x.g)}</span>` : ''}${x.owner ? `<span class="enh-own">${esc(x.owner.name.slice(0, 2))}</span>` : ''}</button>`).join('');
   const shop = Object.keys(ENH.shop).map(id => `<div class="li">${iconImg(id)}<div class="grow stack"><span>${ITEMS[id].name} <b class="num">×${have(id)}</b></span><span class="sub">${ITEMS[id].desc}</span></div><button type="button" class="btn sm" data-act="enhbuy" data-it="${id}"${S.gold < ENH.shop[id] ? ' disabled' : ''}>${fmt(ENH.shop[id])}G</button></div>`).join('');
   const mj = MJ_GRADES.map((nm, i) => `${nm} ${have('mj_' + i)}`).join(' · ');
-  const tbl = ENH.table.map((T, i) => `<tr><td>+${i + 1}</td><td>${enhPct(T[0])}</td><td>${enhPct(T[1])}</td><td>${enhPct(T[2])}</td><td>${enhPct(T[3])}</td><td>${MJ_GRADES[Math.floor(i / 5)]} ${1 + (i % 5)}</td></tr>`).join('');
+  const tbl = ENH.table.map((T, i) => `<tr><td>+${i + 1}</td><td>${enhPct(T[0])}</td><td>${enhPct(T[1])}</td><td>${enhPct(T[2])}</td><td>?</td><td>${MJ_GRADES[Math.floor(i / 5)]} ${1 + (i % 5)}</td></tr>`).join('');
   return `${enhStage(f)}<div class="card enh-ctl">${ctl}</div>
     <div class="sec"><b>장비</b><span>${all.length}점 · 강화 수치 높은 순 · 흐린 칸은 원정 중</span></div><div class="igrid enhgrid">${cells || '<span class="sub">강화할 장비가 없어요.</span>'}</div>
     <div class="sub muted">마정석: ${mj}</div>
     <details class="card"><summary>강화 확률표</summary><table class="enht"><tr><th>목표</th><th>성공</th><th>실패</th><th>손상</th><th>파괴</th><th>마정석</th></tr>${tbl}</table></details>
-    <details class="card"><summary>숫돌 · 에테르 주괴 사기</summary><div class="list">${shop}</div></details>`;
+    <details class="card"><summary>숫돌 사기</summary><div class="sub muted">에테르 주괴는 팔지 않아요. 만들어야 해요.</div><div class="list">${shop}</div></details>`;
 }
 // 강화 누르기: 망치질(ENH_HIT초) 뒤에 결과를 굴린다
 function enhStart(gid) {

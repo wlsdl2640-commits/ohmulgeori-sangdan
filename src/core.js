@@ -553,6 +553,7 @@ function stageClear(p, e) {
     e.stage++;
   } else if (e.stage < floorsOf(e)) { if (F.treasure) treasureChest(p, e); e.stage++; }
   e.pos = 0; e.ei = 0; e.encs = makeEncs(e); e.next = null;
+  herbWalk(p, e);   // 빌드 72: 다음 스테이지로 걸어가는 길의 약초 군락지 (job72.js)
   if (floodOn(e)) ev(e, 'flood', {});   // 빌드 70: 물이 찬 스테이지 (옛 제국 수로)
   changed();
 }

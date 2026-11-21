@@ -199,5 +199,5 @@ function rqClass(src, g, plus) {
 // 칸 그림 HTML. s = 1(30px) · 2(60px)
 const rqArt = (src, g, s, plus) => `<i class="rqa s${s || 2} ${rqClass(src, Math.max(0, Math.min(GRADE_MAX, g | 0)), plus | 0)}" aria-hidden="true"></i>`;
 const rqEmpty = s => `<i class="rqa s${s || 2} ${rqClass(null, -1, 0)}" aria-hidden="true"></i>`;
-const gArt = (g, s) => rqArt(gearIconURL(g), g.q || 0, s, 0);   // 빌드 64: 강화 표시는 없앴다
+const gArt = (g, s) => { const h = rqArt(gearIconURL(g), g.q || 0, s, 0), n = enhGlow(g); return n ? h.replace('class="rqa ', `class="rqa eg${n} `) : h; };   // 빌드 64: 강화 표시는 없앴다
 const iArt = (k, s) => rqArt(itemHD(k) || iconURL(k), itemGrade(k), s, 0);   // 빌드 72: 큰 그림이 있는 물건
