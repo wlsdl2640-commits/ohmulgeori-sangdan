@@ -17,11 +17,11 @@ const J1 = {
 };
 // 약초 군락지 (11-21 13:41 사용자): 약초는 드랍품이 아니다 — 이동 중 싸움 자리에서 소형 10% · 중형 5% · 대형 1%로 군락지를 만나고, 짐꾼 계열(약초꾼)이 그 앞에서 하나씩 캔다
 const HERB72 = { on: true, sizes: [['대형', 0.01, 7, 13], ['중형', 0.05, 3, 7], ['소형', 0.10, 1, 3]], per: 0.8, tierW: [1, 0.3, 0.1] };
-function herbColony(F) {
+function herbColony(F, e) {
   let r = rnd(); const S0 = HERB72.sizes.find(z => (r -= z[1]) < 0); if (!S0) return null;
-  const hs = [...new Set(F.herbs && F.herbs.length ? F.herbs : ['herb'])].filter(h => ITEMS[h]); if (!hs.length) return null;
-  let w = hs.reduce((t, h) => t + (HERB72.tierW[Math.max(0, herbTier(h))] || 0.1), 0) * rnd(), id = hs[0];
-  for (const h of hs) { w -= HERB72.tierW[Math.max(0, herbTier(h))] || 0.1; if (w < 0) { id = h; break; } }
+  const hs = herbCands(F.herbs && F.herbs.length ? F : { herbs: ['herb'] }, e); if (!hs.length) return null;   // herb72.js: 피는 약초 · 밤에만 · 구간 조건
+  let w = hs.reduce((t, h) => t + herbW(h), 0) * rnd(), id = hs[0];
+  for (const h of hs) { w -= herbW(h); if (w < 0) { id = h; break; } }
   return { id, size: S0[0], n: S0[2] + Math.floor(rnd() * (S0[3] - S0[2] + 1)), got: 0 };
 }
 const J1_ORDER = { warrior: 0, rogue: 1, archer: 2, mage: 3, cleric: 4, porter: 5 };
@@ -102,14 +102,15 @@ function j1Hold(p, e, team, dt) {
   e.note = { t: 0.6, txt: por ? '갈무리 중' : '서툰 갈무리 중' }; e.hv = (e.hv || 0) + dt;
   if (e.hv >= J1.harv * (por ? 1 : NP.time)) { e.hv = 0; const C = e.corpses.shift();
     for (const [it, q] of C.items) { let n = q; if (!por && !ITEMS[it].mj) { n = 0; for (let i = 0; i < q; i++) if (rnd() < NP.rate) n++; } if (n > 0) loot(p, e, it, n); }
-    for (const g of C.gear) if (por || rnd() < NP.rate) lootGear(p, e, g); }
+    for (const g of C.gear) if (por || rnd() < NP.rate) lootGear(p, e, g);
+    herbBloom(p, e, C, team); }   // 갈무리가 끝난 바로 뒤: 핏빛꽃 · 충혼초 (herb72.js)
   return true;
 }
 // 싸움 자리에 닿았을 때 (core.js stepExp — spawn 대신): 함정 지대 · 미믹 · 보통 싸움
 function j1Enc(p, e) {
   const team = teamOf(p).filter(a => !a.down), F = FIELDS[e.field], plain = (e.area === 'field' || e.area === 'dungeon') && e.mode === 'advance' && !(e.next && e.next.some(f => f.boss || f.fb || f.rare || f.nest));
-  if (plain && HERB72.on && e.area === 'field') {
-    const H = herbColony(F);
+  if (plain && HERB72.on && (e.area === 'field' || (F.herbs && F.herbs.length))) {
+    const H = herbColony(F, e);
     if (H) {
       const por = team.find(isPorter);
       if (por) { e.next = null; e.herbJob = H; HOOKS.toast(`${p.name}: ${ITEMS[H.id].name} ${H.size} 군락지 발견`); changed(); return; }

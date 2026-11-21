@@ -57,6 +57,7 @@ const MMEAT = {
 };
 Object.entries(MMEAT).forEach(([id, [name, desc]]) => { ITEMS['mm_' + id] = { name, v: 12, w: 1, icon: (ITEMS.raw_meat && ITEMS.raw_meat.icon) || 'blob', c: (ITEMS.raw_meat && ITEMS.raw_meat.c) || '#c05848', mmeat: id, desc: `${desc} (마물육 — ${MONS[id] ? MONS[id].name : ''})` }; });
 function matDrop(p, e, f) {
+  if (e.kq) { e.kq.mon = f.id; e.kq.big = !!(f.boss || f.fb); }   // 사체가 어느 몬스터 것인지 (herb72.js 피는 약초)
   const big = f.boss || f.fb, gr = Math.max(0, Math.min(5, Math.floor((f.lv || 1) / 30)));
   matsOf(f.id).forEach(k => loot(p, e, `${k}_${gr}`, big ? 2 : 1));
   if (ITEMS['mm_' + f.id]) { const it = 'mm_' + f.id; loot(p, e, it, 1); ITEMS[it].v = Math.max(ITEMS[it].v, 8 + (f.lv || 1) * 2); }
