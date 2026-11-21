@@ -26,6 +26,10 @@ const MAT_FAM = {
 };
 const MAT_FAMS = Object.keys(MAT_FAM), MAT_V = [8, 30, 120, 480, 1900, 7500];
 MAT_FAMS.forEach(k => MJ_GRADES.forEach((gn, i) => { const F = MAT_FAM[k]; ITEMS[`${k}_${i}`] = { name: `${gn} ${F.name}`, v: MAT_V[i], w: 1, icon: F.icon, c: F.c[i], g: i, fam: k, desc: F.desc }; }));
+// 가공 재료 (11-21 15:20 ~ 15:38): 대장간 「재료 제작」에서 원재료를 가공해 만든다 — 원재료의 등급을 그대로 물려받는다. id p_<갈래>_<등급>. 제작법 · 시간은 대장간 제작을 만들 때
+const MAT_PROC = { hide: ['무두질한 가죽', '털을 밀고 무두질해 재단한 가죽. 가죽 갑옷 · 장갑 · 신발 · 벨트를 짓는다.'], bone: ['뼈 손잡이', '뼈를 깎고 갈아 만든 손잡이. 무기 자루와 장신구의 뼈대.'], rscale: ['파충류 비늘판', '비늘을 가죽 끈에 엮은 판. 가볍고 질긴 비늘 갑옷을 짓는다.'], dscale: ['용족 비늘판', '용 비늘을 쇠 고리로 이은 판. 가장 귀한 갑옷 재료.'], fscale: ['어류 비늘판', '둥근 비늘을 실로 엮은 판. 물과 냉기에 강한 갑옷을 짓는다.'], feather: ['다듬은 깃 다발', '깃대를 다듬어 묶은 깃. 화살 깃과 장식에 쓴다.'], moss: ['이끼 솜', '이끼를 말리고 두드린 폭신한 솜. 옷의 속감이 된다.'], fiber: ['직물', '섬유를 짠 천 한 필. 로브와 천갑, 끈을 짓는다.'], web: ['거미 비단실', '거미줄을 자아 실패에 감은 실. 고운 옷감과 활시위가 된다.'], shell: ['갑각판', '등딱지를 갈아 자른 판. 가벼운 판금과 방패를 짓는다.'], wood: ['다듬은 목재', '껍질을 벗기고 켠 각재. 지팡이 · 활 · 방패 · 자루를 깎는다.'], ore: ['주괴', '광물을 녹여 부은 쇳덩이. 무기와 판금, 에테르 주괴의 바탕.'] };
+const MAT_PV = [30, 110, 420, 1650, 6500, 25000];
+Object.keys(MAT_PROC).forEach(k => MJ_GRADES.forEach((gn, i) => { ITEMS[`p_${k}_${i}`] = { name: `${gn} ${MAT_PROC[k][0]}`, v: MAT_PV[i], w: 1, icon: MAT_FAM[k].icon, c: MAT_FAM[k].c[i], g: i, pfam: k, keep: 1, desc: MAT_PROC[k][1] }; }));
 // 몬스터 → 등급 부속품 (리마스터한 땅은 손으로, 나머지는 타입 · 이름으로 어림)
 const MAT_OF = {
   rat: ['hide', 'bone'], rabbit: ['hide', 'bone'], wolf: ['hide', 'bone'], scarecrow: ['fiber'], boar: ['hide', 'bone'], aboar: ['hide', 'bone'], ratking: ['hide', 'bone'],
