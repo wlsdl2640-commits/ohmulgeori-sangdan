@@ -4,7 +4,6 @@
    · 포션 상점: 회복 · 마나 물약과 치료 소모품을 늘 판다. 값 = buyPrice(없으면 기준가 × PSHOP.mul).
    · 방 그림은 아직(부탁 글 tools/saved/gpt70/shops/) — 그때까지 협회 로비 그림. 값 · 가짓수는 내 안. */
 const GSHOP = { n: 10, mul: 4, fine: 0.2 }, PSHOP = { mul: 2.5, ids: ['pot_s', 'pot_m', 'pot_l', 'mp_s', 'mp_m', 'mp_l', 'bandage', 'antidote', 'salve', 'warmer', 'ward', 'salts', 'tonic', 'eyedrop', 'holyvial', 'panacea'] };
-if (typeof ROOM_ART !== 'undefined') { ROOM_ART.gearshop = ROOM_ART.gearshop || ROOM_ART.assoc; ROOM_ART.potshop = ROOM_ART.potshop || ROOM_ART.assoc; }
 function gshopState() {
   const d = today(); if (S.gshop && S.gshop.day === d) return S.gshop;
   const top = Math.max(1, ...S.advs.map(a => a.lv)), maxT = GTIERS.reduce((m, T, i) => (T.lv <= top + 4 ? i : m), 0), items = [];

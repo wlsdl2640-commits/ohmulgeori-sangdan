@@ -29,8 +29,8 @@ const SEATS = 6;   // 여관 한 장소의 자리 (2층 침대 셋)
    like: 아직 그림이 없는 장소가 빌려 쓰는 장면 (협회 로비 = 상점 장면 · 창고 = 던전 수거소 장면 — 빌린 장면은 어디를 눌러도 그 장소의 창) */
 Object.assign(FLOOR_INFO, {
   assoc:     { name: '모험가 협회 로비', win: 'assoc', art: 'assoc' },
-  gearshop:  { name: '협회 장비 상점', win: 'gearshop', art: 'gearshop' },   // 빌드 72 (11-21 15:52 사용자): 협회 대장장이들이 만든 장비를 판다 (shop72.js — 방 그림이 올 때까지 로비 그림)
-  potshop:   { name: '협회 포션 상점', win: 'potshop', art: 'potshop' },      // 연금술사들이 만든 포션을 판다
+  gearshop:  { name: '협회 장비 상점', win: 'gearshop', art: 'assoc' },   // 빌드 72 (11-21 15:52 사용자): 협회 대장장이들이 만든 장비를 판다 (shop72.js — 방 그림이 올 때까지 로비 그림)
+  potshop:   { name: '협회 포션 상점', win: 'potshop', art: 'assoc' },      // 연금술사들이 만든 포션을 판다
   warehouse: { name: '창고', win: 'b:warehouse', art: 'warehouse' }
 });
 FLOOR_INFO.shop.art = 'lobby'; FLOOR_INFO.shop.win = 'co';
