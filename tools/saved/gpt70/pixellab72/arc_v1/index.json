@@ -1,0 +1,27 @@
+{
+ "export_date": "2026-11-22T11:17:02.336971",
+ "names": {
+  "upshot": "위로 쏘아 올리기",
+  "fall": "쓰러짐",
+  "idle": "대기",
+  "rapid": "연속 사격 (안 씀)",
+  "walk": "걷기",
+  "liedown": "눕기",
+  "sleep": "자면서 숨쉬기",
+  "hurt": "맞음",
+  "shoot": "활쏘기",
+  "sit": "앉기"
+ },
+ "orig": {
+  "upshot": "Pull_an_arrow_from_the_back_quiver_and_nock_it_to",
+  "fall": "Stagger_backward_and_drop_to_both_knees_as_the_bow",
+  "idle": "Perform_an_idle_breathing_loop_by_slowly_raising_t",
+  "rapid": "Rapidly_draw_and_release_three_arrows_in_quick_suc",
+  "walk": "Step_forward_in_place_with_rhythmic_weight_transfe",
+  "liedown": "Kneel_down_onto_the_ground_pull_back_the_green_hoo",
+  "sleep": "Slowly_raise_the_green_blanket_over_the_chest_by_o",
+  "hurt": "Snap_the_head_and_upper_body_back_sharply_from_the",
+  "shoot": "Reach_the_right_hand_back_to_the_quiver_draw_an_ar",
+  "sit": "Bend_the_knees_and_lower_the_hips_smoothly_settlin"
+ }
+}
