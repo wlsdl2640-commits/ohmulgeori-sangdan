@@ -20,9 +20,9 @@ def cut(path, th, flip=False):
 WAR=Image.open(G+'pixellab72/war_v1/idle.png').crop((0,0,80,80)); bb=WAR.getbbox(); WAR=WAR.crop(bb)
 # 자리: 줄(row) 0 위 · 1 가운데 · 2 아래 — 발 줄 y, 아래 줄일수록 왼쪽으로 조금(안 겹치게)
 ROWY=[150,186,222]; SKEW=[14,0,-14]
-COLX=[196,150,104]      # 전위 · 중위 · 후위(사제)
-REARX,REARY=62,186      # 맨 뒤 한 자리 (짐꾼) + 마차는 그 뒤
-FOEX=[284,330,376]
+COLX=[184,134,84]       # 앞(전사 · 도적) · 가운데(마법사 · 궁수) · 뒤(사제 · 짐꾼)
+REARX,REARY=84,186      # 맨 뒤 한 자리 (짐꾼) + 마차는 그 뒤
+FOEX=[330,380,430]         # 몬스터는 한 칸 더 뒤로
 def slots(): return {(c,r):(COLX[c]+SKEW[r],ROWY[r]) for c in range(3) for r in range(3)}
 def foes(): return {(c,r):(FOEX[c]-SKEW[r],ROWY[r]) for c in range(3) for r in range(3)}
 def font(n):
@@ -37,20 +37,20 @@ def wagon(im,x,y):
 def put(im,sp,x,y): im.paste(sp,(round(x-sp.width/2),y-sp.height),sp)
 def plan():
     im=bg(); d=ImageDraw.Draw(im,'RGBA'); f=font(9)
-    C=[('#d23b30','전위'),('#3a6cc0','중위'),('#3a9a50','후위')]
+    C=[('#d23b30','앞'),('#3a6cc0','가운데'),('#3a9a50','뒤')]
     for (c,r),(x,y) in slots().items(): ell(d,x,y,15,C[c][0]+'aa','#ffffff')
-    ell(d,REARX,REARY,15,'#b07a2caa','#ffffff'); d.rectangle((REARX-58,REARY-30,REARX-22,REARY+4),outline='#ffffff',fill='#b07a2c66')
+    d.rectangle((6,REARY-30,44,REARY+4),outline='#ffffff',fill='#b07a2c66')
     for (c,r),(x,y) in foes().items(): ell(d,x,y,15,'#30303099','#ffffff')
     for c in range(3): d.text((COLX[c]+SKEW[0],ROWY[0]-22),C[c][1],font=f,fill='#ffffff',anchor='ms',stroke_width=2,stroke_fill='#1c1622')
-    d.text((REARX,REARY-22),'짐꾼',font=f,fill='#fff',anchor='ms',stroke_width=2,stroke_fill='#1c1622'); d.text((REARX-36,REARY-36),'마차',font=f,fill='#fff',anchor='ms',stroke_width=2,stroke_fill='#1c1622')
-    d.text((FOEX[1],ROWY[0]-22),'몬스터 3 × 3',font=f,fill='#fff',anchor='ms',stroke_width=2,stroke_fill='#1c1622')
+    d.text((25,REARY-36),'마차',font=f,fill='#fff',anchor='ms',stroke_width=2,stroke_fill='#1c1622')
+    d.text((FOEX[1],ROWY[0]-22),'몬스터',font=f,fill='#fff',anchor='ms',stroke_width=2,stroke_fill='#1c1622')
     return im
 def scene(party, mons, tags=True):
     im=bg(); d=ImageDraw.Draw(im,'RGBA'); f=font(8); S=slots(); F=foes(); items=[]
     for (c,r),name in party.items():
-        x,y=(REARX,REARY) if c==3 else S[(c,r)]; items.append((y,x,WAR,name))
+        x,y=S[(c,r)]; items.append((y,x,WAR,name))
     for (c,r),(sp) in mons.items(): x,y=F[(c,r)]; items.append((y,x,sp,None))
-    if any(c==3 for c,_ in party): wagon(im,REARX-34,REARY+2)
+    if '짐꾼' in party.values(): wagon(im,26,REARY+2)
     for y,x,sp,name in sorted(items,key=lambda t:t[0]):
         d.ellipse((x-12,y-4,x+12,y+3),fill=(30,40,20,90)); put(im,sp,x,y)
     if tags:
@@ -60,6 +60,6 @@ def scene(party, mons, tags=True):
 if __name__=='__main__':
     gob=cut(G+'hd70/sheets/mon_goblin.webp',38); gob=gob.crop((0,0,gob.width//2,gob.height)); gob=gob.crop(gob.getbbox()).transpose(Image.FLIP_LEFT_RIGHT); wolf=rat=rab=gob      # 배치 시안이라 몬스터는 고블린 한 가지로
     plan().save(OUT+'/plan.png')
-    scene({(0,0):'전사',(0,2):'도적',(1,0):'마법사',(1,2):'궁수',(2,1):'사제',(3,1):'짐꾼'}, {(0,0):wolf,(0,2):rat,(1,1):gob,(2,0):rab}).save(OUT+'/party6.png')
-    scene({(c,r):n for (c,r),n in zip([(c,r) for c in range(3) for r in range(3)],['전사','전사','도적','마법사','궁수','궁수','사제','사제','사제'])}|{(3,1):'짐꾼'}, {(c,r):[wolf,rat,gob,rab][(c*3+r)%4] for c in range(3) for r in range(3)}).save(OUT+'/full10.png')
+    scene({(0,0):'전사',(0,2):'도적',(1,0):'마법사',(1,2):'궁수',(2,0):'사제',(2,2):'짐꾼'}, {(0,0):gob,(0,2):gob,(1,1):gob,(2,0):gob}).save(OUT+'/party6.png')
+    scene({(c,r):n for (c,r),n in zip([(c,r) for c in range(3) for r in range(3)],['전사','전사','도적','마법사','궁수','궁수','사제','사제','짐꾼'])}, {(c,r):gob for c in range(3) for r in range(3)}).save(OUT+'/full10.png')
     for n in ('plan','party6','full10'): Image.open(OUT+f'/{n}.png').resize((960,480),Image.NEAREST).save(OUT+f'/{n}_x2.png')
