@@ -1,0 +1,33 @@
+{
+ "export_date": "2026-11-22T08:39:54.332330",
+ "names": {
+  "slash1": "베기 1 (제자리)",
+  "block": "방패로 막기",
+  "liedown": "눕기",
+  "bash": "방패로 밀기",
+  "sit": "앉기",
+  "fall": "쓰러짐",
+  "upslash": "올려 베기",
+  "slash2": "베기 2 (발 내딛기)",
+  "thrust": "찌르기",
+  "idleS": "대기 (정면)",
+  "sleep": "자면서 숨쉬기",
+  "slash3": "베기 3",
+  "idle": "대기 (옆)"
+ },
+ "orig": {
+  "slash1": "Lift_the_sword_up_and_back_above_the_head_while_be",
+  "block": "quickly_bring_the_round_shield_up_in_front_of_the",
+  "liedown": "Kneel_down_remove_the_steel_helmet_and_place_it_on",
+  "bash": "Drop_low_into_a_wind-up_with_the_weight_loading_on",
+  "sit": "Bend_the_knees_and_lower_the_hips_to_sit_down_on_t",
+  "fall": "Stagger_backward_as_the_knees_buckle_and_the_sword",
+  "upslash": "Crouch_low_with_the_knees_bent_deeply_while_shifti",
+  "slash2": "Lift_the_front_foot_to_take_a_step_forward_while_r",
+  "thrust": "Sink_the_weight_onto_the_back_leg_while_pulling_th",
+  "idleS": "Breathe_in_deeply_by_slowly_rising_the_chest_and_s",
+  "sleep": "Inhale_slowly_to_raise_the_red_blanket_over_the_ch",
+  "slash3": "Shift_weight_to_the_back_leg_and_lift_the_sword_ar",
+  "idle": "Inhale_deeply_to_raise_the_chest_and_shoulders_slo"
+ }
+}
