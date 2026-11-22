@@ -14,7 +14,8 @@
   "sleep": "자면서 숨쉬기",
   "slash3": "베기 3",
   "idle": "대기 (옆)",
-  "walk": "걷기"
+  "walk": "걷기",
+  "hurt": "맞음"
  },
  "orig": {
   "slash1": "Lift_the_sword_up_and_back_above_the_head_while_be",
@@ -30,6 +31,7 @@
   "sleep": "Inhale_slowly_to_raise_the_red_blanket_over_the_ch",
   "slash3": "Shift_weight_to_the_back_leg_and_lift_the_sword_ar",
   "idle": "Inhale_deeply_to_raise_the_chest_and_shoulders_slo",
-  "walk": "GIF 1000017556 (17장 중 한 바퀴 = 앞 10장)"
+  "walk": "GIF 1000017556 (17장 중 한 바퀴 = 앞 10장)",
+  "hurt": "GIF side_view_character…east (두 명 중 왼쪽만 · 17장)"
  }
 }
