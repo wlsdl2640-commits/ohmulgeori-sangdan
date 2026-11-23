@@ -33,6 +33,10 @@ page=f"""<title>도적 준비물</title>
   <section class="sec"><h2>3. 픽셀랩에서 할 일</h2>
     <ol class="steps"><li>캐릭터 만들기에서 맨 위 탭 「참조에서 생성」을 누릅니다.</li><li>동쪽 칸에 옆 그림, 남쪽 칸에 정면 그림을 올립니다. 궁수를 만들 때와 같습니다.</li><li>만들어지면 「Idle」 상태의 동쪽 모습을 확인합니다.</li><li>모든 방향이 같은 옷(남색 두건, 겨자색 목도리)인지 돌려 보며 확인합니다.</li></ol>
   </section>
+  <section class="sec"><h2>4. GPT로 해 볼 때</h2>
+    <div class="pair"><figure class="sheet"><img alt="오른쪽을 보는 전사, 흰 바탕에 크게" src="data:image/png;base64,{b64f(H+'/warrior_east_gpt_768.png')}"><button class="btn" type="button" data-save="warrior_east_768.png" data-b64="{b64f(H+'/warrior_east_gpt_768.png')}">전사 옆모습 저장 (GPT용)</button></figure></div>
+    <p class="note">GPT에는 이 전사 그림 한 장만 붙이고, 채팅에 적어 드린 코드를 넣습니다. 나온 그림은 저에게 보내 주시면 64 × 64로 줄여 픽셀랩 기준 그림으로 만듭니다.</p>
+  </section>
 </main>
 {js}"""
 open(H+'/page_rogue.html','w',encoding='utf-8').write(page); print(len(page))
