@@ -10,7 +10,7 @@ import io
 def rg(k,a,b_):   # 도적 띠: 기준 장(0번)을 빼고 a~b_ 장만, 발 줄을 전사에 맞춰 7칸 내림
     im=Image.open(P+'rogue_v1/'+k+'.png').convert('RGBA'); o=Image.new('RGBA',((b_-a+1)*80,80),(0,0,0,0)); o.alpha_composite(im.crop((a*80,0,(b_+1)*80,73)),(0,7))
     f=io.BytesIO(); o.save(f,'PNG'); return dict(src='data:image/png;base64,'+base64.b64encode(f.getvalue()).decode(), n=b_-a+1)
-ROG={k:rg(k,a,b_) for k,a,b_ in [('idle',1,16),('walk',1,16),('run',1,16),('slash',1,19),('thrust',1,20),('double',1,20),('backstab',1,20),('hurt',1,16),('fall',9,20)]}
+ROG={k:rg(k,a,b_) for k,a,b_ in [('idle',1,16),('walk',1,16),('run',1,16),('slash',1,20),('thrust',1,20),('double',1,20),('backstab',1,20),('hurt',1,16),('fall',9,20)]}
 src=open(H+'/../adv_hq/page_px_compare.html',encoding='utf-8').read(); css=src[src.index('<link rel="stylesheet"'):src.index('</style>')+8]
 JS=open(H+'/brawl.js',encoding='utf-8').read().replace('__AN__',json.dumps(AN)).replace('__ARC__',json.dumps(ARC)).replace('__ROG__',json.dumps(ROG)).replace('__BG__',u(H+'/bg720.png')).replace('__GOB__',u(H+'/goblin.png'))
 body=f"""<title>뒤엉키는 전투 시안</title>
