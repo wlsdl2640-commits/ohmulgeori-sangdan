@@ -24,7 +24,8 @@
  },
  "dodge": {
   "n": 21,
-  "src": "Hop_backward_sharply_to_the_left_while_keeping_the"
+  "src": "Bend_the_knees_deeper…(뒤로 점프 + 착지)",
+  "v": 2
  },
  "sit": {
   "n": 21,
@@ -37,8 +38,8 @@
  },
  "double": {
   "n": 21,
-  "src": "Swing_the_dagger_downward_diagonally_in_front_imme",
-  "v": 2
+  "src": "Lift_the_dagger_arm_high_up_in_front…(X자 옆모습 판)",
+  "v": 4
  },
  "idle": {
   "n": 17,
@@ -46,11 +47,17 @@
  },
  "sleep": {
   "n": 17,
-  "src": "Lie_down_on_the_side_onto_the_ground_with_smooth_c"
+  "src": "Calmly_bend_the_knees…(앉았다 옆으로 눕기)",
+  "v": 2
  },
  "walk": {
   "n": 17,
   "src": "Step_forward_continuously_into_a_walking_cycle_wit",
   "v": 2
+ },
+ "slash_alt": {
+  "n": 21,
+  "src": "Raise_the_dagger_up_beside_the_head_then_swing_it(앞쪽 자취 · 몸은 굳음) — 예비",
+  "v": 1
  }
 }
