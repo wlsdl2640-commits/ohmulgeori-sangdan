@@ -10,7 +10,9 @@
   "sleep": "자면서 숨쉬기",
   "hurt": "맞음",
   "shoot": "활쏘기",
-  "sit": "앉기"
+  "sit": "앉기",
+  "kick": "발차기 (밀어내기)",
+  "homerun": "활로 치기 (홈런 스윙)"
  },
  "orig": {
   "upshot": "Pull_an_arrow_from_the_back_quiver_and_nock_it_to",
