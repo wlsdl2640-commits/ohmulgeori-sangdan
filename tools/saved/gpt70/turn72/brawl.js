@@ -28,6 +28,7 @@
   function slotOf(u, f) { const same = U.filter(o => !o.dead && o.side === u.side && o.tg === f && o.K.melee).sort((a, b) => a.id - b.id); const i = same.indexOf(u); return [[1, 0], [-1, -4], [1, -13], [1, 13], [-1, 10], [-1, -16], [1, 22]][Math.max(0, i) % 7]; }
   function hit(a, f, pow, kb) { if (f.dead) return; const dmg = Math.max(1, Math.round(a.K.atk * pow * R(0.85, 1.2))), dir = Math.sign(f.x - a.x) || a.face; f.hp -= dmg; f.flash = 0.12; f.kx += dir * (kb + (f.cls === '도적' ? 70 : 0)); f.ky += R(-10, 10);
     FX.push({ k: 'num', x: f.x, y: f.y - 44, t: 0, v: dmg, c: f.side === 'A' ? '#ff8a7a' : '#fff3b0' }); FX.push({ k: 'spark', x: f.x - dir * 4, y: f.y - 22 + R(-6, 6), t: 0, d: dir });
+    if (f.side === 'A' && f.cls !== '도적') for (let i = 0; i < 7; i++) FX.push({ k: 'blood', x: f.x - dir * 3, y: f.y - 24 + R(-3, 3), t: 0, vx: -dir * R(18, 80), vy: R(-46, 10), c: i % 3 ? '#d42a20' : '#8f1210' });     // 맞으면 피가 튄다(도적은 맞는 그림에 이미 들어 있음)
     if (kb > 60) { shake = 0.16; for (let i = 0; i < 4; i++) FX.push({ k: 'dust', x: f.x + R(-6, 6), y: f.y, t: 0, vx: dir * R(10, 40), vy: R(-30, -8) }); }
     if (f.hp <= 0) { f.dead = 1; f.st = 'dead'; f.stT = 0; f.an = 'fall'; f.at = 0; f.kx += dir * 40; } else if (f.st !== 'atk' || kb > 60) { f.st = 'hurt'; f.stT = 0.26; f.an = 'hurt'; f.at = 0; } }
   function think(u, dt) {
@@ -61,8 +62,8 @@
       if (!live('F').length && !U.some(u => u.side === 'F')) { phase = 'regroup'; tPhase = 0; fights++; say('이겼습니다. 다시 줄을 맞춥니다.'); }
       else if (!live('A').length) { phase = 'lost'; say('전멸했습니다.'); ui(); } }
     else if (phase === 'regroup') { U.forEach(u => { if (u.dead) { if (tPhase > 0.6) { u.dead = 0; u.hp = Math.ceil(u.max * 0.5); u.st = 'idle'; } return; } u.st = 'idle'; u.lx = 0; u.hp = Math.min(u.max, u.hp + u.max * 0.25 * dt); const tx = LINE[u.li], ty = GY + (u.li % 2 ? 3 : -3), dx = tx - u.x, dy = ty - u.y, d = Math.hypot(dx, dy); if (d > 2) { const s = Math.min(1, 70 * dt / d); u.x += dx * s; u.y += dy * s; u.face = dx >= 0 ? 1 : -1; u.an = 'walk'; } else { u.face = 1; u.an = 'idle'; } }); if (tPhase > 1.8) { phase = 'walk'; tPhase = 0; say('한 줄로 걸어갑니다.'); } }
-    for (const f of FX) { f.t += dt; if (f.k === 'arrow') { const tx = f.f.x, ty = f.f.y - 22, dx = tx - f.x, dy = ty - f.y, d = Math.hypot(dx, dy), v = 420 * dt; if (d <= v || f.f.dead && d < 12) { hit(f.a, f.f, 1, R(18, 30)); f.t = 9; } else { f.x += dx / d * v; f.y += dy / d * v; f.ang = Math.atan2(dy, dx); } } else if (f.k === 'dust') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 60 * dt; } }
-    FX = FX.filter(f => f.t < ({ num: 0.7, spark: 0.16, arc: 0.14, dust: 0.4, arrow: 3, txt: 0.9, ring: 0.5 }[f.k])); }
+    for (const f of FX) { f.t += dt; if (f.k === 'arrow') { const tx = f.f.x, ty = f.f.y - 22, dx = tx - f.x, dy = ty - f.y, d = Math.hypot(dx, dy), v = 420 * dt; if (d <= v || f.f.dead && d < 12) { hit(f.a, f.f, 1, R(18, 30)); f.t = 9; } else { f.x += dx / d * v; f.y += dy / d * v; f.ang = Math.atan2(dy, dx); } } else if (f.k === 'dust') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 60 * dt; } else if (f.k === 'blood') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 190 * dt; f.vx *= 1 - 2.5 * dt; } }
+    FX = FX.filter(f => f.t < ({ num: 0.7, spark: 0.16, arc: 0.14, dust: 0.4, blood: 0.42, arrow: 3, txt: 0.9, ring: 0.5 }[f.k])); }
 
   // ── 그리기 ──
   function wagon(x, y) { const o = '#060608', bob = phase === 'walk' ? Math.floor(scroll / 6) % 2 : 0; g.fillStyle = 'rgba(30,40,20,.35)'; g.fillRect(x, y - 1, 40, 3); g.fillStyle = o; g.fillRect(x + 1, y - 33 + bob, 36, 20); g.fillStyle = '#e9dcc0'; g.fillRect(x + 2, y - 32 + bob, 34, 18); g.fillStyle = '#cdbb96'; for (let i = 0; i < 4; i++) g.fillRect(x + 9 + i * 8, y - 32 + bob, 1, 18);
@@ -83,6 +84,7 @@
       else if (f.k === 'arc') { const p = f.t / 0.14; g.strokeStyle = `rgba(255,255,255,${0.9 - p * 0.7})`; g.lineWidth = 3; g.beginPath(); if (f.d > 0) g.arc(f.x - 8, f.y + 2, 17, f.up ? 0.9 - p : -1.1 + p * 0.4, f.up ? -0.7 : 0.9, f.up); else g.arc(f.x + 8, f.y + 2, 17, f.up ? Math.PI - 0.9 + p : Math.PI + 1.1 - p * 0.4, f.up ? Math.PI + 0.7 : Math.PI - 0.9, !f.up); g.stroke(); }
       else if (f.k === 'txt') { const p = f.t / 0.9; g.font = 'bold 9px sans-serif'; g.textAlign = 'center'; g.fillStyle = '#060608'; g.fillText(f.v, Math.round(f.x) + 1, Math.round(f.y - p * 10) + 1); g.fillStyle = f.c; g.fillText(f.v, Math.round(f.x), Math.round(f.y - p * 10)); }
       else if (f.k === 'ring') { const p = f.t / 0.5; g.strokeStyle = `rgba(255,224,138,${1 - p})`; g.lineWidth = 2; g.beginPath(); g.ellipse(f.x, f.y + 20, 12 + p * 90, 5 + p * 34, 0, 0, 7); g.stroke(); }
+      else if (f.k === 'blood') { if (f.t < 0.42) { g.fillStyle = f.c; const s2 = f.t < 0.14 ? 2 : 1; g.fillRect(Math.round(f.x), Math.round(f.y), s2, s2); } }
       else if (f.k === 'dust') { g.fillStyle = `rgba(214,196,150,${0.8 - f.t * 2})`; const s = 2 + Math.floor(f.t * 8); g.fillRect(Math.round(f.x), Math.round(f.y - 2), s, s); }
       else if (f.k === 'arrow') { g.save(); g.translate(Math.round(f.x), Math.round(f.y)); g.rotate(f.ang || 0); g.fillStyle = '#060608'; g.fillRect(-9, -1, 12, 3); g.fillStyle = '#d9c08a'; g.fillRect(-8, 0, 9, 1); g.fillStyle = '#e9e9f0'; g.fillRect(1, 0, 2, 1); g.fillStyle = '#c0392b'; g.fillRect(-9, 0, 2, 1); g.restore(); } }
     g.restore(); }
