@@ -1,7 +1,7 @@
 /* 턴제 전투 시안 2 (11-23 기획서 + 사용자 답): 격자 12×8 · AP 1(기본 공격/방어 태세) · GP 4(이동) · SP +1/턴 · HP 20칸 겹 · 밀치기 · 바위 · 오폭 · 궁수 연격 · 전사 패링 · 짐꾼 석궁+옮기기.
    build_battle2.py가 __AN__ · __ARC__ · __BG__ · __GOB__를 채워 page_battle.html로 만든다. 수치는 모두 임시. */
 (() => {
-  const AN = __AN__, ARC = __ARC__, SETS = { 궁수: ARC }, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__'; const TLS = new Image(); TLS.src = '__TILES__'; const BGF = new Image(); BGF.src = '__BGF__'; const PRP = new Image(); PRP.src = '__PROPS__';
+  const AN = __AN__, ARC = __ARC__, SETS = { 궁수: ARC }, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__'; const TLS = new Image(); TLS.src = '__TILES__'; const BGF = new Image(); BGF.src = '__BGF__'; const PRP = new Image(); PRP.src = '__PROPS__'; const TLD = new Image(); TLD.src = '__TILES2__';
   for (const S of [AN, ARC]) for (const k in S) { S[k].im = new Image(); S[k].im.src = S[k].src; }
   const cv = document.getElementById('stage'), g = cv.getContext('2d'); cv.width = 480; cv.height = 240; g.imageSmoothingEnabled = false;
   const NC = 12, NR = 8, CW = 33, RH = 20, SK = 11, GX = 3, GY = 72, TW = CW + SK;
@@ -111,23 +111,25 @@
 
   // ── 바닥 타일 배경: 층의 생태계마다 바닥이 다르다(임시 도형). 바닥 타일 한 장 = 격자 한 칸 ──
   const BIO = {
+    '평원 흙바닥': { atlas: 2, sky2: 1, edge: '#3c7d38' },
     '평원 조립': { kit: 1 },
     '평원':      { photo: 1 },
     '평원 타일': { atlas: 1, sky: ['#8fd0ee', '#bfe6f3'], far: '#86c46c', mid: '#5fa35a', trunk: '#6b4a2e', leaf: ['#3f8f3f', '#57ab4a'], edge: '#3c7d38', f: ['#74c254', '#6ab84c'], line: '#5ca645', d1: '#4f9a3c', d2: '#fff3a8', cap: 0 },
     '버섯 숲':  { sky: ['#1d1630', '#33264f'], far: '#2f2c58', mid: '#262144', trunk: '#d9cfe2', leaf: ['#a8437f', '#d466a2'], edge: '#1c3540', f: ['#2f6c68', '#2a6360'], line: '#225250', d1: '#3f8a80', d2: '#f0a0d0', cap: 1 },
     '모래 협곡': { sky: ['#f0c284', '#f7deae'], far: '#cc8c54', mid: '#a9693d', trunk: '#7a5a3a', leaf: ['#8aa04a', '#a5ba5c'], edge: '#96673a', f: ['#e5c57e', '#ddbc72'], line: '#cba65e', d1: '#c79a52', d2: '#f6ecc8', cap: 0 }
   };
-  let bio = '평원 조립';
+  let bio = '평원 흙바닥';
   const hsh = (a, b) => { let h = Math.imul(a, 73856093) ^ Math.imul(b, 19349663); h = Math.imul(h ^ (h >>> 13), 1274126177); return (h ^ (h >>> 16)) >>> 0; };
   const TIL = {}; function tileImg(k, par) { const key = k + par; if (TIL[key]) return TIL[key]; const B = BIO[k], c = document.createElement('canvas'), x = c.getContext('2d'); c.width = TW; c.height = 20;
     for (let b = 0; b < 20; b++) { const s0 = Math.round((19 - b) * SK / 20); x.fillStyle = b === 19 ? B.line : B.f[par]; x.fillRect(s0, b, CW, 1); x.fillStyle = B.line; x.fillRect(s0 + CW - 1, b, 1, 1); } return TIL[key] = c; }
-  function drawBG() { const B = BIO[bio], sc = Math.floor(scroll); if (B.kit) { const so = sc % 720; g.fillStyle = '#8fd0ee'; g.fillRect(0, 0, 480, 34); g.fillStyle = '#bfe6f3'; g.fillRect(0, 34, 480, 44);
+  function skyKit(sc) { g.fillStyle = '#8fd0ee'; g.fillRect(0, 0, 480, 34); g.fillStyle = '#bfe6f3'; g.fillRect(0, 34, 480, 44);
       for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.2, h = Math.round(40 + Math.sin(w / 47) * 7 + Math.sin(w / 19) * 3); g.fillStyle = '#8cc873'; g.fillRect(x, h, 4, 78 - h); }
-      for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.45, h = Math.round(56 + Math.sin(w / 31 + 2) * 4 + Math.sin(w / 13) * 2); g.fillStyle = '#e8b93c'; g.fillRect(x, h, 4, 78 - h); g.fillStyle = '#f6d264'; g.fillRect(x, h, 4, 2); }
+      for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.45, h = Math.round(56 + Math.sin(w / 31 + 2) * 4 + Math.sin(w / 13) * 2); g.fillStyle = '#e8b93c'; g.fillRect(x, h, 4, 78 - h); g.fillStyle = '#f6d264'; g.fillRect(x, h, 4, 2); } }
+  function drawBG() { const B = BIO[bio], sc = Math.floor(scroll); if (B.kit) { const so = sc % 720; skyKit(sc);
       g.drawImage(BGF, so, 76, 720 - so, 164, 0, 76, 720 - so, 164); g.drawImage(BGF, 0, 76, 720, 164, 720 - so, 76, 720, 164);
       g.drawImage(PRP, -so, 0); g.drawImage(PRP, 720 - so, 0); return; }
     if (B.photo) { const so = sc % 720; g.drawImage(BGF, -so, 0); g.drawImage(BGF, 720 - so, 0); return; }
-    g.fillStyle = B.sky[0]; g.fillRect(0, 0, 480, 30); g.fillStyle = B.sky[1]; g.fillRect(0, 30, 480, 46);
+    if (B.sky2) skyKit(sc); else { g.fillStyle = B.sky[0]; g.fillRect(0, 0, 480, 30); g.fillStyle = B.sky[1]; g.fillRect(0, 30, 480, 46);
     for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.2, h = Math.round(44 + Math.sin(w / 41) * 7 + Math.sin(w / 17) * 3); g.fillStyle = B.far; g.fillRect(x, h, 4, 76 - h); }
     for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.35, h = Math.round(56 + Math.sin(w / 29 + 2) * 5 + Math.sin(w / 11) * 2); g.fillStyle = B.mid; g.fillRect(x, h, 4, 76 - h); }
     const tp = sc * 0.6, k0 = Math.floor(tp / 30); for (let i = -1; i < 18; i++) { const k = k0 + i, h = hsh(k, 7); if (h % 5 === 0) continue; const x = Math.round(k * 30 - tp + (h >> 4) % 12), th = 16 + (h >> 8) % 16, R = 8 + (h >> 12) % 5, y = 72;
@@ -135,12 +137,13 @@
       if (B.cap) { g.fillStyle = '#060608'; g.beginPath(); g.ellipse(x + 0.5, y - th, R + 3, R * 0.7 + 1, 0, Math.PI, 0); g.fill(); g.fillStyle = B.leaf[h & 1]; g.beginPath(); g.ellipse(x + 0.5, y - th - 1, R + 2, R * 0.7 - 1, 0, Math.PI, 0); g.fill(); g.fillStyle = B.d2; g.fillRect(x - 4, y - th - 5, 2, 2); g.fillRect(x + 3, y - th - 4, 2, 2); }
       else { g.fillStyle = '#060608'; g.beginPath(); g.arc(x + 0.5, y - th - R + 4, R + 1, 0, 7); g.fill(); g.fillStyle = B.leaf[h & 1]; g.beginPath(); g.arc(x + 0.5, y - th - R + 4, R, 0, 7); g.fill(); g.fillStyle = B.leaf[1 - (h & 1)]; g.fillRect(x - R + 3, y - th - R + 1, 4, 2); g.fillRect(x + 1, y - th - R * 2 + 6, 3, 2); } }
     g.fillStyle = '#060608'; g.fillRect(0, 69, 480, 7); g.fillStyle = B.edge; g.fillRect(0, 70, 480, 6); for (let x = 0; x < 480; x += 6) { const h = hsh(Math.floor((x + sc) / 6), 3) % 4; g.fillStyle = B.edge; g.fillRect(x - sc % 6, 70 - h, 6, h); }
+    }
     const off = sc % CW, w0 = Math.floor(sc / CW); for (let r = 0; r < 8; r++) for (let i = -4; i < 16; i++) { const x = GX + i * CW - off + (7 - r) * SK, y = GY + r * 20, wc = w0 + i, h = hsh(wc, r + 11), sh = b => Math.round((19 - b) * SK / 20);
-      if (B.atlas) { const v = h % 20, k = v < 10 ? 0 : v < 15 ? 1 : v < 18 ? 2 : 3; g.drawImage(TLS, k * TW, 0, TW, 20, x, y, TW, 20); continue; } g.drawImage(tileImg(bio, (wc + r) & 1), x, y);
+      if (B.atlas) { const v = h % 20, k = v < 10 ? 0 : v < 15 ? 1 : v < 18 ? 2 : 3; g.drawImage(B.atlas === 2 ? TLD : TLS, k * TW, 0, TW, 20, x, y, TW, 20); continue; } g.drawImage(tileImg(bio, (wc + r) & 1), x, y);
       if (h % 3 === 0) { const a = 4 + (h >> 3) % (CW - 10), b = 3 + (h >> 9) % 12, q = x + sh(b); g.fillStyle = B.d1; g.fillRect(q + a, y + b, 1, 3); g.fillRect(q + a + 2, y + b + 1, 1, 2); g.fillRect(q + a - 2, y + b + 1, 1, 2); }
       if (h % 7 === 1) { const a = 5 + (h >> 5) % 24, b = 4 + (h >> 11) % 10, q = x + sh(b); g.fillStyle = B.d2; g.fillRect(q + a, y + b, 2, 2); g.fillStyle = B.d1; g.fillRect(q + a, y + b + 2, 2, 1); }
       if (h % 13 === 2) { const a = 6 + (h >> 6) % 20, b = 5 + (h >> 12) % 8, q = x + sh(b); g.fillStyle = B.line; g.fillRect(q + a, y + b, 5, 3); g.fillStyle = B.d1; g.fillRect(q + a + 1, y + b, 3, 1); } }
-    if (B.atlas) { for (let i = -1; i < 16; i++) { const k = hsh(w0 + i, 99) % 4; g.drawImage(TLS, k * TW, 20, CW, 8, GX + i * CW - off, GY + 160, CW, 8); } } else { g.fillStyle = '#060608'; g.fillRect(0, GY + 160, 480, 8); g.fillStyle = B.edge; g.fillRect(0, GY + 161, 480, 7); } }
+    if (B.atlas) { for (let i = -1; i < 16; i++) { const k = hsh(w0 + i, 99) % 4; g.drawImage(B.atlas === 2 ? TLD : TLS, k * TW, 20, CW, 8, GX + i * CW - off, GY + 160, CW, 8); } if (B.sky2) { const so = sc % 720; g.drawImage(PRP, -so, -6); g.drawImage(PRP, 720 - so, -6); } } else { g.fillStyle = '#060608'; g.fillRect(0, GY + 160, 480, 8); g.fillStyle = B.edge; g.fillRect(0, GY + 161, 480, 7); } }
   // ── 그리기 ──
   function tile(c, r, fill, line) { const [x, y] = cellXY(c, r), k = SK / RH, p = [[-CW / 2, -15], [CW / 2, -15], [CW / 2, 5], [-CW / 2, 5]].map(([dx, dy]) => [x + dx - dy * k, y + dy]); g.beginPath(); p.forEach(([a, b], i) => i ? g.lineTo(a, b) : g.moveTo(a, b)); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (line) { g.strokeStyle = line; g.lineWidth = 1; g.stroke(); } }
   function hpBar(u, x, top) { const per = 20, lay = Math.max(0, Math.ceil(u.hp / per) - 1), fill = u.hp - lay * per, cTop = LAYER[Math.min(lay, LAYER.length - 1)], cUnder = lay > 0 ? LAYER[Math.min(lay - 1, LAYER.length - 1)] : '#3a2a2a';
