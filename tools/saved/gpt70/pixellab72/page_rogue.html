@@ -1,0 +1,98 @@
+<title>도적 준비물</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 배치: 한 줄 흐름 — 머리 → 순서(번호: 실제 차례) → 붙일 그림 셋(그림 · 크게 보기 · 저장) → 부탁 글 넷(글 · 복사) → 받은 뒤 볼 것.
+   색은 궁수 그림에서: 두건 초록 · 가죽 갈색 · 버클 금색. 그림은 밝은 회색 판 그대로 보인다 */
+:root {
+  --bg: #eeedf4; --surface: #f9f8fc; --panel: #dcd9e8; --fg: #1c1a26; --muted: #5a5770; --line: #c8c4d8;
+  --accent: #8a2f2a; --accent-fg: #ffffff; --label: #7a5a0c; --sheet: #c8ccd6; --code: #f3f1f9;
+  --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #d0564c; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #16151d; --surface: #1f1d29; --panel: #2e2b3c; --fg: #ebe7f2; --muted: #a39fb4; --line: #383548; --accent: #d0564c; --accent-fg: #ffffff; --label: #f0c45a; --sheet: #c8ccd6; --code: #1b1a24; color-scheme: dark }
+*, *::before, *::after { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 820px; margin-inline: auto; display: grid; gap: 44px; grid-template-columns: minmax(0, 1fr) }
+h1, h2, h3, p, ul, ol, figure, pre { margin: 0 }
+ul, ol { padding: 0; list-style: none }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.15 }
+h1 { font-size: clamp(30px, 7vw, 42px) }
+h2 { font-size: 24px }
+h3 { font-size: 16px; font-weight: 600 }
+.top { display: grid; gap: 10px }
+.eyebrow { color: var(--label); font-size: 13px; font-weight: 600; letter-spacing: .04em }
+.lede { max-width: 36em }
+.sec { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) }
+.note { color: var(--muted); font-size: 14px; max-width: 44em }
+.steps { counter-reset: n; display: grid; gap: 12px; max-width: 46em }
+.steps li { counter-increment: n; padding-left: 34px; position: relative }
+.steps li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font: 400 15px/1 var(--font-display); background: var(--accent); color: var(--accent-fg); border-radius: 4px }
+.item { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) }
+.item .what { display: grid; gap: 2px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.msg { color: var(--muted); font-size: 13px }
+.msg:empty { display: none }
+.btn { font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.btn[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg) }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-fg) }
+.btn:disabled { opacity: .6; cursor: default }
+.btn:focus-visible { outline: 2px solid var(--label); outline-offset: 2px }
+.frame { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px }
+.frame img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.frame.zoomed img { width: var(--zw); max-width: none }
+.frame.soft img { image-rendering: auto }
+.attach { color: var(--label); font-size: 13px; font-weight: 600 }
+.req { font: 13.5px/1.65 var(--font-body); white-space: pre-wrap; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; max-height: 22em; overflow: auto; -webkit-user-select: text; user-select: text }
+.list { display: grid; gap: 10px; max-width: 46em }
+.list li { padding-left: 18px; position: relative }
+.list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; background: var(--label) }
+
+.mock { position: relative; width: 100%; aspect-ratio: 2172 / 724; container-type: inline-size; border: 2px solid #000; overflow: hidden; border-radius: 6px; background: #c9d6c2; }
+.mock .b { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 2.9cqw; line-height: 1.25; color: #f2f4e8; box-sizing: border-box; border-top: 1px dashed rgba(0, 0, 0, .45); padding: 0 1cqw; }
+.pts { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style>
+<style>
+.sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 8px; max-width: 260px; }
+.sheet img { display: block; width: 100%; height: auto; image-rendering: pixelated; border-radius: 6px; }
+.btn { font: inherit; font-weight: 600; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.btn.go { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+pre.code { background: var(--code); border: 1px solid var(--line); border-radius: 10px; padding: 14px; font-family: var(--font-data); font-size: 13px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+table.set { border-collapse: collapse; width: 100%; font-size: 14px; } table.set th, table.set td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } table.set th { color: var(--muted); font-weight: 600; }
+</style>
+<main class="wrap">
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 도적 1차</p><h1>도적 준비물</h1><p class="lede">픽셀랩에서 뽑은 전사를 참고 그림으로 붙여, 같은 그림체의 도적 옆모습을 뽑습니다.</p></header>
+  <section class="sec"><h2>1. 참고로 붙일 전사 그림</h2>
+    <figure class="sheet"><img alt="오른쪽을 보고 선 전사. 투구, 붉은 망토, 둥근 방패, 검" src="data:image/png;base64,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"></figure>
+    <div class="row"><button class="btn go" type="button" data-save="warrior_pl_east_64.png" data-b64="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">전사 그림 저장</button></div>
+    <p class="note" id="save-hint">저장이 안 되면 그림을 길게 눌러 저장해 주세요. 저장되는 파일은 64 × 64, 바탕이 투명합니다.</p>
+  </section>
+  <section class="sec"><h2>2. 픽셀랩 설정</h2>
+    <p class="note">심플 크리에이터 → 이미지 생성 → 「프로」 칸</p>
+    <table class="set"><tr><th>화면의 영어</th><th>뜻</th><th>할 일</th></tr>
+    <tr><td>Mode</td><td>방식</td><td>Pro</td></tr><tr><td>Description</td><td>설명</td><td>아래 3번 글 넣기</td></tr><tr><td>Remove background</td><td>배경 제거</td><td>체크</td></tr><tr><td>Output size</td><td>출력 크기</td><td>64x64 (Custom size는 체크 안 함)</td></tr><tr><td>Reference images</td><td>참고 그림</td><td>위 전사 그림 한 장</td></tr><tr><td>Style image</td><td>그림체 그림</td><td>비워 둠</td></tr><tr><td>Color palette</td><td>색상표</td><td>그대로</td></tr></table>
+  </section>
+  <section class="sec"><h2>3. 설명 칸에 넣을 글 (옆모습)</h2>
+    <pre class="code" id="p1">A young rogue adventurer, full body, side view facing right, standing idle. Exactly the same pixel art style, proportions, body size, outline and shading as the character in reference image 1. He wears a dark indigo hood pulled over his head with his face visible, a short dark indigo cloak, a brown leather vest with belts and small pouches, dark grey trousers and soft brown leather boots, and a mustard yellow scarf around his neck. He holds one short steel dagger in his right hand in a reverse grip, low and ready. His left hand is empty. Light, agile build. No shield, no helmet, no bow. Feet on the ground.</pre>
+    <div class="row"><button class="btn" type="button" data-copy="p1">글 복사</button></div>
+    <p class="note">남색 두건과 짧은 망토, 갈색 가죽 조끼, 겨자색 목도리, 거꾸로 쥔 단검 한 자루입니다.</p>
+  </section>
+</main>
+<script>
+(async () => {
+  const msg = document.getElementById('save-hint'); let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+  document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', async () => {
+    const bin = atob(b.dataset.b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    const blob = new Blob([u], { type: 'image/png' });
+    try { if (dl) { await dl.save({ filename: b.dataset.save, data: blob }); msg.textContent = '저장했습니다.'; } else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = b.dataset.save; a.click(); } }
+    catch (e) { msg.textContent = '저장하지 못했습니다. 그림을 길게 눌러 저장해 주세요.'; }
+  }));
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    const t = document.getElementById(b.dataset.copy).textContent;
+    try { await navigator.clipboard.writeText(t); b.textContent = '복사했습니다'; } catch (_) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.copy)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = '글을 골랐습니다 · 길게 눌러 복사'; }
+  }));
+})();
+</script>
