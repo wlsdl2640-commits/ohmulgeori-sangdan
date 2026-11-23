@@ -62,14 +62,14 @@ h3 { font-size: 16px; font-weight: 600 }
   #info { min-height: 1.4em; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
 </style>
 <main class="wrap">
-  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 전투 화면</p><h1>턴제 전투 시안</h1><p class="lede">기획서의 뼈대(격자 8 × 6, 행동 · 이동 · 스킬 포인트, 밀치기, 바위, 아군 오폭)를 작은 전투 창 크기 그대로 만져 보는 시안입니다. 아직 게임에는 넣지 않았습니다.</p></header>
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 전투 화면</p><h1>턴제 전투 시안</h1><p class="lede">기획서의 뼈대(격자 8 × 6, 행동 · 이동 · 스킬 포인트, 밀치기, 바위, 아군 오폭)로 싸우는 모습을 작은 전투 창 크기 그대로 보는 시안입니다. 전투는 전부 자동이고, 자리는 첫 출발 때 한 번만 정합니다. 아직 게임에는 넣지 않았습니다.</p></header>
   <section class="sec">
     <div class="item"><div class="stagebox"><canvas id="stage" role="img" aria-label="바닥 전체에 가로 8칸 세로 6칸 격자가 깔린 전투 화면. 왼쪽에 모험가 여섯, 오른쪽에 고블린과 바위가 있다"></canvas></div>
       <p class="note" id="info" aria-live="polite"></p><p class="note" id="msg" aria-live="polite"></p><div id="acts"></div></div>
-    <p class="note" id="save-hint">직접 눌러 보는 시안이라 저장 단추는 없습니다.</p>
+    <p class="note" id="save-hint">보기만 하는 시안이라 저장 단추는 없습니다.</p>
   </section>
   <section class="sec"><div class="what item"><h2>해 보는 법</h2></div>
-    <ul class="list"><li>걷다가 몬스터를 만나면 격자가 깔립니다. 모험가를 끌어 왼쪽 세 열 안에서 자리를 바꾸고 「전투 시작」을 누릅니다.</li><li>모험가를 누르면 아래에 그 사람의 체력과 포인트가 나오고 단추가 생깁니다.</li><li><b>이동</b>: 하늘색 칸을 누르면 걸어갑니다. 한 턴에 3칸까지입니다.</li><li><b>기본 공격 · 스킬</b>: 누르면 쓸 수 있는 칸이 옅게, 맞는 범위가 짙게 표시됩니다. 끌어서 옮긴 뒤 「시전」을 누릅니다.</li><li><b>방어 태세</b>: 기본 공격 대신 고릅니다. 다음 내 차례까지 받는 피해가 절반입니다.</li><li>「턴 종료」를 누르면 몬스터가 움직입니다. 「자동」을 켜면 모험가도 알아서 싸웁니다.</li></ul>
+    <ul class="list"><li>처음에 격자가 깔려 있습니다. 모험가를 끌어 왼쪽 세 열 안에서 자리를 정하고 「원정 출발」을 누릅니다.</li><li>그 뒤로는 전부 자동입니다. 걷다가 몬스터를 만나면 정해 둔 자리로 가서 알아서 싸우고, 이기면 다시 걷습니다.</li><li>자리는 첫 출발 때 한 번만 정합니다. 바꾸려면 「자리 다시 정하기」를 누릅니다.</li></ul>
   </section>
   <section class="sec"><div class="what item"><h2>이 시안에 넣은 것</h2></div>
     <ul class="list"><li><b>포인트 셋</b>: 행동(AP) 턴마다 1 · 이동(GP) 턴마다 3 · 스킬(SP) 턴마다 +1, 최대 3. 머리 위 파란 원이 스킬 포인트입니다.</li><li><b>체력 10칸</b>: 머리 위 막대가 한 줄 10칸입니다. 한 칸이 체력 2, 체력 20마다 한 겹이고 겹마다 색이 다릅니다(초록 → 파랑 → 보라). 체력이 줄면 줄어든 칸에 아래 겹의 색이 보입니다. 넘치게 회복하면 막대 위에 하늘색 보호막 칸이 붙습니다.</li><li><b>전사</b>: 패링(다음 한 번을 막고 되받아침) · 방패 밀치기(2칸 밀기, 바위에 부딪히면 바위가 부서지고 뒤 칸이 연쇄 피해) · 우렁찬 외침</li><li><b>궁수</b>: 연격(기본 공격을 할 때마다 한 발씩 늘어 다음 턴에 여러 발, 최대 5) · 관통 화살(바위를 부숨) · 풍압 화살(밀치기)</li><li><b>마법사</b>: 화염구(십자 5칸, 아군도 맞음) · <b>사제</b>: 치유의 빛(넘친 만큼 보호막) · <b>도적</b>: 회피 30%, 급소 찌르기(출혈), 그림자 교대(자리 바꾸기)</li><li><b>짐꾼</b>: 석궁(멀리서 기본 공격) · 옮기기(옆의 아군이나 바위를 들어 2칸 안 빈 칸에 내려놓음) · 보급품 살포</li><li>수치는 모두 임시입니다. 그림은 전사와 궁수만 있어서 나머지 직업은 전사 그림이고, 몬스터는 고블린 한 가지입니다. 마법사의 영창(턴을 기다려 범위를 키우는 것)과 상태이상 대부분은 아직 넣지 않았습니다.</li></ul>
@@ -112,16 +112,17 @@ h3 { font-size: 16px; font-weight: 600 }
   const sleep = ms => new Promise(r => setTimeout(r, ms / (auto ? 1.7 : 1))), say = m => { document.getElementById('msg').textContent = m; };
   const num = (u, v, c) => { const [x, y] = posOf(u); fxs.push({ x, y: y - 46, v, c, t: 0 }); };
   async function glide(u, x, y, ms) { const [sx, sy] = posOf(u); for (let i = 1; i <= 8; i++) { u.pos = [sx + (x - sx) * i / 8, sy + (y - sy) * i / 8]; await sleep(ms / 8); } }
-  function reset() { gen++; U = [mk('A', '전사', 2, 1), mk('A', '도적', 2, 4), mk('A', '마법사', 1, 2), mk('A', '궁수', 1, 3), mk('A', '사제', 0, 1), mk('A', '짐꾼', 0, 4)]; fights = 0; walkPhase(); }
+  function reset() { gen++; U = [mk('A', '전사', 2, 1), mk('A', '도적', 2, 4), mk('A', '마법사', 1, 2), mk('A', '궁수', 1, 3), mk('A', '사제', 0, 1), mk('A', '짐꾼', 0, 4)]; fights = 0; auto = false; phase = 'place'; busy = false; sel = null; mode = null; pend = null; moving = false; say('출발 전에 모험가를 끌어 자리를 정하세요. 원정 내내 이 자리에서 싸움을 시작합니다.'); ui(); }
+  function depart() { U.forEach(u => { u.hc = u.c; u.hr = u.r; }); auto = true; walkPhase(); }
   async function walkPhase() { const my = gen; phase = 'walk'; busy = true; sel = null; mode = null; pend = null; U = U.filter(u => u.kind === 'A'); U.forEach(u => { if (!u.alive) { u.alive = true; u.hp = Math.round(u.max * 0.3); u.dead = null; } u.st = {}; u.def = u.parry = 0; u.an = 'walk'; }); say(fights ? '싸움이 끝나 다시 길을 갑니다.' : '원정대가 길을 가는 중입니다.'); ui();
     await Promise.all(U.map(u => glide(u, LINE[u.cls], 176 + (LINE[u.cls] / 30 % 2 ? 6 : -4), 500))); if (my !== gen) return; moving = true; await sleep(2600); if (my !== gen) return; moving = false; encounter(my); }
-  async function encounter(my) { const fc = [5, 6, 7].flatMap(c => [0, 1, 2, 3, 4, 5].map(r => [c, r])).sort(() => Math.random() - 0.5), n = 3 + (Math.random() * 3 | 0);
+  async function encounter(my) { U.forEach(u => { if (u.hc != null) { u.pos = posOf(u); u.c = u.hc; u.r = u.hr; } }); const fc = [5, 6, 7].flatMap(c => [0, 1, 2, 3, 4, 5].map(r => [c, r])).sort(() => Math.random() - 0.5), n = 3 + (Math.random() * 3 | 0);
     fc.slice(0, n).forEach(([c, r]) => { const f = mk('F', '고블린', c, r), [x, y] = cellXY(c, r); f.pos = [x + 200, y]; U.push(f); });
     [3, 4, 5, 6].flatMap(c => [0, 1, 2, 3, 4, 5].map(r => [c, r])).filter(([c, r]) => !at(c, r)).sort(() => Math.random() - 0.5).slice(0, 3).forEach(([c, r]) => U.push(mk('O', '바위', c, r)));
     say('몬스터가 나타났습니다!'); U.forEach(u => { if (u.kind === 'A') u.an = 'idle'; });
-    await Promise.all(U.filter(u => u.kind !== 'O').map(u => { const [x, y] = cellXY(u.c, u.r); return glide(u, x, y, u.kind === 'A' ? 450 : 600); })); if (my !== gen) return; U.forEach(u => { u.pos = null; }); phase = 'place'; busy = false; say('모험가를 끌어 왼쪽 세 열 안에서 자리를 바꿀 수 있습니다. 다 되면 「전투 시작」.'); ui(); if (auto) setTimeout(() => { if (my === gen && phase === 'place') startBattle(); }, 900); }
+    await Promise.all(U.filter(u => u.kind !== 'O').map(u => { const [x, y] = cellXY(u.c, u.r); return glide(u, x, y, u.kind === 'A' ? 450 : 600); })); if (my !== gen) return; U.forEach(u => { u.pos = null; }); busy = false; startBattle(); }
   function turnStart(k) { live(k).forEach(u => { u.ap = 1; u.gp = 3; u.def = 0; if (k === 'A') u.sp = Math.min(3, u.sp + 1); const had = u.st.bleed || u.st.stun; if (u.st.bleed) { hurt(u, 1, null, 1); num(u, '출혈', '#ff8a70'); } if (had && u.C.combo) u.combo = 0; for (const s in u.st) if (u.st[s] > 0) u.st[s]--; }); }
-  function startBattle() { phase = 'A'; round = 1; fights++; U.forEach(u => { u.combo = 0; u.parry = 0; if (u.kind === 'A') u.sp = 2; }); turnStart('A'); say('1턴 · 모험가를 눌러 고르세요.'); ui(); if (auto) autoPlay(); }
+  function startBattle() { phase = 'A'; round = 1; fights++; U.forEach(u => { u.combo = 0; u.parry = 0; if (u.kind === 'A') u.sp = 2; }); turnStart('A'); say('1턴 · 자동으로 싸웁니다.'); ui(); if (auto) autoPlay(); }
   function won() { if (phase === 'end') return; phase = 'end'; sel = null; mode = null; pend = null; say('이겼습니다!'); ui(); const my = gen; setTimeout(() => { if (my === gen) walkPhase(); }, 1100); }
   // ── 규칙 ──
   function hurt(x, d, by, raw) { if (!x.alive) return 0; if (x.kind === 'O') { breakRock(x); return 0; }
@@ -217,12 +218,12 @@ h3 { font-size: 16px; font-weight: 600 }
   const acts = document.getElementById('acts'), info = document.getElementById('info');
   function ui() { acts.innerHTML = ''; const add = (txt, fn, cls, dis) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + (cls || ''); b.textContent = txt; b.disabled = !!dis; b.addEventListener('click', fn); acts.appendChild(b); return b; };
     info.textContent = sel && sel.alive && phase === 'A' ? sel.cls + ' (' + sel.C.spec + ') · 체력 ' + sel.hp + '/' + sel.max + (sel.sh ? ' + 보호막 ' + sel.sh : '') + ' · 행동 AP ' + sel.ap + ' · 이동 GP ' + sel.gp + ' · 스킬 SP ' + sel.sp : '';
-    if (phase === 'place' && !auto) add('전투 시작', startBattle, 'go');
+    if (phase === 'place' && !auto) add('원정 출발', depart, 'go');
     if (phase === 'A' && !busy && !auto) { if (pend) { add(pend.step === 2 ? '여기에 내려놓기' : pend.sk.carry ? '이것을 들기' : '시전', confirm, 'go'); add('취소', () => { pend = null; say('취소했습니다.'); ui(); }); }
       else if (sel && sel.alive) { const u = sel; add(mode === 'move' ? '이동 끝' : '이동 (' + u.gp + ')', () => { mode = mode === 'move' ? null : 'move'; say(mode ? '하늘색 칸을 누르면 그리로 걸어갑니다. 한 칸에 GP 1.' : ''); ui(); }, mode === 'move' ? 'go' : '', u.gp < 1);
         const b = basicSk(u), wb = why(u, b); add('기본 공격', () => wb ? say(wb) : aim(u, b), wb ? 'off' : ''); add('방어 태세', () => { if (u.ap < 1) return say('이번 턴 행동(AP)을 이미 썼습니다.'); u.ap = 0; u.def = 1; num(u, '방어', '#9be3ff'); say('다음 내 차례까지 받는 피해가 절반이 됩니다.'); ui(); }, u.ap < 1 ? 'off' : '');
         u.C.sk.forEach(id => { const sk = SK_[id], w = why(u, sk); add(sk.n + ' ●' + sk.sp, () => w ? say(w) : aim(u, sk), w ? 'off' : ''); }); } }
-    add('턴 종료', () => { if (!busy && phase === 'A') foeTurn(); }, '', busy || phase !== 'A' || auto); add(auto ? '자동 끄기' : '자동', () => { auto = !auto; ui(); if (auto) { if (phase === 'place') startBattle(); else autoPlay(); } }); add('다시', () => { auto = false; reset(); }); }
+    add(phase === 'place' ? '처음 자리로' : '자리 다시 정하기', () => { reset(); }); }
   function aim(u, sk) { mode = null; const valid = anchors(u, sk); if (!valid.length) return say('쓸 수 있는 칸이 없습니다.'); const want = x => x && (sk.heal ? x.kind === 'A' : sk.carry ? x.kind !== 'F' : x.kind === 'F'), nf = nearest(u, live('F')); const tg = valid.find(([c, r]) => want(at(c, r))) || (nf && sk.rng !== 'self' && !sk.heal && !sk.carry ? near(valid, [nf.c, nf.r]) : valid[0]); pend = { sk, valid, a: tg, step: 1 }; say(sk.n + (sk.d ? ' — ' + sk.d : ' — 붉은 칸을 끌어 옮긴 뒤 「시전」.')); ui(); }
   async function confirm() { const p = pend, u = sel; if (p.sk.carry && p.step === 1) { const x = at(p.a[0], p.a[1]); if (!x || x.kind === 'F') return say('아군이나 바위만 들 수 있습니다.'); const drops = []; for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) if (!at(c, r) && man(u, c, r) <= 2) drops.push([c, r]); if (!drops.length) return say('내려놓을 빈 칸이 없습니다.'); p.step = 2; p.drops = drops; p.drop = drops[0]; say('내려놓을 초록 칸을 누른 뒤 「여기에 내려놓기」.'); return ui(); }
     pend = null; ui(); if (p.sk.basic) { const tg = at(p.a[0], p.a[1]); if (!tg || tg.kind === 'A') { say('그 칸에는 칠 것이 없습니다.'); pend = p; return ui(); } await basic(u, tg); } else await cast(u, p.sk, p.a, p.drop);
