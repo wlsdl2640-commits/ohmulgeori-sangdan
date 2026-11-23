@@ -20,7 +20,7 @@ body=f"""<title>턴제 전투 시안</title>
   #info {{ min-height: 1.4em; margin: 6px 0 0; font-variant-numeric: tabular-nums; }}
 </style>
 <main class="wrap">
-  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 전투 화면</p><h1>턴제 전투 시안</h1><p class="lede">격자를 12 × 8로 넓히고, 바닥 전체를 층의 생태계에 맞는 타일로 깐 시안입니다. 바닥 타일 한 장이 격자 한 칸입니다. 정한 대형 그대로 걷고, 몬스터를 만나면 그 자리에서 바로 싸웁니다. 아직 게임에는 넣지 않았습니다.</p></header>
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 전투 화면</p><h1>턴제 전투 시안</h1><p class="lede">격자를 12 × 8로 넓히고, 바닥 전체를 층의 생태계에 맞는 타일로 깐 시안입니다. 바닥 타일 한 장이 격자 한 칸이고, 타일은 살짝 사선으로 누워 있습니다. 정한 대형 그대로 걷고, 몬스터를 만나면 그 자리에서 바로 싸웁니다. 아직 게임에는 넣지 않았습니다.</p></header>
   <section class="sec">
     <div class="item"><div class="stagebox"><canvas id="stage" role="img" aria-label="바닥 전체에 가로 8칸 세로 6칸 격자가 깔린 전투 화면. 왼쪽에 모험가 여섯, 오른쪽에 고블린과 바위가 있다"></canvas></div>
       <p class="note" id="info" aria-live="polite"></p><p class="note" id="msg" aria-live="polite"></p><div id="acts"></div></div>
