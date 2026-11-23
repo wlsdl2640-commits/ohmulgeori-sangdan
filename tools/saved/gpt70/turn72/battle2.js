@@ -4,8 +4,8 @@
   const AN = __AN__, ARC = __ARC__, SETS = { 궁수: ARC }, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__'; const TLS = new Image(); TLS.src = '__TILES__';
   for (const S of [AN, ARC]) for (const k in S) { S[k].im = new Image(); S[k].im.src = S[k].src; }
   const cv = document.getElementById('stage'), g = cv.getContext('2d'); cv.width = 480; cv.height = 240; g.imageSmoothingEnabled = false;
-  const NC = 12, NR = 8, CW = 36, RH = 20, SK = 6, GX = 3, GY = 72;
-  const cellXY = (c, r) => [GX + 18 + c * CW + (NR - 1 - r) * SK, GY + 15 + r * RH];
+  const NC = 12, NR = 8, CW = 33, RH = 20, SK = 11, GX = 3, GY = 72, TW = CW + SK;
+  const cellXY = (c, r) => [Math.round(GX + CW / 2 + c * CW + (NR - 1 - r) * SK), GY + 15 + r * RH];
   const inG = (c, r) => c >= 0 && c < NC && r >= 0 && r < NR && !(c === 0 && (r === 3 || r === 4)), DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
   // 스킬: rng adj 옆 한 칸 · man n 거리 n 안 · line n 네 방향 직선 n칸 · self / shape one · cross · around(자기 둘레 3×3) · line
   const SK_ = {
@@ -27,7 +27,7 @@
     마법사: { hp: 20, atk: 4, rng: 4, sk: ['fire'], spec: '영창' }, 사제: { hp: 20, atk: 2, rng: 3, sk: ['heal'], spec: '치유' }
   };
   const LAYER = ['#57c84d', '#3a8ee6', '#a45ee0', '#f0b030', '#ff6a5a'];       // HP 겹 색: 20칸마다 한 겹
-  let U = [], sel = null, mode = null, pend = null, phase = 'walk', busy = false, auto = false, round = 1, fxs = [], t = 0, last = 0, scroll = 108, moving = false, gridA = 0, dragU = null, fights = 0, gen = 0;
+  let U = [], sel = null, mode = null, pend = null, phase = 'walk', busy = false, auto = false, round = 1, fxs = [], t = 0, last = 0, scroll = 99, moving = false, gridA = 0, dragU = null, fights = 0, gen = 0;
   const LINE = { 짐꾼: 58, 사제: 92, 궁수: 122, 마법사: 152, 도적: 182, 전사: 212 };
   const mk = (kind, cls, c, r) => { const C = kind === 'A' ? CLS[cls] : kind === 'F' ? { hp: 24, atk: 5, rng: 1, sk: [] } : { hp: 1, atk: 0, sk: [] }; return { kind, cls, c, r, hp: C.hp, max: C.hp, sh: 0, atk: C.atk, C, sp: kind === 'A' ? 2 : 0, ap: 1, gp: 3, st: {}, combo: 0, alive: true, pos: null, ox: 0, oy: 0, an: 'idle', at: 0 }; };
   const live = k => U.filter(u => u.kind === k && u.alive), at = (c, r) => U.find(u => u.alive && u.c === c && u.r === r);
@@ -117,8 +117,8 @@
   };
   let bio = '초원';
   const hsh = (a, b) => { let h = Math.imul(a, 73856093) ^ Math.imul(b, 19349663); h = Math.imul(h ^ (h >>> 13), 1274126177); return (h ^ (h >>> 16)) >>> 0; };
-  const TIL = {}; function tileImg(k, par) { const key = k + par; if (TIL[key]) return TIL[key]; const B = BIO[k], c = document.createElement('canvas'), x = c.getContext('2d'); c.width = 36 + SK; c.height = 20;
-    for (let b = 0; b < 20; b++) { const s0 = Math.round((19 - b) * SK / 20); x.fillStyle = b === 19 ? B.line : B.f[par]; x.fillRect(s0, b, 36, 1); x.fillStyle = B.line; x.fillRect(s0 + 35, b, 1, 1); } return TIL[key] = c; }
+  const TIL = {}; function tileImg(k, par) { const key = k + par; if (TIL[key]) return TIL[key]; const B = BIO[k], c = document.createElement('canvas'), x = c.getContext('2d'); c.width = TW; c.height = 20;
+    for (let b = 0; b < 20; b++) { const s0 = Math.round((19 - b) * SK / 20); x.fillStyle = b === 19 ? B.line : B.f[par]; x.fillRect(s0, b, CW, 1); x.fillStyle = B.line; x.fillRect(s0 + CW - 1, b, 1, 1); } return TIL[key] = c; }
   function drawBG() { const B = BIO[bio], sc = Math.floor(scroll);
     g.fillStyle = B.sky[0]; g.fillRect(0, 0, 480, 30); g.fillStyle = B.sky[1]; g.fillRect(0, 30, 480, 46);
     for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.2, h = Math.round(44 + Math.sin(w / 41) * 7 + Math.sin(w / 17) * 3); g.fillStyle = B.far; g.fillRect(x, h, 4, 76 - h); }
@@ -128,14 +128,14 @@
       if (B.cap) { g.fillStyle = '#060608'; g.beginPath(); g.ellipse(x + 0.5, y - th, R + 3, R * 0.7 + 1, 0, Math.PI, 0); g.fill(); g.fillStyle = B.leaf[h & 1]; g.beginPath(); g.ellipse(x + 0.5, y - th - 1, R + 2, R * 0.7 - 1, 0, Math.PI, 0); g.fill(); g.fillStyle = B.d2; g.fillRect(x - 4, y - th - 5, 2, 2); g.fillRect(x + 3, y - th - 4, 2, 2); }
       else { g.fillStyle = '#060608'; g.beginPath(); g.arc(x + 0.5, y - th - R + 4, R + 1, 0, 7); g.fill(); g.fillStyle = B.leaf[h & 1]; g.beginPath(); g.arc(x + 0.5, y - th - R + 4, R, 0, 7); g.fill(); g.fillStyle = B.leaf[1 - (h & 1)]; g.fillRect(x - R + 3, y - th - R + 1, 4, 2); g.fillRect(x + 1, y - th - R * 2 + 6, 3, 2); } }
     g.fillStyle = '#060608'; g.fillRect(0, 69, 480, 7); g.fillStyle = B.edge; g.fillRect(0, 70, 480, 6); for (let x = 0; x < 480; x += 6) { const h = hsh(Math.floor((x + sc) / 6), 3) % 4; g.fillStyle = B.edge; g.fillRect(x - sc % 6, 70 - h, 6, h); }
-    const off = sc % 36, w0 = Math.floor(sc / 36); for (let r = 0; r < 8; r++) for (let i = -3; i < 14; i++) { const x = GX + i * 36 - off + (7 - r) * SK, y = GY + r * 20, wc = w0 + i, h = hsh(wc, r + 11), sh = b => Math.round((19 - b) * SK / 20);
-      if (B.atlas) { const v = h % 20, k = v < 10 ? 0 : v < 15 ? 1 : v < 18 ? 2 : 3; g.drawImage(TLS, k * 42, 0, 42, 20, x, y, 42, 20); continue; } g.drawImage(tileImg(bio, (wc + r) & 1), x, y);
-      if (h % 3 === 0) { const a = 4 + (h >> 3) % 26, b = 3 + (h >> 9) % 12, q = x + sh(b); g.fillStyle = B.d1; g.fillRect(q + a, y + b, 1, 3); g.fillRect(q + a + 2, y + b + 1, 1, 2); g.fillRect(q + a - 2, y + b + 1, 1, 2); }
+    const off = sc % CW, w0 = Math.floor(sc / CW); for (let r = 0; r < 8; r++) for (let i = -4; i < 16; i++) { const x = GX + i * CW - off + (7 - r) * SK, y = GY + r * 20, wc = w0 + i, h = hsh(wc, r + 11), sh = b => Math.round((19 - b) * SK / 20);
+      if (B.atlas) { const v = h % 20, k = v < 10 ? 0 : v < 15 ? 1 : v < 18 ? 2 : 3; g.drawImage(TLS, k * TW, 0, TW, 20, x, y, TW, 20); continue; } g.drawImage(tileImg(bio, (wc + r) & 1), x, y);
+      if (h % 3 === 0) { const a = 4 + (h >> 3) % (CW - 10), b = 3 + (h >> 9) % 12, q = x + sh(b); g.fillStyle = B.d1; g.fillRect(q + a, y + b, 1, 3); g.fillRect(q + a + 2, y + b + 1, 1, 2); g.fillRect(q + a - 2, y + b + 1, 1, 2); }
       if (h % 7 === 1) { const a = 5 + (h >> 5) % 24, b = 4 + (h >> 11) % 10, q = x + sh(b); g.fillStyle = B.d2; g.fillRect(q + a, y + b, 2, 2); g.fillStyle = B.d1; g.fillRect(q + a, y + b + 2, 2, 1); }
       if (h % 13 === 2) { const a = 6 + (h >> 6) % 20, b = 5 + (h >> 12) % 8, q = x + sh(b); g.fillStyle = B.line; g.fillRect(q + a, y + b, 5, 3); g.fillStyle = B.d1; g.fillRect(q + a + 1, y + b, 3, 1); } }
-    if (B.atlas) { for (let i = -1; i < 14; i++) { const k = hsh(w0 + i, 99) % 4; g.drawImage(TLS, k * 42, 20, 36, 8, GX + i * 36 - off, GY + 160, 36, 8); } } else { g.fillStyle = '#060608'; g.fillRect(0, GY + 160, 480, 8); g.fillStyle = B.edge; g.fillRect(0, GY + 161, 480, 7); } }
+    if (B.atlas) { for (let i = -1; i < 16; i++) { const k = hsh(w0 + i, 99) % 4; g.drawImage(TLS, k * TW, 20, CW, 8, GX + i * CW - off, GY + 160, CW, 8); } } else { g.fillStyle = '#060608'; g.fillRect(0, GY + 160, 480, 8); g.fillStyle = B.edge; g.fillRect(0, GY + 161, 480, 7); } }
   // ── 그리기 ──
-  function tile(c, r, fill, line) { const [x, y] = cellXY(c, r), k = SK / RH, p = [[-18, -15], [18, -15], [18, 5], [-18, 5]].map(([dx, dy]) => [x + dx - dy * k, y + dy]); g.beginPath(); p.forEach(([a, b], i) => i ? g.lineTo(a, b) : g.moveTo(a, b)); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (line) { g.strokeStyle = line; g.lineWidth = 1; g.stroke(); } }
+  function tile(c, r, fill, line) { const [x, y] = cellXY(c, r), k = SK / RH, p = [[-CW / 2, -15], [CW / 2, -15], [CW / 2, 5], [-CW / 2, 5]].map(([dx, dy]) => [x + dx - dy * k, y + dy]); g.beginPath(); p.forEach(([a, b], i) => i ? g.lineTo(a, b) : g.moveTo(a, b)); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (line) { g.strokeStyle = line; g.lineWidth = 1; g.stroke(); } }
   function hpBar(u, x, top) { const per = 20, lay = Math.max(0, Math.ceil(u.hp / per) - 1), fill = u.hp - lay * per, cTop = LAYER[Math.min(lay, LAYER.length - 1)], cUnder = lay > 0 ? LAYER[Math.min(lay - 1, LAYER.length - 1)] : '#3a2a2a';
     g.fillStyle = '#060608'; g.fillRect(x - 16, top + 2, 31, 5); for (let i = 0; i < 10; i++) { g.fillStyle = i < Math.ceil(fill / 2) ? cTop : cUnder; g.fillRect(x - 15 + i * 3, top + 3, 2, 3); }
     if (u.sh > 0) { g.fillStyle = '#060608'; g.fillRect(x - 16, top - 4, u.sh * 3 + 1, 4); g.fillStyle = '#8fe0ff'; for (let i = 0; i < u.sh; i++) g.fillRect(x - 15 + i * 3, top - 3, 2, 2); } }
@@ -144,7 +144,7 @@
     if (sel && sel.alive && phase === 'A') tile(sel.c, sel.r, 'rgba(255,224,90,.4)', '#ffe05a');
     if (mode === 'move' && sel) reach(sel).forEach((d, k) => { const [c, r] = k.split(',').map(Number); tile(c, r, 'rgba(90,200,255,.33)', '#bfe8ff'); });
     if (pend) { if (pend.step === 2) pend.drops.forEach(([c, r]) => tile(c, r, c === pend.drop[0] && r === pend.drop[1] ? 'rgba(90,230,120,.6)' : 'rgba(90,230,120,.2)', '#d8ffd8')); else { pend.valid.forEach(([c, r]) => tile(c, r, 'rgba(255,255,255,.14)', null)); area(sel, pend.sk, pend.a).forEach(([c, r]) => tile(c, r, pend.sk.heal || pend.sk.carry || pend.sk.swap ? 'rgba(90,230,120,.5)' : 'rgba(255,70,50,.5)', '#ffffff')); } }
-    g.globalAlpha = 1; { const wx = 27, wy = GY + 95, bob = moving ? Math.floor(scroll / 6) % 2 : 0, o = '#060608';
+    g.globalAlpha = 1; { const wx = GX + 4 * SK - 18, wy = GY + 95, bob = moving ? Math.floor(scroll / 6) % 2 : 0, o = '#060608';
       g.fillStyle = 'rgba(30,40,20,.35)'; g.fillRect(wx, wy - 1, 40, 3);
       g.fillStyle = o; g.fillRect(wx + 1, wy - 33 + bob, 36, 20); g.fillStyle = '#e9dcc0'; g.fillRect(wx + 2, wy - 32 + bob, 34, 18); g.fillStyle = '#cdbb96'; for (let i = 0; i < 4; i++) g.fillRect(wx + 9 + i * 8, wy - 32 + bob, 1, 18); g.fillStyle = '#f6eed9'; g.fillRect(wx + 3, wy - 31 + bob, 32, 2);
       g.fillStyle = o; g.fillRect(wx, wy - 15 + bob, 40, 10); g.fillStyle = '#8a5a34'; g.fillRect(wx + 1, wy - 14 + bob, 38, 8); g.fillStyle = '#6b4226'; g.fillRect(wx + 1, wy - 10 + bob, 38, 1); g.fillStyle = '#a9713f'; g.fillRect(wx + 1, wy - 14 + bob, 38, 1); g.fillStyle = o; g.fillRect(wx + 39, wy - 11 + bob, 9, 3); g.fillStyle = '#8a5a34'; g.fillRect(wx + 39, wy - 10 + bob, 8, 1);
@@ -162,7 +162,7 @@
     fxs.forEach(f => { if (f.arrow) { const k = Math.min(1, f.t / 0.17), x = Math.round(f.x + (f.x1 - f.x) * k), y = Math.round(f.y + (f.y1 - f.y) * k - Math.sin(k * Math.PI) * 5); g.fillStyle = '#060608'; g.fillRect(x - 6, y - 1, 13, 3); g.fillStyle = '#d59a57'; g.fillRect(x - 5, y, 9, 1); g.fillStyle = '#dae0ea'; g.fillRect(x + 4, y, 2, 1); g.fillStyle = '#ffffff'; g.fillRect(x - 5, y, 2, 1); }
       else if (f.boom) { const k = f.t / 0.3, r = 3 + Math.round(k * 9); g.fillStyle = f.c; g.globalAlpha = 1 - k; g.fillRect(f.x - r, f.y - 1, r * 2, 2); g.fillRect(f.x - 1, f.y - r, 2, r * 2); g.globalAlpha = 1; }
       else { g.font = 'bold 9px sans-serif'; g.textAlign = 'center'; const y = f.y - f.t * 16; g.fillStyle = '#060608'; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([a, b]) => g.fillText(f.v, f.x + a, y + b)); g.fillStyle = f.c; g.fillText(f.v, f.x, y); } }); }
-  function loop(ms) { const dt = Math.min(0.05, (ms - last) / 1000 || 0); last = ms; t += dt; U.forEach(u => { u.at += dt; if (u.flash > 0) u.flash -= dt; if (u.dead != null) u.dead += dt; }); fxs.forEach(f => f.t += dt); fxs = fxs.filter(f => f.t < (f.arrow ? 0.17 : f.boom ? 0.3 : 0.9)); if (moving) scroll += dt * 46; else if (scroll % 36 > 0.01) scroll = Math.min(Math.ceil(scroll / 36) * 36, scroll + dt * 46); render(); requestAnimationFrame(loop); }
+  function loop(ms) { const dt = Math.min(0.05, (ms - last) / 1000 || 0); last = ms; t += dt; U.forEach(u => { u.at += dt; if (u.flash > 0) u.flash -= dt; if (u.dead != null) u.dead += dt; }); fxs.forEach(f => f.t += dt); fxs = fxs.filter(f => f.t < (f.arrow ? 0.17 : f.boom ? 0.3 : 0.9)); if (moving) scroll += dt * 46; else if (scroll % CW > 0.01) scroll = Math.min(Math.ceil(scroll / CW) * CW, scroll + dt * 46); render(); requestAnimationFrame(loop); }
   // ── 조작 ──
   const acts = document.getElementById('acts'), info = document.getElementById('info');
   function ui() { acts.innerHTML = ''; const add = (txt, fn, cls, dis) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + (cls || ''); b.textContent = txt; b.disabled = !!dis; b.addEventListener('click', fn); acts.appendChild(b); return b; };
@@ -180,7 +180,7 @@
   async function confirm() { const p = pend, u = sel; if (p.sk.carry && p.step === 1) { const x = at(p.a[0], p.a[1]); if (!x || x.kind === 'F') return say('아군이나 바위만 들 수 있습니다.'); const drops = []; for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) if (!at(c, r) && man(u, c, r) <= 2) drops.push([c, r]); if (!drops.length) return say('내려놓을 빈 칸이 없습니다.'); p.step = 2; p.drops = drops; p.drop = drops[0]; say('내려놓을 초록 칸을 누른 뒤 「여기에 내려놓기」.'); return ui(); }
     pend = null; ui(); if (p.sk.basic) { const tg = at(p.a[0], p.a[1]); if (!tg || tg.kind === 'A') { say('그 칸에는 칠 것이 없습니다.'); pend = p; return ui(); } await basic(u, tg); } else await cast(u, p.sk, p.a, p.drop);
     if (!live('F').length) return won(); say('이어서 고르세요. 다 했으면 「턴 종료」.'); ui(); }
-  function pick(e) { const b = cv.getBoundingClientRect(), x = (e.clientX - b.left) * 480 / b.width, y = (e.clientY - b.top) * 240 / b.height; let best = null, bd = 1e9; for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) { const [cx, cy] = cellXY(c, r), d = ((x - cx - 1.5) / 18) ** 2 + ((y - cy + 5) / 10) ** 2; if (d < bd) { bd = d; best = [c, r]; } } return bd < 2 ? best : null; }
+  function pick(e) { const b = cv.getBoundingClientRect(), x = (e.clientX - b.left) * 480 / b.width, y = (e.clientY - b.top) * 240 / b.height; let best = null, bd = 1e9; for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) { const [cx, cy] = cellXY(c, r), d = ((x - cx - SK / 4) / (CW / 2)) ** 2 + ((y - cy + 5) / 10) ** 2; if (d < bd) { bd = d; best = [c, r]; } } return bd < 2 ? best : null; }
   const near = (list, p) => list.slice().sort((a, b) => Math.abs(a[0] - p[0]) + Math.abs(a[1] - p[1]) - Math.abs(b[0] - p[0]) - Math.abs(b[1] - p[1]))[0];
   let drag = false;
   function place(e, kind) { const b = cv.getBoundingClientRect(), x = (e.clientX - b.left) * 480 / b.width, y = (e.clientY - b.top) * 240 / b.height, p = pick(e);
