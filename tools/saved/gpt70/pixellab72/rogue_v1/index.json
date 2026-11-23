@@ -1,15 +1,18 @@
 {
  "slash": {
   "n": 21,
-  "src": "Wind_up_by_pulling_the_dagger_back_briefly_then_sw"
+  "src": "Pull_the_dagger_back_behind_the_shoulder_then_swin",
+  "v": 2
  },
  "run": {
   "n": 17,
-  "src": "Lean_the_body_forward_and_drive_into_a_rapid_run_c"
+  "src": "Run_forward_continuously_with_a_leaning_torso_driv",
+  "v": 2
  },
  "backstab": {
   "n": 21,
-  "src": "Crouch_low_while_raising_the_dagger_overhead_in_a"
+  "src": "Lift_the_dagger_above_the_head_in_a_reverse_grip_t",
+  "v": 2
  },
  "thrust": {
   "n": 21,
@@ -29,11 +32,13 @@
  },
  "hurt": {
   "n": 17,
-  "src": "Jerking_the_head_and_upper_body_backward_in_reacti"
+  "src": "React_to_a_hit_by_leaning_the_upper_body_back_slig",
+  "v": 2
  },
  "double": {
-  "n": 9,
-  "src": "Execute_a_rapid_double_dagger_slash_to_the_right_b"
+  "n": 21,
+  "src": "Swing_the_dagger_downward_diagonally_in_front_imme",
+  "v": 2
  },
  "idle": {
   "n": 17,
@@ -45,6 +50,7 @@
  },
  "walk": {
   "n": 17,
-  "src": "Step_forward_with_a_natural_stride_swinging_arms_i"
+  "src": "Step_forward_continuously_into_a_walking_cycle_wit",
+  "v": 2
  }
 }
