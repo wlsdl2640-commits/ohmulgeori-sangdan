@@ -1,8 +1,8 @@
 {
  "slash": {
-  "n": 21,
-  "src": "Pull_the_dagger_back_behind_the_shoulder_then_swin",
-  "v": 2
+  "n": 20,
+  "src": "gif: always_facing_right_body_and",
+  "v": 3
  },
  "run": {
   "n": 17,
@@ -32,8 +32,8 @@
  },
  "hurt": {
   "n": 17,
-  "src": "React_to_a_hit_by_leaning_the_upper_body_back_slig",
-  "v": 2
+  "src": "gif: always_facing_right_takes_a_h",
+  "v": 3
  },
  "double": {
   "n": 21,

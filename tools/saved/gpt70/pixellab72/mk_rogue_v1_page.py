@@ -5,7 +5,7 @@ b64=lambda f: base64.b64encode(open(os.path.join(H,f),'rb').read()).decode()
 src=open(H+'/page_pixellab.html',encoding='utf-8').read(); css=src[src.index('<style>'):src.index('</style>')+8]
 idx=json.load(open(H+'/rogue_v1/index.json'))
 # 이름, 띠, 쓰는 장(처음, 끝), 반복 여부
-MOT=[('대기','idle',1,16,1),('걷기','walk',1,16,1),('달리기','run',1,16,1),('단검 베기','slash',1,20,0),('찌르기','thrust',1,20,0),('뒤치기','backstab',1,20,0),('연속 베기','double',1,20,0),('뒤로 물러나기','dodge',1,20,0),('맞음','hurt',1,16,0),('쓰러짐','fall',9,20,0),('앉기','sit',1,20,0),('잠자기','sleep',1,16,0)]
+MOT=[('대기','idle',1,16,1),('걷기','walk',1,16,1),('달리기','run',1,16,1),('단검 베기','slash',0,19,0),('찌르기','thrust',1,20,0),('뒤치기','backstab',1,20,0),('연속 베기','double',1,20,0),('뒤로 물러나기','dodge',1,20,0),('맞음','hurt',1,16,0),('쓰러짐','fall',9,20,0),('앉기','sit',1,20,0),('잠자기','sleep',1,16,0)]
 data={k:b64(f'rogue_v1/{k}.png') for _,k,*_ in MOT}; war=b64('war_v1/idle.png')
 page=f"""<title>도적 동작</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
