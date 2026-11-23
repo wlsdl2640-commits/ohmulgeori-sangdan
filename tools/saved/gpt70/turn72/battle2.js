@@ -1,12 +1,12 @@
-/* 턴제 전투 시안 2 (11-23 기획서 + 사용자 답): 격자 8×6 · AP 1(기본 공격/방어 태세) · GP 3(이동) · SP +1/턴 · HP 20칸 겹 · 밀치기 · 바위 · 오폭 · 궁수 연격 · 전사 패링 · 짐꾼 석궁+옮기기.
+/* 턴제 전투 시안 2 (11-23 기획서 + 사용자 답): 격자 12×8 · AP 1(기본 공격/방어 태세) · GP 4(이동) · SP +1/턴 · HP 20칸 겹 · 밀치기 · 바위 · 오폭 · 궁수 연격 · 전사 패링 · 짐꾼 석궁+옮기기.
    build_battle2.py가 __AN__ · __ARC__ · __BG__ · __GOB__를 채워 page_battle.html로 만든다. 수치는 모두 임시. */
 (() => {
   const AN = __AN__, ARC = __ARC__, SETS = { 궁수: ARC }, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__';
   for (const S of [AN, ARC]) for (const k in S) { S[k].im = new Image(); S[k].im.src = S[k].src; }
   const cv = document.getElementById('stage'), g = cv.getContext('2d'); cv.width = 480; cv.height = 240; g.imageSmoothingEnabled = false;
-  const NC = 8, NR = 6, CW = 50, RH = 21, SK = 6;
-  const cellXY = (c, r) => [Math.round(44 + c * CW + (NR - 1 - r) * SK), Math.round(124 + r * RH)];
-  const inG = (c, r) => c >= 0 && c < NC && r >= 0 && r < NR, DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const NC = 12, NR = 8, CW = 36, RH = 20, SK = 0, GX = 24, GY = 76;
+  const cellXY = (c, r) => [GX + 18 + c * CW, GY + 15 + r * RH];
+  const inG = (c, r) => c >= 0 && c < NC && r >= 0 && r < NR && !(c === 0 && (r === 3 || r === 4)), DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
   // 스킬: rng adj 옆 한 칸 · man n 거리 n 안 · line n 네 방향 직선 n칸 · self / shape one · cross · around(자기 둘레 3×3) · line
   const SK_ = {
     parry:  { n: '패링', sp: 1, rng: 'self', shape: 'one', parry: 1, anim: 'block', d: '다음에 맞는 한 번을 완전히 막고 기본 공격으로 되받아칩니다.' },
@@ -27,7 +27,7 @@
     마법사: { hp: 20, atk: 4, rng: 4, sk: ['fire'], spec: '영창' }, 사제: { hp: 20, atk: 2, rng: 3, sk: ['heal'], spec: '치유' }
   };
   const LAYER = ['#57c84d', '#3a8ee6', '#a45ee0', '#f0b030', '#ff6a5a'];       // HP 겹 색: 20칸마다 한 겹
-  let U = [], sel = null, mode = null, pend = null, phase = 'walk', busy = false, auto = false, round = 1, fxs = [], t = 0, last = 0, scroll = 120, moving = false, gridA = 0, dragU = null, fights = 0, gen = 0;
+  let U = [], sel = null, mode = null, pend = null, phase = 'walk', busy = false, auto = false, round = 1, fxs = [], t = 0, last = 0, scroll = 108, moving = false, gridA = 0, dragU = null, fights = 0, gen = 0;
   const LINE = { 짐꾼: 58, 사제: 92, 궁수: 122, 마법사: 152, 도적: 182, 전사: 212 };
   const mk = (kind, cls, c, r) => { const C = kind === 'A' ? CLS[cls] : kind === 'F' ? { hp: 24, atk: 5, rng: 1, sk: [] } : { hp: 1, atk: 0, sk: [] }; return { kind, cls, c, r, hp: C.hp, max: C.hp, sh: 0, atk: C.atk, C, sp: kind === 'A' ? 2 : 0, ap: 1, gp: 3, st: {}, combo: 0, alive: true, pos: null, ox: 0, oy: 0, an: 'idle', at: 0 }; };
   const live = k => U.filter(u => u.kind === k && u.alive), at = (c, r) => U.find(u => u.alive && u.c === c && u.r === r);
@@ -35,17 +35,17 @@
   const sleep = ms => new Promise(r => setTimeout(r, ms / (auto ? 1.7 : 1))), say = m => { document.getElementById('msg').textContent = m; };
   const num = (u, v, c) => { const [x, y] = posOf(u); fxs.push({ x, y: y - 46, v, c, t: 0 }); };
   async function glide(u, x, y, ms) { const [sx, sy] = posOf(u); for (let i = 1; i <= 8; i++) { u.pos = [sx + (x - sx) * i / 8, sy + (y - sy) * i / 8]; await sleep(ms / 8); } }
-  function reset() { gen++; U = [mk('A', '전사', 2, 1), mk('A', '도적', 2, 4), mk('A', '마법사', 1, 2), mk('A', '궁수', 1, 3), mk('A', '사제', 0, 1), mk('A', '짐꾼', 0, 4)]; fights = 0; auto = false; phase = 'place'; busy = false; sel = null; mode = null; pend = null; moving = false; say('출발 전에 모험가를 끌어 자리를 정하세요. 원정 내내 이 자리에서 싸움을 시작합니다.'); ui(); }
+  function reset() { gen++; U = [mk('A', '전사', 4, 2), mk('A', '도적', 4, 5), mk('A', '마법사', 3, 3), mk('A', '궁수', 3, 4), mk('A', '사제', 2, 2), mk('A', '짐꾼', 1, 4)]; fights = 0; auto = false; phase = 'place'; busy = false; sel = null; mode = null; pend = null; moving = false; say('출발 전에 모험가를 끌어 푸른 칸 안에서 자리를 정하세요. 원정 내내 이 대형으로 걷고 싸웁니다.'); ui(); }
   function depart() { U.forEach(u => { u.hc = u.c; u.hr = u.r; }); auto = true; walkPhase(); }
   async function walkPhase() { const my = gen; phase = 'walk'; busy = true; sel = null; mode = null; pend = null; U = U.filter(u => u.kind === 'A'); U.forEach(u => { if (!u.alive) { u.alive = true; u.hp = Math.round(u.max * 0.3); u.dead = null; } u.st = {}; u.def = u.parry = 0; u.an = 'walk'; }); say(fights ? '싸움이 끝나 다시 길을 갑니다.' : '원정대가 길을 가는 중입니다.'); ui();
-    await Promise.all(U.map(u => glide(u, LINE[u.cls], 176 + (LINE[u.cls] / 30 % 2 ? 6 : -4), 500))); if (my !== gen) return; moving = true; await sleep(2600); if (my !== gen) return; moving = false; encounter(my); }
-  async function encounter(my) { U.forEach(u => { if (u.hc != null) { u.pos = posOf(u); u.c = u.hc; u.r = u.hr; } }); const fc = [5, 6, 7].flatMap(c => [0, 1, 2, 3, 4, 5].map(r => [c, r])).sort(() => Math.random() - 0.5), n = 3 + (Math.random() * 3 | 0);
-    fc.slice(0, n).forEach(([c, r]) => { const f = mk('F', '고블린', c, r), [x, y] = cellXY(c, r); f.pos = [x + 200, y]; U.push(f); });
-    [3, 4, 5, 6].flatMap(c => [0, 1, 2, 3, 4, 5].map(r => [c, r])).filter(([c, r]) => !at(c, r)).sort(() => Math.random() - 0.5).slice(0, 3).forEach(([c, r]) => U.push(mk('O', '바위', c, r)));
+    U.forEach(u => { u.pos = posOf(u); u.c = u.hc; u.r = u.hr; u.face = 1; }); await Promise.all(U.map(u => glide(u, ...cellXY(u.c, u.r), 600))); U.forEach(u => { u.pos = null; }); if (my !== gen) return; moving = true; await sleep(2600); if (my !== gen) return; moving = false; encounter(my); }
+  async function encounter(my) { U.forEach(u => { if (u.hc != null) { u.pos = posOf(u); u.c = u.hc; u.r = u.hr; } }); const RS = [0, 1, 2, 3, 4, 5, 6, 7], fc = [8, 9, 10, 11].flatMap(c => RS.map(r => [c, r])).sort(() => Math.random() - 0.5), n = 4 + (Math.random() * 4 | 0);
+    fc.slice(0, n).forEach(([c, r]) => { const f = mk('F', '고블린', c, r), [x, y] = cellXY(c, r); f.pos = [x + 220, y]; U.push(f); });
+    [5, 6, 7, 8, 9].flatMap(c => RS.map(r => [c, r])).filter(([c, r]) => !at(c, r)).sort(() => Math.random() - 0.5).slice(0, 5).forEach(([c, r]) => U.push(mk('O', '바위', c, r)));
     say('몬스터가 나타났습니다!'); U.forEach(u => { if (u.kind === 'A') u.an = 'idle'; });
     await Promise.all(U.filter(u => u.kind !== 'O').map(u => { const [x, y] = cellXY(u.c, u.r); return glide(u, x, y, u.kind === 'A' ? 450 : 600); })); if (my !== gen) return; U.forEach(u => { u.pos = null; }); busy = false; startBattle(); }
-  function turnStart(k) { live(k).forEach(u => { u.ap = 1; u.gp = 3; u.def = 0; if (k === 'A') u.sp = Math.min(3, u.sp + 1); const had = u.st.bleed || u.st.stun; if (u.st.bleed) { hurt(u, 1, null, 1); num(u, '출혈', '#ff8a70'); } if (had && u.C.combo) u.combo = 0; for (const s in u.st) if (u.st[s] > 0) u.st[s]--; }); }
-  function startBattle() { phase = 'A'; round = 1; fights++; U.forEach(u => { u.combo = 0; u.parry = 0; if (u.kind === 'A') u.sp = 2; }); turnStart('A'); say('1턴 · 자동으로 싸웁니다.'); ui(); if (auto) autoPlay(); }
+  function turnStart(k) { live(k).forEach(u => { u.ap = 1; u.gp = 4; u.def = 0; if (k === 'A') u.sp = Math.min(3, u.sp + 1); const had = u.st.bleed || u.st.stun; if (u.st.bleed) { hurt(u, 1, null, 1); num(u, '출혈', '#ff8a70'); } if (had && u.C.combo) u.combo = 0; for (const s in u.st) if (u.st[s] > 0) u.st[s]--; }); }
+  function startBattle() { phase = 'A'; round = 1; fights++; U.forEach(u => { u.combo = 0; u.parry = 0; if (u.kind === 'A') u.sp = 2; }); turnStart('A'); say(auto ? '1턴 · 자동으로 싸웁니다.' : '1턴 · 모험가를 눌러 고르세요.'); ui(); if (auto) autoPlay(); }
   function won() { if (phase === 'end') return; phase = 'end'; sel = null; mode = null; pend = null; say('이겼습니다!'); ui(); const my = gen; setTimeout(() => { if (my === gen) walkPhase(); }, 1100); }
   // ── 규칙 ──
   function hurt(x, d, by, raw) { if (!x.alive) return 0; if (x.kind === 'O') { breakRock(x); return 0; }
@@ -68,8 +68,8 @@
   function why(u, sk) { if (u.st.stun) return '기절해서 움직일 수 없습니다.'; if (sk.basic) return u.ap < 1 ? '이번 턴 행동(AP)을 이미 썼습니다.' : ''; return u.sp < sk.sp ? '스킬 포인트가 모자랍니다.' : ''; }
   function reach(u) { const seen = new Map([[u.c + ',' + u.r, 0]]), q = [[u.c, u.r]]; while (q.length) { const [c, r] = q.shift(), d = seen.get(c + ',' + r); if (d >= u.gp) continue; for (const [a, b] of DIRS) { const k = (c + a) + ',' + (r + b); if (inG(c + a, r + b) && !seen.has(k) && !at(c + a, r + b)) { seen.set(k, d + 1); q.push([c + a, r + b]); } } } seen.delete(u.c + ',' + u.r); return seen; }
   function pathTo(u, tc, tr, stopAt, incl) { const prev = new Map([[u.c + ',' + u.r, null]]), q = [[u.c, u.r]]; let end = null; while (q.length && !end) { const [c, r] = q.shift(); for (const [a, b] of DIRS) { const nc = c + a, nr = r + b, k = nc + ',' + nr; if (!inG(nc, nr) || prev.has(k)) continue; if (stopAt(nc, nr)) { prev.set(k, [c, r]); end = [nc, nr]; break; } if (at(nc, nr)) continue; prev.set(k, [c, r]); q.push([nc, nr]); } } if (!end) return []; const p = []; let cur = prev.get(end[0] + ',' + end[1]); while (cur && !(cur[0] === u.c && cur[1] === u.r)) { p.unshift(cur); cur = prev.get(cur[0] + ',' + cur[1]); } if (incl) p.push(end); return p; }
-  async function walkPath(u, path) { busy = true; u.an = u.kind === 'A' ? 'walk' : 'idle'; for (const [c, r] of path) { if (u.gp < 1) break; const [x, y] = cellXY(c, r); await glide(u, x, y, 150); u.c = c; u.r = r; u.pos = null; u.gp--; } u.an = 'idle'; busy = false; }
-  async function strike(u, tg, anim) { const [ux, uy] = cellXY(u.c, u.r), [tx, ty] = cellXY(tg.c, tg.r), close = man(u, tg.c, tg.r) === 1, dir = Math.sign(tx - ux) || 1;
+  async function walkPath(u, path) { busy = true; u.an = u.kind === 'A' ? 'walk' : 'idle'; for (const [c, r] of path) { if (u.gp < 1) break; const [x, y] = cellXY(c, r); if (c !== u.c) u.face = c > u.c ? 1 : -1; await glide(u, x, y, 150); u.c = c; u.r = r; u.pos = null; u.gp--; } u.an = 'idle'; busy = false; }
+  async function strike(u, tg, anim) { const [ux, uy] = cellXY(u.c, u.r), [tx, ty] = cellXY(tg.c, tg.r), close = man(u, tg.c, tg.r) === 1, dir = Math.sign(tx - ux) || 1; if (tx !== ux) u.face = tx > ux ? 1 : -1;
     if (close) { u.ox = (tx - ux) * 0.45; u.oy = (ty - uy) * 0.45; } u.an = u.kind === 'A' ? anim : 'idle'; u.at = 0; await sleep(u.kind === 'A' ? 400 : 170);
     if (!close) { fxs.push({ arrow: 1, x: ux + 14 * dir, y: uy - 22, x1: tx - 6 * dir, y1: ty - 18, t: 0 }); await sleep(170); } }
   async function back(u) { await sleep(220); u.ox = u.oy = 0; if (u.alive && u.an !== 'hurt') u.an = 'idle'; }
@@ -94,11 +94,11 @@
   const nearest = (u, list) => list.slice().sort((a, b) => man(u, a.c, a.r) - man(u, b.c, b.r))[0];
   async function foeTurn() { phase = 'F'; busy = true; sel = null; mode = null; pend = null; turnStart('F'); ui(); say('몬스터 차례입니다.'); await sleep(300);
     for (const f of live('F')) { if (!live('A').length || !f.alive) break; if (f.st.stun) continue; let tg = f.st.taunt && f.tauntBy && f.tauntBy.alive ? f.tauntBy : nearest(f, live('A'));
-      if (man(f, tg.c, tg.r) > 1) { f.gp = 2; await walkPath(f, pathTo(f, tg.c, tg.r, (c, r) => c === tg.c && r === tg.r)); busy = true; }
+      if (man(f, tg.c, tg.r) > 1) { f.gp = 3; await walkPath(f, pathTo(f, tg.c, tg.r, (c, r) => c === tg.c && r === tg.r)); busy = true; }
       if (man(f, tg.c, tg.r) === 1) { await strike(f, tg, 'idle'); hurt(tg, f.atk + (Math.random() * 2 | 0), f); await back(f); await sleep(380); } await sleep(80); }
     round++; if (phase !== 'F') return; busy = false; if (!live('A').length) { phase = 'end'; say('전멸했습니다. 「다시」를 눌러 주세요.'); ui(); return; } if (!live('F').length) return won(); phase = 'A'; turnStart('A'); say(round + '턴 · 모험가 차례입니다.'); ui(); if (auto) autoPlay(); }
   async function autoPlay() { if (busy || phase !== 'A') return; const my = gen;
-    for (const u of live('A')) { if (my !== gen || phase !== 'A') return; if (!live('F').length) break; if (u.st.stun) continue; const foes = live('F'), C = u.C;
+    for (const u of live('A')) { if (my !== gen || phase !== 'A' || !auto) return; if (!live('F').length) break; if (u.st.stun) continue; const foes = live('F'), C = u.C;
       if (u.cls === '사제' && u.sp >= 1) { const x = live('A').filter(a => a.hp < a.max * 0.7 && man(u, a.c, a.r) <= 3).sort((a, b) => a.hp / a.max - b.hp / b.max)[0]; if (x) await cast(u, SK_.heal, [x.c, x.r]); }
       if (u.cls === '마법사' && u.sp >= 2) { let best = null, bs = 0; for (const a of anchors(u, SK_.fire)) { const xs = area(u, SK_.fire, a).map(([c, r]) => at(c, r)).filter(Boolean); if (xs.some(x => x.kind === 'A')) continue; const n = xs.filter(x => x.kind === 'F').length; if (n > bs) { bs = n; best = a; } } if (best && bs >= 2) await cast(u, SK_.fire, best); }
       let tg = nearest(u, foes); if (!tg) break;
@@ -107,18 +107,42 @@
       if (man(u, tg.c, tg.r) <= C.rng) { if (u.cls === '도적' && u.sp >= 1 && man(u, tg.c, tg.r) === 1) await cast(u, SK_.stab, [tg.c, tg.r]); if (u.cls === '전사' && u.sp >= 2 && live('F').filter(f => man(u, f.c, f.r) <= 2).length >= 2) await cast(u, SK_.shout, [u.c, u.r]); if (tg.alive && u.ap) await basic(u, tg); }
       else if (u.cls === '전사' && u.sp >= 1 && !u.parry) await cast(u, SK_.parry, [u.c, u.r]);
       ui(); }
-    if (my !== gen || phase !== 'A') return; if (live('F').length) await foeTurn(); else won(); }
+    if (my !== gen || phase !== 'A' || !auto) return; if (live('F').length) await foeTurn(); else won(); }
+
+  // ── 바닥 타일 배경: 층의 생태계마다 바닥이 다르다(임시 도형). 바닥 타일 한 장 = 격자 한 칸 ──
+  const BIO = {
+    '초원':     { sky: ['#8fd0ee', '#bfe6f3'], far: '#86c46c', mid: '#5fa35a', trunk: '#6b4a2e', leaf: ['#3f8f3f', '#57ab4a'], edge: '#3c7d38', f: ['#74c254', '#6ab84c'], line: '#5ca645', d1: '#4f9a3c', d2: '#fff3a8', cap: 0 },
+    '버섯 숲':  { sky: ['#1d1630', '#33264f'], far: '#2f2c58', mid: '#262144', trunk: '#d9cfe2', leaf: ['#a8437f', '#d466a2'], edge: '#1c3540', f: ['#2f6c68', '#2a6360'], line: '#225250', d1: '#3f8a80', d2: '#f0a0d0', cap: 1 },
+    '모래 협곡': { sky: ['#f0c284', '#f7deae'], far: '#cc8c54', mid: '#a9693d', trunk: '#7a5a3a', leaf: ['#8aa04a', '#a5ba5c'], edge: '#96673a', f: ['#e5c57e', '#ddbc72'], line: '#cba65e', d1: '#c79a52', d2: '#f6ecc8', cap: 0 }
+  };
+  let bio = '초원';
+  const hsh = (a, b) => { let h = Math.imul(a, 73856093) ^ Math.imul(b, 19349663); h = Math.imul(h ^ (h >>> 13), 1274126177); return (h ^ (h >>> 16)) >>> 0; };
+  function drawBG() { const B = BIO[bio], sc = Math.floor(scroll);
+    g.fillStyle = B.sky[0]; g.fillRect(0, 0, 480, 30); g.fillStyle = B.sky[1]; g.fillRect(0, 30, 480, 46);
+    for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.2, h = Math.round(44 + Math.sin(w / 41) * 7 + Math.sin(w / 17) * 3); g.fillStyle = B.far; g.fillRect(x, h, 4, 76 - h); }
+    for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.35, h = Math.round(56 + Math.sin(w / 29 + 2) * 5 + Math.sin(w / 11) * 2); g.fillStyle = B.mid; g.fillRect(x, h, 4, 76 - h); }
+    const tp = sc * 0.6, k0 = Math.floor(tp / 30); for (let i = -1; i < 18; i++) { const k = k0 + i, h = hsh(k, 7); if (h % 5 === 0) continue; const x = Math.round(k * 30 - tp + (h >> 4) % 12), th = 16 + (h >> 8) % 16, R = 8 + (h >> 12) % 5, y = 72;
+      g.fillStyle = '#060608'; g.fillRect(x - 2, y - th, 5, th); g.fillStyle = B.trunk; g.fillRect(x - 1, y - th, 3, th);
+      if (B.cap) { g.fillStyle = '#060608'; g.beginPath(); g.ellipse(x + 0.5, y - th, R + 3, R * 0.7 + 1, 0, Math.PI, 0); g.fill(); g.fillStyle = B.leaf[h & 1]; g.beginPath(); g.ellipse(x + 0.5, y - th - 1, R + 2, R * 0.7 - 1, 0, Math.PI, 0); g.fill(); g.fillStyle = B.d2; g.fillRect(x - 4, y - th - 5, 2, 2); g.fillRect(x + 3, y - th - 4, 2, 2); }
+      else { g.fillStyle = '#060608'; g.beginPath(); g.arc(x + 0.5, y - th - R + 4, R + 1, 0, 7); g.fill(); g.fillStyle = B.leaf[h & 1]; g.beginPath(); g.arc(x + 0.5, y - th - R + 4, R, 0, 7); g.fill(); g.fillStyle = B.leaf[1 - (h & 1)]; g.fillRect(x - R + 3, y - th - R + 1, 4, 2); g.fillRect(x + 1, y - th - R * 2 + 6, 3, 2); } }
+    g.fillStyle = '#060608'; g.fillRect(0, 69, 480, 7); g.fillStyle = B.edge; g.fillRect(0, 70, 480, 6); for (let x = 0; x < 480; x += 6) { const h = hsh(Math.floor((x + sc) / 6), 3) % 4; g.fillStyle = B.edge; g.fillRect(x - sc % 6, 70 - h, 6, h); }
+    const off = sc % 36, w0 = Math.floor(sc / 36); for (let i = -1; i < 14; i++) for (let r = 0; r < 8; r++) { const x = GX + i * 36 - off, y = GY + r * 20, wc = w0 + i, h = hsh(wc, r + 11);
+      g.fillStyle = B.f[(wc + r) & 1]; g.fillRect(x, y, 36, 20); g.fillStyle = B.line; g.fillRect(x, y + 19, 36, 1); g.fillRect(x + 35, y, 1, 20);
+      if (h % 3 === 0) { const a = 4 + (h >> 3) % 26, b = 3 + (h >> 9) % 12; g.fillStyle = B.d1; g.fillRect(x + a, y + b, 1, 3); g.fillRect(x + a + 2, y + b + 1, 1, 2); g.fillRect(x + a - 2, y + b + 1, 1, 2); }
+      if (h % 7 === 1) { const a = 5 + (h >> 5) % 24, b = 4 + (h >> 11) % 10; g.fillStyle = B.d2; g.fillRect(x + a, y + b, 2, 2); g.fillStyle = B.d1; g.fillRect(x + a, y + b + 2, 2, 1); }
+      if (h % 13 === 2) { const a = 6 + (h >> 6) % 20, b = 5 + (h >> 12) % 8; g.fillStyle = B.line; g.fillRect(x + a, y + b, 5, 3); g.fillStyle = B.d1; g.fillRect(x + a + 1, y + b, 3, 1); } }
+    g.fillStyle = '#060608'; g.fillRect(0, 236, 480, 4); g.fillStyle = B.edge; g.fillRect(0, 237, 480, 3); }
   // ── 그리기 ──
-  function tile(c, r, fill, line) { const [x, y] = cellXY(c, r), k = SK / RH, p = [[-25, -14], [25, -14], [25, 7], [-25, 7]].map(([dx, dy]) => [x + dx - dy * k, y + dy]); g.beginPath(); p.forEach(([a, b], i) => i ? g.lineTo(a, b) : g.moveTo(a, b)); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (line) { g.strokeStyle = line; g.lineWidth = 1; g.stroke(); } }
+  function tile(c, r, fill, line) { const [x, y] = cellXY(c, r), k = SK / RH, p = [[-18, -15], [18, -15], [18, 5], [-18, 5]].map(([dx, dy]) => [x + dx - dy * k, y + dy]); g.beginPath(); p.forEach(([a, b], i) => i ? g.lineTo(a, b) : g.moveTo(a, b)); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (line) { g.strokeStyle = line; g.lineWidth = 1; g.stroke(); } }
   function hpBar(u, x, top) { const per = 20, lay = Math.max(0, Math.ceil(u.hp / per) - 1), fill = u.hp - lay * per, cTop = LAYER[Math.min(lay, LAYER.length - 1)], cUnder = lay > 0 ? LAYER[Math.min(lay - 1, LAYER.length - 1)] : '#3a2a2a';
     g.fillStyle = '#060608'; g.fillRect(x - 16, top + 2, 31, 5); for (let i = 0; i < 10; i++) { g.fillStyle = i < Math.ceil(fill / 2) ? cTop : cUnder; g.fillRect(x - 15 + i * 3, top + 3, 2, 3); }
     if (u.sh > 0) { g.fillStyle = '#060608'; g.fillRect(x - 16, top - 4, u.sh * 3 + 1, 4); g.fillStyle = '#8fe0ff'; for (let i = 0; i < u.sh; i++) g.fillRect(x - 15 + i * 3, top - 3, 2, 2); } }
-  function render() { const so = Math.floor(scroll) % 720; g.drawImage(BG, -so, 0); g.drawImage(BG, 720 - so, 0); gridA += ((phase === 'walk' ? 0 : 1) - gridA) * 0.15; g.globalAlpha = gridA;
-    for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) tile(c, r, phase === 'place' && c < 3 ? 'rgba(120,190,255,.25)' : null, 'rgba(255,255,255,.34)');
+  function render() { drawBG(); gridA += ((phase === 'walk' ? 0 : 1) - gridA) * 0.1; g.globalAlpha = gridA;
+    for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) if (inG(c, r)) tile(c, r, phase === 'place' && c >= 1 && c <= 4 ? 'rgba(120,190,255,.3)' : null, 'rgba(255,255,255,.2)');
     if (sel && sel.alive && phase === 'A') tile(sel.c, sel.r, 'rgba(255,224,90,.4)', '#ffe05a');
     if (mode === 'move' && sel) reach(sel).forEach((d, k) => { const [c, r] = k.split(',').map(Number); tile(c, r, 'rgba(90,200,255,.33)', '#bfe8ff'); });
     if (pend) { if (pend.step === 2) pend.drops.forEach(([c, r]) => tile(c, r, c === pend.drop[0] && r === pend.drop[1] ? 'rgba(90,230,120,.6)' : 'rgba(90,230,120,.2)', '#d8ffd8')); else { pend.valid.forEach(([c, r]) => tile(c, r, 'rgba(255,255,255,.14)', null)); area(sel, pend.sk, pend.a).forEach(([c, r]) => tile(c, r, pend.sk.heal || pend.sk.carry || pend.sk.swap ? 'rgba(90,230,120,.5)' : 'rgba(255,70,50,.5)', '#ffffff')); } }
-    g.globalAlpha = 1 - gridA; if (gridA < 0.97) { const wx = 4, wy = 192, bob = moving ? Math.floor(scroll / 6) % 2 : 0, o = '#060608';
+    g.globalAlpha = 1; { const wx = 22, wy = 171, bob = moving ? Math.floor(scroll / 6) % 2 : 0, o = '#060608';
       g.fillStyle = 'rgba(30,40,20,.35)'; g.fillRect(wx, wy - 1, 40, 3);
       g.fillStyle = o; g.fillRect(wx + 1, wy - 33 + bob, 36, 20); g.fillStyle = '#e9dcc0'; g.fillRect(wx + 2, wy - 32 + bob, 34, 18); g.fillStyle = '#cdbb96'; for (let i = 0; i < 4; i++) g.fillRect(wx + 9 + i * 8, wy - 32 + bob, 1, 18); g.fillStyle = '#f6eed9'; g.fillRect(wx + 3, wy - 31 + bob, 32, 2);
       g.fillStyle = o; g.fillRect(wx, wy - 15 + bob, 40, 10); g.fillStyle = '#8a5a34'; g.fillRect(wx + 1, wy - 14 + bob, 38, 8); g.fillStyle = '#6b4226'; g.fillRect(wx + 1, wy - 10 + bob, 38, 1); g.fillStyle = '#a9713f'; g.fillRect(wx + 1, wy - 14 + bob, 38, 1); g.fillStyle = o; g.fillRect(wx + 39, wy - 11 + bob, 9, 3); g.fillStyle = '#8a5a34'; g.fillRect(wx + 39, wy - 10 + bob, 8, 1);
@@ -127,7 +151,7 @@
     [...U].sort((a, b) => posOf(a)[1] + a.oy * 0 - posOf(b)[1]).forEach(u => { if (!u.alive && u.kind !== 'A') { if (u.dead > 0.4) return; g.globalAlpha = 1 - u.dead * 2.5; } const [cx, cy] = posOf(u), x = Math.round(cx + u.ox), y = Math.round(cy + u.oy);
       if (u.kind === 'O') { g.fillStyle = 'rgba(30,40,20,.35)'; g.fillRect(x - 13, y - 1, 26, 3); g.fillStyle = '#060608'; g.beginPath(); g.moveTo(x - 14, y + 1); g.lineTo(x - 11, y - 12); g.lineTo(x - 3, y - 19); g.lineTo(x + 8, y - 17); g.lineTo(x + 14, y - 7); g.lineTo(x + 13, y + 1); g.fill(); g.fillStyle = '#8c8a86'; g.beginPath(); g.moveTo(x - 12, y); g.lineTo(x - 9, y - 11); g.lineTo(x - 3, y - 17); g.lineTo(x + 7, y - 15); g.lineTo(x + 12, y - 7); g.lineTo(x + 11, y); g.fill(); g.fillStyle = '#b9b6ae'; g.fillRect(x - 6, y - 15, 9, 3); g.fillRect(x - 9, y - 11, 5, 3); g.fillStyle = '#5f5d5a'; g.fillRect(x + 3, y - 6, 8, 5); g.globalAlpha = 1; return; }
       g.fillStyle = 'rgba(30,40,20,.35)'; g.fillRect(x - 11, y - 2, 22, 3);
-      if (u.kind === 'A') { const S = SETS[u.cls] || AN, a = S[u.an] || AN[u.an], f = u.an === 'idle' || u.an === 'walk' ? Math.floor(u.at * 12) % a.n : Math.min(a.n - 1, Math.floor(u.at * (u.an === 'fall' ? 16 : 44))); g.drawImage(a.im, f * 80, 0, 80, 80, x - 38, y - 66, 80, 80); } else g.drawImage(GOB, x - GOB.width / 2, y - GOB.height);
+      if (u.kind === 'A') { const S = SETS[u.cls] || AN, a = S[u.an] || AN[u.an], f = u.an === 'idle' || u.an === 'walk' ? Math.floor(u.at * 12) % a.n : Math.min(a.n - 1, Math.floor(u.at * (u.an === 'fall' ? 16 : 44))); if (u.face < 0) { g.save(); g.translate(x, 0); g.scale(-1, 1); g.drawImage(a.im, f * 80, 0, 80, 80, -42, y - 66, 80, 80); g.restore(); } else g.drawImage(a.im, f * 80, 0, 80, 80, x - 38, y - 66, 80, 80); } else if (u.face > 0) { g.save(); g.translate(x, 0); g.scale(-1, 1); g.drawImage(GOB, -GOB.width / 2, y - GOB.height); g.restore(); } else g.drawImage(GOB, x - GOB.width / 2, y - GOB.height);
       if (u.flash > 0) { g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,255,255,.5)'; g.fillRect(x - 10, y - 38, 20, 36); g.globalCompositeOperation = 'source-over'; }
       g.globalAlpha = 1; if (!u.alive || phase === 'walk') return; const top = y - 50; hpBar(u, x, top);
       if (u.kind === 'A') { for (let i = 0; i < 3; i++) { g.fillStyle = '#060608'; g.beginPath(); g.arc(x - 6 + i * 6, top - (u.sh ? 9 : 5), 2.6, 0, 7); g.fill(); g.fillStyle = i < u.sp ? '#5ac8ff' : '#3a3644'; g.beginPath(); g.arc(x - 6 + i * 6, top - (u.sh ? 9 : 5), 1.7, 0, 7); g.fill(); } }
@@ -136,7 +160,7 @@
     fxs.forEach(f => { if (f.arrow) { const k = Math.min(1, f.t / 0.17), x = Math.round(f.x + (f.x1 - f.x) * k), y = Math.round(f.y + (f.y1 - f.y) * k - Math.sin(k * Math.PI) * 5); g.fillStyle = '#060608'; g.fillRect(x - 6, y - 1, 13, 3); g.fillStyle = '#d59a57'; g.fillRect(x - 5, y, 9, 1); g.fillStyle = '#dae0ea'; g.fillRect(x + 4, y, 2, 1); g.fillStyle = '#ffffff'; g.fillRect(x - 5, y, 2, 1); }
       else if (f.boom) { const k = f.t / 0.3, r = 3 + Math.round(k * 9); g.fillStyle = f.c; g.globalAlpha = 1 - k; g.fillRect(f.x - r, f.y - 1, r * 2, 2); g.fillRect(f.x - 1, f.y - r, 2, r * 2); g.globalAlpha = 1; }
       else { g.font = 'bold 9px sans-serif'; g.textAlign = 'center'; const y = f.y - f.t * 16; g.fillStyle = '#060608'; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([a, b]) => g.fillText(f.v, f.x + a, y + b)); g.fillStyle = f.c; g.fillText(f.v, f.x, y); } }); }
-  function loop(ms) { const dt = Math.min(0.05, (ms - last) / 1000 || 0); last = ms; t += dt; U.forEach(u => { u.at += dt; if (u.flash > 0) u.flash -= dt; if (u.dead != null) u.dead += dt; }); fxs.forEach(f => f.t += dt); fxs = fxs.filter(f => f.t < (f.arrow ? 0.17 : f.boom ? 0.3 : 0.9)); if (moving) scroll += dt * 46; render(); requestAnimationFrame(loop); }
+  function loop(ms) { const dt = Math.min(0.05, (ms - last) / 1000 || 0); last = ms; t += dt; U.forEach(u => { u.at += dt; if (u.flash > 0) u.flash -= dt; if (u.dead != null) u.dead += dt; }); fxs.forEach(f => f.t += dt); fxs = fxs.filter(f => f.t < (f.arrow ? 0.17 : f.boom ? 0.3 : 0.9)); if (moving) scroll += dt * 46; else if (scroll % 36 > 0.01) scroll = Math.min(Math.ceil(scroll / 36) * 36, scroll + dt * 46); render(); requestAnimationFrame(loop); }
   // ── 조작 ──
   const acts = document.getElementById('acts'), info = document.getElementById('info');
   function ui() { acts.innerHTML = ''; const add = (txt, fn, cls, dis) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + (cls || ''); b.textContent = txt; b.disabled = !!dis; b.addEventListener('click', fn); acts.appendChild(b); return b; };
@@ -146,17 +170,20 @@
       else if (sel && sel.alive) { const u = sel; add(mode === 'move' ? '이동 끝' : '이동 (' + u.gp + ')', () => { mode = mode === 'move' ? null : 'move'; say(mode ? '하늘색 칸을 누르면 그리로 걸어갑니다. 한 칸에 GP 1.' : ''); ui(); }, mode === 'move' ? 'go' : '', u.gp < 1);
         const b = basicSk(u), wb = why(u, b); add('기본 공격', () => wb ? say(wb) : aim(u, b), wb ? 'off' : ''); add('방어 태세', () => { if (u.ap < 1) return say('이번 턴 행동(AP)을 이미 썼습니다.'); u.ap = 0; u.def = 1; num(u, '방어', '#9be3ff'); say('다음 내 차례까지 받는 피해가 절반이 됩니다.'); ui(); }, u.ap < 1 ? 'off' : '');
         u.C.sk.forEach(id => { const sk = SK_[id], w = why(u, sk); add(sk.n + ' ●' + sk.sp, () => w ? say(w) : aim(u, sk), w ? 'off' : ''); }); } }
+    if (phase === 'A' && !auto) add('턴 종료', () => { if (!busy && phase === 'A') foeTurn(); }, '', busy);
+    if (phase !== 'place') add(auto ? '수동으로 전환' : '자동으로 전환', () => { auto = !auto; sel = null; mode = null; pend = null; say(auto ? '자동으로 싸웁니다.' : '수동입니다. 다음 모험가 차례부터 직접 고릅니다.'); ui(); if (auto) autoPlay(); });
+    Object.keys(BIO).forEach(k => add(k, () => { bio = k; ui(); }, bio === k ? 'on' : ''));
     add(phase === 'place' ? '처음 자리로' : '자리 다시 정하기', () => { reset(); }); }
   function aim(u, sk) { mode = null; const valid = anchors(u, sk); if (!valid.length) return say('쓸 수 있는 칸이 없습니다.'); const want = x => x && (sk.heal ? x.kind === 'A' : sk.carry ? x.kind !== 'F' : x.kind === 'F'), nf = nearest(u, live('F')); const tg = valid.find(([c, r]) => want(at(c, r))) || (nf && sk.rng !== 'self' && !sk.heal && !sk.carry ? near(valid, [nf.c, nf.r]) : valid[0]); pend = { sk, valid, a: tg, step: 1 }; say(sk.n + (sk.d ? ' — ' + sk.d : ' — 붉은 칸을 끌어 옮긴 뒤 「시전」.')); ui(); }
   async function confirm() { const p = pend, u = sel; if (p.sk.carry && p.step === 1) { const x = at(p.a[0], p.a[1]); if (!x || x.kind === 'F') return say('아군이나 바위만 들 수 있습니다.'); const drops = []; for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) if (!at(c, r) && man(u, c, r) <= 2) drops.push([c, r]); if (!drops.length) return say('내려놓을 빈 칸이 없습니다.'); p.step = 2; p.drops = drops; p.drop = drops[0]; say('내려놓을 초록 칸을 누른 뒤 「여기에 내려놓기」.'); return ui(); }
     pend = null; ui(); if (p.sk.basic) { const tg = at(p.a[0], p.a[1]); if (!tg || tg.kind === 'A') { say('그 칸에는 칠 것이 없습니다.'); pend = p; return ui(); } await basic(u, tg); } else await cast(u, p.sk, p.a, p.drop);
     if (!live('F').length) return won(); say('이어서 고르세요. 다 했으면 「턴 종료」.'); ui(); }
-  function pick(e) { const b = cv.getBoundingClientRect(), x = (e.clientX - b.left) * 480 / b.width, y = (e.clientY - b.top) * 240 / b.height; let best = null, bd = 1e9; for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) { const [cx, cy] = cellXY(c, r), d = ((x - cx - 1) / 25) ** 2 + ((y - cy + 3.5) / 10.5) ** 2; if (d < bd) { bd = d; best = [c, r]; } } return bd < 2 ? best : null; }
+  function pick(e) { const b = cv.getBoundingClientRect(), x = (e.clientX - b.left) * 480 / b.width, y = (e.clientY - b.top) * 240 / b.height; let best = null, bd = 1e9; for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) { const [cx, cy] = cellXY(c, r), d = ((x - cx) / 18) ** 2 + ((y - cy + 5) / 10) ** 2; if (d < bd) { bd = d; best = [c, r]; } } return bd < 2 ? best : null; }
   const near = (list, p) => list.slice().sort((a, b) => Math.abs(a[0] - p[0]) + Math.abs(a[1] - p[1]) - Math.abs(b[0] - p[0]) - Math.abs(b[1] - p[1]))[0];
   let drag = false;
   function place(e, kind) { const b = cv.getBoundingClientRect(), x = (e.clientX - b.left) * 480 / b.width, y = (e.clientY - b.top) * 240 / b.height, p = pick(e);
     if (kind === 'down') { const u = p && at(p[0], p[1]); if (u && u.kind === 'A') dragU = u; } else if (kind === 'move' && dragU) dragU.pos = [x, y + 12];
-    else if (kind === 'up' && dragU) { const u = dragU; dragU = null; u.pos = null; if (p && p[0] < 3) { const o = at(p[0], p[1]); if (o && o !== u) { o.c = u.c; o.r = u.r; } u.c = p[0]; u.r = p[1]; say(u.cls + '의 자리를 옮겼습니다.'); } } }
+    else if (kind === 'up' && dragU) { const u = dragU; dragU = null; u.pos = null; if (p && p[0] >= 1 && p[0] <= 4) { const o = at(p[0], p[1]); if (o && o !== u) { o.c = u.c; o.r = u.r; } u.c = p[0]; u.r = p[1]; say(u.cls + '의 자리를 옮겼습니다.'); } } }
   async function point(e) { if (phase === 'place' && !auto) return place(e, e.type === 'pointerdown' ? 'down' : 'move'); if (busy || phase !== 'A' || auto) return; const p = pick(e); if (!p) return;
     if (pend) { if (pend.step === 2) pend.drop = near(pend.drops, p); else if (pend.sk.rng !== 'self') pend.a = near(pend.valid, p); return; }
     if (e.type !== 'pointerdown') return; const u = at(p[0], p[1]);
