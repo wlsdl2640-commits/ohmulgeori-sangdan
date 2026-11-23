@@ -1,8 +1,8 @@
 /* 뒤엉켜 싸우는 전투 시안 (11-23 21:25 사용자: 맵은 예전 옆모습 그대로 · 한 줄로 걷다가 만나면 전투 상태 · 근접끼리 겹치게, 역동감)
    build_brawl.py가 __AN__ · __ARC__ · __BG__ · __GOB__를 채워 page_brawl.html로 만든다. 실시간 자동 · 칸 없음 · 수치는 모두 임시. */
 (() => {
-  const AN = __AN__, ARC = __ARC__, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__';
-  for (const S of [AN, ARC]) for (const k in S) { S[k].im = new Image(); S[k].im.src = S[k].src; }
+  const AN = __AN__, ARC = __ARC__, ROG = __ROG__, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__';
+  for (const S of [AN, ARC, ROG]) for (const k in S) { S[k].im = new Image(); S[k].im.src = S[k].src; }
   const cv = document.getElementById('stage'), g = cv.getContext('2d'); cv.width = 480; cv.height = 240; g.imageSmoothingEnabled = false;
   const msg = document.getElementById('msg'), acts = document.getElementById('acts');
   const GY = 188, YT = 154, YB = 214, LINE = [208, 180, 152, 118, 90];                 // 걷는 줄: 맨 앞이 오른쪽
@@ -11,7 +11,7 @@
 
   const KIND = {
     전사: { set: AN, hp: 110, atk: 8, cd: 1.15, spd: 62, melee: 1, atks: ['slash3', 'thrust', 'upslash', 'bash'] },
-    도적: { set: AN, hp: 75, atk: 7, cd: 0.8, spd: 84, melee: 1, atks: ['thrust', 'slash3', 'upslash'] },
+    도적: { set: ROG, hp: 75, atk: 7, cd: 0.8, spd: 84, melee: 1, atks: ['thrust', 'slash', 'double', 'backstab'] },
     궁수: { set: ARC, hp: 55, atk: 7, cd: 1.5, spd: 56, melee: 0, atks: ['shoot'] },
     고블린: { hp: 22, atk: 2, cd: 1.5, spd: 60, melee: 1 }
   };
@@ -69,7 +69,7 @@
     g.fillStyle = o; g.fillRect(x, y - 15 + bob, 40, 10); g.fillStyle = '#8a5a34'; g.fillRect(x + 1, y - 14 + bob, 38, 8); g.fillStyle = '#6b4226'; g.fillRect(x + 1, y - 10 + bob, 38, 1);
     [9, 30].forEach(cx => { g.fillStyle = o; g.beginPath(); g.arc(x + cx, y - 6, 7, 0, 7); g.fill(); g.fillStyle = '#6b4226'; g.beginPath(); g.arc(x + cx, y - 6, 5.6, 0, 7); g.fill(); g.fillStyle = o; g.fillRect(x + cx - 1, y - 7, 3, 3); }); }
   function drawUnit(u) { const x = Math.round(u.x + u.lx), y = Math.round(u.y); g.fillStyle = 'rgba(20,30,15,.3)'; g.beginPath(); g.ellipse(x, y, 11, 3.2, 0, 0, 7); g.fill();
-    if (u.K.set) { const a = u.K.set[u.an] || u.K.set.idle, loop = u.an === 'idle' || u.an === 'walk', fr = loop ? Math.floor(T * (u.an === 'walk' ? (u.run ? 26 : 17) : 12)) % (u.an === 'walk' && u.K.set === AN ? Math.min(10, a.n) : a.n) : Math.min(a.n - 1, Math.floor(u.st === 'dead' ? u.stT * 22 : u.st === 'hurt' ? (0.26 - u.stT) / 0.26 * a.n : u.at));
+    if (u.K.set) { const a = (u.an === 'walk' && u.run && u.K.set.run) || u.K.set[u.an] || u.K.set.idle, loop = u.an === 'idle' || u.an === 'walk', fr = loop ? Math.floor(T * (u.an === 'walk' ? (u.run ? 26 : 17) : 12)) % (u.an === 'walk' && u.K.set === AN ? Math.min(10, a.n) : a.n) : Math.min(a.n - 1, Math.floor(u.st === 'dead' ? u.stT * 22 : u.st === 'hurt' ? (0.26 - u.stT) / 0.26 * a.n : u.at));
       g.save(); if (u.dead && u.side === 'A') g.globalAlpha = 0.85; if (u.face < 0) { g.translate(x, 0); g.scale(-1, 1); g.drawImage(a.im, fr * 80, 0, 80, 80, -42, y - 66, 80, 80); } else g.drawImage(a.im, fr * 80, 0, 80, 80, x - 38, y - 66, 80, 80);
       if (u.flash > 0) { g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.5; if (u.face < 0) g.drawImage(a.im, fr * 80, 0, 80, 80, -42, y - 66, 80, 80); else g.drawImage(a.im, fr * 80, 0, 80, 80, x - 38, y - 66, 80, 80); } g.restore(); }
     else { const w = GOB.width, h = GOB.height, p = u.st === 'atk' ? u.stT / 0.42 : 0, sq = u.st === 'atk' ? 1 + Math.sin(Math.min(1, p) * Math.PI) * 0.12 : 1, bob = u.an === 'walk' ? Math.abs(Math.sin(T * 13 + u.id)) * 2 : 0;
