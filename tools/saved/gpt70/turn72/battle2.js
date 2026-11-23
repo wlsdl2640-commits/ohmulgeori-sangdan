@@ -110,7 +110,7 @@
   // ── 그리기 ──
   function tile(c, r, fill, line) { const [x, y] = cellXY(c, r), k = SK / RH, p = [[-25, -14], [25, -14], [25, 7], [-25, 7]].map(([dx, dy]) => [x + dx - dy * k, y + dy]); g.beginPath(); p.forEach(([a, b], i) => i ? g.lineTo(a, b) : g.moveTo(a, b)); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (line) { g.strokeStyle = line; g.lineWidth = 1; g.stroke(); } }
   function hpBar(u, x, top) { const per = 20, lay = Math.max(0, Math.ceil(u.hp / per) - 1), fill = u.hp - lay * per, cTop = LAYER[Math.min(lay, LAYER.length - 1)], cUnder = lay > 0 ? LAYER[Math.min(lay - 1, LAYER.length - 1)] : '#3a2a2a';
-    g.fillStyle = '#060608'; g.fillRect(x - 16, top, 31, 7); for (let i = 0; i < 20; i++) { const cx = x - 15 + (i % 10) * 3, cy = top + 1 + (i < 10 ? 0 : 3); g.fillStyle = i < fill ? cTop : cUnder; g.fillRect(cx, cy, 2, 2); }
+    g.fillStyle = '#060608'; g.fillRect(x - 16, top + 2, 31, 5); for (let i = 0; i < 10; i++) { g.fillStyle = i < Math.ceil(fill / 2) ? cTop : cUnder; g.fillRect(x - 15 + i * 3, top + 3, 2, 3); }
     if (u.sh > 0) { g.fillStyle = '#060608'; g.fillRect(x - 16, top - 4, u.sh * 3 + 1, 4); g.fillStyle = '#8fe0ff'; for (let i = 0; i < u.sh; i++) g.fillRect(x - 15 + i * 3, top - 3, 2, 2); } }
   function render() { const so = Math.floor(scroll) % 720; g.drawImage(BG, -so, 0); g.drawImage(BG, 720 - so, 0); gridA += ((phase === 'walk' ? 0 : 1) - gridA) * 0.15; g.globalAlpha = gridA;
     for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) tile(c, r, phase === 'place' && c < 3 ? 'rgba(120,190,255,.25)' : null, 'rgba(255,255,255,.34)');
