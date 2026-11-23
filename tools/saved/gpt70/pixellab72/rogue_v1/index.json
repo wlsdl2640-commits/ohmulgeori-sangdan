@@ -1,0 +1,50 @@
+{
+ "slash": {
+  "n": 21,
+  "src": "Wind_up_by_pulling_the_dagger_back_briefly_then_sw"
+ },
+ "run": {
+  "n": 17,
+  "src": "Lean_the_body_forward_and_drive_into_a_rapid_run_c"
+ },
+ "backstab": {
+  "n": 21,
+  "src": "Crouch_low_while_raising_the_dagger_overhead_in_a"
+ },
+ "thrust": {
+  "n": 21,
+  "src": "Crouch_slightly_while_drawing_the_dagger_back_then"
+ },
+ "fall": {
+  "n": 21,
+  "src": "Stagger_backward_with_buckling_knees_dropping_the"
+ },
+ "dodge": {
+  "n": 21,
+  "src": "Hop_backward_sharply_to_the_left_while_keeping_the"
+ },
+ "sit": {
+  "n": 21,
+  "src": "Lower_the_body_into_a_seated_posture_with_crossed"
+ },
+ "hurt": {
+  "n": 17,
+  "src": "Jerking_the_head_and_upper_body_backward_in_reacti"
+ },
+ "double": {
+  "n": 9,
+  "src": "Execute_a_rapid_double_dagger_slash_to_the_right_b"
+ },
+ "idle": {
+  "n": 17,
+  "src": "Lift_the_chest_and_shoulders_slightly_to_inhale_th"
+ },
+ "sleep": {
+  "n": 17,
+  "src": "Lie_down_on_the_side_onto_the_ground_with_smooth_c"
+ },
+ "walk": {
+  "n": 17,
+  "src": "Step_forward_with_a_natural_stride_swinging_arms_i"
+ }
+}
