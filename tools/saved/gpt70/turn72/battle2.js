@@ -1,7 +1,7 @@
 /* 턴제 전투 시안 2 (11-23 기획서 + 사용자 답): 격자 12×8 · AP 1(기본 공격/방어 태세) · GP 4(이동) · SP +1/턴 · HP 20칸 겹 · 밀치기 · 바위 · 오폭 · 궁수 연격 · 전사 패링 · 짐꾼 석궁+옮기기.
    build_battle2.py가 __AN__ · __ARC__ · __BG__ · __GOB__를 채워 page_battle.html로 만든다. 수치는 모두 임시. */
 (() => {
-  const AN = __AN__, ARC = __ARC__, SETS = { 궁수: ARC }, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__'; const TLS = new Image(); TLS.src = '__TILES__';
+  const AN = __AN__, ARC = __ARC__, SETS = { 궁수: ARC }, BG = new Image(), GOB = new Image(); BG.src = '__BG__'; GOB.src = '__GOB__'; const TLS = new Image(); TLS.src = '__TILES__'; const BGF = new Image(); BGF.src = '__BGF__';
   for (const S of [AN, ARC]) for (const k in S) { S[k].im = new Image(); S[k].im.src = S[k].src; }
   const cv = document.getElementById('stage'), g = cv.getContext('2d'); cv.width = 480; cv.height = 240; g.imageSmoothingEnabled = false;
   const NC = 12, NR = 8, CW = 33, RH = 20, SK = 11, GX = 3, GY = 72, TW = CW + SK;
@@ -111,15 +111,16 @@
 
   // ── 바닥 타일 배경: 층의 생태계마다 바닥이 다르다(임시 도형). 바닥 타일 한 장 = 격자 한 칸 ──
   const BIO = {
-    '초원':     { atlas: 1, sky: ['#8fd0ee', '#bfe6f3'], far: '#86c46c', mid: '#5fa35a', trunk: '#6b4a2e', leaf: ['#3f8f3f', '#57ab4a'], edge: '#3c7d38', f: ['#74c254', '#6ab84c'], line: '#5ca645', d1: '#4f9a3c', d2: '#fff3a8', cap: 0 },
+    '평원':      { photo: 1 },
+    '평원 타일': { atlas: 1, sky: ['#8fd0ee', '#bfe6f3'], far: '#86c46c', mid: '#5fa35a', trunk: '#6b4a2e', leaf: ['#3f8f3f', '#57ab4a'], edge: '#3c7d38', f: ['#74c254', '#6ab84c'], line: '#5ca645', d1: '#4f9a3c', d2: '#fff3a8', cap: 0 },
     '버섯 숲':  { sky: ['#1d1630', '#33264f'], far: '#2f2c58', mid: '#262144', trunk: '#d9cfe2', leaf: ['#a8437f', '#d466a2'], edge: '#1c3540', f: ['#2f6c68', '#2a6360'], line: '#225250', d1: '#3f8a80', d2: '#f0a0d0', cap: 1 },
     '모래 협곡': { sky: ['#f0c284', '#f7deae'], far: '#cc8c54', mid: '#a9693d', trunk: '#7a5a3a', leaf: ['#8aa04a', '#a5ba5c'], edge: '#96673a', f: ['#e5c57e', '#ddbc72'], line: '#cba65e', d1: '#c79a52', d2: '#f6ecc8', cap: 0 }
   };
-  let bio = '초원';
+  let bio = '평원';
   const hsh = (a, b) => { let h = Math.imul(a, 73856093) ^ Math.imul(b, 19349663); h = Math.imul(h ^ (h >>> 13), 1274126177); return (h ^ (h >>> 16)) >>> 0; };
   const TIL = {}; function tileImg(k, par) { const key = k + par; if (TIL[key]) return TIL[key]; const B = BIO[k], c = document.createElement('canvas'), x = c.getContext('2d'); c.width = TW; c.height = 20;
     for (let b = 0; b < 20; b++) { const s0 = Math.round((19 - b) * SK / 20); x.fillStyle = b === 19 ? B.line : B.f[par]; x.fillRect(s0, b, CW, 1); x.fillStyle = B.line; x.fillRect(s0 + CW - 1, b, 1, 1); } return TIL[key] = c; }
-  function drawBG() { const B = BIO[bio], sc = Math.floor(scroll);
+  function drawBG() { const B = BIO[bio], sc = Math.floor(scroll); if (B.photo) { const so = sc % 720; g.drawImage(BGF, -so, 0); g.drawImage(BGF, 720 - so, 0); return; }
     g.fillStyle = B.sky[0]; g.fillRect(0, 0, 480, 30); g.fillStyle = B.sky[1]; g.fillRect(0, 30, 480, 46);
     for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.2, h = Math.round(44 + Math.sin(w / 41) * 7 + Math.sin(w / 17) * 3); g.fillStyle = B.far; g.fillRect(x, h, 4, 76 - h); }
     for (let x = 0; x < 480; x += 4) { const w = x + sc * 0.35, h = Math.round(56 + Math.sin(w / 29 + 2) * 5 + Math.sin(w / 11) * 2); g.fillStyle = B.mid; g.fillRect(x, h, 4, 76 - h); }
@@ -140,7 +141,7 @@
     g.fillStyle = '#060608'; g.fillRect(x - 16, top + 2, 31, 5); for (let i = 0; i < 10; i++) { g.fillStyle = i < Math.ceil(fill / 2) ? cTop : cUnder; g.fillRect(x - 15 + i * 3, top + 3, 2, 3); }
     if (u.sh > 0) { g.fillStyle = '#060608'; g.fillRect(x - 16, top - 4, u.sh * 3 + 1, 4); g.fillStyle = '#8fe0ff'; for (let i = 0; i < u.sh; i++) g.fillRect(x - 15 + i * 3, top - 3, 2, 2); } }
   function render() { drawBG(); gridA += ((phase === 'walk' ? 0 : 1) - gridA) * 0.1; g.globalAlpha = gridA;
-    for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) if (inG(c, r)) tile(c, r, phase === 'place' && c >= 1 && c <= 4 ? 'rgba(120,190,255,.3)' : null, 'rgba(255,255,255,.2)');
+    for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) if (inG(c, r)) tile(c, r, phase === 'place' && c >= 1 && c <= 4 ? 'rgba(120,190,255,.3)' : null, BIO[bio].photo ? 'rgba(255,255,255,.34)' : 'rgba(255,255,255,.2)');
     if (sel && sel.alive && phase === 'A') tile(sel.c, sel.r, 'rgba(255,224,90,.4)', '#ffe05a');
     if (mode === 'move' && sel) reach(sel).forEach((d, k) => { const [c, r] = k.split(',').map(Number); tile(c, r, 'rgba(90,200,255,.33)', '#bfe8ff'); });
     if (pend) { if (pend.step === 2) pend.drops.forEach(([c, r]) => tile(c, r, c === pend.drop[0] && r === pend.drop[1] ? 'rgba(90,230,120,.6)' : 'rgba(90,230,120,.2)', '#d8ffd8')); else { pend.valid.forEach(([c, r]) => tile(c, r, 'rgba(255,255,255,.14)', null)); area(sel, pend.sk, pend.a).forEach(([c, r]) => tile(c, r, pend.sk.heal || pend.sk.carry || pend.sk.swap ? 'rgba(90,230,120,.5)' : 'rgba(255,70,50,.5)', '#ffffff')); } }
