@@ -5,7 +5,7 @@ b64=lambda f: base64.b64encode(open(os.path.join(H,f),'rb').read()).decode()
 src=open(H+'/page_pixellab.html',encoding='utf-8').read(); css=src[src.index('<style>'):src.index('</style>')+8]
 idx=json.load(open(H+'/arc_v2/index.json'))
 MOT=[('대기','idle',1),('걷기','walk',1),('달리기','run',1),('활쏘기','shoot',0),('빠른 한 발','quick',0),('힘껏 당겨 쏘기','power',0),('세 발 동시에','triple',0),('하늘로 쏘기','sky',0),('버프 자세','buff',0),('마나 속사 몸동작','mana',0),('활로 치기','swing',0),('발차기','kick',0),('뒤로 물러나기','dodge',0),('앉기','sit',0),('잠자기','sleep',0)]
-MOT=[(a,k,idx[k]['n']-1,l) for a,k,l in MOT]; data={k:b64(f'arc_v2/{k}.png') for _,k,_,_ in MOT}
+MOT=[(a,k,idx[k]['n']-1,l,idx[k]['cell']) for a,k,l in MOT]; data={k:b64(f'arc_v2/{k}.png') for _,k,_,_,_ in MOT}
 page=f"""<title>궁수 동작</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
 {css}
@@ -31,12 +31,12 @@ page=f"""<title>궁수 동작</title>
 const MOT={json.dumps(MOT,ensure_ascii=False)},D={json.dumps(data)};
 const I={{}};for(const k in D){{I[k]=new Image();I[k].src='data:image/png;base64,'+D[k]}}
 const grid=document.getElementById('grid'),cs=[];
-for(const [nm,k,n,loop] of MOT){{const c=document.createElement('div');c.className='card';const cv=document.createElement('canvas');cv.width=150;cv.height=140;cv.setAttribute('role','img');cv.setAttribute('aria-label',nm+' 동작을 하는 궁수');
-  const r=document.createElement('div');r.className='row';const t=document.createElement('b');t.textContent=nm;const s=document.createElement('span');s.textContent=n+'장';r.append(t,s);c.append(cv,r);grid.append(c);cs.push([cv.getContext('2d'),k,n,loop]);}}
+for(const [nm,k,n,loop,cw] of MOT){{const c=document.createElement('div');c.className='card';const cv=document.createElement('canvas');cv.width=180;cv.height=140;cv.setAttribute('role','img');cv.setAttribute('aria-label',nm+' 동작을 하는 궁수');
+  const r=document.createElement('div');r.className='row';const t=document.createElement('b');t.textContent=nm;const s=document.createElement('span');s.textContent=n+'장';r.append(t,s);c.append(cv,r);grid.append(c);cs.push([cv.getContext('2d'),k,n,loop,cw]);}}
 let fps=12,t0=performance.now();
 document.querySelectorAll('.bar button').forEach(x=>x.onclick=()=>{{fps=+x.dataset.fps;t0=performance.now();document.querySelectorAll('.bar button').forEach(y=>y.setAttribute('aria-pressed',y===x))}});
 function draw(now){{const f=Math.floor((now-t0)/1000*fps);
-  for(const [g,k,n,loop] of cs){{const p=loop?f%n:Math.min(f%(n+6),n-1);g.imageSmoothingEnabled=false;g.fillStyle='#78966e';g.fillRect(0,0,150,140);g.fillStyle='#6a875f';g.fillRect(0,128,150,12);g.drawImage(I[k],(1+p)*156,0,156,156,-3,-4,156,156);}}
+  for(const [g,k,n,loop,cw] of cs){{const p=loop?f%n:Math.min(f%(n+6),n-1);g.imageSmoothingEnabled=false;g.fillStyle='#78966e';g.fillRect(0,0,180,140);g.fillStyle='#6a875f';g.fillRect(0,128,180,12);g.drawImage(I[k],(1+p)*cw,0,cw,156,-12,-4,cw,156);}}
   requestAnimationFrame(draw);}}
 requestAnimationFrame(draw);
 </script>"""

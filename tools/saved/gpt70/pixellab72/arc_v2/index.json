@@ -48,9 +48,10 @@
  },
  "power": {
   "n": 25,
-  "cell": 156,
-  "src": "Reach_the_back_hand_over_the_shoulder_to_pull_a_wo",
-  "head": "fix_arrowhead.py × 2번"
+  "cell": 200,
+  "h": 156,
+  "src": "GIF 1000017801(짧은 코드) — 5~12장은 화살이 그림 오른쪽 끝에서 잘려, 13번 장의 촉을 따서 화살대 길이 40에 맞춰 붙이고 한 장 너비를 200으로 넓힘",
+  "head": "13번 장 촉 복사"
  },
  "triple": {
   "n": 25,
