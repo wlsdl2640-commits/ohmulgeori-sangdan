@@ -1,0 +1,354 @@
+[
+ {
+  "key": "assoc",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of the lobby of the Adventurers' Association hall: a long reception counter with clerks' desks, a huge quest board covered in notices, stone pillars, banners with an eight-pointed star emblem, chandeliers. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:ea05adb0-b98c-4f27-a859-704a9e2ad9b8",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "warehouse",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a guild warehouse: tall wooden shelves with crates, barrels and sacks, a loading area with a cart, ropes and pulleys, lanterns. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:9edc2e3e-4206-4b13-b5e9-3f15ff50696f",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "smithy",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a blacksmith forge: a glowing furnace, anvils, racks of swords and shields, bellows, quenching barrel, hanging tools. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:62512ed3-8ae6-44e4-849c-170244f4b604",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "library",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a grand library: tall bookshelves with ladders, reading desks with candles, scrolls and maps, a round window. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:9c3013dd-a0e7-468b-8bce-ccf066ca0bac",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "temple",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a great temple hall: tall stone columns, colorful stained glass windows with abstract flower patterns (no crosses), an altar with candles, long carpet. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:85847e6f-f978-4d6e-8484-b3f1c0d5f3bf",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "tower",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a magic tower laboratory: floating glowing runes, crystal orbs on pedestals, bookshelves, a magic circle on the floor, arcane devices. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:8f5204ff-4987-4da1-94fa-024a5aa7e9a6",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "inn",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of adventurers' dormitory: rows of wooden bunk beds, lockers and chests, a small window, lanterns, hanging cloaks. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:387083b3-545b-440d-8684-58e7052a3788",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "kitchen",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a guild kitchen: a big hearth with cooking pots, a long wooden table with vegetables and meat, hanging herbs and pans, shelves of jars. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:d61c263a-4139-454f-ac38-e2691658ee59",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "alchemy",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of an alchemy laboratory: bubbling flasks and alembics, colorful potions on shelves, a workbench with ingredients, a small furnace. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:6caa506b-4936-45d8-96d1-cb4e80a0e66a",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "pen",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a monster breeding pen: hay-filled stalls with low wooden fences, nests with eggs, feeding troughs, a warm lamp. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:918da580-5db3-43a4-a545-04d5be9d2a04",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "stable",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a stable: horse stalls with hay, saddles and harnesses on the wall, a wagon, water troughs. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:efa308e2-67a7-4cdb-ac91-59c7dfabef80",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "airfield",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a rooftop airship dock: a wooden landing deck, a small airship with balloon moored by ropes, cargo crates, wind sock, sky in the background. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:9f0d6a1e-523f-4fae-82cb-f5cecd3eeac3",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "tavern",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a lively city tavern: bar counter with barrels, round tables, a small stage, a fireplace, warm lanterns. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:25f912f0-7ba1-414b-a51a-cc7dd4f1223a",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "port",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a harbor pier: wooden docks, a moored sailing ship, cargo crates and barrels, a lighthouse in the distance, sea. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:509f6d5c-9d66-4766-824a-758af8bb70c7",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "training",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of a training hall: wooden training dummies, weapon racks, archery targets, sand floor area, banners. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:e11b628b-f09c-456e-9fd2-73943f597972",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "farm",
+  "tool": "create_image_pro",
+  "args": {
+   "description": "Interior scene of an indoor herb farm: rows of planter beds with herbs and glowing plants, watering cans, a greenhouse glass roof, hanging baskets. Seen from the front, wide panorama; the bottom quarter is empty floor; no people. Same layout as the reference image. 16-bit JRPG pixel art, crisp pixels, clean dark outlines, medieval European fantasy.",
+   "width": 792,
+   "height": 336,
+   "no_background": false,
+   "reference_images": [
+    {
+     "url": "upload:7e96c8c5-b865-4aff-8b29-fa25a93717bc",
+     "usage": "composition, layout and contents of the room"
+    }
+   ],
+   "style_image_url": "upload:c64cc118-7756-44fc-9fe4-ba154e80f08d",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ }
+]

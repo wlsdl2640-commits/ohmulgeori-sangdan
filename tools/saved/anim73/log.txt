@@ -1,0 +1,146 @@
+[오전 3:41:05] 보냄 rat/idle 16장 61d87073-f114-4ba9-a9d9-971c4e69e26f
+[오전 3:41:05] 보냄 rabbit/idle 16장 463e41cf-9968-48bd-a1cf-490c02f958c4
+[오전 3:41:05] 보냄 rabbit/jump 20장 862f621e-6f44-4417-a9d3-f4144f8826cc
+[오전 3:41:05] 보냄 rabbit/charge 20장 ae3cdabd-abf1-45ad-8663-136d81ddc4d8
+[오전 3:41:05] 보냄 rat/bite 20장 6aa97af8-249e-49b9-9ca2-e6d89e086b9b
+[오전 3:41:05] 보냄 rat/leap 20장 eb73394f-2ff9-4de9-ab66-15fa31b93315
+[오전 3:42:18] 받음 rabbit/idle
+[오전 3:42:18] 보냄 wolf/idle 16장 e100fc4c-fcb4-40c2-bd6a-234fc0d7dd83
+[오전 3:42:18] 받음 rat/bite
+[오전 3:42:19] 보냄 wolf/bite 20장 b383f076-165e-4300-adf3-d6e638cfaf82
+[오전 3:42:29] 받음 rat/leap
+[오전 3:42:29] 보냄 wolf/leap 20장 e9db2d99-e28a-4340-ac9e-4d16d242b4ca
+[오전 3:42:39] 받음 rabbit/jump
+[오전 3:42:40] 보냄 scarecrow/idle 16장 f7dec093-78a6-4016-bf30-db64fe995007
+[오전 3:43:00] 받음 rabbit/charge
+[오전 3:43:00] 보냄 scarecrow/crow1 20장 f4319253-8137-4289-96fe-99726be03ddc
+[오전 3:43:09] 받음 rat/idle
+[오전 3:43:09] 보냄 scarecrow/crow2 20장 c6bd2a14-0e02-49da-b1d0-8471b21465fb
+[오전 3:43:26] 받음 scarecrow/idle
+[오전 3:43:27] 보냄 scarecrow/crow3 20장 a3f7a489-6163-4d0a-b5c6-c4a4b19e18ac
+[오전 3:43:47] 받음 wolf/idle
+[오전 3:43:47] 보냄 boar/idle 16장 befd6522-b382-444e-af41-5507d4c7e83d
+[오전 3:43:59] 받음 scarecrow/crow1
+[오전 3:43:59] 보냄 boar/walk 16장 6fafd693-9a10-4dc3-af3f-200581422e6a
+[오전 3:44:08] 받음 scarecrow/crow2
+[오전 3:44:09] 보냄 boar/hornup 20장 811274ff-f743-4f16-b07e-e106446325cd
+[오전 3:44:19] 받음 wolf/bite
+[오전 3:44:21] 보냄 boar/headbutt 20장 b2667f8c-8755-47ad-9386-9831893d1a06
+[오전 3:44:26] 받음 scarecrow/crow3
+[오전 3:44:26] 보냄 boar/charge 20장 39af1383-3ef7-4e29-85f7-70d21e5676b3
+[오전 3:44:39] 받음 wolf/leap
+[오전 3:44:40] 보냄 vinesnake/idle 16장 164fc854-7ad4-417a-92a9-068dde9e63fc
+[오전 3:45:27] 받음 boar/walk
+[오전 3:45:27] 받음 boar/idle
+[오전 3:45:27] 보냄 vinesnake/walk 16장 15a51c4b-df37-440a-8688-8d7952b4172c
+[오전 3:45:28] 보냄 vinesnake/bite 20장 67718e36-fce7-4ae2-afca-c0a5c18d54fb
+[오전 3:45:38] 받음 boar/hornup
+[오전 3:45:39] 보냄 cflower/idle 16장 e82f43ed-f7dd-4825-92bf-eb83b152ce66
+[오전 3:45:47] 받음 vinesnake/idle
+[오전 3:45:48] 보냄 cflower/bite 20장 bf01b6ab-ecd1-4563-814b-4f3fa274fc05
+[오전 3:46:00] 받음 boar/headbutt
+[오전 3:46:00] 보냄 cflower/walk 16장 cd99ff08-29a0-42aa-ad58-bfdb38028abc
+[오전 3:46:09] 받음 boar/charge
+[오전 3:46:10] 보냄 stump/idle 16장 8a42eb2c-9909-4abd-8f67-0a39b8eca001
+[오전 3:46:38] 받음 vinesnake/bite
+[오전 3:46:39] 보냄 stump/bite 20장 c175c75e-4530-44c5-9c47-22b87cce1c30
+[오전 3:46:47] 받음 vinesnake/walk
+[오전 3:46:48] 보냄 stump/walk 16장 c1f3ae4f-dbcc-4b13-a942-03a71f958833
+[오전 3:46:58] 받음 cflower/idle
+[오전 3:46:58] 보냄 spotshroom/idle 16장 270f6984-3277-4177-b49c-46d3c1d3b214
+[오전 3:47:08] 받음 stump/idle
+[오전 3:47:08] 보냄 spotshroom/spore 20장 b9e313f5-da53-4df7-ac8d-29bc4a45756a
+[오전 3:47:18] 받음 cflower/walk
+[오전 3:47:19] 보냄 spotshroom/walk 16장 35458f7e-f4dc-4a44-b965-71c0adc5ea98
+[오전 3:47:46] 받음 stump/walk
+[오전 3:47:47] 보냄 ibeetle/idle 16장 aec5f0a6-2637-470e-a60c-7dc5ef75ed80
+[오전 3:47:48] 받음 stump/bite
+[오전 3:47:48] 보냄 ibeetle/charge 20장 ddc3c9ab-1deb-404a-bfc7-f25ba7a08099
+[오전 3:47:56] 받음 spotshroom/idle
+[오전 3:47:57] 보냄 ibeetle/walk 16장 c350ec72-73a4-462e-a5cd-7adaffffc325
+[오전 3:48:00] 받음 cflower/bite
+[오전 3:48:01] 보냄 mgolem/idle 16장 95c10195-99ee-4683-b694-a913897af226
+[오전 3:48:08] 받음 spotshroom/spore
+[오전 3:48:08] 보냄 mgolem/smash 20장 33f3b8be-13e9-4372-902b-23bf49f7f91f
+[오전 3:48:17] 받음 spotshroom/walk
+[오전 3:48:17] 보냄 mgolem/walk 16장 2be55287-6b0e-4ccb-b073-187d7c301038
+[오전 3:48:35] 받음 ibeetle/idle
+[오전 3:48:35] 보냄 fguard/idle 16장 a360c09c-b6e4-445a-8d96-77c723e02a4c
+[오전 3:48:47] 받음 ibeetle/charge
+[오전 3:48:48] 보냄 fguard/charge 20장 48ea5ef5-748b-47c9-adc4-8ff086b70734
+[오전 3:49:08] 받음 mgolem/idle
+[오전 3:49:09] 보냄 fguard/walk 16장 4bd30c9b-f2da-405f-bc2f-52e64403bdaf
+[오전 3:49:16] 받음 ibeetle/walk
+[오전 3:49:16] 받음 mgolem/walk
+[오전 3:49:17] 보냄 fguard/bell 20장 4e825d5c-a273-4b8f-94ec-96592958c1ea
+[오전 3:49:17] 보냄 fguard/stomp 20장 dde5c63d-e0ff-4a86-b849-d806cd027862
+[오전 3:49:18] 받음 mgolem/smash
+[오전 3:49:19] 보냄 fguard/death 20장 fdc21c1b-c4d0-40cb-98bc-a0dc881c1722
+[오전 3:50:25] 받음 fguard/idle
+[오전 3:50:25] 보냄 ewisp/idle 16장 20a6d924-2dbf-4e77-8dd4-31bfdd55c202
+[오전 3:50:37] 받음 fguard/stomp
+[오전 3:50:38] 보냄 ewisp/burst 20장 887295a5-f53c-4f58-9f91-e48336fa3c74
+[오전 3:50:38] 받음 fguard/walk
+[오전 3:50:38] 보냄 ewisp/walk 16장 db0d8fbe-38e3-4d1d-8195-ac68056c29d2
+[오전 3:50:38] 받음 fguard/charge
+[오전 3:50:39] 받음 fguard/death
+[오전 3:50:39] 보냄 emoth/idle 16장 ea99e8b4-321e-47eb-9e48-bca5afd5de28
+[오전 3:50:40] 보냄 emoth/dust 20장 160112b9-52ec-4d94-99b2-eb3810e468a7
+[오전 3:50:47] 받음 fguard/bell
+[오전 3:50:48] 보냄 emoth/walk 16장 cf793b1e-c918-477a-b742-00757144850a
+[오전 3:51:24] 받음 ewisp/idle
+[오전 3:51:25] 보냄 eshroom/idle 16장 f31c3b7d-78bd-4fbd-af26-b06902ba0ffd
+[오전 3:51:35] 받음 ewisp/burst
+[오전 3:51:36] 보냄 eshroom/spore 20장 817bb5c6-2e88-44a9-ad45-6510d4b766b1
+[오전 3:51:45] 받음 ewisp/walk
+[오전 3:51:46] 보냄 eshroom/walk 16장 52db8b90-1b71-465e-940b-651daaab2a6d
+[오전 3:52:18] 받음 emoth/dust
+[오전 3:52:19] 보냄 mlizard/idle 16장 eb172d00-d132-4e8b-a8f4-992f98faaf3f
+[오전 3:52:56] 받음 eshroom/idle
+[오전 3:52:57] 보냄 mlizard/tongue 20장 fc93118c-77e7-4320-b3ff-21ffcd56d0cf
+[오전 3:53:07] 받음 eshroom/spore
+[오전 3:53:07] 보냄 mlizard/walk 16장 92690f94-33f6-408e-932f-0b2dea8f42b6
+[오전 3:53:17] 받음 emoth/walk
+[오전 3:53:18] 보냄 rcenti/idle 16장 a841e241-a5f8-475c-9906-33430c2479d4
+[오전 3:53:26] 받음 mlizard/idle
+[오전 3:53:27] 보냄 rcenti/bite 20장 a75497a9-5428-4068-8c15-8f912c99c86f
+[오전 3:53:57] 받음 eshroom/walk
+[오전 3:53:57] 보냄 rcenti/walk 16장 dd22991d-6d0b-483a-93af-7bccbd1275eb
+[오전 3:54:05] 받음 rcenti/idle
+[오전 3:54:05] 보냄 cstag/idle 16장 cfe30a11-cae0-48f0-bcf6-9feefb3bc4a8
+[오전 3:54:15] 받음 mlizard/walk
+[오전 3:54:15] 보냄 cstag/pinch 20장 bdc81f5d-e24c-436b-b083-707050f55b1c
+[오전 3:54:35] 받음 rcenti/bite
+[오전 3:54:36] 보냄 cstag/walk 16장 53f6305a-98a6-4fd9-8853-9ec55e1653e1
+[오전 3:54:42] 받음 emoth/idle
+[오전 3:54:42] 보냄 sentinel/idle 16장 c15af6e0-eed7-456f-974c-87308187b1af
+[오전 3:54:44] 받음 rcenti/walk
+[오전 3:54:45] 보냄 sentinel/smash 20장 0b624eac-e5f0-4967-a9a8-bd437a615bfb
+[오전 3:54:52] 받음 cstag/idle
+[오전 3:54:52] 보냄 sentinel/walk 16장 d20f1849-3bde-4f6c-9472-66e4f2710d0a
+[오전 3:55:14] 받음 cstag/pinch
+[오전 3:55:15] 보냄 elddragon/idle 16장 016a52bb-c239-4167-8f35-9ac99215b4c2
+[오전 3:55:22] 받음 cstag/walk
+[오전 3:55:24] 보냄 elddragon/bite 20장 fce336ee-f38a-4769-8afe-dfa8a00af43b
+[오전 3:55:27] 받음 mlizard/tongue
+[오전 3:55:28] 보냄 elddragon/walk 16장 605287b4-0a5c-4f23-b461-a6e8c8b516ee
+[오전 3:55:29] 받음 sentinel/idle
+[오전 3:55:30] 보냄 elddragon/breath 20장 f0cb1096-8686-4222-bce4-5e549d397f2e
+[오전 3:55:54] 받음 sentinel/smash
+[오전 3:55:54] 보냄 elddragon/stomp 20장 e4f714a5-a811-4686-b88a-55365bd0f13d
+[오전 3:56:32] 받음 elddragon/idle
+[오전 3:56:33] 보냄 elddragon/death 20장 d77172e6-710a-4b48-ae7f-3b7bb5fd6235
+[오전 3:56:41] 받음 sentinel/walk
+[오전 3:56:42] 보냄 smandrake/idle 16장 2d1d7b67-1e0e-44ed-a4e1-65711db7f713
+[오전 3:56:45] 받음 elddragon/walk
+[오전 3:56:46] 보냄 smandrake/scream 20장 5bee38b4-1787-4b25-be20-a5ae087ae0a0
+[오전 3:56:54] 받음 elddragon/bite
+[오전 3:56:55] 보냄 smandrake/walk 16장 466388c3-2a0a-489b-a238-ad1a500a5100
+[오전 3:57:01] 받음 elddragon/breath
+[오전 3:57:01] 보냄 fdryad/idle 16장 aa6124c9-d8bb-4966-a6a1-0b5a5a70d1b8
+[오전 3:57:24] 받음 elddragon/stomp
+[오전 3:57:24] 보냄 fdryad/whip 20장 bf1aff99-dfbc-453f-b48c-9eb5f5a29533
+[오전 3:57:39] 받음 smandrake/idle
+[오전 3:57:40] 보냄 fdryad/walk 16장 8adc930f-0c63-4ca3-83d1-0d2e1c388283
+[오전 3:57:54] 받음 smandrake/scream
+[오전 3:57:55] 보냄 fairies/idle 16장 2c33fa92-fda2-4c76-be55-3acfbe91214d

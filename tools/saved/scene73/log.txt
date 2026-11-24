@@ -1,0 +1,18 @@
+[오전 3:50:33] 보냄 assoc 3a6c955b-a7bf-4e03-bc59-4b5e356fe9a7
+[오전 3:50:33] 보냄 smithy f53c56a5-8b4a-47de-9474-47459e4ecf75
+[오전 3:50:33] 보냄 warehouse 69711b7b-77e2-4028-9c77-f057f40fe752
+[오전 3:50:34] 보냄 library 90411004-d0f2-4416-bdfa-b9db54dd5846
+[오전 3:53:10] 받음 library
+[오전 3:53:11] 보냄 temple 936d39dc-612d-4fee-84c6-6c8359277e33
+[오전 3:53:32] 받음 smithy
+[오전 3:53:33] 보냄 tower 729d06ab-4dc6-40e4-af05-804fded4035e
+[오전 3:54:39] 받음 warehouse
+[오전 3:54:39] 보냄 inn 0f84d3b7-a00a-4e28-84a9-40d9c14bb938
+[오전 3:55:23] 받음 temple
+[오전 3:55:24] 보냄 kitchen b8faa5f5-f39d-4d0f-90e5-363b4f9c49a2
+[오전 3:56:19] 받음 assoc
+[오전 3:56:20] 보냄 alchemy 692d70fb-89c6-492e-8318-5beacec5bc44
+[오전 3:56:30] 받음 tower
+[오전 3:56:31] 보냄 pen b933ff2b-eb41-4d7b-9abc-cc020caecb2a
+[오전 3:57:25] 받음 kitchen
+[오전 3:57:26] 보냄 stable 2a951e26-78b6-4ff2-a2a2-2805d8777598

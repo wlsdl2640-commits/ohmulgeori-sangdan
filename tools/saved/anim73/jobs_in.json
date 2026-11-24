@@ -1,0 +1,892 @@
+[
+ {
+  "mon": "rat",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:c77cb9ec-ec37-4da5-9308-d148bd3ee836",
+  "last": "upload:c77cb9ec-ec37-4da5-9308-d148bd3ee836",
+  "subject": "a big brown field rat monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rat",
+  "row": "bite",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:5a7ba17d-ba38-44c1-b831-1edc8add28e1",
+  "last": "upload:3807eebe-1b56-4b6e-8592-3c69d46461ba",
+  "subject": "a big brown field rat monster, pixel art, side view",
+  "desc": "lunges forward and bites the enemy in front, then pulls back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rat",
+  "row": "leap",
+  "old": 12,
+  "frames": 20,
+  "first": "upload:bac41e53-3958-4c68-a435-195f64d4b495",
+  "last": "upload:516427d2-80a3-4b8a-a653-906b45b19dfc",
+  "subject": "a big brown field rat monster, pixel art, side view",
+  "desc": "leaps forward through the air and lands. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rabbit",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:bb57826e-f01d-4dd6-8c9b-a277ff3334a8",
+  "last": "upload:bb57826e-f01d-4dd6-8c9b-a277ff3334a8",
+  "subject": "a horned rabbit monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rabbit",
+  "row": "charge",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:a5f9517f-8733-4a64-b3f8-52f7fb2fe082",
+  "last": "upload:9051716f-7f18-4d00-b0ab-62c11c79838a",
+  "subject": "a horned rabbit monster, pixel art, side view",
+  "desc": "lowers its head and charges forward to ram, then recovers. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rabbit",
+  "row": "jump",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:73ddddd2-2367-4c09-9888-8981e9c313e3",
+  "last": "upload:7c3d14cd-8f72-41d7-90cc-edc76a464534",
+  "subject": "a horned rabbit monster, pixel art, side view",
+  "desc": "jumps forward and lands. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "wolf",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:c194fc4f-0262-461a-9cf5-87121112c454",
+  "last": "upload:c194fc4f-0262-461a-9cf5-87121112c454",
+  "subject": "a grey wild wolf monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "wolf",
+  "row": "bite",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:6423bacd-8ccf-4133-9dd5-c9092df8bafb",
+  "last": "upload:e42fb343-92c9-4486-bcac-518ee5c41787",
+  "subject": "a grey wild wolf monster, pixel art, side view",
+  "desc": "lunges forward and bites the enemy in front, then pulls back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "wolf",
+  "row": "leap",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:5d18835d-234f-4954-a088-54a886c5fcf8",
+  "last": "upload:352291f6-048b-4fde-b10c-8603b897dc11",
+  "subject": "a grey wild wolf monster, pixel art, side view",
+  "desc": "leaps forward through the air and lands. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "scarecrow",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:a320230b-a510-4c48-a321-f062e36bd781",
+  "last": "upload:a320230b-a510-4c48-a321-f062e36bd781",
+  "subject": "a living scarecrow monster with crows on it, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "scarecrow",
+  "row": "crow1",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:c0580183-54c4-4a14-8775-33a1705ed9a2",
+  "last": "upload:7aa17ca7-d642-423b-8458-757abca23e74",
+  "subject": "a living scarecrow monster with crows on it, pixel art, side view",
+  "desc": "a crow flies off its shoulder toward the enemy. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "scarecrow",
+  "row": "crow2",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:7b7d53ac-eeb9-4b86-bb6a-26a75b1ef8ca",
+  "last": "upload:a9954125-9cfc-493d-be27-798ca8ce9f94",
+  "subject": "a living scarecrow monster with crows on it, pixel art, side view",
+  "desc": "a crow flies off its head toward the enemy. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "scarecrow",
+  "row": "crow3",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:9ce8b5e7-68f3-45e6-af6f-bb83ec21b694",
+  "last": "upload:b3b80151-aecb-4153-9a13-619582a01cff",
+  "subject": "a living scarecrow monster with crows on it, pixel art, side view",
+  "desc": "the remaining crow flies off toward the enemy. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "boar",
+  "row": "idle",
+  "old": 6,
+  "frames": 16,
+  "first": "upload:e2481e2e-68a4-4796-9b62-09e07bfd27d0",
+  "last": "upload:e2481e2e-68a4-4796-9b62-09e07bfd27d0",
+  "subject": "a wild boar monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "boar",
+  "row": "walk",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:d204af12-cd66-48da-9515-c556f16faa5d",
+  "last": "upload:d204af12-cd66-48da-9515-c556f16faa5d",
+  "subject": "a wild boar monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "boar",
+  "row": "hornup",
+  "old": 6,
+  "frames": 20,
+  "first": "upload:d9eb672c-10a3-4c3f-88ac-08079f5613a2",
+  "last": "upload:308d55e8-8b77-4c03-9af5-18f969845baf",
+  "subject": "a wild boar monster, pixel art, side view",
+  "desc": "raises its head and tusks threateningly. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "boar",
+  "row": "headbutt",
+  "old": 7,
+  "frames": 20,
+  "first": "upload:796f1a72-180d-423e-9d2b-7d9a25355a81",
+  "last": "upload:42c5544d-cb05-47a5-b883-fd263559a122",
+  "subject": "a wild boar monster, pixel art, side view",
+  "desc": "swings its head and headbutts forward. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "boar",
+  "row": "charge",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:f6e57760-e708-40ef-a53e-ab16d94d8fae",
+  "last": "upload:3fbb24fc-d7eb-4267-8169-20da9aba2a66",
+  "subject": "a wild boar monster, pixel art, side view",
+  "desc": "lowers its head and charges forward to ram, then recovers. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "vinesnake",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:45bf29b1-ac9c-41be-9293-901243863053",
+  "last": "upload:45bf29b1-ac9c-41be-9293-901243863053",
+  "subject": "a vine snake monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "vinesnake",
+  "row": "bite",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:b8bf80fd-aa5d-4f1d-9d72-6e096a9fcd32",
+  "last": "upload:9809ae97-ef38-4343-b2f0-5cc4df448a8d",
+  "subject": "a vine snake monster, pixel art, side view",
+  "desc": "lunges forward and bites the enemy in front, then pulls back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "vinesnake",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:e9d8b1e9-bae2-4a71-8d78-802629bd1aaa",
+  "last": "upload:e9d8b1e9-bae2-4a71-8d78-802629bd1aaa",
+  "subject": "a vine snake monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "cflower",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:1c683a58-897d-4627-b385-0f7a90f4f05c",
+  "last": "upload:1c683a58-897d-4627-b385-0f7a90f4f05c",
+  "subject": "a carnivorous flower monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "cflower",
+  "row": "bite",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:a6e20c6e-c133-4ed6-a763-cedc4cc4af1e",
+  "last": "upload:4006e649-d7dd-4143-876e-e081d8813f65",
+  "subject": "a carnivorous flower monster, pixel art, side view",
+  "desc": "lunges forward and bites the enemy in front, then pulls back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "cflower",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:430e8381-d4cd-45e3-b7d8-469c202b2d6c",
+  "last": "upload:430e8381-d4cd-45e3-b7d8-469c202b2d6c",
+  "subject": "a carnivorous flower monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "stump",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:eed8c247-a5e6-4dc2-ac1b-0f9d01d6f8b3",
+  "last": "upload:eed8c247-a5e6-4dc2-ac1b-0f9d01d6f8b3",
+  "subject": "a walking tree stump monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "stump",
+  "row": "bite",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:d86e93fa-1231-4266-a2d2-ef121be606a1",
+  "last": "upload:d59a70f6-c250-4523-928e-6032499d535f",
+  "subject": "a walking tree stump monster, pixel art, side view",
+  "desc": "lunges forward and bites the enemy in front, then pulls back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "stump",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:8132518f-85c3-4b22-896a-8aa5cc43e381",
+  "last": "upload:8132518f-85c3-4b22-896a-8aa5cc43e381",
+  "subject": "a walking tree stump monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "spotshroom",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:9d832c81-0b26-4e90-8bf0-2a97f57e6f60",
+  "last": "upload:9d832c81-0b26-4e90-8bf0-2a97f57e6f60",
+  "subject": "a spotted mushroom monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "spotshroom",
+  "row": "spore",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:9c19fe09-a008-4df3-bba6-570bd2f93109",
+  "last": "upload:0b758d95-a0fe-45a2-a7bb-f12470fb00d8",
+  "subject": "a spotted mushroom monster, pixel art, side view",
+  "desc": "puffs and releases spores from its cap. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "spotshroom",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:1d772080-0006-473b-83da-8e435197e5c5",
+  "last": "upload:1d772080-0006-473b-83da-8e435197e5c5",
+  "subject": "a spotted mushroom monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "ibeetle",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:eadd1406-1975-45d0-a431-726ec367c18c",
+  "last": "upload:eadd1406-1975-45d0-a431-726ec367c18c",
+  "subject": "an iron-shelled horned beetle monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "ibeetle",
+  "row": "charge",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:2588deed-6176-4ba5-b449-627cb46514aa",
+  "last": "upload:66e9f785-4e03-4c50-9eb3-0f5bb6aca6f3",
+  "subject": "an iron-shelled horned beetle monster, pixel art, side view",
+  "desc": "lowers its head and charges forward to ram, then recovers. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "ibeetle",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:b0361c2e-2e10-46cc-85aa-a622250261b3",
+  "last": "upload:b0361c2e-2e10-46cc-85aa-a622250261b3",
+  "subject": "an iron-shelled horned beetle monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "mgolem",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:1870a9ed-a997-4a19-92c7-6888e10b57ae",
+  "last": "upload:1870a9ed-a997-4a19-92c7-6888e10b57ae",
+  "subject": "a moss covered stone golem, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "mgolem",
+  "row": "smash",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:0bb22366-be98-437c-b09a-0a1f1f33eee8",
+  "last": "upload:ceb3a0d9-ba16-4536-988b-bfe1b62416d9",
+  "subject": "a moss covered stone golem, pixel art, side view",
+  "desc": "raises its arms and smashes down heavily. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "mgolem",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:57e462fd-5fc1-4984-af63-b2f2020045d8",
+  "last": "upload:57e462fd-5fc1-4984-af63-b2f2020045d8",
+  "subject": "a moss covered stone golem, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fguard",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:45300b16-5200-4e46-98bb-954b5cb21818",
+  "last": "upload:45300b16-5200-4e46-98bb-954b5cb21818",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fguard",
+  "row": "charge",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:08300ffa-5838-4367-8a93-4eb0b46b74b8",
+  "last": "upload:dd4409e2-5c5c-4e39-a747-22718f4324d9",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "desc": "lowers its head and charges forward to ram, then recovers. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fguard",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:2c046d66-4873-4422-8f21-7966a561c51c",
+  "last": "upload:2c046d66-4873-4422-8f21-7966a561c51c",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fguard",
+  "row": "bell",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:14029a88-8630-4aad-a580-3febb574e8b9",
+  "last": "upload:7a56ed20-eeac-49d7-92c4-f9d10664aa58",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "desc": "rings the bell it carries. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fguard",
+  "row": "stomp",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:03416db8-1b8a-4e90-a8a8-6814c22a9634",
+  "last": "upload:80c45bb7-6dd1-4d32-87b7-625a4f06295f",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "desc": "rears up and stomps the ground hard. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fguard",
+  "row": "death",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:4f0b5e92-1b13-49ff-93e9-d137bd018023",
+  "last": "upload:42b87bb7-eae8-4963-af9e-4b405f9172b6",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "desc": "collapses and falls down defeated. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "ewisp",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:8b3b0c43-abc3-4b9a-8719-f0d4221eff29",
+  "last": "upload:8b3b0c43-abc3-4b9a-8719-f0d4221eff29",
+  "subject": "a swarm of glowing ether fireflies, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "ewisp",
+  "row": "burst",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:d0739099-96e1-46e5-ba54-5ebc820093fe",
+  "last": "upload:465a1579-b651-41e1-b3ac-031d4505d220",
+  "subject": "a swarm of glowing ether fireflies, pixel art, side view",
+  "desc": "the swarm gathers and bursts outward. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "ewisp",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:9bdf90f5-842e-4564-99f5-a642cbaf7c18",
+  "last": "upload:9bdf90f5-842e-4564-99f5-a642cbaf7c18",
+  "subject": "a swarm of glowing ether fireflies, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "emoth",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:9849509b-7dcb-40d6-b314-dfa407e8d334",
+  "last": "upload:9849509b-7dcb-40d6-b314-dfa407e8d334",
+  "subject": "a glowing dust moth monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "emoth",
+  "row": "dust",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:026ebbe3-6fd4-4116-a754-f7931962bb71",
+  "last": "upload:da935a21-f614-47f4-9ec8-b0060c5f2a2b",
+  "subject": "a glowing dust moth monster, pixel art, side view",
+  "desc": "flaps its wings and scatters glowing dust. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "emoth",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:f8ed2810-b7ba-43e9-aac6-252a06e05591",
+  "last": "upload:f8ed2810-b7ba-43e9-aac6-252a06e05591",
+  "subject": "a glowing dust moth monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "eshroom",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:28c5def7-467f-430f-a130-257dbaf1a764",
+  "last": "upload:28c5def7-467f-430f-a130-257dbaf1a764",
+  "subject": "an old ether mushroom elder, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "eshroom",
+  "row": "spore",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:0e9dddb7-f0c5-4ca3-aa21-a0edbf89d6e3",
+  "last": "upload:4b921371-f4ed-4cf1-bbab-873d01dce006",
+  "subject": "an old ether mushroom elder, pixel art, side view",
+  "desc": "puffs and releases spores from its cap. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "eshroom",
+  "row": "walk",
+  "old": 11,
+  "frames": 16,
+  "first": "upload:0f138594-be25-41c7-a4f2-baae8908e58a",
+  "last": "upload:0f138594-be25-41c7-a4f2-baae8908e58a",
+  "subject": "an old ether mushroom elder, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "mlizard",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:8e170886-69ed-4751-a04c-05beebf0a583",
+  "last": "upload:8e170886-69ed-4751-a04c-05beebf0a583",
+  "subject": "a moss-backed lizard monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "mlizard",
+  "row": "tongue",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:f5e00aa8-d859-4447-9387-c274068f6fbe",
+  "last": "upload:1b1fd058-3cb1-4573-a213-8f03644403b4",
+  "subject": "a moss-backed lizard monster, pixel art, side view",
+  "desc": "shoots its long tongue forward and pulls it back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "mlizard",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:95ad1596-ebd7-478b-b068-599eefac2059",
+  "last": "upload:95ad1596-ebd7-478b-b068-599eefac2059",
+  "subject": "a moss-backed lizard monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rcenti",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:e7600641-2115-44dc-82a4-f33249d70a7e",
+  "last": "upload:e7600641-2115-44dc-82a4-f33249d70a7e",
+  "subject": "a root centipede monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rcenti",
+  "row": "bite",
+  "old": 11,
+  "frames": 20,
+  "first": "upload:ba8386c2-613c-4060-9a57-acad8a42422c",
+  "last": "upload:dd919efd-8359-4687-ac67-048e3c5bcabf",
+  "subject": "a root centipede monster, pixel art, side view",
+  "desc": "lunges forward and bites the enemy in front, then pulls back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rcenti",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:8cac1fe5-3fab-4d63-a010-d4684f730cf1",
+  "last": "upload:8cac1fe5-3fab-4d63-a010-d4684f730cf1",
+  "subject": "a root centipede monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "cstag",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:5295eeeb-56fb-47c7-bdec-761fd28f9b4c",
+  "last": "upload:5295eeeb-56fb-47c7-bdec-761fd28f9b4c",
+  "subject": "a crystal stag beetle monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "cstag",
+  "row": "pinch",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:ecb197bd-f722-4367-894a-21d1f843c792",
+  "last": "upload:f1f7548a-083f-46b2-9a3c-a55b31e4e490",
+  "subject": "a crystal stag beetle monster, pixel art, side view",
+  "desc": "snaps its big mandibles forward. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "cstag",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:3b68faf3-a05e-455b-865f-cbea1683496d",
+  "last": "upload:3b68faf3-a05e-455b-865f-cbea1683496d",
+  "subject": "a crystal stag beetle monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "sentinel",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:6b4d4c1a-6071-4cf2-ad88-ba4f0ca30e77",
+  "last": "upload:6b4d4c1a-6071-4cf2-ad88-ba4f0ca30e77",
+  "subject": "an ancient tree sentinel golem, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "sentinel",
+  "row": "smash",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:06e955e9-726e-4d4d-8e83-1a0f151a13d5",
+  "last": "upload:f7d413f6-e0d3-4bd4-b4df-03e6caa37eed",
+  "subject": "an ancient tree sentinel golem, pixel art, side view",
+  "desc": "raises its arms and smashes down heavily. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "sentinel",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:18d71af6-28ad-4689-b5c5-d439256619f3",
+  "last": "upload:18d71af6-28ad-4689-b5c5-d439256619f3",
+  "subject": "an ancient tree sentinel golem, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "elddragon",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:7bd7ac88-ec0d-4389-b328-30f8aa22377a",
+  "last": "upload:7bd7ac88-ec0d-4389-b328-30f8aa22377a",
+  "subject": "a sleeping old tree dragon boss, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "elddragon",
+  "row": "bite",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:273c412b-00cc-406a-948f-1c1ef4dd9c00",
+  "last": "upload:9318d94b-f0c4-42a7-b64b-34eca5fdaff4",
+  "subject": "a sleeping old tree dragon boss, pixel art, side view",
+  "desc": "lunges forward and bites the enemy in front, then pulls back. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "elddragon",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:972db6a4-f80c-4714-a5b3-cc201036081d",
+  "last": "upload:972db6a4-f80c-4714-a5b3-cc201036081d",
+  "subject": "a sleeping old tree dragon boss, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "elddragon",
+  "row": "breath",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:66ad0137-f7cb-4eb3-a5ac-114d33e28fcd",
+  "last": "upload:0260e88c-d33c-4aa3-bd2f-b03f2f45b85e",
+  "subject": "a sleeping old tree dragon boss, pixel art, side view",
+  "desc": "opens its mouth and breathes out forward. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "elddragon",
+  "row": "stomp",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:3a1436f0-46d3-43e0-b20b-cd7a9e34c737",
+  "last": "upload:0b5eb810-558d-4a53-bf35-3a9891d9f5d7",
+  "subject": "a sleeping old tree dragon boss, pixel art, side view",
+  "desc": "rears up and stomps the ground hard. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "elddragon",
+  "row": "death",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:e92b8ba6-5c77-4df4-9fc0-ecd99bf34b16",
+  "last": "upload:075dc999-00f6-4fb0-a365-d1726acc5d9f",
+  "subject": "a sleeping old tree dragon boss, pixel art, side view",
+  "desc": "collapses and falls down defeated. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "smandrake",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:2c82639b-b491-443d-9d85-fd783e1fa091",
+  "last": "upload:2c82639b-b491-443d-9d85-fd783e1fa091",
+  "subject": "a screaming mandrake root monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "smandrake",
+  "row": "scream",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:06d9c787-7c71-4c7e-b151-78826d03e109",
+  "last": "upload:a4b889ff-2282-431f-8c43-65f970ece731",
+  "subject": "a screaming mandrake root monster, pixel art, side view",
+  "desc": "opens its mouth wide and screams. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "smandrake",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:72f06953-1698-413d-b3c6-cb7708e06758",
+  "last": "upload:72f06953-1698-413d-b3c6-cb7708e06758",
+  "subject": "a screaming mandrake root monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fdryad",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:064e19a4-0c51-45ac-b71d-11ec06747871",
+  "last": "upload:064e19a4-0c51-45ac-b71d-11ec06747871",
+  "subject": "a corrupted dryad woman monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fdryad",
+  "row": "whip",
+  "old": 11,
+  "frames": 20,
+  "first": "upload:5a8d497b-515c-42f0-ae1a-c9976fa2f9d7",
+  "last": "upload:3a1248e1-265f-4216-aa2e-d2764e9f28fa",
+  "subject": "a corrupted dryad woman monster, pixel art, side view",
+  "desc": "lashes a vine whip forward. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fdryad",
+  "row": "walk",
+  "old": 11,
+  "frames": 16,
+  "first": "upload:39b648a9-24a5-4f24-8c3e-a0b8530e57c0",
+  "last": "upload:39b648a9-24a5-4f24-8c3e-a0b8530e57c0",
+  "subject": "a corrupted dryad woman monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fairies",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:587e2e50-163d-43d7-af6a-719357b26c11",
+  "last": "upload:587e2e50-163d-43d7-af6a-719357b26c11",
+  "subject": "a group of four small corrupted fairies, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fairies",
+  "row": "stab",
+  "old": 11,
+  "frames": 20,
+  "first": "upload:959a6b7c-ca62-47cd-9744-cae9ce54d215",
+  "last": "upload:d78432ab-b51c-44fb-b805-555e017b9249",
+  "subject": "a group of four small corrupted fairies, pixel art, side view",
+  "desc": "darts forward and stabs with tiny blades. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "fairies",
+  "row": "walk",
+  "old": 11,
+  "frames": 16,
+  "first": "upload:a6155998-73f3-4b14-b5c4-34b9977ca743",
+  "last": "upload:a6155998-73f3-4b14-b5c4-34b9977ca743",
+  "subject": "a group of four small corrupted fairies, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rahen",
+  "row": "idle",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:b10af27c-7479-4492-ac53-691691ffb8e4",
+  "last": "upload:b10af27c-7479-4492-ac53-691691ffb8e4",
+  "subject": "a corrupted elf druid boss with a root staff, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rahen",
+  "row": "slam",
+  "old": 11,
+  "frames": 20,
+  "first": "upload:21149515-5661-476d-858e-c9b1627b5910",
+  "last": "upload:d067720c-cfd3-43f7-b051-9fc0c48155bd",
+  "subject": "a corrupted elf druid boss with a root staff, pixel art, side view",
+  "desc": "slams its staff down. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rahen",
+  "row": "walk",
+  "old": 10,
+  "frames": 16,
+  "first": "upload:99ad6f0a-4e8a-498a-b537-1c63ab11e792",
+  "last": "upload:99ad6f0a-4e8a-498a-b537-1c63ab11e792",
+  "subject": "a corrupted elf druid boss with a root staff, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rahen",
+  "row": "cast",
+  "old": 9,
+  "frames": 20,
+  "first": "upload:22419a92-af44-48df-89d2-76e77e96b30a",
+  "last": "upload:1b2c7e5c-ee6f-4fc6-bf82-96fe3df826d7",
+  "subject": "a corrupted elf druid boss with a root staff, pixel art, side view",
+  "desc": "raises its staff and casts a spell. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rahen",
+  "row": "roots",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:d6647d22-fe69-4819-842c-88ef3f5e9368",
+  "last": "upload:cfd2a1e4-b6fc-4b06-9c98-c84dc524052d",
+  "subject": "a corrupted elf druid boss with a root staff, pixel art, side view",
+  "desc": "commands roots to burst from the ground. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "rahen",
+  "row": "death",
+  "old": 10,
+  "frames": 20,
+  "first": "upload:a4462b68-5946-4041-a189-5821ccfa73c3",
+  "last": "upload:56af5148-db14-4838-8145-9df5e6c98e7f",
+  "subject": "a corrupted elf druid boss with a root staff, pixel art, side view",
+  "desc": "collapses and falls down defeated. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "aboar",
+  "row": "idle",
+  "old": 7,
+  "frames": 16,
+  "first": "upload:56a8c76d-980f-4c04-895f-0a02dbf3e237",
+  "last": "upload:56a8c76d-980f-4c04-895f-0a02dbf3e237",
+  "subject": "a big armored wild boar monster, pixel art, side view",
+  "desc": "idle loop: breathes and moves slightly in place, natural small motion; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "aboar",
+  "row": "walk",
+  "old": 8,
+  "frames": 16,
+  "first": "upload:a81a5ff2-2d63-40b5-89f5-94b07c5d253a",
+  "last": "upload:a81a5ff2-2d63-40b5-89f5-94b07c5d253a",
+  "subject": "a big armored wild boar monster, pixel art, side view",
+  "desc": "walk cycle in place: moves its legs or body as if walking forward, smooth loop; ends in the starting pose. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "aboar",
+  "row": "hornup",
+  "old": 6,
+  "frames": 20,
+  "first": "upload:29921361-35b1-4251-bb9c-d94edf54e83d",
+  "last": "upload:5eb450cb-8766-4910-a733-5f7058a96902",
+  "subject": "a big armored wild boar monster, pixel art, side view",
+  "desc": "raises its head and tusks threateningly. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "aboar",
+  "row": "headbutt",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:39c75e8d-7c90-47f0-9c1e-59cd936ddf8f",
+  "last": "upload:3ebaccce-40ce-4229-97aa-f8e4cfd5a39b",
+  "subject": "a big armored wild boar monster, pixel art, side view",
+  "desc": "swings its head and headbutts forward. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ },
+ {
+  "mon": "aboar",
+  "row": "charge",
+  "old": 8,
+  "frames": 20,
+  "first": "upload:dcf2bcf2-aeda-4cae-8e80-fb7c70f86bb6",
+  "last": "upload:1f43feea-553c-4017-87cf-a5a403d25336",
+  "subject": "a big armored wild boar monster, pixel art, side view",
+  "desc": "lowers its head and charges forward to ram, then recovers. Keep the exact same character design, size and colors. No visual effects, no particles, no blood, no sparks, no flashes."
+ }
+]

@@ -1,0 +1,300 @@
+{
+ "rat/idle": {
+  "id": "61d87073-f114-4ba9-a9d9-971c4e69e26f",
+  "ok": 1
+ },
+ "rabbit/idle": {
+  "id": "463e41cf-9968-48bd-a1cf-490c02f958c4",
+  "ok": 1
+ },
+ "rabbit/jump": {
+  "id": "862f621e-6f44-4417-a9d3-f4144f8826cc",
+  "ok": 1
+ },
+ "rabbit/charge": {
+  "id": "ae3cdabd-abf1-45ad-8663-136d81ddc4d8",
+  "ok": 1
+ },
+ "rat/bite": {
+  "id": "6aa97af8-249e-49b9-9ca2-e6d89e086b9b",
+  "ok": 1
+ },
+ "rat/leap": {
+  "id": "eb73394f-2ff9-4de9-ab66-15fa31b93315",
+  "ok": 1
+ },
+ "wolf/idle": {
+  "id": "e100fc4c-fcb4-40c2-bd6a-234fc0d7dd83",
+  "ok": 1
+ },
+ "wolf/bite": {
+  "id": "b383f076-165e-4300-adf3-d6e638cfaf82",
+  "ok": 1
+ },
+ "wolf/leap": {
+  "id": "e9db2d99-e28a-4340-ac9e-4d16d242b4ca",
+  "ok": 1
+ },
+ "scarecrow/idle": {
+  "id": "f7dec093-78a6-4016-bf30-db64fe995007",
+  "ok": 1
+ },
+ "scarecrow/crow1": {
+  "id": "f4319253-8137-4289-96fe-99726be03ddc",
+  "ok": 1
+ },
+ "scarecrow/crow2": {
+  "id": "c6bd2a14-0e02-49da-b1d0-8471b21465fb",
+  "ok": 1
+ },
+ "scarecrow/crow3": {
+  "id": "a3f7a489-6163-4d0a-b5c6-c4a4b19e18ac",
+  "ok": 1
+ },
+ "boar/idle": {
+  "id": "befd6522-b382-444e-af41-5507d4c7e83d",
+  "ok": 1
+ },
+ "boar/walk": {
+  "id": "6fafd693-9a10-4dc3-af3f-200581422e6a",
+  "ok": 1
+ },
+ "boar/hornup": {
+  "id": "811274ff-f743-4f16-b07e-e106446325cd",
+  "ok": 1
+ },
+ "boar/headbutt": {
+  "id": "b2667f8c-8755-47ad-9386-9831893d1a06",
+  "ok": 1
+ },
+ "boar/charge": {
+  "id": "39af1383-3ef7-4e29-85f7-70d21e5676b3",
+  "ok": 1
+ },
+ "vinesnake/idle": {
+  "id": "164fc854-7ad4-417a-92a9-068dde9e63fc",
+  "ok": 1
+ },
+ "vinesnake/walk": {
+  "id": "15a51c4b-df37-440a-8688-8d7952b4172c",
+  "ok": 1
+ },
+ "vinesnake/bite": {
+  "id": "67718e36-fce7-4ae2-afca-c0a5c18d54fb",
+  "ok": 1
+ },
+ "cflower/idle": {
+  "id": "e82f43ed-f7dd-4825-92bf-eb83b152ce66",
+  "ok": 1
+ },
+ "cflower/bite": {
+  "id": "bf01b6ab-ecd1-4563-814b-4f3fa274fc05",
+  "ok": 1
+ },
+ "cflower/walk": {
+  "id": "cd99ff08-29a0-42aa-ad58-bfdb38028abc",
+  "ok": 1
+ },
+ "stump/idle": {
+  "id": "8a42eb2c-9909-4abd-8f67-0a39b8eca001",
+  "ok": 1
+ },
+ "stump/bite": {
+  "id": "c175c75e-4530-44c5-9c47-22b87cce1c30",
+  "ok": 1
+ },
+ "stump/walk": {
+  "id": "c1f3ae4f-dbcc-4b13-a942-03a71f958833",
+  "ok": 1
+ },
+ "spotshroom/idle": {
+  "id": "270f6984-3277-4177-b49c-46d3c1d3b214",
+  "ok": 1
+ },
+ "spotshroom/spore": {
+  "id": "b9e313f5-da53-4df7-ac8d-29bc4a45756a",
+  "ok": 1
+ },
+ "spotshroom/walk": {
+  "id": "35458f7e-f4dc-4a44-b965-71c0adc5ea98",
+  "ok": 1
+ },
+ "ibeetle/idle": {
+  "id": "aec5f0a6-2637-470e-a60c-7dc5ef75ed80",
+  "ok": 1
+ },
+ "ibeetle/charge": {
+  "id": "ddc3c9ab-1deb-404a-bfc7-f25ba7a08099",
+  "ok": 1
+ },
+ "ibeetle/walk": {
+  "id": "c350ec72-73a4-462e-a5cd-7adaffffc325",
+  "ok": 1
+ },
+ "mgolem/idle": {
+  "id": "95c10195-99ee-4683-b694-a913897af226",
+  "ok": 1
+ },
+ "mgolem/smash": {
+  "id": "33f3b8be-13e9-4372-902b-23bf49f7f91f",
+  "ok": 1
+ },
+ "mgolem/walk": {
+  "id": "2be55287-6b0e-4ccb-b073-187d7c301038",
+  "ok": 1
+ },
+ "fguard/idle": {
+  "id": "a360c09c-b6e4-445a-8d96-77c723e02a4c",
+  "ok": 1
+ },
+ "fguard/charge": {
+  "id": "48ea5ef5-748b-47c9-adc4-8ff086b70734",
+  "ok": 1
+ },
+ "fguard/walk": {
+  "id": "4bd30c9b-f2da-405f-bc2f-52e64403bdaf",
+  "ok": 1
+ },
+ "fguard/bell": {
+  "id": "4e825d5c-a273-4b8f-94ec-96592958c1ea",
+  "ok": 1
+ },
+ "fguard/stomp": {
+  "id": "dde5c63d-e0ff-4a86-b849-d806cd027862",
+  "ok": 1
+ },
+ "fguard/death": {
+  "id": "fdc21c1b-c4d0-40cb-98bc-a0dc881c1722",
+  "ok": 1
+ },
+ "ewisp/idle": {
+  "id": "20a6d924-2dbf-4e77-8dd4-31bfdd55c202",
+  "ok": 1
+ },
+ "ewisp/burst": {
+  "id": "887295a5-f53c-4f58-9f91-e48336fa3c74",
+  "ok": 1
+ },
+ "ewisp/walk": {
+  "id": "db0d8fbe-38e3-4d1d-8195-ac68056c29d2",
+  "ok": 1
+ },
+ "emoth/idle": {
+  "id": "ea99e8b4-321e-47eb-9e48-bca5afd5de28",
+  "ok": 1
+ },
+ "emoth/dust": {
+  "id": "160112b9-52ec-4d94-99b2-eb3810e468a7",
+  "ok": 1
+ },
+ "emoth/walk": {
+  "id": "cf793b1e-c918-477a-b742-00757144850a",
+  "ok": 1
+ },
+ "eshroom/idle": {
+  "id": "f31c3b7d-78bd-4fbd-af26-b06902ba0ffd",
+  "ok": 1
+ },
+ "eshroom/spore": {
+  "id": "817bb5c6-2e88-44a9-ad45-6510d4b766b1",
+  "ok": 1
+ },
+ "eshroom/walk": {
+  "id": "52db8b90-1b71-465e-940b-651daaab2a6d",
+  "ok": 1
+ },
+ "mlizard/idle": {
+  "id": "eb172d00-d132-4e8b-a8f4-992f98faaf3f",
+  "ok": 1
+ },
+ "mlizard/tongue": {
+  "id": "fc93118c-77e7-4320-b3ff-21ffcd56d0cf",
+  "ok": 1
+ },
+ "mlizard/walk": {
+  "id": "92690f94-33f6-408e-932f-0b2dea8f42b6",
+  "ok": 1
+ },
+ "rcenti/idle": {
+  "id": "a841e241-a5f8-475c-9906-33430c2479d4",
+  "ok": 1
+ },
+ "rcenti/bite": {
+  "id": "a75497a9-5428-4068-8c15-8f912c99c86f",
+  "ok": 1
+ },
+ "rcenti/walk": {
+  "id": "dd22991d-6d0b-483a-93af-7bccbd1275eb",
+  "ok": 1
+ },
+ "cstag/idle": {
+  "id": "cfe30a11-cae0-48f0-bcf6-9feefb3bc4a8",
+  "ok": 1
+ },
+ "cstag/pinch": {
+  "id": "bdc81f5d-e24c-436b-b083-707050f55b1c",
+  "ok": 1
+ },
+ "cstag/walk": {
+  "id": "53f6305a-98a6-4fd9-8853-9ec55e1653e1",
+  "ok": 1
+ },
+ "sentinel/idle": {
+  "id": "c15af6e0-eed7-456f-974c-87308187b1af",
+  "ok": 1
+ },
+ "sentinel/smash": {
+  "id": "0b624eac-e5f0-4967-a9a8-bd437a615bfb",
+  "ok": 1
+ },
+ "sentinel/walk": {
+  "id": "d20f1849-3bde-4f6c-9472-66e4f2710d0a",
+  "ok": 1
+ },
+ "elddragon/idle": {
+  "id": "016a52bb-c239-4167-8f35-9ac99215b4c2",
+  "ok": 1
+ },
+ "elddragon/bite": {
+  "id": "fce336ee-f38a-4769-8afe-dfa8a00af43b",
+  "ok": 1
+ },
+ "elddragon/walk": {
+  "id": "605287b4-0a5c-4f23-b461-a6e8c8b516ee",
+  "ok": 1
+ },
+ "elddragon/breath": {
+  "id": "f0cb1096-8686-4222-bce4-5e549d397f2e",
+  "ok": 1
+ },
+ "elddragon/stomp": {
+  "id": "e4f714a5-a811-4686-b88a-55365bd0f13d",
+  "ok": 1
+ },
+ "elddragon/death": {
+  "id": "d77172e6-710a-4b48-ae7f-3b7bb5fd6235"
+ },
+ "smandrake/idle": {
+  "id": "2d1d7b67-1e0e-44ed-a4e1-65711db7f713",
+  "ok": 1
+ },
+ "smandrake/scream": {
+  "id": "5bee38b4-1787-4b25-be20-a5ae087ae0a0",
+  "ok": 1
+ },
+ "smandrake/walk": {
+  "id": "466388c3-2a0a-489b-a238-ad1a500a5100"
+ },
+ "fdryad/idle": {
+  "id": "aa6124c9-d8bb-4966-a6a1-0b5a5a70d1b8"
+ },
+ "fdryad/whip": {
+  "id": "bf1aff99-dfbc-453f-b48c-9eb5f5a29533"
+ },
+ "fdryad/walk": {
+  "id": "8adc930f-0c63-4ca3-83d1-0d2e1c388283"
+ },
+ "fairies/idle": {
+  "id": "2c33fa92-fda2-4c76-be55-3acfbe91214d"
+ }
+}

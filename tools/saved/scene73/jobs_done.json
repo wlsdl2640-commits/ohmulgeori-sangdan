@@ -1,0 +1,42 @@
+{
+ "assoc": {
+  "id": "3a6c955b-a7bf-4e03-bc59-4b5e356fe9a7",
+  "ok": 1
+ },
+ "smithy": {
+  "id": "f53c56a5-8b4a-47de-9474-47459e4ecf75",
+  "ok": 1
+ },
+ "warehouse": {
+  "id": "69711b7b-77e2-4028-9c77-f057f40fe752",
+  "ok": 1
+ },
+ "library": {
+  "id": "90411004-d0f2-4416-bdfa-b9db54dd5846",
+  "ok": 1
+ },
+ "temple": {
+  "id": "936d39dc-612d-4fee-84c6-6c8359277e33",
+  "ok": 1
+ },
+ "tower": {
+  "id": "729d06ab-4dc6-40e4-af05-804fded4035e",
+  "ok": 1
+ },
+ "inn": {
+  "id": "0f84d3b7-a00a-4e28-84a9-40d9c14bb938"
+ },
+ "kitchen": {
+  "id": "b8faa5f5-f39d-4d0f-90e5-363b4f9c49a2",
+  "ok": 1
+ },
+ "alchemy": {
+  "id": "692d70fb-89c6-492e-8318-5beacec5bc44"
+ },
+ "pen": {
+  "id": "b933ff2b-eb41-4d7b-9abc-cc020caecb2a"
+ },
+ "stable": {
+  "id": "2a951e26-78b6-4ff2-a2a2-2805d8777598"
+ }
+}
