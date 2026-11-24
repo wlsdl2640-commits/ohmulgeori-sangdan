@@ -4,6 +4,9 @@ H=os.path.dirname(os.path.abspath(__file__))
 b64=lambda f: base64.b64encode(open(os.path.join(H,f),'rb').read()).decode()
 src=open(H+'/page_pixellab.html',encoding='utf-8').read(); css=src[src.index('<style>'):src.index('</style>')+8]
 data={k:b64(f'arc_v2/{k}.png') for k in ('shoot','buff','idle','dodge','quick','power','kick')}
+# 시안 3(11-25): 픽셀랩 create_image_pro 48×48 후보(fx_pick/ — hawk_t1 · bow_t1 판에서 고름)
+PICK={'hawk_00':'A 기본','hawk_02':'B 짙은 머리','hawk_10':'C 매서운 눈썹','bow_00':'A 맑은 빛','bow_03':'B 정령 불꽃','bow_13':'C 서린 기운'}
+data.update({k:b64(f'fx_pick/pick/{k}.png') for k in PICK})
 page=f"""<title>궁수 스킬 이펙트</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
 {css}
@@ -11,12 +14,22 @@ page=f"""<title>궁수 스킬 이펙트</title>
 .card {{ background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 8px; display: grid; gap: 6px; margin: 0 0 12px; }}
 .card canvas {{ display: block; width: 100%; height: auto; image-rendering: pixelated; border-radius: 6px; }}
 .card b {{ font-weight: 600; }} .card p {{ margin: 0; font-size: 14px; opacity: .85; }}
+.pickrow {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-bottom: 14px; }}
+.pickrow .card {{ margin: 0; border-width: 2px; }}
+.pickrow .card b {{ font-size: 18px; }}
+.pickrow .zoom {{ width: 192px; height: 192px; image-rendering: pixelated; justify-self: center; border-radius: 6px;
+  background: repeating-conic-gradient(#78966e 0 25%, #6a875f 0 50%) 0 0 / 24px 24px; }}
 .bar {{ display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }}
 .bar button {{ font: inherit; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--sheet); color: inherit; cursor: pointer; }}
 .bar button[aria-pressed="true"] {{ background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }}
 </style>
 <main class="wrap">
-  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 궁수 1차 스킬</p><h1>궁수 스킬 이펙트</h1><p class="lede">궁수 1차 스킬 이펙트 시안 열셋입니다. 궁수 동작 위에 효과를 겹쳐 돌려 본 것이고 게임에는 넣지 않았습니다.</p></header>
+  <header class="top"><p class="eyebrow">미궁도시 라비린토스 · 궁수 1차 스킬</p><h1>궁수 스킬 이펙트</h1><p class="lede">궁수 1차 스킬 이펙트 시안 열셋입니다. 궁수 동작 위에 효과를 겹쳐 돌려 본 것이고 게임에는 넣지 않았습니다. 매의 눈 · 예리한사격은 픽셀랩으로 뽑은 그림(B · C)을 씁니다 — 후보 셋씩은 바로 아래에.</p></header>
+  <section class="sec"><h2>고를 후보 (픽셀랩)</h2>
+    <p class="note">매의 눈 · 예리한사격을 픽셀랩으로 뽑은 후보입니다. 매의 눈은 B, 예리한사격은 C로 골랐고(✓), 아래 「시안」 목록의 두 카드도 고른 그림으로 바꿨습니다.</p>
+    <h3>매의 눈 — 머리 위 매 옆얼굴</h3><div class="pickrow" id="pick-hawk"></div>
+    <h3>예리한사격 — 머리 위 정령 활</h3><div class="pickrow" id="pick-bow"></div>
+  </section>
   <section class="sec"><h2>시안</h2>
     <div class="bar"><button type="button" data-sp="1" aria-pressed="true">보통 빠르기</button><button type="button" data-sp="0.4" aria-pressed="false">느리게</button></div>
     <div id="list"></div>
@@ -47,6 +60,12 @@ function swirl(g,t,pal,front){{const cx=OX+76,by=GY-2;          // 나선 띠 �
   if(front)for(let k=0;k<7;k++){{const r2=((t*70+k*19)%100);px(g,cx-26+((k*29)%52),by-r2,pal[k%2],1,2)}}}}
 function dust(g,x,y,t){{if(t<0||t>0.55)return;const C=t<0.18?'#f0e6cc':t<0.36?'#d2c29a':'#b0a07c';          // 흙먼지: 덩이 여섯이 양옆으로 퍼지며 떠오르다 작아짐
   for(let i=0;i<6;i++){{const d=(i-2.5)/2.5,r=6+t*44,s=t<0.2?4:t<0.38?3:2;px(g,x+d*r-s/2,y-s-(1-d*d)*t*20,C,s,s);if(t<0.3)px(g,x+d*r*0.6,y-2,'#d2c29a',2,2)}}}}
+// 픽셀랩 그림(48×48)을 머리 위에: 작게 튀어나와 커지고 → 살짝 떠 있다가 → 사라짐(정수 배율만 써서 칸이 안 뭉개짐)
+function overhead(g,t,k,cy,o){{const T0=0.3,T1=1.9;if(t<T0||t>T1)return;const u=t-T0,cx=OX+76,z=u<0.1?0.5:1,S=48*z,bob=Math.round(Math.sin(u*4)*1.5);
+  const al=u<0.1?u/0.1:u>T1-T0-0.3?(T1-T0-u)/0.3:1;g.globalAlpha=Math.max(0,Math.min(1,al))*(o.shim?0.82+0.18*Math.sin(t*26):1);
+  if(o.ring&&u<0.25)ring(g,cx,cy+24,8+u*70,o.ring);
+  if(o.mote)for(let i=0;i<7;i++){{const r=((t*40+i*17)%40);px(g,cx-18+((i*11)%36),cy+40-r,o.mote[i%2],1,2)}}
+  g.drawImage(I[k],0,0,48,48,Math.round(cx-S/2),Math.round(cy+(48-S)/2+bob),S,S);g.globalAlpha=1}}
 const SK=[
  {{n:'크리티컬샷',d:'놓는 순간 화살 자리에서 빛줄기 한 줄이 같은 속도로 나갑니다. 화살은 가려집니다.',len:2.6,draw(g,t){{const f=Math.min(20,1+Math.floor(t*12)),rel=14.5/12;base(g);spr(g,'shoot',f);if(f>=15&&f<=17){{g.fillStyle='#78966e';g.fillRect(OX+121,OY+66,W,20)}}          // 그림에 든 날아가는 화살 조각은 가림
     const ay=OY+76,bx=OX+112;
@@ -91,9 +110,21 @@ const SK=[
     if(t>0.15&&t<rel+0.4){{const b=t<0.35?Math.round((0.35-t)*30):0,x=257,y=GY-72-b;px(g,x-1,y-1,'#3a1010',5,13);px(g,x,y,'#ff4030',3,7);px(g,x,y+8,'#ff4030',3,3);px(g,x+1,y+1,'#ffb0a0',1,3)}}
     if(u>0&&h<0)arrow(g,BX+u*340,AY-4);spark(g,248,AY-4,h,'#fff','#ffb0a0');if(h>0&&h<0.4){{px(g,262,GY-58-h*30,'#fff',1,1);px(g,270,GY-52-h*24,'#ffb0a0',2,2)}}}}}},
  {{n:'발차기',d:'발이 닿는 순간 발끝에 짧은 타격 섬광이 터지고, 대상이 뒤로 밀립니다.',len:2.6,draw(g,t){{base(g);const f=Math.min(20,1+Math.floor(t*11)),hit=t-11/11;dummy(g,OX+146+(hit>0?Math.min(1,hit/0.25)*26:0),hit>0&&hit<0.12?3:0);spr(g,'kick',f);spark(g,OX+136,OY+98,hit);if(hit>0&&hit<0.3)for(let i=0;i<3;i++)px(g,OX+140+hit*90,OY+92+i*6,'#ffffff',6-hit*18,1)}}}}];
+// 시안 3: 예리한사격 · 매의 눈 바로 뒤에 픽셀랩 후보 카드(예전 코드 그림 카드는 비교용으로 남김)
+const PN={json.dumps(PICK, ensure_ascii=False)};
+const PK=[];          // 맨 위 「고를 후보」 칸에 들어갈 카드
+// 11-25 사용자가 고름: 매의 눈 B(hawk_02) · 예리한사격 C(bow_13) → 시안 목록의 그 스킬 카드도 고른 그림으로
+const CHOSEN={{'매의 눈':'hawk_02','예리한사격':'bow_13'}};
+function addPick(name,box,keys,mk){{const i=SK.findIndex(s=>s.n===name),ck=CHOSEN[name];
+  if(ck){{const m=mk(ck,PN[ck]);SK[i].draw=m.draw;SK[i].d=m.d+' (고른 그림: '+PN[ck]+')'}}
+  for(const k of keys){{const m=Object.assign(mk(k,PN[k]),{{box,k}});if(k===ck)m.n='✓ '+m.n+' — 고름';PK.push(m)}}}}
+addPick('예리한사격','pick-bow',['bow_00','bow_03','bow_13'],(k,n)=>({{n,d:'정령 활이 머리 위에 떴다가 사라집니다. 빛이 일렁이고 옅은 빛 알갱이가 올라갑니다.',len:2.6,
+  draw(g,t){{base(g);spr(g,'buff',Math.min(20,1+Math.floor(t*9)));overhead(g,t,k,OY-24,{{shim:1,mote:['#ffffff','#c8f4ff']}})}}}}));
+addPick('매의 눈','pick-hawk',['hawk_00','hawk_02','hawk_10'],(k,n)=>({{n,d:'매 옆얼굴이 금빛 고리와 함께 머리 위에 떴다가 사라집니다.',len:2.4,
+  draw(g,t){{base(g);spr(g,'idle',1+Math.floor(t*8)%16);overhead(g,t,k,OY-22,{{ring:'#ffe040'}})}}}}));
 const list=document.getElementById('list'),cs=[];
-for(const s of SK){{const c=document.createElement('figure');c.className='card';const cv=document.createElement('canvas');cv.width=W;cv.height=Hh;cv.setAttribute('role','img');cv.setAttribute('aria-label',s.n+' 스킬 이펙트가 궁수 위에 겹쳐 움직이는 모습');
-  const b=document.createElement('b');b.textContent=s.n;const p=document.createElement('p');p.textContent=s.d;c.append(cv,b,p);list.append(c);cs.push([cv.getContext('2d'),s])}}
+for(const s of [...PK,...SK]){{const c=document.createElement('figure');c.className='card';const cv=document.createElement('canvas');cv.width=W;cv.height=Hh;cv.setAttribute('role','img');cv.setAttribute('aria-label',s.n+' 스킬 이펙트가 궁수 위에 겹쳐 움직이는 모습');
+  const b=document.createElement('b');b.textContent=s.n;const p=document.createElement('p');p.textContent=s.d;c.append(cv,b,p);if(s.k){{const z=new Image();z.src=I[s.k].src;z.className='zoom';z.alt=s.n+' 그림을 크게 키운 것';c.insertBefore(z,b)}}(s.box?document.getElementById(s.box):list).append(c);cs.push([cv.getContext('2d'),s])}}
 let sp=1,T=0,last=performance.now();
 document.querySelectorAll('.bar button').forEach(x=>x.onclick=()=>{{sp=+x.dataset.sp;document.querySelectorAll('.bar button').forEach(y=>y.setAttribute('aria-pressed',y===x))}});
 function loop(now){{T+=(now-last)/1000*sp;last=now;for(const [g,s] of cs){{g.imageSmoothingEnabled=false;s.draw(g,window.__fxT!=null?window.__fxT:T%(s.len+0.5))}}requestAnimationFrame(loop)}}
