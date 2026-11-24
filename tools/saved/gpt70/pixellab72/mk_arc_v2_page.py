@@ -4,7 +4,7 @@ H=os.path.dirname(os.path.abspath(__file__))
 b64=lambda f: base64.b64encode(open(os.path.join(H,f),'rb').read()).decode()
 src=open(H+'/page_pixellab.html',encoding='utf-8').read(); css=src[src.index('<style>'):src.index('</style>')+8]
 idx=json.load(open(H+'/arc_v2/index.json'))
-MOT=[('대기','idle',1),('걷기','walk',1),('달리기','run',1),('활쏘기','shoot',0),('힘껏 당겨 쏘기','power',0),('세 발 동시에','triple',0),('하늘로 쏘기','sky',0),('버프 자세','buff',0),('마나 속사 몸동작','mana',0),('활로 치기','swing',0),('발차기','kick',0),('뒤로 물러나기','dodge',0),('앉기','sit',0),('잠자기','sleep',0)]
+MOT=[('대기','idle',1),('걷기','walk',1),('달리기','run',1),('활쏘기','shoot',0),('빠른 한 발','quick',0),('힘껏 당겨 쏘기','power',0),('세 발 동시에','triple',0),('하늘로 쏘기','sky',0),('버프 자세','buff',0),('마나 속사 몸동작','mana',0),('활로 치기','swing',0),('발차기','kick',0),('뒤로 물러나기','dodge',0),('앉기','sit',0),('잠자기','sleep',0)]
 MOT=[(a,k,idx[k]['n']-1,l) for a,k,l in MOT]; data={k:b64(f'arc_v2/{k}.png') for _,k,_,_ in MOT}
 page=f"""<title>궁수 동작</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
@@ -24,7 +24,7 @@ page=f"""<title>궁수 동작</title>
   <section class="sec"><h2>동작 돌려 보기</h2>
     <div class="bar"><button type="button" data-fps="12" aria-pressed="true">보통 빠르기</button><button type="button" data-fps="5" aria-pressed="false">느리게</button></div>
     <div class="grid" id="grid"></div>
-    <p class="note" id="save-hint">맞음과 쓰러짐은 아직 받지 못했고, 빠른 한 발은 화살이 거꾸로 그려져 뺐습니다. 반복 동작이 아닌 것은 끝에서 잠깐 멈췄다가 다시 시작합니다.</p>
+    <p class="note" id="save-hint">맞음과 쓰러짐은 아직 받지 못했습니다. 빠른 한 발은 활쏘기에서 장을 골라 만든 것입니다. 반복 동작이 아닌 것은 끝에서 잠깐 멈췄다가 다시 시작합니다.</p>
   </section>
 </main>
 <script>
