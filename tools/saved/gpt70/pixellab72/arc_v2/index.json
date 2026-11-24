@@ -57,7 +57,8 @@
   "n": 25,
   "cell": 156,
   "src": "Reach_the_back_hand_over_the_shoulder_to_pull_thre",
-  "head": "fix_arrowhead.py multi × 2번"
+  "head": "fix_arrowhead.py multi × 2번",
+  "note": "쓰지 않음(11-24 19:36 — 활쏘기 + 스킬 이펙트로)"
  },
  "sky": {
   "n": 21,
@@ -112,5 +113,18 @@
   "cell": 156,
   "src": "Calmly_shift_weight_and_lower_the_body_into_a_seat",
   "head": null
+ },
+ "hurt": {
+  "n": 17,
+  "cell": 156,
+  "src": "Flash_a_small_white_and_yellow_star-shaped_spark_a…",
+  "head": null
+ },
+ "fall": {
+  "n": 21,
+  "cell": 156,
+  "src": "Take_a_heavy_hit_with_eyes_squeezing_shut_stagger…",
+  "head": null,
+  "note": "2~5장에 붉은 타격 조각(피처럼 보임)"
  }
 }
