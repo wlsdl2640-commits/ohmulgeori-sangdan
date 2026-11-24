@@ -30,7 +30,7 @@ const blessed = id => !!(S && S.bless && S.bless.id === id);
 const isNight = () => phaseOf(S.t) === 3;
 
 /* ───────── 길드원 능력치 ───────── */
-function expNeed(lv) { return Math.round(30 * Math.pow(lv, 1.8)); }
+function expNeed(lv) { return Math.round(EXP_K * Math.pow(lv, 1.8)); }   // 시안 draft-pace70: 계수 30 → EXP_K(5)
 function growStats(a, n) {
   const g = CLASSES[a.cls].grow;
   for (let i = 0; i < n; i++) for (const [k] of STATS) { const v = g[k], f = Math.floor(v); a.st[k] += f + (rnd() < v - f ? 1 : 0); }
@@ -250,7 +250,10 @@ const DIFF = { hp: 1.22, atk: 1.16 };   // v0.5: 더 어렵게
 function areaDef(e) { const F = FIELDS[e.field]; return e.area === 'dungeon' ? F.dungeon : F; }
 // 던전 층수: 보물 던전은 셋, 나머지는 다섯
 const floorsOf = e => (FIELDS[e.field] && FIELDS[e.field].treasure ? TREASURE_FLOORS : DUNGEON_FLOORS);
+const ownerBeaten = fid => !!((S.fields[fid] || {}).boss || {})[5];   // 시안: 그 계층 마지막 칸의 주인을 한 번이라도 잡았나
+const fastOn = e => !!(e && e.fast && e.mode === 'advance' && e.area === 'field' && isLab(e.field) && ownerBeaten(e.field));   // 「빠른 돌파」 중인가
 function makeEncs(e) {
+  if (fastOn(e)) return [];   // 시안: 빠른 돌파 — 이미 이긴 계층의 일반 무리 · 주인은 지나친다
   if (e.area === 'trade') return rnd() < (e.mode === 'return' ? 0.45 : 0.6) + (isNight() ? 0.15 : 0) ? [ri(20, 52)] : [];   // 교역로: 산적과 짐승이 가끔
   const night = e.area === 'field' && isNight();
   if (e.mode === 'return') return rnd() < (night ? 0.55 : 0.4) ? [ri(20, 50)] : [];
@@ -395,6 +398,7 @@ function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(�
   formParty(p);
   p.exp = newExp(fid, sup, labStart(fid, p.start));   // 빌드 72: 가 본 층(최고 층 + 1)까지는 어느 층에서든 출발한다 (예전: 우두머리를 잡은 거점 1 · 11 · 21 …)
   if (o.grp) { p.exp.grp = o.grp; p.exp.grpi = o.grpi || 0; }   // 빌드 69: 레이드 원정대 묶음 (함께 걷고 · 레이드 원정대 창에 함께 나온다)
+  p.exp.fast = p.pass === 'fast';   // 시안: 행군 방식(일반 행군 / 빠른 돌파)
   p.exp.food = packFood(p);   // 도시락
   boostStart(p.exp);   // 빌드 63: 상단 전용 원정 휴대품 (나침반 · 은화 · 부적 · 미끼 · 깃발 · 월계관 · 이슬 · 방울)
   if (FIELDS[fid].trade) tradeSetup(p, p.exp);
@@ -506,7 +510,7 @@ function stepExp(p, dt) {
   if (maxF >= FATIGUE.camp || (isNight() && p.campNight !== false && avgF >= FATIGUE.nightCamp)) { startCamp(p, e); return; }
   tire(team, FATIGUE.walk * fr * dt);
   if (!e.next && e.encs[e.ei] != null) e.next = rollFoes(e, e.ei);
-  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1) * floodMul(e) / (e.area === 'field' || e.area === 'dungeon' ? WALK_STRETCH : 1);   // 빌드 69 (11-15 12:03 「×3으로」): 필드 · 던전의 걷는 길 세 배 (data-stat69.js) · 빌드 70: 물이 찬 스테이지는 걸음 ×0.7 (data-under70.js)
+  const v = moveOf(p) * (e.mode === 'return' ? 1.15 : 1) * floodMul(e) * (fastOn(e) ? FAST_WALK : 1) / (e.area === 'field' || e.area === 'dungeon' ? WALK_STRETCH : 1);   // 빌드 69 (11-15 12:03 「×3으로」): 필드 · 던전의 걷는 길 세 배 (data-stat69.js) · 빌드 70: 물이 찬 스테이지는 걸음 ×0.7 (data-under70.js)
   if (e.mode === 'advance') {
     const next = e.encs[e.ei], np = e.pos + v * dt;
     if (next != null && np >= next) { e.pos = next; e.ei++; j1Enc(p, e); return; }
@@ -1351,7 +1355,8 @@ function kill(p, e, f) {
   const team = teamOf(p).filter(a => !a.down);
   team.forEach(a => { a.kills = (a.kills || 0) + 1; a.pf = (a.pf || 0) + (e.area === 'dungeon' ? 0.08 : 0.04) * (1 + traitSum(a, 'pfPct')); if ((f.fb || f.boss) && !f.pvp) a.bosses = (a.bosses || 0) + 1; });   // 우두머리·주인 처치 수는 라이선스 심사에 쓴다
   const harvest = blessed('harvest') ? 1.15 : 1;
-  const xp = Math.round(f.lv * 3 * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (f.sum ? 0.5 : 1) * (f.rare ? RARE.exp : f.nest ? 1.5 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp') + (foodFx(e).exp || 0)) * harvest);
+  const first = e.area === 'field' && isLab(e.field) && !f.pvp && e.stage > ((S.fields[e.field] || {}).best || 0);   // 시안: 칸별 첫 승리(그 칸을 아직 넘어 본 적 없음)
+  const xp = Math.round(f.lv * KILL_XP * (first ? FIRST_WIN : 1) * (f.fb ? 8 : f.boss ? 15 : f.pvp ? 4 : 1) * (f.sum ? 0.5 : 1) * (f.rare ? RARE.exp : f.nest ? 1.5 : 1) * (1 + (spn('elves') >= 2 ? 0.1 : 0) + (spn('elves') >= 3 ? 0.15 : 0) + relic('exp') + petHome('exp') + (foodFx(e).exp || 0)) * harvest);
   if (f.rare && !f.pvp) rareDown(p, e, f);
   team.forEach(a => { if (addExp(a, xp)) { ev(e, 'lvl', { d: a.id }); log(`${a.name}이(가) Lv${a.lv}이 되었다.`, 'good'); } });
   ev(e, 'kill', { d: f.uid, id: f.id, sc: f.sc || 0, adv: f.adv || null });

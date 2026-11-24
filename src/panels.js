@@ -543,7 +543,7 @@ function partyCard(p) {
   const e = p.exp, on = S.view === p.id;
   const head = `<div class="row"><div class="grow"><div class="h">${esc(p.name)} <small>${p.members.length}명 · 전투원 ${fightersOf(p).length}/${fighterCap(p)} · 짐꾼 ${portersOf(p).length}/${porterCap(p)}${p.raidOnly ? ' · 레이드 전용' : ''}</small></div><div class="sub" data-pst="${p.id}"></div></div>${on ? '<span class="tag gold-t">화면에 표시 중</span>' : `<button type="button" class="btn sm" data-act="view" data-id="${p.id}">화면 보기</button>`}</div>`;
   const DM = { ask: '멈추고 묻기', enter: '바로 들어가기', skip: '지나가기' };
-  const toggles = `<button type="button" class="btn sm${p.auto ? ' on' : ''}" data-act="auto" data-id="${p.id}">짐 차면 복귀 ${p.auto ? '켬' : '끔'}</button><button type="button" class="btn sm${p.safe ? ' on' : ''}" data-act="safe" data-id="${p.id}">위험하면 복귀 ${p.safe ? '켬' : '끔'}</button><button type="button" class="btn sm${p.campNight !== false ? ' on' : ''}" data-act="camp" data-id="${p.id}">밤에는 야영 ${p.campNight !== false ? '켬' : '끔'}</button><button type="button" class="btn sm${p.repeat ? ' on' : ''}" data-act="repeat" data-id="${p.id}">돌아오면 다시 출발 ${p.repeat ? '켬' : '끔'}</button><button type="button" class="btn sm${p.autoBuy ? ' on' : ''}" data-act="autobuy" data-id="${p.id}">보급품 모자라면 사기 ${p.autoBuy ? '켬' : '끔'}</button><button type="button" class="btn sm on" data-act="dmode" data-id="${p.id}">던전 앞에서: ${DM[p.dmode || 'ask']}</button>`;
+  const toggles = `<button type="button" class="btn sm${p.auto ? ' on' : ''}" data-act="auto" data-id="${p.id}">짐 차면 복귀 ${p.auto ? '켬' : '끔'}</button><button type="button" class="btn sm${p.safe ? ' on' : ''}" data-act="safe" data-id="${p.id}">위험하면 복귀 ${p.safe ? '켬' : '끔'}</button><button type="button" class="btn sm${p.campNight !== false ? ' on' : ''}" data-act="camp" data-id="${p.id}">밤에는 야영 ${p.campNight !== false ? '켬' : '끔'}</button><button type="button" class="btn sm${p.repeat ? ' on' : ''}" data-act="repeat" data-id="${p.id}">돌아오면 다시 출발 ${p.repeat ? '켬' : '끔'}</button><button type="button" class="btn sm${p.autoBuy ? ' on' : ''}" data-act="autobuy" data-id="${p.id}">보급품 모자라면 사기 ${p.autoBuy ? '켬' : '끔'}</button><button type="button" class="btn sm${p.pass === 'fast' ? ' on' : ''}" data-act="pass" data-id="${p.id}" title="주인을 이미 잡은 계층은 싸움 없이 ${FAST_WALK}배로 빨리 지나간다">행군: ${p.pass === 'fast' ? '빠른 돌파' : '일반 행군'}</button><button type="button" class="btn sm on" data-act="dmode" data-id="${p.id}">던전 앞에서: ${DM[p.dmode || 'ask']}</button>`;
   if (e) {
     const team = teamOf(p), F = FIELDS[e.field];
     const gate = e.wait === 'gate';
@@ -864,6 +864,7 @@ const ACT = {
   gate: d => { const p = findP(d.id); if (p) { gateChoice(p, d.c); S.view = p.id; } },
   wagon: d => say(buyWagon(+d.id, d.w, +d.s || 1)),
   camp: d => { const p = findP(d.id); if (p) p.campNight = p.campNight === false; },
+  pass: d => { const p = findP(d.id); if (p) p.pass = p.pass === 'fast' ? 'march' : 'fast'; },   // 시안 draft-pace70: 일반 행군 ↔ 빠른 돌파
   dmode: d => { const p = findP(d.id); if (p) p.dmode = { ask: 'enter', enter: 'skip', skip: 'ask' }[p.dmode || 'ask']; },
   rankup: () => say(rankUp()),
   treat: d => say(treat(+d.id, d.k)),

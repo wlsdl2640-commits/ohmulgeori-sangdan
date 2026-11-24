@@ -76,7 +76,7 @@ function monCard(id) {
   const m = MONS[id], D = dexState(), k = D.kills[id] || 0, seen = !!D.seen[id] || k > 0, where = monWhere(id), lv = where.length ? where[0].lv : 10;
   const lvl = DEX_K.filter(x => k >= x).length;   // 0~4
   if (!seen) return `<div class="li dexm dim"><img class="dexi" src="${monIconURL(id, 1)}" alt=""><div class="grow stack"><span>???</span><span class="sub">${where.length ? esc(where[0].where) : '어딘가'} · 만나면 열려요</span></div></div>`;
-  const fbk = where.length && where[0].fb ? where[0].fb : 0, f = fbk ? fieldBoss(FIELDS[where[0].fid], fbk * 10, lv - 1) : foeFrom(id, lv), xp = Math.round(lv * 3 * (fbk ? 8 : m.boss ? 15 : 1));
+  const fbk = where.length && where[0].fb ? where[0].fb : 0, f = fbk ? fieldBoss(FIELDS[where[0].fid], fbk * 10, lv - 1) : foeFrom(id, lv), xp = Math.round(lv * KILL_XP * (fbk ? 8 : m.boss ? 15 : 1));
   const tags = [m.boss && !m.giant ? '<span class="tag gold-t">주인</span>' : '', fbk ? `<span class="tag gold-t">${fbk >= 5 ? '필드의 주인' : '우두머리'}</span>` : '', m.giant ? '<span class="tag red-t">레이드</span>' : '', m.magic ? '<span class="tag">마법</span>' : '', m.aoe ? '<span class="tag">광역</span>' : ''].join('');
   const stats = lvl >= 1 ? `<div class="stats"><span>Lv${lv} 기준</span><span>HP <b>${fmt(f.maxHp)}</b></span><span>공격 <b>${f.atk.toFixed(0)}</b></span><span>방어 <b>${f.def.toFixed(0)}</b></span><span>속도 <b>${m.spd}</b></span>${m.eva ? `<span>회피 <b>${Math.round(m.eva * 100)}%</b></span>` : ''}<span>경험치 <b>${fmt(xp)}</b>${m.boss ? '' : '/마리'}</span></div><div class="sub muted">체력 ×${m.mh} · 공격 ×${m.ma} · 방어 ×${m.md || 0} · 레벨이 오르면 함께 오른다</div>` : `<div class="sub muted">한 마리 잡으면 능력치와 경험치가 열려요.</div>`;
   let drops = '';

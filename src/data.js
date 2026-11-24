@@ -24,6 +24,11 @@ const HOUR0 = 4;
 const SPEEDS = [1, 2, 3, 5, 10, 20];   // 빌드 66: 1 · 2 · 3 · 5배 + 설정에서 켜는 10 · 20배 (사용자 11-12 21:47)
 const SPEED_OPT = [10, 20];
 const speedList = () => SPEEDS.filter(n => !SPEED_OPT.includes(n) || !!(typeof S !== 'undefined' && S && S.spdOn && S.spdOn[n]));
+// 시안 draft-pace70 (11-25 회의 안건 7 · 사용자 결정 전 시안): 2층까지 속도 절충안
+const EXP_K = 5;        // 레벨업 필요 경험치 계수 (예전 30) — expNeed = EXP_K × Lv^1.8 · Lv1→30 누적 약 2만 3천
+const KILL_XP = 5;      // 처치 경험치 = 몬스터 Lv × KILL_XP (예전 3)
+const FIRST_WIN = 2;    // 그 칸을 아직 넘어 본 적 없으면(칸별 첫 승리) 경험치 배율
+const FAST_WALK = 2;    // 「빠른 돌파」: 주인을 잡은 계층은 싸움 없이 이 배로 빨리 걷는다
 const WALK_MUL = 2;   // 빌드 66 (사용자 「1배속 이동속도를 더 올려줘 이동속도만」): 원정 · 레이드 · 방어전 · 투기장에서 걷는 빠르기만 두 배
 const phaseOf = t => Math.floor(((t % DAY_SEC) + DAY_SEC) % DAY_SEC / (DAY_SEC / 4));
 const phaseFrac = t => (((t % DAY_SEC) + DAY_SEC) % DAY_SEC) / (DAY_SEC / 4) % 1;
@@ -205,7 +210,7 @@ const FIELDS = {
     next: 'forest'
   },
   forest: {
-    no: 2, name: '원시림', lv: 9, bg: 'forest_hd', tier: 1,   // 빌드 72: 새 풍경 (hd70.js buildForestHD)
+    no: 2, name: '원시림', lv: 31, span: 7, bg: 'forest_hd', tier: 1,   // 시안 draft-pace70: Lv9 ~ 21 → 31 ~ 38 (1층 끝 30에 이어서) · 빌드 72: 새 풍경 (hd70.js buildForestHD)
     desc: '중앙에 세계수가 솟은 숲. 엘프 왕국의 영역이다.',
     mons: ['vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem'],   // 11-20 17:34: 새 여섯(약한 차례) · 고블린 셋은 다음 계층으로 보낸다(사용자 — 지금은 어느 땅에도 안 나온다)   // 빌드 72 (11-20 17:14 사용자 「원시림에 추가했던 몬스터는 다 빼버려」): 예전 넷(독버섯 괴물 · 거대 거미 · 트렌트 묘목 · 고블린 주술사)을 뺐다 — 지금은 고블린 셋. 다음: 덩굴 뱀 · 식충 꽃 · 이끼 골렘 · 숲의 수호령 (GPT 판 기다림)
     dungeon: { name: '썩은 뿌리 동굴', bg: 'cave', mons: ['myconid', 'spider', 'sapling', 'shaman'], boss: 'elder' },
@@ -251,7 +256,7 @@ const FIELD_IDS = ['plains', 'forest', 'mountain', 'valley', 'snow', 'desert'];
 const ALL_FIELDS = FIELD_IDS.concat(['alley', 'deepforest', 'rootcave']);
 // 빌드 72 (11-20 19:10 사용자): 2계층의 미개척지대 「깊은 숲」 — 원시림 2-50 다음에 3계층으로 내려가는 대신 들어가는 갈림길(branch). 필드는 2-2-1 ~ 2-2-50(lbl).
 //   몬스터는 GPT 판을 받을 때까지 원시림 것을 빌려 쓴다(정해 둔 여덟: 에테르 반딧불 무리 · 빛가루 나방 · 에테르 버섯 장로 · 이끼 등 도마뱀 · 뿌리 지네 · 수정 사슴벌레 · 고목 파수꾼 · 주인 잠든 고룡목).
-FIELDS.deepforest = { no: 2, lbl: '2-2', branch: 'forest', name: '깊은 숲', lv: 22, bg: 'deep_hd', tier: 1,
+FIELDS.deepforest = { no: 2, lbl: '2-2', branch: 'forest', name: '깊은 숲', lv: 32, span: 7, bg: 'deep_hd', tier: 1,   // 시안 draft-pace70: 22 ~ 34 → 32 ~ 39
   desc: '세계수 바로 아래의 어두운 숲. 엘프들이 떠난 옛 거주지에 에테르 등불만 남아 있다.',
   bgAt: [41, 'wtbase_hd'],   // 2-2-41부터 세계수 밑동(썩어 뚫린 굴 입구 · 엘프 왕실 — 11-20 23:51 그림)
   mons: ['ewisp', 'mlizard', 'rcenti', 'emoth', 'eshroom', 'cstag', 'sentinel'], bosses: ['rcenti', 'emoth', 'cstag', 'sentinel', 'elddragon'] };
