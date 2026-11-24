@@ -11,6 +11,10 @@ for p in [(0, 0), (im.width - 1, 0), (0, im.height - 1), (im.width - 1, im.heigh
 m = np.asarray(f)[:, :, 3] > 0; ys = np.where(m.any(1))[0]; xs = np.where(m.any(0))[0]
 y0, y1, x0, x1 = ys[0], ys[-1] + 1, xs[0], xs[-1] + 1
 rgb = np.asarray(im)[y0:y1, x0:x1]; m = m[y0:y1, x0:x1].copy(); c = (y1 - y0) / H
+from scipy import ndimage
+lab, nl = ndimage.label(m & (rgb.min(-1) >= 246))          # 그림 안에 갇힌 큰 흰 바탕(활과 시위 사이 같은 곳) — 작은 흰 칸(화살 깃)은 그림
+for i, sz in enumerate(ndimage.sum(np.ones_like(lab), lab, range(1, nl + 1)), 1):
+    if sz >= 2500 or sz >= 300 and np.where(lab == i)[1].mean() > m.shape[1] * 0.45: m[lab == i] = False     # 앞쪽(오른쪽 반)은 작은 것도 — 뒤쪽은 화살 깃
 k = int((y1 - y0) * 0.85); m[k:] &= ~(rgb[k:].min(-1) >= 248)          # 두 발 사이에 갇힌 흰 바탕
 P = Palette(flat_pixels(rgb, m), groups=G)
 foot = np.where(m[-int(c * 3):].any(0))[0]; axp = (foot[0] + foot[-1] + 1) / 2          # 닻 = 발 가운데 · 땅 줄
