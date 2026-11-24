@@ -277,7 +277,8 @@ function makeNestFoe(f) {
 const nestAt = fid => (typeof evActive === 'function' ? evActive('nest').find(x => x.at === fid) : null) || null;
 // 필드 보스: 10 스테이지마다. k = 1~5 (1-50은 그 필드의 주인)
 function fieldBoss(F, stage, lv) {
-  const k = Math.round(stage / BOSS_EVERY), pool = F.mons.filter(id => minStage(MONS[id]) <= stage);
+  // 마지막 칸은 칸 수와 상관없이 주인(k 5) — 10단계 던전(세계수 뿌리굴)에서 round(10/10) = 1이 되어 라헨 대신 bosses[0]이 나오던 것을 고침(11-25)
+  const k = stage >= fstages(F) ? 5 : Math.round(stage / BOSS_EVERY), pool = F.mons.filter(id => minStage(MONS[id]) <= stage);
   const id = F.bosses && F.bosses[k - 1] && MONS[F.bosses[k - 1]] ? F.bosses[k - 1] : pool[(k * 7 + F.no * 3) % pool.length];
   const f = foeFrom(id, lv + 1);
   f.hp = f.maxHp = Math.round(f.maxHp * (3 + 0.9 * k));
