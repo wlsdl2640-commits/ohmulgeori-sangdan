@@ -399,6 +399,7 @@ function startExp(p, fid, o = {}) {   // o.grp · o.grpi: 레이드 원정대(�
   p.exp = newExp(fid, sup, labStart(fid, p.start));   // 빌드 72: 가 본 층(최고 층 + 1)까지는 어느 층에서든 출발한다 (예전: 우두머리를 잡은 거점 1 · 11 · 21 …)
   if (o.grp) { p.exp.grp = o.grp; p.exp.grpi = o.grpi || 0; }   // 빌드 69: 레이드 원정대 묶음 (함께 걷고 · 레이드 원정대 창에 함께 나온다)
   p.exp.fast = p.pass === 'fast';   // 시안: 행군 방식(일반 행군 / 빠른 돌파)
+  if (fastOn(p.exp)) { p.exp.encs = []; p.exp.ei = 0; p.exp.next = null; }   // 첫 칸(1-1)도 무리 없이 — newExp가 먼저 만든 무리를 비운다
   p.exp.food = packFood(p);   // 도시락
   boostStart(p.exp);   // 빌드 63: 상단 전용 원정 휴대품 (나침반 · 은화 · 부적 · 미끼 · 깃발 · 월계관 · 이슬 · 방울)
   if (FIELDS[fid].trade) tradeSetup(p, p.exp);
