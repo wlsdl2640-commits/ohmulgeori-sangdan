@@ -1,8 +1,98 @@
 {
+ "idle": {
+  "n": 17,
+  "cell": 156,
+  "src": "Breathe_in_place_by_gently_raising_the_chest_and_s",
+  "head": null
+ },
+ "walk": {
+  "n": 17,
+  "cell": 156,
+  "src": "Walk_with_a_continuous_stride_with_legs_alternatin",
+  "head": null
+ },
+ "run": {
+  "n": 17,
+  "cell": 156,
+  "src": "Lean_the_body_forward_and_drive_into_a_continuous",
+  "head": null
+ },
+ "shoot": {
+  "n": 21,
+  "cell": 156,
+  "src": "Take_an_arrow_from_the_quiver_nock_it_onto_the_bow",
+  "head": "fix_arrowhead.py"
+ },
+ "quick": {
+  "n": 21,
+  "cell": 156,
+  "src": "Quickly_snatch_an_arrow_from_the_back_quiver_with",
+  "head": "fix_arrowhead.py"
+ },
+ "power": {
+  "n": 25,
+  "cell": 156,
+  "src": "Reach_the_back_hand_over_the_shoulder_to_pull_a_wo",
+  "head": "fix_arrowhead.py"
+ },
+ "triple": {
+  "n": 25,
+  "cell": 156,
+  "src": "Reach_the_back_hand_over_the_shoulder_to_pull_thre",
+  "head": "fix_arrowhead.py multi"
+ },
+ "sky": {
+  "n": 21,
+  "cell": 156,
+  "src": "Reach_over_the_shoulder_with_the_back_hand_to_pull",
+  "head": null
+ },
  "buff": {
   "n": 21,
   "cell": 156,
-  "src": "화살 꺼내기로 나온 활쏘기(28프레임 판) — 사용자가 버프 스킬 자세로 쓰기로",
-  "v": 1
+  "src": "Lift_the_bow_with_the_front_arm_stretched_straight",
+  "head": null
+ },
+ "mana": {
+  "n": 29,
+  "cell": 156,
+  "src": "Plant_feet_in_a_firm_stance_raise_the_bow_straight",
+  "head": null
+ },
+ "swing": {
+  "n": 21,
+  "cell": 156,
+  "src": "Wind_up_by_gripping_the_bow_with_both_hands_twisti",
+  "head": null
+ },
+ "kick": {
+  "n": 21,
+  "cell": 156,
+  "src": "Drop_weight_onto_the_back_leg_and_pull_the_front_k",
+  "head": null
+ },
+ "kick_old": {
+  "n": 21,
+  "cell": 156,
+  "src": "Shift_weight_onto_the_back_leg_and_lift_the_front",
+  "head": null
+ },
+ "dodge": {
+  "n": 21,
+  "cell": 156,
+  "src": "Bend_the_knees_to_wind_up_leap_backward_with_both",
+  "head": null
+ },
+ "sit": {
+  "n": 17,
+  "cell": 156,
+  "src": "Lower_the_body_into_a_sitting_position_on_the_grou",
+  "head": null
+ },
+ "sleep": {
+  "n": 17,
+  "cell": 156,
+  "src": "Calmly_shift_weight_and_lower_the_body_into_a_seat",
+  "head": null
  }
 }
