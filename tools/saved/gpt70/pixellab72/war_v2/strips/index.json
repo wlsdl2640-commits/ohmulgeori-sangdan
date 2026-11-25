@@ -1,0 +1,262 @@
+{
+ "idle": {
+  "ko": "서 있기",
+  "n": 17,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "idle/v2",
+  "foot": 124
+ },
+ "walk": {
+  "ko": "걷기",
+  "n": 17,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "walk/v1",
+  "foot": 124
+ },
+ "run": {
+  "ko": "달리기",
+  "n": 17,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "run/v1",
+  "foot": 124
+ },
+ "hurt": {
+  "ko": "맞음",
+  "n": 17,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "hurt/v2",
+  "foot": 124
+ },
+ "fall": {
+  "ko": "쓰러짐",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "fall/v2",
+  "foot": 124
+ },
+ "sit": {
+  "ko": "앉기",
+  "n": 17,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "sit/v2",
+  "foot": 124
+ },
+ "sleep_a": {
+  "ko": "자기 A",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "sleep2/v1",
+  "foot": 124
+ },
+ "sleep_b": {
+  "ko": "자기 B",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "sleep2/v2",
+  "foot": 124
+ },
+ "sleep_c": {
+  "ko": "자기 C",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "sleep2/v3",
+  "foot": 124
+ },
+ "backstep": {
+  "ko": "뒤로 물러나기",
+  "n": 21,
+  "cell": [
+   256,
+   132
+  ],
+  "src": "dodge3/v3",
+  "foot": 124
+ },
+ "slash": {
+  "ko": "밀어 베기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "slash/v2",
+  "foot": 124
+ },
+ "block": {
+  "ko": "둥근 방패 막기",
+  "n": 17,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "block/v1",
+  "foot": 124
+ },
+ "taunt": {
+  "ko": "도발",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "taunt/v1",
+  "foot": 124
+ },
+ "lowcut": {
+  "ko": "발굽 끊기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "lowcut/v2",
+  "foot": 124
+ },
+ "sweep": {
+  "ko": "가로 휩쓸기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "sweep/v3",
+  "foot": 124
+ },
+ "bash": {
+  "ko": "방패 두드리기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "bash/v1",
+  "foot": 124
+ },
+ "counter": {
+  "ko": "되치기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "counter/v1",
+  "foot": 124
+ },
+ "brace": {
+  "ko": "자세 고정",
+  "n": 17,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "brace/v1",
+  "foot": 124
+ },
+ "resolve": {
+  "ko": "결의",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "resolve/v1",
+  "foot": 124
+ },
+ "earth": {
+  "ko": "대지 가르기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "earth/v1",
+  "foot": 124
+ },
+ "quake": {
+  "ko": "충격파",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "quake/v1",
+  "foot": 124
+ },
+ "twocut": {
+  "ko": "두 번 베기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "sweep/v2",
+  "foot": 124
+ },
+ "shieldthrust": {
+  "ko": "방패 뒤 찌르기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "counter/v2",
+  "foot": 124
+ },
+ "warcry": {
+  "ko": "돌격 함성",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "resolve/v3",
+  "foot": 124
+ },
+ "leap": {
+  "ko": "뛰어들기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "quake/v3",
+  "foot": 124
+ },
+ "shieldland": {
+  "ko": "방패 착지",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "quake/v4",
+  "foot": 124
+ }
+}
