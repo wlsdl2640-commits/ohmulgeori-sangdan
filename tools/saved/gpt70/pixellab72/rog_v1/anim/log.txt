@@ -1,0 +1,204 @@
+[오전 1:12:30] !! walk/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:30] !! run/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:30] !! walk/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:30] !! run/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:30] !! idle/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:31] !! idle/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:36] !! walk/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:36] !! idle/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:36] !! run/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:36] !! walk/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:37] !! idle/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:37] !! run/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:43] !! walk/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:43] !! run/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:43] !! idle/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:43] !! walk/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:43] !! idle/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:43] !! run/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:49] !! fall/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:49] !! sit/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:49] !! fall/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:49] !! hurt/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:49] !! hurt/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:49] !! hurt/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:55] !! fall/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:55] !! hurt/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:55] !! hurt/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:55] !! fall/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:55] !! hurt/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:12:55] !! sit/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:01] !! fall/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:01] !! hurt/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:01] !! sit/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:01] !! hurt/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:01] !! hurt/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:01] !! fall/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:07] !! stab/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:07] !! sleep/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:07] !! sleep/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:07] !! sit/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:08] !! stab/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:08] !! sleep/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:13] !! sleep/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:13] !! sleep/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:13] !! sleep/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:13] !! stab/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:14] !! sit/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:14] !! stab/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:19] !! sleep/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:19] !! sit/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:19] !! stab/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:19] !! stab/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:20] !! sleep/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:20] !! sleep/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:26] !! footwork/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:26] !! footwork/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:26] !! footwork/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:26] !! footwork/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:26] !! stab/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:26] !! stab/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:32] !! footwork/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:32] !! stab/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:32] !! footwork/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:32] !! stab/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:32] !! footwork/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:32] !! footwork/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='a young rogue in a dark ...guard in 
+[오전 1:13:49] 보냄 walk/v1 16장 c0c15426-fd64-4eb9-b217-061ef1713f13
+[오전 1:13:49] 보냄 idle/v1 16장 89a666fc-da22-4ce8-9ae7-be95a8d88f61
+[오전 1:13:49] 보냄 run/v1 16장 31fed2fd-9933-4732-8e67-8c37ef88280a
+[오전 1:13:49] 보냄 walk/v2 16장 e09f206f-7894-4dff-a97d-e2d8cf4b7e18
+[오전 1:13:49] 보냄 idle/v2 16장 a00a1a68-9e43-43b3-840d-9597db197b86
+[오전 1:13:49] 보냄 run/v2 16장 e46c034b-23e3-4e53-b9d1-442d822bf1e0
