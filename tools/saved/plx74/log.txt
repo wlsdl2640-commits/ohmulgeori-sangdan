@@ -1,0 +1,42 @@
+[오전 10:03:05] 보냄 soldier d150b623-8a04-47fc-ba17-53a4187f8df6
+[오전 10:03:05] 보냄 trapjaw d3c554d4-32f5-4416-ad83-4751640d573e
+[오전 10:03:05] 보냄 honeypot f5700135-622d-4ee9-98b8-399e2bae19e6
+[오전 10:04:12] 받음 trapjaw
+[오전 10:04:13] 받음 honeypot
+[오전 10:04:13] 받음 soldier
+[오전 10:04:13] 보냄 aphids 643e3591-a875-4f56-9909-4bc53c0a2772
+[오전 10:04:13] 보냄 pupa ac2d4c7c-e490-4747-ac07-2f5d29933526
+[오전 10:04:13] 보냄 antlion c641c43f-f443-4f04-8579-60422fe6b06b
+[오전 10:05:21] 받음 aphids
+[오전 10:05:21] 보냄 fungusant f6e5fed1-abf3-4ec1-b2bc-4ad8d3398b18
+[오전 10:05:32] 받음 pupa
+[오전 10:05:32] 보냄 mimicspider 1ce77376-a686-4e2d-b3fe-fe02c045e27b
+[오전 10:05:43] 받음 antlion
+[오전 10:05:43] 보냄 bluelarva dd7733e0-839e-4ab4-b3f1-537dc57d3a58
+[오전 10:06:28] 받음 fungusant
+[오전 10:06:28] 보냄 gatekeeper ab9d7c3a-af18-4eed-8d45-8f0aa720160e
+[오전 10:06:39] 받음 mimicspider
+[오전 10:06:40] 보냄 swampbrute 80b3c585-d31a-4bcb-88c2-84d2b4c2c204
+[오전 10:07:46] 받음 bluelarva
+[오전 10:07:46] 보냄 slime e6a93b0d-b88f-46a8-a793-78f5519bb68e
+[오전 10:08:19] 받음 gatekeeper
+[오전 10:08:19] 보냄 acidslime bacd3168-fb10-4349-94bb-945cf59b3405
+[오전 10:09:14] 받음 slime
+[오전 10:09:14] 받음 swampbrute
+[오전 10:09:15] 보냄 queen/q1 223d450b-8a69-4bf7-8aef-8e08454aedd9
+[오전 10:09:15] 보냄 queen/q0 a36b703e-f470-470f-b171-4443b7a1e3e1
+[오전 10:09:48] 받음 acidslime
+[오전 10:09:48] 보냄 queen/q2 e181ef1f-8c22-4805-81eb-a2115683c65e
+[오전 10:10:09] 받음 queen/q0
+[오전 10:10:09] 보냄 queen/q3 b42e3297-38c7-4e01-89ee-53cc85d5765f
+[오전 10:10:20] 받음 queen/q1
+[오전 10:10:20] 보냄 bg_water/day bf5322e1-39cf-4923-9459-bd29c0b28829
+[오전 10:10:54] 받음 queen/q2
+[오전 10:10:54] 보냄 bg_water/night a1518609-441c-48c6-bd86-53ea1cb2eeac
+[오전 10:11:05] 받음 queen/q3
+[오전 10:12:11] 받음 bg_water/day
+[오전 10:12:22] 받음 bg_water/night
+[오전 10:12:22] 끝 — 19 / 19
+[오전 10:13:03] 보냄 soldier2 53d05a1f-cb1c-4a99-a269-4d00a98c8d59
+[오전 10:14:23] 받음 soldier2
+[오전 10:14:23] 끝 — 1 / 1

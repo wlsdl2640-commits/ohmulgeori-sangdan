@@ -1,0 +1,19 @@
+[
+ {
+  "key": "soldier2",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Big-headed soldier ant (major worker caste): its square armored head is enormous, as big as its whole thorax and abdomen together, with two huge dark curved crushing mandibles, small body behind the giant head, red-brown armor, thick legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ }
+]

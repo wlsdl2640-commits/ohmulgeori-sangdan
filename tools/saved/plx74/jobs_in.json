@@ -1,0 +1,343 @@
+[
+ {
+  "key": "soldier",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Stocky red-brown soldier ant, oversized wedge-shaped head, huge dark hooked jaws, thick legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "trapjaw",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Lean charcoal ant, long straight wide-open mandibles, copper-colored joints, raised hind legs ready to spring, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "honeypot",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Brown ant with a huge round translucent amber honey-filled abdomen and thin legs tucked beneath it, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "aphids",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Three tightly clustered pea-green aphids, squat pear-shaped bodies, short black legs, tiny rear tubes, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "pupa",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Compact ivory ant pupa lying on its side, curled legs folded under a segmented shell, soft ochre seams, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "antlion",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Low sand-brown antlion larva, broad ridged round belly, two long curved trap jaws, six short legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "fungusant",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Hunched ash-brown zombie ant infected by fungus, one crooked ivory fungal stalk growing out of its head, muted teal fungal patches on its back, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "mimicspider",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Slender dark ant-mimic jumping spider shaped like an ant, eight legs with the front pair raised like antennae, pinched waist, pale eyes, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "bluelarva",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Plump pale-lavender butterfly caterpillar, low oval body, soft waxy ridges, dusty blue stripes on its back, tiny tucked legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "gatekeeper",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Heavy dark-clay gatekeeper ant, a huge broad round plug-shaped flat forehead like a shield, thick armored rim, recessed eyes, thick legs, imposing mini-boss, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "swampbrute",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Broad low hulking swamp monster made of peat and mud, peat-brown body, long mud-caked forearms, ragged roots and reeds growing on its shoulders, glowing small eyes, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "slime",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Large cute round moss-green slime, big soft dome body with a heavy flattened base, two tiny dot eyes and a small smile, smooth clean rounded top with no droplet and no tip on its head, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "acidslime",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Large round murky yellow-green acid slime, a dark violet core visible inside, lobed sides, narrow fierce eyes, smooth rounded top with no droplet and no tip on its head, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "queen/q0",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Terrifying colossal queen ant boss, wide low silhouette, immense egg-swollen pale abdomen under layered wine-black armored shell plates, dark blood-red armored head and thorax, long hooked jaws, tiny ivory eyes, a crown-like chitin ridge, truly menacing final boss, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 1000
+  }
+ },
+ {
+  "key": "queen/q1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Terrifying colossal queen ant boss, wide low silhouette, immense egg-swollen pale abdomen under layered wine-black armored shell plates, dark blood-red armored head and thorax, long hooked jaws, tiny ivory eyes, a crown-like chitin ridge, truly menacing final boss, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 1001
+  }
+ },
+ {
+  "key": "queen/q2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Terrifying colossal queen ant boss, wide low silhouette, immense egg-swollen pale abdomen under layered wine-black armored shell plates, dark blood-red armored head and thorax, long hooked jaws, tiny ivory eyes, a crown-like chitin ridge, truly menacing final boss, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 1002
+  }
+ },
+ {
+  "key": "queen/q3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Terrifying colossal queen ant boss, wide low silhouette, immense egg-swollen pale abdomen under layered wine-black armored shell plates, dark blood-red armored head and thorax, long hooked jaws, tiny ivory eyes, a crown-like chitin ridge, truly menacing final boss, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 1003
+  }
+ },
+ {
+  "key": "bg_water/day",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Side-scrolling 2D game battle background, wide panorama, no characters. A flooded swamp waterway inside an underground world: the ground path across the bottom quarter is shallow murky water with mud banks, reeds and floating lily pads, half-sunken logs and stepping roots, dark teal water with ripples, twisted dead trees, low drifting mist. Three depth layers: far misty treeline, middle reeds and dead trees, and the flooded water path across the bottom quarter where the party wades. Same swamp, same colors and same art style as the reference image. 16-bit JRPG pixel art, crisp pixels, no people, no effects. Daytime under a hazy artificial sun, yellowish fog.",
+   "width": 528,
+   "height": 224,
+   "no_background": false,
+   "style_image_url": "upload:84c3f7d9-bd7f-48a2-8519-7636e6b55198",
+   "style_copy": [
+    "color_palette",
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "reference_images": [
+    {
+     "url": "upload:84c3f7d9-bd7f-48a2-8519-7636e6b55198",
+     "usage": "swamp scenery, colors and composition"
+    }
+   ]
+  }
+ },
+ {
+  "key": "bg_water/night",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Side-scrolling 2D game battle background, wide panorama, no characters. A flooded swamp waterway inside an underground world: the ground path across the bottom quarter is shallow murky water with mud banks, reeds and floating lily pads, half-sunken logs and stepping roots, dark teal water with ripples, twisted dead trees, low drifting mist. Three depth layers: far misty treeline, middle reeds and dead trees, and the flooded water path across the bottom quarter where the party wades. Same swamp, same colors and same art style as the reference image. 16-bit JRPG pixel art, crisp pixels, no people, no effects. Night under an artificial moon.",
+   "width": 528,
+   "height": 224,
+   "no_background": false,
+   "style_image_url": "upload:a8302c7e-b4a1-4c60-84a6-6d2f3fe13324",
+   "style_copy": [
+    "color_palette",
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "reference_images": [
+    {
+     "url": "upload:a8302c7e-b4a1-4c60-84a6-6d2f3fe13324",
+     "usage": "swamp scenery, colors and composition"
+    }
+   ]
+  }
+ }
+]
