@@ -1,0 +1,190 @@
+{
+ "idle/v1": {
+  "id": "6272ce09-b005-4780-8207-d7d58bb9854a",
+  "ok": 1
+ },
+ "walk/v2": {
+  "id": "a172d1af-3d1a-45cd-b2e8-3cd75600b065",
+  "ok": 1
+ },
+ "run/v1": {
+  "id": "e4a866f0-a0b8-4105-ad53-90a051a48f15",
+  "ok": 1
+ },
+ "idle/v2": {
+  "id": "cbb3b091-a232-475b-837a-f940dac4a038",
+  "ok": 1
+ },
+ "run/v2": {
+  "id": "ff527cea-4fe7-4f3b-957e-f76d3e5183fa",
+  "ok": 1
+ },
+ "walk/v1": {
+  "id": "66b32033-0510-497d-82d6-7d694a61df1a",
+  "ok": 1
+ },
+ "hurt/v1": {
+  "id": "48763283-9380-4424-b0a8-a8a3cc8e4d82",
+  "ok": 1
+ },
+ "hurt/v2": {
+  "id": "746b22d5-6ebf-4cdb-b18c-3abcaa1c881b",
+  "ok": 1
+ },
+ "hurt/v3": {
+  "id": "be17deeb-22b7-4266-8e90-5dfb84caf0e8",
+  "ok": 1
+ },
+ "fall/v1": {
+  "id": "2106247c-deb5-4fd5-9b90-77d46794ea8c",
+  "ok": 1
+ },
+ "fall/v2": {
+  "id": "79caca94-0783-4af4-ad91-bbae56553b78",
+  "ok": 1
+ },
+ "sit/v1": {
+  "id": "c932347a-a48c-433a-a612-3182f06492e8",
+  "ok": 1
+ },
+ "sit/v2": {
+  "id": "0d628b83-d623-4f77-94af-6e05e73c105e",
+  "ok": 1
+ },
+ "sleep/v1": {
+  "id": "48418c88-7572-4ed8-9a5d-b244d18359d4",
+  "ok": 1
+ },
+ "sleep/v2": {
+  "id": "3bf4504c-cc45-4357-a1ea-f5a44666437b",
+  "ok": 1
+ },
+ "sleep/v3": {
+  "id": "279fc2a1-9f43-4963-91c6-bc99890e11cd",
+  "ok": 1
+ },
+ "dodge/v1": {
+  "id": "777e8827-d94e-4f69-a0cd-4fef80b5438b",
+  "ok": 1
+ },
+ "dodge/v2": {
+  "id": "71a23a92-a705-4535-ba7d-acf7c4caa948",
+  "ok": 1
+ },
+ "dodge/v3": {
+  "id": "3dfcd9a4-3026-4b1c-9328-e57eea309997",
+  "ok": 1
+ },
+ "shoot/v1": {
+  "id": "f7fc947e-6ac7-45f2-ad18-22a66d758b83",
+  "ok": 1
+ },
+ "shoot/v2": {
+  "id": "b5d2ad80-7ad0-4932-a9f1-4e0f79ad8dc1",
+  "ok": 1
+ },
+ "shoot/v3": {
+  "id": "95903b77-3dfc-45ad-873e-f5b0377d3d66",
+  "ok": 1
+ },
+ "shoot/v4": {
+  "id": "92687c02-93af-4242-900b-4adbe2ae2813",
+  "ok": 1
+ },
+ "throw/v1": {
+  "id": "b59ebc2a-84f8-4c0d-b4c5-fe511a94e8c3",
+  "ok": 1
+ },
+ "throw/v2": {
+  "id": "3916b77f-c89c-4927-95f7-1b7deb57f644",
+  "ok": 1
+ },
+ "throw/v3": {
+  "id": "a4aad61d-dc7e-4c95-b6e9-55910eb52da4",
+  "ok": 1
+ },
+ "throw/v4": {
+  "id": "98235fae-516b-498f-9e9a-0d52b292e8be",
+  "ok": 1
+ },
+ "shout/v1": {
+  "id": "cd3ec5d8-1536-456c-9e54-d8f0874e10ec",
+  "ok": 1
+ },
+ "shout/v3": {
+  "id": "79f96200-ab92-4cd1-9b6a-a989e71ea3d2",
+  "ok": 1
+ },
+ "shout/v2": {
+  "id": "575bd4e1-6549-4a85-998e-ed961aaa5a32",
+  "ok": 1
+ },
+ "shout/v4": {
+  "id": "e6fc250e-d509-421f-92d4-162115a3fced",
+  "ok": 1
+ },
+ "canteen/v1": {
+  "id": "b47af3c2-98f4-4fe0-881c-63024681b0d7",
+  "ok": 1
+ },
+ "canteen/v2": {
+  "id": "33c6c345-46cb-4a70-bccb-d2ae5cab22e7",
+  "ok": 1
+ },
+ "canteen/v3": {
+  "id": "f4b5dda3-af3a-4bb8-a732-0aafa5ee78e9",
+  "ok": 1
+ },
+ "canteen/v4": {
+  "id": "bbb7f033-f65d-4577-ae7b-48e84e1dc3c6",
+  "ok": 1
+ },
+ "quake/v1": {
+  "id": "19e12b30-c3c1-4e1b-b235-20bdad147724",
+  "ok": 1
+ },
+ "quake/v2": {
+  "id": "b1a25539-f222-4cae-8e83-14c472e5b022",
+  "ok": 1
+ },
+ "quake/v3": {
+  "id": "99bc2dd1-c410-420f-aea7-ad8458db04ba",
+  "ok": 1
+ },
+ "quake/v4": {
+  "id": "7e4b8952-7e19-47e4-a3ef-8f2ca3520f24",
+  "ok": 1
+ },
+ "lighten/v1": {
+  "id": "954bbbc5-a394-481a-9ed3-7eac6aeb66c4",
+  "ok": 1
+ },
+ "lighten/v2": {
+  "id": "34c89620-2214-446c-a50d-1cdf107d74da",
+  "ok": 1
+ },
+ "lighten/v3": {
+  "id": "ac176275-7e05-4f2e-959f-796b84d155bf",
+  "ok": 1
+ },
+ "lighten/v4": {
+  "id": "f8d88bf3-5846-4613-b951-2910945ec841",
+  "ok": 1
+ },
+ "avalanche/v1": {
+  "id": "99530bdd-1841-4d41-8468-93cba4f198b9",
+  "ok": 1
+ },
+ "avalanche/v2": {
+  "id": "c2948035-fc5e-473d-ba0d-a861f83adc06",
+  "ok": 1
+ },
+ "avalanche/v3": {
+  "id": "13c03970-b268-4db1-ae2e-fa746a26b2e4",
+  "ok": 1
+ },
+ "avalanche/v4": {
+  "id": "b5ae42c5-b309-420c-b822-e8bb1090ee38",
+  "ok": 1
+ }
+}
