@@ -1,0 +1,223 @@
+[
+ {
+  "key": "slash_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: one huge diagonal sword-slash crescent arc sweeping from upper left down to lower right, thick in the middle and tapering to sharp points, hot white core edged with pale steel-blue then a thin warm amber rim, fine parallel speed streaks inside the arc, a burst of white-yellow sparks and small cut flecks flying off the lower tip. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3300
+  }
+ },
+ {
+  "key": "twocut_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: two sharp sword-slash crescent arcs crossing each other in a big X shape, silver-white cores with cold blue edges, a bright star-shaped spark flash where they cross, small sparks and steel glints scattered around, thin speed lines. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3301
+  }
+ },
+ {
+  "key": "downcut_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a heavy falling sword-slash crescent arc coming down steeply from high above and striking the ground at the bottom right, white core with steel-blue and amber edges, at the strike point a splash of sparks, a small burst of mud chunks and a short ground crack. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3302
+  }
+ },
+ {
+  "key": "lowcut_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a long low horizontal sword-slash arc skimming just above the ground from left to right, white-blue core with amber rim, under it a spray of mud droplets, torn grass blades and pebbles kicked up in a line, sparks at the right end. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3303
+  }
+ },
+ {
+  "key": "sweep_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a very wide horizontal sweeping crescent of steel light spanning almost the full width, curving slightly, layered with two thinner trailing arcs behind it, swirling wind streaks, dust, leaves and grass bits swept along to the right. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3304
+  }
+ },
+ {
+  "key": "counter_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: on the left a bright parry spark explosion (a white-gold star burst with metal sparks spraying), and from it a fast thin counter-slash crescent shooting forward to the right with a white core and red-orange rim, speed lines. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3305
+  }
+ },
+ {
+  "key": "bash_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a heavy blunt impact burst seen from the side, a bright white-gold core flash, thick radiating impact spikes, a vertical elliptical shockwave ring, flying metal sparks and small dented-air distortion arcs, a few dust puffs at the bottom. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3306
+  }
+ },
+ {
+  "key": "shove_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forward-pushing force wave: a big curved wall of compressed air and pale golden light bulging to the right like the front of a round shield, motion streaks and dust trailing behind it to the left, and on the far right a ring of small dizzy stun stars and spiral sparks. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3307
+  }
+ },
+ {
+  "key": "block_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a tall upright oval barrier of translucent golden-steel light seen from the side, with an engraved rune border ring and hexagonal facet pattern, its front surface cracking with bright light where blows hit, bright sparks deflecting off to the right. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3308
+  }
+ },
+ {
+  "key": "taunt_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an angry red battle aura bursting from the center: jagged red-orange shout rings expanding outward, sharp flame-like spikes pointing outward, a big jagged red crest of light rising at the top, ember sparks. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3309
+  }
+ },
+ {
+  "key": "warcry_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a roaring war cry: wide cone of layered orange-red sound shockwave rings blasting to the right, at the left a tall flame-like crimson and gold aura flaring upward, flying embers and dust blown away. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3310
+  }
+ },
+ {
+  "key": "resolve_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a column of golden light rising from a glowing circular sigil on the ground (a flat perspective ellipse with rune marks), embers and light motes rising, thin vertical light rays, faint golden wind swirling around the column. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3311
+  }
+ },
+ {
+  "key": "brace_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a steel-blue glowing rune circle flat on the ground (perspective ellipse), heavy links of light-chains anchoring down into the earth around it, low stone plates pushed up at the rim, dust rings at the edges. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3312
+  }
+ },
+ {
+  "key": "steel_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a metallic silver aura shell: many small polished steel plate shards floating in a tall oval ring around an empty center, bright white sheen glints on them, faint gray-blue glow, a few sparkles. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3313
+  }
+ },
+ {
+  "key": "earth_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a straight fissure tearing through muddy ground from left to right, a row of jagged dark stone spikes erupting along the crack, growing taller toward the right end, glowing amber in the crack, rock chunks and mud flying, dust clouds rolling along the ground. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3314
+  }
+ },
+ {
+  "key": "leap_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a heavy landing impact on muddy ground: a shallow crater ring of cracked earth, thick dust and misty dirt clouds bursting low and wide to both sides with fine drifting particles, mud chunks and pebbles flying up, a short bright impact flash at the center bottom. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3315
+  }
+ },
+ {
+  "key": "shieldland_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a heavy landing impact with a protective dome: a half-dome barrier of translucent golden-steel light with hexagonal facets forming over the center, a bright ring flash where it meets the ground, dust clouds bursting out to both sides, small rock chunks flying. Ultimate version: huge and spectacular, filling most of the frame, three layered stages of energy, a glowing magic circle or rune sigil on the ground (flat perspective ellipse), a rising pillar or wall of light, strong hot white core with vivid saturated steel-blue and gold gradient, many sparks, embers, shards and shockwave rings, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 3316
+  }
+ }
+]

@@ -1,0 +1,39 @@
+[오후 4:45:31] 보냄 slash_c 17ec53a0-6935-42f4-bbf1-b545fadff4be
+[오후 4:45:31] 보냄 slash_a e9387396-b06a-422e-b4eb-a057b7297813
+[오후 4:45:31] 보냄 twocut_a 163ef8f8-ebba-443a-bec7-ebceba74abd0
+[오후 4:47:01] 받음 slash_c
+[오후 4:47:02] 보냄 twocut_c 9cb46685-60a2-4c21-a21a-267f095424c6
+[오후 4:47:35] 받음 slash_a
+[오후 4:47:35] 보냄 downcut_a 4a982af9-0928-42fd-9cb7-509fda9018d5
+[오후 4:48:30] 받음 twocut_a
+[오후 4:48:31] 보냄 downcut_c 0284ebed-77ae-4bef-aa0a-e8afb0bc78bc
+[오후 4:48:53] 받음 downcut_a
+[오후 4:48:53] 보냄 lowcut_a 2ba2953d-6cb4-4bb4-b5b6-4a1e1ea63a5e
+[오후 4:50:10] 받음 twocut_c
+[오후 4:50:10] 보냄 lowcut_c 05c9b9a5-7e65-4a71-9993-421745f20b12
+[오후 4:50:20] 받음 downcut_c
+[오후 4:50:21] 보냄 sweep_a 56ec6716-14a5-4824-9793-1db8e9717e3f
+[오후 4:50:43] 받음 lowcut_a
+[오후 4:50:43] 보냄 sweep_c 83139119-ddaa-41cf-8f30-47d4975d5dea
+[오후 4:51:16] 받음 sweep_a
+[오후 4:51:17] 보냄 counter_a f36b571c-8ae3-4146-94b9-46b543e3a581
+[오후 4:51:39] 받음 lowcut_c
+[오후 4:51:39] 보냄 counter_c 90aa570b-2efb-42ef-9142-267cfb2c1e3a
+[오후 4:52:45] 받음 sweep_c
+[오후 4:52:46] 보냄 bash_a 5a8f2c1e-19d3-4406-a3c2-a738b74f1928
+[오후 4:53:29] 받음 counter_a
+[오후 4:53:30] 보냄 bash_c 2354cf7d-8d67-430d-91fb-8e2cc9504a9f
+[오후 4:53:40] 받음 bash_a
+[오후 4:53:41] 보냄 shove_a b66d0c4a-51ee-4b75-a77a-179c294a8799
+[오후 4:54:25] 받음 counter_c
+[오후 4:54:25] 보냄 shove_c ea2807e9-a26d-498b-a9ff-6ed28f01668a
+[오후 4:54:45] 받음 bash_c
+[오후 4:54:46] 보냄 block_a f78c26be-d15b-4f40-8c44-49b1bfdb6fde
+[오후 4:55:29] 받음 shove_c
+[오후 4:55:29] 보냄 block_c 8672f424-cce1-4e34-9499-0af948e5a219
+[오후 4:56:58] 받음 block_a
+[오후 4:56:58] 보냄 taunt_a 7143e4a2-9638-4d11-8632-974041693227
+[오후 4:57:20] 받음 block_c
+[오후 4:57:21] 보냄 taunt_c e837b21d-7f8f-463b-9cb6-21f117bbb398
+[오후 4:57:32] 받음 shove_a
+[오후 4:57:32] 보냄 warcry_a 753a260e-f382-47ee-8155-2fcc42d5afcf

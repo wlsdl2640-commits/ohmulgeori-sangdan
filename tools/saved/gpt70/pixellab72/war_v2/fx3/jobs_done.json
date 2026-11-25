@@ -1,0 +1,70 @@
+{
+ "lowcut": {
+  "id": "d8a899ea-0a50-4eac-a3c3-7066853af4fe",
+  "ok": 1
+ },
+ "slash": {
+  "id": "4297e098-2bae-480c-9579-a0d8aedc8991",
+  "ok": 1
+ },
+ "twocut": {
+  "id": "d340b556-6d91-41c2-8744-6189e7c91323",
+  "ok": 1
+ },
+ "downcut": {
+  "id": "c360073a-5988-447b-a670-69cd70effc15",
+  "ok": 1
+ },
+ "sweep": {
+  "id": "ac11ae4e-9f2e-43b1-b1fc-c48c23a4aaf8",
+  "ok": 1
+ },
+ "counter": {
+  "id": "a9803b54-2fed-43ee-b4d7-f46078072d99",
+  "ok": 1
+ },
+ "bash": {
+  "id": "622df89b-5ab5-4ec3-b83e-9d0dfb83418e",
+  "ok": 1
+ },
+ "shove": {
+  "id": "5febc5ee-8069-4de6-950e-d7709d69c31d",
+  "ok": 1
+ },
+ "block": {
+  "id": "c0151997-67c4-4eca-a499-ea688c5308eb",
+  "ok": 1
+ },
+ "taunt": {
+  "id": "1ad2a794-9191-4dad-ad60-75fce3ad7614",
+  "ok": 1
+ },
+ "warcry": {
+  "id": "55b191c4-7690-4788-8447-6ac2bcef1549",
+  "ok": 1
+ },
+ "resolve": {
+  "id": "54e1834b-333e-41db-9b32-003118b9151f",
+  "ok": 1
+ },
+ "steel": {
+  "id": "d71a6628-e968-4744-89a2-e3e62ba9585f",
+  "ok": 1
+ },
+ "brace": {
+  "id": "7956dc5c-99d2-4128-b957-6fdd7a285dd0",
+  "ok": 1
+ },
+ "earth": {
+  "id": "9918ddee-ef2c-497a-880d-e723df91b975",
+  "ok": 1
+ },
+ "leap": {
+  "id": "f2a07f52-3af4-4784-bcc2-ec5fc4527aaf",
+  "ok": 1
+ },
+ "shieldland": {
+  "id": "0dab867f-7f7e-4252-b370-39df35e4a886",
+  "ok": 1
+ }
+}

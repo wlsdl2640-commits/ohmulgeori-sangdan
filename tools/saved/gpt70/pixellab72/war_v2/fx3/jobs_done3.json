@@ -1,0 +1,52 @@
+{
+ "slash_d": {
+  "id": "25ccce27-cf2c-4059-853e-7437d19f4ea1",
+  "ok": 1
+ },
+ "twocut_d": {
+  "id": "ea8f7933-f710-4ab5-a6ab-be741f58dfa9",
+  "ok": 1
+ },
+ "downcut_d": {
+  "id": "6d2eafb6-3454-4ea8-8cdf-d07449fc4622",
+  "ok": 1
+ },
+ "lowcut_d": {
+  "id": "ef160a8d-2023-4614-9cd4-3a868da63f22",
+  "ok": 1
+ },
+ "sweep_d": {
+  "id": "8fe018b2-b19c-45c8-ba84-1d6747a38e97",
+  "ok": 1
+ },
+ "counter_d": {
+  "id": "93b74a34-3985-4fe4-a35f-56975c2b13ce",
+  "ok": 1
+ },
+ "bash_d": {
+  "id": "0d2dd1d0-5fe8-4b70-ab51-45e029e50f57",
+  "ok": 1
+ },
+ "shove_d": {
+  "id": "59e289bb-adc3-4f3c-b348-a6a51193994c",
+  "ok": 1
+ },
+ "block_d": {
+  "id": "2e893bd9-14a9-44e4-8915-96e1d06bce36",
+  "ok": 1
+ },
+ "taunt_d": {
+  "id": "6a38ff20-4407-4ab8-bf14-3f2d1d9125fb",
+  "ok": 1
+ },
+ "warcry_d": {
+  "id": "2b301de1-18c2-44cb-ae7e-86d13b3f048b",
+  "ok": 1
+ },
+ "resolve_d": {
+  "id": "9bedcb44-0613-4c4d-8875-8917c7a73948"
+ },
+ "brace_d": {
+  "id": "ca3eac3d-92dd-4ab8-9479-5b2d4e1395e6"
+ }
+}
