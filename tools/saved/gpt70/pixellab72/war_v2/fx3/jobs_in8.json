@@ -1,0 +1,182 @@
+[
+ {
+  "key": "bashQ1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a shield bash that RINGS like a struck bell or gong: from one small bright impact point, many concentric resonating sound-wave rings spread out in all directions like ripples on water seen slightly from the side, each ring a vibrating wavy band (not a blade or crescent), rings get thinner and fainter outward, steel-blue and pale cream with amber glints, small musical-vibration tick marks and tiny sparks between the rings. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 811
+  }
+ },
+ {
+  "key": "bashQ2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a shield bash that RINGS like a struck bell or gong: from one small bright impact point, many concentric resonating sound-wave rings spread out in all directions like ripples on water seen slightly from the side, each ring a vibrating wavy band (not a blade or crescent), rings get thinner and fainter outward, steel-blue and pale cream with amber glints, small musical-vibration tick marks and tiny sparks between the rings. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 853
+  }
+ },
+ {
+  "key": "bashQ3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a shield bash that RINGS like a struck bell or gong: from one small bright impact point, many concentric resonating sound-wave rings spread out in all directions like ripples on water seen slightly from the side, each ring a vibrating wavy band (not a blade or crescent), rings get thinner and fainter outward, steel-blue and pale cream with amber glints, small musical-vibration tick marks and tiny sparks between the rings. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 815
+  }
+ },
+ {
+  "key": "bashQ4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a shield bash that RINGS like a struck bell or gong: from one small bright impact point, many concentric resonating sound-wave rings spread out in all directions like ripples on water seen slightly from the side, each ring a vibrating wavy band (not a blade or crescent), rings get thinner and fainter outward, steel-blue and pale cream with amber glints, small musical-vibration tick marks and tiny sparks between the rings. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 857
+  }
+ },
+ {
+  "key": "shoveQ1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent ENERGY SHIELD projectile: a round shield shape made entirely of glowing steel-blue and cream magical energy (bright rim, see-through center with a faint inner emblem ring), seen from the side as a tall oval, flying to the right, with a few short energy streaks and fading afterimage copies trailing behind it on the left, tiny sparkles. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 815
+  }
+ },
+ {
+  "key": "shoveQ2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent ENERGY SHIELD projectile: a round shield shape made entirely of glowing steel-blue and cream magical energy (bright rim, see-through center with a faint inner emblem ring), seen from the side as a tall oval, flying to the right, with a few short energy streaks and fading afterimage copies trailing behind it on the left, tiny sparkles. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 857
+  }
+ },
+ {
+  "key": "shoveQ3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent ENERGY SHIELD projectile: a round shield shape made entirely of glowing steel-blue and cream magical energy (bright rim, see-through center with a faint inner emblem ring), seen from the side as a tall oval, flying to the right, with a few short energy streaks and fading afterimage copies trailing behind it on the left, tiny sparkles. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 819
+  }
+ },
+ {
+  "key": "shoveQ4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent ENERGY SHIELD projectile: a round shield shape made entirely of glowing steel-blue and cream magical energy (bright rim, see-through center with a faint inner emblem ring), seen from the side as a tall oval, flying to the right, with a few short energy streaks and fading afterimage copies trailing behind it on the left, tiny sparkles. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 861
+  }
+ },
+ {
+  "key": "blockQ1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent protective barrier in the exact shape of the round shield in the reference image, but made of glowing energy: see-through glassy steel-blue light, bright white rim and concentric inner rings, soft hexagon-free smooth surface, a bright white glint star on its right face where a blow is stopped, a few orange-white sparks bouncing back to the right. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 819,
+   "reference_images": [
+    {
+     "url": "upload:42c047b3-9be5-4541-b3b0-dbe890d44f19",
+     "usage": "shape and size of the shield barrier"
+    }
+   ]
+  }
+ },
+ {
+  "key": "blockQ2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent protective barrier in the exact shape of the round shield in the reference image, but made of glowing energy: see-through glassy steel-blue light, bright white rim and concentric inner rings, soft hexagon-free smooth surface, a bright white glint star on its right face where a blow is stopped, a few orange-white sparks bouncing back to the right. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 861,
+   "reference_images": [
+    {
+     "url": "upload:42c047b3-9be5-4541-b3b0-dbe890d44f19",
+     "usage": "shape and size of the shield barrier"
+    }
+   ]
+  }
+ },
+ {
+  "key": "blockQ3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent protective barrier in the exact shape of the round shield in the reference image, but made of glowing energy: see-through glassy steel-blue light, bright white rim and concentric inner rings, soft hexagon-free smooth surface, a bright white glint star on its right face where a blow is stopped, a few orange-white sparks bouncing back to the right. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 823,
+   "reference_images": [
+    {
+     "url": "upload:42c047b3-9be5-4541-b3b0-dbe890d44f19",
+     "usage": "shape and size of the shield barrier"
+    }
+   ]
+  }
+ },
+ {
+  "key": "blockQ4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a translucent protective barrier in the exact shape of the round shield in the reference image, but made of glowing energy: see-through glassy steel-blue light, bright white rim and concentric inner rings, soft hexagon-free smooth surface, a bright white glint star on its right face where a blow is stopped, a few orange-white sparks bouncing back to the right. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 865,
+   "reference_images": [
+    {
+     "url": "upload:42c047b3-9be5-4541-b3b0-dbe890d44f19",
+     "usage": "shape and size of the shield barrier"
+    }
+   ]
+  }
+ }
+]

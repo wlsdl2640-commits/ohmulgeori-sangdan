@@ -1,0 +1,28 @@
+[
+ {
+  "key": "bashQ5",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a shield bash that RINGS like a struck bell or gong: from one small bright impact point, many concentric resonating sound-wave rings stand UPRIGHT and spread forward to the right like sound waves from a struck gong seen from the side: tall narrow vertical ovals nested inside each other, opening to the right, each ring a vibrating wavy band (not a blade or crescent), rings get thinner and fainter outward, steel-blue and pale cream with amber glints, small musical-vibration tick marks and tiny sparks between the rings. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 915
+  }
+ },
+ {
+  "key": "bashQ6",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a shield bash that RINGS like a struck bell or gong: from one small bright impact point, many concentric resonating sound-wave rings stand UPRIGHT and spread forward to the right like sound waves from a struck gong seen from the side: tall narrow vertical ovals nested inside each other, opening to the right, each ring a vibrating wavy band (not a blade or crescent), rings get thinner and fainter outward, steel-blue and pale cream with amber glints, small musical-vibration tick marks and tiny sparks between the rings. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 917
+  }
+ }
+]
