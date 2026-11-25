@@ -1,0 +1,121 @@
+[오후 1:06:47] 보냄 b9_buffalo 442fa45a-5a64-4757-a9d1-0eb741f4d53b
+[오후 1:06:47] 보냄 b9_mantis df820324-3679-45f7-9409-3007f5bf6cb3
+[오후 1:06:48] 보냄 salamander2 901befdd-cafd-4d01-9be5-f9e036251841
+[오후 1:08:18] 받음 b9_mantis
+[오후 1:08:18] 받음 salamander2
+[오후 1:08:19] 보냄 caiman2 4c6c08cb-1189-48c3-a86d-03f8d8b11566
+[오후 1:08:19] !! b14_hut/i0_s11 실패 1: 작업 번호 없음: {
+  "background_job_id": "1d7d8dc9-68c3-48a3-b0de-4c86658b3e21",
+  "image_id": "33961b52-8c90-5dc3-bf48-a26e8e2acaea",
+  "status": "processing",
+  "source_image_id": "33961b52-8c90-5dc3-bf48
+[오후 1:08:25] !! b14_hut/i0_s11 실패 2: 작업 번호 없음: {
+  "background_job_id": "884185a8-79df-4253-9a77-01e39f9a7380",
+  "image_id": "c67911c9-d6df-5561-a710-89a5fa61b859",
+  "status": "processing",
+  "source_image_id": "c67911c9-d6df-5561-a710
+[오후 1:08:28] 받음 b9_buffalo
+[오후 1:08:28] !! b14_hut/i0_s23 실패 1: 작업 번호 없음: {
+  "background_job_id": "f49233e4-49b3-4217-817d-fd812be3ec9f",
+  "image_id": "21c7c2dd-9c4a-5aa5-8cef-93461cb8b5cc",
+  "status": "processing",
+  "source_image_id": "21c7c2dd-9c4a-5aa5-8cef
+[오후 1:08:30] !! b14_hut/i0_s11 실패 3: 작업 번호 없음: {
+  "background_job_id": "f0b85264-f6dc-4dc8-aaf2-512b923cf7fe",
+  "image_id": "e66fd964-8c28-5c87-acfc-e362e5db3943",
+  "status": "processing",
+  "source_image_id": "e66fd964-8c28-5c87-acfc
+[오후 1:08:34] !! b14_hut/i0_s23 실패 2: 작업 번호 없음: {
+  "background_job_id": "c3be8dc3-dab4-475c-aa9b-663fd03957bc",
+  "image_id": "21e1a875-84e6-5e5c-8097-69b412aa77c1",
+  "status": "processing",
+  "source_image_id": "21e1a875-84e6-5e5c-8097
+[오후 1:08:36] !! b14_hut/i1_s11 실패 1: 작업 번호 없음: {
+  "background_job_id": "177b2439-695f-4c43-92ee-56dfa8205801",
+  "image_id": "808bb50f-61ef-5e61-935e-5137b31f86bb",
+  "status": "processing",
+  "source_image_id": "808bb50f-61ef-5e61-935e
+[오후 1:08:39] !! b14_hut/i0_s23 실패 3: 작업 번호 없음: {
+  "background_job_id": "ed39f492-f234-4000-9df8-59d5342e3b06",
+  "image_id": "c59ab3c1-5e5e-5962-a2d8-6c659207d78d",
+  "status": "processing",
+  "source_image_id": "c59ab3c1-5e5e-5962-a2d8
+[오후 1:08:41] !! b14_hut/i1_s11 실패 2: 작업 번호 없음: {
+  "background_job_id": "94b96089-9118-4acb-b104-826328f0f52f",
+  "image_id": "3bbed32a-a29c-59c9-8b4e-90e117050075",
+  "status": "processing",
+  "source_image_id": "3bbed32a-a29c-59c9-8b4e
+[오후 1:08:45] !! b14_hut/i1_s23 실패 1: 작업 번호 없음: {
+  "background_job_id": "f4cbe1a6-148d-4ce4-852c-b9d483dc662f",
+  "image_id": "3500d21e-11ae-53d9-825c-2620385f5932",
+  "status": "processing",
+  "source_image_id": "3500d21e-11ae-53d9-825c
+[오후 1:08:47] !! b14_hut/i1_s11 실패 3: 작업 번호 없음: {
+  "background_job_id": "9b518d53-dfb5-4857-b8d1-d24701e694a5",
+  "image_id": "6d1d834e-11c7-54a8-8d4d-f5cf3c3f5388",
+  "status": "processing",
+  "source_image_id": "6d1d834e-11c7-54a8-8d4d
+[오후 1:08:50] !! b14_hut/i1_s23 실패 2: 작업 번호 없음: {
+  "background_job_id": "6b1fa116-14df-4a35-9a38-c433ed5d871f",
+  "image_id": "e5fd9e44-c729-5cef-b41a-75f13796ddc4",
+  "status": "processing",
+  "source_image_id": "e5fd9e44-c729-5cef-b41a
+[오후 1:08:52] !! b14_hut/i2_s11 실패 1: 작업 번호 없음: {
+  "background_job_id": "53f45ecb-5856-4842-8ccb-ed6ae0635ebf",
+  "image_id": "dc35c44f-ea5f-5f34-a3dd-e93b78c6f661",
+  "status": "processing",
+  "source_image_id": "dc35c44f-ea5f-5f34-a3dd
+[오후 1:08:56] !! b14_hut/i1_s23 실패 3: 작업 번호 없음: {
+  "background_job_id": "3f4e8cb9-93d1-4638-973d-91e476b41a21",
+  "image_id": "aff8f656-712c-5380-a3c6-011c3aae51fe",
+  "status": "processing",
+  "source_image_id": "aff8f656-712c-5380-a3c6
+[오후 1:08:58] !! b14_hut/i2_s11 실패 2: 작업 번호 없음: {
+  "background_job_id": "ce39f76a-193a-4543-8a56-075b34454818",
+  "image_id": "08c57ff5-f7bf-58be-b478-918e6d777d97",
+  "status": "processing",
+  "source_image_id": "08c57ff5-f7bf-58be-b478
+[오후 1:09:01] !! b14_hut/i2_s23 실패 1: 작업 번호 없음: {
+  "background_job_id": "9115d433-444b-4d34-92bf-c6e8f4bdd0fe",
+  "image_id": "1c41a76f-0bbd-5bc0-8f38-a0f0fd154cc2",
+  "status": "processing",
+  "source_image_id": "1c41a76f-0bbd-5bc0-8f38
+[오후 1:09:03] !! b14_hut/i2_s11 실패 3: 작업 번호 없음: {
+  "background_job_id": "bf61cb57-a5db-43ad-b12e-06c660ae61d7",
+  "image_id": "17c96f9a-7507-5cb0-97a0-b3db8e7fed98",
+  "status": "processing",
+  "source_image_id": "17c96f9a-7507-5cb0-97a0
+[오후 1:09:07] !! b14_hut/i2_s23 실패 2: 작업 번호 없음: {
+  "background_job_id": "74b286eb-872d-4267-bc30-dcc2ed6728a6",
+  "image_id": "760ee7e8-a5a3-5567-8cbe-bfa94b226165",
+  "status": "processing",
+  "source_image_id": "760ee7e8-a5a3-5567-8cbe
+[오후 1:09:09] !! b14_hut/i3_s11 실패 1: 작업 번호 없음: {
+  "background_job_id": "a7c62205-e6b9-4a35-93bd-8fa14c76be13",
+  "image_id": "08ca1b87-6ba9-525d-8fda-155e3fe5ceb0",
+  "status": "processing",
+  "source_image_id": "08ca1b87-6ba9-525d-8fda
+[오후 1:09:12] !! b14_hut/i2_s23 실패 3: 작업 번호 없음: {
+  "background_job_id": "9c7dad71-3aff-4e54-8bd9-ddbba7fd014d",
+  "image_id": "3c7cdbc2-d096-5675-b489-1a3010abe789",
+  "status": "processing",
+  "source_image_id": "3c7cdbc2-d096-5675-b489
+[오후 1:09:14] !! b14_hut/i3_s11 실패 2: 작업 번호 없음: error: Maximum 20 concurrent background jobs allowed (Tier 3). You have 20 active jobs.
+[오후 1:09:17] !! b14_hut/i3_s23 실패 1: 작업 번호 없음: error: Maximum 20 concurrent background jobs allowed (Tier 3). You have 20 active jobs.
+[오후 1:09:44] 받음 caiman2
+[오후 1:10:15] !! b14_hut/i3_s11 실패 3: 작업 번호 없음: {
+  "background_job_id": "3c3db2c6-7467-4479-a02d-a60e4b48b13a",
+  "image_id": "e92f424a-169e-598a-8623-18a5dae4b9ad",
+  "status": "processing",
+  "source_image_id": "e92f424a-169e-598a-8623
+[오후 1:10:18] !! b14_hut/i3_s23 실패 2: 작업 번호 없음: {
+  "background_job_id": "25312f34-8159-40c4-83ad-0f5c074f41ed",
+  "image_id": "ca635275-4a52-542e-be7d-5c0453bfbe58",
+  "status": "processing",
+  "source_image_id": "ca635275-4a52-542e-be7d
+[오후 1:10:24] !! b14_hut/i3_s23 실패 3: 작업 번호 없음: {
+  "background_job_id": "308fb765-6c58-459b-b847-b02293d09728",
+  "image_id": "bf308be8-df88-5a42-a68b-cdae359f74d4",
+  "status": "processing",
+  "source_image_id": "bf308be8-df88-5a42-a68b
+[오후 1:10:29] 끝 — 4 / 12

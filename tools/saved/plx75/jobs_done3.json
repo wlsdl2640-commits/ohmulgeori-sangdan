@@ -1,0 +1,42 @@
+{
+ "b9_buffalo": {
+  "id": "442fa45a-5a64-4757-a9d1-0eb741f4d53b",
+  "ok": 1
+ },
+ "b9_mantis": {
+  "id": "df820324-3679-45f7-9409-3007f5bf6cb3",
+  "ok": 1
+ },
+ "salamander2": {
+  "id": "901befdd-cafd-4d01-9be5-f9e036251841",
+  "ok": 1
+ },
+ "caiman2": {
+  "id": "4c6c08cb-1189-48c3-a86d-03f8d8b11566",
+  "ok": 1
+ },
+ "b14_hut/i0_s11": {
+  "fail": 1
+ },
+ "b14_hut/i0_s23": {
+  "fail": 1
+ },
+ "b14_hut/i1_s11": {
+  "fail": 1
+ },
+ "b14_hut/i1_s23": {
+  "fail": 1
+ },
+ "b14_hut/i2_s11": {
+  "fail": 1
+ },
+ "b14_hut/i2_s23": {
+  "fail": 1
+ },
+ "b14_hut/i3_s11": {
+  "fail": 1
+ },
+ "b14_hut/i3_s23": {
+  "fail": 1
+ }
+}

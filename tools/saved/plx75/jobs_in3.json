@@ -1,0 +1,190 @@
+[
+ {
+  "key": "b9_mantis",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Boss: colossal reed mantis, towering insect with a crown of broken reed stalks on its head, two huge spear-like serrated forelegs raised to stab, armored reed-brown and dull green carapace with cracked mud patches, long thin legs standing in the marsh, menacing heavy build, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b9_buffalo",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Boss: huge marsh water buffalo beast, a crown of broken reed stalks and mud on its head, two very long straight spear-like horns pointing forward to stab, massive shoulders, shaggy wet dark hide hung with reeds and moss, thick legs caked in mud, menacing, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "salamander2",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Venomous swamp newt monster, big and fierce, tall jagged crest of spines running along its back to the tail, frilly feathery gills around a wide toothy open mouth, warty dark skin with bright yellow and black warning bands, thick clawed legs, heavy paddle tail, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "caiman2",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Heavy marsh caiman monster, its whole back caked in a thick layer of cracked wet brown mud like plates, mud clumps dripping off its sides, small reeds and grass sprouting from the mud on its back, mud-covered legs, broad snout with blunt teeth, thick tail, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b14_hut/i0_s11",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:44896bdf-31e5-483d-bf5a-42077558317b",
+   "mask_x": 55,
+   "mask_y": 0,
+   "mask_width": 170,
+   "mask_height": 92,
+   "no_background": true,
+   "seed": 11
+  }
+ },
+ {
+  "key": "b14_hut/i0_s23",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:44896bdf-31e5-483d-bf5a-42077558317b",
+   "mask_x": 55,
+   "mask_y": 0,
+   "mask_width": 170,
+   "mask_height": 92,
+   "no_background": true,
+   "seed": 23
+  }
+ },
+ {
+  "key": "b14_hut/i1_s11",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:85900350-38a0-4829-9ac6-20d678d8d1b7",
+   "mask_x": 60,
+   "mask_y": 0,
+   "mask_width": 165,
+   "mask_height": 90,
+   "no_background": true,
+   "seed": 11
+  }
+ },
+ {
+  "key": "b14_hut/i1_s23",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:85900350-38a0-4829-9ac6-20d678d8d1b7",
+   "mask_x": 60,
+   "mask_y": 0,
+   "mask_width": 165,
+   "mask_height": 90,
+   "no_background": true,
+   "seed": 23
+  }
+ },
+ {
+  "key": "b14_hut/i2_s11",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:7c3eadca-90fa-4167-8d15-9d5d06c4971e",
+   "mask_x": 55,
+   "mask_y": 0,
+   "mask_width": 170,
+   "mask_height": 92,
+   "no_background": true,
+   "seed": 11
+  }
+ },
+ {
+  "key": "b14_hut/i2_s23",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:7c3eadca-90fa-4167-8d15-9d5d06c4971e",
+   "mask_x": 55,
+   "mask_y": 0,
+   "mask_width": 170,
+   "mask_height": 92,
+   "no_background": true,
+   "seed": 23
+  }
+ },
+ {
+  "key": "b14_hut/i3_s11",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:68ed8390-9ff4-4013-8712-f419b28f3b45",
+   "mask_x": 60,
+   "mask_y": 0,
+   "mask_width": 160,
+   "mask_height": 94,
+   "no_background": true,
+   "seed": 11
+  }
+ },
+ {
+  "key": "b14_hut/i3_s23",
+  "tool": "inpaint_image_pro_flash",
+  "n": 1,
+  "args": {
+   "description": "Keep the monster exactly as it is. On its back add one small ruined, half-collapsed swamp shack: leaning rotten wooden plank walls, broken sagging thatch roof with holes, crooked support stilts, plus a short broken wooden boardwalk of weathered planks around it, with the reeds, moss and small dead trees still growing around them. Same pixel art style, colors and outline as the monster. No visual effects, no glow, no people, no text.",
+   "image_url": "upload:68ed8390-9ff4-4013-8712-f419b28f3b45",
+   "mask_x": 60,
+   "mask_y": 0,
+   "mask_width": 160,
+   "mask_height": 94,
+   "no_background": true,
+   "seed": 23
+  }
+ }
+]

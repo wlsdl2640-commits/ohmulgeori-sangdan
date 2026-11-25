@@ -31,7 +31,7 @@ async function one(j) {
     try {
       const res = await rpc('tools/call', { name: j.tool, arguments: j.args });
       const txt = (res.content || []).map(c => c.text || '').join('\n');
-      const id = (txt.match(/job_id: ([0-9a-f-]{36})/) || [])[1]; if (!id) throw new Error('작업 번호 없음: ' + txt.slice(0, 300));
+      const id = (txt.match(/job_id: ([0-9a-f-]{36})/) || txt.match(/"background_job_id": "([0-9a-f-]{36})"/) || [])[1]; if (!id) throw new Error('작업 번호 없음: ' + txt.slice(0, 300));
       done[j.key] = { id }; save(); log(`보냄 ${j.key} ${id}`);
       let st = 0;
       for (let t = 0; t < 120; t++) { const r = await fetch(`https://api.pixellab.ai/mcp/images/${id}/download?index=0`); st = r.status; if (st === 200) break; if (st !== 423) throw new Error('받기 ' + st + ' ' + (await r.text()).slice(0, 200)); await sleep(10000); }
