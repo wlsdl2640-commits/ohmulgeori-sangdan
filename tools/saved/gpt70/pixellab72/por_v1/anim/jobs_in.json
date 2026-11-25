@@ -555,5 +555,85 @@
   "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
   "desc": "He leans forward and heaves his big backpack over his shoulder, tipping it so a pile of bundles, sacks and pots tumbles forward out of it toward the enemy, then he pulls the backpack back onto his back and returns to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters.",
   "last": "upload:263408fc-3577-4dee-93d3-9b7ecfb0c56a"
+ },
+ {
+  "mon": "dodge2",
+  "row": "v1",
+  "ko": "뒤로 물러나기 (주춤주춤)",
+  "frames": 24,
+  "first": "upload:9144382e-bab0-422d-b7c2-b38b61111b8d",
+  "seed": 401,
+  "subject": "a young male porter with spiky brown hair, a red headband, cream linen shirt, brown leather vest, a big brown backpack with a rolled red blanket on top, a small wooden hand crossbow in his right hand and an iron lantern with an orange flame in his left hand",
+  "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
+  "desc": "Still facing right toward the enemy, he hesitantly backs away to the left with small unsteady shuffling steps, flinching and leaning back warily, stepping back again and again step by step, the backpack swaying, and stops further to the left still facing right. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "dodge2",
+  "row": "v2",
+  "ko": "뒤로 물러나기 (주춤주춤)",
+  "frames": 24,
+  "first": "upload:9144382e-bab0-422d-b7c2-b38b61111b8d",
+  "seed": 402,
+  "subject": "a young male porter with spiky brown hair, a red headband, cream linen shirt, brown leather vest, a big brown backpack with a rolled red blanket on top, a small wooden hand crossbow in his right hand and an iron lantern with an orange flame in his left hand",
+  "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
+  "desc": "Still facing right toward the enemy, he hesitantly backs away to the left with small unsteady shuffling steps, flinching and leaning back warily, stepping back again and again step by step, the backpack swaying, and stops further to the left still facing right. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "dodge2",
+  "row": "v3",
+  "ko": "뒤로 물러나기 (주춤주춤)",
+  "frames": 24,
+  "first": "upload:9144382e-bab0-422d-b7c2-b38b61111b8d",
+  "seed": 403,
+  "subject": "a young male porter with spiky brown hair, a red headband, cream linen shirt, brown leather vest, a big brown backpack with a rolled red blanket on top, a small wooden hand crossbow in his right hand and an iron lantern with an orange flame in his left hand",
+  "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
+  "desc": "Still facing right toward the enemy, he hesitantly backs away to the left with small unsteady shuffling steps, flinching and leaning back warily, stepping back again and again step by step, the backpack swaying, and stops further to the left still facing right. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "dodge2",
+  "row": "v4",
+  "ko": "뒤로 물러나기 (주춤주춤)",
+  "frames": 24,
+  "first": "upload:9144382e-bab0-422d-b7c2-b38b61111b8d",
+  "seed": 404,
+  "subject": "a young male porter with spiky brown hair, a red headband, cream linen shirt, brown leather vest, a big brown backpack with a rolled red blanket on top, a small wooden hand crossbow in his right hand and an iron lantern with an orange flame in his left hand",
+  "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
+  "desc": "Still facing right toward the enemy, he hesitantly backs away to the left with small unsteady shuffling steps, flinching and leaning back warily, stepping back again and again step by step, the backpack swaying, and stops further to the left still facing right. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "avalanche2",
+  "row": "v1",
+  "ko": "짐 사태 (넓은 칸)",
+  "frames": 20,
+  "first": "upload:c1cbce2e-61ae-46b7-9ddd-83604702135a",
+  "seed": 102,
+  "subject": "a young male porter with spiky brown hair, a red headband, cream linen shirt, brown leather vest, a big brown backpack with a rolled red blanket on top, a small wooden hand crossbow in his right hand and an iron lantern with an orange flame in his left hand",
+  "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
+  "desc": "He leans forward and heaves his big backpack over his shoulder, tipping it so a pile of bundles, sacks and pots tumbles forward out of it toward the enemy, then he pulls the backpack back onto his back and returns to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters.",
+  "last": "upload:c1cbce2e-61ae-46b7-9ddd-83604702135a"
+ },
+ {
+  "mon": "avalanche2",
+  "row": "v2",
+  "ko": "짐 사태 (넓은 칸)",
+  "frames": 20,
+  "first": "upload:c1cbce2e-61ae-46b7-9ddd-83604702135a",
+  "seed": 502,
+  "subject": "a young male porter with spiky brown hair, a red headband, cream linen shirt, brown leather vest, a big brown backpack with a rolled red blanket on top, a small wooden hand crossbow in his right hand and an iron lantern with an orange flame in his left hand",
+  "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
+  "desc": "He leans forward and heaves his big backpack over his shoulder, tipping it so a pile of bundles, sacks and pots tumbles forward out of it toward the enemy, then he pulls the backpack back onto his back and returns to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters.",
+  "last": "upload:c1cbce2e-61ae-46b7-9ddd-83604702135a"
+ },
+ {
+  "mon": "avalanche2",
+  "row": "v3",
+  "ko": "짐 사태 (넓은 칸)",
+  "frames": 20,
+  "first": "upload:c1cbce2e-61ae-46b7-9ddd-83604702135a",
+  "seed": 503,
+  "subject": "a young male porter with spiky brown hair, a red headband, cream linen shirt, brown leather vest, a big brown backpack with a rolled red blanket on top, a small wooden hand crossbow in his right hand and an iron lantern with an orange flame in his left hand",
+  "pose": "standing idle, crossbow held low in his right hand, lantern hanging from his left hand, backpack on his back",
+  "desc": "He leans forward and heaves his big backpack over his shoulder, tipping it so a pile of bundles, sacks and pots tumbles forward out of it toward the enemy, then he pulls the backpack back onto his back and returns to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters.",
+  "last": "upload:c1cbce2e-61ae-46b7-9ddd-83604702135a"
  }
 ]
