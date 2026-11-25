@@ -1,0 +1,52 @@
+/* =====================================================================
+   라비린토스 글자 체계 v1 — 2026-11-25 확정
+   · 제목·스토리 대사·버튼  : .t15  (Galmuri14, 15px 넓은 칸 가는체)
+   · 일반 본문·선택지·수치 라벨 : .t12  (Galmuri11, 12px 가는체)
+   · 색                     : .c-gold … (기본 = 그라데이션 + 1px 그림자)
+   · 테두리 각인(강조)        : .heavy 추가
+   · 합성 굵게               : .bold-synth 추가
+   · 도장·큰 숫자·깔끔한 굵게 : CSS로 안 됨 → stamps/, sprites/ 그림 사용
+   ※ 픽셀 폰트는 원래 크기에서만 선명: Galmuri11=12px, Galmuri14=15px.
+     다른 크기(9·10·11·13·14·16·18px 등)로 쓰지 말 것.
+   ===================================================================== */
+@font-face { font-family: 'L-G11';  src: url('../fonts/Galmuri11.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'L-G11B'; src: url('../fonts/Galmuri11-Bold.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'L-G14';  src: url('../fonts/Galmuri14.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'L-C15';  src: url('../fonts/LabyrinthCyrillic15.woff2') format('woff2'); font-display: block; }  /* 15px 러시아·우크라이나 글자 (새로 그림) */
+@font-face { font-family: 'L-F12SC'; src: url('../fonts/FusionPixel12-SC.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'L-F12TC'; src: url('../fonts/FusionPixel12-TC.woff2') format('woff2'); font-display: block; }
+/* 15px 줄에서 15px 글꼴에 없는 글자(간체 일부 등)를 12px 원래 크기로 선명하게 대신 그리는 임시 대체 (15 × 0.8 = 12px) */
+@font-face { font-family: 'L-G11@15';   src: url('../fonts/Galmuri11.woff2') format('woff2'); size-adjust: 80%; font-display: block; }
+@font-face { font-family: 'L-F12SC@15'; src: url('../fonts/FusionPixel12-SC.woff2') format('woff2'); size-adjust: 80%; font-display: block; }
+@font-face { font-family: 'L-F12TC@15'; src: url('../fonts/FusionPixel12-TC.woff2') format('woff2'); size-adjust: 80%; font-display: block; }
+
+.t12, .t15 { -webkit-font-smoothing: none; text-rendering: optimizeSpeed; font-kerning: none; font-weight: normal; }
+.t12 { font-family: 'L-G11', 'L-F12SC', sans-serif; font-size: 12px; line-height: 18px; --lh: 18px; --gt: 2px; --gb: 14px; }
+.t15 { font-family: 'L-G14', 'L-C15', 'L-G11@15', 'L-F12SC@15', sans-serif; font-size: 15px; line-height: 20px; --lh: 20px; --gt: 2px; --gb: 16px; }
+:lang(zh-Hant) .t12, .t12:lang(zh-Hant) { font-family: 'L-G11', 'L-F12TC', sans-serif; }
+:lang(zh-Hant) .t15, .t15:lang(zh-Hant) { font-family: 'L-G14', 'L-C15', 'L-G11@15', 'L-F12TC@15', sans-serif; }
+/* 일본어·중국어 줄바꿈 금칙(문장부호가 줄 맨 앞에 오지 않게) */
+:lang(ja) .t12, :lang(ja) .t15, :lang(zh) .t12, :lang(zh) .t15 { line-break: strict; word-break: normal; overflow-wrap: anywhere; }
+
+/* ---- 색: 줄마다 같은 세로 그라데이션 + 그림자 ---- */
+[class*="c-"] {
+  background-image: var(--g); background-size: 100% var(--lh, 18px); background-repeat: repeat-y;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: var(--bold-f, drop-shadow(0 0 0 transparent)) drop-shadow(1px 1px 0 var(--sh));
+}
+.c-gold      { --sh: #3a0808; --ol: #3a0808; --mid: #ffd65e; --g: linear-gradient(180deg, #fff6c4 var(--gt), #ffd65e calc(var(--gt) + (var(--gb) - var(--gt)) * .35), #e2a02e calc(var(--gt) + (var(--gb) - var(--gt)) * .7), #966016 var(--gb)); }
+.c-ivory     { --sh: #341e0e; --ol: #341e0e; --mid: #f2e2b6; --g: linear-gradient(180deg, #fffbee var(--gt), #f2e2b6 calc((var(--gt) + var(--gb)) / 2), #ceb078 var(--gb)); }
+.c-silver    { --sh: #101422; --ol: #101422; --mid: #dce2ee; --g: linear-gradient(180deg, #ffffff var(--gt), #dce2ee calc(var(--gt) + (var(--gb) - var(--gt)) * .4), #aab2c6 calc(var(--gt) + (var(--gb) - var(--gt)) * .75), #707892 var(--gb)); }
+.c-bronze    { --sh: #281006; --ol: #281006; --mid: #e2985c; --g: linear-gradient(180deg, #ffd6aa var(--gt), #e2985c calc(var(--gt) + (var(--gb) - var(--gt)) * .45), #965228 var(--gb)); }
+.c-white     { --sh: #140c08; --ol: #140c08; --mid: #f0f0f0; --g: linear-gradient(180deg, #ffffff var(--gt), #dedede var(--gb)); }
+.c-parch     { --sh: #fcf0d4; --ol: #fcf0d4; --mid: #3c2412; --g: linear-gradient(180deg, #4a2e16 var(--gt), #2e1a0a var(--gb)); }  /* 양피지 바탕(#e2cc9e) 위 전용 */
+.c-iron      { --sh: #b0b0be; --ol: #b0b0be; --mid: #4e4e5a; --g: linear-gradient(180deg, #848492 var(--gt), #4e4e5a calc(var(--gt) + (var(--gb) - var(--gt)) * .45), #22222a var(--gb)); }  /* 제목·도장용 */
+.c-iron-body { --sh: #121218; --ol: #121218; --mid: #b0b0bc; --g: linear-gradient(180deg, #ceced8 var(--gt), #9292a0 var(--gb)); }  /* 실패 본문용 */
+.c-crimson   { --sh: #280000; --ol: #280000; --mid: #ff6048; --g: linear-gradient(180deg, #ffc4b4 var(--gt), #ff6048 calc(var(--gt) + (var(--gb) - var(--gt)) * .35), #d62820 calc(var(--gt) + (var(--gb) - var(--gt)) * .7), #820c0c var(--gb)); }
+.c-blackred  { --sh: #dc3020; --ol: #dc3020; --mid: #302424; --g: linear-gradient(180deg, #605454 var(--gt), #302424 calc((var(--gt) + var(--gb)) / 2), #120a0a var(--gb)); }
+.c-prism     { --sh: #240e3c; --ol: #240e3c; --mid: #fff; --g: linear-gradient(90deg, #ff9a9a, #ffd27a, #f4ff86, #8dffa0, #86e8ff, #9aa8ff, #e49aff); background-size: 100% var(--lh, 18px); }
+
+/* ---- 굵기·강조 ---- */
+.bold-synth { --bold-f: drop-shadow(1px 0 0 var(--mid)); }          /* 합성 굵게: 영어·러시아 등 획 단순한 글자의 큰 강조용 */
+.heavy { filter: var(--bold-f, drop-shadow(0 0 0 transparent)) drop-shadow(1px 0 0 var(--ol)) drop-shadow(-1px 0 0 var(--ol)) drop-shadow(0 1px 0 var(--ol)) drop-shadow(0 -1px 0 var(--ol)) drop-shadow(1px 1px 0 rgba(0,0,0,.6)); }
+.parch-bg { background-color: #e2cc9e; }   /* .c-parch를 올릴 종이 바탕 */

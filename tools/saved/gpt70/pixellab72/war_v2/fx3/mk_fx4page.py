@@ -30,6 +30,7 @@ for k, ko, tip in [('bash', '방패 두드리기', '둔탁한 충격 · 나무 �
         if os.path.exists(f): H.append(card('data:image/png;base64,' + b64(V.scene(k, Image.open(f).convert('RGBA'))), f'{ko} 새 {s}', 'class=s'))
     H.append("</div>")
 H2 = []
+H2.append("<h3>도발 — 새로 (몸 테두리가 붉게 감싸여 빛남 + 머리 위 느낌표)</h3><p>느낌표 = 라비린토스 폰트 키트 v1.1의 B2 큰 진홍 「!」(b2-big crimson). 외칠 때 머리 위로 솟아 잠깐 머물고 천천히 옅어집니다.</p><div class=row>" + card('data:image/gif;base64,' + gif('../fx4/taunt_v4x.gif'), '도발 v4', 'class=g') + "</div>")
 H2.append("<h3>아직 안 고르신 것 — 뛰어들기 · 방패 착지 (① 차분 · ② 보통 · ③ 화려 · ④ 최대)</h3>")
 for k, ko in [('leap', '뛰어들기'), ('shieldland', '방패 착지')]:
     im = Image.open(f'var/{k}.png').convert('RGB'); im = im.resize((im.width * 3 // 4, im.height * 3 // 4), Image.NEAREST)
@@ -37,5 +38,5 @@ for k, ko in [('leap', '뛰어들기'), ('shieldland', '방패 착지')]:
 CSS = "body{margin:0;background:#1c1f26;color:#e8e6e0;font-family:system-ui,sans-serif}main{max-width:1240px;margin:0 auto;padding:16px}h3{margin:18px 0 6px;color:#f0c878}p{opacity:.88;margin:4px 0}.row{display:flex;flex-wrap:wrap;gap:8px}.card{background:#262a33;border:1px solid #3a3f4a;border-radius:10px;padding:6px;display:grid;gap:4px;text-align:center}img{image-rendering:pixelated;border-radius:6px}.g{width:280px}.s{width:360px}.w{width:100%;max-width:1100px}"
 open(sys.argv[1], 'w', encoding='utf-8').write(f"<!doctype html><meta charset=utf-8><title>전사 효과 다시 고르기</title><style>{CSS}</style><main><h2>전사 1차 효과 — 다시 고를 것 (11-25 저녁)</h2>{''.join(H)}</main>")
 f2 = sys.argv[1].replace('.html', '_2.html')
-open(f2, 'w', encoding='utf-8').write(f"<!doctype html><meta charset=utf-8><title>전사 효과 다시 고르기 2</title><style>{CSS}</style><main><h2>전사 1차 효과 — 아직 안 고르신 것</h2>{''.join(H2)}</main>")
+open(f2, 'w', encoding='utf-8').write(f"<!doctype html><meta charset=utf-8><title>전사 효과 다시 고르기 2</title><style>{CSS}</style><main><h2>전사 1차 효과 — 새 도발 · 아직 안 고르신 것</h2>{''.join(H2)}</main>")
 print(os.path.getsize(sys.argv[1]), os.path.getsize(f2))
