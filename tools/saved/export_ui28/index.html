@@ -1,0 +1,132 @@
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="../labyrinth_font_kit/css/labyrinth-type.css"><script src="../labyrinth_font_kit/js/b2-numbers.js"></script>
+<style>
+body{margin:0;background:#16151d;color:#ebe7f2;font-family:"Malgun Gothic",sans-serif;width:1520px}
+.wrap{padding:24px 28px} h1{color:#f0c45a;font-size:26px;margin:0 0 4px} .sub{color:#a39fb4;font-size:14px;margin-bottom:14px}
+h2{color:#f0c45a;font-size:19px;margin:22px 0 8px;border-bottom:1px solid #333;padding-bottom:6px}
+.note{color:#a39fb4;font-size:13px;margin-top:6px;line-height:1.6}
+.row2{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.z{zoom:2;image-rendering:pixelated}
+/* 게임 창 (1배 픽셀) */
+.win{width:360px;background:#11131c;border:2px solid #050608;box-shadow:inset 0 0 0 2px #3c3448,inset 0 0 0 3px #0b0c12;padding:3px}
+.win.wide{width:360px}
+.head{background:#232634;border-bottom:2px solid #050608;text-align:center;padding:3px 0 2px}
+.tabs{display:flex;gap:2px;padding:4px 4px 0}
+.tab{flex:1;text-align:center;background:#1a1c27;border:1px solid #050608;padding:1px 0}
+.tab.on{background:#3a2c1a;box-shadow:inset 0 -2px 0 #e2a02e}
+.body{display:flex;gap:4px;padding:4px}
+.list{width:178px;display:flex;flex-direction:column;gap:2px}
+.it{display:flex;gap:3px;align-items:center;background:#181a25;border:1px solid #050608;padding:2px;position:relative}
+.it.sel{background:#2a2333;box-shadow:inset 0 0 0 1px #e2a02e}
+.it.dim{opacity:.62}
+.ic{width:26px;height:26px;flex:none;background:#0b0c12;border:1px solid;display:flex;align-items:center;justify-content:center}
+.ic img{width:22px;height:22px;image-rendering:auto;object-fit:contain}
+.q3{border-color:#4aa0ff}.q4{border-color:#b06cff}.q5{border-color:#ffb030}.q6{border-color:#ff5a5a}.q1{border-color:#8a8a8a}
+.px{width:16px;height:16px}
+.tag{display:inline-block;padding:0 3px;border:1px solid #050608;margin-top:1px}
+.tg-ok{background:#1d3324}.tg-bd{background:#2a2a30}.tg-wait{background:#1c2638}.tg-lock{background:#3a2c14}.tg-hold{background:#3a1414}
+.det{flex:1;background:#151722;border:1px solid #050608;padding:4px;display:flex;flex-direction:column;gap:2px}
+.ln{border-top:1px solid #2a2c3a;margin:2px 0}
+.ck{display:flex;gap:3px}
+.btn{margin-top:3px;text-align:center;background:#7a4c22;border:1px solid #050608;box-shadow:inset 0 1px 0 #b27a3e,inset 0 -2px 0 #4a2a10;padding:2px 0}
+.btn.off{background:#2a2a30;box-shadow:inset 0 1px 0 #44444c}
+.res{width:200px;background:#11131c;border:2px solid #050608;box-shadow:inset 0 0 0 2px #3c3448;padding:8px 6px;text-align:center;display:flex;flex-direction:column;gap:3px}
+.step{display:flex;justify-content:center;gap:4px}
+.dot{width:6px;height:6px;margin-top:6px;border:1px solid #050608;background:#333}
+.dot.on{background:#e2a02e}
+</style>
+<div class="wrap">
+<h1>모험가협회 물류창고 · 감정 · 반출 — 화면 시안 1 (결정 28장)</h1>
+<div class="sub">폰트 키트 v1.1 규칙(글자 12px · 15px만 · 색 클래스 · UI 숫자 B2 금박) · 실제 도트 2배 · 장비 그림은 게임 그림 · 수수료 값과 문구는 회의(d1) 결과로 바꿀 자리</div>
+
+<h2>A · 반출 탭 — 게임 → 스팀 보관함</h2>
+<div class="row2">
+<div class="z"><div class="win">
+ <div class="head"><span class="t15 c-gold">물류창고 · 감정 · 반출</span></div>
+ <div class="tabs"><div class="tab on"><span class="t12 c-gold">반출</span></div><div class="tab"><span class="t12 c-silver">들여오기</span></div><div class="tab"><span class="t12 c-silver">기록</span></div></div>
+ <div class="body">
+  <div class="list">
+   <div class="it sel"><div class="ic q3"><img src="img/sword.webp"></div><div><div class="t12 c-gold">미스릴 장검 +0</div><span class="tag tg-ok"><span class="t12 c-ivory">장터 가능</span></span></div></div>
+   <div class="it"><div class="ic q4"><img src="img/longbow.webp"></div><div><div class="t12 c-ivory">바람결 장궁 +0</div><span class="tag tg-ok"><span class="t12 c-ivory">장터 가능</span></span></div></div>
+   <div class="it"><div class="ic q5"><img src="img/ring.webp"></div><div><div class="t12 c-ivory">별빛 반지</div><span class="tag tg-wait"><span class="t12 c-silver">기록 보내는 중</span></span></div></div>
+   <div class="it"><div class="ic q6"><img src="img/orb.webp"></div><div><div class="t12 c-ivory">심해 오브 +0</div><span class="tag tg-lock"><span class="t12 c-bronze">반출 중 · 잠김</span></span></div></div>
+   <div class="it dim"><div class="ic q4"><img src="img/hvarmor.webp"></div><div><div class="t12 c-iron-body">강철 중갑 +7</div><span class="tag tg-bd"><span class="t12 c-iron-body">귀속 · 강화 중</span></span></div></div>
+   <div class="it"><div class="ic q3"><img src="img/boots.webp"></div><div><div class="t12 c-ivory">늪지 판금신발</div><span class="tag tg-hold"><span class="t12 c-crimson">감정 보류</span></span></div></div>
+  </div>
+  <div class="det">
+   <div class="t12 c-gold">미스릴 장검 +0</div>
+   <div class="t12 c-bronze">희귀 · 장검 · 착용 Lv55</div>
+   <div class="ln"></div>
+   <div class="t12 c-silver">얻은 곳</div>
+   <div class="t12 c-ivory">대장간 제작 · 11-26</div>
+   <div class="t12 c-ivory">재료 영수증 3장 연결</div>
+   <div class="ln"></div>
+   <div class="t12 c-silver">감정</div>
+   <div class="ck"><span class="t12 c-gold">✓</span><span class="t12 c-ivory">영수증 확인</span></div>
+   <div class="ck"><span class="t12 c-gold">✓</span><span class="t12 c-ivory">주사위 맞춤</span></div>
+   <div class="ck"><span class="t12 c-gold">✓</span><span class="t12 c-ivory">속도 정상</span></div>
+   <div class="ln"></div>
+   <div class="t12 c-silver">감정 수수료</div>
+   <div class="ck"><span class="t12 c-ivory">골드</span><span data-b2="b2-ui/gold/1,200"></span></div>
+   <div class="ck"><span class="t12 c-ivory">협회 인장</span><span data-b2="b2-ui/gold/×1"></span></div>
+   <div class="t12 c-silver">받는 곳 : 스팀 보관함</div>
+   <div class="btn"><span class="t15 c-white">감정 · 반출</span></div>
+  </div>
+ </div>
+ <div style="padding:0 4px 4px"><span class="t12 c-crimson">반출하면 게임 창고에서 빠져요</span></div>
+</div></div>
+<div class="note">
+· 왼쪽 목록 = 메인 창고의 반출 후보. 꼬리표 색 다섯:<br>
+&nbsp;&nbsp;<b style="color:#7fd08a">장터 가능</b>(영수증 있음) · <b style="color:#b8c0d6">기록 보내는 중</b>(오프라인 드롭 — 다음 접속에 서버로) · <b style="color:#e2985c">반출 중 · 잠김</b>(서버 답을 기다림, 쓰기 · 팔기 · 합성 막힘)<br>
+&nbsp;&nbsp;<b style="color:#9292a0">귀속</b>(강화권 · +1 이상 · 1차 · 공용 스킬북 — 흐리게, 누르면 까닭) · <b style="color:#ff6048">감정 보류</b>(검토 중 — 반출만 멈춤, 게임에서는 그대로 씀)<br>
+· 오른쪽 = 고른 칸. 「얻은 곳」에 영수증 사슬(드롭 → 제작) · 「감정」 세 줄 = 영수증 · 씨앗 · 한계선(28장 1 ~ 3)<br>
+· 수수료 골드 · 협회 인장은 <b>넣을지부터 회의(d1)</b> — 시안에는 자리만<br>
+· 단추 = 15px 백색 · 경고 = 12px 진홍 · 이름 = 12px 금박 · 숫자 = B2 금박
+</div>
+</div>
+
+<h2>B · 들여오기 탭 — 스팀 보관함 → 게임</h2>
+<div class="row2">
+<div class="z"><div class="win">
+ <div class="head"><span class="t15 c-gold">물류창고 · 감정 · 반출</span></div>
+ <div class="tabs"><div class="tab"><span class="t12 c-silver">반출</span></div><div class="tab on"><span class="t12 c-gold">들여오기</span></div><div class="tab"><span class="t12 c-silver">기록</span></div></div>
+ <div class="body">
+  <div class="list">
+   <div class="t12 c-silver" style="padding:1px 2px">스팀 보관함</div>
+   <div class="it sel"><div class="ic q4"><img src="img/hvarmor.webp"></div><div><div class="t12 c-gold">강철 중갑 +0</div><span class="tag tg-ok"><span class="t12 c-ivory">들여오기 가능</span></span></div></div>
+   <div class="it"><div class="ic q5"><img src="img/ring.webp"></div><div><div class="t12 c-ivory">별빛 반지</div><span class="tag tg-ok"><span class="t12 c-ivory">들여오기 가능</span></span></div></div>
+   <div class="it"><div class="ic q3"><img src="img/sword.webp"></div><div><div class="t12 c-ivory">미스릴 장검 +0</div><span class="tag tg-lock"><span class="t12 c-bronze">들여오는 중</span></span></div></div>
+  </div>
+  <div class="det">
+   <div class="t12 c-gold">강철 중갑 +0</div>
+   <div class="t12 c-bronze">영웅 · 중갑 · 착용 Lv70</div>
+   <div class="ln"></div>
+   <div class="t12 c-silver">장터에서 산 것</div>
+   <div class="t12 c-ivory">들여오면 보관함에서</div>
+   <div class="t12 c-ivory">빠지고 게임 창고로</div>
+   <div class="t12 c-ivory">새 영수증이 붙어요</div>
+   <div class="ln"></div>
+   <div class="t12 c-silver">메인 창고</div>
+   <div class="ck"><span data-b2="b2-ui/gold/184/200"></span><span class="t12 c-ivory">칸</span></div>
+   <div class="btn"><span class="t15 c-white">들여오기</span></div>
+  </div>
+ </div>
+ <div style="padding:0 4px 4px"><span class="t12 c-silver">인터넷이 필요해요 · 게임은 오프라인 가능</span></div>
+</div></div>
+<div class="note">
+· 들여오기 = 서버가 보관함 아이템을 소모 처리 → 게임 아이템 + 새 영수증(28장)<br>
+· 메인 창고가 꽉 차면 단추가 잠김(지금 게임 규칙 「넘치면 못 얻게」와 같게)<br>
+· 같은 요청이 두 번 가도 한 번만 들어오게 — 서버 요청 번호(requestid)<br>
+· 「기록」 탭 = 반출 · 들여오기 내역(날짜 · 아이템 · 상태) — 다음 시안에서
+</div>
+</div>
+
+<h2>C · 결과 창 · 단계</h2>
+<div class="row2">
+<div class="z"><div class="res"><div class="t15 c-gold heavy">반출 완료</div><div class="t12 c-ivory">미스릴 장검 +0</div><div class="t12 c-silver">스팀 보관함에 들어갔어요</div><div class="t12 c-silver">장터에 올릴 수 있어요</div><div class="btn"><span class="t15 c-white">확인</span></div></div></div>
+<div class="z"><div class="res"><div class="t15 c-silver heavy">감정하는 중</div><div class="step"><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div><div class="t12 c-ivory">영수증 · 주사위 맞추는 중</div><div class="t12 c-silver">창을 닫아도 계속돼요</div></div></div>
+<div class="z"><div class="res"><div class="t15 c-crimson heavy">감정 보류</div><div class="t12 c-ivory">늪지 판금신발</div><div class="t12 c-crimson">기록이 맞지 않아 검토해요</div><div class="t12 c-silver">게임에서는 그대로 쓸 수 있어요</div><div class="btn off"><span class="t15 c-silver">확인</span></div></div></div>
+</div>
+<div class="note">· 성공 = 15px 금박 각인 · 진행 = 은박 + 점 셋(영수증 → 주사위 → 지급) · 보류 = 진홍, 「반출만 멈춤 · 게임은 그대로」를 꼭 적음(28장 4) · 화면 문구에 「가짜」 「부정」 같은 말은 쓰지 않음(정상 플레이어가 겁먹지 않게)</div>
+</div>
+<script>(async()=>{for(const el of document.querySelectorAll('[data-b2]')){const [k,c,...t]=el.dataset.b2.split('/');await B2.load(k,c,'../labyrinth_font_kit/sprites');el.appendChild(B2.html(k,c,t.join('/')));}document.body.dataset.ready=1})();</script>
