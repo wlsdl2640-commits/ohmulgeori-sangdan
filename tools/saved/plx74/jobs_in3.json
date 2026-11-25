@@ -1,0 +1,74 @@
+[
+ {
+  "key": "gate2/g0",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal gatekeeper ant mini-boss (turtle ant soldier): its head is a gigantic flat round shield-like plug, a huge thick armored disc as tall as a cave tunnel entrance, much bigger than its own body; the small body and legs stand behind the giant disc head, dark clay-brown armor with a thick rim, small recessed eyes at the bottom edge of the disc, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 2000
+  }
+ },
+ {
+  "key": "gate2/g1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal gatekeeper ant mini-boss (turtle ant soldier): its head is a gigantic flat round shield-like plug, a huge thick armored disc as tall as a cave tunnel entrance, much bigger than its own body; the small body and legs stand behind the giant disc head, dark clay-brown armor with a thick rim, small recessed eyes at the bottom edge of the disc, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 2001
+  }
+ },
+ {
+  "key": "gate2/g2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal gatekeeper ant mini-boss (turtle ant soldier): its head is a gigantic flat round shield-like plug, a huge thick armored disc as tall as a cave tunnel entrance, much bigger than its own body; the small body and legs stand behind the giant disc head, dark clay-brown armor with a thick rim, small recessed eyes at the bottom edge of the disc, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 2002
+  }
+ },
+ {
+  "key": "gate2/g3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal gatekeeper ant mini-boss blocking a round tunnel: only its gigantic flat round plug-shaped head is visible filling an earthen tunnel hole, a huge thick armored disc with a thick rim and small recessed eyes and short mandibles at the bottom, side view facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no slash marks, no humans, no people, no characters, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 2003
+  }
+ }
+]

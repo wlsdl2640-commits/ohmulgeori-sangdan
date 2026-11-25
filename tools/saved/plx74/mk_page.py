@@ -18,7 +18,7 @@ ANT = [('soldier', '큰머리 병정개미', '페이돌레 · 군대개미 병�
  ('fungusant', '포자에 먹힌 개미', '동충하초 — 쓰러지면 포자로 가까운 길드원 한 번 피해 · 3-7·12·16칸'),
  ('mimicspider', '개미 흉내 거미', '개미처럼 서 있다가 뒷줄 기습 · 3-8칸 (개미처럼 보이는 게 맞는 모습)'),
  ('bluelarva', '부전나비 애벌레', '여왕 소리를 흉내 — 곁의 일개미가 대신 맞아 줌 · 서브 스토리 단서 · 3-15·16칸'),
- ('gatekeeper', '문지기 개미 (중간 우두머리)', '거북개미 — 원반 머리로 굴문을 막고 있다가 빠져나오며 전투 · 3-19칸 · 1.7배 · 144칸으로 뽑음'),]
+]
 SW = [('swampbrute', '늪지 괴물', '예전 산성 슬라임 시안을 튼 것 — 진흙 · 뿌리 앞팔로 앞줄을 휩쓺, 물리 정상'),
  ('slime', '늪 슬라임 (새 슬라임)', '둥글고 크고 귀여움 · 머리 방울 없음 · 본길에서 물리 피해 25% 감소부터 시험'),
  ('acidslime', '강산 슬라임', '보라 핵 · 물리 면역은 13층 갈래 · 14층 던전에서만 (입구에서 알림)')]
@@ -39,9 +39,12 @@ def mons(L):
         for f in sorted(os.listdir(os.path.join(H, k))): o.append(f"<div class='card mon'><img src='data:image/png;base64,{b64(os.path.join(H,k,f))}'><b>{f[:2]}</b></div>")
         o.append("</div>")
 mons(ANT)
+o.append("<h3>문지기 개미 (중간 우두머리 · 다시 뽑음)</h3><p>대표님 「머리 뚜껑이 굴만 해야」 → 원반 머리를 굴문만큼 크게, 256칸으로 네 번. 굴문을 막고 있다가 구멍에서 빠져나오며 전투 · 3-19칸. (첫 판 144칸 시안은 gatekeeper_old에 보관)</p><div class=row>")
+for i in range(4): o.append(f"<div class='card queen'><img src='data:image/png;base64,{b64(os.path.join(H,'gate2',f'g{i}','00.png'))}'><b>g{i}</b></div>")
+o.append("</div>")
 o.append("<h3>배경 위에 올려 본 모습 (예시 조합 — 어제 배경 A · B)</h3>")
 c1 = comp(os.path.join(P73, 'bg_antnest', '00.png'), [(os.path.join(H, 'soldier', '00.png'), 1), (os.path.join(P73, 'workerant', '01.png'), 1), (os.path.join(H, 'aphids', '01.png'), 1)], '_comp_a.png')
-c2 = comp(os.path.join(P73, 'bg_antnest2', '00.png'), [(os.path.join(H, 'queen', 'q2', '00.png'), 1.3), (os.path.join(H, 'gatekeeper', '00.png'), 1)], '_comp_b.png')
+c2 = comp(os.path.join(P73, 'bg_antnest2', '00.png'), [(os.path.join(H, 'queen', 'q2', '00.png'), 1.3), (os.path.join(H, 'gate2', 'g1', '00.png'), 1.2)], '_comp_b.png')
 for c, t in [(c1, 'A 버섯 정원 (1~12칸) + 병정개미 · 일개미 · 진딧물'), (c2, 'B 알방 · 여왕방 (13~20칸) + 여왕 q2 · 문지기')]: o.append(f"<div class='card bg'><img src='data:image/png;base64,{b64(c)}'><b>{t}</b></div>")
 o.append("<h2>늪지대 (9~14층)</h2><h3>새 물길 배경 — 물이 찬 길목 · 이동 20% 느려짐</h3><div class=row>")
 for t, n in [('day', '낮 (흐린 인공 태양 · 누런 안개)'), ('night', '밤 (인공 달)')]: o.append(f"<div class='card bg'><img src='data:image/png;base64,{b64(os.path.join(H,'bg_water',t,'00.png'))}' style='width:1056px'><b>{n}</b></div>")
