@@ -826,5 +826,53 @@
   "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
   "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
   "desc": "Still facing right, he quickly hops backward to the left several times, retreating away from the enemy with his shield raised, and ends standing in his ready stance further to the left. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "shove",
+  "row": "v1",
+  "ko": "방패 밀치기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "seed": 401,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He crouches behind his round shield, then charges one step forward and shoves the shield out hard with his whole body and shoulder behind it, holds the pushed-out pose for a moment, then steps back to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no impact stars, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "shove",
+  "row": "v2",
+  "ko": "방패 밀치기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "seed": 402,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He crouches behind his round shield, then charges one step forward and shoves the shield out hard with his whole body and shoulder behind it, holds the pushed-out pose for a moment, then steps back to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no impact stars, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "shove",
+  "row": "v3",
+  "ko": "방패 밀치기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "seed": 403,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He crouches behind his round shield, then charges one step forward and shoves the shield out hard with his whole body and shoulder behind it, holds the pushed-out pose for a moment, then steps back to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no impact stars, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "shove",
+  "row": "v4",
+  "ko": "방패 밀치기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "seed": 404,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He crouches behind his round shield, then charges one step forward and shoves the shield out hard with his whole body and shoulder behind it, holds the pushed-out pose for a moment, then steps back to the start pose. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no impact stars, no sparks, no flashes, no dust clouds, no other characters."
  }
 ]
