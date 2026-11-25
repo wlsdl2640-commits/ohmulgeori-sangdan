@@ -1,0 +1,573 @@
+{
+ "frames": [
+  {
+   "filename": "effect 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 1.png",
+   "frame": {
+    "x": 214,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 2.png",
+   "frame": {
+    "x": 428,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 3.png",
+   "frame": {
+    "x": 642,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 4.png",
+   "frame": {
+    "x": 856,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 5.png",
+   "frame": {
+    "x": 0,
+    "y": 162,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 6.png",
+   "frame": {
+    "x": 214,
+    "y": 162,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 7.png",
+   "frame": {
+    "x": 428,
+    "y": 162,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 8.png",
+   "frame": {
+    "x": 642,
+    "y": 162,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 9.png",
+   "frame": {
+    "x": 856,
+    "y": 162,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 10.png",
+   "frame": {
+    "x": 0,
+    "y": 324,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 11.png",
+   "frame": {
+    "x": 214,
+    "y": 324,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 12.png",
+   "frame": {
+    "x": 428,
+    "y": 324,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 13.png",
+   "frame": {
+    "x": 642,
+    "y": 324,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 14.png",
+   "frame": {
+    "x": 856,
+    "y": 324,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 15.png",
+   "frame": {
+    "x": 0,
+    "y": 486,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 16.png",
+   "frame": {
+    "x": 214,
+    "y": 486,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 17.png",
+   "frame": {
+    "x": 428,
+    "y": 486,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 18.png",
+   "frame": {
+    "x": 642,
+    "y": 486,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 19.png",
+   "frame": {
+    "x": 856,
+    "y": 486,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  },
+  {
+   "filename": "effect 20.png",
+   "frame": {
+    "x": 0,
+    "y": 648,
+    "w": 214,
+    "h": 162
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 214,
+    "h": 162
+   },
+   "sourceSize": {
+    "w": 214,
+    "h": 162
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7345679012345679
+   },
+   "duration": 71
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "effect.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1070,
+   "h": 810
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "feet",
+   "x": 107,
+   "y": 119
+  },
+  "frameTags": [
+   {
+    "name": "effect",
+    "from": 0,
+    "to": 20,
+    "direction": "forward"
+   }
+  ]
+ }
+}
