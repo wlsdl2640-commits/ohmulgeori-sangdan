@@ -1,0 +1,210 @@
+[
+ {
+  "key": "bashP1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blunt shield-bash hit impact at one point: a chunky four-to-six pointed impact star of white and pale amber light, around it two thick layered crescent shock ripples opening to the right (cream core, steel-blue rim), a handful of chunky orange-white sparks and tiny steel glints flying out, and a small shaded grey-brown dust puff below. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 701
+  }
+ },
+ {
+  "key": "bashP2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blunt shield-bash hit impact at one point: a chunky four-to-six pointed impact star of white and pale amber light, around it two thick layered crescent shock ripples opening to the right (cream core, steel-blue rim), a handful of chunky orange-white sparks and tiny steel glints flying out, and a small shaded grey-brown dust puff below. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 743
+  }
+ },
+ {
+  "key": "bashP3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blunt shield-bash hit impact at one point: a chunky four-to-six pointed impact star of white and pale amber light, around it two thick layered crescent shock ripples opening to the right (cream core, steel-blue rim), a handful of chunky orange-white sparks and tiny steel glints flying out, and a small shaded grey-brown dust puff below. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 705
+  }
+ },
+ {
+  "key": "bashP4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blunt shield-bash hit impact at one point: a chunky four-to-six pointed impact star of white and pale amber light, around it two thick layered crescent shock ripples opening to the right (cream core, steel-blue rim), a handful of chunky orange-white sparks and tiny steel glints flying out, and a small shaded grey-brown dust puff below. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 747
+  }
+ },
+ {
+  "key": "shoveP1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forward shoving push: three thick layered crescent pressure waves pushing to the right (cream-white core, steel-blue and amber rims), each wave bigger than the last, a shaded grey-brown dust cloud kicked back along the ground at the lower left, a few chunky pebbles, and a small circle of yellow stun stars at the upper right end. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 705
+  }
+ },
+ {
+  "key": "shoveP2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forward shoving push: three thick layered crescent pressure waves pushing to the right (cream-white core, steel-blue and amber rims), each wave bigger than the last, a shaded grey-brown dust cloud kicked back along the ground at the lower left, a few chunky pebbles, and a small circle of yellow stun stars at the upper right end. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 747
+  }
+ },
+ {
+  "key": "shoveP3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forward shoving push: three thick layered crescent pressure waves pushing to the right (cream-white core, steel-blue and amber rims), each wave bigger than the last, a shaded grey-brown dust cloud kicked back along the ground at the lower left, a few chunky pebbles, and a small circle of yellow stun stars at the upper right end. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 709
+  }
+ },
+ {
+  "key": "shoveP4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forward shoving push: three thick layered crescent pressure waves pushing to the right (cream-white core, steel-blue and amber rims), each wave bigger than the last, a shaded grey-brown dust cloud kicked back along the ground at the lower left, a few chunky pebbles, and a small circle of yellow stun stars at the upper right end. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 751
+  }
+ },
+ {
+  "key": "blockP1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a defensive block flash: a tall curved vertical arc of solid steel-blue light like the front rim of a round shield seen from the side, a bright white glint star on its right face where a blow is stopped, chunky orange-white sparks bouncing back to the right, and a small shaded dust puff at its base. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 709
+  }
+ },
+ {
+  "key": "blockP2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a defensive block flash: a tall curved vertical arc of solid steel-blue light like the front rim of a round shield seen from the side, a bright white glint star on its right face where a blow is stopped, chunky orange-white sparks bouncing back to the right, and a small shaded dust puff at its base. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 751
+  }
+ },
+ {
+  "key": "blockP3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a defensive block flash: a tall curved vertical arc of solid steel-blue light like the front rim of a round shield seen from the side, a bright white glint star on its right face where a blow is stopped, chunky orange-white sparks bouncing back to the right, and a small shaded dust puff at its base. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 713
+  }
+ },
+ {
+  "key": "blockP4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a defensive block flash: a tall curved vertical arc of solid steel-blue light like the front rim of a round shield seen from the side, a bright white glint star on its right face where a blow is stopped, chunky orange-white sparks bouncing back to the right, and a small shaded dust puff at its base. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 755
+  }
+ },
+ {
+  "key": "warcryP1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a battle shout that rallies allies: from a center point at the right side, thick layered sound-wave arcs (parts of rings seen from the side) spread to the LEFT, getting bigger and fainter, bright cream-gold core fading to orange and deep red rims, golden embers rising, and a small shaded dust swirl along the ground. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 713
+  }
+ },
+ {
+  "key": "warcryP2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a battle shout that rallies allies: from a center point at the right side, thick layered sound-wave arcs (parts of rings seen from the side) spread to the LEFT, getting bigger and fainter, bright cream-gold core fading to orange and deep red rims, golden embers rising, and a small shaded dust swirl along the ground. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 755
+  }
+ },
+ {
+  "key": "warcryP3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a battle shout that rallies allies: from a center point at the right side, thick layered sound-wave arcs (parts of rings seen from the side) spread to the LEFT, getting bigger and fainter, bright cream-gold core fading to orange and deep red rims, golden embers rising, and a small shaded dust swirl along the ground. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 717
+  }
+ },
+ {
+  "key": "warcryP4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a battle shout that rallies allies: from a center point at the right side, thick layered sound-wave arcs (parts of rings seen from the side) spread to the LEFT, getting bigger and fainter, bright cream-gold core fading to orange and deep red rims, golden embers rising, and a small shaded dust swirl along the ground. Compact but richly rendered, a beginner skill: the effect fills about half of the canvas, not an explosion, no fire, no magic runes, no glowing barrier dome. Detailed 16-bit pixel art in the same art style and palette mood as the reference image: solid parts (dust puffs, pebbles, metal glints) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color with a darker colored rim, crisp stepped pixel edges, no blur, no thin single-pixel line art. Layered composition: one main shape, secondary layered shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no animals, no silhouettes, no weapons, no shields, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 759
+  }
+ }
+]
