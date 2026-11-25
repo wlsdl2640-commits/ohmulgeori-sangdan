@@ -1,0 +1,110 @@
+[
+ {
+  "key": "b14_island2/h0",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Its broad flat back is a mossy island with reeds and small dead trees, and on top of its back stands one small ruined half-collapsed swamp shack built into the island: leaning rotten plank walls, broken sagging thatch roof with holes, crooked wooden stilts. Around the shack a weathered wooden boardwalk path of planks on short posts runs along the back, like an old swamp boardwalk bridge, some planks broken or missing, all overgrown with moss and reeds so the shack and boardwalk are part of the creature's back. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 4000
+  }
+ },
+ {
+  "key": "b14_island2/h1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Its broad flat back is a mossy island with reeds and small dead trees, and on top of its back stands one small ruined half-collapsed swamp shack built into the island: leaning rotten plank walls, broken sagging thatch roof with holes, crooked wooden stilts. Around the shack a weathered wooden boardwalk path of planks on short posts runs along the back, like an old swamp boardwalk bridge, some planks broken or missing, all overgrown with moss and reeds so the shack and boardwalk are part of the creature's back. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 4001
+  }
+ },
+ {
+  "key": "b14_island2/h2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Its broad flat back is a mossy island with reeds and small dead trees, and on top of its back stands one small ruined half-collapsed swamp shack built into the island: leaning rotten plank walls, broken sagging thatch roof with holes, crooked wooden stilts. Around the shack a weathered wooden boardwalk path of planks on short posts runs along the back, like an old swamp boardwalk bridge, some planks broken or missing, all overgrown with moss and reeds so the shack and boardwalk are part of the creature's back. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 4002
+  }
+ },
+ {
+  "key": "b14_island2/h3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Its broad flat back is a mossy island with reeds and small dead trees, and on top of its back stands one small ruined half-collapsed swamp shack built into the island: leaning rotten plank walls, broken sagging thatch roof with holes, crooked wooden stilts. Around the shack a weathered wooden boardwalk path of planks on short posts runs along the back, like an old swamp boardwalk bridge, some planks broken or missing, all overgrown with moss and reeds so the shack and boardwalk are part of the creature's back. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 4003
+  }
+ },
+ {
+  "key": "b14_island2/h4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Its broad flat back is a mossy island with reeds and small dead trees, and on top of its back stands one small ruined half-collapsed swamp shack built into the island: leaning rotten plank walls, broken sagging thatch roof with holes, crooked wooden stilts. Around the shack a weathered wooden boardwalk path of planks on short posts runs along the back, like an old swamp boardwalk bridge, some planks broken or missing, all overgrown with moss and reeds so the shack and boardwalk are part of the creature's back. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 4004
+  }
+ },
+ {
+  "key": "b14_island2/h5",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Its broad flat back is a mossy island with reeds and small dead trees, and on top of its back stands one small ruined half-collapsed swamp shack built into the island: leaning rotten plank walls, broken sagging thatch roof with holes, crooked wooden stilts. Around the shack a weathered wooden boardwalk path of planks on short posts runs along the back, like an old swamp boardwalk bridge, some planks broken or missing, all overgrown with moss and reeds so the shack and boardwalk are part of the creature's back. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 4005
+  }
+ }
+]
