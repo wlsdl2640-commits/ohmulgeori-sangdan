@@ -1,6 +1,105 @@
-[오전 1:13:49] 보냄 walk/v1 16장 c0c15426-fd64-4eb9-b217-061ef1713f13
-[오전 1:13:49] 보냄 idle/v1 16장 89a666fc-da22-4ce8-9ae7-be95a8d88f61
-[오전 1:13:49] 보냄 run/v1 16장 31fed2fd-9933-4732-8e67-8c37ef88280a
-[오전 1:13:49] 보냄 walk/v2 16장 e09f206f-7894-4dff-a97d-e2d8cf4b7e18
-[오전 1:13:49] 보냄 idle/v2 16장 a00a1a68-9e43-43b3-840d-9597db197b86
-[오전 1:13:49] 보냄 run/v2 16장 e46c034b-23e3-4e53-b9d1-442d822bf1e0
+[오전 8:10:47] 보냄 walk/v2 16장 be0bbb90-c6e8-419f-9343-383cb64d87e0
+[오전 8:10:47] 보냄 idle/v2 16장 cbe0ce9f-0a9e-4b92-88c0-8883838058af
+[오전 8:10:47] 보냄 idle/v1 16장 d6a311de-0711-4f9e-9df0-03ec2e83af98
+[오전 8:10:47] 보냄 walk/v1 16장 2c3f7c50-7091-42a7-9a86-cb232ababeff
+[오전 8:10:47] 보냄 run/v2 16장 a24c1f91-f49b-4450-af65-e1a9c25c6ccf
+[오전 8:10:47] 보냄 run/v1 16장 0a345db0-bb0b-4bc4-95a4-a1735b666ad2
+[오전 8:12:21] 받음 run/v2
+[오전 8:12:22] 보냄 hurt/v1 20장 2dfb91e8-d919-4e45-9b9a-3ef28cbab78c
+[오전 8:12:32] 받음 run/v1
+[오전 8:12:32] 받음 walk/v1
+[오전 8:12:33] 보냄 hurt/v2 20장 d3494d46-de12-4a4f-9df1-8cc719f3027b
+[오전 8:12:33] 보냄 hurt/v3 20장 da147e4f-cc93-45fc-a5de-adb2c766320e
+[오전 8:12:34] 받음 idle/v2
+[오전 8:12:35] 보냄 fall/v1 20장 cc875d65-74a3-41f9-95da-bfbfbde18e0d
+[오전 8:12:42] 받음 walk/v2
+[오전 8:12:43] 보냄 fall/v2 20장 a71aca3e-253e-4fd5-843a-2bca3197f947
+[오전 8:12:43] 받음 idle/v1
+[오전 8:12:43] 보냄 sit/v1 20장 a9ebbfe7-f9af-493b-94a5-be935d8fd342
+[오전 8:14:18] 받음 fall/v1
+[오전 8:14:18] 받음 hurt/v1
+[오전 8:14:19] 보냄 sit/v2 20장 3ac655fe-2bcc-455f-8a9d-6c0eec0ffa20
+[오전 8:14:19] 보냄 sleep/v1 20장 49fd76e2-2dbb-42e7-80a2-3da79b96d625
+[오전 8:14:39] 받음 hurt/v3
+[오전 8:14:40] 보냄 sleep/v2 20장 cc687759-f9d6-4437-9150-b58b13a3f795
+[오전 8:14:59] 받음 fall/v2
+[오전 8:15:00] 보냄 sleep/v3 20장 d74e39fe-f936-44b8-8ae5-033f4e5f17a5
+[오전 8:15:20] 받음 hurt/v2
+[오전 8:15:20] 보냄 stab/v1 20장 72db8e66-6b26-45c2-8f6a-610c22865a13
+[오전 8:15:20] 받음 sit/v1
+[오전 8:15:21] 보냄 stab/v2 20장 995e0a8e-1bb9-4528-99c3-f89186d3becc
+[오전 8:16:34] 받음 sleep/v1
+[오전 8:16:34] 보냄 stab/v3 20장 3bd6860a-d6c4-4dd4-acdc-5b309b031a93
+[오전 8:16:44] 받음 sit/v2
+[오전 8:16:44] 받음 sleep/v3
+[오전 8:16:44] 보냄 stab/v4 20장 36e7f48d-4b59-476d-b5e3-c6d59bd7b5ce
+[오전 8:16:44] 보냄 footwork/v1 20장 fafb33f4-8bd9-4aeb-b61e-94c17fb75482
+[오전 8:16:54] 받음 sleep/v2
+[오전 8:16:55] 보냄 footwork/v2 20장 2fd54b28-68c9-421c-b5dc-a70bd45c1775
+[오전 8:17:15] 받음 stab/v2
+[오전 8:17:15] 보냄 footwork/v3 20장 6106a826-e6df-4b7e-a181-639a73298ec5
+[오전 8:17:56] 받음 stab/v1
+[오전 8:17:57] 보냄 footwork/v4 20장 a798c354-7748-48a8-9ebe-924873b72418
+[오전 8:18:16] 받음 stab/v3
+[오전 8:18:16] 보냄 backhand/v1 20장 34d3f87a-cc6b-4526-abc9-6a38fea1122e
+[오전 8:18:48] 받음 footwork/v1
+[오전 8:18:48] 보냄 backhand/v2 20장 881060ae-401a-4682-8568-aebb1855281d
+[오전 8:18:58] 받음 stab/v4
+[오전 8:18:58] 보냄 backhand/v3 20장 6e580fa4-745c-4c93-aeae-f8425b8c4241
+[오전 8:19:39] 받음 footwork/v2
+[오전 8:19:39] 받음 footwork/v3
+[오전 8:19:39] 보냄 backhand/v4 20장 32186488-b6ae-4dbd-a8e0-33dce3fb7e7d
+[오전 8:19:40] 보냄 smoke/v1 20장 0e061ea4-bd68-4301-b7a3-77c7d1246438
+[오전 8:20:09] 받음 backhand/v1
+[오전 8:20:09] 보냄 smoke/v2 20장 2704ad53-b5a8-4df9-89e1-83112c9ad479
+[오전 8:20:41] 받음 backhand/v2
+[오전 8:20:41] 보냄 smoke/v3 20장 c105d5f2-18a9-49ca-acf0-656aa9e2d99b
+[오전 8:21:01] 받음 backhand/v3
+[오전 8:21:02] 보냄 smoke/v4 20장 0591a3ce-4c43-4119-a55e-143f1583f6f1
+[오전 8:21:12] 받음 footwork/v4
+[오전 8:21:12] 보냄 needle/v1 20장 89bf5506-e7a1-4bdf-8a31-40f416228f37
+[오전 8:21:31] 받음 smoke/v1
+[오전 8:21:31] 받음 backhand/v4
+[오전 8:21:31] 보냄 needle/v2 20장 6f917533-a340-4a5f-ab11-75dc7731fadd
+[오전 8:21:31] 보냄 needle/v3 20장 c7fad2ee-616e-47e1-8556-7476a5c9c3df
+[오전 8:22:33] 받음 smoke/v2
+[오전 8:22:33] 보냄 needle/v4 20장 e724f642-012d-4d9a-8c58-fdb67bc2f603
+[오전 8:22:43] 받음 smoke/v3
+[오전 8:22:44] 보냄 counter/v1 20장 233d14c1-d64b-4dbd-9fd1-5aa03892685e
+[오전 8:22:56] 받음 smoke/v4
+[오전 8:22:56] 보냄 counter/v2 20장 a1680224-d89e-44a5-ace6-bf5aa60849c7
+[오전 8:23:14] 받음 needle/v1
+[오전 8:23:15] 보냄 counter/v3 20장 2c43347f-4fd7-4b52-9abc-bf60728dc925
+[오전 8:23:25] 받음 needle/v3
+[오전 8:23:25] 보냄 counter/v4 20장 4a5834e0-25f3-4f21-8fa8-1069c772a3f3
+[오전 8:23:45] 받음 needle/v2
+[오전 8:23:46] 보냄 thunder/v1 20장 f87c82bf-2f53-4369-b09e-1752ec7333b8
+[오전 8:24:15] 받음 needle/v4
+[오전 8:24:15] 보냄 thunder/v2 20장 af758eab-98fb-4f93-9fd0-57678ee5f86f
+[오전 8:24:36] 받음 counter/v1
+[오전 8:24:36] 보냄 thunder/v3 20장 8e54caa8-2319-40e2-860b-2a002ec7a73c
+[오전 8:24:46] 받음 thunder/v1
+[오전 8:24:46] 보냄 thunder/v4 20장 2b0e9f07-850f-4790-a9b8-bf6b064b6d7e
+[오전 8:25:17] 받음 counter/v4
+[오전 8:25:17] 받음 counter/v2
+[오전 8:25:17] 보냄 sidestab/v1 20장 dfb49cb3-d82d-4aa8-9d74-5ab6cc6c7ac6
+[오전 8:25:17] 보냄 sidestab/v2 20장 3465fd5c-4980-4540-8913-cfee896e391a
+[오전 8:25:25] 받음 thunder/v2
+[오전 8:25:26] 보냄 sidestab/v3 20장 8031e31b-df8a-4ad2-9e96-96f39ad2d4ad
+[오전 8:25:36] 받음 thunder/v3
+[오전 8:25:37] 보냄 sidestab/v4 20장 ed90f71b-fc94-4f59-bc2a-9df37bac1a19
+[오전 8:25:48] 받음 counter/v3
+[오전 8:25:48] 보냄 backstep/v1 24장 e1f74870-c829-40a4-a697-56e025fe0575
+[오전 8:26:17] 받음 thunder/v4
+[오전 8:26:17] 보냄 backstep/v2 24장 33f2c992-a688-4734-94ad-dff580ea93a9
+[오전 8:26:48] 받음 backstep/v1
+[오전 8:26:48] 보냄 backstep/v3 24장 7789334a-4878-4f05-92f0-876835aa09da
+[오전 8:27:17] 받음 sidestab/v1
+[오전 8:27:18] 받음 sidestab/v2
+[오전 8:27:18] 보냄 backstep/v4 24장 a4feeccf-4cb1-4fe7-be1b-b559332a49f4
+[오전 8:27:59] 받음 sidestab/v4
+[오전 8:28:09] 받음 sidestab/v3
+[오전 8:28:10] 받음 backstep/v3
+[오전 8:28:11] 받음 backstep/v2
+[오전 8:28:31] 받음 backstep/v4
+[오전 8:28:31] 끝 — 받은 동작 52 / 52

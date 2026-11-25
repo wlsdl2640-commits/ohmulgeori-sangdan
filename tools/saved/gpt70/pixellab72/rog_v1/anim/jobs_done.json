@@ -1,0 +1,210 @@
+{
+ "walk/v2": {
+  "id": "be0bbb90-c6e8-419f-9343-383cb64d87e0",
+  "ok": 1
+ },
+ "idle/v2": {
+  "id": "cbe0ce9f-0a9e-4b92-88c0-8883838058af",
+  "ok": 1
+ },
+ "idle/v1": {
+  "id": "d6a311de-0711-4f9e-9df0-03ec2e83af98",
+  "ok": 1
+ },
+ "walk/v1": {
+  "id": "2c3f7c50-7091-42a7-9a86-cb232ababeff",
+  "ok": 1
+ },
+ "run/v2": {
+  "id": "a24c1f91-f49b-4450-af65-e1a9c25c6ccf",
+  "ok": 1
+ },
+ "run/v1": {
+  "id": "0a345db0-bb0b-4bc4-95a4-a1735b666ad2",
+  "ok": 1
+ },
+ "hurt/v1": {
+  "id": "2dfb91e8-d919-4e45-9b9a-3ef28cbab78c",
+  "ok": 1
+ },
+ "hurt/v2": {
+  "id": "d3494d46-de12-4a4f-9df1-8cc719f3027b",
+  "ok": 1
+ },
+ "hurt/v3": {
+  "id": "da147e4f-cc93-45fc-a5de-adb2c766320e",
+  "ok": 1
+ },
+ "fall/v1": {
+  "id": "cc875d65-74a3-41f9-95da-bfbfbde18e0d",
+  "ok": 1
+ },
+ "fall/v2": {
+  "id": "a71aca3e-253e-4fd5-843a-2bca3197f947",
+  "ok": 1
+ },
+ "sit/v1": {
+  "id": "a9ebbfe7-f9af-493b-94a5-be935d8fd342",
+  "ok": 1
+ },
+ "sit/v2": {
+  "id": "3ac655fe-2bcc-455f-8a9d-6c0eec0ffa20",
+  "ok": 1
+ },
+ "sleep/v1": {
+  "id": "49fd76e2-2dbb-42e7-80a2-3da79b96d625",
+  "ok": 1
+ },
+ "sleep/v2": {
+  "id": "cc687759-f9d6-4437-9150-b58b13a3f795",
+  "ok": 1
+ },
+ "sleep/v3": {
+  "id": "d74e39fe-f936-44b8-8ae5-033f4e5f17a5",
+  "ok": 1
+ },
+ "stab/v1": {
+  "id": "72db8e66-6b26-45c2-8f6a-610c22865a13",
+  "ok": 1
+ },
+ "stab/v2": {
+  "id": "995e0a8e-1bb9-4528-99c3-f89186d3becc",
+  "ok": 1
+ },
+ "stab/v3": {
+  "id": "3bd6860a-d6c4-4dd4-acdc-5b309b031a93",
+  "ok": 1
+ },
+ "stab/v4": {
+  "id": "36e7f48d-4b59-476d-b5e3-c6d59bd7b5ce",
+  "ok": 1
+ },
+ "footwork/v1": {
+  "id": "fafb33f4-8bd9-4aeb-b61e-94c17fb75482",
+  "ok": 1
+ },
+ "footwork/v2": {
+  "id": "2fd54b28-68c9-421c-b5dc-a70bd45c1775",
+  "ok": 1
+ },
+ "footwork/v3": {
+  "id": "6106a826-e6df-4b7e-a181-639a73298ec5",
+  "ok": 1
+ },
+ "footwork/v4": {
+  "id": "a798c354-7748-48a8-9ebe-924873b72418",
+  "ok": 1
+ },
+ "backhand/v1": {
+  "id": "34d3f87a-cc6b-4526-abc9-6a38fea1122e",
+  "ok": 1
+ },
+ "backhand/v2": {
+  "id": "881060ae-401a-4682-8568-aebb1855281d",
+  "ok": 1
+ },
+ "backhand/v3": {
+  "id": "6e580fa4-745c-4c93-aeae-f8425b8c4241",
+  "ok": 1
+ },
+ "backhand/v4": {
+  "id": "32186488-b6ae-4dbd-a8e0-33dce3fb7e7d",
+  "ok": 1
+ },
+ "smoke/v1": {
+  "id": "0e061ea4-bd68-4301-b7a3-77c7d1246438",
+  "ok": 1
+ },
+ "smoke/v2": {
+  "id": "2704ad53-b5a8-4df9-89e1-83112c9ad479",
+  "ok": 1
+ },
+ "smoke/v3": {
+  "id": "c105d5f2-18a9-49ca-acf0-656aa9e2d99b",
+  "ok": 1
+ },
+ "smoke/v4": {
+  "id": "0591a3ce-4c43-4119-a55e-143f1583f6f1",
+  "ok": 1
+ },
+ "needle/v1": {
+  "id": "89bf5506-e7a1-4bdf-8a31-40f416228f37",
+  "ok": 1
+ },
+ "needle/v2": {
+  "id": "6f917533-a340-4a5f-ab11-75dc7731fadd",
+  "ok": 1
+ },
+ "needle/v3": {
+  "id": "c7fad2ee-616e-47e1-8556-7476a5c9c3df",
+  "ok": 1
+ },
+ "needle/v4": {
+  "id": "e724f642-012d-4d9a-8c58-fdb67bc2f603",
+  "ok": 1
+ },
+ "counter/v1": {
+  "id": "233d14c1-d64b-4dbd-9fd1-5aa03892685e",
+  "ok": 1
+ },
+ "counter/v2": {
+  "id": "a1680224-d89e-44a5-ace6-bf5aa60849c7",
+  "ok": 1
+ },
+ "counter/v3": {
+  "id": "2c43347f-4fd7-4b52-9abc-bf60728dc925",
+  "ok": 1
+ },
+ "counter/v4": {
+  "id": "4a5834e0-25f3-4f21-8fa8-1069c772a3f3",
+  "ok": 1
+ },
+ "thunder/v1": {
+  "id": "f87c82bf-2f53-4369-b09e-1752ec7333b8",
+  "ok": 1
+ },
+ "thunder/v2": {
+  "id": "af758eab-98fb-4f93-9fd0-57678ee5f86f",
+  "ok": 1
+ },
+ "thunder/v3": {
+  "id": "8e54caa8-2319-40e2-860b-2a002ec7a73c",
+  "ok": 1
+ },
+ "thunder/v4": {
+  "id": "2b0e9f07-850f-4790-a9b8-bf6b064b6d7e",
+  "ok": 1
+ },
+ "sidestab/v1": {
+  "id": "dfb49cb3-d82d-4aa8-9d74-5ab6cc6c7ac6",
+  "ok": 1
+ },
+ "sidestab/v2": {
+  "id": "3465fd5c-4980-4540-8913-cfee896e391a",
+  "ok": 1
+ },
+ "sidestab/v3": {
+  "id": "8031e31b-df8a-4ad2-9e96-96f39ad2d4ad",
+  "ok": 1
+ },
+ "sidestab/v4": {
+  "id": "ed90f71b-fc94-4f59-bc2a-9df37bac1a19",
+  "ok": 1
+ },
+ "backstep/v1": {
+  "id": "e1f74870-c829-40a4-a697-56e025fe0575",
+  "ok": 1
+ },
+ "backstep/v2": {
+  "id": "33f2c992-a688-4734-94ad-dff580ea93a9",
+  "ok": 1
+ },
+ "backstep/v3": {
+  "id": "7789334a-4878-4f05-92f0-876835aa09da",
+  "ok": 1
+ },
+ "backstep/v4": {
+  "id": "a4feeccf-4cb1-4fe7-be1b-b559332a49f4",
+  "ok": 1
+ }
+}
