@@ -72,12 +72,67 @@
   "ok": 1
  },
  "taunt_a": {
-  "id": "7143e4a2-9638-4d11-8632-974041693227"
+  "id": "7143e4a2-9638-4d11-8632-974041693227",
+  "ok": 1
  },
  "taunt_c": {
-  "id": "e837b21d-7f8f-463b-9cb6-21f117bbb398"
+  "id": "e837b21d-7f8f-463b-9cb6-21f117bbb398",
+  "ok": 1
  },
  "warcry_a": {
-  "id": "753a260e-f382-47ee-8155-2fcc42d5afcf"
+  "id": "753a260e-f382-47ee-8155-2fcc42d5afcf",
+  "ok": 1
+ },
+ "warcry_c": {
+  "id": "3eed5d9b-754d-4ea3-88a6-703e3b14eb73",
+  "ok": 1
+ },
+ "resolve_a": {
+  "id": "81ec4eb2-ceaa-4e5e-9a31-8386960d0e10",
+  "ok": 1
+ },
+ "resolve_c": {
+  "id": "5d01cdd2-9bb7-4592-ba27-102c9a2acc44",
+  "ok": 1
+ },
+ "brace_a": {
+  "id": "1bf6add5-b80b-47ff-b3ce-5eab2004e664",
+  "ok": 1
+ },
+ "brace_c": {
+  "id": "54f2c235-714c-49a0-8086-af380c955ab6",
+  "ok": 1
+ },
+ "steel_a": {
+  "id": "25dc7057-8faa-4866-a481-35c7dd52c569",
+  "ok": 1
+ },
+ "steel_c": {
+  "id": "180ce616-27d7-4c79-ad66-b4e3a6f37c58",
+  "ok": 1
+ },
+ "earth_a": {
+  "id": "84090c8e-1011-4388-8981-bf1bc2df2985",
+  "ok": 1
+ },
+ "earth_c": {
+  "id": "08d9a1ed-481f-43e4-a6ed-0b837c1f6697",
+  "ok": 1
+ },
+ "leap_a": {
+  "id": "e5effbb0-7a7e-416d-b2a7-d851dd920fcd",
+  "ok": 1
+ },
+ "leap_c": {
+  "id": "93912679-898e-4531-af5b-d88880b11303",
+  "ok": 1
+ },
+ "shieldland_a": {
+  "id": "4128a850-2e15-4f65-b912-b8cd04c4226c",
+  "ok": 1
+ },
+ "shieldland_c": {
+  "id": "261472ae-76ee-4dca-9fe2-6dbe5655d10e",
+  "ok": 1
  }
 }

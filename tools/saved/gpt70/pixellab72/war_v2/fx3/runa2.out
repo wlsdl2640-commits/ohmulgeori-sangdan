@@ -1,0 +1,33 @@
+[오후 5:00:34] 보냄 leap_out 18e545e8-687f-4b68-a279-9faebd2fb0ae
+[오후 5:00:34] 보냄 earth_out 039f85f2-0708-49b4-9cc1-ad1ce5e8ecd1
+[오후 5:00:36] 보냄 earth_in 40569768-40d9-49d5-b938-70fa537950ca
+[오후 5:01:59] 받음 earth_in
+[오후 5:02:00] 보냄 leap_in b526f9ec-0d15-46a4-89d8-f5a631436731
+[오후 5:02:45] 받음 leap_out
+[오후 5:02:46] 보냄 shieldland_out 597010ba-c253-490c-9643-fdfd1beb0569
+[오후 5:02:55] 받음 earth_out
+[오후 5:02:56] 보냄 shieldland_in adc04474-e098-43dd-ad01-8bab73898680
+[오후 5:03:29] 받음 leap_in
+[오후 5:03:30] 보냄 slash_out 1f70d42d-6742-450b-80d9-c2eaba705cd4
+[오후 5:05:17] 받음 shieldland_in
+[오후 5:05:18] 보냄 slash_in 8c67d58e-5dfc-48e9-913b-fedf53f12b4d
+[오후 5:05:22] 받음 shieldland_out
+[오후 5:05:23] 보냄 downcut_out 5397c8dc-2b8a-495b-9b00-734c2ad44d4a
+[오후 5:05:45] 받음 slash_out
+[오후 5:05:46] 보냄 downcut_in 35fd003a-df7c-4a18-9596-cfcf2046f73a
+[오후 5:06:48] 받음 slash_in
+[오후 5:06:49] 보냄 twocut_out 640edf3f-056e-4cc2-9761-b2891c86a09e
+[오후 5:07:26] 받음 downcut_in
+[오후 5:07:26] 보냄 twocut_in 1f2bb39e-4b13-4f3e-9d9b-acd151217344
+[오후 5:07:40] 받음 downcut_out
+[오후 5:07:41] 보냄 brace_out a1c3f961-f9cd-4d66-91a3-cfeb01fe4a79
+[오후 5:09:03] 받음 twocut_in
+[오후 5:09:05] 보냄 brace_in d3846b6b-8039-4bd6-8d2e-143bcdb77731
+[오후 5:09:08] 받음 twocut_out
+[오후 5:09:09] 보냄 resolve_out 301bc5a8-4cc2-4cc4-b896-92728435240b
+[오후 5:10:02] 받음 brace_out
+[오후 5:10:02] 보냄 resolve_in 186f80f8-41c0-49fb-830b-7f02b8ba4d46
+[오후 5:10:37] 받음 brace_in
+[오후 5:11:42] 받음 resolve_in
+[오후 5:11:45] 받음 resolve_out
+[오후 5:11:45] 끝 — 16 / 16

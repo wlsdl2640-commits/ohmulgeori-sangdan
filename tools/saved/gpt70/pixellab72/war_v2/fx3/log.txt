@@ -96,3 +96,85 @@
 [오후 4:57:32] 보냄 warcry_a 753a260e-f382-47ee-8155-2fcc42d5afcf
 [오후 4:57:39] 받음 warcry_d
 [오후 4:57:40] 보냄 brace_d ca3eac3d-92dd-4ab8-9479-5b2d4e1395e6
+[오후 4:58:44] 받음 resolve_d
+[오후 4:58:45] 보냄 steel_d e25ba37c-548f-489c-a7be-20da81acee62
+[오후 4:58:52] 보냄 earth 62ab3b91-8cd2-43ba-8127-f7cff7aca66b
+[오후 4:58:52] 보냄 leap 3448c10d-45ea-419c-904c-6bffff40a0bc
+[오후 4:58:55] 받음 brace_d
+[오후 4:58:56] 보냄 earth_d a13c924c-487f-4e68-9e65-f5e4075e974c
+[오후 4:59:01] 받음 taunt_a
+[오후 4:59:01] 보냄 warcry_c 3eed5d9b-754d-4ea3-88a6-703e3b14eb73
+[오후 4:59:49] 받음 steel_d
+[오후 4:59:49] 보냄 leap_d aacf0a82-6edb-43f3-b3d4-a05ea7dc28c5
+[오후 4:59:56] 받음 taunt_c
+[오후 4:59:56] 보냄 resolve_a 81ec4eb2-ceaa-4e5e-9a31-8386960d0e10
+[오후 5:00:04] 받음 leap
+[오후 5:00:04] 받음 earth
+[오후 5:00:05] 보냄 shieldland 34d27162-fe84-4d10-a0fc-fd5c7467166e
+[오후 5:00:05] 보냄 slash 09c10445-d30f-446e-837b-2f9f85d4f4f4
+[오후 5:00:29] 받음 earth_d
+[오후 5:00:30] 보냄 shieldland_d b319889b-1fb5-4226-b930-aff64ab2ca56
+[오후 5:00:34] 보냄 leap_out 18e545e8-687f-4b68-a279-9faebd2fb0ae
+[오후 5:00:34] 보냄 earth_out 039f85f2-0708-49b4-9cc1-ad1ce5e8ecd1
+[오후 5:00:36] 보냄 earth_in 40569768-40d9-49d5-b938-70fa537950ca
+[오후 5:01:13] 받음 warcry_c
+[오후 5:01:14] 보냄 resolve_c 5d01cdd2-9bb7-4592-ba27-102c9a2acc44
+[오후 5:01:43] 받음 leap_d
+[오후 5:01:46] 받음 resolve_a
+[오후 5:01:47] 보냄 brace_a 1bf6add5-b80b-47ff-b3ce-5eab2004e664
+[오후 5:01:59] 받음 earth_in
+[오후 5:02:00] 보냄 leap_in b526f9ec-0d15-46a4-89d8-f5a631436731
+[오후 5:02:23] 받음 shieldland_d
+[오후 5:02:23] 끝 — 17 / 17
+[오후 5:02:45] 받음 leap_out
+[오후 5:02:46] 보냄 shieldland_out 597010ba-c253-490c-9643-fdfd1beb0569
+[오후 5:02:55] 받음 earth_out
+[오후 5:02:56] 보냄 shieldland_in adc04474-e098-43dd-ad01-8bab73898680
+[오후 5:03:29] 받음 leap_in
+[오후 5:03:30] 보냄 slash_out 1f70d42d-6742-450b-80d9-c2eaba705cd4
+[오후 5:03:38] 받음 resolve_c
+[오후 5:03:38] 보냄 brace_c 54f2c235-714c-49a0-8086-af380c955ab6
+[오후 5:04:22] 받음 brace_a
+[오후 5:04:23] 보냄 steel_a ca1875df-46f6-43d9-8a74-c964d87f67ac
+[오후 5:05:17] 받음 shieldland_in
+[오후 5:05:18] 보냄 slash_in 8c67d58e-5dfc-48e9-913b-fedf53f12b4d
+[오후 5:05:22] 받음 shieldland_out
+[오후 5:05:23] 보냄 downcut_out 5397c8dc-2b8a-495b-9b00-734c2ad44d4a
+[오후 5:05:29] 받음 warcry_a
+[오후 5:05:30] 보냄 steel_c 180ce616-27d7-4c79-ad66-b4e3a6f37c58
+[오후 5:05:45] 받음 slash_out
+[오후 5:05:46] 보냄 downcut_in 35fd003a-df7c-4a18-9596-cfcf2046f73a
+[오후 5:05:51] 받음 brace_c
+[오후 5:05:52] 보냄 earth_a 84090c8e-1011-4388-8981-bf1bc2df2985
+[오후 5:06:24] !! steel_a 실패 1: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
+[오후 5:06:30] 보냄 steel_a 25dc7057-8faa-4866-a481-35c7dd52c569
+[오후 5:06:35] 받음 steel_c
+[오후 5:06:35] 보냄 earth_c 08d9a1ed-481f-43e4-a6ed-0b837c1f6697
+[오후 5:06:48] 받음 slash_in
+[오후 5:06:49] 보냄 twocut_out 640edf3f-056e-4cc2-9761-b2891c86a09e
+[오후 5:07:26] 받음 downcut_in
+[오후 5:07:26] 받음 earth_a
+[오후 5:07:26] 보냄 twocut_in 1f2bb39e-4b13-4f3e-9d9b-acd151217344
+[오후 5:07:27] 보냄 leap_a e5effbb0-7a7e-416d-b2a7-d851dd920fcd
+[오후 5:07:40] 받음 downcut_out
+[오후 5:07:41] 보냄 brace_out a1c3f961-f9cd-4d66-91a3-cfeb01fe4a79
+[오후 5:08:22] 받음 earth_c
+[오후 5:08:23] 보냄 leap_c 93912679-898e-4531-af5b-d88880b11303
+[오후 5:08:43] 받음 leap_a
+[오후 5:08:43] 받음 steel_a
+[오후 5:08:43] 보냄 shieldland_a 4128a850-2e15-4f65-b912-b8cd04c4226c
+[오후 5:08:43] 보냄 shieldland_c 261472ae-76ee-4dca-9fe2-6dbe5655d10e
+[오후 5:09:03] 받음 twocut_in
+[오후 5:09:05] 보냄 brace_in d3846b6b-8039-4bd6-8d2e-143bcdb77731
+[오후 5:09:08] 받음 twocut_out
+[오후 5:09:09] 보냄 resolve_out 301bc5a8-4cc2-4cc4-b896-92728435240b
+[오후 5:09:39] 받음 leap_c
+[오후 5:09:49] 받음 shieldland_a
+[오후 5:10:00] 받음 shieldland_c
+[오후 5:10:00] 끝 — 34 / 34
+[오후 5:10:02] 받음 brace_out
+[오후 5:10:02] 보냄 resolve_in 186f80f8-41c0-49fb-830b-7f02b8ba4d46
+[오후 5:10:37] 받음 brace_in
+[오후 5:11:42] 받음 resolve_in
+[오후 5:11:45] 받음 resolve_out
+[오후 5:11:45] 끝 — 16 / 16

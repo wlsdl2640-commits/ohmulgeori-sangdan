@@ -37,3 +37,35 @@
 [오후 4:57:21] 보냄 taunt_c e837b21d-7f8f-463b-9cb6-21f117bbb398
 [오후 4:57:32] 받음 shove_a
 [오후 4:57:32] 보냄 warcry_a 753a260e-f382-47ee-8155-2fcc42d5afcf
+[오후 4:59:01] 받음 taunt_a
+[오후 4:59:01] 보냄 warcry_c 3eed5d9b-754d-4ea3-88a6-703e3b14eb73
+[오후 4:59:56] 받음 taunt_c
+[오후 4:59:56] 보냄 resolve_a 81ec4eb2-ceaa-4e5e-9a31-8386960d0e10
+[오후 5:01:13] 받음 warcry_c
+[오후 5:01:14] 보냄 resolve_c 5d01cdd2-9bb7-4592-ba27-102c9a2acc44
+[오후 5:01:46] 받음 resolve_a
+[오후 5:01:47] 보냄 brace_a 1bf6add5-b80b-47ff-b3ce-5eab2004e664
+[오후 5:03:38] 받음 resolve_c
+[오후 5:03:38] 보냄 brace_c 54f2c235-714c-49a0-8086-af380c955ab6
+[오후 5:04:22] 받음 brace_a
+[오후 5:04:23] 보냄 steel_a ca1875df-46f6-43d9-8a74-c964d87f67ac
+[오후 5:05:29] 받음 warcry_a
+[오후 5:05:30] 보냄 steel_c 180ce616-27d7-4c79-ad66-b4e3a6f37c58
+[오후 5:05:51] 받음 brace_c
+[오후 5:05:52] 보냄 earth_a 84090c8e-1011-4388-8981-bf1bc2df2985
+[오후 5:06:24] !! steel_a 실패 1: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
+[오후 5:06:30] 보냄 steel_a 25dc7057-8faa-4866-a481-35c7dd52c569
+[오후 5:06:35] 받음 steel_c
+[오후 5:06:35] 보냄 earth_c 08d9a1ed-481f-43e4-a6ed-0b837c1f6697
+[오후 5:07:26] 받음 earth_a
+[오후 5:07:27] 보냄 leap_a e5effbb0-7a7e-416d-b2a7-d851dd920fcd
+[오후 5:08:22] 받음 earth_c
+[오후 5:08:23] 보냄 leap_c 93912679-898e-4531-af5b-d88880b11303
+[오후 5:08:43] 받음 leap_a
+[오후 5:08:43] 받음 steel_a
+[오후 5:08:43] 보냄 shieldland_a 4128a850-2e15-4f65-b912-b8cd04c4226c
+[오후 5:08:43] 보냄 shieldland_c 261472ae-76ee-4dca-9fe2-6dbe5655d10e
+[오후 5:09:39] 받음 leap_c
+[오후 5:09:49] 받음 shieldland_a
+[오후 5:10:00] 받음 shieldland_c
+[오후 5:10:00] 끝 — 34 / 34

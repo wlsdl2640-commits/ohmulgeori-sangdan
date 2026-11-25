@@ -1,0 +1,146 @@
+[
+ {
+  "key": "earth_out",
+  "src": "earth/00.png",
+  "desc": "The stone spikes crack, crumble and sink back into the ground one by one from left to right, rock chunks fall and settle, dust clouds roll outward along the ground and thin out, the amber glow in the crack cools and darkens until only a faint crack and a little rubble remain. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "ground fissure with erupting stone spikes",
+  "pose": "the stone spikes fully raised, dust rolling",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "earth_in",
+  "src": "earth/00.png",
+  "desc": "The stone spikes sink smoothly straight back down into the crack, starting from the right end, the crack slowly closes from right to left, flying rocks and dust are drawn back into the ground, the amber glow shrinks steadily until the ground is untouched and empty. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "ground fissure with erupting stone spikes",
+  "pose": "the stone spikes fully raised, dust rolling",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "leap_out",
+  "src": "leap/00.png",
+  "desc": "The dust and misty dirt clouds keep spreading low and wide along the ground while thinning into fine drifting particles, mud chunks fall back down and settle, the center flash fades, until only a faint crater ring remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a landing impact with dust clouds and crater",
+  "pose": "the impact at its peak, dust bursting out",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "leap_in",
+  "src": "leap/00.png",
+  "desc": "The dust and dirt clouds smoothly contract back toward the center bottom, mud chunks fall back into place, the crater ring shrinks, the flash shrinks to a tiny point and disappears, leaving nothing. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a landing impact with dust clouds and crater",
+  "pose": "the impact at its peak, dust bursting out",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "shieldland_out",
+  "src": "shieldland/00.png",
+  "desc": "The golden hexagon dome shimmers, its facets flicker and break apart into small glowing shards that drift upward and fade, the ground ring flash dims, dust clouds roll outward and thin away. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a landing impact with a golden hexagon barrier dome",
+  "pose": "the dome fully formed, dust bursting",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "shieldland_in",
+  "src": "shieldland/00.png",
+  "desc": "The golden hexagon dome smoothly shrinks down into the ground ring, the ring tightens to a small bright point at the center bottom, the dust is drawn back inward, until nothing remains. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a landing impact with a golden hexagon barrier dome",
+  "pose": "the dome fully formed, dust bursting",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "slash_out",
+  "src": "slash/00.png",
+  "desc": "The crescent slash arc thins from the tail toward the tip, breaks into small glowing fragments and streaks that drift along the swing direction and fade out, sparks fall and dim, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a diagonal sword-slash crescent arc of light with sparks",
+  "pose": "the slash arc at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "slash_in",
+  "src": "slash/00.png",
+  "desc": "The crescent slash arc smoothly retracts back along its own path toward its starting point at the upper left, the tip end disappearing first, shrinking into a thin line of light that shortens until it vanishes; sparks are drawn back in. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a diagonal sword-slash crescent arc of light with sparks",
+  "pose": "the slash arc at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "downcut_out",
+  "src": "downcut/00.png",
+  "desc": "The falling slash arc thins and breaks apart into glowing fragments that fade out, the sparks at the strike point fall and dim, mud bits fall back, the short ground crack stays faintly then fades. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a falling sword-slash arc striking the ground",
+  "pose": "the arc at full brightness striking the ground",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "downcut_in",
+  "src": "downcut/00.png",
+  "desc": "The falling slash arc smoothly retracts upward back along its path toward its high starting point, the bottom end disappearing first, shrinking into a short thin line of light that vanishes; sparks and mud bits are drawn back in. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a falling sword-slash arc striking the ground",
+  "pose": "the arc at full brightness striking the ground",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "twocut_out",
+  "src": "twocut/00.png",
+  "desc": "The two crossing slash arcs thin from their tails, split into glowing fragments and streaks that scatter outward and fade, the star flash at the crossing shrinks and vanishes, sparks fall and dim. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "two crossing sword-slash arcs in an X with a spark flash",
+  "pose": "both arcs at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "twocut_in",
+  "src": "twocut/00.png",
+  "desc": "Both slash arcs smoothly retract back along their paths toward their starting points, shortening into thin lines that vanish one after the other, the crossing flash shrinks to nothing. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "two crossing sword-slash arcs in an X with a spark flash",
+  "pose": "both arcs at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "brace_out",
+  "src": "brace/00.png",
+  "desc": "The rune circle keeps glowing and slowly rotates, the light-chains pulse and slowly sink into the ground, small sparks rise, then the glow gradually dims to a faint outline and fades out. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a glowing steel-blue rune circle on the ground with chains of light",
+  "pose": "the rune circle fully glowing",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "brace_in",
+  "src": "brace/00.png",
+  "desc": "The light-chains smoothly pull up out of the ground and shorten, the rune circle shrinks evenly toward its center into a small bright point that fades, the stone plates sink back flat, dust is drawn back in. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a glowing steel-blue rune circle on the ground with chains of light",
+  "pose": "the rune circle fully glowing",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "resolve_out",
+  "src": "resolve/00.png",
+  "desc": "The golden light column keeps rising upward and thins out from the bottom, embers and light motes float up and fade, the ground sigil slowly dims and fades away. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a golden light column rising from a ground sigil",
+  "pose": "the light column at full height",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "resolve_in",
+  "src": "resolve/00.png",
+  "desc": "The golden light column smoothly shrinks downward back into the ground sigil, the motes fall back in, the sigil shrinks evenly to a small bright point at the center and fades away. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a golden light column rising from a ground sigil",
+  "pose": "the light column at full height",
+  "frames": 24,
+  "seed": 11
+ }
+]
