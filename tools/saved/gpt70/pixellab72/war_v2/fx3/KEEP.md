@@ -47,3 +47,7 @@
 | 방패 두드리기 · 방패 밀치기 · 둥근 방패 막기 | **다시** — 「컨셉에 너무 안 맞음」 | 새 시안 `bashS*` · `shoveS*` · `blockS*`(마법 막 · 금빛 룬 빼고 나무 방패 · 쇠 · 먼지 · 불꽃으로, jobs_in5.json) |
 | 자세 고정 brace · 강철 피부 steel | **새로** — 좋다고 한 몸 감싸는 빛으로 | 효과 도구 시안 `../fx4/brace_A~C` · `steel_A~B`(바닥 효과 없음, 32장) |
 | 뛰어들기 leap · 방패 착지 shieldland | 아직 안 고름 | 시안 다시 보임 |
+- 움직임(11-25 저녁 · anim_in3.json): slash_c · lowcut_c · sweep_a · counter · taunt_a · warcry_a · resolve_a 생김 24 + 사라짐 40 → 판 `../page_fx3_pick1~5.html`.
+  - **돌격 함성 ①은 좌우를 뒤집어 소리 물결이 동료 쪽(왼쪽)으로** 퍼지게 했다(파티 강화 — mk_fx3.py MIR). 원래 그림은 적 쪽으로 퍼졌다.
+  - **결의 ①은 가는 빛기둥이 몸 뒤에 가려 안 보여서 앞에 반투명(0.6)으로** 겹쳤다.
+- 다시 고를 판 `../page_fx4_redo.html`(자세 고정 A~C · 강철 피부 A~B · 방패 셋 새 시안) · `../page_fx4_redo_2.html`(뛰어들기 · 방패 착지 ①~④). 효과 도구 저장: 자세 고정 v4 A 09c6ba08 · B 2721ff60 · C f620ffe9 · 강철 피부 v4 A b2e5c241 · B 5893f9c6.

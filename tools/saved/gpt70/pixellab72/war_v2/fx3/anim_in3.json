@@ -1,0 +1,128 @@
+[
+ {
+  "key": "slash_c_out",
+  "src": "slash_c/00.png",
+  "desc": "The crescent slash arc thins from the tail toward the tip, the wind ribbons unwind and drift away, rock bits fall, the tip sparks scatter and dim, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a big diagonal sword-slash crescent with swirling wind ribbons, rock bits and a spark burst at the tip",
+  "pose": "the slash at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "slash_c_in",
+  "src": "slash_c/00.png",
+  "desc": "The crescent slash arc retracts back along its own path toward the upper left, the tip end disappearing first, the wind ribbons wind back in and the sparks are drawn back, shrinking to a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a big diagonal sword-slash crescent with swirling wind ribbons, rock bits and a spark burst at the tip",
+  "pose": "the slash at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "lowcut_c_out",
+  "src": "lowcut_c/00.png",
+  "desc": "The low slash streak thins from left to right and breaks into small fading glints, the dirt and grass clods fall back to the ground and settle, the spark burst dims, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a low horizontal blue-white sword slash skimming the ground with flying dirt, grass and a spark burst",
+  "pose": "the low slash at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "lowcut_c_in",
+  "src": "lowcut_c/00.png",
+  "desc": "The low slash streak retracts leftward along the ground toward its start, the dirt and sparks are drawn back into the ground, shrinking to a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a low horizontal blue-white sword slash skimming the ground with flying dirt, grass and a spark burst",
+  "pose": "the low slash at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "sweep_a_out",
+  "src": "sweep_a/00.png",
+  "desc": "The wide sweep arc thins and stretches along its swing direction, the wind streaks unwind and drift off, rock chips fall and settle, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a wide horizontal steel-grey sword sweep arc with wind streaks and flying rock chips",
+  "pose": "the sweep arc at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "sweep_a_in",
+  "src": "sweep_a/00.png",
+  "desc": "The wide sweep arc retracts back toward its left starting end, the wind streaks wind back in, shrinking to a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a wide horizontal steel-grey sword sweep arc with wind streaks and flying rock chips",
+  "pose": "the sweep arc at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "counter_out",
+  "src": "counter/00.png",
+  "desc": "The parry flash star on the left shrinks and dims first, then the red slash streak on the right thins from left to right into fading red glints, debris falls, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a bright parry flash star on the left and a red sword slash streak shooting out to the right",
+  "pose": "both the parry flash and the red slash at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "counter_in",
+  "src": "counter/00.png",
+  "desc": "The red slash streak on the right retracts leftward back into the parry flash, then the parry flash star shrinks to a point and vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a bright parry flash star on the left and a red sword slash streak shooting out to the right",
+  "pose": "both the parry flash and the red slash at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "taunt_a_out",
+  "src": "taunt_a/00.png",
+  "desc": "The red flames lower and flicker down, the rage spikes shrink back, embers float up and dim, the rocks darken and the ground glow cools, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a ring of red-orange flames and rage spikes bursting up from scattered rocks on the ground",
+  "pose": "the flame ring at full height",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "taunt_a_in",
+  "src": "taunt_a/00.png",
+  "desc": "The flame ring sinks smoothly back down into the rocks, the spikes shrink into the ground, the glow shrinks to a small ember point that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a ring of red-orange flames and rage spikes bursting up from scattered rocks on the ground",
+  "pose": "the flame ring at full height",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "warcry_a_out",
+  "src": "warcry_a/00.png",
+  "desc": "The sound-wave arcs keep spreading slowly to the right while thinning and fading one by one, the fiery burst on the left sinks and dims to embers, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a fiery shout burst on the left with concentric red sound-wave arcs spreading to the right",
+  "pose": "the shout burst and sound waves at full size",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "warcry_a_in",
+  "src": "warcry_a/00.png",
+  "desc": "The sound-wave arcs shrink back leftward into the fiery burst one by one, then the burst sinks into the ground and vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a fiery shout burst on the left with concentric red sound-wave arcs spreading to the right",
+  "pose": "the shout burst and sound waves at full size",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "resolve_a_out",
+  "src": "resolve_a/00.png",
+  "desc": "The golden pillar thins and slowly fades from the bottom up, the spiraling sparkles float upward and dim, the rune circle on the ground fades last, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a slim golden light pillar rising from a glowing rune circle on the ground with spiraling sparkles",
+  "pose": "the light pillar at full height",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "resolve_a_in",
+  "src": "resolve_a/00.png",
+  "desc": "The golden pillar sinks smoothly straight down into the rune circle, the sparkles spiral back in, then the rune circle shrinks to a point and vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a slim golden light pillar rising from a glowing rune circle on the ground with spiraling sparkles",
+  "pose": "the light pillar at full height",
+  "frames": 24,
+  "seed": 11
+ }
+]

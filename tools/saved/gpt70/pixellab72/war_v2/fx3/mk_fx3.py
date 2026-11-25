@@ -16,8 +16,16 @@ P={
  'shieldland':('방패 착지','shieldland','b',FX,GY+4,10,0),
  'brace':('자세 고정','brace','b',FX,GY+4,10,0),
  'resolve':('결의','resolve','b',FX,GY+4,12,0),
+ # 11-25 저녁 대표님 고른 판
+ 'slash_c':('밀어 베기 ③','slash','c',205,GY-48,4,1),
+ 'lowcut_c':('발굽 끊기 ③','lowcut','b',215,GY+4,4,1),
+ 'sweep_a':('가로 휩쓸기 ①','sweep','c',215,GY-30,4,1),
+ 'counter':('되치기 ②','counter','c',200,GY-48,4,1),
+ 'taunt_a':('도발 ①','taunt','b',FX,GY+4,8,0),
+ 'warcry_a':('돌격 함성 ① (동료 쪽으로)','warcry','br',FX+34,GY+4,8,0),
+ 'resolve_a':('결의 ①','resolve','b',FX,GY+4,12,0),
 }
-Z={'brace':('back',1),'resolve':('back',1),'shieldland':('front',0.6),'leap':('both',1)}   # 효과 앞뒤 · 앞에 그릴 때 투명도
+Z={'brace':('back',1),'resolve':('back',1),'resolve_a':('front',0.6),'taunt_a':('back',1),'warcry_a':('back',1),'shieldland':('front',0.6),'leap':('both',1)}   # 효과 앞뒤 · 앞에 그릴 때 투명도
 def tile(): t=bg.crop((0,0,360,224)).copy(); t.alpha_composite(mon,(360-mon.width-6,GY-mon.height+4)); return t
 def strip(k):
     s=Image.open(R+f'strips/{k}.png').convert('RGBA'); n=IDX[k]['n']; w=IDX[k]['cell'][0]
@@ -28,13 +36,16 @@ def bbox(fr):
         x=f.getbbox()
         if x: b=x if b is None else (min(b[0],x[0]),min(b[1],x[1]),max(b[2],x[2]),max(b[3],x[3]))
     return b
+MIR={'warcry_a'}   # 동료 쪽(왼쪽)으로 퍼지게 뒤집음 — 파티 강화
 def build(k):
     ko,sk,mode,ax,ay,tin,lead=P[k]
-    eff,pk=smooth(k, stretch_out=2 if k in('slash','twocut','downcut') else 1)
+    eff,pk=smooth(k, stretch_out=2 if k in('slash','twocut','downcut','slash_c','lowcut_c','sweep_a','counter') else 1)
     pre=eff[:pk]; idx=[round(i*(len(pre)-1)/max(1,tin-1)) for i in range(tin)] if pre else []
     eff=[pre[i] for i in idx]+eff[pk:]
+    if k in MIR: eff=[e.transpose(Image.FLIP_LEFT_RIGHT) for e in eff]
     b=bbox(eff)
-    if mode=='c': ox,oy=ax-(b[0]+b[2])//2, ay-(b[1]+b[3])//2
+    if mode=='br': ox,oy=ax-b[2], ay-b[3]
+    elif mode=='c': ox,oy=ax-(b[0]+b[2])//2, ay-(b[1]+b[3])//2
     elif mode=='b': ox,oy=ax-(b[0]+b[2])//2, ay-b[3]
     else: ox,oy=ax-b[0], ay-b[3]
     wf,h,cw=strip(sk); idle,_,_=strip('idle')

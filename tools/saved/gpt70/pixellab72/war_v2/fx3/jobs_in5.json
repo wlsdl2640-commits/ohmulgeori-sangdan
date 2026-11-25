@@ -1,0 +1,119 @@
+[
+ {
+  "key": "bashS1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: the dull heavy impact of a round wooden shield slammed into an enemy: a short flat vertical impact flash shaped like a thick crescent on the right side (pale warm white core, grey-steel edge, no gold), a few chunky wood splinters and small iron flecks bursting outward, a ring of grey dust puffs pushed out sideways at chest height, short thick motion strokes. Physical and grounded, no magic, no runes, no glowing barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 705
+  }
+ },
+ {
+  "key": "bashS2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: the dull heavy impact of a round wooden shield slammed into an enemy: a short flat vertical impact flash shaped like a thick crescent on the right side (pale warm white core, grey-steel edge, no gold), a few chunky wood splinters and small iron flecks bursting outward, a ring of grey dust puffs pushed out sideways at chest height, short thick motion strokes. Physical and grounded, no magic, no runes, no glowing barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 742
+  }
+ },
+ {
+  "key": "bashS3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: the dull heavy impact of a round wooden shield slammed into an enemy: a short flat vertical impact flash shaped like a thick crescent on the right side (pale warm white core, grey-steel edge, no gold), a few chunky wood splinters and small iron flecks bursting outward, a ring of grey dust puffs pushed out sideways at chest height, short thick motion strokes. Physical and grounded, no magic, no runes, no glowing barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 779
+  }
+ },
+ {
+  "key": "shoveS1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forceful forward shove: a low wave of brown dust and grit sweeping to the right along the ground from behind, curved horizontal push strokes like rushing air at chest height pointing right, small pebbles kicked up, and on the far right three or four small bright yellow cartoon stun stars circling in a little ring above head height. Physical and grounded, no magic, no runes, no glowing wall. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 706
+  }
+ },
+ {
+  "key": "shoveS2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forceful forward shove: a low wave of brown dust and grit sweeping to the right along the ground from behind, curved horizontal push strokes like rushing air at chest height pointing right, small pebbles kicked up, and on the far right three or four small bright yellow cartoon stun stars circling in a little ring above head height. Physical and grounded, no magic, no runes, no glowing wall. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 743
+  }
+ },
+ {
+  "key": "shoveS3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a forceful forward shove: a low wave of brown dust and grit sweeping to the right along the ground from behind, curved horizontal push strokes like rushing air at chest height pointing right, small pebbles kicked up, and on the far right three or four small bright yellow cartoon stun stars circling in a little ring above head height. Physical and grounded, no magic, no runes, no glowing wall. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 780
+  }
+ },
+ {
+  "key": "blockS1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blow being deflected off the face of a round shield: a fan-shaped spray of bright orange-white metal sparks bouncing back to the right from one small hot impact point, a short curved white deflection streak, a few tiny iron chips and a small puff of grey smoke at the impact point. Compact and sharp, physical, no magic, no runes, no glowing barrier, no coin shapes. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 706
+  }
+ },
+ {
+  "key": "blockS2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blow being deflected off the face of a round shield: a fan-shaped spray of bright orange-white metal sparks bouncing back to the right from one small hot impact point, a short curved white deflection streak, a few tiny iron chips and a small puff of grey smoke at the impact point. Compact and sharp, physical, no magic, no runes, no glowing barrier, no coin shapes. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 743
+  }
+ },
+ {
+  "key": "blockS3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blow being deflected off the face of a round shield: a fan-shaped spray of bright orange-white metal sparks bouncing back to the right from one small hot impact point, a short curved white deflection streak, a few tiny iron chips and a small puff of grey smoke at the impact point. Compact and sharp, physical, no magic, no runes, no glowing barrier, no coin shapes. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 780
+  }
+ }
+]
