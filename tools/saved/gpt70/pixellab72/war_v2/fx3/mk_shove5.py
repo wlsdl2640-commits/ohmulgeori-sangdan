@@ -21,8 +21,10 @@ def make(n, flip=False, short=False):
     name = f'shoveQ{n}_short' if short else f'shoveQ{n}'
     e = Image.open(f'shoveQ{n}/00.png').convert('RGBA')
     if flip: e = e.transpose(Image.FLIP_LEFT_RIGHT)
-    e = lead(e); k0 = min(1, 58 / e.height); e = e.resize((round(e.width * k0), round(e.height * k0)), Image.NEAREST) if k0 < 1 else e
+    e = lead(e); k0 = min(1, (46 if short else 58) / e.height); e = e.resize((round(e.width * k0), round(e.height * k0)), Image.NEAREST) if k0 < 1 else e
     wf, hit, cw = m.strip('shove'); x0 = FX + 30; y0 = GY - 62 - e.height // 2
+    if short:   # 11-26 대표님 「나가는 효과 높이가 방패와 맞게 — 너무 높음」: 맞히는 장 방패 가운데(띠 칸 x 138 · y 76)에서 시작
+        x0 = FX - 76 + 138 - e.width // 2 + 6; y0 = GY - 124 + 76 - e.height // 2
     T0, TRAV, N = hit, TR_, 26          # 맞히는 장부터 생김
     out = []
     def pos(k):                        # 생긴 뒤 k장째: (x, 크기, 진하기)
