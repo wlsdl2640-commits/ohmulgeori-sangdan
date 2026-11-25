@@ -1,0 +1,53 @@
+[
+ {
+  "key": "bluelarva2/a",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Fat blue butterfly caterpillar that lives in an ant nest, chubby segmented body in pale sky-blue and lavender, a row of small soft bumps on its back, a tiny round head with little dark eyes, short stubby legs, looks cute and harmless. Side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "bluelarva2/b",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Big slug-like butterfly larva mimicking an ant queen: wide flat pale-blue body with fake ant-like dark spots and small fake antennae on its head, glossy waxy skin, short legs underneath. Side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "bluelarva2/c",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Curled-up plump caterpillar monster of a blue butterfly, body half rolled in a C shape, light blue with violet stripes and tiny white hairs, smooth round head, it is vibrating and humming. Side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference ant monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:16a25210-69ad-4726-ba30-57c0822ecec6",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ }
+]
