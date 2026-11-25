@@ -25,7 +25,13 @@ P={
  'taunt_a':('도발 ①','taunt','b',FX,GY+4,8,0),
  'warcry_a':('돌격 함성 ① (동료 쪽으로)','warcry','br',FX+34,GY+4,8,0),
  'resolve_a':('결의 ①','resolve','b',FX,GY+4,12,0),
+ # 11-25 밤 대표님 둘째 고름 — 방패 두드리기 ⑥ · 둥근 방패 막기 ②
+ 'bashQ6':('방패 두드리기 ⑥ (소리 물결)','bash','c',226,GY-45,4,1),
+ 'blockQ2':('둥근 방패 막기 ② (에너지 막)','block','c',186,GY-48,6,1),
 }
+# 그림이 전사보다 커서 줄이는 것: (최대 높이, 최대 너비) — mk_fx7page.py fit과 같게
+THK={'bashQ6':4000}   # 사이 장 섞는 문턱 — 물결 그림은 장마다 차이가 커서 사이 장이 너무 많이 끼었다
+FIT={'bashQ6':(66,120),'blockQ2':(80,999)}
 Z={'brace':('back',1),'resolve':('back',1),'resolve_a':('front',0.6),'taunt_a':('back',1),'warcry_a':('back',1),'shieldland':('front',0.6),'leap':('both',1)}   # 효과 앞뒤 · 앞에 그릴 때 투명도
 def tile(): t=bg.crop((0,0,360,224)).copy(); t.alpha_composite(mon,(360-mon.width-6,GY-mon.height+4)); return t
 def strip(k):
@@ -40,10 +46,13 @@ def bbox(fr):
 MIR={'warcry_a'}   # 동료 쪽(왼쪽)으로 퍼지게 뒤집음 — 파티 강화
 def build(k):
     ko,sk,mode,ax,ay,tin,lead=P[k]
-    eff,pk=smooth(k, stretch_out=2 if k in('slash','twocut','downcut','slash_c','lowcut_c','sweep_a','counter') else 1)
+    eff,pk=smooth(k, TH=THK.get(k,900), stretch_out=2 if k in('slash','twocut','downcut','slash_c','lowcut_c','sweep_a','counter') else 1)
     pre=eff[:pk]; idx=[round(i*(len(pre)-1)/max(1,tin-1)) for i in range(tin)] if pre else []
     eff=[pre[i] for i in idx]+eff[pk:]
     if k in MIR: eff=[e.transpose(Image.FLIP_LEFT_RIGHT) for e in eff]
+    if k in FIT:
+        b0=Image.open(f'{k}/00.png').getbbox(); sc=min(FIT[k][0]/(b0[3]-b0[1]),FIT[k][1]/(b0[2]-b0[0]))
+        if sc<1: eff=[e.resize((round(e.width*sc),round(e.height*sc)),Image.NEAREST) for e in eff]
     b=bbox(eff)
     if mode=='br': ox,oy=ax-b[2], ay-b[3]
     elif mode=='c': ox,oy=ax-(b[0]+b[2])//2, ay-(b[1]+b[3])//2

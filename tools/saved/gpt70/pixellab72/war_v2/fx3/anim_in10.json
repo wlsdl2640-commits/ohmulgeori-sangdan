@@ -1,0 +1,18 @@
+[
+ {"key": "bashQ6_out", "src": "bashQ6/00.png",
+  "desc": "The ringing sound-wave rings keep spreading outward to the right, each ring growing slightly, getting thinner and fainter until it fades away, the small impact flash at the center dims and the tiny sparks drift and wink out, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "upright nested sound-wave rings ringing out from a small bright impact point, like a struck gong seen from the side",
+  "pose": "the rings at full brightness", "frames": 40, "seed": 7},
+ {"key": "bashQ6_in", "src": "bashQ6/00.png",
+  "desc": "The sound-wave rings shrink back inward toward the small impact point at the left, the outer rings first, getting smaller and fainter, until only a tiny point of light remains and vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "upright nested sound-wave rings ringing out from a small bright impact point, like a struck gong seen from the side",
+  "pose": "the rings at full brightness", "frames": 24, "seed": 11},
+ {"key": "blockQ2_out", "src": "blockQ2/00.png",
+  "desc": "The translucent energy shield barrier flickers softly, its light rings ripple once and its glow slowly fades, becoming more and more see-through, the white glint dims and the sparks drift away and wink out, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a tall translucent glowing energy shield barrier shaped like a round shield seen from the side, with a white glint and sparks on its right face",
+  "pose": "the barrier at full brightness", "frames": 40, "seed": 7},
+ {"key": "blockQ2_in", "src": "blockQ2/00.png",
+  "desc": "The translucent energy shield barrier shrinks and folds back into a thin vertical line of light, the glint and sparks are drawn back into it, getting fainter, until it vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a tall translucent glowing energy shield barrier shaped like a round shield seen from the side, with a white glint and sparks on its right face",
+  "pose": "the barrier at full brightness", "frames": 24, "seed": 11}
+]
