@@ -7,7 +7,8 @@
    132
   ],
   "src": "idle/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 0
  },
  "walk": {
   "ko": "걷기",
@@ -17,7 +18,8 @@
    132
   ],
   "src": "walk/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 11
  },
  "run": {
   "ko": "달리기",
@@ -27,7 +29,8 @@
    132
   ],
   "src": "run/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 9
  },
  "hurt": {
   "ko": "맞음",
@@ -37,7 +40,8 @@
    132
   ],
   "src": "hurt/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 1
  },
  "fall": {
   "ko": "쓰러짐",
@@ -47,7 +51,8 @@
    132
   ],
   "src": "fall/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 15
  },
  "sit": {
   "ko": "앉기",
@@ -57,7 +62,8 @@
    132
   ],
   "src": "sit/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 1
  },
  "sleep_a": {
   "ko": "자기 A",
@@ -67,7 +73,8 @@
    132
   ],
   "src": "sleep2/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 6
  },
  "sleep_b": {
   "ko": "자기 B",
@@ -77,7 +84,8 @@
    132
   ],
   "src": "sleep2/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 7
  },
  "sleep_c": {
   "ko": "자기 C",
@@ -87,7 +95,8 @@
    132
   ],
   "src": "sleep2/v3",
-  "foot": 124
+  "foot": 124,
+  "hit": 5
  },
  "backstep": {
   "ko": "뒤로 물러나기",
@@ -97,7 +106,8 @@
    132
   ],
   "src": "dodge3/v3",
-  "foot": 124
+  "foot": 124,
+  "hit": 0
  },
  "slash": {
   "ko": "밀어 베기",
@@ -107,7 +117,8 @@
    132
   ],
   "src": "slash/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 6
  },
  "block": {
   "ko": "둥근 방패 막기",
@@ -117,7 +128,8 @@
    132
   ],
   "src": "block/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 7
  },
  "taunt": {
   "ko": "도발",
@@ -127,7 +139,8 @@
    132
   ],
   "src": "taunt/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 4
  },
  "lowcut": {
   "ko": "발굽 끊기",
@@ -137,7 +150,8 @@
    132
   ],
   "src": "lowcut/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 7
  },
  "sweep": {
   "ko": "가로 휩쓸기",
@@ -147,7 +161,8 @@
    132
   ],
   "src": "sweep/v3",
-  "foot": 124
+  "foot": 124,
+  "hit": 3
  },
  "bash": {
   "ko": "방패 두드리기",
@@ -157,7 +172,8 @@
    132
   ],
   "src": "bash/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 4
  },
  "counter": {
   "ko": "되치기",
@@ -167,7 +183,8 @@
    132
   ],
   "src": "counter/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 4
  },
  "brace": {
   "ko": "자세 고정",
@@ -177,7 +194,8 @@
    132
   ],
   "src": "brace/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 2
  },
  "resolve": {
   "ko": "결의",
@@ -187,7 +205,8 @@
    132
   ],
   "src": "resolve/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 10
  },
  "earth": {
   "ko": "대지 가르기",
@@ -197,7 +216,8 @@
    132
   ],
   "src": "earth/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 6
  },
  "quake": {
   "ko": "충격파",
@@ -207,7 +227,8 @@
    132
   ],
   "src": "quake/v1",
-  "foot": 124
+  "foot": 124,
+  "hit": 7
  },
  "twocut": {
   "ko": "두 번 베기",
@@ -217,17 +238,8 @@
    132
   ],
   "src": "sweep/v2",
-  "foot": 124
- },
- "shieldthrust": {
-  "ko": "방패 뒤 찌르기",
-  "n": 21,
-  "cell": [
-   192,
-   132
-  ],
-  "src": "counter/v2",
-  "foot": 124
+  "foot": 124,
+  "hit": 7
  },
  "warcry": {
   "ko": "돌격 함성",
@@ -237,7 +249,8 @@
    132
   ],
   "src": "resolve/v3",
-  "foot": 124
+  "foot": 124,
+  "hit": 3
  },
  "leap": {
   "ko": "뛰어들기",
@@ -247,7 +260,8 @@
    132
   ],
   "src": "quake/v3",
-  "foot": 124
+  "foot": 124,
+  "hit": 7
  },
  "shieldland": {
   "ko": "방패 착지",
@@ -257,6 +271,29 @@
    132
   ],
   "src": "quake/v4",
-  "foot": 124
+  "foot": 124,
+  "hit": 8
+ },
+ "downcut": {
+  "ko": "내려 베기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "counter/v2",
+  "foot": 124,
+  "hit": 7
+ },
+ "shove": {
+  "ko": "방패 밀치기",
+  "n": 21,
+  "cell": [
+   192,
+   132
+  ],
+  "src": "shove/v2",
+  "foot": 124,
+  "hit": 7
  }
 }

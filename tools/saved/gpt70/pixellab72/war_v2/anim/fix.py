@@ -7,7 +7,7 @@ FIX = {'hurt/v2': [1], 'slash/v2': [5, 8], 'block/v1': [6, 7], 'lowcut/v2': [4, 
        'earth/v1': [5], 'quake/v1': [5, 6], 'sweep/v2': [3, 7], 'counter/v2': [7], 'resolve/v3': [4, 11], 'quake/v3': [6, 7], 'quake/v4': [7, 8, 9, 10, 11]}
 HOLD = {'slash/v2': [5], 'lowcut/v2': [6], 'resolve/v3': [4, 11]}   # 몸에 붙은 큰 궤적 — 바로 앞 장을 한 번 더
 PICK = ['idle/v2', 'walk/v1', 'run/v1', 'hurt/v2', 'fall/v2', 'sit/v2', 'sleep2/v1', 'sleep2/v2', 'sleep2/v3', 'dodge3/v3', 'slash/v2', 'block/v1', 'taunt/v1',
-        'lowcut/v2', 'sweep/v3', 'bash/v1', 'counter/v1', 'brace/v1', 'resolve/v1', 'earth/v1', 'quake/v1', 'sweep/v2', 'counter/v2', 'resolve/v3', 'quake/v3', 'quake/v4']
+        'lowcut/v2', 'sweep/v3', 'bash/v1', 'counter/v1', 'brace/v1', 'resolve/v1', 'earth/v1', 'quake/v1', 'sweep/v2', 'counter/v2', 'shove/v2', 'resolve/v3', 'quake/v3', 'quake/v4']
 def near(d, i, fl):
     # 앞뒤로 고치지 않을 가장 가까운 장의 몸 모양에서 R칸 넘게 떨어진 칸(궤적 · 튄 조각)을 지운다
     fs = sorted(os.listdir('clean/' + d)); n = len(fs); R = 7
