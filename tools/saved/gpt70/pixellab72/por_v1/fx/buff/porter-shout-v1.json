@@ -1,0 +1,859 @@
+{
+ "frames": [
+  {
+   "filename": "porter-shout-v1 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 1.png",
+   "frame": {
+    "x": 230,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 2.png",
+   "frame": {
+    "x": 460,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 3.png",
+   "frame": {
+    "x": 690,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 4.png",
+   "frame": {
+    "x": 920,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 5.png",
+   "frame": {
+    "x": 1150,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 6.png",
+   "frame": {
+    "x": 0,
+    "y": 196,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 7.png",
+   "frame": {
+    "x": 230,
+    "y": 196,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 8.png",
+   "frame": {
+    "x": 460,
+    "y": 196,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 9.png",
+   "frame": {
+    "x": 690,
+    "y": 196,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 10.png",
+   "frame": {
+    "x": 920,
+    "y": 196,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 11.png",
+   "frame": {
+    "x": 1150,
+    "y": 196,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 12.png",
+   "frame": {
+    "x": 0,
+    "y": 392,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 13.png",
+   "frame": {
+    "x": 230,
+    "y": 392,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 14.png",
+   "frame": {
+    "x": 460,
+    "y": 392,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 15.png",
+   "frame": {
+    "x": 690,
+    "y": 392,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 16.png",
+   "frame": {
+    "x": 920,
+    "y": 392,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 17.png",
+   "frame": {
+    "x": 1150,
+    "y": 392,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 18.png",
+   "frame": {
+    "x": 0,
+    "y": 588,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 19.png",
+   "frame": {
+    "x": 230,
+    "y": 588,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 20.png",
+   "frame": {
+    "x": 460,
+    "y": 588,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 21.png",
+   "frame": {
+    "x": 690,
+    "y": 588,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 22.png",
+   "frame": {
+    "x": 920,
+    "y": 588,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 23.png",
+   "frame": {
+    "x": 1150,
+    "y": 588,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 24.png",
+   "frame": {
+    "x": 0,
+    "y": 784,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 25.png",
+   "frame": {
+    "x": 230,
+    "y": 784,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 26.png",
+   "frame": {
+    "x": 460,
+    "y": 784,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 27.png",
+   "frame": {
+    "x": 690,
+    "y": 784,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 28.png",
+   "frame": {
+    "x": 920,
+    "y": 784,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 29.png",
+   "frame": {
+    "x": 1150,
+    "y": 784,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 30.png",
+   "frame": {
+    "x": 0,
+    "y": 980,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  },
+  {
+   "filename": "porter-shout-v1 31.png",
+   "frame": {
+    "x": 230,
+    "y": 980,
+    "w": 230,
+    "h": 196
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 230,
+    "h": 196
+   },
+   "sourceSize": {
+    "w": 230,
+    "h": 196
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8163265306122449
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "porter-shout-v1.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1380,
+   "h": 1176
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "feet",
+   "x": 115,
+   "y": 160
+  },
+  "frameTags": [
+   {
+    "name": "porter-shout-v1",
+    "from": 0,
+    "to": 31,
+    "direction": "forward"
+   }
+  ]
+ }
+}

@@ -1,0 +1,158 @@
+[
+ {
+  "key": "bolt_1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a crossbow bolt shot: a short heavy wooden crossbow bolt with an iron tip flying to the right, a pale streak of air behind it, and at the right end a small impact burst of amber sparks and wood splinters where it hits. Calm version: small and simple, few particles, a beginner skill. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1201
+  }
+ },
+ {
+  "key": "bolt_2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a crossbow bolt shot: a short heavy wooden crossbow bolt with an iron tip flying to the right, a pale streak of air behind it, and at the right end a small impact burst of amber sparks and wood splinters where it hits. Normal version: clear readable shapes, a moderate number of particles. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1243
+  }
+ },
+ {
+  "key": "bolt_3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a crossbow bolt shot: a short heavy wooden crossbow bolt with an iron tip flying to the right, a pale streak of air behind it, and at the right end a small impact burst of amber sparks and wood splinters where it hits. Flashy version: bigger, more layered, more sparks and debris. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1285
+  }
+ },
+ {
+  "key": "bolt_4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a crossbow bolt shot: a short heavy wooden crossbow bolt with an iron tip flying to the right, a pale streak of air behind it, and at the right end a small impact burst of amber sparks and wood splinters where it hits. Maximum version: big and dramatic, many layers of debris, dust and sparks, still crisp. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1327
+  }
+ },
+ {
+  "key": "junk_1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a thrown bundle of junk: a tied leather sack, a small wooden crate and a tin pot tumbling through the air to the right in an arc, with motion lines, and at the right end a thudding impact with a brown dust puff and a few bouncing pebbles. Calm version: small and simple, few particles, a beginner skill. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1205
+  }
+ },
+ {
+  "key": "junk_2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a thrown bundle of junk: a tied leather sack, a small wooden crate and a tin pot tumbling through the air to the right in an arc, with motion lines, and at the right end a thudding impact with a brown dust puff and a few bouncing pebbles. Normal version: clear readable shapes, a moderate number of particles. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1247
+  }
+ },
+ {
+  "key": "junk_3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a thrown bundle of junk: a tied leather sack, a small wooden crate and a tin pot tumbling through the air to the right in an arc, with motion lines, and at the right end a thudding impact with a brown dust puff and a few bouncing pebbles. Flashy version: bigger, more layered, more sparks and debris. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1289
+  }
+ },
+ {
+  "key": "junk_4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a thrown bundle of junk: a tied leather sack, a small wooden crate and a tin pot tumbling through the air to the right in an arc, with motion lines, and at the right end a thudding impact with a brown dust puff and a few bouncing pebbles. Maximum version: big and dramatic, many layers of debris, dust and sparks, still crisp. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1331
+  }
+ },
+ {
+  "key": "aval_1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an avalanche of luggage: a wide pile of tumbling leather sacks, wooden crates, barrels, rolled blankets and pots crashing down onto the ground across the whole width, with big brown dust clouds billowing out and debris bouncing, an earthy brown, red and amber palette. Calm version: small and simple, few particles, a beginner skill. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1209
+  }
+ },
+ {
+  "key": "aval_2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an avalanche of luggage: a wide pile of tumbling leather sacks, wooden crates, barrels, rolled blankets and pots crashing down onto the ground across the whole width, with big brown dust clouds billowing out and debris bouncing, an earthy brown, red and amber palette. Normal version: clear readable shapes, a moderate number of particles. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1251
+  }
+ },
+ {
+  "key": "aval_3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an avalanche of luggage: a wide pile of tumbling leather sacks, wooden crates, barrels, rolled blankets and pots crashing down onto the ground across the whole width, with big brown dust clouds billowing out and debris bouncing, an earthy brown, red and amber palette. Flashy version: bigger, more layered, more sparks and debris. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1293
+  }
+ },
+ {
+  "key": "aval_4",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an avalanche of luggage: a wide pile of tumbling leather sacks, wooden crates, barrels, rolled blankets and pots crashing down onto the ground across the whole width, with big brown dust clouds billowing out and debris bouncing, an earthy brown, red and amber palette. Maximum version: big and dramatic, many layers of debris, dust and sparks, still crisp. Detailed 16-bit pixel art in the same art style and palette mood as the style image: solid parts (wood, leather, cloth, rope, dust puffs, pebbles) have bold dark outlines and 3-4 step shading; glowing parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur, no thin single-pixel line art. Only the effect: no characters, no people, no creatures, no hands, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:6ee842f6-29ce-409d-9bfe-3e27ef650fd1",
+   "seed": 1335
+  }
+ }
+]
