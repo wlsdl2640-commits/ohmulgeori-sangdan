@@ -718,5 +718,113 @@
   "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
   "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
   "desc": "He jumps up and lands hard on the ground, crouching with his shield and sword. Only the character moves. Keep the exact same character design, size, colors and equipment; sword in his right hand, shield on his left arm. Absolutely no visual effects: no motion trails, no swoosh arcs, no impact stars, no sparks, no flashes, no dust clouds, no blood, no other characters."
+ },
+ {
+  "mon": "sleep2",
+  "row": "v1",
+  "ko": "자기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": null,
+  "seed": 201,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He lies down on the ground on his side with his back turned toward the viewer, curls up and falls asleep, breathing slowly; the shield and sword lie beside him. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters."
+ },
+ {
+  "mon": "sleep2",
+  "row": "v2",
+  "ko": "자기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": null,
+  "seed": 202,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He lies down on the ground on his side with his back turned toward the viewer, curls up and falls asleep, breathing slowly; the shield and sword lie beside him. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters."
+ },
+ {
+  "mon": "sleep2",
+  "row": "v3",
+  "ko": "자기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": null,
+  "seed": 203,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He lies down on the ground on his side with his back turned toward the viewer, curls up and falls asleep, breathing slowly; the shield and sword lie beside him. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters."
+ },
+ {
+  "mon": "dodge2",
+  "row": "v1",
+  "ko": "뒤로 물러나기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": null,
+  "seed": 201,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He jumps far backward, a big clear retreat of two body lengths, keeping his shield up, lands and slides a little backward on the ground. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters."
+ },
+ {
+  "mon": "dodge2",
+  "row": "v2",
+  "ko": "뒤로 물러나기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": null,
+  "seed": 202,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He jumps far backward, a big clear retreat of two body lengths, keeping his shield up, lands and slides a little backward on the ground. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters."
+ },
+ {
+  "mon": "dodge2",
+  "row": "v3",
+  "ko": "뒤로 물러나기",
+  "frames": 20,
+  "first": "upload:a018d557-11da-468b-8730-89ad044a383b",
+  "last": null,
+  "seed": 203,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "He jumps far backward, a big clear retreat of two body lengths, keeping his shield up, lands and slides a little backward on the ground. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no Z letters, no other characters."
+ },
+ {
+  "mon": "dodge3",
+  "row": "v1",
+  "ko": "뒤로 물러나기",
+  "frames": 20,
+  "first": "upload:7a22ecb5-1209-423f-8f2a-9f12c053434e",
+  "last": "upload:f3b98e03-b196-43be-b933-0b0f8bb9215e",
+  "seed": 301,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "Still facing right, he quickly hops backward to the left several times, retreating away from the enemy with his shield raised, and ends standing in his ready stance further to the left. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "dodge3",
+  "row": "v2",
+  "ko": "뒤로 물러나기",
+  "frames": 20,
+  "first": "upload:7a22ecb5-1209-423f-8f2a-9f12c053434e",
+  "last": "upload:f3b98e03-b196-43be-b933-0b0f8bb9215e",
+  "seed": 302,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "Still facing right, he quickly hops backward to the left several times, retreating away from the enemy with his shield raised, and ends standing in his ready stance further to the left. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
+ },
+ {
+  "mon": "dodge3",
+  "row": "v3",
+  "ko": "뒤로 물러나기",
+  "frames": 20,
+  "first": "upload:7a22ecb5-1209-423f-8f2a-9f12c053434e",
+  "last": "upload:f3b98e03-b196-43be-b933-0b0f8bb9215e",
+  "seed": 303,
+  "subject": "a young male warrior with a grey steel kettle helmet, red scarf, brown leather armor, a steel longsword in his right hand and a round wooden shield on his left arm",
+  "pose": "standing in a ready stance, shield in front of his chest, sword lowered",
+  "desc": "Still facing right, he quickly hops backward to the left several times, retreating away from the enemy with his shield raised, and ends standing in his ready stance further to the left. Only the character moves. Keep the exact same character design, size, colors and equipment. Absolutely no visual effects: no motion trails, no sparks, no flashes, no dust clouds, no other characters."
  }
 ]

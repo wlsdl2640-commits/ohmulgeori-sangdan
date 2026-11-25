@@ -238,5 +238,41 @@
  "quake/v4": {
   "id": "0839b59f-47bf-41b8-975a-988a9c3996c5",
   "ok": 1
+ },
+ "sleep2/v1": {
+  "id": "a3aa3c64-ee75-481b-9458-19c1a9a44db8",
+  "ok": 1
+ },
+ "sleep2/v2": {
+  "id": "f5539ba4-8cb0-46f9-9753-d8b42b8507b4",
+  "ok": 1
+ },
+ "sleep2/v3": {
+  "id": "a84522b6-6994-4c11-a09b-c4e375ad7aa5",
+  "ok": 1
+ },
+ "dodge2/v1": {
+  "id": "f12c8116-ffc6-4075-a0fd-b457cc4ed779",
+  "ok": 1
+ },
+ "dodge2/v2": {
+  "id": "21a8dc4e-c8d1-4f3c-9c07-e96f69e6cbe7",
+  "ok": 1
+ },
+ "dodge2/v3": {
+  "id": "dd18c07f-8459-4e5f-8e5c-d5cdc70a9b69",
+  "ok": 1
+ },
+ "dodge3/v1": {
+  "id": "6beebcb6-6b7d-45e0-ac1a-9bc6da89ad43",
+  "ok": 1
+ },
+ "dodge3/v3": {
+  "id": "9689d194-9422-49b0-8c0f-65cd98613352",
+  "ok": 1
+ },
+ "dodge3/v2": {
+  "id": "c79c0d4a-d9c1-4500-b9c1-e00b44a00f03",
+  "ok": 1
  }
 }
