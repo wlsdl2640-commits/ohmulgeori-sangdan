@@ -1,3 +1,4 @@
+import os, sys
 # 채택한 효과(fx3) 움직이는 판: 늪지 배경 · 전사 동작 · 몬스터 위에 — v2(효과 도구)와 나란히. python mk_fx3.py <출력 html> [키,…]
 import json, base64, io, os, sys, math
 from PIL import Image
@@ -72,7 +73,13 @@ def build(k):
                 a=e.getchannel('A').point(lambda v:int(v*al)); e=e.copy(); e.putalpha(a)
             t.alpha_composite(e,(ox,oy))
         out.append(t.convert('RGB'))
+        if i==st+4: hw=(int(cx+dx), int(GY-124+dy), w)
+    if k in HUD:   # 버프 머리 위 아이콘(11-25 대표님) — ../fx4/buffhud.py
+        cwd=os.getcwd(); os.chdir(R+'fx4'); sys.path.insert(0,'.'); import buffhud as BH
+        x0,y0,ww=hw; bx,by=BH.head(ww); fr=[o.convert('RGBA') for o in out]
+        out=[o.convert('RGB') for o in BH.over(fr,HUD[k],st,x0+bx,y0+by,fade=(st+18,st+25))]; os.chdir(cwd)
     return out
+HUD={'resolve_a':'resolve','warcry_a':'warcry'}
 def v2(k):
     try:
         js=json.load(open(R+f'vfx/out/{k}_v2.json',encoding='utf-8')); sh=Image.open(R+f'vfx/out/{k}_v2.png').convert('RGBA')

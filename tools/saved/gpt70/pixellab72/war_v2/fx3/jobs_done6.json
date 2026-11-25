@@ -1,0 +1,38 @@
+{
+ "bashL3": {
+  "id": "ce8b8b61-5e7e-4678-a1a6-f891f5440a25",
+  "ok": 1
+ },
+ "bashL1": {
+  "id": "80f66247-4c77-4f9a-b11c-37f720a36a9d",
+  "ok": 1
+ },
+ "bashL2": {
+  "id": "f9fe90b8-6a5b-419d-a410-c8f3f2294da8",
+  "ok": 1
+ },
+ "shoveL1": {
+  "id": "c134a79c-fc24-412d-a247-df6d61fd366d",
+  "ok": 1
+ },
+ "shoveL2": {
+  "id": "275dd738-4349-4c36-961e-7f3e40fff368",
+  "ok": 1
+ },
+ "shoveL3": {
+  "id": "6a066be8-8deb-4c3d-97cc-923fbe4d93de",
+  "ok": 1
+ },
+ "blockL1": {
+  "id": "79bcf8fe-f2b3-477a-81d7-46e3ee718ee2",
+  "ok": 1
+ },
+ "blockL2": {
+  "id": "92554664-128e-4189-ba96-44402c9ea610",
+  "ok": 1
+ },
+ "blockL3": {
+  "id": "aeee1d42-843d-44ef-91b0-5c859acc4127",
+  "ok": 1
+ }
+}

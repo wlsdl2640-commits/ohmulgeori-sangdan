@@ -1,0 +1,119 @@
+[
+ {
+  "key": "bashL1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light shield-bash hit: a small double ripple of thin pale steel-blue curved lines (like a ring seen from the side) spreading from one hit point, a tiny white flash at the center and four or five small white-yellow sparks. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 905
+  }
+ },
+ {
+  "key": "bashL2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light shield-bash hit: a small double ripple of thin pale steel-blue curved lines (like a ring seen from the side) spreading from one hit point, a tiny white flash at the center and four or five small white-yellow sparks. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 946
+  }
+ },
+ {
+  "key": "bashL3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light shield-bash hit: a small double ripple of thin pale steel-blue curved lines (like a ring seen from the side) spreading from one hit point, a tiny white flash at the center and four or five small white-yellow sparks. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 987
+  }
+ },
+ {
+  "key": "shoveL1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light shove: two or three thin pale curved push ripples moving to the right at chest height, a small low puff of dust at the ground, and on the far right a small ring of three tiny yellow stun stars. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 906
+  }
+ },
+ {
+  "key": "shoveL2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light shove: two or three thin pale curved push ripples moving to the right at chest height, a small low puff of dust at the ground, and on the far right a small ring of three tiny yellow stun stars. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 947
+  }
+ },
+ {
+  "key": "shoveL3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light shove: two or three thin pale curved push ripples moving to the right at chest height, a small low puff of dust at the ground, and on the far right a small ring of three tiny yellow stun stars. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 988
+  }
+ },
+ {
+  "key": "blockL1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light block: a small upright thin pale steel-blue oval ripple at the point where a blow meets a shield, a short white glint line and three or four tiny white sparks bouncing back. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 906
+  }
+ },
+ {
+  "key": "blockL2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light block: a small upright thin pale steel-blue oval ripple at the point where a blow meets a shield, a short white glint line and three or four tiny white sparks bouncing back. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 947
+  }
+ },
+ {
+  "key": "blockL3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light block: a small upright thin pale steel-blue oval ripple at the point where a blow meets a shield, a short white glint line and three or four tiny white sparks bouncing back. Light and modest, a beginner skill: small, occupying only about a third of the canvas, thin shapes, few particles, no explosion, no smoke cloud, no debris, no wood splinters, no magic runes, no golden barrier. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (rock, mud, metal shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no creatures, no weapons, no shields, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 988
+  }
+ }
+]
