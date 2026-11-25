@@ -1,0 +1,80 @@
+[오전 11:35:52] 보냄 reedhopper 197063d7-a02b-4c9d-80d0-26eb3af511b2
+[오전 11:35:52] 보냄 pebbleearwig 294c7508-a299-4f28-b83a-b17d539cfecc
+[오전 11:35:52] 보냄 earwig afeb973d-1c87-4027-92a9-071f533d5a2c
+[오전 11:37:11] 받음 reedhopper
+[오전 11:37:11] 보냄 kelpie 18a8f296-0fa8-4c05-b23f-c2ff988257cb
+[오전 11:37:22] 받음 earwig
+[오전 11:37:22] 보냄 witch 41b905f3-2113-4ca9-9405-1031c5c479af
+[오전 11:37:22] 받음 pebbleearwig
+[오전 11:37:23] 보냄 lizardspear 8348bed6-f226-4c2d-b215-b91c39426a27
+[오전 11:38:30] 받음 kelpie
+[오전 11:38:30] 보냄 suckerfrog 21745be2-523d-4fa5-b05a-7d11ac4c957e
+[오전 11:38:41] 받음 lizardspear
+[오전 11:38:42] 보냄 poisonhopper df7c2782-b902-4900-ab16-4ef211a2abf6
+[오전 11:38:52] 받음 witch
+[오전 11:38:53] 보냄 lizardshield cd6c45ca-8827-4814-aa68-d7ebf0d375ad
+[오전 11:39:48] 받음 suckerfrog
+[오전 11:39:49] 보냄 bigpebbleearwig 46104e1d-dcbc-4df3-a714-34c5b7f4a1c8
+[오전 11:40:10] 받음 poisonhopper
+[오전 11:40:10] 받음 lizardshield
+[오전 11:40:11] 보냄 b9_reedbill 6d0f4eb7-8fb8-4813-a795-15c6ed6e9fd3
+[오전 11:40:11] 보냄 b10_rootkelpie 8eff8383-814c-4821-a16b-9c12aaf14c4e
+[오전 11:41:18] 받음 bigpebbleearwig
+[오전 11:41:18] 보냄 b11_witch bc3fc8bb-640c-47b1-a10e-4b3f1a884306
+[오전 11:41:29] 받음 b9_reedbill
+[오전 11:41:29] 보냄 b12_warden 33e7131f-55e9-4b1d-915f-04164dcf0373
+[오전 11:41:51] 받음 b10_rootkelpie
+[오전 11:41:51] 보냄 b13_toad e3297021-e5f6-4a7f-a9ab-51ac21f465ef
+[오전 11:42:47] 받음 b11_witch
+[오전 11:42:47] 보냄 b14_island/i0 78bf025c-3293-43a8-b0f2-7c47fc68ce3b
+[오전 11:42:58] 받음 b12_warden
+[오전 11:42:58] 보냄 b14_island/i1 66eaff91-5d33-4498-b96c-dfef9f1e3626
+[오전 11:43:08] 받음 b13_toad
+[오전 11:43:09] 보냄 b14_island/i2 2360cf3f-a964-4066-a1d2-4e61baf6b954
+[오전 11:44:14] 받음 b14_island/i0
+[오전 11:44:15] 보냄 b14_island/i3 ae98fcdc-674f-414e-8612-f5f42c1918be
+[오전 11:44:35] 받음 b14_island/i1
+[오전 11:45:06] 받음 b14_island/i2
+[오전 11:45:27] 받음 b14_island/i3
+[오전 11:45:27] 끝 — 19 / 19
+[오전 11:52:15] 보냄 cattail 3b826c69-f60a-415e-9145-34dfa9b42996
+[오전 11:52:15] 보냄 coot 65b272ff-74a2-4a21-bb5e-a28b10e427ec
+[오전 11:52:15] 보냄 seedbeetle b1b15e26-d091-45fc-bcd7-9ceb7643c49d
+[오전 11:53:34] 받음 seedbeetle
+[오전 11:53:34] 받음 coot
+[오전 11:53:35] 보냄 loach 3ef55f14-7d3f-4b36-9245-bc4ad1a5c79c
+[오전 11:53:35] 보냄 rootcrab c88dc109-255d-4c9f-a310-4f4e08ccb20a
+[오전 11:53:45] 받음 cattail
+[오전 11:53:46] 보냄 barkmoth 03b68c1e-d304-4144-a719-31384ed64c22
+[오전 11:54:54] 받음 loach
+[오전 11:54:54] 보냄 vinecoil 788bd05f-91a9-4355-8ca8-b8993a8938bd
+[오전 11:55:15] 받음 barkmoth
+[오전 11:55:16] 보냄 goby 0e5dccd5-46bf-473e-a318-85c283befefa
+[오전 11:56:11] 받음 rootcrab
+[오전 11:56:11] 보냄 leech 29d4fb7d-80c7-4bb6-ae27-5a2a4233457f
+[오전 11:56:23] 받음 vinecoil
+[오전 11:56:23] 보냄 watersnake 53b00d70-f366-47b5-b131-b05beb6d06fa
+[오전 11:56:56] 받음 goby
+[오전 11:56:56] 보냄 slinger ef2efdd5-f209-405a-b3eb-734518005b89
+[오전 11:57:51] 받음 watersnake
+[오전 11:57:51] 받음 leech
+[오전 11:57:52] 보냄 leafbeetle bf5211e7-1f9b-4e4c-ae59-48c8c740f640
+[오전 11:57:52] 보냄 trapleaf d058f286-dd2c-412a-b36c-829bdfe98ffd
+[오전 11:58:58] 받음 slinger
+[오전 11:58:58] 보냄 dragonfly 450a94f4-ace0-43bf-a198-67de97f04890
+[오전 11:59:09] 받음 leafbeetle
+[오전 11:59:09] 받음 trapleaf
+[오전 11:59:09] 보냄 mosquito 7a55ae0a-bb19-461f-94f8-52ca01451133
+[오전 11:59:09] 보냄 salamander 6f831502-44ed-4566-95f6-eb720f735cd1
+[오후 12:00:05] 받음 dragonfly
+[오후 12:00:06] 보냄 leafwitch 21a749ad-fd08-430f-8f27-b2ae3588d85a
+[오후 12:00:16] 받음 mosquito
+[오후 12:00:16] 보냄 leaflizard ff674a85-83e3-4fdd-b1eb-b59bd96cb119
+[오후 12:00:27] 받음 salamander
+[오후 12:00:28] 보냄 caiman 44fffdb7-3e08-4bfa-8d1a-40cc092818a0
+[오후 12:01:34] 받음 leafwitch
+[오후 12:01:34] 보냄 snapturtle 494337f5-2975-40a4-afa6-d5f68be646df
+[오후 12:01:45] 받음 leaflizard
+[오후 12:02:07] 받음 caiman
+[오후 12:03:13] 받음 snapturtle
+[오후 12:03:13] 끝 — 20 / 20

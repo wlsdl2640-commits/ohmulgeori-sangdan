@@ -1,0 +1,78 @@
+{
+ "reedhopper": {
+  "id": "197063d7-a02b-4c9d-80d0-26eb3af511b2",
+  "ok": 1
+ },
+ "pebbleearwig": {
+  "id": "294c7508-a299-4f28-b83a-b17d539cfecc",
+  "ok": 1
+ },
+ "earwig": {
+  "id": "afeb973d-1c87-4027-92a9-071f533d5a2c",
+  "ok": 1
+ },
+ "kelpie": {
+  "id": "18a8f296-0fa8-4c05-b23f-c2ff988257cb",
+  "ok": 1
+ },
+ "witch": {
+  "id": "41b905f3-2113-4ca9-9405-1031c5c479af",
+  "ok": 1
+ },
+ "lizardspear": {
+  "id": "8348bed6-f226-4c2d-b215-b91c39426a27",
+  "ok": 1
+ },
+ "suckerfrog": {
+  "id": "21745be2-523d-4fa5-b05a-7d11ac4c957e",
+  "ok": 1
+ },
+ "poisonhopper": {
+  "id": "df7c2782-b902-4900-ab16-4ef211a2abf6",
+  "ok": 1
+ },
+ "lizardshield": {
+  "id": "cd6c45ca-8827-4814-aa68-d7ebf0d375ad",
+  "ok": 1
+ },
+ "bigpebbleearwig": {
+  "id": "46104e1d-dcbc-4df3-a714-34c5b7f4a1c8",
+  "ok": 1
+ },
+ "b9_reedbill": {
+  "id": "6d0f4eb7-8fb8-4813-a795-15c6ed6e9fd3",
+  "ok": 1
+ },
+ "b10_rootkelpie": {
+  "id": "8eff8383-814c-4821-a16b-9c12aaf14c4e",
+  "ok": 1
+ },
+ "b11_witch": {
+  "id": "bc3fc8bb-640c-47b1-a10e-4b3f1a884306",
+  "ok": 1
+ },
+ "b12_warden": {
+  "id": "33e7131f-55e9-4b1d-915f-04164dcf0373",
+  "ok": 1
+ },
+ "b13_toad": {
+  "id": "e3297021-e5f6-4a7f-a9ab-51ac21f465ef",
+  "ok": 1
+ },
+ "b14_island/i0": {
+  "id": "78bf025c-3293-43a8-b0f2-7c47fc68ce3b",
+  "ok": 1
+ },
+ "b14_island/i1": {
+  "id": "66eaff91-5d33-4498-b96c-dfef9f1e3626",
+  "ok": 1
+ },
+ "b14_island/i2": {
+  "id": "2360cf3f-a964-4066-a1d2-4e61baf6b954",
+  "ok": 1
+ },
+ "b14_island/i3": {
+  "id": "ae98fcdc-674f-414e-8612-f5f42c1918be",
+  "ok": 1
+ }
+}

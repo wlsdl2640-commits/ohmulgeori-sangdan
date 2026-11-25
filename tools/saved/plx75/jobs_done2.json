@@ -1,0 +1,82 @@
+{
+ "cattail": {
+  "id": "3b826c69-f60a-415e-9145-34dfa9b42996",
+  "ok": 1
+ },
+ "coot": {
+  "id": "65b272ff-74a2-4a21-bb5e-a28b10e427ec",
+  "ok": 1
+ },
+ "seedbeetle": {
+  "id": "b1b15e26-d091-45fc-bcd7-9ceb7643c49d",
+  "ok": 1
+ },
+ "loach": {
+  "id": "3ef55f14-7d3f-4b36-9245-bc4ad1a5c79c",
+  "ok": 1
+ },
+ "rootcrab": {
+  "id": "c88dc109-255d-4c9f-a310-4f4e08ccb20a",
+  "ok": 1
+ },
+ "barkmoth": {
+  "id": "03b68c1e-d304-4144-a719-31384ed64c22",
+  "ok": 1
+ },
+ "vinecoil": {
+  "id": "788bd05f-91a9-4355-8ca8-b8993a8938bd",
+  "ok": 1
+ },
+ "goby": {
+  "id": "0e5dccd5-46bf-473e-a318-85c283befefa",
+  "ok": 1
+ },
+ "leech": {
+  "id": "29d4fb7d-80c7-4bb6-ae27-5a2a4233457f",
+  "ok": 1
+ },
+ "watersnake": {
+  "id": "53b00d70-f366-47b5-b131-b05beb6d06fa",
+  "ok": 1
+ },
+ "slinger": {
+  "id": "ef2efdd5-f209-405a-b3eb-734518005b89",
+  "ok": 1
+ },
+ "leafbeetle": {
+  "id": "bf5211e7-1f9b-4e4c-ae59-48c8c740f640",
+  "ok": 1
+ },
+ "trapleaf": {
+  "id": "d058f286-dd2c-412a-b36c-829bdfe98ffd",
+  "ok": 1
+ },
+ "dragonfly": {
+  "id": "450a94f4-ace0-43bf-a198-67de97f04890",
+  "ok": 1
+ },
+ "mosquito": {
+  "id": "7a55ae0a-bb19-461f-94f8-52ca01451133",
+  "ok": 1
+ },
+ "salamander": {
+  "id": "6f831502-44ed-4566-95f6-eb720f735cd1",
+  "ok": 1
+ },
+ "leafwitch": {
+  "id": "21a749ad-fd08-430f-8f27-b2ae3588d85a",
+  "ok": 1
+ },
+ "leaflizard": {
+  "id": "ff674a85-83e3-4fdd-b1eb-b59bd96cb119",
+  "ok": 1
+ },
+ "caiman": {
+  "id": "44fffdb7-3e08-4bfa-8d1a-40cc092818a0",
+  "ok": 1
+ },
+ "snapturtle": {
+  "id": "494337f5-2975-40a4-afa6-d5f68be646df",
+  "ok": 1
+ }
+}

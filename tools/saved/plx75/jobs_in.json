@@ -1,0 +1,329 @@
+[
+ {
+  "key": "earwig",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Flat marsh earwig, broad curved rear pincers, striped reed-brown segmented shell, six short legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "pebbleearwig",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Squat marsh earwig covered with an overlapping shell of round grey pebbles, short heavy rear pincers, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "reedhopper",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Frog-shaped reptile with long folded hind legs, green-brown scaled hide, a narrow reed-like crest on its head and back, crouching, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "kelpie",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Marsh water horse monster (kelpie), dark wet body, black split hooves, long tangled reed and waterweed mane, narrow eel-like tail instead of a horse tail, glowing pale eyes, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 128,
+   "height": 128,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "witch",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Hunched nonhuman bog witch creature, split bark-like face with glowing eyes, knotted root arms and legs, ragged reed mantle, holding a crooked twig staff, not a human, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "lizardspear",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Upright long-tailed lizardman warrior holding a reedwood spear, leaf and bark armor, no metal armor, green scales, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "suckerfrog",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Squat frog-shaped reptile with wide adhesive toe pads, a flat back like a big leaf, broad jaw, mossy green, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "poisonhopper",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Frog-shaped reptile with striped inflated yellow-purple throat sacs, short spines along its back, sturdy mossy scales, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "lizardshield",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Heavy bulky lizardman warrior holding a large curved bark shield, thick tail, leaf-and-scale armor plates, no metal armor, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "bigpebbleearwig",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Large armored marsh earwig mini-boss, layered stone shell plates, chipped oversized rear pincers raised, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 128,
+   "height": 128,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b9_reedbill",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Boss: huge marsh wading bird with a fan of broken reed plumes on its head and back, heavy hooked bill, long legs, menacing, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b10_rootkelpie",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Boss: massive marsh water horse (kelpie) with thick gnarled roots wrapped around its neck like a yoke collar, long reed mane, wide split hooves, eel tail, menacing, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b11_witch",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Boss: tall hunched nonhuman swamp witch creature, jagged bark head with glowing eyes, twisted root limbs, long reed cloak, holding a crooked wooden marker-post staff, not human, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b12_warden",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Boss: tall reptilian lizardman sluice gate warden, carrying a huge shield made of wooden gate planks, heavy tail, layered leaf armor, no metal armor, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b13_toad",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Boss: giant squat marsh toad with two big wrinkled purple poison sacs on its cheeks, stubby legs, broad warty back, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "b14_island/i0",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, its broad back covered with reeds, mud, small dead trees and moss like an island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 3000
+  }
+ },
+ {
+  "key": "b14_island/i1",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, its broad back covered with reeds, mud, small dead trees and moss like an island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 3001
+  }
+ },
+ {
+  "key": "b14_island/i2",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, its broad back covered with reeds, mud, small dead trees and moss like an island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 3002
+  }
+ },
+ {
+  "key": "b14_island/i3",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Colossal swamp boss: a huge low beast shaped like a floating reed island, its broad back covered with reeds, mud, small dead trees and moss like an island, massive root forelimbs, layered mud belly, small glowing eyes at the front, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 256,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ],
+   "seed": 3003
+  }
+ }
+]

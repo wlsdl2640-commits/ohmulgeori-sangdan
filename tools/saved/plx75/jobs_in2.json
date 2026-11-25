@@ -1,0 +1,362 @@
+[
+ {
+  "key": "seedbeetle",
+  "name": "갈대씨벌레",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Small stout reed seed beetle, split seed-husk shell, stubby legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "cattail",
+  "name": "부들줄기",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Walking cattail plant, thick brown seed head, folded blade leaves, knotted root feet, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "coot",
+  "name": "갈대발 물닭",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Squat marsh coot, short blunt bill, round charcoal body, oversized lobed toes, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "loach",
+  "name": "진흙 미꾸리",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Muddy olive-brown loach, arched speckled body, short whiskers, bent paddle tail, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "rootcrab",
+  "name": "뿌리납작게",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Flat freshwater crab, oversized square pincer, shell shaped like tangled root plates, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "barkmoth",
+  "name": "나무껍질 나방",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Broad marsh moth, folded bark-pattern wings, thick fuzzy body, serrated wing edges, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "vinecoil",
+  "name": "뿌리감개",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Crawling knot of slender woody swamp vines, one long looped root, no mud body, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "goby",
+  "name": "진창 망둑",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Stout marsh goby, high fan-shaped dorsal fin, rounded head, broad crawling fins, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "leech",
+  "name": "먹빛 턱거머리",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Thick charcoal swamp leech, segmented body, wide round jawed mouth, pale belly stripe, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "watersnake",
+  "name": "밤눈 물뱀",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Coiled dark marsh water snake, broad pale eyes, flat neck, blunt striped tail, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "slinger",
+  "name": "검은물 투석병",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Reptilian swamp skirmisher, crouched long-tailed body, leather sling, round stone pouch, bark shoulder guard, no metal armor, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "leafbeetle",
+  "name": "잎등 물방개",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Oval diving beetle, overlapping leaf-shaped wing covers, broad paddle legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "trapleaf",
+  "name": "큰잎 덫꽃",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Walking marsh trap plant, two broad ribbed green leaves forming a jaw, low stalk, thick root feet, no flower petals, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "dragonfly",
+  "name": "연잎 왕잠자리",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Giant marsh dragonfly, four pale veined wings, long segmented teal-green body, large compound eyes, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "mosquito",
+  "name": "안개막 모기",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Marsh mosquito, narrow striped abdomen, wide pale folded wings, angular legs, straight short proboscis, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "salamander",
+  "name": "노란목 도롱뇽",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Smooth-skinned swamp salamander, broad yellow throat, blunt head, low splayed legs, flattened tail, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "leafwitch",
+  "name": "삭은잎 마녀",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Hunched plant-bodied bog witch, tattered wide leaf hood, ragged dead-leaf mantle, forked twig staff with hanging gourd, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "leaflizard",
+  "name": "떠돌잎 물도마뱀",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Slim swamp lizard, long splayed toes, broad leaf-shaped tail, ridged olive scales, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "caiman",
+  "name": "진흙등 악어",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Small heavy marsh caiman, low armored dark-olive back, broad snout with blunt teeth, thick ridged tail, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "snapturtle",
+  "name": "이끼등 늑대거북",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Large swamp snapping turtle, mossy ridged dark shell with small muddy roots, pale plated belly, no reeds, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bold dark outline, 16-bit JRPG pixel art, same art style as the reference swamp monster. Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 128,
+   "height": 128,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ }
+]
