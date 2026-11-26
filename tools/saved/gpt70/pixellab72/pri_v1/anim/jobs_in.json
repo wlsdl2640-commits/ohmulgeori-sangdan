@@ -1253,5 +1253,71 @@
   "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
   "desc": "Her rear hand stays still at her chest gripping the one small silver holy symbol the whole time; only the scepter arm and body move. Exactly one holy symbol and exactly two hands at all times. She runs forward in place hurriedly, holding the scepter close, robe and braid fluttering, loops back to the start pose. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters.",
   "last": "upload:0396e164-e519-45f1-936d-471b6b0213ac"
+ },
+ {
+  "mon": "attack",
+  "row": "w1",
+  "ko": "기본 공격 (셉터 치기)",
+  "frames": 24,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1100,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Her rear hand stays completely still at her chest gripping the one small silver holy symbol from the first frame to the last; only the scepter arm and body move. She steps forward and swings the golden scepter down in a short overhead strike like a small mace with the front hand, then steps back and settles calmly into the start pose and holds it still for the last few frames. Exactly one holy symbol and exactly two hands. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "attack",
+  "row": "w2",
+  "ko": "기본 공격 (셉터 치기)",
+  "frames": 24,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1101,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Her rear hand stays completely still at her chest gripping the one small silver holy symbol from the first frame to the last; only the scepter arm and body move. She steps forward and swings the golden scepter down in a short overhead strike like a small mace with the front hand, then steps back and settles calmly into the start pose and holds it still for the last few frames. Exactly one holy symbol and exactly two hands. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "attack",
+  "row": "w3",
+  "ko": "기본 공격 (셉터 치기)",
+  "frames": 24,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1102,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Her rear hand stays completely still at her chest gripping the one small silver holy symbol from the first frame to the last; only the scepter arm and body move. She steps forward and swings the golden scepter down in a short overhead strike like a small mace with the front hand, then steps back and settles calmly into the start pose and holds it still for the last few frames. Exactly one holy symbol and exactly two hands. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "sit",
+  "row": "w1",
+  "ko": "앉기",
+  "frames": 40,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1103,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Slow sit down: as she starts to bend her knees she slips the small silver holy symbol into her satchel so it is no longer visible, then lowers herself carefully, puts one hand on the ground for support, settles onto the ground with her legs folded to the side, lays the scepter across her lap and rests, breathing calmly. Exactly two hands. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "sit",
+  "row": "w2",
+  "ko": "앉기",
+  "frames": 40,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1104,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Slow sit down: as she starts to bend her knees she slips the small silver holy symbol into her satchel so it is no longer visible, then lowers herself carefully, puts one hand on the ground for support, settles onto the ground with her legs folded to the side, lays the scepter across her lap and rests, breathing calmly. Exactly two hands. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "sit",
+  "row": "w3",
+  "ko": "앉기",
+  "frames": 40,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1105,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Slow sit down: as she starts to bend her knees she slips the small silver holy symbol into her satchel so it is no longer visible, then lowers herself carefully, puts one hand on the ground for support, settles onto the ground with her legs folded to the side, lays the scepter across her lap and rests, breathing calmly. Exactly two hands. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
  }
 ]
