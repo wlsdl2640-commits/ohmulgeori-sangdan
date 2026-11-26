@@ -1,11 +1,70 @@
 {
  "f4_boss_earwig": {
-  "id": "6b14727d-fee4-4023-b6b6-295ccfbee203"
+  "id": "6b14727d-fee4-4023-b6b6-295ccfbee203",
+  "ok": 1
  },
  "f4_wedgebeetle": {
-  "id": "ee4da777-525a-4179-ab96-fd582c9510e7"
+  "id": "ee4da777-525a-4179-ab96-fd582c9510e7",
+  "ok": 1
  },
  "f4_jawlizard": {
-  "id": "6bb53530-8b13-4607-95f0-47f68f6c38b9"
+  "id": "6bb53530-8b13-4607-95f0-47f68f6c38b9",
+  "ok": 1
+ },
+ "f5_shovelbird": {
+  "id": "4be8ff2a-e48e-48de-9848-d440d7c8a2d5",
+  "ok": 1
+ },
+ "f5_platerat": {
+  "id": "bc612964-671d-43da-857d-fa04fec24599",
+  "ok": 1
+ },
+ "f5_boss_mole": {
+  "id": "89357ea5-a0d5-4d11-9ca7-d9f324fe1dbf",
+  "ok": 1
+ },
+ "f5_branch_weasel": {
+  "id": "c71491cc-4c54-4a1e-b212-e910b2a113e0",
+  "ok": 1
+ },
+ "f6_flatbug": {
+  "id": "620d586d-4aea-4b20-a821-afadba7574da",
+  "ok": 1
+ },
+ "f6_pooltoad": {
+  "id": "6395e7f8-dbd2-48e2-8771-88aa5c3ac70e",
+  "ok": 1
+ },
+ "f6_boss_bigtoad": {
+  "id": "ce6e2dd5-293b-4bbd-825e-1cfe88ac102e",
+  "ok": 1
+ },
+ "f7_holebat": {
+  "id": "82bbb826-487f-4c6c-9c00-53bfe97543e9",
+  "ok": 1
+ },
+ "f7_barrelwasp": {
+  "id": "307c53c4-4aa0-4576-8a61-07b914930ded",
+  "ok": 1
+ },
+ "f7_boss_hawk": {
+  "id": "1559ac85-af37-4fa5-8a06-1491ae0d6425",
+  "ok": 1
+ },
+ "f8_hornbug": {
+  "id": "7b1548c4-c8a8-42b3-9520-0799ece97351",
+  "ok": 1
+ },
+ "f8_otter": {
+  "id": "43db4aa2-ce79-402b-91d2-29f2c7ad5463",
+  "ok": 1
+ },
+ "f8_boss_bison": {
+  "id": "8b29c1b6-953c-4e12-bf01-a334d1854e82",
+  "ok": 1
+ },
+ "d2_boss_crab": {
+  "id": "120d24e7-b675-4aad-9447-5975229ce5e2",
+  "ok": 1
  }
 }

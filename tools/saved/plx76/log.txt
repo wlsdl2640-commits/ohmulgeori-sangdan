@@ -1,3 +1,35 @@
 [오후 11:19:18] 보냄 f4_boss_earwig 6b14727d-fee4-4023-b6b6-295ccfbee203
 [오후 11:19:18] 보냄 f4_wedgebeetle ee4da777-525a-4179-ab96-fd582c9510e7
 [오후 11:19:18] 보냄 f4_jawlizard 6bb53530-8b13-4607-95f0-47f68f6c38b9
+[오후 11:21:22] 받음 f4_wedgebeetle
+[오후 11:21:23] 보냄 f5_shovelbird 4be8ff2a-e48e-48de-9848-d440d7c8a2d5
+[오후 11:22:06] 받음 f4_jawlizard
+[오후 11:22:07] 받음 f4_boss_earwig
+[오후 11:22:07] 보냄 f5_platerat bc612964-671d-43da-857d-fa04fec24599
+[오후 11:22:07] 보냄 f5_boss_mole 89357ea5-a0d5-4d11-9ca7-d9f324fe1dbf
+[오후 11:24:20] 받음 f5_platerat
+[오후 11:24:21] 보냄 f5_branch_weasel c71491cc-4c54-4a1e-b212-e910b2a113e0
+[오후 11:24:43] 받음 f5_boss_mole
+[오후 11:24:43] 보냄 f6_flatbug 620d586d-4aea-4b20-a821-afadba7574da
+[오후 11:26:01] 받음 f5_shovelbird
+[오후 11:26:01] 받음 f5_branch_weasel
+[오후 11:26:02] 보냄 f6_pooltoad 6395e7f8-dbd2-48e2-8771-88aa5c3ac70e
+[오후 11:26:02] 보냄 f6_boss_bigtoad ce6e2dd5-293b-4bbd-825e-1cfe88ac102e
+[오후 11:27:30] 받음 f6_pooltoad
+[오후 11:27:30] 보냄 f7_holebat 82bbb826-487f-4c6c-9c00-53bfe97543e9
+[오후 11:27:41] 받음 f6_boss_bigtoad
+[오후 11:27:42] 보냄 f7_barrelwasp 307c53c4-4aa0-4576-8a61-07b914930ded
+[오후 11:29:11] 받음 f7_barrelwasp
+[오후 11:29:11] 보냄 f7_boss_hawk 1559ac85-af37-4fa5-8a06-1491ae0d6425
+[오후 11:29:21] 받음 f7_holebat
+[오후 11:29:22] 보냄 f8_hornbug 7b1548c4-c8a8-42b3-9520-0799ece97351
+[오후 11:30:40] 받음 f7_boss_hawk
+[오후 11:30:40] 보냄 f8_otter 43db4aa2-ce79-402b-91d2-29f2c7ad5463
+[오후 11:31:24] 받음 f8_hornbug
+[오후 11:31:24] 보냄 f8_boss_bison 8b29c1b6-953c-4e12-bf01-a334d1854e82
+[오후 11:31:46] 받음 f8_otter
+[오후 11:31:46] 보냄 d2_boss_crab 120d24e7-b675-4aad-9447-5975229ce5e2
+[오후 11:32:42] 받음 f6_flatbug
+[오후 11:32:54] 받음 f8_boss_bison
+[오후 11:33:38] 받음 d2_boss_crab
+[오후 11:33:38] 끝 — 17 / 17
