@@ -71,3 +71,40 @@
 [오전 10:50:55] 받음 backstep_d
 [오전 10:51:05] 받음 backstep_a
 [오전 10:51:05] 끝 — 36 / 36
+[오후 1:04:30] 보냄 stab_a_in 00d5b337-b712-4458-9e3a-06f7d5738cd8
+[오후 1:04:30] 보냄 stab_a_out a91ca1cc-1f7a-4a86-8643-47362255586b
+[오후 1:04:30] 보냄 footwork_a_out 11f0c80a-edc3-4c7a-a330-955bd20124ad
+[오후 1:04:30] 보냄 footwork_a_in c04e46bf-f422-40a8-9f17-fbf74d1bd064
+[오후 1:05:56] 받음 stab_a_in
+[오후 1:05:56] 받음 footwork_a_in
+[오후 1:05:57] 보냄 backhand_a_out 2e82fa3d-8c1a-435f-ad2e-3604015f9b92
+[오후 1:05:57] 보냄 backhand_a_in 38f10af1-0c08-4368-9252-88a239dc107b
+[오후 1:06:43] 받음 footwork_a_out
+[오후 1:06:46] 보냄 smoke_a_out 30cd8c14-05dc-4e13-8baf-3748d5a8f006
+[오후 1:07:44] 받음 backhand_a_in
+[오후 1:07:46] 보냄 smoke_a_in f8375dc3-3d5e-4ee5-87b8-919a604a3646
+[오후 1:07:59] 받음 stab_a_out
+[오후 1:08:00] 보냄 needle_a_out 7e9c80c1-32e0-4225-af2b-e573f1d9e4d7
+[오후 1:08:20] 받음 backhand_a_out
+[오후 1:08:21] 보냄 needle_a_in 9715767e-a1a8-46f6-8f05-1764f784a538
+[오후 1:09:07] 받음 smoke_a_out
+[오후 1:09:08] 보냄 counter_a_out 5ecce9da-64e4-4d83-8db3-3e6793864df8
+[오후 1:09:20] 받음 smoke_a_in
+[오후 1:09:21] 보냄 counter_a_in 1ac9a092-8ffe-49bb-942c-d66d67869236
+[오후 1:10:04] 받음 needle_a_in
+[오후 1:10:05] 보냄 thunder_a_out 34c144f4-ab25-4286-a427-aee4a54e4e08
+[오후 1:10:38] 받음 needle_a_out
+[오후 1:10:38] 보냄 thunder_a_in 655caef7-7bbc-4f8e-b109-14f729178bc5
+[오후 1:10:54] 받음 counter_a_in
+[오후 1:10:55] 보냄 sidestab_a_out 52387716-267f-4dcb-9a42-b0506a6225db
+[오후 1:11:19] 받음 counter_a_out
+[오후 1:11:20] 보냄 sidestab_a_in 5fd575fc-66b0-4f20-bb72-c05f6420757e
+[오후 1:11:59] 받음 thunder_a_in
+[오후 1:12:01] 보냄 backstep_a_out 19cc3cb7-bb7a-4baa-a50e-e0347499696e
+[오후 1:12:24] 받음 thunder_a_out
+[오후 1:12:25] 보냄 backstep_a_in 85c489a0-0761-45fe-a1a7-ce0850e0827e
+[오후 1:12:52] 받음 sidestab_a_in
+[오후 1:13:40] 받음 sidestab_a_out
+[오후 1:14:12] 받음 backstep_a_out
+[오후 1:14:18] 받음 backstep_a_in
+[오후 1:14:18] 끝 — 18 / 18

@@ -1,0 +1,74 @@
+{
+ "stab_a_in": {
+  "id": "00d5b337-b712-4458-9e3a-06f7d5738cd8",
+  "ok": 1
+ },
+ "stab_a_out": {
+  "id": "a91ca1cc-1f7a-4a86-8643-47362255586b",
+  "ok": 1
+ },
+ "footwork_a_out": {
+  "id": "11f0c80a-edc3-4c7a-a330-955bd20124ad",
+  "ok": 1
+ },
+ "footwork_a_in": {
+  "id": "c04e46bf-f422-40a8-9f17-fbf74d1bd064",
+  "ok": 1
+ },
+ "backhand_a_out": {
+  "id": "2e82fa3d-8c1a-435f-ad2e-3604015f9b92",
+  "ok": 1
+ },
+ "backhand_a_in": {
+  "id": "38f10af1-0c08-4368-9252-88a239dc107b",
+  "ok": 1
+ },
+ "smoke_a_out": {
+  "id": "30cd8c14-05dc-4e13-8baf-3748d5a8f006",
+  "ok": 1
+ },
+ "smoke_a_in": {
+  "id": "f8375dc3-3d5e-4ee5-87b8-919a604a3646",
+  "ok": 1
+ },
+ "needle_a_out": {
+  "id": "7e9c80c1-32e0-4225-af2b-e573f1d9e4d7",
+  "ok": 1
+ },
+ "needle_a_in": {
+  "id": "9715767e-a1a8-46f6-8f05-1764f784a538",
+  "ok": 1
+ },
+ "counter_a_out": {
+  "id": "5ecce9da-64e4-4d83-8db3-3e6793864df8",
+  "ok": 1
+ },
+ "counter_a_in": {
+  "id": "1ac9a092-8ffe-49bb-942c-d66d67869236",
+  "ok": 1
+ },
+ "thunder_a_out": {
+  "id": "34c144f4-ab25-4286-a427-aee4a54e4e08",
+  "ok": 1
+ },
+ "thunder_a_in": {
+  "id": "655caef7-7bbc-4f8e-b109-14f729178bc5",
+  "ok": 1
+ },
+ "sidestab_a_out": {
+  "id": "52387716-267f-4dcb-9a42-b0506a6225db",
+  "ok": 1
+ },
+ "sidestab_a_in": {
+  "id": "5fd575fc-66b0-4f20-bb72-c05f6420757e",
+  "ok": 1
+ },
+ "backstep_a_out": {
+  "id": "19cc3cb7-bb7a-4baa-a50e-e0347499696e",
+  "ok": 1
+ },
+ "backstep_a_in": {
+  "id": "85c489a0-0761-45fe-a1a7-ce0850e0827e",
+  "ok": 1
+ }
+}

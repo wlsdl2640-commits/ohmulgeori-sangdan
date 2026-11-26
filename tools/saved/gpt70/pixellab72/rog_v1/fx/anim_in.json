@@ -1,0 +1,164 @@
+[
+ {
+  "key": "stab_a_out",
+  "src": "stab_a/00.png",
+  "desc": "The thin piercing streak thins from the left end toward the tip and breaks into tiny fading glints, the star glint at the tip twinkles once and dims, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a thin horizontal violet-silver dagger thrust streak with a small star glint at the tip",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "stab_a_in",
+  "src": "stab_a/00.png",
+  "desc": "The piercing streak retracts back leftward along its own line toward its start, the tip glint shrinking, becoming a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a thin horizontal violet-silver dagger thrust streak with a small star glint at the tip",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "footwork_a_out",
+  "src": "footwork_a/00.png",
+  "desc": "The light ribbons keep spiraling slowly upward, getting thinner and fainter, the dust puffs spread low and settle, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "violet-silver light ribbons spiraling upward around an empty space with small dust puffs at the ground",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "footwork_a_in",
+  "src": "footwork_a/00.png",
+  "desc": "The light ribbons unwind downward toward the ground and shrink, the dust puffs draw back into the ground, until nothing remains. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "violet-silver light ribbons spiraling upward around an empty space with small dust puffs at the ground",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "backhand_a_out",
+  "src": "backhand_a/00.png",
+  "desc": "The crescent slash thins from the tail toward the tip and breaks into small fading glints, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a thin waist-height crescent slash with a silver core and crimson-violet rim",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "backhand_a_in",
+  "src": "backhand_a/00.png",
+  "desc": "The crescent slash retracts back along its own path toward its start, the tip end disappearing first, shrinking to a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a thin waist-height crescent slash with a silver core and crimson-violet rim",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "smoke_a_out",
+  "src": "smoke_a/00.png",
+  "desc": "The smoke cloud keeps billowing slowly, spreading wider and drifting upward, puffs thinning and breaking apart, the small flash at the base dims, the cloud becoming more and more see-through until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a thick billowing grey-violet smoke cloud with dark outlines and a small flash at its base",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "smoke_a_in",
+  "src": "smoke_a/00.png",
+  "desc": "The smoke cloud shrinks back down into the small flash point at its base, puffs drawn inward and shrinking, until only a tiny glint remains and vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a thick billowing grey-violet smoke cloud with dark outlines and a small flash at its base",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "needle_a_out",
+  "src": "needle_a/00.png",
+  "desc": "The zigzag sparks crackle and twitch a little, getting smaller and dimmer, the thin ring fades, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "small yellow-green paralysis zigzag sparks and a thin ring around a hit point",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "needle_a_in",
+  "src": "needle_a/00.png",
+  "desc": "The zigzag sparks and the ring shrink inward into the central hit point, getting smaller, until only a tiny point remains and vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "small yellow-green paralysis zigzag sparks and a thin ring around a hit point",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "counter_a_out",
+  "src": "counter_a/00.png",
+  "desc": "The dodge smear fades first, then the forward streak thins from left toward the tip and breaks into small glints, the star burst dims, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a violet dodge smear arc on the left followed by a forward silver-violet thrust streak with a star burst at the tip",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "counter_a_in",
+  "src": "counter_a/00.png",
+  "desc": "The forward streak retracts leftward toward the smear arc, the smear arc shrinks, everything shrinking to a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a violet dodge smear arc on the left followed by a forward silver-violet thrust streak with a star burst at the tip",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "thunder_a_out",
+  "src": "thunder_a/00.png",
+  "desc": "The lightning streak flickers and crackles, thinning and breaking into short dimming segments from left to right, the forked burst sputters and fades, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a long horizontal yellow-white lightning streak with violet rim and a forked burst at the tip",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "thunder_a_in",
+  "src": "thunder_a/00.png",
+  "desc": "The lightning streak retracts leftward toward its start, the forked burst shrinking first, crackling as it shortens to a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a long horizontal yellow-white lightning streak with violet rim and a forked burst at the tip",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "sidestab_a_out",
+  "src": "sidestab_a/00.png",
+  "desc": "The thrust streak thins from the bottom toward the tip and breaks into small glints, the dust puff spreads low and settles, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a diagonal upward silver dagger thrust streak with a small kick of dust at the ground",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "sidestab_a_in",
+  "src": "sidestab_a/00.png",
+  "desc": "The thrust streak retracts down along its own line toward its start, the dust drawn back into the ground, shrinking to a thin line that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a diagonal upward silver dagger thrust streak with a small kick of dust at the ground",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "backstep_a_out",
+  "src": "backstep_a/00.png",
+  "desc": "The afterimage streaks fade from right to left, the dust puffs spread low and settle, the smoke wisps drift up and thin out, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "low dust puffs and faint afterimage streaks along the ground with thin smoke wisps",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "backstep_a_in",
+  "src": "backstep_a/00.png",
+  "desc": "The dust puffs, streaks and wisps shrink back toward the left end along the ground, getting smaller, until nothing remains. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "low dust puffs and faint afterimage streaks along the ground with thin smoke wisps",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ }
+]
