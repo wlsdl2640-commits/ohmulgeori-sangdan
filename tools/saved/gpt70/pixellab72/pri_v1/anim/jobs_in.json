@@ -471,5 +471,53 @@
   "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, short golden scepter with blue gem in front hand, small silver holy symbol held at her chest in rear hand, brown satchel with two rolled scrolls on hip, brown boots",
   "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
   "desc": "She holds the golden scepter upright in front of her face with both hands, eyes closed in deep concentration, leans into it for a long moment, then opens her eyes and returns to the start pose. Keep the exact same character design, size, colors and equipment; the scepter and the holy symbol stay in her hands. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "idle",
+  "row": "v3",
+  "ko": "서 있기(숨쉬기)",
+  "frames": 16,
+  "first": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f",
+  "seed": 300,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, short golden scepter with blue gem in front hand, small silver holy symbol held at her chest in rear hand, brown satchel with two rolled scrolls on hip, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Clearly visible slow breathing idle: her shoulders and chest rise on the inhale and sink on the exhale, the whole upper body moves up and down by one or two pixels, head bobs gently with the breath, braid and hood tip sway softly, robe hem moves slightly. Feet stay planted. Loops back to the start pose. Keep the exact same character design, size, colors and equipment; the scepter and the holy symbol stay in her hands. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters.",
+  "last": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f"
+ },
+ {
+  "mon": "idle",
+  "row": "v4",
+  "ko": "서 있기(숨쉬기)",
+  "frames": 16,
+  "first": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f",
+  "seed": 301,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, short golden scepter with blue gem in front hand, small silver holy symbol held at her chest in rear hand, brown satchel with two rolled scrolls on hip, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Relaxed breathing idle with a soft knee bounce: she bends her knees very slightly and rises again with each breath, shoulders lift and drop, the scepter bobs a little with her hand, braid swings gently behind her. Feet stay planted. Loops back to the start pose. Keep the exact same character design, size, colors and equipment; the scepter and the holy symbol stay in her hands. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters.",
+  "last": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f"
+ },
+ {
+  "mon": "idle",
+  "row": "v5",
+  "ko": "서 있기(숨쉬기)",
+  "frames": 16,
+  "first": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f",
+  "seed": 302,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, short golden scepter with blue gem in front hand, small silver holy symbol held at her chest in rear hand, brown satchel with two rolled scrolls on hip, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Lively idle: she breathes in deeply so her shoulders lift, then exhales and settles, tilting her head slightly to one side and back, the hood and braid sway, the robe hem flutters a little. Feet stay planted. Loops back to the start pose. Keep the exact same character design, size, colors and equipment; the scepter and the holy symbol stay in her hands. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters.",
+  "last": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f"
+ },
+ {
+  "mon": "idle",
+  "row": "v6",
+  "ko": "서 있기(숨쉬기)",
+  "frames": 16,
+  "first": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f",
+  "seed": 303,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, short golden scepter with blue gem in front hand, small silver holy symbol held at her chest in rear hand, brown satchel with two rolled scrolls on hip, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Calm prayerful idle: with each slow breath her upper body rises and falls, she leans her weight very slightly forward and back, the holy symbol at her chest moves gently with her breathing, braid sways. Feet stay planted. Loops back to the start pose. Keep the exact same character design, size, colors and equipment; the scepter and the holy symbol stay in her hands. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters.",
+  "last": "upload:7756c752-b414-48c1-879c-961ddc0c5d9f"
  }
 ]
