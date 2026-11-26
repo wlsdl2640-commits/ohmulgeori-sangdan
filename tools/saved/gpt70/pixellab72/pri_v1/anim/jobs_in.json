@@ -1319,5 +1319,38 @@
   "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
   "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
   "desc": "Slow sit down: as she starts to bend her knees she slips the small silver holy symbol into her satchel so it is no longer visible, then lowers herself carefully, puts one hand on the ground for support, settles onto the ground with her legs folded to the side, lays the scepter across her lap and rests, breathing calmly. Exactly two hands. The small silver holy symbol is a handheld object held in her rear hand, not a brooch: wherever the rear hand moves, the symbol moves with it; if the hand lets go of it, it is put away and no longer visible. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "fall",
+  "row": "d1",
+  "ko": "쓰러짐",
+  "frames": 40,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1200,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Slow collapse in clear steps: she staggers back one step, her rear hand loosens and the small silver holy symbol slips out and drops to the ground in front of her feet with a small bounce; she reaches toward it weakly, drops to both knees, leans forward and catches herself on her hands, the scepter slipping from her front hand, then she slowly rolls down onto her side and lies still on the ground with eyes closed, the holy symbol lying on the ground near her hand. The small silver holy symbol is a handheld object: once it falls from her hand it stays on the ground and does not come back to her. The whole motion is gradual with many in-between poses, no sudden jumps. Only the character moves. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "fall",
+  "row": "d2",
+  "ko": "쓰러짐",
+  "frames": 40,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1201,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Slow collapse in clear steps: she staggers back one step, her rear hand loosens and the small silver holy symbol slips out and drops to the ground in front of her feet with a small bounce; she reaches toward it weakly, drops to both knees, leans forward and catches herself on her hands, the scepter slipping from her front hand, then she slowly rolls down onto her side and lies still on the ground with eyes closed, the holy symbol lying on the ground near her hand. The small silver holy symbol is a handheld object: once it falls from her hand it stays on the ground and does not come back to her. The whole motion is gradual with many in-between poses, no sudden jumps. Only the character moves. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
+ },
+ {
+  "mon": "fall",
+  "row": "d3",
+  "ko": "쓰러짐",
+  "frames": 40,
+  "first": "upload:0396e164-e519-45f1-936d-471b6b0213ac",
+  "seed": 1202,
+  "subject": "young female priest: white hooded robe with sky-blue trim, brown braided hair, golden scepter in front hand, a small handheld silver holy symbol gripped in her rear hand (a separate object, not attached to the robe), brown satchel, brown boots",
+  "pose": "standing calmly facing right, scepter held up in the front hand, the rear hand holding the small silver holy symbol in front of her chest",
+  "desc": "Slow collapse in clear steps: she staggers back one step, her rear hand loosens and the small silver holy symbol slips out and drops to the ground in front of her feet with a small bounce; she reaches toward it weakly, drops to both knees, leans forward and catches herself on her hands, the scepter slipping from her front hand, then she slowly rolls down onto her side and lies still on the ground with eyes closed, the holy symbol lying on the ground near her hand. The small silver holy symbol is a handheld object: once it falls from her hand it stays on the ground and does not come back to her. The whole motion is gradual with many in-between poses, no sudden jumps. Only the character moves. Keep the exact same character design, size and colors. No visual effects, no motion trails, no flashes, no glow, no sparks, no blood, no other characters."
  }
 ]
