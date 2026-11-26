@@ -43,6 +43,11 @@
  "backstep": [
   "v3"
  ],
- "smoke": "다시(v5~v7 바닥에 · smokethrow v1~v3 던지기)",
- "needle": "다시(v5~v8 손목 침)"
+ "smoke": [
+  "v7"
+ ],
+ "needle": "다시(v9~v12 손등이 바닥을 봄)",
+ "smokethrow": [
+  "v2"
+ ]
 }

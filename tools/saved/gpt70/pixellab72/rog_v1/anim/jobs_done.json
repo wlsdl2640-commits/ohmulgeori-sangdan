@@ -246,5 +246,21 @@
  "needle/v8": {
   "id": "effb911c-55c1-47f5-b461-acd055ad0f83",
   "ok": 1
+ },
+ "needle/v9": {
+  "id": "149d965f-7691-485a-9ce9-845a84236e1e",
+  "ok": 1
+ },
+ "needle/v10": {
+  "id": "100b85e3-156f-461a-9013-5f1d1b851fbd",
+  "ok": 1
+ },
+ "needle/v12": {
+  "id": "7aff1426-2366-45d0-96af-c0c6f11cd22f",
+  "ok": 1
+ },
+ "needle/v11": {
+  "id": "14e76299-b81c-4b98-8773-9a36a5ded64b",
+  "ok": 1
  }
 }
