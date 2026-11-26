@@ -46,7 +46,9 @@
  "smoke": [
   "v7"
  ],
- "needle": "다시(v9~v12 손등이 바닥을 봄)",
+ "needle": [
+  "k2a"
+ ],
  "smokethrow": [
   "v2"
  ]
