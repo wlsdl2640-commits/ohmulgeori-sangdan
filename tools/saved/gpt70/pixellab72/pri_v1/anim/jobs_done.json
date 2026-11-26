@@ -174,5 +174,61 @@
  "idle/v6": {
   "id": "c3628796-b770-4d81-8fe1-e23560650bcc",
   "ok": 1
+ },
+ "fall/s2": {
+  "id": "1d8a867c-16cc-4a29-a04c-8019efe9c5b8",
+  "ok": 1
+ },
+ "sleep/s2": {
+  "id": "53e2e72a-0523-4be7-a6e7-7ee277a9c500",
+  "ok": 1
+ },
+ "sit/s2": {
+  "id": "4f3ea0a5-fc41-4c4c-81a7-dd82ff16ff25",
+  "ok": 1
+ },
+ "sleep/s1": {
+  "id": "e4cbd67c-be8a-4f44-99ff-8f4f9e654d58",
+  "ok": 1
+ },
+ "fall/s1": {
+  "id": "a5dbfaa5-32d8-4d6c-8d43-43a544f7aa67",
+  "ok": 1
+ },
+ "sit/s1": {
+  "id": "572b5af7-6074-4278-a3b1-f0e636c77b9f",
+  "ok": 1
+ },
+ "weaken/t1": {
+  "id": "cdda50f9-1641-45c7-b385-060202cf748c",
+  "ok": 1
+ },
+ "weaken/t2": {
+  "id": "20be48ef-8736-4f83-9bb8-7420d6c0d1cc",
+  "ok": 1
+ },
+ "heal/t2": {
+  "id": "66c4974f-1d03-4c8b-872b-a7ed76023783",
+  "ok": 1
+ },
+ "heal/t1": {
+  "id": "cad2ae8c-a1e8-4c14-8a71-e11f31ba46ce",
+  "ok": 1
+ },
+ "firstaid/t1": {
+  "id": "0f2f08bf-a178-4fe5-ae7e-6ebfedc23446",
+  "ok": 1
+ },
+ "holyhammer/t2": {
+  "id": "a5da543f-8c07-453a-a134-b8ae6fea321a",
+  "ok": 1
+ },
+ "holyhammer/t1": {
+  "id": "089c3024-11f3-4d73-aaa1-132780f99dfe",
+  "ok": 1
+ },
+ "firstaid/t2": {
+  "id": "58218fbd-765c-4734-870f-cdbf5235c8e9",
+  "ok": 1
  }
 }
