@@ -230,5 +230,69 @@
  "firstaid/t2": {
   "id": "58218fbd-765c-4734-870f-cdbf5235c8e9",
   "ok": 1
+ },
+ "bless/t1": {
+  "id": "feb19dd5-f2ff-4427-a524-c54b3b309b52",
+  "ok": 1
+ },
+ "sanctuary/t1": {
+  "id": "8c2140b6-cf82-44a2-86ae-b04956602323",
+  "ok": 1
+ },
+ "holy/t1": {
+  "id": "93a5f04f-bbe1-403c-98ff-f9628455b01f",
+  "ok": 1
+ },
+ "holy/t2": {
+  "id": "34a6a242-76f8-4867-b57f-4733a9f9e1de",
+  "ok": 1
+ },
+ "cure/t2": {
+  "id": "e9e204d0-2056-4f6d-a9ad-a3aa219621d7",
+  "ok": 1
+ },
+ "bless/t2": {
+  "id": "1c0c058c-9aa8-4abf-ba4f-a8443bbc4152",
+  "ok": 1
+ },
+ "sanctuary/t2": {
+  "id": "3d5abdc1-6201-42ae-899c-2fdb03ed2f36",
+  "ok": 1
+ },
+ "cure/t1": {
+  "id": "f3f123e7-3f1a-4b9f-9489-5f30cf7a3b6a",
+  "ok": 1
+ },
+ "massheal/t1": {
+  "id": "cce73747-b0ec-416f-9fd7-d225c3b3d8d8",
+  "ok": 1
+ },
+ "massheal/t2": {
+  "id": "b45145dd-d759-4968-8146-4e9a77d3a289",
+  "ok": 1
+ },
+ "greatheal/t1": {
+  "id": "bbf727c0-7b70-4332-b4a5-2c9903ded04e",
+  "ok": 1
+ },
+ "attack/t1": {
+  "id": "1ae57dde-1989-484d-b875-d0bdffec52c8",
+  "ok": 1
+ },
+ "greatheal/t2": {
+  "id": "641d1e7f-9afd-4189-8f72-3b93daaf56d6",
+  "ok": 1
+ },
+ "attack/t2": {
+  "id": "49bb839b-9c6e-4800-8b3d-36d530ade23a",
+  "ok": 1
+ },
+ "heal/t4": {
+  "id": "a537271f-04ea-42de-80ba-e5c1b168a8b9",
+  "ok": 1
+ },
+ "heal/t3": {
+  "id": "37362a33-33f8-4e12-9623-420315d6f4cc",
+  "ok": 1
  }
 }
