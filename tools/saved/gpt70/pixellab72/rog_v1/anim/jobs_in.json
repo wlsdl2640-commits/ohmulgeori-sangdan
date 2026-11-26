@@ -779,5 +779,101 @@
   "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
   "desc": "He thrusts his front arm straight forward at the enemy, wrist and its cloth wrap clearly visible. As the arm extends the hand opens flat and turns palm up: the BACK of the hand faces DOWN toward the ground and the open palm faces up to the sky, fingers spread forward. The shuriken is pinched between two fingers and hangs just below the back of the hand, under the hand. A single very thin tiny steel needle shoots straight forward out of the cloth wrap on his wrist. Then he pulls the arm back, closes the hand on the shuriken and returns to the start pose. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
   "last": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b"
+ },
+ {
+  "mon": "needle_in",
+  "row": "k1a",
+  "ko": "마비 침 (뻗기)",
+  "frames": 12,
+  "first": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b",
+  "seed": 601,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "He quickly thrusts his front arm straight forward at shoulder height; the hand turns flat and horizontal like a knife blade, back of the hand facing down and palm facing up, seen edge-on from the side, the shuriken pinched between two fingers hanging under the hand, and a thin needle shoots forward from the wrist wrap. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:648b5b1a-3d68-4b9a-ad1c-4d7aae8cbddc"
+ },
+ {
+  "mon": "needle_out",
+  "row": "k1a",
+  "ko": "마비 침 (거두기)",
+  "frames": 12,
+  "first": "upload:648b5b1a-3d68-4b9a-ad1c-4d7aae8cbddc",
+  "seed": 611,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "Holding the flat edge-on hand forward for a moment, the thin needle keeps flying forward and leaves the frame; then he pulls the arm back, closes the hand around the shuriken and returns to his ready stance with the shuriken raised. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b"
+ },
+ {
+  "mon": "needle_in",
+  "row": "k1b",
+  "ko": "마비 침 (뻗기)",
+  "frames": 12,
+  "first": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b",
+  "seed": 602,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "He quickly thrusts his front arm straight forward at shoulder height; the hand turns flat and horizontal like a knife blade, back of the hand facing down and palm facing up, seen edge-on from the side, the shuriken pinched between two fingers hanging under the hand, and a thin needle shoots forward from the wrist wrap. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:648b5b1a-3d68-4b9a-ad1c-4d7aae8cbddc"
+ },
+ {
+  "mon": "needle_out",
+  "row": "k1b",
+  "ko": "마비 침 (거두기)",
+  "frames": 12,
+  "first": "upload:648b5b1a-3d68-4b9a-ad1c-4d7aae8cbddc",
+  "seed": 612,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "Holding the flat edge-on hand forward for a moment, the thin needle keeps flying forward and leaves the frame; then he pulls the arm back, closes the hand around the shuriken and returns to his ready stance with the shuriken raised. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b"
+ },
+ {
+  "mon": "needle_in",
+  "row": "k2a",
+  "ko": "마비 침 (뻗기)",
+  "frames": 12,
+  "first": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b",
+  "seed": 601,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "He quickly thrusts his front arm straight forward at shoulder height; the hand turns flat and horizontal like a knife blade, back of the hand facing down and palm facing up, seen edge-on from the side, the shuriken pinched between two fingers hanging under the hand, and a thin needle shoots forward from the wrist wrap. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:e1cf8fd5-df87-445f-963c-15f01331a072"
+ },
+ {
+  "mon": "needle_out",
+  "row": "k2a",
+  "ko": "마비 침 (거두기)",
+  "frames": 12,
+  "first": "upload:e1cf8fd5-df87-445f-963c-15f01331a072",
+  "seed": 611,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "Holding the flat edge-on hand forward for a moment, the thin needle keeps flying forward and leaves the frame; then he pulls the arm back, closes the hand around the shuriken and returns to his ready stance with the shuriken raised. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b"
+ },
+ {
+  "mon": "needle_in",
+  "row": "k2b",
+  "ko": "마비 침 (뻗기)",
+  "frames": 12,
+  "first": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b",
+  "seed": 602,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "He quickly thrusts his front arm straight forward at shoulder height; the hand turns flat and horizontal like a knife blade, back of the hand facing down and palm facing up, seen edge-on from the side, the shuriken pinched between two fingers hanging under the hand, and a thin needle shoots forward from the wrist wrap. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:e1cf8fd5-df87-445f-963c-15f01331a072"
+ },
+ {
+  "mon": "needle_out",
+  "row": "k2b",
+  "ko": "마비 침 (거두기)",
+  "frames": 12,
+  "first": "upload:e1cf8fd5-df87-445f-963c-15f01331a072",
+  "seed": 612,
+  "subject": "a young hooded rogue: charcoal-black hood and short ragged cape with a round clasp, black cloth mask, brown hair, dark grey tunic and trousers, red sash, bandaged forearms, slim steel dagger in the rear hand, silver shuriken in the front hand, closed black drawstring pouch at the belt",
+  "pose": "standing in a ready stance, dagger held low in the rear hand, a shuriken raised in the front hand",
+  "desc": "Holding the flat edge-on hand forward for a moment, the thin needle keeps flying forward and leaves the frame; then he pulls the arm back, closes the hand around the shuriken and returns to his ready stance with the shuriken raised. Keep the exact same character design, size, colors and equipment. No other visual effects: no motion trails, no flashes, no sparks, no smoke, no dust clouds, no other characters.",
+  "last": "upload:14564fa7-5ee5-400f-b433-acf7467ed16b"
  }
 ]
