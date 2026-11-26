@@ -1,0 +1,48 @@
+{
+ "idle": [
+  "v1"
+ ],
+ "walk": [
+  "v1"
+ ],
+ "run": [
+  "v1"
+ ],
+ "hurt": [
+  "v2"
+ ],
+ "fall": [
+  "v2"
+ ],
+ "sit": [
+  "v2"
+ ],
+ "sleep": [
+  "v1",
+  "v2",
+  "v3"
+ ],
+ "stab": [
+  "v1"
+ ],
+ "footwork": [
+  "v3"
+ ],
+ "backhand": [
+  "v2"
+ ],
+ "counter": [
+  "v1"
+ ],
+ "thunder": [
+  "v3"
+ ],
+ "sidestab": [
+  "v3"
+ ],
+ "backstep": [
+  "v3"
+ ],
+ "smoke": "다시(v5~v7 바닥에 · smokethrow v1~v3 던지기)",
+ "needle": "다시(v5~v8 손목 침)"
+}

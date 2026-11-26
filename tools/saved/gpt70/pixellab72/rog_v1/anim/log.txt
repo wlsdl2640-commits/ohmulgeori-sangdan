@@ -308,3 +308,24 @@ subject_description
 [오전 8:28:11] 받음 backstep/v2
 [오전 8:28:31] 받음 backstep/v4
 [오전 8:28:31] 끝 — 받은 동작 52 / 52
+[오전 9:05:49] 보냄 smoke/v6 20장 f5056eea-b3cb-43f5-8e32-a6c395159e3b
+[오전 9:05:49] 보냄 smoke/v5 20장 66e2e363-fa26-4513-999a-bacac32f876d
+[오전 9:05:49] 보냄 smoke/v7 20장 cce35677-ec55-46d7-afd5-0818abc3b979
+[오전 9:05:49] 보냄 smokethrow/v2 20장 a0e171e9-3fe8-48ab-b274-b32ab0950ac8
+[오전 9:05:49] 보냄 smokethrow/v3 20장 9c8c6453-076b-4379-baab-97b8c33d91a0
+[오전 9:05:49] 보냄 smokethrow/v1 20장 2fc5ca04-86e0-46e7-b87b-e2abf0a3281c
+[오전 9:07:36] 받음 smokethrow/v2
+[오전 9:07:36] 받음 smokethrow/v3
+[오전 9:07:36] 보냄 needle/v5 20장 349ff3b5-0ac8-4183-b0d2-c6c21189b929
+[오전 9:07:36] 보냄 needle/v6 20장 08fff8c8-eac3-4b50-995a-4c11a6dc251f
+[오전 9:07:46] 받음 smokethrow/v1
+[오전 9:07:47] 보냄 needle/v7 20장 cbb95236-406e-42ab-8790-c16e59e1e07c
+[오전 9:07:47] 받음 smoke/v5
+[오전 9:07:47] 보냄 needle/v8 20장 effb911c-55c1-47f5-b461-acd055ad0f83
+[오전 9:08:06] 받음 smoke/v7
+[오전 9:08:17] 받음 smoke/v6
+[오전 9:09:32] 받음 needle/v7
+[오전 9:09:32] 받음 needle/v5
+[오전 9:09:32] 받음 needle/v6
+[오전 9:09:32] 받음 needle/v8
+[오전 9:09:32] 끝 — 받은 동작 62 / 62

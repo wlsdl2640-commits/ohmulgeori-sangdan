@@ -206,5 +206,45 @@
  "backstep/v4": {
   "id": "a4feeccf-4cb1-4fe7-be1b-b559332a49f4",
   "ok": 1
+ },
+ "smoke/v6": {
+  "id": "f5056eea-b3cb-43f5-8e32-a6c395159e3b",
+  "ok": 1
+ },
+ "smoke/v5": {
+  "id": "66e2e363-fa26-4513-999a-bacac32f876d",
+  "ok": 1
+ },
+ "smoke/v7": {
+  "id": "cce35677-ec55-46d7-afd5-0818abc3b979",
+  "ok": 1
+ },
+ "smokethrow/v2": {
+  "id": "a0e171e9-3fe8-48ab-b274-b32ab0950ac8",
+  "ok": 1
+ },
+ "smokethrow/v3": {
+  "id": "9c8c6453-076b-4379-baab-97b8c33d91a0",
+  "ok": 1
+ },
+ "smokethrow/v1": {
+  "id": "2fc5ca04-86e0-46e7-b87b-e2abf0a3281c",
+  "ok": 1
+ },
+ "needle/v5": {
+  "id": "349ff3b5-0ac8-4183-b0d2-c6c21189b929",
+  "ok": 1
+ },
+ "needle/v6": {
+  "id": "08fff8c8-eac3-4b50-995a-4c11a6dc251f",
+  "ok": 1
+ },
+ "needle/v7": {
+  "id": "cbb95236-406e-42ab-8790-c16e59e1e07c",
+  "ok": 1
+ },
+ "needle/v8": {
+  "id": "effb911c-55c1-47f5-b461-acd055ad0f83",
+  "ok": 1
  }
 }
