@@ -44,3 +44,48 @@
 [오후 11:19:05] !! holy_d 실패 1: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
 [오후 11:19:12] 보냄 holy_d da6c1992-92aa-4b22-92c5-3df5839fba39
 [오후 11:19:12] 보냄 bless_d 5e244ea8-3add-4fab-af4b-845d414b69c2
+[오후 11:20:20] 받음 holy
+[오후 11:20:21] 보냄 weaken 0e4ab76d-b6ee-49cf-923d-da7db0abebe7
+[오후 11:21:26] !! weaken_a 실패 1: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
+[오후 11:21:26] 받음 bless_d
+[오후 11:21:27] 보냄 weaken_c 3a9551c7-2a55-4cc8-a67c-ceca864cd90a
+[오후 11:21:32] 보냄 weaken_a f3697896-1aef-432b-9272-e21e713f8b4c
+[오후 11:21:36] 받음 holy_d
+[오후 11:21:37] 보냄 weaken_d 35ebdba6-4301-421b-b8f8-a27b5c3f1190
+[오후 11:21:57] 받음 weaken
+[오후 11:21:57] 보냄 holyhammer_a 4f691a9e-a045-45e2-b5ac-b25c68469675
+[오후 11:22:28] 받음 weaken_a
+[오후 11:22:28] 보냄 holyhammer 413916e3-d4d7-4e29-aa5c-e6cc99ac11c0
+[오후 11:23:02] 받음 weaken_c
+[오후 11:23:03] 보냄 holyhammer_c fa2349bd-3e2b-4b7c-a128-a980829c5fea
+[오후 11:23:24] 받음 holyhammer_a
+[오후 11:23:25] 보냄 holyhammer_d 63493d12-936e-42ec-b02b-af512386f662
+[오후 11:24:09] 받음 holyhammer
+[오후 11:24:09] 보냄 sanctuary_a 93f7c11a-100e-442b-815c-acc50d1a9d16
+[오후 11:24:31] 받음 holyhammer_c
+[오후 11:24:31] 보냄 sanctuary b5044d47-9917-4ac5-9689-cb6e6db295ff
+[오후 11:25:05] 받음 holyhammer_d
+[오후 11:25:05] 보냄 sanctuary_c 339f8915-c71e-4f49-9189-2f977c3de6d9
+[오후 11:25:27] 받음 sanctuary_a
+[오후 11:25:27] 보냄 sanctuary_d 2a988686-062f-43b0-8426-2c98cf354d29
+[오후 11:25:38] 받음 sanctuary
+[오후 11:25:38] 보냄 massheal_a 60b95ce8-d364-47a2-814f-c992867be593
+[오후 11:26:00] 받음 weaken_d
+[오후 11:26:01] 보냄 massheal bf14d507-1bd7-4730-bd15-5fd1020595fd
+[오후 11:26:23] 받음 sanctuary_c
+[오후 11:26:23] 보냄 massheal_c 205bcf12-c2bb-428b-b065-d2bb8b21e6f8
+[오후 11:26:45] 받음 massheal_a
+[오후 11:26:45] 보냄 massheal_d 958633ac-3c39-4127-a2ce-9fd900fc9d00
+[오후 11:26:56] 받음 sanctuary_d
+[오후 11:26:56] 보냄 greatheal_a 0b059570-e4f2-4a05-b214-d63e78653365
+[오후 11:27:17] 받음 massheal
+[오후 11:27:18] 보냄 greatheal 731a5d8f-b10b-46a0-8808-0340cf123172
+[오후 11:27:29] 받음 massheal_c
+[오후 11:27:29] 보냄 greatheal_c 0659de6b-197f-47a9-8782-11ca1875aaf2
+[오후 11:28:24] 받음 greatheal_a
+[오후 11:28:24] 받음 greatheal
+[오후 11:28:25] 보냄 greatheal_d 23e519bf-0096-497f-ae25-a2dbb6e19a1c
+[오후 11:28:46] 받음 massheal_d
+[오후 11:29:51] 받음 greatheal_d
+[오후 11:30:22] 받음 greatheal_c
+[오후 11:30:22] 끝 — 40 / 40

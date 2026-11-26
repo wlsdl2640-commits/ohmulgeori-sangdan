@@ -60,23 +60,103 @@
   "ok": 1
  },
  "bless_d": {
-  "id": "5e244ea8-3add-4fab-af4b-845d414b69c2"
+  "id": "5e244ea8-3add-4fab-af4b-845d414b69c2",
+  "ok": 1
  },
  "holy_a": {
   "id": "0ee4c0d9-ddc4-4e86-b796-2f4a1d94ee80",
   "ok": 1
  },
  "holy": {
-  "id": "ef0cd353-f998-4c93-b285-8553cbb3dc5c"
+  "id": "ef0cd353-f998-4c93-b285-8553cbb3dc5c",
+  "ok": 1
  },
  "holy_c": {
   "id": "07aba2c6-2ece-4c49-aeda-0e96e2818438",
   "ok": 1
  },
  "holy_d": {
-  "id": "da6c1992-92aa-4b22-92c5-3df5839fba39"
+  "id": "da6c1992-92aa-4b22-92c5-3df5839fba39",
+  "ok": 1
  },
  "weaken_a": {
-  "id": "962267ba-ffc4-4d34-9f03-b252ca43ae53"
+  "id": "f3697896-1aef-432b-9272-e21e713f8b4c",
+  "ok": 1
+ },
+ "weaken": {
+  "id": "0e4ab76d-b6ee-49cf-923d-da7db0abebe7",
+  "ok": 1
+ },
+ "weaken_c": {
+  "id": "3a9551c7-2a55-4cc8-a67c-ceca864cd90a",
+  "ok": 1
+ },
+ "weaken_d": {
+  "id": "35ebdba6-4301-421b-b8f8-a27b5c3f1190",
+  "ok": 1
+ },
+ "holyhammer_a": {
+  "id": "4f691a9e-a045-45e2-b5ac-b25c68469675",
+  "ok": 1
+ },
+ "holyhammer": {
+  "id": "413916e3-d4d7-4e29-aa5c-e6cc99ac11c0",
+  "ok": 1
+ },
+ "holyhammer_c": {
+  "id": "fa2349bd-3e2b-4b7c-a128-a980829c5fea",
+  "ok": 1
+ },
+ "holyhammer_d": {
+  "id": "63493d12-936e-42ec-b02b-af512386f662",
+  "ok": 1
+ },
+ "sanctuary_a": {
+  "id": "93f7c11a-100e-442b-815c-acc50d1a9d16",
+  "ok": 1
+ },
+ "sanctuary": {
+  "id": "b5044d47-9917-4ac5-9689-cb6e6db295ff",
+  "ok": 1
+ },
+ "sanctuary_c": {
+  "id": "339f8915-c71e-4f49-9189-2f977c3de6d9",
+  "ok": 1
+ },
+ "sanctuary_d": {
+  "id": "2a988686-062f-43b0-8426-2c98cf354d29",
+  "ok": 1
+ },
+ "massheal_a": {
+  "id": "60b95ce8-d364-47a2-814f-c992867be593",
+  "ok": 1
+ },
+ "massheal": {
+  "id": "bf14d507-1bd7-4730-bd15-5fd1020595fd",
+  "ok": 1
+ },
+ "massheal_c": {
+  "id": "205bcf12-c2bb-428b-b065-d2bb8b21e6f8",
+  "ok": 1
+ },
+ "massheal_d": {
+  "id": "958633ac-3c39-4127-a2ce-9fd900fc9d00",
+  "ok": 1
+ },
+ "greatheal_a": {
+  "id": "0b059570-e4f2-4a05-b214-d63e78653365",
+  "ok": 1
+ },
+ "greatheal": {
+  "id": "731a5d8f-b10b-46a0-8808-0340cf123172",
+  "ok": 1
+ },
+ "greatheal_c": {
+  "id": "0659de6b-197f-47a9-8782-11ca1875aaf2",
+  "ok": 1
+ },
+ "greatheal_d": {
+  "id": "23e519bf-0096-497f-ae25-a2dbb6e19a1c",
+  "ok": 1
  }
 }
