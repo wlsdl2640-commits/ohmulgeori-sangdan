@@ -20,7 +20,8 @@
   "ok": 1
  },
  "soldier/walk": {
-  "id": "912d1200-44a3-4266-bc80-5a08f5614ddd"
+  "id": "912d1200-44a3-4266-bc80-5a08f5614ddd",
+  "ok": 1
  },
  "honeypot/idle": {
   "id": "b2eb5ac4-0eff-448a-ad9b-5bf959c35cf9",
@@ -31,11 +32,583 @@
   "ok": 1
  },
  "honeypot/atk": {
-  "id": "2a667568-1ed8-48ea-ae93-f8217046ec55"
+  "id": "2a667568-1ed8-48ea-ae93-f8217046ec55",
+  "ok": 1
  },
  "aphids/idle": {
-  "id": "71d2fc26-b762-4195-97c3-cfab8373e17c"
+  "id": "71d2fc26-b762-4195-97c3-cfab8373e17c",
+  "ok": 1
  },
  "aphids/walk": {
-  "id": "e0b1005a-c774-43d7-beab-343f898968f5"
+  "id": "e0b1005a-c774-43d7-beab-343f898968f5",
+  "ok": 1
  },
+ "aphids/atk": {
+  "id": "b8e0b3c5-462f-4f9e-9763-6bff2eb428be",
+  "ok": 1
+ },
+ "pupa/idle": {
+  "id": "3889f678-52ed-478b-9fdc-db9851fe3d41",
+  "ok": 1
+ },
+ "pupa/walk": {
+  "id": "ee939dde-92b7-4814-8892-6be4c83381ab",
+  "ok": 1
+ },
+ "pupa/atk": {
+  "id": "5bf11025-a7f0-4cee-b2bb-b2fa42b37b6e",
+  "ok": 1
+ },
+ "antlion/idle": {
+  "id": "37781ef9-d0b5-4420-9a6c-131e458b402e",
+  "ok": 1
+ },
+ "antlion/walk": {
+  "id": "320a5305-4ba4-40fa-b0c2-e8cf3bc8c408",
+  "ok": 1
+ },
+ "antlion/atk": {
+  "id": "3ed48bea-fc93-46d3-a65d-8cd1f4526f6f",
+  "ok": 1
+ },
+ "fungusant/idle": {
+  "id": "a4c687d5-6035-448c-9c21-bc69aee0324d",
+  "ok": 1
+ },
+ "fungusant/walk": {
+  "id": "d75b86e2-868c-4834-b488-3dfc0dfa8394",
+  "ok": 1
+ },
+ "fungusant/atk": {
+  "id": "18bbe85a-3ac8-4f2d-9108-c6be2c947423",
+  "ok": 1
+ },
+ "mimicspider/idle": {
+  "id": "79281281-e434-41a6-9de5-716fc96c9357",
+  "ok": 1
+ },
+ "mimicspider/walk": {
+  "id": "2bcf0db8-475c-49f3-aca5-01c7b5c5a21b",
+  "ok": 1
+ },
+ "mimicspider/atk": {
+  "id": "095a434b-b177-49a0-a178-8d6d8a7dc254",
+  "ok": 1
+ },
+ "acidslime/idle": {
+  "id": "3462f86f-77eb-44c8-99a4-5e2f5e42021d",
+  "ok": 1
+ },
+ "acidslime/walk": {
+  "id": "4445ee6e-3399-4022-b954-2024e426a1b5",
+  "ok": 1
+ },
+ "acidslime/atk": {
+  "id": "5dd4a445-ae64-432c-8d4c-216cad8a7dc4",
+  "ok": 1
+ },
+ "slime/idle": {
+  "id": "6a73a16b-d10e-4894-9444-6bae61749ee7",
+  "ok": 1
+ },
+ "slime/walk": {
+  "id": "8f3883ac-d727-48db-a8ce-60f3763df0bd",
+  "ok": 1
+ },
+ "slime/atk": {
+  "id": "79c198b8-54a9-4c6f-83e6-1d94ab715d7f",
+  "ok": 1
+ },
+ "swampbrute0/idle": {
+  "id": "ec734542-2a00-4a13-bd98-08bb36615c43",
+  "ok": 1
+ },
+ "swampbrute0/walk": {
+  "id": "af73af6a-214a-445d-8271-e2a6c54e4e5b",
+  "ok": 1
+ },
+ "swampbrute0/atk": {
+  "id": "c74bdcc5-8b76-4692-905f-d2fc146eef1c",
+  "ok": 1
+ },
+ "swampbrute1/idle": {
+  "id": "983dda39-3ca4-439e-8045-59cd1b029f04",
+  "ok": 1
+ },
+ "swampbrute1/walk": {
+  "id": "9488a453-ffbe-4a23-bbdc-96e6160a2c4d",
+  "ok": 1
+ },
+ "swampbrute1/atk": {
+  "id": "3fd70226-e4c9-4b13-8b1b-8ed663d134b1",
+  "ok": 1
+ },
+ "swampbrute2/idle": {
+  "id": "cb031746-dc40-4f2a-888d-e3dba7af993b",
+  "ok": 1
+ },
+ "swampbrute2/walk": {
+  "id": "71580f43-6976-429b-a0b9-65d0d2fe7681",
+  "ok": 1
+ },
+ "swampbrute2/atk": {
+  "id": "eb97f6e3-82cd-4516-ac23-4317234437fd",
+  "ok": 1
+ },
+ "queen/idle": {
+  "id": "a83d7963-2f7f-42a2-833e-153b20f441a2",
+  "ok": 1
+ },
+ "queen/walk": {
+  "id": "f42dce31-4a91-475f-bdce-13e24547d52e",
+  "ok": 1
+ },
+ "queen/atk": {
+  "id": "6358af09-dcdd-46b5-b2e1-64c1c7b440b2",
+  "ok": 1
+ },
+ "gatekeeper/idle": {
+  "id": "ee460439-56cd-4bc3-8480-b377328bed89",
+  "ok": 1
+ },
+ "gatekeeper/walk": {
+  "id": "348ea508-3313-4cb9-a334-d13237604859",
+  "ok": 1
+ },
+ "gatekeeper/atk": {
+  "id": "9d9412f0-7c7d-4442-94fb-228542539aaf",
+  "ok": 1
+ },
+ "seedbeetle/idle": {
+  "id": "78fe9132-9060-486e-8bc7-eeffbacc7820",
+  "ok": 1
+ },
+ "seedbeetle/walk": {
+  "id": "4381edb3-b8bd-4300-aced-2a08481e77af",
+  "ok": 1
+ },
+ "seedbeetle/atk": {
+  "id": "40de75ef-3844-4c6d-b4e2-0ee132adda17",
+  "ok": 1
+ },
+ "earwig/idle": {
+  "id": "d2b628fd-5087-44e6-a3da-490f462dd803",
+  "ok": 1
+ },
+ "earwig/walk": {
+  "id": "73c9d4b8-b3b1-49aa-8df0-c544c59f1414",
+  "ok": 1
+ },
+ "earwig/atk": {
+  "id": "5fdcd4ae-01cd-4d15-9421-fbdd19be665f",
+  "ok": 1
+ },
+ "cattail/idle": {
+  "id": "add86788-a359-4258-8324-d82c1c90d9a1",
+  "ok": 1
+ },
+ "cattail/walk": {
+  "id": "a3696848-ccb2-45ae-8bbd-4d2814e29221",
+  "ok": 1
+ },
+ "cattail/atk": {
+  "id": "f8b52c8f-e8b3-4e39-b8c7-7d2ba1f516f1",
+  "ok": 1
+ },
+ "reedhopper/idle": {
+  "id": "f633fcc0-db2c-4965-950a-79768ef4d05b",
+  "ok": 1
+ },
+ "reedhopper/walk": {
+  "id": "4bee3e57-b7a4-41e7-8f9b-1dc5209bf81a",
+  "ok": 1
+ },
+ "reedhopper/atk": {
+  "id": "b2ab4937-b8b9-4723-9f12-4b72b3e1cfeb",
+  "ok": 1
+ },
+ "coot/idle": {
+  "id": "ad5df8fa-f492-49d9-abcf-ab67234b10bd",
+  "ok": 1
+ },
+ "coot/walk": {
+  "id": "c645ea77-b791-4f8a-8386-422c4a523dc5",
+  "ok": 1
+ },
+ "coot/atk": {
+  "id": "42b968be-bd19-42d5-8991-f7fa4dd7d726",
+  "ok": 1
+ },
+ "loach/idle": {
+  "id": "3e5afacb-fd89-4127-98e7-f742c9f3c901",
+  "ok": 1
+ },
+ "loach/walk": {
+  "id": "dc5baa92-6b88-4b45-9fd1-e8da69b11cfe",
+  "ok": 1
+ },
+ "loach/atk": {
+  "id": "dd16e45d-03b0-41a5-8955-b442e391bbdb",
+  "ok": 1
+ },
+ "buffalo/idle": {
+  "id": "b717be4d-9bc1-418c-814a-9e801b9e4d96",
+  "ok": 1
+ },
+ "buffalo/walk": {
+  "id": "265f9d7f-447d-4d49-8d7f-6424c7d9a896",
+  "ok": 1
+ },
+ "buffalo/atk": {
+  "id": "80506117-b934-4aff-abb6-4a208c553f51",
+  "ok": 1
+ },
+ "mantis/idle": {
+  "id": "2b1314dd-ba4e-48ca-9bbd-103fe16758cd",
+  "ok": 1
+ },
+ "mantis/walk": {
+  "id": "ac1ca8bd-9978-440a-8f41-2b74b9166469",
+  "ok": 1
+ },
+ "mantis/atk": {
+  "id": "9183cca5-4ac9-43c5-9dcd-17ff63aaf0a4",
+  "ok": 1
+ },
+ "pebbleearwig/idle": {
+  "id": "b1840200-d2e0-4690-95ad-6ba4301e0b7f",
+  "ok": 1
+ },
+ "pebbleearwig/walk": {
+  "id": "e93ca57e-d10c-4385-89b7-a524acb1c624",
+  "ok": 1
+ },
+ "pebbleearwig/atk": {
+  "id": "eafe1fa3-1bda-4adf-b7e1-55c004555b4a",
+  "ok": 1
+ },
+ "rootcrab/idle": {
+  "id": "13a75066-eaec-4b92-b66c-f1a470f438cc",
+  "ok": 1
+ },
+ "rootcrab/walk": {
+  "id": "9eb3957f-e635-4a3f-89e8-69343cc9e246",
+  "ok": 1
+ },
+ "rootcrab/atk": {
+  "id": "cb76b194-c826-46f6-97b2-71bb5682bccf",
+  "ok": 1
+ },
+ "barkmoth/idle": {
+  "id": "5933e3af-5c66-4c45-8d3c-8f0b2d448d96",
+  "ok": 1
+ },
+ "barkmoth/walk": {
+  "id": "34774927-10d6-480d-953d-593d0a1cc08d",
+  "ok": 1
+ },
+ "barkmoth/atk": {
+  "id": "53b9cdb4-0b8b-492e-95d1-9c933d6deae1",
+  "ok": 1
+ },
+ "vinecoil/idle": {
+  "id": "aed52f9e-2265-4b01-84d3-0d4352ce19f0",
+  "ok": 1
+ },
+ "vinecoil/walk": {
+  "id": "e95f8149-e8b7-48b0-a1b5-fed203d60f88",
+  "ok": 1
+ },
+ "kelpie/idle": {
+  "id": "16fe37de-b725-4a45-801c-011f84e58d69",
+  "ok": 1
+ },
+ "vinecoil/atk": {
+  "id": "bc6d5efb-b5ab-4d2e-8cc3-7f9e328fe8ab",
+  "ok": 1
+ },
+ "kelpie/walk": {
+  "id": "4a0bf0e9-50f6-4c04-8f8d-f85f77d0665c",
+  "ok": 1
+ },
+ "kelpie/atk": {
+  "id": "dc0f2a13-8041-48fd-83e9-c270b0fd1afd",
+  "ok": 1
+ },
+ "goby/idle": {
+  "id": "2fb0b349-ba2a-4b81-a6ee-34ea943af83b",
+  "ok": 1
+ },
+ "goby/walk": {
+  "id": "f555d1c8-e5a1-4d23-a11f-74797dc1afa7",
+  "ok": 1
+ },
+ "goby/atk": {
+  "id": "388c6846-e93f-4bba-8d54-ca58a141ff00",
+  "ok": 1
+ },
+ "bigpebbleearwig/idle": {
+  "id": "6f8511f3-4943-4fc7-9b16-ec1620595d3d",
+  "ok": 1
+ },
+ "bigpebbleearwig/walk": {
+  "id": "c74ec8b0-2353-4a0b-b51b-3fc6e888ed86",
+  "ok": 1
+ },
+ "bigpebbleearwig/atk": {
+  "id": "1740935b-4f45-4591-8a80-70ce457e1a83",
+  "ok": 1
+ },
+ "rootkelpie/idle": {
+  "id": "6f0c2cd1-8974-4531-9d11-562064133376",
+  "ok": 1
+ },
+ "rootkelpie/walk": {
+  "id": "69b2312d-2525-4f27-8f25-5d6b76354a2a",
+  "ok": 1
+ },
+ "rootkelpie/atk": {
+  "id": "d7782b1c-9c62-4d98-8c65-0e380942827d",
+  "ok": 1
+ },
+ "leech/idle": {
+  "id": "5d00cf10-fef1-477d-a55d-55a62501012b",
+  "ok": 1
+ },
+ "leech/walk": {
+  "id": "53d0beae-1a00-4442-8985-79130df473fd",
+  "ok": 1
+ },
+ "leech/atk": {
+  "id": "b78cc633-4297-46b7-a8b9-1d0f5ce71483",
+  "ok": 1
+ },
+ "watersnake/idle": {
+  "id": "bd10e10e-23a2-4880-8f7d-f0d44825b541",
+  "ok": 1
+ },
+ "watersnake/walk": {
+  "id": "4224cb03-cb79-474a-a10d-b0b66d604523",
+  "ok": 1
+ },
+ "watersnake/atk": {
+  "id": "d930c3d3-79ce-429e-ac12-789ea64eed97",
+  "ok": 1
+ },
+ "witch/idle": {
+  "id": "6b0e5454-432a-426d-b663-1ea72e929b23",
+  "ok": 1
+ },
+ "witch/walk": {
+  "id": "941ed0eb-3864-4d0f-950e-b8b305d61231",
+  "ok": 1
+ },
+ "witch/atk": {
+  "id": "94b69064-66e4-4fa2-ab58-046d12d4d73e",
+  "ok": 1
+ },
+ "lizardspear/idle": {
+  "id": "a5d97a1f-c7cf-45e5-a84b-e772d70fe936",
+  "ok": 1
+ },
+ "lizardspear/walk": {
+  "id": "ea989f99-7813-4409-a33e-c9605f78adfb",
+  "ok": 1
+ },
+ "lizardspear/atk": {
+  "id": "13d889a6-d207-4da9-a829-50c40423d7b4",
+  "ok": 1
+ },
+ "slinger/idle": {
+  "id": "f869414c-d114-474c-91e7-a02f7f86aa90",
+  "ok": 1
+ },
+ "slinger/walk": {
+  "id": "9e93c539-19b0-4905-b8f2-f306fbabfe34",
+  "ok": 1
+ },
+ "slinger/atk": {
+  "id": "75047af5-99f2-436b-bcc8-0052961cc4df",
+  "ok": 1
+ },
+ "vernola/idle": {
+  "id": "3e03382c-7c4f-42c5-8ad0-8bf08c4f206a",
+  "ok": 1
+ },
+ "vernola/walk": {
+  "id": "fd3fdf09-3494-4ed4-801b-a9f7e3c85de7",
+  "ok": 1
+ },
+ "vernola/atk": {
+  "id": "efbc72d5-b05e-42dc-903e-16d93ffd9d94",
+  "ok": 1
+ },
+ "leafbeetle/idle": {
+  "id": "4fef7444-2b94-4a8b-bc4d-a14a6f40bfc7",
+  "ok": 1
+ },
+ "leafbeetle/walk": {
+  "id": "f5bd56cd-e8a1-4cf1-9d78-31f887721431",
+  "ok": 1
+ },
+ "leafbeetle/atk": {
+  "id": "c6f0c467-7baf-4287-9836-e6880b0ab046",
+  "ok": 1
+ },
+ "trapleaf/idle": {
+  "id": "ec59ba5e-7451-4f4c-9746-cb12d8dde379",
+  "ok": 1
+ },
+ "trapleaf/walk": {
+  "id": "9f4269cf-d28a-44d2-b94f-af401ad14149",
+  "ok": 1
+ },
+ "trapleaf/atk": {
+  "id": "630f5e7e-1c87-4d4f-9b8e-92107dcc37bb",
+  "ok": 1
+ },
+ "dragonfly/idle": {
+  "id": "fe97a16e-37a8-430c-b63a-60485b1d40a2",
+  "ok": 1
+ },
+ "dragonfly/walk": {
+  "id": "b7ab3a00-297a-477f-8531-470c253ea25e",
+  "ok": 1
+ },
+ "dragonfly/atk": {
+  "id": "492afbf0-8c3e-4c87-8dbe-d1aa48867d56",
+  "ok": 1
+ },
+ "suckerfrog/idle": {
+  "id": "5f8ad4ff-185e-4e6d-914b-80c03e51b32f",
+  "ok": 1
+ },
+ "suckerfrog/walk": {
+  "id": "ff3f96a3-5ae8-4c9b-87e9-686b3bc32519",
+  "ok": 1
+ },
+ "suckerfrog/atk": {
+  "id": "21e54ce5-2e24-49d6-bc7f-57e2c401fbbd",
+  "ok": 1
+ },
+ "lizardshield/idle": {
+  "id": "f4d93f18-86df-4321-b622-d2613f747f4f",
+  "ok": 1
+ },
+ "lizardshield/walk": {
+  "id": "fd142fad-feed-4757-aaf9-713bee828087",
+  "ok": 1
+ },
+ "lizardshield/atk": {
+  "id": "de078282-c3f5-495d-8f22-c6509a2af0fc",
+  "ok": 1
+ },
+ "dorbekan/idle": {
+  "id": "4ead2e18-cc2a-405e-88cb-12c139e7e15c",
+  "ok": 1
+ },
+ "dorbekan/walk": {
+  "id": "69574a2f-4d3f-4fce-af82-9b226f9ee237",
+  "ok": 1
+ },
+ "dorbekan/atk": {
+  "id": "658b8a8b-2eff-4294-a1f4-1054d0c0ba15",
+  "ok": 1
+ },
+ "mosquito/idle": {
+  "id": "a6a2f625-a617-475f-b7fa-eb6881eae7fc",
+  "ok": 1
+ },
+ "mosquito/walk": {
+  "id": "81bb3a23-8bc8-451f-b4c0-107cf372c8ad",
+  "ok": 1
+ },
+ "mosquito/atk": {
+  "id": "5590f1d9-a137-4275-96e5-b85aac5c64de",
+  "ok": 1
+ },
+ "salamander/idle": {
+  "id": "e0b2211e-8aa0-4919-b2ee-0f3930cfe3ca",
+  "ok": 1
+ },
+ "salamander/walk": {
+  "id": "51a7d09e-798a-4f66-a2fa-8d450b02598d",
+  "ok": 1
+ },
+ "salamander/atk": {
+  "id": "7fdabe5b-cd92-4b73-82a0-ba08918b7ca5",
+  "ok": 1
+ },
+ "leafwitch/idle": {
+  "id": "e9832694-eea3-4a52-92eb-6dfdecd0cea2",
+  "ok": 1
+ },
+ "leafwitch/walk": {
+  "id": "b56939ef-4dc3-4e9d-8427-53efb80c3c72",
+  "ok": 1
+ },
+ "leafwitch/atk": {
+  "id": "2e0bfff6-4c32-4584-ac4e-0f606b5673e7",
+  "ok": 1
+ },
+ "poisonhopper/idle": {
+  "id": "dec1bb4d-3c7b-4ed6-b92a-7327d2c7e274",
+  "ok": 1
+ },
+ "poisonhopper/walk": {
+  "id": "b4e80a52-5a40-4be0-80d2-d2ad67dbcd61",
+  "ok": 1
+ },
+ "poisonhopper/atk": {
+  "id": "748d12aa-5860-4008-aa22-0510879d4522",
+  "ok": 1
+ },
+ "toad/walk": {
+  "id": "277e6c70-97cf-431a-a256-1f05edecba57",
+  "ok": 1
+ },
+ "toad/idle": {
+  "id": "135cf6fd-01bd-4c0e-80bf-85ce269e23a4",
+  "ok": 1
+ },
+ "toad/atk": {
+  "id": "6b3e094b-d91c-451b-aad0-74bce97d8d23",
+  "ok": 1
+ },
+ "leaflizard/idle": {
+  "id": "061aefd2-86c7-4aad-9640-4d773c23c99c",
+  "ok": 1
+ },
+ "leaflizard/walk": {
+  "id": "c1bd199e-9050-4abe-b119-33ab738e2656",
+  "ok": 1
+ },
+ "leaflizard/atk": {
+  "id": "d13b0ec7-0622-4fb3-814a-2e8aedf4b02d",
+  "ok": 1
+ },
+ "caiman/idle": {
+  "id": "598654a1-593c-48a3-aecd-8a3c909d77c6",
+  "ok": 1
+ },
+ "caiman/walk": {
+  "id": "3cab6953-a9e6-418a-8aeb-f8a2541244f9",
+  "ok": 1
+ },
+ "caiman/atk": {
+  "id": "a01e8896-d7d1-4057-90d2-e01170e6aaf6",
+  "ok": 1
+ },
+ "snapturtle/idle": {
+  "id": "0bc07403-1131-46fb-956f-27e722003c26",
+  "ok": 1
+ },
+ "snapturtle/walk": {
+  "id": "7f87aac3-d5ae-4bfb-94d6-257d6f4fbd59",
+  "ok": 1
+ },
+ "snapturtle/atk": {
+  "id": "4c7ac519-b4e1-4bbe-9a87-bbe2e6deebf7",
+  "ok": 1
+ }
+}

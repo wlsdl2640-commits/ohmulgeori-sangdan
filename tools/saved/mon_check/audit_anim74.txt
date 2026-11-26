@@ -1,0 +1,63 @@
+acidslime/atk red 389@4 ， blob +4@5 ， jump 0.57@2
+antlion/atk red 482@6 ， blob +6@6 ， jump 0.89@6
+aphids/atk red 1256@6 ， blob +4@7
+aphids/idle red 531@15 ， blob +1@13
+aphids/walk blob +1@5
+barkmoth/atk red 561@6 ， blob +1@7 ， jump 0.69@9
+bigpebbleearwig/atk red 1619@6 ， blob +4@7
+buffalo/atk red 2110@11 ， blob +14@12
+caiman/atk red 138@12 ， blob +1@3
+dragonfly/atk red 469@7 ， jump 0.97@6
+dragonfly/walk red 50@1 ， jump 0.63@6
+earwig/atk red 815@6 ， blob +1@7
+earwig/idle red 82@8 ， blob +4@9
+earwig/walk red 564@4 ， blob +1@3 ， jump 0.50@13
+fungusant/atk red 379@6 ， blob +5@14
+gatekeeper/atk red 1653@9 ， blob +1@17
+gatekeeper/idle blob +1@8
+goby/atk red 2962@6 ， blob +15@7
+kelpie/atk red 606@14 ， blob +4@16
+kelpie/idle blob +1@11
+leafbeetle/atk red 1502@6 ， blob +1@7 ， jump 0.62@6
+leafbeetle/idle red 253@1 ， blob +2@8
+leaflizard/atk red 339@6 ， jump 0.62@6
+leafwitch/atk blob +1@11
+leech/atk red 298@11
+leech/idle red 309@1 ， blob +1@3
+lizardshield/atk red 522@6 ， blob +2@13
+loach/atk red 875@7 ， blob +2@8
+mantis/atk red 205@7 ， blob +1@16 ， jump 1.02@7
+mantis/walk red 258@3 ， blob +8@10
+mimicspider/atk red 981@6 ， blob +4@7 ， jump 1.19@6
+mosquito/atk red 132@6 ， blob +2@6 ， jump 0.88@6
+pebbleearwig/atk red 397@6 ， blob +1@13
+pebbleearwig/idle red 168@8 ， blob +3@9
+poisonhopper/atk blob +3@14 ， jump 1.12@14
+poisonhopper/idle red 275@16 ， blob +2@10
+pupa/atk red 505@13 ， blob +5@14
+queen/atk red 1148@15 ， blob +4@18
+queen/idle red 979@10 ， blob +2@11
+reedhopper/atk blob +1@11
+reedhopper/idle red 328@2 ， blob +6@5
+reedhopper/walk blob +1@4
+rootcrab/atk red 403@6 ， blob +1@13
+rootkelpie/atk red 5837@12 ， blob +13@12 ， jump 0.58@10
+salamander/atk red 227@13 ， blob +1@14
+salamander/walk blob +1@6
+seedbeetle/atk red 2790@6 ， blob +3@7 ， jump 0.58@6
+slime/atk red 334@3 ， jump 0.80@5
+slinger/atk jump 0.93@7
+slinger/idle red 424@1 ， blob +5@2
+soldier/atk red 172@12 ， blob +5@13
+suckerfrog/atk red 516@5 ， blob +3@7 ， jump 0.93@10
+suckerfrog/idle red 94@3 ， blob +2@7
+suckerfrog/walk jump 0.54@6
+swampbrute0/atk red 678@6 ， blob +7@7 ， jump 0.58@6
+swampbrute1/atk red 2627@6 ， blob +2@7 ， jump 0.65@6
+swampbrute2/atk red 129@4 ， blob +1@5 ， jump 0.65@6
+trapjaw/atk red 178@14 ， blob +3@14 ， jump 0.56@11
+trapjaw/idle red 361@1 ， blob +2@1
+trapleaf/atk red 53@18
+vernola/atk red 1799@7 ， blob +9@8
+vinecoil/walk jump 0.53@4
+watersnake/atk red 1031@7 ， jump 0.63@7

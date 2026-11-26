@@ -1,0 +1,37 @@
+clean/acidslime/atk jump 0.58@2
+clean/antlion/atk jump 0.57@6
+clean/aphids/walk blob +1@5
+clean/barkmoth/atk blob +1@3
+clean/barkmoth/walk jump 0.53@9
+clean/bigpebbleearwig/atk blob +1@5
+clean/buffalo/atk blob +1@10
+clean/dragonfly/atk jump 0.89@6
+clean/dragonfly/walk jump 0.55@9
+clean/fungusant/atk blob +3@6
+clean/gatekeeper/atk red 33@13 ， blob +2@8
+clean/kelpie/atk blob +2@15
+clean/kelpie/idle blob +1@11
+clean/leafbeetle/atk jump 0.62@6
+clean/leafbeetle/idle blob +1@15
+clean/leaflizard/atk blob +2@5 ， jump 0.72@6
+clean/leafwitch/atk blob +1@10
+clean/lizardshield/atk blob +1@5
+clean/mantis/atk jump 0.92@7
+clean/mimicspider/atk jump 0.94@6
+clean/mosquito/atk blob +1@13 ， jump 0.85@6
+clean/pebbleearwig/atk blob +2@13
+clean/poisonhopper/atk jump 1.15@14
+clean/reedhopper/walk blob +1@4
+clean/rootcrab/atk blob +3@5
+clean/salamander/atk blob +1@5
+clean/slime/atk jump 0.82@5
+clean/slinger/atk jump 0.93@7
+clean/suckerfrog/atk blob +1@6 ， jump 0.94@10
+clean/suckerfrog/walk jump 0.54@6
+clean/swampbrute0/atk jump 0.52@6
+clean/swampbrute1/atk blob +2@6 ， jump 0.80@6
+clean/swampbrute2/atk blob +1@4 ， jump 0.62@6
+clean/trapjaw/atk blob +2@13 ， jump 0.53@11
+clean/vernola/atk blob +1@7 ， jump 0.55@7
+clean/vinecoil/walk jump 0.53@4
+clean/watersnake/atk jump 0.57@7

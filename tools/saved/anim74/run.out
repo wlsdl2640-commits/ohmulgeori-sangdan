@@ -16,3 +16,292 @@
 [오후 11:19:51] 보냄 aphids/walk 16장 e0b1005a-c774-43d7-beab-343f898968f5
 [오후 11:20:16] 받음 honeypot/walk
 [오후 11:20:16] 받음 honeypot/idle
+[오후 11:20:16] 보냄 aphids/atk 24장 b8e0b3c5-462f-4f9e-9763-6bff2eb428be
+[오후 11:20:16] 보냄 pupa/idle 16장 3889f678-52ed-478b-9fdc-db9851fe3d41
+[오후 11:20:18] 받음 soldier/walk
+[오후 11:20:19] 보냄 pupa/walk 16장 ee939dde-92b7-4814-8892-6be4c83381ab
+[오후 11:20:27] 받음 aphids/idle
+[오후 11:20:27] 보냄 pupa/atk 24장 5bf11025-a7f0-4cee-b2bb-b2fa42b37b6e
+[오후 11:21:09] 받음 aphids/walk
+[오후 11:21:10] 보냄 antlion/idle 16장 37781ef9-d0b5-4420-9a6c-131e458b402e
+[오후 11:21:16] 받음 pupa/idle
+[오후 11:21:16] 받음 pupa/walk
+[오후 11:21:16] 보냄 antlion/walk 16장 320a5305-4ba4-40fa-b0c2-e8cf3bc8c408
+[오후 11:21:17] 보냄 antlion/atk 24장 3ed48bea-fc93-46d3-a65d-8cd1f4526f6f
+[오후 11:21:22] 받음 honeypot/atk
+[오후 11:21:23] 보냄 fungusant/idle 16장 a4c687d5-6035-448c-9c21-bc69aee0324d
+[오후 11:21:29] 받음 pupa/atk
+[오후 11:21:29] 보냄 fungusant/walk 16장 d75b86e2-868c-4834-b488-3dfc0dfa8394
+[오후 11:21:57] 받음 antlion/idle
+[오후 11:21:57] 보냄 fungusant/atk 24장 18bbe85a-3ac8-4f2d-9108-c6be2c947423
+[오후 11:22:20] 받음 fungusant/idle
+[오후 11:22:21] 보냄 mimicspider/idle 16장 79281281-e434-41a6-9de5-716fc96c9357
+[오후 11:22:24] 받음 antlion/walk
+[오후 11:22:24] 보냄 mimicspider/walk 16장 2bcf0db8-475c-49f3-aca5-01c7b5c5a21b
+[오후 11:22:26] 받음 antlion/atk
+[오후 11:22:27] 보냄 mimicspider/atk 24장 095a434b-b177-49a0-a178-8d6d8a7dc254
+[오후 11:22:31] 받음 aphids/atk
+[오후 11:22:31] 보냄 acidslime/idle 16장 3462f86f-77eb-44c8-99a4-5e2f5e42021d
+[오후 11:22:57] 받음 fungusant/walk
+[오후 11:22:57] 보냄 acidslime/walk 16장 4445ee6e-3399-4022-b954-2024e426a1b5
+[오후 11:23:07] 받음 fungusant/atk
+[오후 11:23:08] 보냄 acidslime/atk 24장 5dd4a445-ae64-432c-8d4c-216cad8a7dc4
+[오후 11:23:08] 받음 mimicspider/idle
+[오후 11:23:08] 보냄 slime/idle 16장 6a73a16b-d10e-4894-9444-6bae61749ee7
+[오후 11:23:21] 받음 mimicspider/walk
+[오후 11:23:22] 보냄 slime/walk 16장 8f3883ac-d727-48db-a8ce-60f3763df0bd
+[오후 11:23:26] 받음 mimicspider/atk
+[오후 11:23:26] 보냄 slime/atk 24장 79c198b8-54a9-4c6f-83e6-1d94ab715d7f
+[오후 11:23:54] 받음 acidslime/walk
+[오후 11:23:55] 보냄 swampbrute0/idle 16장 ec734542-2a00-4a13-bd98-08bb36615c43
+[오후 11:23:59] 받음 acidslime/idle
+[오후 11:23:59] 보냄 swampbrute0/walk 16장 af73af6a-214a-445d-8271-e2a6c54e4e5b
+[오후 11:24:05] 받음 slime/idle
+[오후 11:24:06] 보냄 swampbrute0/atk 24장 c74bdcc5-8b76-4692-905f-d2fc146eef1c
+[오후 11:24:07] 받음 acidslime/atk
+[오후 11:24:08] 보냄 swampbrute1/idle 16장 983dda39-3ca4-439e-8045-59cd1b029f04
+[오후 11:24:09] 받음 slime/walk
+[오후 11:24:09] 보냄 swampbrute1/walk 16장 9488a453-ffbe-4a23-bbdc-96e6160a2c4d
+[오후 11:24:26] 받음 slime/atk
+[오후 11:24:26] 보냄 swampbrute1/atk 24장 3fd70226-e4c9-4b13-8b1b-8ed663d134b1
+[오후 11:24:43] 받음 swampbrute0/idle
+[오후 11:24:44] 보냄 swampbrute2/idle 16장 cb031746-dc40-4f2a-888d-e3dba7af993b
+[오후 11:24:46] 받음 swampbrute0/walk
+[오후 11:24:47] 보냄 swampbrute2/walk 16장 71580f43-6976-429b-a0b9-65d0d2fe7681
+[오후 11:25:06] 받음 swampbrute1/idle
+[오후 11:25:07] 보냄 swampbrute2/atk 24장 eb97f6e3-82cd-4516-ac23-4317234437fd
+[오후 11:25:07] 받음 swampbrute1/walk
+[오후 11:25:07] 보냄 queen/idle 16장 a83d7963-2f7f-42a2-833e-153b20f441a2
+[오후 11:25:07] 받음 swampbrute0/atk
+[오후 11:25:08] 보냄 queen/walk 16장 f42dce31-4a91-475f-bdce-13e24547d52e
+[오후 11:25:27] 받음 swampbrute1/atk
+[오후 11:25:27] 보냄 queen/atk 24장 6358af09-dcdd-46b5-b2e1-64c1c7b440b2
+[오후 11:25:34] 받음 swampbrute2/walk
+[오후 11:25:34] 보냄 gatekeeper/idle 16장 ee460439-56cd-4bc3-8480-b377328bed89
+[오후 11:25:42] 받음 swampbrute2/idle
+[오후 11:25:42] 보냄 gatekeeper/walk 16장 348ea508-3313-4cb9-a334-d13237604859
+[오후 11:26:17] 받음 swampbrute2/atk
+[오후 11:26:17] 보냄 gatekeeper/atk 24장 9d9412f0-7c7d-4442-94fb-228542539aaf
+[오후 11:26:46] 받음 queen/walk
+[오후 11:26:47] 보냄 seedbeetle/idle 16장 78fe9132-9060-486e-8bc7-eeffbacc7820
+[오후 11:27:34] 받음 gatekeeper/idle
+[오후 11:27:34] 받음 seedbeetle/idle
+[오후 11:27:34] 보냄 seedbeetle/walk 16장 4381edb3-b8bd-4300-aced-2a08481e77af
+[오후 11:27:34] 보냄 seedbeetle/atk 24장 40de75ef-3844-4c6d-b4e2-0ee132adda17
+[오후 11:27:37] 받음 queen/idle
+[오후 11:27:38] 보냄 earwig/idle 16장 d2b628fd-5087-44e6-a3da-490f462dd803
+[오후 11:27:50] 받음 queen/atk
+[오후 11:27:50] 보냄 earwig/walk 16장 73c9d4b8-b3b1-49aa-8df0-c544c59f1414
+[오후 11:28:01] 받음 gatekeeper/walk
+[오후 11:28:02] 보냄 earwig/atk 24장 5fdcd4ae-01cd-4d15-9421-fbdd19be665f
+[오후 11:28:21] 받음 seedbeetle/walk
+[오후 11:28:21] 보냄 cattail/idle 16장 add86788-a359-4258-8324-d82c1c90d9a1
+[오후 11:28:25] 받음 earwig/idle
+[오후 11:28:25] 보냄 cattail/walk 16장 a3696848-ccb2-45ae-8bbd-4d2814e29221
+[오후 11:28:38] 받음 earwig/walk
+[오후 11:28:38] 보냄 cattail/atk 24장 f8b52c8f-e8b3-4e39-b8c7-7d2ba1f516f1
+[오후 11:28:50] 받음 gatekeeper/atk
+[오후 11:28:51] 보냄 reedhopper/idle 16장 f633fcc0-db2c-4965-950a-79768ef4d05b
+[오후 11:29:08] 받음 cattail/idle
+[오후 11:29:08] 보냄 reedhopper/walk 16장 4bee3e57-b7a4-41e7-8f9b-1dc5209bf81a
+[오후 11:29:11] 받음 earwig/atk
+[오후 11:29:12] 보냄 reedhopper/atk 24장 b2ab4937-b8b9-4723-9f12-4b72b3e1cfeb
+[오후 11:29:13] 받음 cattail/walk
+[오후 11:29:13] 보냄 coot/idle 16장 ad5df8fa-f492-49d9-abcf-ab67234b10bd
+[오후 11:29:25] 받음 seedbeetle/atk
+[오후 11:29:26] 보냄 coot/walk 16장 c645ea77-b791-4f8a-8386-422c4a523dc5
+[오후 11:29:38] 받음 cattail/atk
+[오후 11:29:38] 받음 reedhopper/idle
+[오후 11:29:38] 보냄 coot/atk 24장 42b968be-bd19-42d5-8991-f7fa4dd7d726
+[오후 11:29:38] 보냄 loach/idle 16장 3e5afacb-fd89-4127-98e7-f742c9f3c901
+[오후 11:30:10] 받음 reedhopper/walk
+[오후 11:30:11] 보냄 loach/walk 16장 dc5baa92-6b88-4b45-9fd1-e8da69b11cfe
+[오후 11:30:12] 받음 coot/idle
+[오후 11:30:13] 보냄 loach/atk 24장 dd16e45d-03b0-41a5-8955-b442e391bbdb
+[오후 11:30:23] 받음 coot/walk
+[오후 11:30:24] 보냄 buffalo/idle 16장 b717be4d-9bc1-418c-814a-9e801b9e4d96
+[오후 11:30:32] 받음 reedhopper/atk
+[오후 11:30:32] 보냄 buffalo/walk 16장 265f9d7f-447d-4d49-8d7f-6424c7d9a896
+[오후 11:30:36] 받음 loach/idle
+[오후 11:30:36] 보냄 buffalo/atk 24장 80506117-b934-4aff-abb6-4a208c553f51
+[오후 11:30:38] 받음 coot/atk
+[오후 11:30:39] 보냄 mantis/idle 16장 2b1314dd-ba4e-48ca-9bbd-103fe16758cd
+[오후 11:31:08] 받음 loach/walk
+[오후 11:31:08] 보냄 mantis/walk 16장 ac1ca8bd-9978-440a-8f41-2b74b9166469
+[오후 11:31:19] 받음 buffalo/walk
+[오후 11:31:19] 보냄 mantis/atk 24장 9183cca5-4ac9-43c5-9dcd-17ff63aaf0a4
+[오후 11:31:21] 받음 buffalo/idle
+[오후 11:31:21] 보냄 pebbleearwig/idle 16장 b1840200-d2e0-4690-95ad-6ba4301e0b7f
+[오후 11:31:22] 받음 loach/atk
+[오후 11:31:23] 보냄 pebbleearwig/walk 16장 e93ca57e-d10c-4385-89b7-a524acb1c624
+[오후 11:31:36] 받음 mantis/idle
+[오후 11:31:37] 보냄 pebbleearwig/atk 24장 eafe1fa3-1bda-4adf-b7e1-55c004555b4a
+[오후 11:31:47] 받음 buffalo/atk
+[오후 11:31:47] 보냄 rootcrab/idle 16장 13a75066-eaec-4b92-b66c-f1a470f438cc
+[오후 11:32:05] 받음 mantis/walk
+[오후 11:32:06] 보냄 rootcrab/walk 16장 9eb3957f-e635-4a3f-89e8-69343cc9e246
+[오후 11:32:09] 받음 pebbleearwig/walk
+[오후 11:32:10] 보냄 rootcrab/atk 24장 cb76b194-c826-46f6-97b2-71bb5682bccf
+[오후 11:32:18] 받음 pebbleearwig/idle
+[오후 11:32:19] 보냄 barkmoth/idle 16장 5933e3af-5c66-4c45-8d3c-8f0b2d448d96
+[오후 11:32:31] 받음 mantis/atk
+[오후 11:32:32] 보냄 barkmoth/walk 16장 34774927-10d6-480d-953d-593d0a1cc08d
+[오후 11:32:34] 받음 rootcrab/idle
+[오후 11:32:35] 보냄 barkmoth/atk 24장 53b9cdb4-0b8b-492e-95d1-9c933d6deae1
+[오후 11:32:57] 받음 pebbleearwig/atk
+[오후 11:32:58] 보냄 vinecoil/idle 16장 aed52f9e-2265-4b01-84d3-0d4352ce19f0
+[오후 11:33:02] 받음 rootcrab/walk
+[오후 11:33:03] 보냄 vinecoil/walk 16장 e95f8149-e8b7-48b0-a1b5-fed203d60f88
+[오후 11:33:16] 받음 barkmoth/idle
+[오후 11:33:18] 받음 barkmoth/walk
+[오후 11:33:19] 보냄 kelpie/idle 16장 16fe37de-b725-4a45-801c-011f84e58d69
+[오후 11:33:19] 보냄 vinecoil/atk 24장 bc6d5efb-b5ab-4d2e-8cc3-7f9e328fe8ab
+[오후 11:33:23] 받음 rootcrab/atk
+[오후 11:33:23] 보냄 kelpie/walk 16장 4a0bf0e9-50f6-4c04-8f8d-f85f77d0665c
+[오후 11:33:44] 받음 barkmoth/atk
+[오후 11:33:44] 받음 vinecoil/idle
+[오후 11:33:45] 보냄 kelpie/atk 24장 dc0f2a13-8041-48fd-83e9-c270b0fd1afd
+[오후 11:33:45] 보냄 goby/idle 16장 2fb0b349-ba2a-4b81-a6ee-34ea943af83b
+[오후 11:33:49] 받음 vinecoil/walk
+[오후 11:33:50] 보냄 goby/walk 16장 f555d1c8-e5a1-4d23-a11f-74797dc1afa7
+[오후 11:34:18] 받음 kelpie/idle
+[오후 11:34:18] 보냄 goby/atk 24장 388c6846-e93f-4bba-8d54-ca58a141ff00
+[오후 11:34:20] 받음 kelpie/walk
+[오후 11:34:21] 보냄 bigpebbleearwig/idle 16장 6f8511f3-4943-4fc7-9b16-ec1620595d3d
+[오후 11:34:31] 받음 vinecoil/atk
+[오후 11:34:31] 보냄 bigpebbleearwig/walk 16장 c74ec8b0-2353-4a0b-b51b-3fc6e888ed86
+[오후 11:34:38] 받음 goby/walk
+[오후 11:34:38] 보냄 bigpebbleearwig/atk 24장 1740935b-4f45-4591-8a80-70ce457e1a83
+[오후 11:34:42] 받음 goby/idle
+[오후 11:34:43] 보냄 rootkelpie/idle 16장 6f0c2cd1-8974-4531-9d11-562064133376
+[오후 11:34:45] 받음 kelpie/atk
+[오후 11:34:46] 보냄 rootkelpie/walk 16장 69b2312d-2525-4f27-8f25-5d6b76354a2a
+[오후 11:35:08] 받음 bigpebbleearwig/idle
+[오후 11:35:09] 보냄 rootkelpie/atk 24장 d7782b1c-9c62-4d98-8c65-0e380942827d
+[오후 11:35:18] 받음 goby/atk
+[오후 11:35:18] 보냄 leech/idle 16장 5d00cf10-fef1-477d-a55d-55a62501012b
+[오후 11:35:28] 받음 bigpebbleearwig/walk
+[오후 11:35:28] 보냄 leech/walk 16장 53d0beae-1a00-4442-8985-79130df473fd
+[오후 11:35:43] 받음 rootkelpie/walk
+[오후 11:35:43] 보냄 leech/atk 24장 b78cc633-4297-46b7-a8b9-1d0f5ce71483
+[오후 11:35:49] 받음 bigpebbleearwig/atk
+[오후 11:35:50] 보냄 watersnake/idle 16장 bd10e10e-23a2-4880-8f7d-f0d44825b541
+[오후 11:35:51] 받음 rootkelpie/idle
+[오후 11:35:51] 보냄 watersnake/walk 16장 4224cb03-cb79-474a-a10d-b0b66d604523
+[오후 11:36:06] 받음 leech/idle
+[오후 11:36:06] 보냄 watersnake/atk 24장 d930c3d3-79ce-429e-ac12-789ea64eed97
+[오후 11:36:16] 받음 leech/walk
+[오후 11:36:17] 보냄 witch/idle 16장 6b0e5454-432a-426d-b663-1ea72e929b23
+[오후 11:36:19] 받음 rootkelpie/atk
+[오후 11:36:19] 보냄 witch/walk 16장 941ed0eb-3864-4d0f-950e-b8b305d61231
+[오후 11:36:47] 받음 watersnake/idle
+[오후 11:36:47] 보냄 witch/atk 24장 94b69064-66e4-4fa2-ab58-046d12d4d73e
+[오후 11:36:49] 받음 watersnake/walk
+[오후 11:36:50] 보냄 lizardspear/idle 16장 a5d97a1f-c7cf-45e5-a84b-e772d70fe936
+[오후 11:36:53] 받음 leech/atk
+[오후 11:36:53] 보냄 lizardspear/walk 16장 ea989f99-7813-4409-a33e-c9605f78adfb
+[오후 11:37:06] 받음 witch/walk
+[오후 11:37:07] 보냄 lizardspear/atk 24장 13d889a6-d207-4da9-a829-50c40423d7b4
+[오후 11:37:14] 받음 witch/idle
+[오후 11:37:14] 보냄 slinger/idle 16장 f869414c-d114-474c-91e7-a02f7f86aa90
+[오후 11:37:37] 받음 watersnake/atk
+[오후 11:37:37] 보냄 slinger/walk 16장 9e93c539-19b0-4905-b8f2-f306fbabfe34
+[오후 11:37:47] 받음 lizardspear/idle
+[오후 11:37:47] 보냄 slinger/atk 24장 75047af5-99f2-436b-bcc8-0052961cc4df
+[오후 11:37:50] 받음 lizardspear/walk
+[오후 11:37:51] 보냄 vernola/idle 16장 3e03382c-7c4f-42c5-8ad0-8bf08c4f206a
+[오후 11:37:57] 받음 witch/atk
+[오후 11:37:57] 보냄 vernola/walk 16장 fd3fdf09-3494-4ed4-801b-a9f7e3c85de7
+[오후 11:38:11] 받음 slinger/idle
+[오후 11:38:13] 보냄 vernola/atk 24장 efbc72d5-b05e-42dc-903e-16d93ffd9d94
+[오후 11:38:16] 받음 lizardspear/atk
+[오후 11:38:17] 보냄 leafbeetle/idle 16장 4fef7444-2b94-4a8b-bc4d-a14a6f40bfc7
+[오후 11:38:24] 받음 slinger/walk
+[오후 11:38:24] 보냄 leafbeetle/walk 16장 f5bd56cd-e8a1-4cf1-9d78-31f887721431
+[오후 11:38:38] 받음 vernola/idle
+[오후 11:38:39] 보냄 leafbeetle/atk 24장 c6f0c467-7baf-4287-9836-e6880b0ab046
+[오후 11:38:44] 받음 vernola/walk
+[오후 11:38:45] 보냄 trapleaf/idle 16장 ec59ba5e-7451-4f4c-9746-cb12d8dde379
+[오후 11:39:08] 받음 slinger/atk
+[오후 11:39:08] 보냄 trapleaf/walk 16장 9f4269cf-d28a-44d2-b94f-af401ad14149
+[오후 11:39:11] 받음 leafbeetle/walk
+[오후 11:39:12] 보냄 trapleaf/atk 24장 630f5e7e-1c87-4d4f-9b8e-92107dcc37bb
+[오후 11:39:13] 받음 vernola/atk
+[오후 11:39:14] 보냄 dragonfly/idle 16장 fe97a16e-37a8-430c-b63a-60485b1d40a2
+[오후 11:39:14] 받음 leafbeetle/idle
+[오후 11:39:15] 보냄 dragonfly/walk 16장 b7ab3a00-297a-477f-8531-470c253ea25e
+[오후 11:39:42] 받음 trapleaf/idle
+[오후 11:39:42] 보냄 dragonfly/atk 24장 492afbf0-8c3e-4c87-8dbe-d1aa48867d56
+[오후 11:39:59] 받음 leafbeetle/atk
+[오후 11:39:59] 보냄 suckerfrog/idle 16장 5f8ad4ff-185e-4e6d-914b-80c03e51b32f
+[오후 11:40:11] 받음 dragonfly/idle
+[오후 11:40:11] 보냄 suckerfrog/walk 16장 ff3f96a3-5ae8-4c9b-87e9-686b3bc32519
+[오후 11:40:12] 받음 dragonfly/walk
+[오후 11:40:12] 보냄 suckerfrog/atk 24장 21e54ce5-2e24-49d6-bc7f-57e2c401fbbd
+[오후 11:40:16] 받음 trapleaf/walk
+[오후 11:40:16] 보냄 lizardshield/idle 16장 f4d93f18-86df-4321-b622-d2613f747f4f
+[오후 11:40:56] 받음 suckerfrog/idle
+[오후 11:40:57] 보냄 lizardshield/walk 16장 fd142fad-feed-4757-aaf9-713bee828087
+[오후 11:40:58] 받음 suckerfrog/walk
+[오후 11:40:58] 보냄 lizardshield/atk 24장 de078282-c3f5-495d-8f22-c6509a2af0fc
+[오후 11:41:02] 받음 dragonfly/atk
+[오후 11:41:02] 보냄 dorbekan/idle 16장 4ead2e18-cc2a-405e-88cb-12c139e7e15c
+[오후 11:41:13] 받음 trapleaf/atk
+[오후 11:41:15] 보냄 dorbekan/walk 16장 69574a2f-4d3f-4fce-af82-9b226f9ee237
+[오후 11:41:23] 받음 suckerfrog/atk
+[오후 11:41:24] 보냄 dorbekan/atk 24장 658b8a8b-2eff-4294-a1f4-1054d0c0ba15
+[오후 11:41:25] 받음 lizardshield/idle
+[오후 11:41:27] 보냄 mosquito/idle 16장 a6a2f625-a617-475f-b7fa-eb6881eae7fc
+[오후 11:41:54] 받음 lizardshield/walk
+[오후 11:41:54] 보냄 mosquito/walk 16장 81bb3a23-8bc8-451f-b4c0-107cf372c8ad
+[오후 11:42:10] 받음 dorbekan/idle
+[오후 11:42:10] 보냄 mosquito/atk 24장 5590f1d9-a137-4275-96e5-b85aac5c64de
+[오후 11:42:18] 받음 lizardshield/atk
+[오후 11:42:19] 보냄 salamander/idle 16장 e0b2211e-8aa0-4919-b2ee-0f3930cfe3ca
+[오후 11:42:35] 받음 mosquito/idle
+[오후 11:42:36] 보냄 salamander/walk 16장 51a7d09e-798a-4f66-a2fa-8d450b02598d
+[오후 11:42:43] 받음 mosquito/walk
+[오후 11:42:43] 보냄 salamander/atk 24장 7fdabe5b-cd92-4b73-82a0-ba08918b7ca5
+[오후 11:42:54] 받음 dorbekan/walk
+[오후 11:42:54] 보냄 leafwitch/idle 16장 e9832694-eea3-4a52-92eb-6dfdecd0cea2
+[오후 11:42:56] 받음 dorbekan/atk
+[오후 11:42:56] 보냄 leafwitch/walk 16장 b56939ef-4dc3-4e9d-8427-53efb80c3c72
+[오후 11:43:16] 받음 salamander/idle
+[오후 11:43:17] 보냄 leafwitch/atk 24장 2e0bfff6-4c32-4584-ac4e-0f606b5673e7
+[오후 11:43:20] 받음 mosquito/atk
+[오후 11:43:21] 보냄 poisonhopper/idle 16장 dec1bb4d-3c7b-4ed6-b92a-7327d2c7e274
+[오후 11:43:33] 받음 salamander/walk
+[오후 11:43:34] 보냄 poisonhopper/walk 16장 b4e80a52-5a40-4be0-80d2-d2ad67dbcd61
+[오후 11:43:42] 받음 leafwitch/idle
+[오후 11:43:42] 보냄 poisonhopper/atk 24장 748d12aa-5860-4008-aa22-0510879d4522
+[오후 11:44:05] 받음 leafwitch/walk
+[오후 11:44:06] 받음 salamander/atk
+[오후 11:44:06] 보냄 toad/walk 16장 277e6c70-97cf-431a-a256-1f05edecba57
+[오후 11:44:06] 보냄 toad/idle 16장 135cf6fd-01bd-4c0e-80bf-85ce269e23a4
+[오후 11:44:09] 받음 poisonhopper/idle
+[오후 11:44:09] 보냄 toad/atk 24장 6b3e094b-d91c-451b-aad0-74bce97d8d23
+[오후 11:44:28] 받음 leafwitch/atk
+[오후 11:44:29] 보냄 leaflizard/idle 16장 061aefd2-86c7-4aad-9640-4d773c23c99c
+[오후 11:44:42] 받음 poisonhopper/walk
+[오후 11:44:42] 보냄 leaflizard/walk 16장 c1bd199e-9050-4abe-b119-33ab738e2656
+[오후 11:45:04] 받음 poisonhopper/atk
+[오후 11:45:04] 보냄 leaflizard/atk 24장 d13b0ec7-0622-4fb3-814a-2e8aedf4b02d
+[오후 11:45:15] 받음 toad/idle
+[오후 11:45:16] 받음 toad/walk
+[오후 11:45:16] 보냄 caiman/idle 16장 598654a1-593c-48a3-aecd-8a3c909d77c6
+[오후 11:45:16] 보냄 caiman/walk 16장 3cab6953-a9e6-418a-8aeb-f8a2541244f9
+[오후 11:45:29] 받음 leaflizard/idle
+[오후 11:45:29] 보냄 caiman/atk 24장 a01e8896-d7d1-4057-90d2-e01170e6aaf6
+[오후 11:45:30] 받음 leaflizard/walk
+[오후 11:45:31] 보냄 snapturtle/idle 16장 0bc07403-1131-46fb-956f-27e722003c26
+[오후 11:45:41] 받음 toad/atk
+[오후 11:45:41] 보냄 snapturtle/walk 16장 7f87aac3-d5ae-4bfb-94d6-257d6f4fbd59
+[오후 11:46:03] 받음 caiman/walk
+[오후 11:46:04] 보냄 snapturtle/atk 24장 4c7ac519-b4e1-4bbe-9a87-bbe2e6deebf7
+[오후 11:46:14] 받음 caiman/idle
+[오후 11:46:18] 받음 snapturtle/idle
+[오후 11:46:49] 받음 snapturtle/walk
+[오후 11:46:51] 받음 caiman/atk
+[오후 11:47:05] 받음 leaflizard/atk
+[오후 11:47:29] 받음 snapturtle/atk
+[오후 11:47:29] 끝 — 받은 동작 153 / 153
