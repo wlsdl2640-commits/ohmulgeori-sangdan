@@ -1,0 +1,522 @@
+[
+ {
+  "key": "heal_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a gentle healing glow rising around a target: a soft rounded aura of warm white and pale green-gold light, small leaf-shaped light motes and tiny sparkles drifting upward. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2100
+  }
+ },
+ {
+  "key": "heal",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a gentle healing glow rising around a target: a soft rounded aura of warm white and pale green-gold light, small leaf-shaped light motes and tiny sparkles drifting upward. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2101
+  }
+ },
+ {
+  "key": "heal_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a gentle healing glow rising around a target: a soft rounded aura of warm white and pale green-gold light, small leaf-shaped light motes and tiny sparkles drifting upward. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2102
+  }
+ },
+ {
+  "key": "heal_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a gentle healing glow rising around a target: a soft rounded aura of warm white and pale green-gold light, small leaf-shaped light motes and tiny sparkles drifting upward. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2103
+  }
+ },
+ {
+  "key": "firstaid_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick first aid effect: a short white bandage ribbon wrapping in a loose spiral, with a few small soft gold sparkles and a tiny warm glow at its center. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2104
+  }
+ },
+ {
+  "key": "firstaid",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick first aid effect: a short white bandage ribbon wrapping in a loose spiral, with a few small soft gold sparkles and a tiny warm glow at its center. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2105
+  }
+ },
+ {
+  "key": "firstaid_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick first aid effect: a short white bandage ribbon wrapping in a loose spiral, with a few small soft gold sparkles and a tiny warm glow at its center. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2106
+  }
+ },
+ {
+  "key": "firstaid_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick first aid effect: a short white bandage ribbon wrapping in a loose spiral, with a few small soft gold sparkles and a tiny warm glow at its center. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2107
+  }
+ },
+ {
+  "key": "cure_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a purifying effect: dark purple poison bubbles bursting and dissolving upward into clean sky-blue droplets and small white sparkles. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2108
+  }
+ },
+ {
+  "key": "cure",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a purifying effect: dark purple poison bubbles bursting and dissolving upward into clean sky-blue droplets and small white sparkles. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2109
+  }
+ },
+ {
+  "key": "cure_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a purifying effect: dark purple poison bubbles bursting and dissolving upward into clean sky-blue droplets and small white sparkles. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2110
+  }
+ },
+ {
+  "key": "cure_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a purifying effect: dark purple poison bubbles bursting and dissolving upward into clean sky-blue droplets and small white sparkles. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2111
+  }
+ },
+ {
+  "key": "bless_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blessing effect over an ally: a thin floating ring of pale gold light hovering above, with golden motes gently falling and rising around it. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2112
+  }
+ },
+ {
+  "key": "bless",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blessing effect over an ally: a thin floating ring of pale gold light hovering above, with golden motes gently falling and rising around it. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2113
+  }
+ },
+ {
+  "key": "bless_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blessing effect over an ally: a thin floating ring of pale gold light hovering above, with golden motes gently falling and rising around it. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2114
+  }
+ },
+ {
+  "key": "bless_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blessing effect over an ally: a thin floating ring of pale gold light hovering above, with golden motes gently falling and rising around it. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2115
+  }
+ },
+ {
+  "key": "holy_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a glowing orb of holy light flying to the right: a round sky-blue and white light ball with a bright white core and a short soft trail of sparkles behind it. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2116
+  }
+ },
+ {
+  "key": "holy",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a glowing orb of holy light flying to the right: a round sky-blue and white light ball with a bright white core and a short soft trail of sparkles behind it. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2117
+  }
+ },
+ {
+  "key": "holy_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a glowing orb of holy light flying to the right: a round sky-blue and white light ball with a bright white core and a short soft trail of sparkles behind it. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2118
+  }
+ },
+ {
+  "key": "holy_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a glowing orb of holy light flying to the right: a round sky-blue and white light ball with a bright white core and a short soft trail of sparkles behind it. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2119
+  }
+ },
+ {
+  "key": "weaken_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blinding flash: a sudden bright white starburst with sharp radiating rays and a pale gold ring, small afterglow sparkles. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2120
+  }
+ },
+ {
+  "key": "weaken",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blinding flash: a sudden bright white starburst with sharp radiating rays and a pale gold ring, small afterglow sparkles. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2121
+  }
+ },
+ {
+  "key": "weaken_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blinding flash: a sudden bright white starburst with sharp radiating rays and a pale gold ring, small afterglow sparkles. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2122
+  }
+ },
+ {
+  "key": "weaken_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a blinding flash: a sudden bright white starburst with sharp radiating rays and a pale gold ring, small afterglow sparkles. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2123
+  }
+ },
+ {
+  "key": "holyhammer_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a scepter strike impact on the ground: a golden radiant burst with short light rays spreading sideways, small glowing ground cracks and bouncing light chips. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2124
+  }
+ },
+ {
+  "key": "holyhammer",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a scepter strike impact on the ground: a golden radiant burst with short light rays spreading sideways, small glowing ground cracks and bouncing light chips. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2125
+  }
+ },
+ {
+  "key": "holyhammer_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a scepter strike impact on the ground: a golden radiant burst with short light rays spreading sideways, small glowing ground cracks and bouncing light chips. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2126
+  }
+ },
+ {
+  "key": "holyhammer_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a scepter strike impact on the ground: a golden radiant burst with short light rays spreading sideways, small glowing ground cracks and bouncing light chips. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2127
+  }
+ },
+ {
+  "key": "sanctuary_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective circle: a flat glowing ring of light on the ground (perspective ellipse) with a low translucent dome of pale sky-blue light rising from it and small sparkles along the rim. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2128
+  }
+ },
+ {
+  "key": "sanctuary",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective circle: a flat glowing ring of light on the ground (perspective ellipse) with a low translucent dome of pale sky-blue light rising from it and small sparkles along the rim. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2129
+  }
+ },
+ {
+  "key": "sanctuary_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective circle: a flat glowing ring of light on the ground (perspective ellipse) with a low translucent dome of pale sky-blue light rising from it and small sparkles along the rim. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2130
+  }
+ },
+ {
+  "key": "sanctuary_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective circle: a flat glowing ring of light on the ground (perspective ellipse) with a low translucent dome of pale sky-blue light rising from it and small sparkles along the rim. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2131
+  }
+ },
+ {
+  "key": "massheal_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a wide group healing: soft light motes and small light feathers gently falling from above across a wide area, with a faint warm glow spreading along the ground. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2132
+  }
+ },
+ {
+  "key": "massheal",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a wide group healing: soft light motes and small light feathers gently falling from above across a wide area, with a faint warm glow spreading along the ground. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2133
+  }
+ },
+ {
+  "key": "massheal_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a wide group healing: soft light motes and small light feathers gently falling from above across a wide area, with a faint warm glow spreading along the ground. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2134
+  }
+ },
+ {
+  "key": "massheal_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a wide group healing: soft light motes and small light feathers gently falling from above across a wide area, with a faint warm glow spreading along the ground. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2135
+  }
+ },
+ {
+  "key": "greatheal_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a great healing: a tall soft pillar of warm white and pale gold light rising from the ground, with spiral sparkles climbing up inside it. Restrained version: compact size, fewer particles, small glow core, soft white, pale gold and sky-blue colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2136
+  }
+ },
+ {
+  "key": "greatheal",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a great healing: a tall soft pillar of warm white and pale gold light rising from the ground, with spiral sparkles climbing up inside it. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2137
+  }
+ },
+ {
+  "key": "greatheal_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a great healing: a tall soft pillar of warm white and pale gold light rising from the ground, with spiral sparkles climbing up inside it. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with vivid pale gold and sky-blue gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2138
+  }
+ },
+ {
+  "key": "greatheal_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a great healing: a tall soft pillar of warm white and pale gold light rising from the ground, with spiral sparkles climbing up inside it. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint golden light circle on the ground (flat perspective ellipse), strong hot white core with vivid gold and sky-blue gradient, many sparkles, feathers of light and soft rays, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (bandage cloth, feathers, pebbles) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 2139
+  }
+ }
+]

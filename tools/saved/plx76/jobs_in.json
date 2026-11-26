@@ -1,0 +1,308 @@
+[
+ {
+  "key": "f4_jawlizard",
+  "name": "흙턱 도마뱀",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Squat clay-red canyon lizard with a wide flat red lower jaw like a shovel, sandy belly, short sturdy legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f4_wedgebeetle",
+  "name": "벽틈 딱정벌레",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Canyon crevice beetle with a wedge-shaped layered rock-like back plate, rusty red and sand colors, short strong legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f4_boss_earwig",
+  "name": "수로턱 집게벌레 (4층 보스)",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Large canal-wall earwig boss with huge curved rear pincers, armored red clay plates with old aqueduct stone patterns, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f5_shovelbird",
+  "name": "층리 딱새",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Plump canyon bird with a broad shovel-like beak, layered ochre and rust striped feathers, standing on thin legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f5_platerat",
+  "name": "계단 껍질쥐",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Canyon rat with overlapping layered shell plates on its back like stair steps, ochre and red brown, long tail, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f5_boss_mole",
+  "name": "빗금 굴두더지 (5층 보스)",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Big burrowing mole boss with diagonal striped earth-colored fur, huge digging claws, small pink nose, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f5_branch_weasel",
+  "name": "진흙턱 굴족제비 (갈2)",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Mud-jawed burrowing weasel monster, long body, mud caked lower jaw and paws, sandy brown fur, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 128,
+   "height": 128,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f6_flatbug",
+  "name": "흙판 잠복충",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Paper-flat ambush bug monster that hides under dry mud plates, wide thin body with cracked mud pattern, many short legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f6_pooltoad",
+  "name": "웅덩이 두꺼비",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Muddy pool toad monster with a big black throat sac, olive and mud brown warty skin, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f6_boss_bigtoad",
+  "name": "흙판을 깨는 큰두꺼비 (6층 보스)",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Huge mud-plate breaking toad boss with cracked dry mud armor plates on its back, black throat sac, heavy front legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f7_holebat",
+  "name": "구멍박쥐",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Canyon hole bat monster with folded triangular wings, apricot and red brown fur, big ears, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f7_barrelwasp",
+  "name": "흙관벌",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Clay pipe wasp monster with a barrel-shaped striped abdomen, apricot and rust colors, clear wings, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f7_boss_hawk",
+  "name": "흙탑 사냥매 (7층 보스)",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Large earth tower hunting hawk boss with apricot and dark navy feathers, sharp hooked beak and big talons, wings half spread, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f8_hornbug",
+  "name": "물턱 황소벌레",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Water-edge bull beetle monster with a single down-curved horn, wet reddish brown shell, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f8_otter",
+  "name": "둑발 수달",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Dam-footed otter monster with wide mud-covered webbed feet, sleek brown fur, standing on hind legs, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 96,
+   "height": 96,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "f8_boss_bison",
+  "name": "벽흙 들소 (8층 보스)",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Massive canyon wall-clay bison boss with red clay caked shaggy fur, thick horns, heavy shoulders, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ },
+ {
+  "key": "d2_boss_crab",
+  "name": "수문쇠 집게괴수 (던2)",
+  "tool": "create_image_pro",
+  "n": 4,
+  "args": {
+   "description": "Floodgate iron pincer monster boss, a giant crab-like beast with rusted bronze floodgate plates for a shell and huge iron claws, side view, facing left. Game monster sprite, full body, the whole creature visible, plain transparent background. Bright readable colors with clear contrast, bold dark outline, chunky 16-bit JRPG pixel art, same art style as the reference beetle monster (clean outline, bright highlights, 3-4 step shading). Only the monster: no visual effects, no glow, no sparks, no flashes, no particles, no humans, no people, no text.",
+   "width": 144,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:63a4b0c4-6d64-4e74-975b-21bd5b4af6e8",
+   "style_copy": [
+    "outline",
+    "shading",
+    "detail"
+   ]
+  }
+ }
+]

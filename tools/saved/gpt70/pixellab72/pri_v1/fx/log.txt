@@ -1,0 +1,46 @@
+[오후 11:08:10] 보냄 heal 4404d173-823d-465c-9dbb-67a46f20e8d1
+[오후 11:08:10] 보냄 heal_c a044ec96-132c-4dbe-a327-024a5cfcad92
+[오후 11:08:10] 보냄 heal_a d8b97cd8-b52f-4be5-b623-577d450cc28f
+[오후 11:08:11] 보냄 heal_d 39eda5f0-3caf-4915-8687-9a579e67f554
+[오후 11:09:52] 받음 heal_a
+[오후 11:09:52] 보냄 firstaid_a 11fdd171-c1fe-487a-b921-e66bebf5cb7a
+[오후 11:10:06] 받음 heal_c
+[오후 11:10:06] 보냄 firstaid cb75b4eb-b56f-4292-90e5-9ab2fc54a49f
+[오후 11:10:14] 받음 heal_d
+[오후 11:10:14] 보냄 firstaid_c f9dedf3a-96af-475a-b3b8-13e12f6d4555
+[오후 11:10:24] 받음 heal
+[오후 11:10:24] 보냄 firstaid_d 8a9e4b72-5201-430c-8cf0-dc152cf239c1
+[오후 11:11:09] 받음 firstaid
+[오후 11:11:09] 보냄 cure_a d4a63ea9-81e5-4d7f-8e67-1fd3a04105c7
+[오후 11:11:20] 받음 firstaid_a
+[오후 11:11:21] 보냄 cure 0477034d-b7de-4760-b1ec-a3c3cb8189d6
+[오후 11:11:31] 받음 firstaid_c
+[오후 11:11:32] 보냄 cure_c 4cb8f781-8264-4263-87a3-a18480ffcc16
+[오후 11:12:05] 받음 firstaid_d
+[오후 11:12:06] 보냄 cure_d 5b590495-866e-42b8-a17d-d8f05a824e9d
+[오후 11:12:28] 받음 cure
+[오후 11:12:28] 받음 cure_a
+[오후 11:12:28] 보냄 bless_a cb50254c-829b-4d6b-8c66-300490d2e43c
+[오후 11:12:28] 보냄 bless ed40da4d-edbf-47e7-b2b5-7eef0cf7b6ec
+[오후 11:13:12] 받음 cure_c
+[오후 11:13:12] 보냄 bless_c 50a222dc-687b-46f2-8b17-0b754efafc18
+[오후 11:13:34] 받음 bless_a
+[오후 11:13:34] 보냄 bless_d 75c581c6-942a-43fa-946f-e361b6ab1cc1
+[오후 11:13:56] 받음 cure_d
+[오후 11:13:57] 보냄 holy_a 0ee4c0d9-ddc4-4e86-b796-2f4a1d94ee80
+[오후 11:15:21] 받음 bless
+[오후 11:15:22] 보냄 holy ade1b263-308a-4144-9821-91e1c2526fcc
+[오후 11:15:54] !! bless_d 실패 1: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
+[오후 11:16:00] 보냄 bless_d b6431d88-df10-42f8-baf4-b785558f89e5
+[오후 11:16:05] 받음 holy_a
+[오후 11:16:05] 보냄 holy_c 07aba2c6-2ece-4c49-aeda-0e96e2818438
+[오후 11:16:36] 받음 bless_c
+[오후 11:16:36] 보냄 holy_d 3e87983b-ac21-40e6-8fcc-58dee3e5f9e9
+[오후 11:17:52] !! holy 실패 1: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
+[오후 11:17:58] 보냄 holy ef0cd353-f998-4c93-b285-8553cbb3dc5c
+[오후 11:18:34] 받음 holy_c
+[오후 11:18:35] 보냄 weaken_a 962267ba-ffc4-4d34-9f03-b252ca43ae53
+[오후 11:19:05] !! bless_d 실패 2: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
+[오후 11:19:05] !! holy_d 실패 1: 받기 410 {"detail":"failed: Generation failed (Generation failed because it is against policy. Try a different description or reference image.). This job_id is gone; run the create tool again."}
+[오후 11:19:12] 보냄 holy_d da6c1992-92aa-4b22-92c5-3df5839fba39
+[오후 11:19:12] 보냄 bless_d 5e244ea8-3add-4fab-af4b-845d414b69c2

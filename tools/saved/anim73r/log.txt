@@ -1,0 +1,4 @@
+[오후 11:19:58] 보냄 scarecrow/crow2_r2 24장 645be6fa-1cf1-412d-8234-a8aeae7f8578
+[오후 11:19:58] 보냄 scarecrow/crow2_r1 24장 7db5ea54-49f6-4562-93a9-6c88da065df8
+[오후 11:19:58] 보냄 mgolem/smash_r1 24장 69923a0d-7a97-4cf9-be10-b62659208215
+[오후 11:19:58] 보냄 mgolem/smash_r2 24장 95574841-4740-4a51-bc0f-60ef92cd9add

@@ -1,0 +1,41 @@
+{
+ "trapjaw/walk": {
+  "id": "b2940981-3255-4571-9986-6ceb1e7d1bf5",
+  "ok": 1
+ },
+ "trapjaw/idle": {
+  "id": "5ed46c1d-9eaa-4848-8e9e-6031f8c67872",
+  "ok": 1
+ },
+ "soldier/atk": {
+  "id": "0ef106a7-275e-47ec-9b2a-1d1e1f458124",
+  "ok": 1
+ },
+ "soldier/idle": {
+  "id": "525ffee9-a7a1-4899-a6a7-43bf1f933c49",
+  "ok": 1
+ },
+ "trapjaw/atk": {
+  "id": "06b61e0d-3b45-4e88-ab2c-dd1b91763db7",
+  "ok": 1
+ },
+ "soldier/walk": {
+  "id": "912d1200-44a3-4266-bc80-5a08f5614ddd"
+ },
+ "honeypot/idle": {
+  "id": "b2eb5ac4-0eff-448a-ad9b-5bf959c35cf9",
+  "ok": 1
+ },
+ "honeypot/walk": {
+  "id": "6b508055-cc7b-4009-8083-7e28197a8bf5",
+  "ok": 1
+ },
+ "honeypot/atk": {
+  "id": "2a667568-1ed8-48ea-ae93-f8217046ec55"
+ },
+ "aphids/idle": {
+  "id": "71d2fc26-b762-4195-97c3-cfab8373e17c"
+ },
+ "aphids/walk": {
+  "id": "e0b1005a-c774-43d7-beab-343f898968f5"
+ },

@@ -1,0 +1,33 @@
+clean/boar/headbutt blob +4@15 ， jump 0.58@15
+clean/boar/hornup blob +2@11
+clean/cflower/bite blob +1@7 ， jump 1.01@8
+clean/elddragon/bite jump 0.71@5
+clean/elddragon/stomp jump 0.73@13
+clean/emoth/idle blob +2@3
+clean/eshroom/spore blob +2@7
+clean/ewisp/burst blob +3@1
+clean/ewisp/walk blob +3@11
+clean/fguard/bell red 1420@15
+clean/fguard/charge red 253@13 ， blob +7@12 ， jump 0.80@11
+clean/fguard/death red 162@18 ， blob +1@17 ， jump 0.97@17
+clean/fguard/idle red 80@6 ， blob +1@11
+clean/fguard/stomp red 703@11 ， blob +9@10 ， jump 0.61@9
+clean/fguard/walk red 170@11
+clean/ibeetle/charge blob +1@14 ， jump 0.51@11
+clean/mgolem/smash blob +1@18 ， jump 0.81@18
+clean/rabbit/charge jump 0.53@7
+clean/rabbit/jump blob +1@9 ， jump 0.51@18
+clean/rat/bite jump 0.58@10
+clean/rat/leap jump 1.13@18
+clean/rcenti/bite blob +1@9 ， jump 0.71@9
+clean/scarecrow/crow1 blob +1@13 ， jump 0.61@13
+clean/scarecrow/crow2 blob +11@16
+clean/scarecrow/crow3 blob +4@13
+clean/sentinel/idle blob +1@7
+clean/sentinel/smash blob +2@8 ， jump 0.76@7
+clean/sentinel/walk blob +1@1
+clean/spotshroom/spore red 57@14 ， blob +1@8
+clean/stump/bite blob +2@10 ， jump 0.63@6
+clean/vinesnake/bite jump 0.62@8
+clean/wolf/bite blob +2@12
+clean/wolf/leap jump 0.90@8

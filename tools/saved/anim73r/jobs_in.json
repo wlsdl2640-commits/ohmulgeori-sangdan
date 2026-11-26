@@ -1,0 +1,92 @@
+[
+ {
+  "mon": "scarecrow",
+  "row": "crow2_r1",
+  "frames": 24,
+  "first": "upload:7b7d53ac-eeb9-4b86-bb6a-26a75b1ef8ca",
+  "subject": "a living scarecrow monster with crows on it, pixel art, side view",
+  "seed": 41,
+  "desc": "a crow flies off its head toward the enemy. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "scarecrow",
+  "row": "crow2_r2",
+  "frames": 24,
+  "first": "upload:7b7d53ac-eeb9-4b86-bb6a-26a75b1ef8ca",
+  "subject": "a living scarecrow monster with crows on it, pixel art, side view",
+  "seed": 42,
+  "desc": "a crow flies off its head toward the enemy. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "mgolem",
+  "row": "smash_r1",
+  "frames": 24,
+  "first": "upload:0bb22366-be98-437c-b09a-0a1f1f33eee8",
+  "subject": "a moss covered stone golem, pixel art, side view",
+  "seed": 41,
+  "desc": "raises its arms and smashes down heavily. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "mgolem",
+  "row": "smash_r2",
+  "frames": 24,
+  "first": "upload:0bb22366-be98-437c-b09a-0a1f1f33eee8",
+  "subject": "a moss covered stone golem, pixel art, side view",
+  "seed": 42,
+  "desc": "raises its arms and smashes down heavily. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "fguard",
+  "row": "charge_r1",
+  "frames": 24,
+  "first": "upload:08300ffa-5838-4367-8a93-4eb0b46b74b8",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "seed": 41,
+  "desc": "lowers its head and charges forward to ram, then recovers. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "fguard",
+  "row": "charge_r2",
+  "frames": 24,
+  "first": "upload:08300ffa-5838-4367-8a93-4eb0b46b74b8",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "seed": 42,
+  "desc": "lowers its head and charges forward to ram, then recovers. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "fguard",
+  "row": "bell_r1",
+  "frames": 24,
+  "first": "upload:14029a88-8630-4aad-a580-3febb574e8b9",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "seed": 41,
+  "desc": "rings the bell it carries. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "fguard",
+  "row": "bell_r2",
+  "frames": 24,
+  "first": "upload:14029a88-8630-4aad-a580-3febb574e8b9",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "seed": 42,
+  "desc": "rings the bell it carries. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "fguard",
+  "row": "stomp_r1",
+  "frames": 24,
+  "first": "upload:03416db8-1b8a-4e90-a8a8-6814c22a9634",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "seed": 41,
+  "desc": "rears up and stomps the ground hard. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ },
+ {
+  "mon": "fguard",
+  "row": "stomp_r2",
+  "frames": 24,
+  "first": "upload:03416db8-1b8a-4e90-a8a8-6814c22a9634",
+  "subject": "a forest guardian spirit beast with a bell, pixel art, side view",
+  "seed": 42,
+  "desc": "rears up and stomps the ground hard. Then it returns to the start pose and holds still for the last few frames. Only this monster: no target, no other creatures, no visual effects, no blood, no red splashes, no sparks, no flashes, no starbursts, no particles, no motion trails, nothing on the ground. Keep the exact same design, size and colors."
+ }
+]

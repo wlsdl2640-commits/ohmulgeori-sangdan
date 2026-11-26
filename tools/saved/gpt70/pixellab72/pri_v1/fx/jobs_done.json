@@ -1,0 +1,82 @@
+{
+ "heal": {
+  "id": "4404d173-823d-465c-9dbb-67a46f20e8d1",
+  "ok": 1
+ },
+ "heal_c": {
+  "id": "a044ec96-132c-4dbe-a327-024a5cfcad92",
+  "ok": 1
+ },
+ "heal_a": {
+  "id": "d8b97cd8-b52f-4be5-b623-577d450cc28f",
+  "ok": 1
+ },
+ "heal_d": {
+  "id": "39eda5f0-3caf-4915-8687-9a579e67f554",
+  "ok": 1
+ },
+ "firstaid_a": {
+  "id": "11fdd171-c1fe-487a-b921-e66bebf5cb7a",
+  "ok": 1
+ },
+ "firstaid": {
+  "id": "cb75b4eb-b56f-4292-90e5-9ab2fc54a49f",
+  "ok": 1
+ },
+ "firstaid_c": {
+  "id": "f9dedf3a-96af-475a-b3b8-13e12f6d4555",
+  "ok": 1
+ },
+ "firstaid_d": {
+  "id": "8a9e4b72-5201-430c-8cf0-dc152cf239c1",
+  "ok": 1
+ },
+ "cure_a": {
+  "id": "d4a63ea9-81e5-4d7f-8e67-1fd3a04105c7",
+  "ok": 1
+ },
+ "cure": {
+  "id": "0477034d-b7de-4760-b1ec-a3c3cb8189d6",
+  "ok": 1
+ },
+ "cure_c": {
+  "id": "4cb8f781-8264-4263-87a3-a18480ffcc16",
+  "ok": 1
+ },
+ "cure_d": {
+  "id": "5b590495-866e-42b8-a17d-d8f05a824e9d",
+  "ok": 1
+ },
+ "bless_a": {
+  "id": "cb50254c-829b-4d6b-8c66-300490d2e43c",
+  "ok": 1
+ },
+ "bless": {
+  "id": "ed40da4d-edbf-47e7-b2b5-7eef0cf7b6ec",
+  "ok": 1
+ },
+ "bless_c": {
+  "id": "50a222dc-687b-46f2-8b17-0b754efafc18",
+  "ok": 1
+ },
+ "bless_d": {
+  "id": "5e244ea8-3add-4fab-af4b-845d414b69c2"
+ },
+ "holy_a": {
+  "id": "0ee4c0d9-ddc4-4e86-b796-2f4a1d94ee80",
+  "ok": 1
+ },
+ "holy": {
+  "id": "ef0cd353-f998-4c93-b285-8553cbb3dc5c"
+ },
+ "holy_c": {
+  "id": "07aba2c6-2ece-4c49-aeda-0e96e2818438",
+  "ok": 1
+ },
+ "holy_d": {
+  "id": "da6c1992-92aa-4b22-92c5-3df5839fba39"
+ },
+ "weaken_a": {
+  "id": "962267ba-ffc4-4d34-9f03-b252ca43ae53"
+ }
+}
