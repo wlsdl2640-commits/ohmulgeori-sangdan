@@ -1,20 +1,162 @@
 {
  "walk/v1": {
-  "id": "1d9cfb02-b90a-4221-bd93-4f7390b908ea"
+  "id": "1d9cfb02-b90a-4221-bd93-4f7390b908ea",
+  "ok": 1
  },
  "run/v2": {
-  "id": "8030f5b9-0bee-4170-8797-55d3914ba58d"
+  "id": "8030f5b9-0bee-4170-8797-55d3914ba58d",
+  "ok": 1
  },
  "idle/v2": {
-  "id": "36314f86-69da-4117-bc6a-86cd7da68dfc"
+  "id": "36314f86-69da-4117-bc6a-86cd7da68dfc",
+  "ok": 1
  },
  "idle/v1": {
-  "id": "0ad31162-b725-4bd6-afa9-baa880f143a3"
+  "id": "0ad31162-b725-4bd6-afa9-baa880f143a3",
+  "ok": 1
  },
  "walk/v2": {
-  "id": "2211ba77-5920-4e50-bae7-cde819544d50"
+  "id": "2211ba77-5920-4e50-bae7-cde819544d50",
+  "ok": 1
  },
  "run/v1": {
-  "id": "28dd514a-150a-46d2-9d2b-847f29976610"
+  "id": "28dd514a-150a-46d2-9d2b-847f29976610",
+  "ok": 1
+ },
+ "hurt/v1": {
+  "id": "d96d3113-48db-491b-ac58-6da5fc80f154",
+  "ok": 1
+ },
+ "hurt/v2": {
+  "id": "e09037b9-4151-4b4c-9495-21e1d97d9389",
+  "ok": 1
+ },
+ "hurt/v3": {
+  "id": "04fcc56e-67d9-4e67-918b-1d0ec5395860",
+  "ok": 1
+ },
+ "fall/v1": {
+  "id": "a6a3b3fb-cc36-4a12-8676-64f0cb837d9a",
+  "ok": 1
+ },
+ "fall/v2": {
+  "id": "7076f1e0-3ece-4ca3-99ad-0a634942b99f",
+  "ok": 1
+ },
+ "sit/v1": {
+  "id": "4bcfd422-8157-479b-92be-cff687f861fa",
+  "ok": 1
+ },
+ "sit/v2": {
+  "id": "ef127e69-910f-4a36-83a3-07f172c908bd",
+  "ok": 1
+ },
+ "sleep/v1": {
+  "id": "1dda72f8-654b-411e-98b8-49b2a86a2606",
+  "ok": 1
+ },
+ "sleep/v2": {
+  "id": "28078565-0b99-4de8-9d6f-862352e256cd",
+  "ok": 1
+ },
+ "sleep/v3": {
+  "id": "5b3b1470-fde9-44b8-9fd7-c9859068fddd",
+  "ok": 1
+ },
+ "attack/v1": {
+  "id": "72666e5d-a397-4a1a-b96f-32a77fffe2a8",
+  "ok": 1
+ },
+ "attack/v2": {
+  "id": "7d2e10dc-3187-4ea7-8a3b-dd21ae025d1f",
+  "ok": 1
+ },
+ "attack/v3": {
+  "id": "59630a5f-1ae5-4f5e-a418-e6bf0bad05b1",
+  "ok": 1
+ },
+ "heal/v1": {
+  "id": "e73db513-2dd0-4ef0-87bd-454bd4d9a3cc",
+  "ok": 1
+ },
+ "heal/v2": {
+  "id": "36378b28-df67-44ce-87bc-1257af4b5217",
+  "ok": 1
+ },
+ "heal/v3": {
+  "id": "7a19c9ec-42a5-4837-b135-1ffb4b2cba0c",
+  "ok": 1
+ },
+ "cure/v1": {
+  "id": "0668de04-16fe-4c71-99b3-0b46c8e9a9e7",
+  "ok": 1
+ },
+ "cure/v2": {
+  "id": "6726c804-b181-4ec9-807e-a29ab08b2cb5",
+  "ok": 1
+ },
+ "firstaid/v1": {
+  "id": "4465fcaf-07cc-436c-a422-45e25fa66cad",
+  "ok": 1
+ },
+ "firstaid/v2": {
+  "id": "d0b2739a-5657-4c5a-839c-ee8e24b2f1aa",
+  "ok": 1
+ },
+ "bless/v1": {
+  "id": "fed016d0-fb20-4ace-bf9f-b6fc21ceb127",
+  "ok": 1
+ },
+ "bless/v2": {
+  "id": "c3fb03c9-0a49-4e01-9a2d-c183abeb626a",
+  "ok": 1
+ },
+ "holy/v1": {
+  "id": "a23c2173-6f73-4799-aea0-bf696794adaa",
+  "ok": 1
+ },
+ "holy/v2": {
+  "id": "d3e0f708-58b3-49a9-9dbf-460a0295f09b",
+  "ok": 1
+ },
+ "weaken/v1": {
+  "id": "e7ff6563-2f18-45ef-ac44-bf822d734a06",
+  "ok": 1
+ },
+ "weaken/v2": {
+  "id": "9ac25621-0cf9-4336-9b71-86cdb3e57c9b",
+  "ok": 1
+ },
+ "holyhammer/v1": {
+  "id": "32da9980-f99b-44c5-8ba1-1081344114ca",
+  "ok": 1
+ },
+ "holyhammer/v2": {
+  "id": "93386b6c-2121-4569-bf6a-deab57ed8290",
+  "ok": 1
+ },
+ "sanctuary/v1": {
+  "id": "8da4f2c8-a38c-4d0e-a747-3c641a35ff77",
+  "ok": 1
+ },
+ "sanctuary/v2": {
+  "id": "845177df-1025-480d-bc82-627331dc1232",
+  "ok": 1
+ },
+ "massheal/v1": {
+  "id": "8dfa4d2d-d16e-4780-a52d-a6615619a6ba",
+  "ok": 1
+ },
+ "massheal/v2": {
+  "id": "6cf7463c-b0a5-4014-a55c-9cc397a180b2",
+  "ok": 1
+ },
+ "greatheal/v1": {
+  "id": "5c8977f8-dd4e-495c-9a87-07026b091028",
+  "ok": 1
+ },
+ "greatheal/v2": {
+  "id": "766b0028-1068-4ca1-a621-2dccd77cf626",
+  "ok": 1
  }
 }
