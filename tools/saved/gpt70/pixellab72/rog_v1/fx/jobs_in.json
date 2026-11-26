@@ -1,0 +1,470 @@
+[
+ {
+  "key": "stab_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a single quick dagger thrust: a narrow bright horizontal piercing streak pointing to the right, a sharp needle-like tip flash with a small four-point star glint at the tip, thin silver-white core with a violet rim, a few tiny steel sparks scattering forward. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1101
+  }
+ },
+ {
+  "key": "stab",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a single quick dagger thrust: a narrow bright horizontal piercing streak pointing to the right, a sharp needle-like tip flash with a small four-point star glint at the tip, thin silver-white core with a violet rim, a few tiny steel sparks scattering forward. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1102
+  }
+ },
+ {
+  "key": "stab_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a single quick dagger thrust: a narrow bright horizontal piercing streak pointing to the right, a sharp needle-like tip flash with a small four-point star glint at the tip, thin silver-white core with a violet rim, a few tiny steel sparks scattering forward. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1103
+  }
+ },
+ {
+  "key": "stab_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a single quick dagger thrust: a narrow bright horizontal piercing streak pointing to the right, a sharp needle-like tip flash with a small four-point star glint at the tip, thin silver-white core with a violet rim, a few tiny steel sparks scattering forward. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1104
+  }
+ },
+ {
+  "key": "footwork_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light-footed speed buff: soft violet-silver light wrapping upward around an empty space where a body would stand, several faint afterimage arcs and swirling wind ribbons curling around the lower half near the ground, small dust puffs kicked at both sides on a flat ground ellipse, little horizontal speed streaks. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1105
+  }
+ },
+ {
+  "key": "footwork",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light-footed speed buff: soft violet-silver light wrapping upward around an empty space where a body would stand, several faint afterimage arcs and swirling wind ribbons curling around the lower half near the ground, small dust puffs kicked at both sides on a flat ground ellipse, little horizontal speed streaks. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1106
+  }
+ },
+ {
+  "key": "footwork_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light-footed speed buff: soft violet-silver light wrapping upward around an empty space where a body would stand, several faint afterimage arcs and swirling wind ribbons curling around the lower half near the ground, small dust puffs kicked at both sides on a flat ground ellipse, little horizontal speed streaks. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1107
+  }
+ },
+ {
+  "key": "footwork_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a light-footed speed buff: soft violet-silver light wrapping upward around an empty space where a body would stand, several faint afterimage arcs and swirling wind ribbons curling around the lower half near the ground, small dust puffs kicked at both sides on a flat ground ellipse, little horizontal speed streaks. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1108
+  }
+ },
+ {
+  "key": "backhand_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick low horizontal slash at waist height: one thin sharp crescent cut arc sweeping from left to right, silver-white core with a crimson-violet rim, the arc thinning and breaking into fine fragments at its right end, small steel sparks at the cut. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1109
+  }
+ },
+ {
+  "key": "backhand",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick low horizontal slash at waist height: one thin sharp crescent cut arc sweeping from left to right, silver-white core with a crimson-violet rim, the arc thinning and breaking into fine fragments at its right end, small steel sparks at the cut. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1110
+  }
+ },
+ {
+  "key": "backhand_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick low horizontal slash at waist height: one thin sharp crescent cut arc sweeping from left to right, silver-white core with a crimson-violet rim, the arc thinning and breaking into fine fragments at its right end, small steel sparks at the cut. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1111
+  }
+ },
+ {
+  "key": "backhand_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick low horizontal slash at waist height: one thin sharp crescent cut arc sweeping from left to right, silver-white core with a crimson-violet rim, the arc thinning and breaking into fine fragments at its right end, small steel sparks at the cut. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1112
+  }
+ },
+ {
+  "key": "smoke_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a smoke bomb bursting on the ground: a thick rolling cloud of dark grey-violet smoke billowing up and outward from a small burst point on the ground, round puffy cloud lumps with bold dark outlines and 3-4 step shading, a small bright pale flash at the burst center near the ground, wisps curling at the edges, a few tiny cloth scraps. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1113
+  }
+ },
+ {
+  "key": "smoke",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a smoke bomb bursting on the ground: a thick rolling cloud of dark grey-violet smoke billowing up and outward from a small burst point on the ground, round puffy cloud lumps with bold dark outlines and 3-4 step shading, a small bright pale flash at the burst center near the ground, wisps curling at the edges, a few tiny cloth scraps. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1114
+  }
+ },
+ {
+  "key": "smoke_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a smoke bomb bursting on the ground: a thick rolling cloud of dark grey-violet smoke billowing up and outward from a small burst point on the ground, round puffy cloud lumps with bold dark outlines and 3-4 step shading, a small bright pale flash at the burst center near the ground, wisps curling at the edges, a few tiny cloth scraps. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1115
+  }
+ },
+ {
+  "key": "smoke_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a smoke bomb bursting on the ground: a thick rolling cloud of dark grey-violet smoke billowing up and outward from a small burst point on the ground, round puffy cloud lumps with bold dark outlines and 3-4 step shading, a small bright pale flash at the burst center near the ground, wisps curling at the edges, a few tiny cloth scraps. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1116
+  }
+ },
+ {
+  "key": "needle_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a paralysis needle hit: one small sharp impact point where a thin needle struck, crackling sickly yellow-green paralysis sparks spreading from it in short jagged zigzag lines, small yellow-green numbness rings pulsing outward, a few tiny venom droplets. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1117
+  }
+ },
+ {
+  "key": "needle",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a paralysis needle hit: one small sharp impact point where a thin needle struck, crackling sickly yellow-green paralysis sparks spreading from it in short jagged zigzag lines, small yellow-green numbness rings pulsing outward, a few tiny venom droplets. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1118
+  }
+ },
+ {
+  "key": "needle_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a paralysis needle hit: one small sharp impact point where a thin needle struck, crackling sickly yellow-green paralysis sparks spreading from it in short jagged zigzag lines, small yellow-green numbness rings pulsing outward, a few tiny venom droplets. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1119
+  }
+ },
+ {
+  "key": "needle_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a paralysis needle hit: one small sharp impact point where a thin needle struck, crackling sickly yellow-green paralysis sparks spreading from it in short jagged zigzag lines, small yellow-green numbness rings pulsing outward, a few tiny venom droplets. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1120
+  }
+ },
+ {
+  "key": "counter_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a dodge and counter thrust in two beats: on the left a soft curved smear of violet light arcing backward like a sidestep dodge, then on the right a sharp bright forward piercing streak pointing right with a star glint at its tip, silver-white core and violet rim. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1121
+  }
+ },
+ {
+  "key": "counter",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a dodge and counter thrust in two beats: on the left a soft curved smear of violet light arcing backward like a sidestep dodge, then on the right a sharp bright forward piercing streak pointing right with a star glint at its tip, silver-white core and violet rim. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1122
+  }
+ },
+ {
+  "key": "counter_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a dodge and counter thrust in two beats: on the left a soft curved smear of violet light arcing backward like a sidestep dodge, then on the right a sharp bright forward piercing streak pointing right with a star glint at its tip, silver-white core and violet rim. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1123
+  }
+ },
+ {
+  "key": "counter_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a dodge and counter thrust in two beats: on the left a soft curved smear of violet light arcing backward like a sidestep dodge, then on the right a sharp bright forward piercing streak pointing right with a star glint at its tip, silver-white core and violet rim. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1124
+  }
+ },
+ {
+  "key": "thunder_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning dash thrust: a long horizontal streak of crackling electric lightning shooting to the right, bright white-yellow core with an electric violet rim, jagged branching sparks along the streak, a burst of forked lightning at the right tip. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1125
+  }
+ },
+ {
+  "key": "thunder",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning dash thrust: a long horizontal streak of crackling electric lightning shooting to the right, bright white-yellow core with an electric violet rim, jagged branching sparks along the streak, a burst of forked lightning at the right tip. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1126
+  }
+ },
+ {
+  "key": "thunder_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning dash thrust: a long horizontal streak of crackling electric lightning shooting to the right, bright white-yellow core with an electric violet rim, jagged branching sparks along the streak, a burst of forked lightning at the right tip. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1127
+  }
+ },
+ {
+  "key": "thunder_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning dash thrust: a long horizontal streak of crackling electric lightning shooting to the right, bright white-yellow core with an electric violet rim, jagged branching sparks along the streak, a burst of forked lightning at the right tip. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1128
+  }
+ },
+ {
+  "key": "sidestab_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a sidestep thrust: a quick sideways dust kick on the ground at the left (flat perspective ellipse of dust puffs and pebbles) and a quick piercing streak angled slightly upward to the right with a star glint at the tip, silver and violet. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1129
+  }
+ },
+ {
+  "key": "sidestab",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a sidestep thrust: a quick sideways dust kick on the ground at the left (flat perspective ellipse of dust puffs and pebbles) and a quick piercing streak angled slightly upward to the right with a star glint at the tip, silver and violet. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1130
+  }
+ },
+ {
+  "key": "sidestab_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a sidestep thrust: a quick sideways dust kick on the ground at the left (flat perspective ellipse of dust puffs and pebbles) and a quick piercing streak angled slightly upward to the right with a star glint at the tip, silver and violet. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1131
+  }
+ },
+ {
+  "key": "sidestab_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a sidestep thrust: a quick sideways dust kick on the ground at the left (flat perspective ellipse of dust puffs and pebbles) and a quick piercing streak angled slightly upward to the right with a star glint at the tip, silver and violet. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1132
+  }
+ },
+ {
+  "key": "backstep_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick backward hop: a low burst of dust puffs and pebbles on the ground at the right (flat perspective ellipse), faint violet afterimage streaks trailing horizontally to the right, soft smoke wisps fading. Restrained version: compact size, fewer particles, small glow core, muted charcoal, silver and dusky violet colors, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1133
+  }
+ },
+ {
+  "key": "backstep",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick backward hop: a low burst of dust puffs and pebbles on the ground at the right (flat perspective ellipse), faint violet afterimage streaks trailing horizontally to the right, soft smoke wisps fading. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1134
+  }
+ },
+ {
+  "key": "backstep_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick backward hop: a low burst of dust puffs and pebbles on the ground at the right (flat perspective ellipse), faint violet afterimage streaks trailing horizontally to the right, soft smoke wisps fading. Flashy version: bigger and brighter, extra layered secondary arcs, more sparks and particles, strong hot white core with vivid violet, silver and crimson gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1135
+  }
+ },
+ {
+  "key": "backstep_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a quick backward hop: a low burst of dust puffs and pebbles on the ground at the right (flat perspective ellipse), faint violet afterimage streaks trailing horizontally to the right, soft smoke wisps fading. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, a faint shadow-violet sigil on the ground (flat perspective ellipse), strong hot white core with vivid saturated violet, silver and crimson gradient, many sparks, shards and afterimage streaks, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (smoke puffs, dust, pebbles, steel shards) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, no letters, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 1136
+  }
+ }
+]

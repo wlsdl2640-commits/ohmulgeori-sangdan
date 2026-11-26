@@ -1,0 +1,146 @@
+{
+ "stab_d": {
+  "id": "89b7dbb4-da28-4ed4-9d33-cc4880c8bffd",
+  "ok": 1
+ },
+ "stab_a": {
+  "id": "3fbc3dc3-4455-424a-bf04-c5f619a30bba",
+  "ok": 1
+ },
+ "stab": {
+  "id": "77a9c988-4e7e-451e-9e1c-a568c5474c96",
+  "ok": 1
+ },
+ "stab_c": {
+  "id": "fac1afb1-2a42-4a73-a385-d37a07ea7e63",
+  "ok": 1
+ },
+ "footwork_a": {
+  "id": "cd2bb531-ffa4-4148-8413-effe782a1224",
+  "ok": 1
+ },
+ "footwork": {
+  "id": "a73f007f-ca83-4878-b75b-365d4a675f71",
+  "ok": 1
+ },
+ "footwork_c": {
+  "id": "4f018ca5-4ae9-42bc-896e-33a745e6dfb9",
+  "ok": 1
+ },
+ "footwork_d": {
+  "id": "61749ea7-26da-487e-a962-b2473ce3b234",
+  "ok": 1
+ },
+ "backhand_a": {
+  "id": "b704c4f3-0375-4cb5-ad9d-ecc9e7b3b79a",
+  "ok": 1
+ },
+ "backhand": {
+  "id": "4d613f68-277f-4967-9d64-203307a67942",
+  "ok": 1
+ },
+ "backhand_c": {
+  "id": "9c39ee7c-427d-4b2a-8455-1614188636be",
+  "ok": 1
+ },
+ "backhand_d": {
+  "id": "2632a001-f717-4bba-bd41-d4034dc8db36",
+  "ok": 1
+ },
+ "smoke_a": {
+  "id": "14d40ec1-c54f-4ec6-be8a-40d1a8106478",
+  "ok": 1
+ },
+ "smoke": {
+  "id": "d807f2b8-f691-4447-ac43-21f9f5d73d28",
+  "ok": 1
+ },
+ "smoke_c": {
+  "id": "38a9f78b-2c10-4b9e-af6e-7b7f5412722c",
+  "ok": 1
+ },
+ "smoke_d": {
+  "id": "3d89dfac-3b6b-4116-8ed4-eab29402e471",
+  "ok": 1
+ },
+ "needle": {
+  "id": "0d5ae04d-ca81-4496-ab39-92e1de1c770e",
+  "ok": 1
+ },
+ "needle_a": {
+  "id": "8d4765af-150a-4f15-bd56-faf9ea914a46",
+  "ok": 1
+ },
+ "needle_d": {
+  "id": "1bf34bd5-2e3f-42f8-9512-45e1bb5e9da2",
+  "ok": 1
+ },
+ "needle_c": {
+  "id": "2435e588-8f31-4614-8d1a-06e6551dc271",
+  "ok": 1
+ },
+ "counter_a": {
+  "id": "ddab83c7-c9b7-4b52-9d11-5b5c082800f0",
+  "ok": 1
+ },
+ "counter": {
+  "id": "3c01af9a-4a99-4985-977b-daf7f15e6e7d",
+  "ok": 1
+ },
+ "counter_c": {
+  "id": "9357d6e8-b822-40b6-8722-249c64be4c9a",
+  "ok": 1
+ },
+ "counter_d": {
+  "id": "70a1d6d7-ad26-43d1-9677-177849f3cae8",
+  "ok": 1
+ },
+ "thunder_a": {
+  "id": "9024e509-9118-4e05-8212-194f8487d04a",
+  "ok": 1
+ },
+ "thunder": {
+  "id": "b005a7d0-b4a2-48ac-aca8-9550eef590d7",
+  "ok": 1
+ },
+ "thunder_c": {
+  "id": "b124138b-f005-4ac3-b8af-b8e213be374f",
+  "ok": 1
+ },
+ "thunder_d": {
+  "id": "38c8f59a-9166-4eb0-8a0c-d7c9a76a5e47",
+  "ok": 1
+ },
+ "sidestab_a": {
+  "id": "80c1df67-cfe4-4be1-bee9-c55b2b0a3cdb",
+  "ok": 1
+ },
+ "sidestab": {
+  "id": "6075b3dd-a3e0-4809-9626-c76718901203",
+  "ok": 1
+ },
+ "sidestab_c": {
+  "id": "68c03fa3-e47a-4ff0-9c6d-ceb9ace17c1f",
+  "ok": 1
+ },
+ "sidestab_d": {
+  "id": "871c0554-f4da-45d3-8cf2-1883bea6f8b5",
+  "ok": 1
+ },
+ "backstep_a": {
+  "id": "d9492725-8e68-40cd-84bd-6ea8e2513acc",
+  "ok": 1
+ },
+ "backstep": {
+  "id": "54cd8470-6ac2-43d6-949e-c09916bb3024",
+  "ok": 1
+ },
+ "backstep_c": {
+  "id": "531bf76a-056c-4a26-a616-9bb6398c1784",
+  "ok": 1
+ },
+ "backstep_d": {
+  "id": "027946f5-836f-4525-b2ae-540b9b90f8e6",
+  "ok": 1
+ }
+}
