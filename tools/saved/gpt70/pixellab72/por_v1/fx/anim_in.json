@@ -1,0 +1,29 @@
+[
+ {
+  "key": "bolt_1_out",
+  "src": "bolt_1/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, debris and dust settle and drift apart into tiny soft particles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a crossbow bolt shot: a short heavy wooden crossbow bolt with an iron tip flying to the right, a pale streak of air behind it, and at the right end a small impact burst of amber sparks and wood splinters where it hits",
+  "pose": "the effect at full strength",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "junk_2_out",
+  "src": "junk_2/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, debris and dust settle and drift apart into tiny soft particles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a thrown bundle of junk: a tied leather sack, a small wooden crate and a tin pot tumbling through the air to the right in an arc, with motion lines, and at the right end a thudding impact with a brown dust puff and a few bouncing pebbles",
+  "pose": "the effect at full strength",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "aval_2_out",
+  "src": "aval_2/anim_src.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, debris and dust settle and drift apart into tiny soft particles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "an avalanche of luggage: a wide pile of tumbling leather sacks, wooden crates, barrels, rolled blankets and pots crashing down onto the ground across the whole width, with big brown dust clouds billowing out and debris bouncing, an earthy brown, red and amber palette",
+  "pose": "the effect at full strength",
+  "frames": 40,
+  "seed": 7
+ }
+]
