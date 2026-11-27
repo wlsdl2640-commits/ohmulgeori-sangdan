@@ -14,8 +14,9 @@ def scene(art, xs=80):
         p = Image.open(f'pick_{art}.png').convert('RGBA'); p = p.crop(p.getbbox())
         X = xs * q - p.width // 2; Y = round(my * q) + 90 - p.height; S.alpha_composite(p, (X, Y))
         clip = Image.new('RGBA', (W, H)); oy = round(my * q)
-        for x in range(0, min(W, mid.width), 2):   # regen78.js와 같은 들쭉날쭉한 윗선
-            y0 = 74 - ((x * 7 + (x >> 3) * 13) % 7); clip.alpha_composite(mid.crop((x, y0, x + 2, mid.height)), (x, oy + y0))
+        import math
+        for x in range(0, min(W, mid.width)):   # regen78.js와 같은 앞 밀 윗선(물결 + 이삭)
+            k = x % 6; y0 = 74 - round(3 + 2 * math.sin(x * 0.19) + math.sin(x * 0.47 + 2) + (2 if k == 3 else 1 if k in (2, 4) else 0)); clip.alpha_composite(mid.crop((x, y0, x + 1, mid.height)), (x, oy + y0))
         box = (X - 4, Y, X + p.width + 4, H); S.alpha_composite(clip.crop(box), box[:2])
     S.alpha_composite(row(gr, 111 + LD))
     return S

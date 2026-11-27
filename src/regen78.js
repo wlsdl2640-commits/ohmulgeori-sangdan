@@ -164,8 +164,9 @@ buildWideHD = function (id, old) {   // eslint-disable-line no-func-assign
   if (id !== 'plains' || b.hdWait || typeof REGEN_ART === 'undefined') return b;
   const B = HD70_DATA.bg[id], LD = (B.ld != null ? B.ld : 55) - HD_LD_UP, q = B.hs || 1, my = B.mid.y + LD;
   const [fr, fx] = mkCanvas(b.mid.width, b.mid.height); const sy = Math.round(my * q) + REGEN_FR;
-  for (let x = 0; x < b.mid.width; x += 2) {   // 앞줄 윗선을 밀 이삭처럼 들쭉날쭉하게(두 픽셀마다 0 ~ 6줄 위로) — 곧은 선이면 그림이 잘려 보인다
-    const y0 = sy - ((x * 7 + (x >> 3) * 13) % 7); fx.drawImage(b.mid, x, y0, 2, b.mid.height - y0, x, y0, 2, b.mid.height - y0);
+  for (let x = 0; x < b.mid.width; x++) {   // 앞 밀 윗선: 완만한 물결 + 여섯 픽셀마다 이삭 끝 하나(11-28 대표님 「각지게 잘림」 → tools/saved/regen78/edgetest2.py e_tuft)
+    const k = x % 6, y0 = sy - Math.round(3 + 2 * Math.sin(x * 0.19) + Math.sin(x * 0.47 + 2) + (k === 3 ? 2 : k === 2 || k === 4 ? 1 : 0));
+    fx.drawImage(b.mid, x, y0, 1, b.mid.height - y0, x, y0, 1, b.mid.height - y0);
   }
   fr.hs = q;   // 중경 앞줄만
   const W2 = b.mid.width / q, base = my + REGEN_BASE / q, pr = b.props;
