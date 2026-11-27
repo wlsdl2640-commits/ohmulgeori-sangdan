@@ -31,7 +31,7 @@ def tint(src, hue, sat):   # 양피지(누런 칸)를 그 색으로
 ribbon_green = lambda h, s, v: (h > 0.2) & (h < 0.48) & (s > 0.2)
 ribbon_blue = lambda h, s, v: (h > 0.52) & (h < 0.72) & (s > 0.3)
 ribbon_purple = lambda h, s, v: (h > 0.72) & (h < 0.95) & (s > 0.25)
-ROWS = [('s_seal_0', ribbon_green, '주문서 A1 · 리본만 확률 색'), ('s_seal_3', ribbon_green, '주문서 A4 · 리본만 확률 색'),
+ROWS = [('s_seal_0', ribbon_green, '주문서 A1 · 리본만 확률 색'),
         ('s_open_3', ribbon_blue, '주문서 B4 · 리본만 확률 색'), ('s_open_1', ribbon_blue, '주문서 B2 · 리본만 확률 색'),
         ('s_rods_3', ribbon_purple, '주문서 C4 · 끈 · 술만 확률 색'), ('s_seal_0', None, '주문서 A1 · 양피지 전체를 물들임')]
 S = 2; cw = 128 * S + 14
