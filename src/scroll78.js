@@ -1,6 +1,6 @@
 /* ───────── 빌드 78 넷째: 주문서 강화 · 내구도 · 숫돌 수리 · 촉매 · 망각의 주문서 · 마탑 스킬북 합성 · 단계 책 없앰 (11-27 대표님 — ai-meeting decisions.md 31장 끝 「강화 정리」 둘째 ~ 넷째 · e4 · e5) ─────────
    · 주문서: 갈래 다섯(주무기 · 부장비 · 방어구 · 장신구 · 가방) × 능력치 × 확률 100 · 80 · 60 · 30 · 10%. 성공하면 정해진 수치를 그대로 더한다(%가 아님).
-     수치는 장비 착용 레벨 구간(1 · 30 · 60 · 90 · 120)마다 정한 값(B안 — 대표님이 A(완전 고정)를 고르면 SCR78.band를 [1] 하나로). 실패하면 아무 일 없음(부서지지 않음). 바르는 횟수 제한 없음.
+     수치는 장비 레벨과 상관없이 늘 같은 값(11-28 대표님 A안 — 100% +1 · 80% +2 · 60% +4 · 30% +7 · 10% +12, 공격력 기준 · 다른 능력치는 mul 배율). 예전 B안(레벨 구간 1 · 30 · 60 · 90 · 120마다 다른 값)은 SCR78_B에 남김. 실패하면 아무 일 없음(부서지지 않음). 바르는 횟수 제한 없음.
      장비: g.sc = { 능력치: 더한 값 } · g.scN 성공 수 · g.scT 바른 수. 옛 +1 ~ +30 강화(g.enh)는 불러올 때 들어간 돈 · 마정석을 돌려주고 지운다.
    · 내구도: 주무기 · 부장비 120 · 방어구 부위 150(장신구 · 가방 · 화살 없음). 싸움이 끝날 때 1(레이드 3), 그 싸움에서 쓰러진 사람은 4 더. 0이면 그 장비 능력치 50%.
      g.dur(없으면 가득). 숫돌 하나 = 40 수리 + 돈. 자동 수리: 출발 전 40 이상 닳은 장비를 창고 숫돌로 · 숫돌을 챙겨 가 야영 때 고치고 잔다 · 짐꾼 계열은 원정마다 한 번 숫돌 없이 응급 수리 20.
@@ -17,14 +17,15 @@ const SCR78 = {
     bag: { name: '가방', slots: ['bag'], stats: ['carry', 'movePct'] }
   },
   rates: [100, 80, 60, 30, 10],
-  band: [1, 30, 60, 90, 120],   // 장비 착용 레벨 구간
-  atk: [[1, 2, 4, 7, 12], [2, 3, 6, 10, 18], [2, 4, 8, 14, 24], [4, 7, 14, 24, 40], [6, 11, 22, 38, 60]],   // [확률][구간] 공격력 기준
+  band: [1],   // A안: 구간 하나(장비 레벨 상관없이 같은 값)
+  atk: [[1], [2], [4], [7], [12]],   // [확률][구간] 공격력 기준
   mul: { atk: 1, matk: 1, def: 0.6, hp: 3, mp: 2, str: 0.5, vit: 0.5, agi: 0.5, int: 0.5, carry: 1.5, crit: 0.0005, block: 0.0005, eva: 0.0005, mres: 0.0006, movePct: 0.002 },
   name: { atk: '공격력', matk: '마법 공격력', crit: '치명', def: '방어력', block: '막기', mp: '최대 MP', mres: '마법 저항', hp: '최대 HP', eva: '회피', str: '힘', vit: '체력', agi: '민첩', int: '지능', carry: '짐', movePct: '이동 속도' },
   pct: ['crit', 'block', 'eva', 'mres', 'movePct'],
   v: [300, 900, 2000, 5000, 12000],   // 기준가 (100% 주문서는 대장간에서 이 값에 판다)
   drop: { p80: 0.008, p60: 0.003, boss30: 0.09, boss10: 0.04 }   // 임시: 몬스터마다 정한 주문서 표가 나오기 전까지
 };
+const SCR78_B = { band: [1, 30, 60, 90, 120], atk: [[1, 2, 4, 7, 12], [2, 3, 6, 10, 18], [2, 4, 8, 14, 24], [4, 7, 14, 24, 40], [6, 11, 22, 38, 60]] };   // 보관: 예전 B안(구간마다 다른 값)
 const DUR78 = { arms: 120, armor: 150, fight: 1, raid: 3, down: 4, stone: 40, auto: 40, pack: 3, porter: 20, warn: 0.2, zero: 0.5, fee: t => 20 + 15 * (t || 0) };   // fee = 숫돌 하나 쓸 때 드는 돈
 const CAT78 = { cat_str: ['맹공의 촉매', 'str', '#d0503a'], cat_int: ['비전의 촉매', 'int', '#6a5ad8'], cat_vit: ['수호의 촉매', 'vit', '#3a9a58'], cat_agi: ['질풍의 촉매', 'agi', '#3aa8c8'] };
 const CAT78_Q = 1.25, CAT78_DROP = 0.15;
@@ -36,7 +37,7 @@ const scrFmt = (s, v) => scrPct(s) ? `+${Math.round(v * 1000) / 10}%` : `+${v}`;
 const scrRi = r => SCR78.rates.indexOf(r);
 for (const [c, C] of Object.entries(SCR78.cats)) for (const s of C.stats) SCR78.rates.forEach((r, i) => {
   ITEMS[`scr_${c}_${s}_${r}`] = { name: `${C.name} ${SCR78.name[s]} 주문서 ${r}%`, v: SCR78.v[i], w: 0, icon: 'book', c: '#d8b878', g: i, keep: 1, scr: { c, s, r },
-    desc: `${C.name}(${C.slots.map(x => (SLOTS.find(y => y[0] === x) || [0, x])[1]).join(' · ')})에 발라요. 성공 ${r}% — 성공하면 ${SCR78.name[s]}이(가) 정해진 만큼 오르고(장비 레벨 구간마다 값이 달라요), 실패해도 장비는 그대로예요.` };
+    desc: `${C.name}(${C.slots.map(x => (SLOTS.find(y => y[0] === x) || [0, x])[1]).join(' · ')})에 발라요. 성공 ${r}% — 성공하면 ${SCR78.name[s]}이(가) 정해진 만큼 오르고(어떤 장비에 발라도 같은 값), 실패해도 장비는 그대로예요.` };
 });
 ITEMS.whetstone = { name: '숫돌', v: 300, w: 1, icon: 'ore', c: '#b8b0a0', g: 0, keep: 1, desc: `닳은 장비를 고쳐요. 하나에 내구도 ${DUR78.stone}. 원정에 챙겨 가면 야영 때 고치고 자요.` };
 Object.entries(CAT78).forEach(([id, [n, st, c]]) => { ITEMS[id] = { name: n, v: 1200, w: 1, icon: 'gem', c, g: 2, keep: 1, desc: `대장간에서 장비를 만들 때 넣어요. 희귀 이상이 조금 더 잘 나오고, 희귀 이상이면 ${STATS.find(x => x[0] === st)[1]}이(가) 꼭 붙어요. 만들 때마다 하나씩 써요.` }; });
@@ -108,10 +109,10 @@ function scrollBox() {
       <div class="list">${rows || '<div class="li"><span class="sub">바를 수 있는 주문서가 없어요.</span></div>'}</div>`;
   }
   const cells = all.map(x => `<button type="button" class="cell${f && f.g === x.g ? ' on' : ''}${x.owner && x.owner.status !== 'idle' ? ' zero' : ''}" data-act="scrsel" data-g="${x.g.id}" aria-label="${esc(gearName(x.g))}">${gArt(x.g, 2)}${x.g.scN ? `<span class="qty enhq">+${x.g.scN}</span>` : ''}</button>`).join('');
-  const band = SCR78.band.map((b, i) => `<tr><td>Lv${b}~</td>${SCR78.rates.map((r, j) => `<td>+${SCR78.atk[j][i]}</td>`).join('')}</tr>`).join('');
+  const band = SCR78.band.map((b, i) => `<tr><td>${SCR78.band.length > 1 ? `Lv${b}~` : "모든 장비"}</td>${SCR78.rates.map((r, j) => `<td>+${SCR78.atk[j][i]}</td>`).join('')}</tr>`).join('');
   return `<div class="card enh-ctl">${ctl}</div>
     <div class="sec"><b>장비</b><span>${all.length}점 · 흐린 칸은 원정 중</span></div><div class="igrid enhgrid">${cells || '<span class="sub">장비가 없어요.</span>'}</div>
-    <details class="card"><summary>주문서 수치표 (공격력 기준 — 다른 능력치는 배율만큼)</summary><table class="enht"><tr><th>장비 레벨</th>${SCR78.rates.map(r => `<th>${r}%</th>`).join('')}</tr>${band}</table>
+    <details class="card"><summary>주문서 수치표 (공격력 기준 — 다른 능력치는 배율만큼)</summary><table class="enht"><tr><th>${SCR78.band.length > 1 ? "장비 레벨" : ""}</th>${SCR78.rates.map(r => `<th>${r}%</th>`).join('')}</tr>${band}</table>
       <div class="sub muted">방어력 ×0.6 · 최대 HP ×3 · 최대 MP ×2 · 힘 · 체력 · 민첩 · 지능 ×0.5 · 짐 ×1.5 · 치명 · 막기 · 회피 ×0.05%p · 마법 저항 ×0.06%p · 이동 ×0.2%</div></details>`;
 }
 

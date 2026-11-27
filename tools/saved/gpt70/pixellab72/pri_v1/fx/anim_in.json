@@ -1,0 +1,182 @@
+[
+ {
+  "key": "heal_a_out",
+  "src": "heal_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a gentle healing glow rising around a target: a soft rounded aura of warm white and pale green-gold light, small leaf-shaped light motes and tiny sparkles drifting upward",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "heal_a_in",
+  "src": "heal_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a gentle healing glow rising around a target: a soft rounded aura of warm white and pale green-gold light, small leaf-shaped light motes and tiny sparkles drifting upward",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "firstaid_a_out",
+  "src": "firstaid_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a quick first aid effect: a short white bandage ribbon wrapping in a loose spiral, with a few small soft gold sparkles and a tiny warm glow at its center",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "firstaid_a_in",
+  "src": "firstaid_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a quick first aid effect: a short white bandage ribbon wrapping in a loose spiral, with a few small soft gold sparkles and a tiny warm glow at its center",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "cure_a_out",
+  "src": "cure_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a purifying effect: dark purple poison bubbles bursting and dissolving upward into clean sky-blue droplets and small white sparkles",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "cure_a_in",
+  "src": "cure_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a purifying effect: dark purple poison bubbles bursting and dissolving upward into clean sky-blue droplets and small white sparkles",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "bless_a_out",
+  "src": "bless_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a blessing effect over an ally: a thin floating ring of pale gold light hovering above, with golden motes gently falling and rising around it",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "bless_a_in",
+  "src": "bless_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a blessing effect over an ally: a thin floating ring of pale gold light hovering above, with golden motes gently falling and rising around it",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "holyw_out",
+  "src": "holy_w/full.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a small round white holy light orb with a pale silver rim and soft white glow",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "holyw_in",
+  "src": "holy_w/full.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a small round white holy light orb with a pale silver rim and soft white glow",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "weaken_a_out",
+  "src": "weaken_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a blinding flash: a sudden bright white starburst with sharp radiating rays and a pale gold ring, small afterglow sparkles",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "weaken_a_in",
+  "src": "weaken_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a blinding flash: a sudden bright white starburst with sharp radiating rays and a pale gold ring, small afterglow sparkles",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "holyhammer_a_out",
+  "src": "holyhammer_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a scepter strike impact on the ground: a golden radiant burst with short light rays spreading sideways, small glowing ground cracks and bouncing light chips",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "holyhammer_a_in",
+  "src": "holyhammer_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a scepter strike impact on the ground: a golden radiant burst with short light rays spreading sideways, small glowing ground cracks and bouncing light chips",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "sanctuary_c_out",
+  "src": "sanctuary_c/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a protective circle: a flat glowing ring of light on the ground (perspective ellipse) with a low translucent dome of pale sky-blue light rising from it and small sparkles along the rim",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "sanctuary_c_in",
+  "src": "sanctuary_c/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a protective circle: a flat glowing ring of light on the ground (perspective ellipse) with a low translucent dome of pale sky-blue light rising from it and small sparkles along the rim",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "massheal_a_out",
+  "src": "massheal_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a wide group healing: soft light motes and small light feathers gently falling from above across a wide area, with a faint warm glow spreading along the ground",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "massheal_a_in",
+  "src": "massheal_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a wide group healing: soft light motes and small light feathers gently falling from above across a wide area, with a faint warm glow spreading along the ground",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "greatheal_c_out",
+  "src": "greatheal_c/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a great healing: a tall soft pillar of warm white and pale gold light rising from the ground, with spiral sparkles climbing up inside it",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 7
+ },
+ {
+  "key": "greatheal_c_in",
+  "src": "greatheal_c/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a great healing: a tall soft pillar of warm white and pale gold light rising from the ground, with spiral sparkles climbing up inside it",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ }
+]

@@ -1464,7 +1464,7 @@
 
 ## 주문서 강화 · 내구도 · 숫돌 · 촉매 · 망각의 주문서 · 마탑 스킬북 합성 · 단계 책 없앰 (빌드 78 넷째, 11-27 대표님 — decisions.md 31장 끝 「강화 정리」 둘째 ~ 넷째)
 - `src/scroll78.js`(build.py에서 regen78 다음 · main 앞 — 머리 주석에 규칙 전부) · 그림 `src/data-scrollart78.js`(ITEM_HD scrart_<갈래>_<확률> 25장 · lethe0/1 = `tools/saved/scrollart78/px/export_scrolls.py`).
-- 주문서 ITEMS `scr_<갈래>_<능력치>_<확률>`(85종, 부속품 칸) — 성공하면 `g.sc[능력치]`에 정한 수치를 더함(SCR78.atk[확률][장비 착용 레벨 구간] × SCR78.mul). 실패는 아무 일 없음 · 횟수 제한 없음 · `g.scN`(이름 끝 +n) · `g.scT`. 100%는 대장간에서 판다. 드롭은 임시(matDrop 감쌈 — 일반 80% 0.8% · 60% 0.3% · 우두머리 30% 9% · 10% 4% · 촉매 15%).
+- 주문서 ITEMS `scr_<갈래>_<능력치>_<확률>`(85종, 부속품 칸) — 성공하면 `g.sc[능력치]`에 정한 수치를 더함(SCR78.atk[확률][구간] × SCR78.mul — **11-28 대표님 A안: 구간 하나 `band [1]`, 장비 레벨 상관없이 100% +1 · 80% +2 · 60% +4 · 30% +7 · 10% +12**, 예전 B안 표는 `SCR78_B`에 보관). 실패는 아무 일 없음 · 횟수 제한 없음 · `g.scN`(이름 끝 +n) · `g.scT`. 100%는 대장간에서 판다. 드롭은 임시(matDrop 감쌈 — 일반 80% 0.8% · 60% 0.3% · 우두머리 30% 9% · 10% 4% · 촉매 15%).
 - 내구도: `durMax`(주무기 · 부장비 · 볼트통 120 · 방어구 다섯 부위 150) · `g.dur`(없으면 가득) · ev 'clear'(싸움 끝)를 감싸 `durWear`(1 · 레이드 3 · 쓰러진 사람 +4) · 0이면 gearStats 감쌈에서 그 장비 능력치 절반. 숫돌 `whetstone`(40 + 돈 DUR78.fee) · 대장간 「수리」 탭 `repairBox` · 자동 수리(S.autoRepair, 기본 켬): startExp 감쌈(40 이상 닳은 장비 · 숫돌 3개를 e.sup에 챙김 — 남으면 arrive의 unloadBag이 돌려줌) · startCamp 감쌈(챙긴 숫돌로 고치고 잠 · 짐꾼 계열 원정마다 한 번 +20 `e.prFix`).
 - 촉매 `cat_str/int/vit/agi`: 대장간 제작 탭 `catPick`(UI.forgeCat) → forge72.js forgeGear가 재료에 하나 더하고 job.cat → forgeTick rollQuality(boost × 1.25 + 0.02) · `catBonus`(희귀 이상이면 그 능력치를 꼭).
 - 망각의 주문서: `lethe`(빈 것 — 마탑에서 중급 마정석 2 + 3,000G) · `S.lethe[]`(가둔 기억 {sc, n, from}, 본인 귀속) · `letheTake`(1,000G, 장비는 sc · scN · scT 지움) · `letheGive`(어떤 장비든 더함). 마탑 창 `towerBox` 감쌈 → `letheBox` + 스킬북 합성(BLD_BOX.library 그대로 빌림).
