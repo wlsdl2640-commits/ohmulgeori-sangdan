@@ -6,9 +6,11 @@
    · 지도 · 화면에 「출현 중 · 남은 시간」을 보이지 않는다 — 협회 로비 모험가 · 지나가는 모험가의 소문 대사로만 알린다(늘 도는 소문 · 나와 있을 때만 도는 소문).
    상태 S.regen[열쇠] = { next: 다시 나오는 때(ms, 없으면 지금 나와 있음), busy: 싸우기 시작한 때(ms — 2분 동안은 다른 파티가 못 만난다), kills, told: 나왔다고 알린 next } */
 const REGEN78 = {
-  c1: { mon: 'scare_c1', field: 'plains', stage: 8, min: 15, lvAdd: 3, hp: 4.5, atk: 1.3, spot: '밀짚더미',
+  // 빌드 78 둘째 (e3 합의안 · 11-27 대표님): 배율은 같은 레벨 표준 몬스터(1.0) 기준 — 몬스터 자체 배율(mh · ma · md)을 나눠 겹쳐 곱하지 않는다
+  c1: { mon: 'scare_c1', field: 'plains', stage: 8, min: 15, lvAdd: 3, hp: 2.5, atk: 1.35, def: 1.0, spot: '밀짚더미',
+        guard: { mon: 'scare_a3', lvAdd: 1, cut: 0.15 },   // Lv10 누더기 허수아비 졸개 — 살아 있는 동안 보스가 받는 피해 −15%
         drop: [['ring', 0.10]] },
-  c2: { mon: 'scare_c2', field: 'plains', stage: 16, min: 30, lvAdd: 4, hp: 5.5, atk: 1.4, spot: '낡은 축사',
+  c2: { mon: 'scare_c2', field: 'plains', stage: 16, min: 30, lvAdd: 4, hp: 4.5, atk: 1.6, def: 1.2, spot: '낡은 축사',   // 혼자 나온다
         drop: [['book', 0.24]] }
 };
 const REGEN_BUSY = 120000;   // 싸우는 중(2분)에는 다른 파티가 못 만난다 — 지거나 물러나면 2분 뒤 다시 만날 수 있다
@@ -50,12 +52,53 @@ function regenAt(e) {   // 이 원정이 지금 이 스테이지에서 만날 �
   return null;
 }
 function regenFoe(k, lv) {
-  const R = REGEN78[k], f = foeFrom(R.mon, lv + R.lvAdd);
-  f.hp = f.maxHp = Math.round(f.maxHp * R.hp); f.atk *= R.atk; f.def *= 1.2;
+  const R = REGEN78[k], m = MONS[R.mon], f = foeFrom(R.mon, lv + R.lvAdd);
+  f.hp = f.maxHp = Math.round(f.maxHp * R.hp / (m.mh || 1)); f.atk *= R.atk / (m.ma || 1); f.def *= (R.def || 1) / (m.md || 1);
   f.boss = true; f.regen = k; f.aoe = true; f.sc = 2;
   f.name = `리젠보스 ${MONS[R.mon].name}`;
   regenSt(k).busy = Date.now();
   return f;
+}
+function regenPack(k, lv) {   // core.js rollFoes — 리젠보스 (+ 졸개)
+  const R = REGEN78[k], f = regenFoe(k, lv), out = [f];
+  if (R.guard) { const g = foeFrom(R.guard.mon, lv + R.guard.lvAdd); out.push(g); f.guardBy = g.uid; f.guardCut = R.guard.cut; }
+  return out;
+}
+
+// ── 빌드 78 둘째: 20칸 층의 무리 (e3 · 11-27 대표님 B안 — 마릿수를 먼저, 같은 종류 80% · 섞일 때는 어울리는 짝끼리만, 많아야 두 종류) ──
+function st20Pool(F, st) {
+  const n = isNight();
+  const top = Math.max(...Object.values(F.st20).map(r => r[1])); st = Math.min(st, top);   // 주인 칸(1-20) 뒤로는 마지막 칸 후보
+  return F.mons.filter(id => { const r = F.st20[id]; return r && r[0] <= st && st <= r[1] && (!MONS[id].night || n); });
+}
+function st20Pack(F, e, pool, extra) {
+  const P = F.pack20[Math.max(0, Math.min(F.pack20.length - 1, e.stage - 1))], nt = isNight();
+  let n = e.mode === 'return' ? 1 : ri(nt ? P[2] : P[0], nt ? P[3] : P[1]);
+  n = Math.min(5, n + (extra || 0));
+  const main = pickOne(pool);
+  if (n < 2 || rnd() < (F.same20 || 0.8)) return Array(n).fill(main);
+  const mates = (F.mix20 || []).filter(c => c.includes(main)).map(c => c[0] === main ? c[1] : c[0]).filter(id => pool.includes(id));
+  if (!mates.length) return Array(n).fill(main);
+  const b = pickOne(mates), nb = Math.floor(n / 2);   // 3마리면 2 + 1
+  return Array(n - nb).fill(main).concat(Array(nb).fill(b));
+}
+
+// ── 빌드 78 둘째: 옛 저장 — 까마귀 깃털 → 최하급 깃털(1:1), 1층 진행은 20칸 안으로 (불러올 때마다, 할 것이 없으면 아무것도 안 함) ──
+function scare78() {
+  let n = 0;
+  const walk = o => {
+    if (Array.isArray(o)) { for (const v of o) if (v && typeof v === 'object') walk(v); return; }
+    for (const k of Object.keys(o)) {
+      const v = o[k];
+      if (k === 'crow_feather' && typeof v === 'number') { o.feather_0 = (o.feather_0 || 0) + v; delete o[k]; n += v; continue; }
+      if (v && typeof v === 'object') walk(v);
+    }
+  };
+  if (S.inv) walk(S.inv); if (S.wh) walk(S.wh); (S.parties || []).forEach(p => { if (p.exp && p.exp.bag) walk(p.exp.bag); });
+  const fs = S.fields && S.fields.plains, L = fstages(FIELDS.plains);
+  if (fs && fs.best > L) fs.best = L;
+  (S.parties || []).forEach(p => { if (p.exp && p.exp.field === 'plains' && p.exp.stage > L) { p.exp.stage = L; if (p.exp.home > L) p.exp.home = L; } });
+  if (n) log(`허수아비 부속품 정리: 까마귀 깃털 ${fmt(n)}개를 최하급 깃털로 바꾸었다. (허수아비 짚단은 이제 「마법 걸린 짚단」)`);
 }
 function regenDown(p, e, f) {   // core.js kill이 부른다 — 시계를 다시 돌리고 무작위 드롭(짐이 차 있어도 넣는다)
   const k = f.regen, R = REGEN78[k], r = regenSt(k);

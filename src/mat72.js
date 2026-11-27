@@ -32,7 +32,7 @@ const MAT_PV = [30, 110, 420, 1650, 6500, 25000];
 Object.keys(MAT_PROC).forEach(k => MJ_GRADES.forEach((gn, i) => { ITEMS[`p_${k}_${i}`] = { name: `${gn} ${MAT_PROC[k][0]}`, v: MAT_PV[i], w: 1, icon: MAT_FAM[k].icon, c: MAT_FAM[k].c[i], g: i, pfam: k, keep: 1, desc: MAT_PROC[k][1] }; }));
 // 몬스터 → 등급 부속품 (리마스터한 땅은 손으로, 나머지는 타입 · 이름으로 어림)
 const MAT_OF = {
-  rat: ['hide', 'bone'], rabbit: ['hide', 'bone'], wolf: ['hide', 'bone'], scarecrow: ['fiber', 'feather'], scare_a3: ['fiber', 'feather'], scare_b2: ['fiber', 'feather'], scare_c4: ['fiber', 'feather'], scare_c1: ['fiber', 'feather'], scare_c2: ['fiber', 'feather'],   /* 11-21 23:29: 깃털을 주는 몬스터가 하나도 없어 활 · 화살을 못 만들었다 → 허수아비(까마귀) */ boar: ['hide', 'bone'], aboar: ['hide', 'bone'], ratking: ['hide', 'bone'],
+  rat: ['hide', 'bone'], rabbit: ['hide', 'bone'], wolf: ['hide', 'bone'], scarecrow: ['fiber', 'feather'], scare_a3: ['fiber', 'feather'], scare_b2: ['fiber', 'feather'], scare_c4: ['fiber', 'feather'], scare_c1: ['fiber', 'feather'], scare_c2: ['fiber', 'feather'],   /* 11-21 23:29: 깃털을 주는 몬스터가 하나도 없어 활 · 화살을 못 만들었다 → 허수아비(까마귀) */ boar: ['hide', 'bone'], badger: ['hide', 'bone'], aboar: ['hide', 'bone'], ratking: ['hide', 'bone'],
   vinesnake: ['rscale', 'fiber'], cflower: ['fiber'], stump: ['wood', 'moss'], spotshroom: ['moss'], ibeetle: ['shell'], mgolem: ['ore', 'moss'], fguard: ['wood', 'moss'], elder: ['wood', 'moss'],
   ewisp: [], mlizard: ['rscale', 'moss'], rcenti: ['shell'], emoth: ['web'], eshroom: ['moss'], cstag: ['shell', 'ore'], sentinel: ['wood', 'moss'], elddragon: ['wood', 'moss'],
   smandrake: ['fiber'], fairies: [], fdryad: ['wood', 'fiber'], rahen: []
@@ -52,6 +52,7 @@ function matsOf(id) {
 // 마물육: 몬스터마다 하나 (id → [이름, 설명])
 const MMEAT = {
   rat: ['들쥐 고기', '작고 질기지만 구우면 먹을 만하다.'], rabbit: ['뿔토끼 안심살', '부드럽고 담백한 살코기.'], wolf: ['들늑대 뒷다리살', '기름기 없이 단단한 붉은 살.'], scarecrow: ['벼', '허수아비 속에 채워져 있던 낟알 달린 벼.'],
+  badger: ['오소리 앞다리살', '굴을 파느라 다져진 단단한 앞다리살.'],
   boar: ['멧돼지 삼겹살', '비계가 두툼하게 붙은 고소한 살.'], aboar: ['갑옷 멧돼지 갈빗살', '등판 아래 숨은 쫄깃한 갈빗살.'], ratking: ['들쥐왕 등심', '곡식만 먹고 자라 뜻밖에 기름진 등심.'],
   vinesnake: ['덩굴 뱀 몸통살', '가시를 바르면 닭고기 같은 흰 살이 나온다.'], cflower: ['식충 꽃 줄기 속살', '아삭하고 달큰한 줄기 속.'], stump: ['그루터기 새순', '등에서 돋은 연한 새순.'], spotshroom: ['점박이 버섯 기둥살', '독 있는 갓을 떼어 낸 쫄깃한 기둥.'],
   ibeetle: ['철갑 풍뎅이 속살', '껍데기 속의 고소한 흰 살.'], mgolem: ['바위 버섯', '이끼 골렘의 몸에 붙어 자란 식용 버섯.'], fguard: ['수호령의 이슬 열매', '뿔 가지에 맺힌 맑은 열매.'], elder: ['트렌트 수액', '오래 묵어 조청처럼 진한 수액.'],

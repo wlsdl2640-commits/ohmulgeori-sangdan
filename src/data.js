@@ -32,7 +32,7 @@ function clockOf(t) { const f = (((t % DAY_SEC) + DAY_SEC) % DAY_SEC) / DAY_SEC,
 const clockStr = t => { const c = clockOf(t); return String(c.h).padStart(2, '0') + ':' + String(Math.floor(c.m / 10) * 10).padStart(2, '0'); };
 // 필드 몬스터 레벨: 네 스테이지마다 1씩 오른다 (1-50에서 +12). F.span이 있으면 1-50에서 +span (구름섬 너머의 섬: 10)
 const fstages = F => (F && F.stages) || FIELD_STAGES;   // 빌드 72 (11-21 00:24 사용자 「던전은 무조건 10단계」): 던전 필드는 F.stages = 10 (세계수 뿌리굴 2-3-1 ~ 2-3-10)
-const fieldLv = (F, stage) => F.lv + (F.span ? Math.floor((stage - 1) * F.span / (FIELD_STAGES - 1)) : F.stages ? stage - 1 : Math.floor((stage - 1) / 4));   // 던전(F.stages)은 한 단계에 한 레벨
+const fieldLv = (F, stage) => F.lvTab ? F.lvTab[Math.max(0, Math.min(F.lvTab.length - 1, stage - 1))] : F.lv + (F.span ? Math.floor((stage - 1) * F.span / (FIELD_STAGES - 1)) : F.stages ? stage - 1 : Math.floor((stage - 1) / 4));   // 던전(F.stages)은 한 단계에 한 레벨
 const minStage = m => 1 + ((m.minS || 1) - 1) * 3;
 // 던전 몬스터는 필드 끝(1-50)보다 강하다
 const dungeonLv = (F, floor) => (F.span ? F.lv + F.span - 5 + floor : F.lv + 10 + floor);
@@ -50,8 +50,8 @@ const ITEMS = {
   goblin_fletch:  { name: '고블린 화살깃',      v: 16,   w: 1, icon: 'feather', c: '#c8c0b0' },   // 빌드 72: 고블린 궁수
   rusty_dagger:   { name: '녹슨 단검',          v: 18,   w: 2, icon: 'blade',   c: '#b7774a' },
   ratking_crown:  { name: '들쥐왕의 왕관',      v: 320,  w: 2, icon: 'crown',   c: '#f0c24a' },
-  scare_straw:    { name: '허수아비 짚단',      v: 30,   w: 2, icon: 'hide',    c: '#d8b45a' },   // 빌드 70: 곡창지대 평원 새 몬스터
-  crow_feather:   { name: '까마귀 깃털',        v: 38,   w: 1, icon: 'feather', c: '#4a4a62' },
+  scare_straw:    { name: '마법 걸린 짚단',     v: 35,   w: 2, icon: 'hide',    c: '#d8b45a', desc: '낡은 끈으로 묶은 누런 짚단. 끝에 옅은 푸른 마력 빛이 돈다 — 1층 허수아비 다섯이 모두 떨어뜨린다.' },   // 빌드 78 (e3): 허수아비 다섯 공용 부속품 (id는 그대로)   // 빌드 70: 곡창지대 평원 새 몬스터
+  crow_feather:   { name: '까마귀 깃털',        v: 38,   w: 1, icon: 'feather', c: '#4a4a62', keep: 1 },   // 빌드 78: 이제 떨어지지 않는다 — 옛 저장은 최하급 깃털로 (regen78.js scare78)
   boar_tusk:      { name: '멧돼지 엄니',        v: 46,   w: 1, icon: 'fang',    c: '#efe2c4' },
   boar_hide:      { name: '멧돼지 가죽',        v: 52,   w: 3, icon: 'hide',    c: '#8a4a32' },
   aboar_plate:    { name: '갑옷 멧돼지 등판',   v: 90,   w: 3, icon: 'gem',     c: '#b8a890' },
@@ -155,12 +155,13 @@ const MONS = {
   gobarcher: { name: '고블린 궁수', plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.75, ma: 1.1, md: 0.4, spd: 0.95, eva: 0.08, minS: 7, drops: [['goblin_ear', 0.6], ['goblin_fletch', 0.45]] },
   scarecrow: { name: '허수아비',    plan: 'biped', skin: '#c8a060', cloth: '#7a5232', gear: 'staff', mh: 1.0, ma: 1.05, md: 0.6, spd: 0.9, minS: 7, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },   // 빌드 70: 곡창지대 평원 (리마스터 그림 — hd70.js)
   // 빌드 78 (11-27 대표님): 허수아비 다섯 — 약한 순 A3 · B2(밤에만) · C4 · 리젠보스 C1 · C2 (그림 data-pxl78.js · 리젠 regen78.js)
-  scare_a3: { mm: 'scarecrow', name: '누더기 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#7a5232', mh: 1.0, ma: 1.0, md: 0.6, spd: 0.9, minS: 5, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },
-  scare_b2: { mm: 'scarecrow', name: '호박등 허수아비', plan: 'biped', skin: '#e08a2a', cloth: '#4a6a3a', mh: 1.05, ma: 1.15, md: 0.6, spd: 0.95, minS: 7, night: 1, drops: [['scare_straw', 0.6], ['crow_feather', 0.5]] },
-  scare_c4: { mm: 'scarecrow', name: '갈고리든 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a4a32', mh: 1.25, ma: 1.2, md: 0.8, spd: 0.9, minS: 9, drops: [['scare_straw', 0.6], ['crow_feather', 0.55]] },
-  scare_c1: { mm: 'scarecrow', name: '마법 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a2a20', scale: 2, regen: 1, mh: 1.4, ma: 1.25, md: 0.9, spd: 0.95, minS: 99, drops: [['scare_straw', 1, 3], ['crow_feather', 1, 2]] },
-  scare_c2: { mm: 'scarecrow', name: '저주 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#26305a', scale: 2, regen: 1, mh: 1.55, ma: 1.35, md: 1.0, spd: 1.0, minS: 99, drops: [['scare_straw', 1, 3], ['crow_feather', 1, 3]] },
+  scare_a3: { mm: 'scarecrow', name: '누더기 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#7a5232', mh: 1.0, ma: 1.0, md: 0.6, spd: 0.9, minS: 5, drops: [['scare_straw', 1]] },
+  scare_b2: { mm: 'scarecrow', name: '호박등 허수아비', plan: 'biped', skin: '#e08a2a', cloth: '#4a6a3a', mh: 1.05, ma: 1.15, md: 0.6, spd: 0.95, minS: 7, night: 1, drops: [['scare_straw', 1]] },
+  scare_c4: { mm: 'scarecrow', name: '갈고리든 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a4a32', mh: 1.25, ma: 1.2, md: 0.8, spd: 0.9, minS: 9, drops: [['scare_straw', 1]] },
+  scare_c1: { mm: 'scarecrow', name: '마법 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a2a20', scale: 2, regen: 1, mh: 1.4, ma: 1.25, md: 0.9, spd: 0.95, minS: 99, drops: [['scare_straw', 1, 2]] },
+  scare_c2: { mm: 'scarecrow', name: '저주 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#26305a', scale: 2, regen: 1, mh: 1.55, ma: 1.35, md: 1.0, spd: 1.0, minS: 99, drops: [['scare_straw', 1, 3]] },
   boar:    { name: '멧돼지',       plan: 'quad', body: '#8a4a32', dark: '#5a2e1e', len: 14, h: 7, tail: 1, ear: 1, mh: 1.3, ma: 1.2, md: 0.8, spd: 0.9, minS: 10, drops: [['boar_hide', 0.5], ['boar_tusk', 0.45]] },
+  badger:  { name: '둑굴 오소리',  plan: 'quad', body: '#5c5652', dark: '#2c2826', len: 12, h: 6, tail: 1, ear: 1, snout: 1, mh: 1.4, ma: 1.25, md: 0.9, spd: 1.0, minS: 99, drops: [['boar_hide', 0.4], ['wolf_fang', 0.35]] },   // 빌드 78 (e3 C안): 1-13 ~ 1-16 밭둑 굴 — 그림은 시안 뒤 (지금은 옛 네발 그림)
   aboar:   { name: '갑옷 멧돼지',  plan: 'quad', body: '#7a3a2a', dark: '#4a2418', len: 15, h: 8, tail: 1, ear: 1, mh: 1.8, ma: 1.35, md: 1.6, spd: 0.8, minS: 14, drops: [['aboar_plate', 0.45], ['boar_tusk', 0.5], ['boar_hide', 0.3]] },
   ratking: { name: '들쥐왕',       plan: 'quad', body: '#7a6656', dark: '#4b3d32', len: 9, h: 4, tail: 1, ear: 1, crown: 1, scale: 3, boss: 1, mh: 4, ma: 1.5, md: 1, spd: 0.9, aoe: 1, drops: [['ratking_crown', 1], ['rat_tail', 1, 3]] },
 
@@ -206,7 +207,13 @@ const FIELDS = {
   plains: {
     no: 1, name: '곡창지대 평원', lv: 1, span: 29, bg: 'plains_hd', tier: 0,   // 빌드 70 (11-18 사용자): 이름 「곡창지대 평원」 · 몬스터 Lv1 ~ 30 · 슬라임 · 고블린은 다른 곳으로 옮길 때까지 던전에만
     desc: '곡창지대. 밀밭과 풍차 사이 넓은 들판에 들짐승과 허수아비가 돌아다닌다.',
-    mons: ['rat', 'rabbit', 'wolf', 'scare_a3', 'scare_b2', 'scare_c4', 'boar', 'aboar'], bosses: ['wolf', 'scarecrow', 'boar', 'aboar', 'aboar'],
+    mons: ['rat', 'rabbit', 'wolf', 'scare_a3', 'scare_b2', 'scare_c4', 'boar', 'badger', 'aboar'], bosses: ['wolf', 'scarecrow', 'boar', 'aboar', 'aboar'],
+    // 빌드 78 (11-27 대표님 · e3): 20칸 · 칸마다 Lv · 나오는 칸 [처음, 끝] · 마릿수 [낮 최소, 최대, 밤 최소, 최대] · 섞일 수 있는 짝 (같은 종류 80%)
+    stages: 20, lvTab: [1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 19, 20, 21, 22, 24, 25],
+    st20: { rat: [1, 5], rabbit: [2, 8], wolf: [4, 11], scare_a3: [6, 13], scare_b2: [7, 14], scare_c4: [10, 19], boar: [12, 19], badger: [13, 16], aboar: [17, 19] },
+    pack20: [[1, 1, 1, 1], [1, 1, 1, 2], [1, 2, 1, 2], [1, 2, 1, 2], [1, 2, 2, 2], [1, 2, 2, 3], [1, 2, 2, 3], [1, 2, 2, 3], [1, 2, 2, 3], [1, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 3, 2, 3], [2, 3, 2, 3], [2, 3, 3, 3]],
+    mix20: [['rat', 'rabbit'], ['scare_a3', 'scare_b2'], ['scare_a3', 'scare_c4'], ['scare_c4', 'boar'], ['boar', 'badger'], ['boar', 'aboar']], same20: 0.8,
+    lordX: { hp: 7.8, atk: 1.75, def: 1.9 },
     dungeon: { name: '버려진 곡물 창고', bg: 'cellar', mons: ['rat', 'slime', 'goblin', 'wolf'], boss: 'ratking' },
     next: 'forest'
   },

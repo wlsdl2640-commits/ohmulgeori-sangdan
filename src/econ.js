@@ -134,7 +134,7 @@ function migrate4() {
   S.parties.forEach(p => {
     p.start = 1;
     const e = p.exp;
-    if (e) { e.home = 1; if (e.wait === 'gate' && e.area === 'field' && e.stage < FIELD_STAGES) e.wait = null; }
+    if (e) { e.home = 1; if (e.wait === 'gate' && e.area === 'field' && e.stage < fstages(FIELDS[e.field])) e.wait = null; }
   });
   if (S.parties.filter(p => !p.raidOnly).length > partyMax()) S.flags.overParty = 1;
   if (!S.flags.v05) {
@@ -1243,7 +1243,7 @@ function loadGame() {
 function loadFrom(v) {
   try {
     if (!v || !Array.isArray(v.advs)) return false;
-    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); concept70(); slot69(); ms72(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); notes71(); saveGame(); return true; }
+    if (v.v === 1) { migrate(v); runeRename(); cut69(); heal69(); raid69(); sal69(); concept70(); slot69(); ms72(); scare78(); migrate3(); migrate4(); notes6(); migrate5(); migrateS(); notesB(); notes22(); notes23(); notes25(); notes28(); notes29(); migrate6(); notes30(); migrate7(); notes31(); notes34(); migrate8(); notes36(); notes37(); migrate9(); migrate10(); migrate11(); migrate12(); migrate13(); notes38(); notes39(); notes40(); notes41(); notes42(); notes43(); notes44(); notes45(); notes46(); notes48(); notes49(); notes50(); notes51(); notes52(); notes53(); notes55(); notes56(); notes57(); notes58(); notes59(); notes60(); notes61(); notes62(); notes63(); notes63b(); notes63c(); notes64(); refit65(); migrate14(); notes65(); migrate15(); lowJob66(); migrate16(); notes68(); notes67(); notes68b(); notes69(); notes69b(); notes69c(); notes69d(); notes69e(); notes69f(); notes69g(); notes69h(); notes70(); notes71(); saveGame(); return true; }
     if (typeof v.v !== 'number' || v.v < 2 || v.v > SAVE_V) return false;   // 판을 올릴 때는 SAVE_V만 올린다
     S = v;
     S.modals = S.modals || []; S.flags = S.flags || {}; S.gear = S.gear || []; S.stats = S.stats || {}; S.pets = S.pets || []; S.pen = S.pen || { inc: [] }; S.bld.pen = S.bld.pen || 0;
@@ -1262,7 +1262,7 @@ function loadFrom(v) {
     if (S.bld.warehouse == null) S.bld.warehouse = 1;
     assocOpen();   // 빌드 72: 창고 건물 (옛 저장은 1단계)
     concept70();                  // 빌드 70 미궁도시 개편 첫 단계: 길드 이름 꼬리 · 경쟁 길드 이름 · 성문 방어전 없앰 (불러올 때마다)
-    slot69(); ms72();                     // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
+    slot69(); ms72(); scare78();          // 빌드 69 장비 9칸: 룬은 3칸까지 — 넘친 룬(· 마석)을 빼서 창고로 (불러올 때마다, 넘친 게 없으면 아무것도 안 함)
     if (old < 4) { migrate3(); migrate4(); saveGame(); }
     S.unlocked = S.unlocked || []; S.rank = S.rank || 0;
     notes6();

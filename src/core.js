@@ -278,11 +278,12 @@ const nestAt = fid => (typeof evActive === 'function' ? evActive('nest').find(x 
 // 필드 보스: 10 스테이지마다. k = 1~5 (1-50은 그 필드의 주인)
 function fieldBoss(F, stage, lv) {
   // 마지막 칸은 칸 수와 상관없이 주인(k 5) — 10단계 던전(세계수 뿌리굴)에서 round(10/10) = 1이 되어 라헨 대신 bosses[0]이 나오던 것을 고침(11-25)
-  const k = stage >= fstages(F) ? 5 : Math.round(stage / BOSS_EVERY), pool = F.mons.filter(id => minStage(MONS[id]) <= stage);
+  const k = stage >= fstages(F) ? 5 : Math.round(stage / BOSS_EVERY), pool = F.st20 ? F.mons.filter(id => (F.st20[id] || [1])[0] <= stage) : F.mons.filter(id => minStage(MONS[id]) <= stage);
   const id = F.bosses && F.bosses[k - 1] && MONS[F.bosses[k - 1]] ? F.bosses[k - 1] : pool[(k * 7 + F.no * 3) % pool.length];
-  const f = foeFrom(id, lv + 1);
+  const f = foeFrom(id, lv + (k >= 5 && F.lordX ? 0 : 1));   // 20칸 층 주인은 표의 Lv 그대로 (1-20 = Lv25)
   f.hp = f.maxHp = Math.round(f.maxHp * (3 + 0.9 * k));
   f.atk *= 1.25 + 0.06 * k; f.def *= 1.25;
+  if (k >= 5 && F.lordX) { const m = MONS[id], X = F.lordX; f.hp = f.maxHp = Math.round(f.maxHp / (3 + 0.9 * k) * X.hp / (m.mh || 1)); f.atk *= X.atk / (1.25 + 0.06 * k) / (m.ma || 1); f.def *= X.def / 1.25 / (m.md || 1); }   // 빌드 78: 20칸 층 주인은 표준 몬스터 기준 배율 (e3)
   f.boss = true; f.fb = k; f.aoe = k >= 3;
   f.sc = Math.max(1, Math.round(MONS[id].scale || 1));   // 빌드 72: 크게 그리지 않는다 (그 앞: +1 · 주인 +2, 3까지)
   f.name = k >= 5 ? `${F.name}의 주인 ${MONS[id].name}` : `우두머리 ${MONS[id].name}`;
@@ -301,11 +302,12 @@ function rollFoes(e, idx, extra = 0) {
   const dboss = e.area === 'dungeon' && e.stage === floorsOf(e) && last;
   const fboss = e.area === 'field' && e.stage === fstages(FIELDS[e.field]) && last;   // 빌드 72: 10스테이지마다 나오던 우두머리를 없앰 — 마지막 스테이지(1-50)에만 그 땅에서 가장 센 몬스터가 주인으로
   const lv = e.area === 'dungeon' ? (F.treasure ? Math.max(1, (e.lvo || 10) + e.stage - 3) : F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);   // 보물 던전: 파티 평균 -2 ~ 0
-  const pool = A.mons.filter(id => e.area === 'dungeon' || (minStage(MONS[id]) <= e.stage && (!MONS[id].night || isNight())));   // 빌드 78: night 몬스터(호박등 허수아비)는 밤에만
+  const pool = e.area === 'field' && F.st20 ? st20Pool(F, e.stage) : A.mons.filter(id => e.area === 'dungeon' || (minStage(MONS[id]) <= e.stage && (!MONS[id].night || isNight())));   // 빌드 78: night 몬스터(호박등 허수아비)는 밤에만
   const out = [], rgk = !dboss && !fboss && last && typeof regenAt === 'function' ? regenAt(e) : null;   // 빌드 78 리젠보스 (regen78.js)
   if (dboss) { out.push(foeFrom(A.boss, F.treasure ? (e.lvo || 10) + 2 : F.raid ? F.lv + 14 : dungeonBossLv(F))); if (A.guards) A.guards.forEach(id => out.push(foeFrom(id, lv + 2))); else out.push(foeFrom(pickOne(pool), lv)); }   // guards (빌드 51): 주인 곁을 지키는 정해진 호위 (암살자 길드 두목 + 간부 둘)
-  else if (rgk) { out.push(regenFoe(rgk, lv)); out.push(foeFrom(pickOne(pool), lv)); }
-  else if (fboss) { out.push(fieldBoss(F, e.stage, lv)); for (let i = 0; i < (e.stage >= 30 ? 2 : 1); i++) out.push(foeFrom(pickOne(pool), lv)); }
+  else if (rgk) out.push(...regenPack(rgk, lv));   // 빌드 78 둘째: 도착했을 때 나와 있으면 바로 싸운다 (C1 졸개 하나 · C2 혼자)
+  else if (fboss) { out.push(fieldBoss(F, e.stage, lv)); for (let i = 0; i < (F.st20 ? 0 : e.stage >= 30 ? 2 : 1); i++) out.push(foeFrom(pickOne(pool), lv)); }   // 빌드 78: 20칸 층 주인은 혼자 (e3 표 1-20 = 1마리)
+  else if (e.area === 'field' && F.st20 && pool.length) { const nest = e.mode === 'advance' ? nestAt(e.field) : null; for (const id of st20Pack(F, e, pool, extra + (nest ? NEST.extra : 0))) { const f = foeFrom(id, lv); if (nest && rnd() < NEST.p) makeNestFoe(f); out.push(f); } }
   else {
     const nest = e.area === 'field' && e.mode === 'advance' ? nestAt(e.field) : null;
     let n = e.mode === 'return' ? 1 : 1 + ri(0, Math.min(2, Math.floor(e.stage / 5))) + (e.area === 'dungeon' ? 1 : 0) + (lv >= PACK.lv && !F.treasure ? PACK.add : 0);   // 빌드 69: Lv100 넘는 땅은 +1
@@ -341,7 +343,7 @@ function checkpoints(fid) {
   const F = FIELDS[fid], fs = S.fields[fid];
   if (!F || F.raid || !fs) return [1];
   if (isLab(fid)) return [1];   // 빌드 72: 미궁은 늘 1-1부터
-  return [1].concat([1, 2, 3, 4].filter(k => fs.boss && fs.boss[k]).map(k => k * BOSS_EVERY + 1));
+  return [1].concat([1, 2, 3, 4].filter(k => fs.boss && fs.boss[k]).map(k => k * BOSS_EVERY + 1).filter(s => s < fstages(F)));   // 빌드 78: 20칸 층에서 옛 1-21 · 31 · 41 거점이 남지 않게
 }
 // 빌드 72 (11-20 16:27 사용자 「원정마다 무조건 1계층의 1-1부터 다시 가야 해」 · 「최종도달 필드 1-50 이런 식으로」): 미궁 원정은 늘 1계층 1-1에서 시작해 1-50을 넘으면 다음 계층 1로 내려간다
 const LAB_IDS = () => ALL_FIELDS.filter(f => FIELDS[f] && !FIELDS[f].hidden && !FIELDS[f].raid && !FIELDS[f].trade && !FIELDS[f].demon && FIELDS[f].region !== 'sky' && !FIELDS[f].frontier && !FIELDS[f].under && f !== 'alley' && !FIELDS[f].branch && inScope(f)).sort((a, b) => FIELDS[a].no - FIELDS[b].no);
@@ -531,7 +533,7 @@ function stageClear(p, e) {
       if (isLab(e.field)) { teamOf(p).filter(a => !a.down).forEach(a => { a.dungeons = (a.dungeons || 0) + 1; }); S.stats.dungeons = (S.stats.dungeons || 0) + 1; }   // 11-21 23:29: 계층(구역)을 끝까지 돌파 = 라이선스 심사의 「돌파」 한 번 (옛 던전 공략 자리)
       // 1-50의 주인을 쓰러뜨려 던전 입구가 열렸다 (한 번 공략한 던전은 봉인된다)
       if (F.dungeon && !isLab(e.field)) {   // 빌드 72 (11-21 02:29 사용자 「던전은 1회용 아니고 반복 가능하게」): 공략한 던전도 다시 열린다   // 빌드 72 (11-20 16:38 사용자 「예전 던전은 없애 나중에 내가 던전을 따로 추가할 거야」): 미궁 계층에서는 옛 던전 입구가 나오지 않는다
-        if (!fs.found) { fs.found = true; log(`${p.name}이(가) ${F.no}-${FIELD_STAGES}에서 ${F.dungeon.name} 입구를 열었다!`, 'good'); }
+        if (!fs.found) { fs.found = true; log(`${p.name}이(가) ${F.no}-${fstages(F)}에서 ${F.dungeon.name} 입구를 열었다!`, 'good'); }
         const mode = p.dmode || 'ask';
         if (mode !== 'skip') {
           e.wait = 'gate';
@@ -578,7 +580,7 @@ function stageBack(p, e) {
   if (e.area === 'dungeon') {
     if (e.stage > 1) e.stage--;
     else if (FIELDS[e.field].raid) { arrive(p); return; }
-    else { e.area = 'field'; e.stage = FIELD_STAGES; }
+    else { e.area = 'field'; e.stage = fstages(FIELDS[e.field]); }
   } else if (e.stage > (e.home || 1)) e.stage--;
   else { arrive(p); return; }   // 출발한 거점에 닿으면 마차를 타고 길드로
   e.pos = STAGE_LEN; e.ei = 0; e.encs = makeEncs(e); e.next = null;
@@ -687,6 +689,7 @@ function hitFoe(e, f, atk, crit, magic, a, el, sk) {
   if (T.pen) def *= 1 - T.pen;
   if (sk && sk.pen) def *= 1 - sk.pen;   // 빌드 65: 볼트 방어 무시 (석궁술)
   if (T.first && f.hp >= f.maxHp) m *= T.first;
+  if (f.guardBy && e.foes && e.foes.some(o => o.uid === f.guardBy && o.hp > 0)) m *= 1 - (f.guardCut || 0.15);   // 빌드 78: 마법 걸린 허수아비 — 누더기 졸개가 살아 있으면
   if (T.bossDmg && f.boss) m *= T.bossDmg;
   if (a && f.boss) m *= 1 + traitSum(a, 'bossDmg');
   if (a && !f.pvp && dexKills(f.id) >= DEX_K[3]) m *= 1.03;   // 도감 완전 기록

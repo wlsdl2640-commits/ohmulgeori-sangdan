@@ -51,7 +51,7 @@ const fatMul = f => (f >= 100 ? 0.65 : f >= 85 ? 0.78 : f >= 60 ? 0.92 : 1);
 /* ───────── 마탑 연구 ───────── */
 // cost[n] = [골드, 재료], days[n] = 걸리는 날 (게임 속 날짜)
 const RESEARCH = {   // 11-21 23:29 사용자 「조건 달성 할 수도 없게 막혀 있고」: 재료가 옛 몬스터 부속품(주술 깃털 · 골렘 핵 …)이라 연구를 못 했다 → 지금 나오는 고유 부속품으로(1단계 평원 · 원시림 / 2단계 깊은 숲 / 3단계 깊은 숲 · 뿌리굴 — 고른 것은 내 안)
-  power:    { name: '마력 증폭',      max: 3, desc: lv => `마법 피해와 치유량 +${lv * 10}%`,           cost: [[800, { crow_feather: 4 }], [2400, { moss_core: 3 }], [6000, { ether_crystal: 6 }]], days: [2, 4, 7] },
+  power:    { name: '마력 증폭',      max: 3, desc: lv => `마법 피해와 치유량 +${lv * 10}%`,           cost: [[800, { scare_straw: 4 }], [2400, { moss_core: 3 }], [6000, { ether_crystal: 6 }]], days: [2, 4, 7] },
   mana:     { name: '마나 순환',      max: 2, desc: lv => `MP 회복 +${lv * 30}%`,                      cost: [[700, { spore: 6 }], [3000, { ether_dust: 4 }]], days: [2, 5] },
   potion:   { name: '정제 연금술',    max: 2, desc: lv => `물약 회복량 +${lv * 25}%`,                  cost: [[600, { flower_nectar: 4 }], [2500, { ether_cap: 3 }]], days: [2, 4] },
   carry:    { name: '공간 확장 마법', max: 3, desc: lv => `파티가 드는 짐 +${lv * 10}%`,               cost: [[900, { wolf_pelt: 6 }], [2600, { beetle_shell: 8 }], [6500, { moth_scale: 5 }]], days: [2, 4, 7] },

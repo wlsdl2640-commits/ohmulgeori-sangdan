@@ -20,7 +20,7 @@ const SMITHS = [
 ];
 const HOUR_SEC = DAY_SEC / 24, FORGE_SEC = 7.5;   // 표의 1 = 현실 7.5초 (예전 게임 1시간과 같은 길이)
 const FORGE_UNIQ = {
-  0: { melee: ['wolf_fang', 1], bow: ['rabbit_horn', 1], staff: ['rabbit_horn', 1], shield: ['aboar_plate', 1], heavy: ['aboar_plate', 1], leather: ['boar_hide', 1], cloth: ['scare_straw', 2], acc: ['boar_tusk', 1], ammo: ['crow_feather', 1], belt: ['rat_tail', 2] },
+  0: { melee: ['wolf_fang', 1], bow: ['rabbit_horn', 1], staff: ['rabbit_horn', 1], shield: ['aboar_plate', 1], heavy: ['aboar_plate', 1], leather: ['boar_hide', 1], cloth: ['scare_straw', 3], acc: ['boar_tusk', 1], belt: ['rat_tail', 2] },
   1: { melee: ['beetle_horn', 1], bow: ['vine_thorn', 1], staff: ['stump_ring', 1], shield: ['beetle_shell', 1], heavy: ['beetle_shell', 1], leather: ['bark', 1], cloth: ['spot_cap', 1], acc: ['moss_core', 1], ammo: ['vine_thorn', 1], belt: ['bark', 1] },
   2: { melee: ['root_fang', 1], bow: ['moth_scale', 1], staff: ['ether_crystal', 1], shield: ['old_heartwood', 1], heavy: ['beetle_shell', 2], leather: ['moss_hide', 1], cloth: ['moth_scale', 1], acc: ['ether_crystal', 1], ammo: ['root_fang', 1], belt: ['moss_hide', 1] },
   3: { staff: ['mandrake_root', 1], cloth: ['rot_petal', 1], acc: ['dryad_tear', 1] }
