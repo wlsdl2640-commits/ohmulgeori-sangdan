@@ -66,8 +66,8 @@ function forgeStart(job, need, fee) {
 }
 function forgeGear(base, t, lv) {
   const sm = forgeSel(), w = forgeGearWhy(base, t, lv, sm); if (w) return w;
-  const g = { base, t, q: 0, lv };
-  forgeStart({ sm, kind: 'gear', base, t, lv: lv || 0, h: forgeGearH(t), name: gearName(g) }, forgeNeed(base, t), forgeGearFee(t, sm));
+  const g = { base, t, q: 0, lv }, cat = typeof catSel === 'function' ? catSel() : '', need = forgeNeed(base, t); if (cat) need[cat] = (need[cat] || 0) + 1;   // 빌드 78: 촉매 (scroll78.js)
+  forgeStart({ sm, kind: 'gear', base, t, lv: lv || 0, h: forgeGearH(t), name: gearName(g), cat }, need, forgeGearFee(t, sm));
   return `${SMITHS[sm].name}에게 ${gearName(g)} 제작을 맡겼다. (${hoursTxt(forgeGearH(t))})`;
 }
 // 재료 제작
@@ -99,7 +99,7 @@ function forgeTick() {
     if (j.rt && Date.now() < j.end) continue; const sm = SMITHS[j.sm] || SMITHS[0];
     if (j.kind === 'gear') {
       if (!roomGear(1)) { if (!j.warn) { j.warn = 1; HOOKS.toast('창고가 꽉 차서 다 만든 장비를 못 받아요'); } continue; }
-      const g = makeGear(j.base, j.t, rollQuality(sm.bonus + 0.02 * (S.bld.smithy || 0) + (relic('smith') ? 0.05 : 0)), j.lv); S.gear.push(g);
+      const bq = sm.bonus + 0.02 * (S.bld.smithy || 0) + (relic('smith') ? 0.05 : 0), g = makeGear(j.base, j.t, rollQuality(j.cat ? bq * CAT78_Q + 0.02 : bq), j.lv); if (j.cat) catBonus(g, j.cat); S.gear.push(g);   // 빌드 78: 촉매 — 희귀 이상 조금 더 · 그 능력치
       log(`${sm.title} ${sm.name}이(가) ${QUALITY[g.q].name} 「${gearName(g)}」을(를) 완성했다.`, g.q ? 'good' : ''); HOOKS.toast(`${sm.name}: ${QUALITY[g.q].name} ${gearName(g)} 완성`);
     } else {
       if (!roomItem(j.out)) { if (!j.warn) { j.warn = 1; HOOKS.toast('창고가 꽉 차서 다 만든 재료를 못 받아요'); } continue; }

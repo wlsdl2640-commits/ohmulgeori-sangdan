@@ -1461,3 +1461,15 @@
 - 20칸에 맞춘 곳: checkpoints(1-20 넘는 옛 거점 뺌) · 던전 입구 글 · stageBack · econ 문 기다림(FIELD_STAGES → fstages).
 - 확인(시험 묶음 아님): `scratchpad/v78/e3.js`(+ enc2_in.js — 칸마다 낮 · 밤 400번: 마릿수 · 섞임 % · 몬스터 몫, 리젠보스 · 주인 수치, 졸개 피해 감소 0.849, 옛 저장 깃털).
 - **직업 스킬북 그림(빌드 78 셋째, 11-27 대표님 고름)**: `src/data-bookart78.js`(ITEM_HD.skb_warrior · archer · mage · cleric · rogue · porter · all, 96px webp) = `tools/saved/scrollart78/px/export_books.py`(손으로 고치지 말 것). enh72.js `bookHDKey` — itemHD가 펼친 스킬북(ITEMS.book)을 계열로 찾는다(284권). 단계 책(bk_*)은 옛 그림 그대로. 강화 주문서 25장은 `scrollart78/px/cat/<갈래>_<확률>.png`(규칙이 정해지면 넣음) · 보관 그림 `px/keep/README.md`.
+
+## 주문서 강화 · 내구도 · 숫돌 · 촉매 · 망각의 주문서 · 마탑 스킬북 합성 · 단계 책 없앰 (빌드 78 넷째, 11-27 대표님 — decisions.md 31장 끝 「강화 정리」 둘째 ~ 넷째)
+- `src/scroll78.js`(build.py에서 regen78 다음 · main 앞 — 머리 주석에 규칙 전부) · 그림 `src/data-scrollart78.js`(ITEM_HD scrart_<갈래>_<확률> 25장 · lethe0/1 = `tools/saved/scrollart78/px/export_scrolls.py`).
+- 주문서 ITEMS `scr_<갈래>_<능력치>_<확률>`(85종, 부속품 칸) — 성공하면 `g.sc[능력치]`에 정한 수치를 더함(SCR78.atk[확률][장비 착용 레벨 구간] × SCR78.mul). 실패는 아무 일 없음 · 횟수 제한 없음 · `g.scN`(이름 끝 +n) · `g.scT`. 100%는 대장간에서 판다. 드롭은 임시(matDrop 감쌈 — 일반 80% 0.8% · 60% 0.3% · 우두머리 30% 9% · 10% 4% · 촉매 15%).
+- 내구도: `durMax`(주무기 · 부장비 · 볼트통 120 · 방어구 다섯 부위 150) · `g.dur`(없으면 가득) · ev 'clear'(싸움 끝)를 감싸 `durWear`(1 · 레이드 3 · 쓰러진 사람 +4) · 0이면 gearStats 감쌈에서 그 장비 능력치 절반. 숫돌 `whetstone`(40 + 돈 DUR78.fee) · 대장간 「수리」 탭 `repairBox` · 자동 수리(S.autoRepair, 기본 켬): startExp 감쌈(40 이상 닳은 장비 · 숫돌 3개를 e.sup에 챙김 — 남으면 arrive의 unloadBag이 돌려줌) · startCamp 감쌈(챙긴 숫돌로 고치고 잠 · 짐꾼 계열 원정마다 한 번 +20 `e.prFix`).
+- 촉매 `cat_str/int/vit/agi`: 대장간 제작 탭 `catPick`(UI.forgeCat) → forge72.js forgeGear가 재료에 하나 더하고 job.cat → forgeTick rollQuality(boost × 1.25 + 0.02) · `catBonus`(희귀 이상이면 그 능력치를 꼭).
+- 망각의 주문서: `lethe`(빈 것 — 마탑에서 중급 마정석 2 + 3,000G) · `S.lethe[]`(가둔 기억 {sc, n, from}, 본인 귀속) · `letheTake`(1,000G, 장비는 sc · scN · scT 지움) · `letheGive`(어떤 장비든 더함). 마탑 창 `towerBox` 감쌈 → `letheBox` + 스킬북 합성(BLD_BOX.library 그대로 빌림).
+- 스킬북: `tierBookFor` 감쌈 — 단계를 뽑은 뒤 그 단계 스킬북(book_)을 바로 준다(펼치는 단계 책 없음). 합성: `lfWhy`(도서관 조건 뺌) · `lfPick`(넣은 책의 계열 표 → 그 계열에서) · LIB_FUSE.jump 0.
+- 옛 저장 `scroll78()`(econ.js loadFrom 두 길, scare78 다음 · 불러올 때마다): 강화 g.enh → 돈(enhGold) · 마정석(enhMj) 돌려주고 지움 · 에테르 주괴 → 1,500G · 강화 주괴 → 빈 망각의 주문서 · 숫돌(+n회) → 수리 숫돌 n개 · 단계 책 → 펼침 · 알림 flags.v78s. enh72.js(옛 강화 화면)는 남아 있으나 탭은 scrollBox를 연다.
+- 대장간 탭: 장비 제작 · 재료 제작 · 주문서 강화 · 수리.
+- 확인(시험 묶음 아님): `scratchpad/v78/sc.js`(+ sc_in.js: 구간 · 10% 50번 · 치명 · 내구도 0 · 수리 · 망각 빼기/풀기 · 단계 책 → 스킬북 · 옛 저장 · 화면 · 합성 계열 표) · `run.js`(+ run_in.js: 평원 원정 — 출발 자동 수리 · 숫돌 챙기기 · 야영 짐꾼 응급 수리).
+- 아직: 주문서 · 촉매 · 숫돌 몬스터별 드롭표 · 바르기 연출(지금은 결과 한 줄) · 내구도 막대 그림 · 스팀 장터 반출 규칙(주문서 안 쓴 장비만 — 장터가 생기면).

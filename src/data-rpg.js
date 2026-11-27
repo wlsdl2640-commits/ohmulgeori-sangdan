@@ -532,7 +532,7 @@ const uniqName = g => { const L = typeof WNAME !== 'undefined' && WNAME[g.base];
 // 빌드 64 (사용자 11-11 19:28): 단계 이름(숲지기 · 서리 …)은 방어구 · 장신구에만(세트 효과는 빌드 65에서 없앰). 다른 무기 · 부장비 · 가방 · 화살은 고유 이름이 들어가기 전까지 「활 Lv8」처럼
 const tierNamed = b => !!GTYPES[b] && ['armor', 'legs', 'gloves', 'boots', 'belt', 'acc', 'ear'].includes(GTYPES[b].slot);   // 빌드 65: 하의 · 장갑 · 신발 · 벨트 · 귀걸이도
 const gearBaseName = g => (isUniq(g) && uniqName(g)) || (tierNamed(g.base) ? `${GTIERS[g.t].name} ${GTYPES[g.base].name}${LADDER_B[g.base] ? ' Lv' + gearReqLv(g) : ''}` : `${GTYPES[g.base].name} Lv${gearReqLv(g)}`);   // 빌드 67: 2차 직업 방어구는 착용 레벨도 · 이름의 Lv = 착용 레벨(2차 직업 창 · 류트는 늪지 단계에서 Lv50)
-const gearName = g => gearBaseName(g) + (g.enh > 0 ? ` +${g.enh}` : '');   // 빌드 72: 강화 수치
+const gearName = g => gearBaseName(g) + (g.scN > 0 ? ` +${g.scN}` : g.enh > 0 ? ` +${g.enh}` : '');   // 빌드 72: 강화 수치
 const gearNameOf = (base, t) => { const L = LADDER_B[base] ? ladderSteps(+t) : []; return L.length ? `${tierNamed(base) ? GTIERS[+t].name + ' ' : ''}${GTYPES[base].name} Lv${L[0]}${L.length > 1 ? '~' + L[L.length - 1] : ''}` : gearBaseName({ base, t: +t }); };   // 진열대 · 의뢰 열쇠(종류:단계) 이름 — 빌드 67: 중갑 · 판금은 그 단계의 착용 레벨 대(「늪지 중갑 Lv55~60」)
 const gearKey = g => `${g.base}:${g.t}`;
 const gearValue = g => Math.round((45 * gearP(g) * QUALITY[g.q || 0].m + recipeFee(g.t) * 0.5) + (g.runes || []).concat(g.ms || []).reduce((s, id) => s + (ITEMS[id] ? ITEMS[id].v * 0.5 : 0), 0));   // 빌드 69: 끼운 마석도

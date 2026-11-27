@@ -213,12 +213,13 @@ function smithyBox() {
   const rows = CRAFT_IDS.flatMap(b => (LADDER_B[b] ? ladderSteps(t).map(L => rowOf(b, L)) : tierOk(b, t) ? [rowOf(b, 0)] : [])).join('');
   const note = B ? `<div class="sub ${S.bld.smithy >= smithLv(t, q) ? 'gold-t' : 'red-t'}">${QUALITY[q].name} 장비는 그 등급이 반드시 나와요. 보스 전용 부속품이 들고, 대장간 Lv${smithLv(t, q)}이 필요해요. ${slot9Txt(q)}.${q === 6 ? ' 신성 장비에는 레이드 몬스터의 부속품도 들어가요.' : ''}</div>`
     : '<div class="sub muted">레어도는 완성될 때 정해져요. 솜씨 좋은 대장장이일수록 좋은 레어도가 잘 나와요. 재료는 「재료 제작」에서 만든 가공 재료와 마정석이에요.</div>';
-  const st = ['enh', 'mat'].includes(UI.smithTab) ? UI.smithTab : 'make';   // 11-21 16:11 사용자 「합성탭은 빼주고」 — 장비 합성(store.js fuseBox)은 화면에서 뺌(코드는 남김)   // 빌드 64: 강화 탭은 없앴다
-  const tabs = `<div class="tabs">${[['make', '장비 제작'], ['mat', '재료 제작'], ['enh', '강화']].map(([id, n]) => `<button type="button" class="tab${st === id ? ' on' : ''}" data-act="smithTab" data-t="${id}">${n}</button>`).join('')}</div>`;
-  if (st === 'enh') return tabs + enhBox();   // 빌드 72: 강화 +1 ~ +30 (enh72.js)
+  const st = ['enh', 'mat', 'fix'].includes(UI.smithTab) ? UI.smithTab : 'make';   // 11-21 16:11 사용자 「합성탭은 빼주고」 — 장비 합성(store.js fuseBox)은 화면에서 뺌(코드는 남김)   // 빌드 64: 강화 탭은 없앴다
+  const tabs = `<div class="tabs">${[['make', '장비 제작'], ['mat', '재료 제작'], ['enh', '주문서 강화'], ['fix', '수리']].map(([id, n]) => `<button type="button" class="tab${st === id ? ' on' : ''}" data-act="smithTab" data-t="${id}">${n}</button>`).join('')}</div>`;
+  if (st === 'enh') return tabs + (typeof scrollBox === 'function' ? scrollBox() : enhBox());   // 빌드 78: 주문서 강화 (scroll78.js — 옛 +1 ~ +30 enhBox 대신)
+  if (st === 'fix') return tabs + repairBox();   // 빌드 78: 내구도 · 숫돌 수리
   if (st === 'mat') return tabs + forgeSmithBox() + forgeMatBox();   // 빌드 72: 재료 제작 (forge72.js)
   if (st === 'fuse') return tabs + fuseBox();   // 빌드 63: 같은 레어도 9점 합성 (store.js)
-  return `${tabs}${forgeSmithBox()}<div class="btns">${chips}</div>${note}<div class="list">${rows}</div>`;
+  return `${tabs}${forgeSmithBox()}${typeof catPick === 'function' ? catPick() : ''}<div class="btns">${chips}</div>${note}<div class="list">${rows}</div>`;
 }
 function templeBox() {
   const B = S.bless && BLESSINGS[S.bless.id], hs = healers(), plan = healPlan(), pats = patients();
