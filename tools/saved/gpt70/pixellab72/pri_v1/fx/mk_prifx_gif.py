@@ -12,7 +12,7 @@ F = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 14)
 # 키: (이름, 자리 'p' 사제 · 'm' 몬스터, 놓는 법 'c' 가운데 · 'b' 바닥, y 올림, 크기)
 P = {'heal_a': ('작은 치유 ①', 'p', 'c', 50, 1), 'firstaid_a': ('상처 싸매기 ①', 'p', 'c', 52, 1), 'cure_a': ('해독 부적 ①', 'p', 'c', 54, 1),
      'bless_a': ('응원의 기도 ①', 'p', 'c', 92, 1), 'holyw': ('빛 구슬 ② 하얗게 45%', 'fly', 'c', 56, 0.45), 'weaken_a': ('눈부심 ①', 'm', 'c', 60, 1),
-     'holyhammer_a': ('셉터 내려치기 ①', 'm', 'b', 0, 1), 'sanctuary_c': ('보호의 원 ③', 'p', 'b', -2, 1), 'massheal_a': ('모두의 기도 ①', 'p', 'c', 60, 1),
+     'holyhammer_a': ('셉터 내려치기 ①', 'm', 'b', 0, 1), 'sanctuary_c': ('보호의 원 ③', 'p', 'b', -2, 1), 'massheal_a': ('모두의 기도 ①', 'p', 'b', 0, 1),
      'greatheal_c': ('정성 어린 치유 ③', 'p', 'b', 0, 1)}
 def fit(im, s, mx=150):
     b = im.getbbox()
