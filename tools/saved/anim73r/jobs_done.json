@@ -1,14 +1,42 @@
 {
  "scarecrow/crow2_r2": {
-  "id": "645be6fa-1cf1-412d-8234-a8aeae7f8578"
+  "id": "645be6fa-1cf1-412d-8234-a8aeae7f8578",
+  "ok": 1
  },
  "scarecrow/crow2_r1": {
-  "id": "7db5ea54-49f6-4562-93a9-6c88da065df8"
+  "id": "7db5ea54-49f6-4562-93a9-6c88da065df8",
+  "ok": 1
  },
  "mgolem/smash_r1": {
-  "id": "69923a0d-7a97-4cf9-be10-b62659208215"
+  "id": "69923a0d-7a97-4cf9-be10-b62659208215",
+  "ok": 1
  },
  "mgolem/smash_r2": {
-  "id": "95574841-4740-4a51-bc0f-60ef92cd9add"
+  "id": "95574841-4740-4a51-bc0f-60ef92cd9add",
+  "ok": 1
+ },
+ "fguard/charge_r1": {
+  "id": "50b0d697-ee5d-4d8b-8e58-d1b99d663e34",
+  "ok": 1
+ },
+ "fguard/charge_r2": {
+  "id": "5ce75cc2-02d1-45d5-884c-ad89812b035f",
+  "ok": 1
+ },
+ "fguard/bell_r1": {
+  "id": "0ac3e2b6-b0dc-49ba-b9ea-9a1a44a9073f",
+  "ok": 1
+ },
+ "fguard/bell_r2": {
+  "id": "ad6ab2dd-49f6-4915-bd7a-e8171b747d66",
+  "ok": 1
+ },
+ "fguard/stomp_r1": {
+  "id": "b7bed293-c6b3-466d-b44f-967dea183d3d",
+  "ok": 1
+ },
+ "fguard/stomp_r2": {
+  "id": "74319abd-5e3c-4a0b-a4d7-9ff26bfd33c7",
+  "ok": 1
  }
 }
