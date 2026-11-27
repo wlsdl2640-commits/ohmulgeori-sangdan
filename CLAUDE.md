@@ -1460,3 +1460,4 @@
 - 부속품: `scare_straw` 이름 「마법 걸린 짚단」(35G · 허수아비 일반 1 · C1 2 · C2 3개) · 까마귀 깃털은 더 안 떨어진다(`keep` — 옛 저장은 `scare78()`가 최하급 깃털 feather_0으로 1:1, 1층 best · 원정 칸을 20 안으로 — econ.js loadFrom 두 길, 불러올 때마다). 대장간 1단계 천 방어구 짚단 3개 · 화살은 고유 부속품 없음 · 연구 마력 증폭 1단계 짚단 4개.
 - 20칸에 맞춘 곳: checkpoints(1-20 넘는 옛 거점 뺌) · 던전 입구 글 · stageBack · econ 문 기다림(FIELD_STAGES → fstages).
 - 확인(시험 묶음 아님): `scratchpad/v78/e3.js`(+ enc2_in.js — 칸마다 낮 · 밤 400번: 마릿수 · 섞임 % · 몬스터 몫, 리젠보스 · 주인 수치, 졸개 피해 감소 0.849, 옛 저장 깃털).
+- **직업 스킬북 그림(빌드 78 셋째, 11-27 대표님 고름)**: `src/data-bookart78.js`(ITEM_HD.skb_warrior · archer · mage · cleric · rogue · porter · all, 96px webp) = `tools/saved/scrollart78/px/export_books.py`(손으로 고치지 말 것). enh72.js `bookHDKey` — itemHD가 펼친 스킬북(ITEMS.book)을 계열로 찾는다(284권). 단계 책(bk_*)은 옛 그림 그대로. 강화 주문서 25장은 `scrollart78/px/cat/<갈래>_<확률>.png`(규칙이 정해지면 넣음) · 보관 그림 `px/keep/README.md`.

@@ -88,7 +88,11 @@ const ENH_HIT = 1.3;   // 망치질 초
 const ENH_RES = { s: ['강화 성공!', 'ok'], f: ['강화 실패', 'fail'], d: ['손상', 'dmg'], x: ['파괴', 'brk'], v: ['파괴를 막았다', 'save'] };
 const enhDustNeed = n => n;   // 에테르 주괴: 강화 +1마다 하나씩 더 (+n 도전에 n개 — 11-21 14:59 사용자). 어느 단계든 넣을 수 있다(파괴가 없는 단계에서는 쓸모가 없다)
 // 큰 그림이 있는 물건(ITEM_HD — data-enhart.js: 마정석 · 에테르 주괴 · 강화 주괴 · 숫돌): 칸에 굽지 않고 얹는 그림(HR_URL)
-function itemHD(id) { if (typeof ITEM_HD === 'undefined') return ''; const I = ITEMS[id], k = ITEM_HD[id] ? id : I && I.ingot ? 'ingot' : ''; if (!k) return ''; HR_URL.add(ITEM_HD[k]); return ITEM_HD[k]; }
+function bookHDKey(I) {   // 빌드 78: 펼친 스킬북 → 계열 그림 (data-bookart78.js — 2 · 3 · 4차 책도 그 계열 모습)
+  if (!I || !I.book || !SKILLS[I.book]) return ''; const c0 = (SKILLS[I.book].cls || [])[0], fam = !c0 || c0 === 'all' || !CLASSES[c0] ? 'all' : jobBase(c0);
+  const k = 'skb_' + (['warrior', 'archer', 'mage', 'cleric', 'rogue', 'porter'].includes(fam) ? fam : 'all'); return ITEM_HD[k] ? k : '';
+}
+function itemHD(id) { if (typeof ITEM_HD === 'undefined') return ''; const I = ITEMS[id], k = ITEM_HD[id] ? id : I && I.ingot ? 'ingot' : bookHDKey(I); if (!k) return ''; HR_URL.add(ITEM_HD[k]); return ITEM_HD[k]; }
 const enhFx = (k, cls) => (typeof ENH_ART !== 'undefined' && ENH_ART['fx_' + k] ? `<i class="enh-fx ${cls}" style="background-image:url(${ENH_ART['fx_' + k]})"></i>` : '');
 const enhArt = k => (typeof ENH_ART !== 'undefined' && ENH_ART[k] ? ` style="background-image:url(${ENH_ART[k]})"` : '');
 function enhStage(f) {
