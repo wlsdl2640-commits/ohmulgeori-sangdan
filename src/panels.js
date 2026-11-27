@@ -763,6 +763,7 @@ function invDetail(k, rate) {
 /* 의뢰 */
 PANELS.req = () => `
   <div class="sec"><b>모험가 협회 의뢰</b><span>날마다 06:00에 새 의뢰</span></div>
+  ${typeof rumorBox === 'function' ? rumorBox() : ''}
   <div class="card"><div class="sub">협회 의뢰로 전달하면 길드 명성이 그냥 팔 때의 2배예요. 그 부속품을 얻어 온 길드원들은 개인 명성을 얻어요(부속품 등급이 높을수록 많이, 의뢰가 판매보다 많이).</div></div>
   <div class="card${autoReqOn() ? ' hl' : ''}"><div class="row"><div class="grow stack"><span>의뢰품 자동 전달 <span class="tag ${autoReqOn() ? 'ok-t' : 'muted'}">${autoReqOn() ? '켬' : '끔'}</span></span><span class="sub">창고에 의뢰품이 다 있으면 파티가 돌아올 때와 날이 바뀔 때 저절로 전달해요. 장비 의뢰는 일반·고급의 강화 안 한 것만 내주고, 좋은 장비뿐이면 직접 전달해야 해요.</span></div><button type="button" class="btn sm${autoReqOn() ? ' on' : ''}" data-act="autoreq">${autoReqOn() ? '끄기' : '켜기'}</button></div></div>
   ${S.reqs.map(r => { const have = reqHave(r), ok = have >= r.qty, dd = r.due - today();

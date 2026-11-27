@@ -126,7 +126,7 @@ const MON_SK = {
   vinesnake: [['venom', '가시 독니']], cflower: [['drain', '삼키기', { mult: 1.3, heal: 0.5 }]], stump: [['hit', '통째로 물기', { mult: 1.5, sta: { k: 'stun', p: 0.25, d: 1.2 } }]], spotshroom: [['miasma', '독 포자 구름'], ['sleep', '잠의 포자', { mult: 0.3 }]],
   ibeetle: [['guard', '등딱지 세우기'], ['gore', '뿔 들이받기', { mult: 1.6 }]], mgolem: [['quake', '바위 내려찍기'], ['guard', '이끼 갑옷']], fguard: [['quake', '앞발 구르기', { mult: 0.8 }], ['sleep', '숲의 종소리', { mult: 0.45 }], ['guard', '숲의 가호']], gobarcher: [['blind', '눈 겨누기', { mult: 1.1 }]],
   ratking: [['summon', '쥐 떼 부르기', { mon: ['rat'], n: 2 }], ['bite', '이빨 갈기']],
-  scarecrow: [['blind', '까마귀 쪼기', { mult: 1.2 }]], boar: [['gore', '멧돼지 돌진']], aboar: [['gore', '철갑 돌진', { mult: 1.8 }], ['guard', '등판 웅크리기']],   // 빌드 70: 곡창지대 평원
+  scarecrow: [['blind', '까마귀 쪼기', { mult: 1.2 }]], scare_a3: [['blind', '까마귀 쪼기', { mult: 1.2 }]], scare_b2: [['flash', '호박등 불빛']], scare_c4: [['lowhit', '갈고리 낚아채기']], scare_c1: [['blind', '까마귀 쪼기', { mult: 1.4 }], ['sweep', '낫 휘두르기'], ['roar', '까마귀 떼 울음']], scare_c2: [['pierce', '사신의 낫'], ['sweep', '낫 휘두르기', { mult: 0.85 }], ['hexall', '푸른 저주'], ['flash', '까마귀 소용돌이']], boar: [['gore', '멧돼지 돌진']], aboar: [['gore', '철갑 돌진', { mult: 1.8 }], ['guard', '등판 웅크리기']],   // 빌드 70: 곡창지대 평원
   // 원시림 · 썩은 뿌리 동굴
   myconid: [['sleep', '잠의 포자']], spider: [['para', '거미줄 쏘기']], sapling: [['para', '뿌리 휘감기']], shaman: [['curse', '저주의 주문'], ['mend', '주술 치유']],
   elder: [['summon', '묘목 부르기', { mon: ['sapling'], n: 2 }], ['sleep', '잠의 꽃가루']],

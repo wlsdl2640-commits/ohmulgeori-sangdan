@@ -28,6 +28,11 @@ const MU69 = {
   rat:      { sta: ST69('bleed', 0.15, 4, 0.15), hits: 2, sk: [['lowhit', '약한 곳 물어뜯기', { mult: 1.3 }]] },
   slime:    { sta: ST69('corrode', 0.15, 8), sk: [['regen', '몸 다시 뭉치기', { pct: 0.12 }]] },
   rabbit:   { sta: ST69('stun', 0.08, 1), hits: 2, sk: [['haste', '깡충 뛰기', { mul: 1.3 }]] },
+  scare_a3: { sta: ST69('blind', 0.15, 4) },   // 빌드 78 허수아비 다섯
+  scare_b2: { sta: ST69('burn', 0.15, 4, 0.15) },
+  scare_c4: { sta: ST69('bleed', 0.18, 5, 0.2) },
+  scare_c1: { sta: ST69('blind', 0.25, 5), sta2: ST69('bleed', 0.2, 5, 0.2) },
+  scare_c2: { sta: ST69('bleed', 0.25, 6, 0.25), sta2: ST69('fear', 0.12, 3) },
   scarecrow: { sta: ST69('blind', 0.15, 4), sk: [['flash', '까마귀 떼', { mult: 0.45, magic: 0, sta: { k: 'blind', p: 0.35, d: 4 } }]] },   // 빌드 70: 곡창지대 평원
   boar:     { sta: ST69('stun', 0.1, 1), sk: [['rage', '콧김 뿜기', { mul: 1.25 }]] },
   aboar:    { sta: ST69('stun', 0.14, 1.2), sk: [['pierce', '엄니 꿰뚫기']] },

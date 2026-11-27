@@ -10,6 +10,15 @@
    · 1차 스킬 그림 13개: hexURL이 육각 안쪽 34×40을 그린다 (hdSkiCells)
    · 넓은 평원(bg plains_hd): 뒷산 · 중경(언덕 · 농장 · 울타리) · 넓은 땅 · 도는 풍차 날개 — 땅이 화면 아래 40%,
      파티 · 몬스터가 앞뒤로 흩어져 선다 (view.js formSlots · foeSlots · zAt이 V.wide를 본다) */
+function hd78Mot() {   // 빌드 78 허수아비 동작: 장 16 · 0.055초 · 맞히는 장 7 · 까마귀 · 등불은 어깨 위에서 날아간다
+  const o = {}, z = () => Array(16).fill(0), add = (id, row, tip, hit) => { o['i_' + id + '_' + row] = { id, row, T: 0.055, hit: hit || 7, dx: z(), tip }; };
+  for (const id of ['scare_a3', 'scare_b2']) add(id, 'crow1', [10, -52]);
+  add('scare_a3', 'crows', [8, -56]); add('scare_b2', 'lantern', [16, -44]);
+  add('scare_c4', 'sickle', null); add('scare_c4', 'crows', [8, -54]);
+  for (const id of ['scare_c1', 'scare_c2']) { add(id, 'sickle', null); add(id, 'crows', [8, -54]); add(id, 'swarm', [6, -50], 8); }
+  for (const k in o) if (!o[k].tip) delete o[k].tip;
+  return o;
+}
 const HD = { mon: {}, war: null, cls: {}, sky: null, bg: null, spr: new Map(), tint: new WeakMap(), big: false };   // big: 지금 그리는 몬스터가 2배 우두머리 (art.js drawMon이 켰다 끈다)
 const HD_EMPTY = (() => { if (typeof document === 'undefined') return null; const [cv] = mkCanvas(1, 1); return { cv, ax: 0, ay: 0, w: 1, h: 1, dx: 0, jy: 0, fo: [0, 0] }; })();
 // 그림 몬스터 동작: 줄 · 장 시간 · 맞히는 장 · 앞으로 나간 거리(논리 픽셀, 장마다) · 쏘는 자리
@@ -62,9 +71,11 @@ const HD_MOT = {
   i_gobclub_smash: { id: 'gobclub', row: 'smash', T: [0.07, 0.08, 0.08, 0.09, 0.05, 0.07, 0.09, 0.07, 0.07], hit: 4, dx: [0, 0, 1, 3, 6, 6, 5, 2, 0] },
   i_goblin_slash: { id: 'goblin', row: 'slash', T: [0.06, 0.07, 0.06, 0.07, 0.07, 0.05, 0.07, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 0, 2, 4, 7, 7, 5, 2, 0] },
   i_goblin_thrust: { id: 'goblin', row: 'thrust', T: [0.06, 0.07, 0.06, 0.06, 0.06, 0.05, 0.08, 0.07, 0.06, 0.06], hit: 5, dx: [0, 0, 1, 3, 6, 10, 10, 6, 2, 0] },
-  i_gobarcher_shot: { id: 'gobarcher', row: 'shot', T: [0.06, 0.07, 0.07, 0.08, 0.09, 0.09, 0.05, 0.07, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [22, -21] }   // 화살은 게임이 그린다 (판의 날아가는 화살은 지웠다)
+  i_gobarcher_shot: { id: 'gobarcher', row: 'shot', T: [0.06, 0.07, 0.07, 0.08, 0.09, 0.09, 0.05, 0.07, 0.07, 0.06], hit: 6, dx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], tip: [22, -21] },   // 화살은 게임이 그린다 (판의 날아가는 화살은 지웠다)
+  // 빌드 78: 허수아비 다섯 (픽셀랩 동작 32장 → 16장 · data-pxl78.js) — 8번째 장에서 맞힌다
+  ...hd78Mot()
 };
-const HD_IDLE_FPS = { rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, ewisp: 8, emoth: 8, eshroom: 6, mlizard: 6, rcenti: 7, cstag: 6, sentinel: 6, elddragon: 6, smandrake: 7, fdryad: 6, fairies: 9, rahen: 6, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
+const HD_IDLE_FPS = { scare_a3: 8, scare_b2: 8, scare_c4: 8, scare_c1: 8, scare_c2: 8, rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, ewisp: 8, emoth: 8, eshroom: 6, mlizard: 6, rcenti: 7, cstag: 6, sentinel: 6, elddragon: 6, smandrake: 7, fdryad: 6, fairies: 9, rahen: 6, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
 const HD_DEATH = { fguard: 'i_fguard_death', elddragon: 'i_elddragon_death', rahen: 'i_rahen_death' };
 const HD_LIFT = { ewisp: 5, emoth: 5, fairies: 6 };   // 떠 있는 몬스터: 몸을 이만큼 띄운다 (뭉툭 칸 — 그림자는 땅에)   // 쓰러지는 그림이 따로 있는 몬스터 (넘어뜨려 돌리지 않고 이 줄을 돌린다)
 const HD_WALK = { gobclub: [3, 4, 5, 6], goblin: [3, 4, 5, 6], gobarcher: [3, 4, 5, 6] };   // 걷기 줄에서 도는 장 (고블린 달리기 줄은 서기 → 달리기 → 서기라서 가운데 넉 장만)
@@ -73,9 +84,9 @@ for (const k in HD_MOT) {   // 장 시간 · 맞히는 장을 동작 표에 (fmo
   PXS_MOT_TT[k] = Array.isArray(M.T) ? M.T : Array.from({ length: n }, () => M.T);
   PXS_MOT_HITF[k] = M.hit;
 }
-Object.assign(PXU_CAST, { i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1, i_spotshroom_spore: 1, i_ewisp_burst: 1, i_emoth_dust: 1, i_eshroom_spore: 1, i_smandrake_scream: 1, i_elddragon_breath: 1, i_rahen_cast: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
+Object.assign(PXU_CAST, { i_scare_a3_crow1: 1, i_scare_a3_crows: 1, i_scare_b2_crow1: 1, i_scare_b2_lantern: 1, i_scare_c4_crows: 1, i_scare_c1_crows: 1, i_scare_c1_swarm: 1, i_scare_c2_crows: 1, i_scare_c2_swarm: 1, i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1, i_spotshroom_spore: 1, i_ewisp_burst: 1, i_emoth_dust: 1, i_eshroom_spore: 1, i_smandrake_scream: 1, i_elddragon_breath: 1, i_rahen_cast: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
 // 새 몬스터 셋은 그림만 있다 (PXU 자리 · 크기 규칙만 빌린다) — 들쥐 · 뿔토끼 · 들늑대는 예전 PXU 그림이 그림 판을 풀기 전까지 그대로 나온다
-for (const id of ['scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard', 'ewisp', 'emoth', 'eshroom', 'mlizard', 'rcenti', 'cstag', 'sentinel', 'elddragon', 'smandrake', 'fdryad', 'fairies', 'rahen']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
+for (const id of ['scare_a3', 'scare_b2', 'scare_c4', 'scare_c1', 'scare_c2', 'scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard', 'ewisp', 'emoth', 'eshroom', 'mlizard', 'rcenti', 'cstag', 'sentinel', 'elddragon', 'smandrake', 'fdryad', 'fairies', 'rahen']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
 for (const id of ['rat', 'rabbit', 'wolf', 'goblin']) PXU[id].img = 1;
 // 동작 갈래: hd = 그림 판이 있을 때 · 없으면 예전 갈래 (새 몬스터는 같은 것)
 const HD_ACT = {
@@ -83,6 +94,11 @@ const HD_ACT = {
   rabbit:    { atk: ['i_rabbit_charge', 'i_rabbit_jump'], skl: ['i_rabbit_jump'] },
   wolf:      { atk: ['i_wolf_bite', 'i_wolf_leap'], skl: ['i_wolf_leap'] },
   scarecrow: { atk: ['i_scarecrow_crow1', 'i_scarecrow_crow2'], skl: ['i_scarecrow_crow3'] },
+  scare_a3: { atk: ['i_scare_a3_crow1'], skl: ['i_scare_a3_crows'] },
+  scare_b2: { atk: ['i_scare_b2_crow1'], mag: ['i_scare_b2_lantern'], skl: ['i_scare_b2_lantern'] },
+  scare_c4: { atk: ['i_scare_c4_sickle'], skl: ['i_scare_c4_crows'] },
+  scare_c1: { atk: ['i_scare_c1_sickle'], skl: ['i_scare_c1_crows', 'i_scare_c1_swarm'] },
+  scare_c2: { atk: ['i_scare_c2_sickle'], skl: ['i_scare_c2_crows', 'i_scare_c2_swarm'] },
   boar:      { atk: ['i_boar_butt'], skl: ['i_boar_charge'] },
   aboar:     { atk: ['i_aboar_butt'], skl: ['i_aboar_charge', 'i_aboar_horn'] },
   gobclub:   { atk: ['i_gobclub_smash'], skl: ['i_gobclub_smash'] },
@@ -102,6 +118,11 @@ const HD_ACT = {
   gobarcher: { atk: ['i_gobarcher_shot'], skl: ['i_gobarcher_shot'] }
 };
 Object.assign(PXU_ACT, {
+  scare_a3: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'claw', p: 'dart' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers' } } }, HD_ACT.scare_a3),
+  scare_b2: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'claw', p: 'dart' }, mag: { pal: 'fire', hit: 'burst', p: 'orb' }, skl: { pal: 'fire', hit: 'burst', p: 'orb', big: 1, after: 'embers' } } }, HD_ACT.scare_b2),
+  scare_c4: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'slashes' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers' } } }, HD_ACT.scare_c4),
+  scare_c1: Object.assign({ tk: 1.05, fx: { atk: { pal: 'shadow', hit: 'slashes' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers', shake: 1 } } }, HD_ACT.scare_c1),
+  scare_c2: Object.assign({ tk: 1.05, fx: { atk: { pal: 'water', hit: 'slashes' }, skl: { pal: 'evil', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers', shake: 2 } } }, HD_ACT.scare_c2),
   scarecrow: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'claw', p: 'dart' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers' } } }, HD_ACT.scarecrow),
   boar:      Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'star', big: 1, after: 'dust' } } }, HD_ACT.boar),
   aboar:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'war', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.aboar),
@@ -151,8 +172,9 @@ function hdRing(cv) {   // 칸 둘레 한 겹 (네 쪽으로 한 칸씩 민 것 
 function hdLoad() {
   if (typeof Image === 'undefined' || typeof HD70_DATA === 'undefined') return;
   const D = HD70_DATA, img = (url, fn) => { const im = new Image(); im.onload = () => fn(im); im.src = url; };
-  for (const id in D.mon) {
-    const m = D.mon[id];
+  const MON = Object.assign({}, D.mon, typeof PXL78_DATA !== 'undefined' ? PXL78_DATA.mon : {});   // 빌드 78: 픽셀랩 허수아비 다섯
+  for (const id in MON) {
+    const m = MON[id];
     img(m.url, im => {
       const f = hdCut(im, m.w, m.h, m.rows, m.n), b = hdBox(f[m.rows[0]][0]);
       const q = m.hs || 1; HD.mon[id] = { m, f, bb: b ? [(b[0] - m.ax) / q, (b[1] - m.ax) / q, (m.ay - b[2]) / q] : [-10, 10, 20] };   // 닻에서 뒤 끝 · 앞 끝 · 키

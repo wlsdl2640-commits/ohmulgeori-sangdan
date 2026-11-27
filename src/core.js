@@ -301,9 +301,10 @@ function rollFoes(e, idx, extra = 0) {
   const dboss = e.area === 'dungeon' && e.stage === floorsOf(e) && last;
   const fboss = e.area === 'field' && e.stage === fstages(FIELDS[e.field]) && last;   // 빌드 72: 10스테이지마다 나오던 우두머리를 없앰 — 마지막 스테이지(1-50)에만 그 땅에서 가장 센 몬스터가 주인으로
   const lv = e.area === 'dungeon' ? (F.treasure ? Math.max(1, (e.lvo || 10) + e.stage - 3) : F.raid ? F.lv + 8 + e.stage : dungeonLv(F, e.stage)) : fieldLv(F, e.stage);   // 보물 던전: 파티 평균 -2 ~ 0
-  const pool = A.mons.filter(id => e.area === 'dungeon' || minStage(MONS[id]) <= e.stage);
-  const out = [];
+  const pool = A.mons.filter(id => e.area === 'dungeon' || (minStage(MONS[id]) <= e.stage && (!MONS[id].night || isNight())));   // 빌드 78: night 몬스터(호박등 허수아비)는 밤에만
+  const out = [], rgk = !dboss && !fboss && last && typeof regenAt === 'function' ? regenAt(e) : null;   // 빌드 78 리젠보스 (regen78.js)
   if (dboss) { out.push(foeFrom(A.boss, F.treasure ? (e.lvo || 10) + 2 : F.raid ? F.lv + 14 : dungeonBossLv(F))); if (A.guards) A.guards.forEach(id => out.push(foeFrom(id, lv + 2))); else out.push(foeFrom(pickOne(pool), lv)); }   // guards (빌드 51): 주인 곁을 지키는 정해진 호위 (암살자 길드 두목 + 간부 둘)
+  else if (rgk) { out.push(regenFoe(rgk, lv)); out.push(foeFrom(pickOne(pool), lv)); }
   else if (fboss) { out.push(fieldBoss(F, e.stage, lv)); for (let i = 0; i < (e.stage >= 30 ? 2 : 1); i++) out.push(foeFrom(pickOne(pool), lv)); }
   else {
     const nest = e.area === 'field' && e.mode === 'advance' ? nestAt(e.field) : null;
@@ -1373,16 +1374,17 @@ function kill(p, e, f) {
   const ap = 1 + rlv('appraise') * 0.25;
   const inD = e.area === 'dungeon';
   const gt = F.treasure ? Math.min(GTIERS.length - 1, raidTier(e.lvo || 10)) : F.tier;   // 보물 던전은 파티 레벨에 맞는 단계
-  { const gk = f.fb ? 'fb' : f.boss ? 'boss' : 0; if (rnd() < (gk ? GEAR_DROP[gk] : inD ? GEAR_DROP.dungeon : GEAR_DROP.field) * ap) lootGear(p, e, makeGear(dropBase(gt), gt, rollGrade(gt, gk))); }   // 빌드 63 다섯째 묶음: 드랍 줄임 · 레어도는 rollGrade
+  if (!f.regen) { const gk = f.fb ? 'fb' : f.boss ? 'boss' : 0; if (rnd() < (gk ? GEAR_DROP[gk] : inD ? GEAR_DROP.dungeon : GEAR_DROP.field) * ap) lootGear(p, e, makeGear(dropBase(gt), gt, rollGrade(gt, gk))); }   // 빌드 63 다섯째 묶음: 드랍 줄임 · 레어도는 rollGrade
   { const ea = GEAR_DROP_ON && elemArrowOf(f.id); if (ea && rnd() < (f.boss || f.fb ? 0.3 : 0.012) * ap) lootGear(p, e, makeGear(ea, gt, 0)); }   // 속성 화살: 그 속성 몬스터한테서
   // 스킬북: 빌드 63부터 모든 몬스터가 스킬북 단계를 떨어뜨린다 — 확률은 예전 그대로(bookRate), 어느 책인지는 그 땅의 단계로(우두머리 · 주인은 한 줄 위) · 감정 연구 · 전리품 운이 확률을 올린다
-  if (rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck) * (1 + (foodFx(e).book || 0)))) { const tb = tierBookFor(F.treasure ? raidTier(e.lvo || 10) : F.tier != null ? F.tier : tierOfLv(f.lv), f.boss || f.fb); if (tb) loot(p, e, tb, 1); }   // 꽝이면 없음
+  if (!f.regen && rnd() < Math.min(1, bookRate(f, e.area) * ap * (1 + luck + hunt + petLuck) * (1 + (foodFx(e).book || 0)))) { const tb = tierBookFor(F.treasure ? raidTier(e.lvo || 10) : F.tier != null ? F.tier : tierOfLv(f.lv), f.boss || f.fb); if (tb) loot(p, e, tb, 1); }   // 꽝이면 없음
   bossParts(p, e, f, inD);
   stoneDrops(p, e, f, luck);
   mapDrops(p, e, f, luck);
   harvClose(e);
   if (f.nest) nestKill(p, e, f);
   if (luck && rnd() < luck) { const g = Math.round(f.lv * (2 + rnd() * 3)); S.gold += g; S.stats.earned += g; }
+  if (f.regen && typeof regenDown === 'function') regenDown(p, e, f);   // 빌드 78 리젠보스: 시계 · 무작위 드롭
   if (f.fb) { if (S.fields[e.field]) fieldBossDown(p, e, f); }   // 방어전(wave)의 우두머리는 필드 기록이 없다
   else if (f.boss && e.area === 'dungeon') dungeonClear(p, e);
 }
