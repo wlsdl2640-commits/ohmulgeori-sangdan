@@ -12,8 +12,11 @@ JOBS = {
     'b_mage2': '43f2464e-67ba-42cd-892d-e961b20912dd', 'b_mage3': 'a0744a03-577e-4f18-80ce-709b7d070452',
     'e_100': '3f2c2548-8257-4148-9e10-d318634efc82', 'e_80': '09eb465e-b06d-4811-9e46-b57640aa4e49', 'e_60': '3c0ba1c8-b6fc-402c-8f11-33a1488be46d',
     'e_30': '757a3b86-e42d-40d1-98d6-9c9cb8ae0643', 'e_10': '391b24c7-b4c0-4516-9219-a9fd8bd04553',
+    # 셋째: 마법사 나3 + 나1 룬 · 30% 가운데 갈라짐 줄이기
+    'b_mage_fin1': '744d1454-ef35-425b-bad5-964ea03ca290', 'b_mage_fin2': '02e77eca-f393-4177-9b20-329ecf7b9b92',
+    'e_30b': 'a9ee18f9-5096-410e-9fa8-a5b89f480d1d', 'e_30c': '8025ca5f-e022-433e-99d4-2ac3dab74220',
 }
-ONE = ('b_rogue_key', 'b_rogue_key2', 'e_100', 'e_80', 'e_60', 'e_30', 'e_10')   # 고치기(edit)는 한 장
+ONE = ('b_mage_fin1', 'b_mage_fin2', 'e_30b', 'e_30c', 'b_rogue_key', 'b_rogue_key2', 'e_100', 'e_80', 'e_60', 'e_30', 'e_10')   # 고치기(edit)는 한 장
 os.makedirs('raw', exist_ok=True)
 for name, jid in JOBS.items():
     for i in range(1 if name in ONE else 4):

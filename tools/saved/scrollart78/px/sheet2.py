@@ -6,11 +6,9 @@ f12 = ImageFont.truetype(FD + 'malgun.ttf', 12); f14 = ImageFont.truetype(FD + '
 BG = (19, 22, 30); INK = (236, 228, 208); INK2 = (169, 176, 189); GOLD = (240, 180, 60)
 RQ = [((26, 32, 48), (70, 78, 96)), ((38, 60, 34), (74, 138, 62)), ((30, 56, 88), (60, 118, 184)), ((64, 36, 90), (147, 86, 204)), ((87, 64, 18), (224, 160, 50))]
 ROWS = [
-    ('고른 스킬북 (전사 1 · 궁수 4 · 짐꾼 1 · 공용 1) + 성직자는 아직 안 고르심', [('b_warrior_0', '전사'), ('b_archer_3', '궁수'), ('b_porter_0', '짐꾼'), ('b_common_0', '공용'), ('b_cleric_0', '성직자?')]),
-    ('도적 1번 + 열쇠 (두 가지)', [('b_rogue_0', '도적 1 (원래)'), ('b_rogue_key_0', '열쇠 가'), ('b_rogue_key2_0', '열쇠 나')]),
-    ('마법사 다시 — 금속 장식 없이 · 고리 주문이 책을 감싸고 돎 · 룬 새김 (1)', [(f'b_mage2_{i}', f'가{i + 1}') for i in range(4)]),
-    ('마법사 다시 (2)', [(f'b_mage3_{i}', f'나{i + 1}') for i in range(4)]),
-    ('강화 주문서 = B 1번, 파란 리본 없이 · 확률은 양피지 색 · 상태로', [('s_open_0', '원래 B1'), ('e_100_0', '100% 새것'), ('e_80_0', '80% 깨끗'), ('e_60_0', '60% 바랜 색'), ('e_30_0', '30% 낡음'), ('e_10_0', '10% 이끼 · 고대 유물')]),
+    ('고른 스킬북 — 전사 1 · 궁수 4 · 성직자 4 · 도적 3 · 짐꾼 1 · 공용 1', [('b_warrior_0', '전사'), ('b_archer_3', '궁수'), ('b_cleric_3', '성직자'), ('b_rogue_2', '도적'), ('b_porter_0', '짐꾼'), ('b_common_0', '공용')]),
+    ('마법사 = 나3 + 앞면 룬을 나1의 룬으로', [('b_mage3_2', '나3 (원래)'), ('b_mage3_0', '나1 (룬 본)'), ('b_mage_fin1_0', '고침 가'), ('b_mage_fin2_0', '고침 나')]),
+    ('강화 주문서 확률 상태 — 30% 가운데 갈라짐 줄임 (가 · 나 중 하나)', [('e_100_0', '100%'), ('e_80_0', '80%'), ('e_60_0', '60%'), ('e_30b_0', '30% 가'), ('e_30c_0', '30% 나'), ('e_10_0', '10%')]),
 ]
 S = 2; cw = 128 * S + 14; RH = 128 * S + 120
 W = 40 + 6 * cw
@@ -23,7 +21,7 @@ for title, items in ROWS:
         src = Image.open(f'raw/{k}.png').convert('RGBA'); x = 20 + i * cw
         d.rectangle([x - 2, y + 20, x + 128 * S + 1, y + 22 + 128 * S], fill=(40, 44, 56))
         im.alpha_composite(src.resize((128 * S, 128 * S), Image.NEAREST), (x, y + 21)); d.text((x + 4, y + 24), lab, font=f14, fill=GOLD)
-        g = [0, 0, 1, 2, 3, 4][i] if k.startswith('e_') or k == 's_open_0' else 2
+        g = {'e_100_0': 0, 'e_80_0': 1, 'e_60_0': 2, 'e_10_0': 4}.get(k, 3 if k.startswith('e_30') else 2)
         inner, border = RQ[g]; cy = y + 30 + 128 * S
         d.rectangle([x, cy, x + 75, cy + 75], fill=inner, outline=border, width=2); im.alpha_composite(src.resize((72, 72), Image.LANCZOS), (x + 2, cy + 2))
     y += RH
