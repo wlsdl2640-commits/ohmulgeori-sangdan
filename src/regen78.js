@@ -156,7 +156,7 @@ if (typeof window !== 'undefined') setInterval(regenTick, 5000);
 const REGEN_SPOT = { c1: { art: 'hay', x: 80 }, c2: { art: 'barn', x: 80 } };   // 집 · 망루와 겹치지 않는 왼쪽 빈자리(나무와 짐수레 사이)   // x = 중경 한 바퀴(960) 안의 자리 (논리 칸)
 const REGEN_IMG = {};
 if (typeof Image !== 'undefined' && typeof REGEN_ART !== 'undefined') for (const k in REGEN_ART) { const im = new Image(); im.src = REGEN_ART[k].url; REGEN_IMG[k] = im; }
-const REGEN_FR = 88, REGEN_BASE = 103;   // 중경 그림(픽셀)의 앞줄 시작 · 그림 밑동이 닿는 줄
+const REGEN_FR = 74, REGEN_BASE = 90;   // 11-28 대표님 「울타리 아래 보이게 공중부양」 → 울타리 뒤 밀밭 땅(90줄)에 세우고, 울타리 · 밀 아랫단 · 풀 · 꽃(74줄부터)을 그림 앞에 다시 그린다
 GTYPES.strawring.art = 'strawring';
 const _bwh78 = buildWideHD;
 buildWideHD = function (id, old) {   // eslint-disable-line no-func-assign
@@ -164,7 +164,10 @@ buildWideHD = function (id, old) {   // eslint-disable-line no-func-assign
   if (id !== 'plains' || b.hdWait || typeof REGEN_ART === 'undefined') return b;
   const B = HD70_DATA.bg[id], LD = (B.ld != null ? B.ld : 55) - HD_LD_UP, q = B.hs || 1, my = B.mid.y + LD;
   const [fr, fx] = mkCanvas(b.mid.width, b.mid.height); const sy = Math.round(my * q) + REGEN_FR;
-  fx.drawImage(b.mid, 0, sy, b.mid.width, b.mid.height - sy, 0, sy, b.mid.width, b.mid.height - sy); fr.hs = q;   // 중경 앞줄만
+  for (let x = 0; x < b.mid.width; x += 2) {   // 앞줄 윗선을 밀 이삭처럼 들쭉날쭉하게(두 픽셀마다 0 ~ 6줄 위로) — 곧은 선이면 그림이 잘려 보인다
+    const y0 = sy - ((x * 7 + (x >> 3) * 13) % 7); fx.drawImage(b.mid, x, y0, 2, b.mid.height - y0, x, y0, 2, b.mid.height - y0);
+  }
+  fr.hs = q;   // 중경 앞줄만
   const W2 = b.mid.width / q, base = my + REGEN_BASE / q, pr = b.props;
   b.props = function (g, off, t, dark) {
     if (pr) pr.call(this, g, off, t, dark);
