@@ -149,3 +149,37 @@ function regenTick() {
   }
 }
 if (typeof window !== 'undefined') setInterval(regenTick, 5000);
+
+// ── 11-28 리젠 자리 그림: 첫째 = 밀짚더미(1-8) · 둘째 = 낡은 축사(1-16). 그 스테이지에서만 평원 중경 위에 서 있다 ──
+//   그림은 data-regenart78.js(REGEN_ART — 중경과 같은 점 굵기 hs 2). 중경 다음 · 땅 앞에 그리고(scene.js drawLand의 props 차례),
+//   중경의 앞줄(꽃 · 돌 · 풀 — 중경 그림 88줄부터)을 그림 자리에만 한 번 더 그려 밑동이 풀 속에 묻히게 한다(11-28 대표님 「잘라 붙인 티」).
+const REGEN_SPOT = { c1: { art: 'hay', x: 80 }, c2: { art: 'barn', x: 80 } };   // 집 · 망루와 겹치지 않는 왼쪽 빈자리(나무와 짐수레 사이)   // x = 중경 한 바퀴(960) 안의 자리 (논리 칸)
+const REGEN_IMG = {};
+if (typeof Image !== 'undefined' && typeof REGEN_ART !== 'undefined') for (const k in REGEN_ART) { const im = new Image(); im.src = REGEN_ART[k].url; REGEN_IMG[k] = im; }
+const REGEN_FR = 88, REGEN_BASE = 103;   // 중경 그림(픽셀)의 앞줄 시작 · 그림 밑동이 닿는 줄
+GTYPES.strawring.art = 'strawring';
+const _bwh78 = buildWideHD;
+buildWideHD = function (id, old) {   // eslint-disable-line no-func-assign
+  const b = _bwh78(id, old);
+  if (id !== 'plains' || b.hdWait || typeof REGEN_ART === 'undefined') return b;
+  const B = HD70_DATA.bg[id], LD = (B.ld != null ? B.ld : 55) - HD_LD_UP, q = B.hs || 1, my = B.mid.y + LD;
+  const [fr, fx] = mkCanvas(b.mid.width, b.mid.height); const sy = Math.round(my * q) + REGEN_FR;
+  fx.drawImage(b.mid, 0, sy, b.mid.width, b.mid.height - sy, 0, sy, b.mid.width, b.mid.height - sy); fr.hs = q;   // 중경 앞줄만
+  const W2 = b.mid.width / q, base = my + REGEN_BASE / q, pr = b.props;
+  b.props = function (g, off, t, dark) {
+    if (pr) pr.call(this, g, off, t, dark);
+    const e = V.landE; if (!e || e.field !== 'plains' || e.area === 'dungeon') return;
+    for (const k in REGEN78) {
+      const R = REGEN78[k], sp = REGEN_SPOT[k]; if (!sp || R.stage !== e.stage) continue;
+      const A = REGEN_ART[sp.art], im = REGEN_IMG[sp.art]; if (!im || !im.complete) continue;
+      const w = A.w / q, h = A.h / q, x0 = ((sp.x - off) % W2 + W2) % W2;
+      for (const xx of [x0, x0 - W2]) {
+        if (xx + w / 2 < -4 || xx - w / 2 > VW + 4) continue;
+        const X = Math.round(xx - w / 2), Y = Math.round(base - h);
+        g.drawImage(im, X, Y, w, h);
+        g.save(); g.beginPath(); g.rect(X - 2, Y, w + 4, h + 20); g.clip(); tile(g, fr, off, 0); g.restore();   // 앞줄을 그림 위에
+      }
+    }
+  };
+  return b;
+};

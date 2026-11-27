@@ -155,6 +155,7 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
   if (bg.under) R(g, 0, 0, AW, AH, '#000');
   else { R(g, 0, 0, AW, BG_OY + 1, T.sky[0]); if (T.star > 0.02) for (const st of STARS) { const tw = 0.55 + 0.45 * Math.sin(t * (1.5 + st.b * 2) + st.p), a = T.star * tw * (0.5 + st.b * 0.5); if (a > 0.05) R(g, st.x, Math.round(st.y * BG_OY / 70), 1, 1, `rgba(255,250,235,${a.toFixed(2)})`); } }
   g.save(); g.translate(0, BG_OY + (bg.skyOy || 0)); drawSky(g, id, V.scroll, t, dp); g.restore(); if (bg.skyFill) R(g, 0, 0, AW, AH, bg.skyFill);   // 깊은 숲: 하늘이 안 보인다   // 넓은 땅은 지평선이 높아 하늘 띠를 위로
+  V.landE = e;   // 빌드 78: 리젠 자리 그림(regen78.js)이 지금 그리는 원정의 땅 · 스테이지를 본다
   w.save(); w.translate(0, oy); drawLand(w, id, V.scroll, t, T); w.restore();
   if (!bg.under) groundWx(w, wxNow(e || null), oy);   // 겨울 눈 덮인 땅 · 젖은 땅
   else if (e && floodOn(e)) floodFloor(w, V.scroll, t, oy);   // 빌드 70: 물이 찬 스테이지 (under70.js)
