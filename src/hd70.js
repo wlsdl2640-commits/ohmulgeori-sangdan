@@ -17,6 +17,9 @@ function hd78Mot() {   // 빌드 78 허수아비 동작: 장 16 · 0.055초 · �
   add('scare_c4', 'sickle', null); add('scare_c4', 'crows', [8, -54]);
   for (const id of ['scare_c1', 'scare_c2']) { add(id, 'sickle', null); add(id, 'crows', [8, -54]); add(id, 'swarm', [6, -50], 8); }
   for (const k in o) if (!o[k].tip) delete o[k].tip;
+  // 11-28 둑굴 오소리(픽셀랩 7번): 발톱 할퀴기 · 땅 파고 낮게 덮치기 (16장)
+  o.i_badger_claw = { id: 'badger', row: 'claw', T: 0.055, hit: 8, dx: [0, 0, 0, 0, 1, 1, 2, 3, 4, 4, 3, 2, 1, 1, 0, 0] };
+  o.i_badger_dig = { id: 'badger', row: 'dig', T: 0.055, hit: 9, dx: [0, 0, 0, -1, -1, 0, 2, 5, 9, 12, 13, 11, 8, 5, 2, 0] };
   return o;
 }
 const HD = { mon: {}, war: null, cls: {}, sky: null, bg: null, spr: new Map(), tint: new WeakMap(), big: false };   // big: 지금 그리는 몬스터가 2배 우두머리 (art.js drawMon이 켰다 끈다)
@@ -75,7 +78,7 @@ const HD_MOT = {
   // 빌드 78: 허수아비 다섯 (픽셀랩 동작 32장 → 16장 · data-pxl78.js) — 8번째 장에서 맞힌다
   ...hd78Mot()
 };
-const HD_IDLE_FPS = { scare_a3: 8, scare_b2: 8, scare_c4: 8, scare_c1: 8, scare_c2: 8, rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, ewisp: 8, emoth: 8, eshroom: 6, mlizard: 6, rcenti: 7, cstag: 6, sentinel: 6, elddragon: 6, smandrake: 7, fdryad: 6, fairies: 9, rahen: 6, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
+const HD_IDLE_FPS = { badger: 8, scare_a3: 8, scare_b2: 8, scare_c4: 8, scare_c1: 8, scare_c2: 8, rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, ewisp: 8, emoth: 8, eshroom: 6, mlizard: 6, rcenti: 7, cstag: 6, sentinel: 6, elddragon: 6, smandrake: 7, fdryad: 6, fairies: 9, rahen: 6, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
 const HD_DEATH = { fguard: 'i_fguard_death', elddragon: 'i_elddragon_death', rahen: 'i_rahen_death' };
 const HD_LIFT = { ewisp: 5, emoth: 5, fairies: 6 };   // 떠 있는 몬스터: 몸을 이만큼 띄운다 (뭉툭 칸 — 그림자는 땅에)   // 쓰러지는 그림이 따로 있는 몬스터 (넘어뜨려 돌리지 않고 이 줄을 돌린다)
 const HD_WALK = { gobclub: [3, 4, 5, 6], goblin: [3, 4, 5, 6], gobarcher: [3, 4, 5, 6] };   // 걷기 줄에서 도는 장 (고블린 달리기 줄은 서기 → 달리기 → 서기라서 가운데 넉 장만)
@@ -86,7 +89,7 @@ for (const k in HD_MOT) {   // 장 시간 · 맞히는 장을 동작 표에 (fmo
 }
 Object.assign(PXU_CAST, { i_scare_a3_crow1: 1, i_scare_a3_crows: 1, i_scare_b2_crow1: 1, i_scare_b2_lantern: 1, i_scare_c4_crows: 1, i_scare_c1_crows: 1, i_scare_c1_swarm: 1, i_scare_c2_crows: 1, i_scare_c2_swarm: 1, i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1, i_spotshroom_spore: 1, i_ewisp_burst: 1, i_emoth_dust: 1, i_eshroom_spore: 1, i_smandrake_scream: 1, i_elddragon_breath: 1, i_rahen_cast: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
 // 새 몬스터 셋은 그림만 있다 (PXU 자리 · 크기 규칙만 빌린다) — 들쥐 · 뿔토끼 · 들늑대는 예전 PXU 그림이 그림 판을 풀기 전까지 그대로 나온다
-for (const id of ['scare_a3', 'scare_b2', 'scare_c4', 'scare_c1', 'scare_c2', 'scarecrow', 'boar', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard', 'ewisp', 'emoth', 'eshroom', 'mlizard', 'rcenti', 'cstag', 'sentinel', 'elddragon', 'smandrake', 'fdryad', 'fairies', 'rahen']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
+for (const id of ['scare_a3', 'scare_b2', 'scare_c4', 'scare_c1', 'scare_c2', 'scarecrow', 'boar', 'badger', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard', 'ewisp', 'emoth', 'eshroom', 'mlizard', 'rcenti', 'cstag', 'sentinel', 'elddragon', 'smandrake', 'fdryad', 'fairies', 'rahen']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
 for (const id of ['rat', 'rabbit', 'wolf', 'goblin']) PXU[id].img = 1;
 // 동작 갈래: hd = 그림 판이 있을 때 · 없으면 예전 갈래 (새 몬스터는 같은 것)
 const HD_ACT = {
@@ -101,6 +104,7 @@ const HD_ACT = {
   scare_c2: { atk: ['i_scare_c2_sickle'], skl: ['i_scare_c2_crows', 'i_scare_c2_swarm'] },
   boar:      { atk: ['i_boar_butt'], skl: ['i_boar_charge'] },
   aboar:     { atk: ['i_aboar_butt'], skl: ['i_aboar_charge', 'i_aboar_horn'] },
+  badger:    { atk: ['i_badger_claw'], skl: ['i_badger_dig'] },
   gobclub:   { atk: ['i_gobclub_smash'], skl: ['i_gobclub_smash'] },
   ewisp: { atk: ['i_ewisp_burst'], mag: ['i_ewisp_burst'], skl: ['i_ewisp_burst'] }, emoth: { atk: ['i_emoth_dust'], mag: ['i_emoth_dust'], skl: ['i_emoth_dust'] }, eshroom: { atk: ['i_eshroom_spore'], mag: ['i_eshroom_spore'], skl: ['i_eshroom_spore'] },
   mlizard: { atk: ['i_mlizard_tongue'], skl: ['i_mlizard_tongue'] }, rcenti: { atk: ['i_rcenti_bite'], skl: ['i_rcenti_bite'] }, cstag: { atk: ['i_cstag_pinch'], skl: ['i_cstag_pinch'] }, sentinel: { atk: ['i_sentinel_smash'], skl: ['i_sentinel_smash'] },
@@ -126,6 +130,7 @@ Object.assign(PXU_ACT, {
   scarecrow: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'claw', p: 'dart' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers' } } }, HD_ACT.scarecrow),
   boar:      Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'star', big: 1, after: 'dust' } } }, HD_ACT.boar),
   aboar:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'war', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.aboar),
+  badger:    Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'claw', after: 'dust' }, skl: { pal: 'earth', hit: 'slashes', big: 1, after: 'dust' } } }, HD_ACT.badger),
   vinesnake: Object.assign({ fx: { atk: { pal: 'poison', hit: 'bite' }, skl: { pal: 'poison', hit: 'poison', big: 1, after: 'bubbles' } } }, HD_ACT.vinesnake),
   cflower:   Object.assign({ fx: { atk: { pal: 'nature', hit: 'bite' }, skl: { pal: 'evil', hit: 'bite', big: 1, after: 'drain' } } }, HD_ACT.cflower),
   stump:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'earth', hit: 'bite' }, skl: { pal: 'earth', hit: 'bite', big: 1, after: 'dust' } } }, HD_ACT.stump),

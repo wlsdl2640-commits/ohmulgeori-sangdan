@@ -1965,5 +1965,38 @@
   "seed": 12,
   "subject": "a stocky brown badger monster with a white stripe on its head, shaggy fur with bits of wheat straw, big curved digging claws, hunched on four short legs, pixel art, side view, facing left",
   "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it crouches low and scrapes at the ground with both front claws. Frames 11-18: it lunges forward low along the ground with claws out, then stops. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "f2_canyonbat",
+  "row": "walk_s21",
+  "frames": 24,
+  "first": "upload:ef67091e-1620-4c02-98a4-f8120fcaddfa",
+  "last": "upload:ef67091e-1620-4c02-98a4-f8120fcaddfa",
+  "dir": "west",
+  "seed": 21,
+  "subject": "a red canyon bat monster with a pig-like snout, pixel art, side view, facing left",
+  "desc": "Smooth seamless 24-frame movement loop in place: it flies forward with steady even wing beats, the body bobbing gently up and down. The body keeps exactly the same shape, size and proportions in every frame; only the limbs, wings or body wave move. Every change between frames is small and even, and the last frames lead smoothly back into the first pose. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors. Keep the whole body, tail and wings inside the frame with empty space around them; the wing tips never reach the frame edges, wings spread only moderately."
+ },
+ {
+  "mon": "f2_canyonbat",
+  "row": "atk_s21",
+  "frames": 32,
+  "first": "upload:ef67091e-1620-4c02-98a4-f8120fcaddfa",
+  "last": "upload:ef67091e-1620-4c02-98a4-f8120fcaddfa",
+  "dir": "west",
+  "seed": 21,
+  "subject": "a red canyon bat monster with a pig-like snout, pixel art, side view, facing left",
+  "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it hovers and raises its wings high, pulling its head back. Frames 11-18: it beats its wings down and pushes its snout a short way forward. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors. Keep the whole body, tail and wings inside the frame with empty space around them; the wing tips never reach the frame edges, wings spread only moderately."
+ },
+ {
+  "mon": "f2_canyonbat",
+  "row": "atk_s22",
+  "frames": 32,
+  "first": "upload:ef67091e-1620-4c02-98a4-f8120fcaddfa",
+  "last": "upload:ef67091e-1620-4c02-98a4-f8120fcaddfa",
+  "dir": "west",
+  "seed": 22,
+  "subject": "a red canyon bat monster with a pig-like snout, pixel art, side view, facing left",
+  "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it hovers and raises its wings high, pulling its head back. Frames 11-18: it beats its wings down and pushes its snout a short way forward. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors. Keep the whole body, tail and wings inside the frame with empty space around them; the wing tips never reach the frame edges, wings spread only moderately."
  }
 ]

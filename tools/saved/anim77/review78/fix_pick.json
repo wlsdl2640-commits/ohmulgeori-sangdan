@@ -1,0 +1,13 @@
+{
+ "jawlizard/idle": "clean/f_jawlizard/idle_s21",
+ "jawlizard/walk": "clean/f_jawlizard/walk_s21",
+ "jawlizard/atk": "clean/f_jawlizard/atk_s21",
+ "otter/idle": "clean/f_otter/idle_s21",
+ "otter/walk": "clean/f_otter/walk_s21",
+ "otter/atk": "clean/f_otter/atk_s21",
+ "canyonbat/walk": "clean/f2_canyonbat/walk_s21",
+ "canyonbat/atk": "clean/f2_canyonbat/atk_s22",
+ "hawk/walk": "clean/f_hawk/walk_s21",
+ "hawk/atk": "clean/f_hawk/atk_s21",
+ "earwig/walk": "clean/f_earwig/walk_s21"
+}
