@@ -155,11 +155,11 @@ const MONS = {
   gobarcher: { name: '고블린 궁수', plan: 'biped', skin: '#7fae4b', cloth: '#6b4a2e', gear: 'dagger', mh: 0.75, ma: 1.1, md: 0.4, spd: 0.95, eva: 0.08, minS: 7, drops: [['goblin_ear', 0.6], ['goblin_fletch', 0.45]] },
   scarecrow: { name: '허수아비',    plan: 'biped', skin: '#c8a060', cloth: '#7a5232', gear: 'staff', mh: 1.0, ma: 1.05, md: 0.6, spd: 0.9, minS: 7, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },   // 빌드 70: 곡창지대 평원 (리마스터 그림 — hd70.js)
   // 빌드 78 (11-27 대표님): 허수아비 다섯 — 약한 순 A3 · B2(밤에만) · C4 · 리젠보스 C1 · C2 (그림 data-pxl78.js · 리젠 regen78.js)
-  scare_a3: { name: '누더기 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#7a5232', mh: 1.0, ma: 1.0, md: 0.6, spd: 0.9, minS: 5, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },
-  scare_b2: { name: '호박등 허수아비', plan: 'biped', skin: '#e08a2a', cloth: '#4a6a3a', mh: 1.05, ma: 1.15, md: 0.6, spd: 0.95, minS: 7, night: 1, drops: [['scare_straw', 0.6], ['crow_feather', 0.5]] },
-  scare_c4: { name: '갈고리 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a4a32', mh: 1.25, ma: 1.2, md: 0.8, spd: 0.9, minS: 9, drops: [['scare_straw', 0.6], ['crow_feather', 0.55]] },
-  scare_c1: { name: '짚단 사신', plan: 'biped', skin: '#c8a060', cloth: '#3a2a20', scale: 2, regen: 1, mh: 1.4, ma: 1.25, md: 0.9, spd: 0.95, minS: 99, drops: [['scare_straw', 1, 3], ['crow_feather', 1, 2]] },
-  scare_c2: { name: '푸른 모자 사신', plan: 'biped', skin: '#c8a060', cloth: '#26305a', scale: 2, regen: 1, mh: 1.55, ma: 1.35, md: 1.0, spd: 1.0, minS: 99, drops: [['scare_straw', 1, 3], ['crow_feather', 1, 3]] },
+  scare_a3: { mm: 'scarecrow', name: '누더기 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#7a5232', mh: 1.0, ma: 1.0, md: 0.6, spd: 0.9, minS: 5, drops: [['scare_straw', 0.6], ['crow_feather', 0.45]] },
+  scare_b2: { mm: 'scarecrow', name: '호박등 허수아비', plan: 'biped', skin: '#e08a2a', cloth: '#4a6a3a', mh: 1.05, ma: 1.15, md: 0.6, spd: 0.95, minS: 7, night: 1, drops: [['scare_straw', 0.6], ['crow_feather', 0.5]] },
+  scare_c4: { mm: 'scarecrow', name: '갈고리든 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a4a32', mh: 1.25, ma: 1.2, md: 0.8, spd: 0.9, minS: 9, drops: [['scare_straw', 0.6], ['crow_feather', 0.55]] },
+  scare_c1: { mm: 'scarecrow', name: '마법 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a2a20', scale: 2, regen: 1, mh: 1.4, ma: 1.25, md: 0.9, spd: 0.95, minS: 99, drops: [['scare_straw', 1, 3], ['crow_feather', 1, 2]] },
+  scare_c2: { mm: 'scarecrow', name: '저주 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#26305a', scale: 2, regen: 1, mh: 1.55, ma: 1.35, md: 1.0, spd: 1.0, minS: 99, drops: [['scare_straw', 1, 3], ['crow_feather', 1, 3]] },
   boar:    { name: '멧돼지',       plan: 'quad', body: '#8a4a32', dark: '#5a2e1e', len: 14, h: 7, tail: 1, ear: 1, mh: 1.3, ma: 1.2, md: 0.8, spd: 0.9, minS: 10, drops: [['boar_hide', 0.5], ['boar_tusk', 0.45]] },
   aboar:   { name: '갑옷 멧돼지',  plan: 'quad', body: '#7a3a2a', dark: '#4a2418', len: 15, h: 8, tail: 1, ear: 1, mh: 1.8, ma: 1.35, md: 1.6, spd: 0.8, minS: 14, drops: [['aboar_plate', 0.45], ['boar_tusk', 0.5], ['boar_hide', 0.3]] },
   ratking: { name: '들쥐왕',       plan: 'quad', body: '#7a6656', dark: '#4b3d32', len: 9, h: 4, tail: 1, ear: 1, crown: 1, scale: 3, boss: 1, mh: 4, ma: 1.5, md: 1, spd: 0.9, aoe: 1, drops: [['ratking_crown', 1], ['rat_tail', 1, 3]] },
