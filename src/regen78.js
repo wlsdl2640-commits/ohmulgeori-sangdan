@@ -187,3 +187,19 @@ buildWideHD = function (id, old) {   // eslint-disable-line no-func-assign
   };
   return b;
 };
+
+// ── 11-28 소문 말풍선: 쉬는 파티가 서 있는 길드 로비(작은 창)에서 한 사람이 소문을 말한다 ──
+//   16초마다 다음 사람 · 다음 소문, 앞 7초만 보인다. 리젠보스가 나와 있으면 「방금 봤다더라」가 먼저(rumorLines). 글은 DOM(작은 창 글자 칸)이라 또렷하다.
+const RUMOR_CYC = 16000, RUMOR_ON = 7000;
+function rumorBubble(slots, list) {
+  if (typeof document === 'undefined') return;
+  let el = document.getElementById('rumor-bub');
+  const now = Date.now(), ph = now % RUMOR_CYC, cyc = Math.floor(now / RUMOR_CYC);
+  if (!slots || !list || !list.length || ph > RUMOR_ON || document.hidden || (typeof RP !== 'undefined' && RP.page === 1)) { if (el) el.remove(); return; }
+  const box = document.getElementById('callouts'); if (!box) return;
+  if (!el) { el = document.createElement('span'); el.id = 'rumor-bub'; el.className = 'rbub'; el.setAttribute('aria-hidden', 'true'); box.append(el); }   // 글자 칸(callouts)과 같은 자리 계산 — 지워져도 다음 장에 다시 만든다
+  const i = cyc % list.length, [x, y] = slots[i];
+  if (el.dataset.c !== String(cyc)) { const L = rumorLines(3); el.dataset.c = String(cyc); el.textContent = L[cyc % L.length][1]; }
+  const xp = Math.max(22, Math.min(78, x / AW * 100)), yp = Math.max(4, (y - 52 - PIP_Y) / PIP_H * 100);
+  el.style.left = xp + '%'; el.style.top = yp + '%';
+}

@@ -148,8 +148,10 @@ function drawFrame(now, vt, pq) {   // pq: 레이드 원정대 창의 한 칸 (�
     let list = p ? teamOf(p) : []; if (!list.length) list = S.advs.filter(a => a.status === 'idle').slice(0, 6); list = list.slice(0, 6);
     const slots = frontSlots(list.length); V.hitA = list.map((a, i) => [a.id, slots[i][0], slots[i][1], 0]);
     list.forEach((a, i) => { const [x, y] = slots[i], z = zq(y > 185 ? ZS : ZS * 0.92); shadowAt(w, x, y, 9 * z / ZS); w.save(); w.translate(x, y); drawAdv(w, a, t, { ph: i * 0.5, z }); w.restore(); });
+    if (!pq && typeof rumorBubble === 'function') rumorBubble(slots, list);   // 빌드 78: 로비 모험가가 소문을 수군거린다 (regen78.js)
     g.drawImage(V.wc, 0, 0, AW, AH); if (pq) return; present(); return;
   }
+  if (!pq && typeof rumorBubble === 'function') rumorBubble(null);   // 원정 화면에서는 말풍선을 치운다
   // 옛 240×128 풍경을 무대 아래쪽에 붙이고, 위는 하늘로 잇는다 (키 큰 풍경은 무대 전체)
   const T = todAt(dp, id);
   if (bg.under) R(g, 0, 0, AW, AH, '#000');
