@@ -14,10 +14,10 @@ const BOOK_MONS = {
   icelance:   ['slime', 'spider'],
   smoke:      ['goblin', 'rat'],
   cure:       ['myconid', 'spider'],
-  shout:      ['goblin', 'ratking'],
+  shout:      ['goblin', 'aboar'],   // 11-28: 들쥐왕(옛 던전) 대신 1층 주인 갑옷 멧돼지
   meditate:   ['myconid', 'shaman'],
-  ironwall:   ['sapling', 'ratking'],
-  massheal:   ['sapling', 'ratking'],
+  ironwall:   ['sapling', 'aboar'],
+  massheal:   ['sapling', 'scarecrow'],   // 11-28: 1-20 우두머리 허수아비
   venom:      ['spider', 'myconid'],
   poisonarrow:['spider', 'myconid'],
   chain:      ['shaman', 'elder'],

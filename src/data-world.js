@@ -5,7 +5,7 @@ const KINGDOMS = {
     wants: ['wolf_pelt', 'wolf_fang', 'iron_ore', 'lizard_scale', 'kobold_pick', 'golem_core', 'yeti_fur', 'griffon_claw', 'rh_kaishar', 'rh_tempest'],
     desc: '서쪽의 기사 왕국. 군대에 쓸 가죽과 철을 대량으로 사들인다.' },
   frama: { name: '프라마 왕국', race: '인간', c: '#a8432f', c2: '#f4f0e0', need: null,
-    wants: ['rabbit_horn', 'shaman_feather', 'harpy_feather', 'spider_silk', 'maiden_veil', 'sand_silk', 'ratking_crown', 'giant_gem', 'worm_pearl', 'rh_kingslime', 'rh_griffon'],
+    wants: ['rabbit_horn', 'shaman_feather', 'harpy_feather', 'spider_silk', 'maiden_veil', 'sand_silk', 'aboar_plate', 'giant_gem', 'worm_pearl', 'rh_kingslime', 'rh_griffon'],
     desc: '남쪽 바다의 상업 왕국. 사치품과 보석에 돈을 아끼지 않는다.' },
   elves: { name: '엘프 왕국 실바레아', race: '엘프', c: '#3f8a4a', c2: '#e8f0c0', need: 'forest',
     wants: ['herb', 'slime_jelly', 'spore', 'treant_sap', 'bark', 'venom_gland', 'elder_heart', 'snow_essence', 'harpy_feather', 'rh_behemoth'],

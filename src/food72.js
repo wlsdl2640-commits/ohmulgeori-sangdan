@@ -53,7 +53,7 @@ const FOOD72 = {
   boar_beet:     ['멧돼지 비트 스튜',      'soup',   1, { mm_boar: 2, dw_beet: 1, dw_garlic: 1 },                      { hp: 0.1, coldRes: 1 },             '#9a1a3a', '광부들의 붉은 스튜.'],
   aboar_steam:   ['갑옷 멧돼지 갈비찜',    'steam',  1, { mm_aboar: 2, soy: 1, sugar: 1, hg_carrot: 1 },               { def: 0.1, hp: 0.05 },              '#8a4a2a', '달큰한 간장에 푹 졸인 갈비.'],
   aboar_grill:   ['갑옷 멧돼지 갈비 구이', 'grill',  1, { mm_aboar: 2, soy: 1, sesame: 1 },                            { def: 0.08, atk: 0.04 },            '#a85a2a', '양념을 발라 구운 갈비.'],
-  ratking_steak: ['들쥐왕 등심 스테이크',  'grill',  1, { mm_ratking: 1, butter: 1, pepper: 1, salt: 1 },              { atk: 0.1, exp: 0.05 },             '#b85838', '버터에 지진 두툼한 등심.'],
+  ratking_steak: ['갑옷 멧돼지 스테이크',  'grill',  1, { mm_aboar: 2, butter: 1, pepper: 1, salt: 1 },              { atk: 0.1, exp: 0.05 },             '#b85838', '버터에 지진 두툼한 등심.'],
   plains_set:    ['평원 사냥꾼 정식',      'set',    1, { mm_rabbit: 1, mm_wolf: 1, mm_boar: 1, mm_scarecrow: 1, salt: 1 }, { atk: 0.06, hp: 0.06, exp: 0.06 }, '#d8904a', '평원에서 잡은 것을 한 상에 올렸다.'],
   /* ── 원시림 (주방 Lv2) ── */
   snake_grill:   ['덩굴 뱀 소금구이',      'grill',  2, { mm_vinesnake: 2, salt: 1 },                                  { crit: 0.06 },                      '#e0d0a8', '가시를 바르고 구운 흰 살.'],
@@ -100,7 +100,7 @@ const FOOD72 = {
   fairy_ade:     ['요정 이슬꿀 에이드',    'drink',  3, { mm_fairies: 1, fairybell: 1, sr_cactus: 1 },                 { luck: 0.15 },                      '#f0c0e0', '이슬꿀에 선인장 열매 즙을 탄 마실 것.'],
   fairy_cookie:  ['이슬꿀 쿠키',           'bake',   3, { mm_fairies: 1, flour: 2, butter: 1 },                        { luck: 0.1, exp: 0.08 },            '#f0d070', '이슬꿀로 단맛을 낸 쿠키.'],
   black_syrup:   ['검은 수액 열매청',      'drink',  3, { mm_fdryad: 1, sugar: 1, blacktear: 1 },                      { sta: 0.5, matk: 0.08 },            '#6a3a8a', '새콤한 열매를 설탕에 재운 청.'],
-  feast:         ['용사의 만찬',           'set',    3, { mm_ratking: 1, mm_elder: 1, mm_elddragon: 1, mm_fdryad: 1, salt: 1, pepper: 1 }, { atk: 0.1, matk: 0.1, def: 0.1, hp: 0.1, exp: 0.1 }, '#f0c24a', '네 땅의 우두머리로 차린 전설의 만찬.']
+  feast:         ['용사의 만찬',           'set',    3, { mm_aboar: 1, mm_elder: 1, mm_elddragon: 1, mm_fdryad: 1, salt: 1, pepper: 1 }, { atk: 0.1, matk: 0.1, def: 0.1, hp: 0.1, exp: 0.1 }, '#f0c24a', '네 땅의 우두머리로 차린 전설의 만찬.']
 };
 const FOOD_START = { rat_skewer: 1, rabbit_grill: 1, rice_juk: 1 };   // 처음부터 아는 레시피 (cook68.js knows)
 Object.entries(FOOD72).forEach(([id, [name, kind, lv, need, fx, c, desc]]) => {
