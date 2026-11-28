@@ -1,0 +1,76 @@
+{
+  "ui_assets": [
+    {
+      "id": "ebcc4e9c-08ab-4cf5-808f-6c82e9338b26",
+      "name": "ui79_C_stone_gold",
+      "prompt": "fantasy labyrinth city RPG game window: dark slate stone frame with engraved gold rune border and small gem at the top center, deep navy inner panel with item list rows, row of tabs under a gold title plate, two buttons at the bottom (gold primary button and stone secondary button), elegant dark pixel art style",
+      "kind": "template",
+      "file": "ui79_C_stone_gold/ui79_C_stone_gold.png",
+      "size": {
+        "width": 298,
+        "height": 400
+      },
+      "group_id": "ebcc4e9c-08ab-4cf5-808f-6c82e9338b26"
+    },
+    {
+      "id": "d361c930-eb92-4012-ac30-1b499528e3e1",
+      "name": "element 1",
+      "prompt": "fantasy labyrinth city RPG game window: dark slate stone frame with engraved gold rune border and small gem at the top center, deep navy inner panel with item list rows, row of tabs under a gold title plate, two buttons at the bottom (gold primary button and stone secondary button), elegant dark pixel art style",
+      "kind": "element",
+      "file": "ui79_C_stone_gold/elements/element_1.png",
+      "size": {
+        "width": 298,
+        "height": 286
+      },
+      "group_id": "ebcc4e9c-08ab-4cf5-808f-6c82e9338b26"
+    },
+    {
+      "id": "a7ad050e-ea2c-42ea-ab8e-d79742b2f258",
+      "name": "element 2",
+      "prompt": "fantasy labyrinth city RPG game window: dark slate stone frame with engraved gold rune border and small gem at the top center, deep navy inner panel with item list rows, row of tabs under a gold title plate, two buttons at the bottom (gold primary button and stone secondary button), elegant dark pixel art style",
+      "kind": "element",
+      "file": "ui79_C_stone_gold/elements/element_2.png",
+      "size": {
+        "width": 107,
+        "height": 44
+      },
+      "group_id": "ebcc4e9c-08ab-4cf5-808f-6c82e9338b26"
+    },
+    {
+      "id": "3180cc55-6d4c-454d-b877-2751a0441730",
+      "name": "element 3",
+      "prompt": "fantasy labyrinth city RPG game window: dark slate stone frame with engraved gold rune border and small gem at the top center, deep navy inner panel with item list rows, row of tabs under a gold title plate, two buttons at the bottom (gold primary button and stone secondary button), elegant dark pixel art style",
+      "kind": "element",
+      "file": "ui79_C_stone_gold/elements/element_3.png",
+      "size": {
+        "width": 260,
+        "height": 143
+      },
+      "group_id": "ebcc4e9c-08ab-4cf5-808f-6c82e9338b26"
+    },
+    {
+      "id": "e46ccf47-76a0-435b-839b-245fd004a01e",
+      "name": "Button",
+      "prompt": "fantasy labyrinth city RPG game window: dark slate stone frame with engraved gold rune border and small gem at the top center, deep navy inner panel with item list rows, row of tabs under a gold title plate, two buttons at the bottom (gold primary button and stone secondary button), elegant dark pixel art style",
+      "kind": "element",
+      "file": "ui79_C_stone_gold/elements/Button.png",
+      "size": {
+        "width": 134,
+        "height": 58
+      },
+      "group_id": "ebcc4e9c-08ab-4cf5-808f-6c82e9338b26"
+    },
+    {
+      "id": "96665bb1-c159-42b6-a1b6-c9aebb8a85e0",
+      "name": "Button",
+      "prompt": "fantasy labyrinth city RPG game window: dark slate stone frame with engraved gold rune border and small gem at the top center, deep navy inner panel with item list rows, row of tabs under a gold title plate, two buttons at the bottom (gold primary button and stone secondary button), elegant dark pixel art style",
+      "kind": "element",
+      "file": "ui79_C_stone_gold/elements/Button-2.png",
+      "size": {
+        "width": 134,
+        "height": 58
+      },
+      "group_id": "ebcc4e9c-08ab-4cf5-808f-6c82e9338b26"
+    }
+  ]
+}

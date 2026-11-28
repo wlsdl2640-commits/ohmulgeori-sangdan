@@ -1,0 +1,76 @@
+{
+  "ui_assets": [
+    {
+      "id": "5aa081b6-a6a9-485a-a3c6-f92016a268b8",
+      "name": "ui79_B_parchment",
+      "prompt": "fantasy guild RPG game window made of an aged parchment document pinned on a carved wooden board, wax seal stamp at the corner, dark ink title header with a thin red line, tabs like paper bookmarks, list rows drawn as ruled lines, two buttons at the bottom (red wax primary button and wooden secondary button), pixel art style",
+      "kind": "template",
+      "file": "ui79_B_parchment/ui79_B_parchment.png",
+      "size": {
+        "width": 298,
+        "height": 400
+      },
+      "group_id": "5aa081b6-a6a9-485a-a3c6-f92016a268b8"
+    },
+    {
+      "id": "66c528f3-5b7b-4d74-a3e8-c053260fe548",
+      "name": "element 1",
+      "prompt": "fantasy guild RPG game window made of an aged parchment document pinned on a carved wooden board, wax seal stamp at the corner, dark ink title header with a thin red line, tabs like paper bookmarks, list rows drawn as ruled lines, two buttons at the bottom (red wax primary button and wooden secondary button), pixel art style",
+      "kind": "element",
+      "file": "ui79_B_parchment/elements/element_1.png",
+      "size": {
+        "width": 298,
+        "height": 286
+      },
+      "group_id": "5aa081b6-a6a9-485a-a3c6-f92016a268b8"
+    },
+    {
+      "id": "ebbf1a32-8d37-46fc-90bd-4cab48f11cf3",
+      "name": "element 2",
+      "prompt": "fantasy guild RPG game window made of an aged parchment document pinned on a carved wooden board, wax seal stamp at the corner, dark ink title header with a thin red line, tabs like paper bookmarks, list rows drawn as ruled lines, two buttons at the bottom (red wax primary button and wooden secondary button), pixel art style",
+      "kind": "element",
+      "file": "ui79_B_parchment/elements/element_2.png",
+      "size": {
+        "width": 107,
+        "height": 44
+      },
+      "group_id": "5aa081b6-a6a9-485a-a3c6-f92016a268b8"
+    },
+    {
+      "id": "c556c494-2315-4577-8614-cde84e54f03e",
+      "name": "element 3",
+      "prompt": "fantasy guild RPG game window made of an aged parchment document pinned on a carved wooden board, wax seal stamp at the corner, dark ink title header with a thin red line, tabs like paper bookmarks, list rows drawn as ruled lines, two buttons at the bottom (red wax primary button and wooden secondary button), pixel art style",
+      "kind": "element",
+      "file": "ui79_B_parchment/elements/element_3.png",
+      "size": {
+        "width": 260,
+        "height": 143
+      },
+      "group_id": "5aa081b6-a6a9-485a-a3c6-f92016a268b8"
+    },
+    {
+      "id": "705f6e59-427f-4597-ad38-c82d6a167ced",
+      "name": "Button",
+      "prompt": "fantasy guild RPG game window made of an aged parchment document pinned on a carved wooden board, wax seal stamp at the corner, dark ink title header with a thin red line, tabs like paper bookmarks, list rows drawn as ruled lines, two buttons at the bottom (red wax primary button and wooden secondary button), pixel art style",
+      "kind": "element",
+      "file": "ui79_B_parchment/elements/Button.png",
+      "size": {
+        "width": 134,
+        "height": 58
+      },
+      "group_id": "5aa081b6-a6a9-485a-a3c6-f92016a268b8"
+    },
+    {
+      "id": "046194a4-bc1f-4b17-b085-6211b84dcbcc",
+      "name": "Button",
+      "prompt": "fantasy guild RPG game window made of an aged parchment document pinned on a carved wooden board, wax seal stamp at the corner, dark ink title header with a thin red line, tabs like paper bookmarks, list rows drawn as ruled lines, two buttons at the bottom (red wax primary button and wooden secondary button), pixel art style",
+      "kind": "element",
+      "file": "ui79_B_parchment/elements/Button-2.png",
+      "size": {
+        "width": 134,
+        "height": 58
+      },
+      "group_id": "5aa081b6-a6a9-485a-a3c6-f92016a268b8"
+    }
+  ]
+}

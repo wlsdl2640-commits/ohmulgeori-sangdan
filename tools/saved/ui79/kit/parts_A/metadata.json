@@ -1,0 +1,76 @@
+{
+  "ui_assets": [
+    {
+      "id": "415d3e80-f1a8-43ec-99ee-9c7edf7e9b11",
+      "name": "ui79_A_wood_gold",
+      "prompt": "fantasy guild RPG game window: warm dark wooden frame with gold metal corner trim and rivets, crimson ribbon title bar at the top, inside a dark brown wood panel with a list of item rows, a row of tabs under the title, two buttons at the bottom (gold primary button and wooden secondary button), cozy tavern pixel art style",
+      "kind": "template",
+      "file": "ui79_A_wood_gold/ui79_A_wood_gold.png",
+      "size": {
+        "width": 298,
+        "height": 400
+      },
+      "group_id": "415d3e80-f1a8-43ec-99ee-9c7edf7e9b11"
+    },
+    {
+      "id": "89ec18d2-14d3-4f9b-b0de-909339d984e9",
+      "name": "element 1",
+      "prompt": "fantasy guild RPG game window: warm dark wooden frame with gold metal corner trim and rivets, crimson ribbon title bar at the top, inside a dark brown wood panel with a list of item rows, a row of tabs under the title, two buttons at the bottom (gold primary button and wooden secondary button), cozy tavern pixel art style",
+      "kind": "element",
+      "file": "ui79_A_wood_gold/elements/element_1.png",
+      "size": {
+        "width": 298,
+        "height": 286
+      },
+      "group_id": "415d3e80-f1a8-43ec-99ee-9c7edf7e9b11"
+    },
+    {
+      "id": "b3012f60-3a09-43a4-845e-65c97ca02296",
+      "name": "element 2",
+      "prompt": "fantasy guild RPG game window: warm dark wooden frame with gold metal corner trim and rivets, crimson ribbon title bar at the top, inside a dark brown wood panel with a list of item rows, a row of tabs under the title, two buttons at the bottom (gold primary button and wooden secondary button), cozy tavern pixel art style",
+      "kind": "element",
+      "file": "ui79_A_wood_gold/elements/element_2.png",
+      "size": {
+        "width": 107,
+        "height": 44
+      },
+      "group_id": "415d3e80-f1a8-43ec-99ee-9c7edf7e9b11"
+    },
+    {
+      "id": "38123b58-dd9f-4948-8086-c4a8d0ebb53b",
+      "name": "element 3",
+      "prompt": "fantasy guild RPG game window: warm dark wooden frame with gold metal corner trim and rivets, crimson ribbon title bar at the top, inside a dark brown wood panel with a list of item rows, a row of tabs under the title, two buttons at the bottom (gold primary button and wooden secondary button), cozy tavern pixel art style",
+      "kind": "element",
+      "file": "ui79_A_wood_gold/elements/element_3.png",
+      "size": {
+        "width": 260,
+        "height": 143
+      },
+      "group_id": "415d3e80-f1a8-43ec-99ee-9c7edf7e9b11"
+    },
+    {
+      "id": "37398542-0d9e-42e4-a747-ae4d2f1c2c63",
+      "name": "Button",
+      "prompt": "fantasy guild RPG game window: warm dark wooden frame with gold metal corner trim and rivets, crimson ribbon title bar at the top, inside a dark brown wood panel with a list of item rows, a row of tabs under the title, two buttons at the bottom (gold primary button and wooden secondary button), cozy tavern pixel art style",
+      "kind": "element",
+      "file": "ui79_A_wood_gold/elements/Button.png",
+      "size": {
+        "width": 134,
+        "height": 58
+      },
+      "group_id": "415d3e80-f1a8-43ec-99ee-9c7edf7e9b11"
+    },
+    {
+      "id": "d6b12571-3694-4197-b7bc-8cefe5d89a4d",
+      "name": "Button",
+      "prompt": "fantasy guild RPG game window: warm dark wooden frame with gold metal corner trim and rivets, crimson ribbon title bar at the top, inside a dark brown wood panel with a list of item rows, a row of tabs under the title, two buttons at the bottom (gold primary button and wooden secondary button), cozy tavern pixel art style",
+      "kind": "element",
+      "file": "ui79_A_wood_gold/elements/Button-2.png",
+      "size": {
+        "width": 134,
+        "height": 58
+      },
+      "group_id": "415d3e80-f1a8-43ec-99ee-9c7edf7e9b11"
+    }
+  ]
+}
