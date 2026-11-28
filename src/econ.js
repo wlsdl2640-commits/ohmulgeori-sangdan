@@ -689,7 +689,7 @@ function buyWagon(pid, w, sl) {
 
 /* ───────── 판매·구매·제작 ───────── */
 const guildRate = () => GUILD_RATE + (spn('guild') >= 1 ? 0.1 : 0) + 0.02 * (S.rank || 0);
-const guildV = k => ITEMS[k].gsell != null ? ITEMS[k].gsell : guildV(k);   // 빌드 78: 주문서는 정한 매입가(scroll78.js DROP79.gsell)
+const guildV = k => ITEMS[k].gsell != null ? ITEMS[k].gsell : ITEMS[k].v * guildRate();   // 빌드 78: 주문서는 정한 매입가(scroll78.js DROP79.gsell)
 // 자동 판매: 표시해 둔 부속품은 원정대가 돌아올 때 남길 수만 남기고 길드에 판다
 function autoSellRun(who) {
   const A = S.autoSell || {}; let total = 0, n = 0;

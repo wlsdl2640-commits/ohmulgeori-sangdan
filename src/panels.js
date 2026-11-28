@@ -142,7 +142,7 @@ PANELS.co_king = () => {
   })() : `<div class="card"><div class="sub">지금은 찾아온 왕국 상단이 없어요. ${S.king ? `${dayLabel(S.king.next)}쯤 다음 상단이 올 거예요.` : ''}</div></div>`;
   const list = KINGDOM_IDS.map(k => { const D = KINGDOMS[k], open = kingOpen(k), f = favorOf(k), t = favorTier(f), nx = FAVOR[t + 1];
     return `<div class="card${open ? '' : ' dim'}"><div class="row"><span class="kbadge" style="background:${D.c};color:${D.c2}">${D.race}</span><div class="grow"><div class="h">${D.name} <small>${FAVOR[t].name}</small></div><div class="sub">${open ? `호감 ${Math.floor(f)}${nx ? `/${nx.at}` : ''} · 값 ${Math.round(FAVOR[t].m * 100)}%` : `${FIELDS[D.need].name}에 가 보면 교역을 시작해요`}</div></div></div>
-    ${open ? `<div class="sub muted">찾는 물건: ${D.wants.map(i => ITEMS[i].name).join(', ')}</div>` : ''}</div>`; }).join('');
+    ${open ? `<div class="sub muted">찾는 물건: ${D.wants.filter(i => ITEMS[i]).map(i => ITEMS[i].name).join(', ')}</div>` : ''}</div>`; }).join('');
   return `${visit}<div class="sec"><b>이웃 왕국</b><span>주문을 채울수록 값을 더 쳐줘요</span></div>${list}`;
 };
 PANELS.co_relic = () => {
