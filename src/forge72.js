@@ -44,7 +44,7 @@ function forgeNeed(base, t) {
   const U = FORGE_UNIQ[t] && FORGE_UNIQ[t][forgeCat(base)]; if (U && ITEMS[U[0]]) n[U[0]] = U[1];   // 고유 부속품 (그 단계 땅의 몬스터 것)
   if (T.ammo) { add('wood', 1); add('feather', 1); n['mj_' + g] = 1; return n; }
   add(wood ? 'wood' : 'ore', M[0]); add('hide', M[1]); add('fiber', M[2]);
-  if (T.bow || base === 'bow' || T.icon === 'bow') add('web', 1);
+  if (T.bow || base === 'bow' || T.icon === 'bow') add(g === 0 ? 'fiber' : 'web', 1);   // 11-28 대표님: 0단계 활시위는 거미실 대신 짚 섬유(1층에 거미가 없다)
   else if (T.slot === 'weapon' && !wood) add('bone', 1);
   if (typeof SHIELDS !== 'undefined' && SHIELDS.includes(base)) add('wood', 1);
   n['mj_' + g] = FORGE.mj; return n;

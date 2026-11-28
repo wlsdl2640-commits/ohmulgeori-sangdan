@@ -43,8 +43,8 @@ const herbFields = it => ALL_FIELDS.filter(f => (FIELDS[f].herbs || []).includes
 // 연금술 공방 조제법: 약초가 바탕
 RECIPES.length = 0;
 RECIPES.push(
-  { out: 'pot_s',    need: { herb: 2, slime_jelly: 1 },            fee: 6,   lv: 1 },
-  { out: 'bandage',  need: { herb: 2, spider_silk: 1 },            fee: 5,   lv: 1 },
+  { out: 'pot_s',    need: { herb: 2, mugwort: 1 },                fee: 6,   lv: 1 },
+  { out: 'bandage',  need: { herb: 2, fiber_0: 1 },                fee: 5,   lv: 1 },
   { out: 'mp_s',     need: { ethermoss: 1, spore: 1 },             fee: 15,  lv: 1 },
   { out: 'pot_m',    need: { herb: 2, bloodshroom: 1, treant_sap: 1 }, fee: 20, lv: 1 },
   { out: 'antidote', need: { herb: 2, waterherb: 1 },              fee: 10,  lv: 1 },
