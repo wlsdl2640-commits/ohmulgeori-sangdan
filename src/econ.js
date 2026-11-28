@@ -197,10 +197,7 @@ function rollCands() {
   S.cands = [];
   const n = 3 + (spn('guild') >= 3 ? 1 : 0);
   for (let i = 0; i < n; i++) S.cands.push(makeCand());
-  if (!living().length) {
-    const a = makeAdv({ cls: pickOne(['warrior', 'archer', 'cleric']), lv: 1, bio: '길드원 협회가 보낸 견습생. 계약금 없이 일하겠다고 한다.' });
-    a.fee = 0; a.salK = 0.5; salaryNew(a); starterGear(a); S.cands.unshift(a);   // 견습생은 봉급 절반 (빌드 69: 예전엔 60G로 고정)
-  }
+  // 11-28 대표님: 협회 견습생은 없다 — 선술집의 자유 모험가만 받는다(길드원 0명 비상 지원도 없앰)
 }
 function hire(id) {
   const c = S.cands.find(x => x.id === id);
