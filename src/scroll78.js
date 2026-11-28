@@ -279,7 +279,7 @@ const DROP79 = {
 };
 const SCR_ALL = Object.entries(SCR78.cats).flatMap(([c, C]) => C.stats.map(s => [c, s]));   // 17종
 for (const [c, s] of SCR_ALL) SCR78.rates.forEach(r => { const I = ITEMS[`scr_${c}_${s}_${r}`]; if (I) I.gsell = DROP79.gsell[r]; });
-const dropKind = f => f.regen ? f.regen : f.fb ? (f.fb >= 5 ? 'lord' : 'mid') : f.boss ? 'owner' : 'normal';
+const dropKind79 = f => f.regen ? f.regen : f.fb ? (f.fb >= 5 ? 'lord' : 'mid') : f.boss ? 'owner' : 'normal';
 function scrPick79(main, r) {
   let c, s;
   if (main && rnd() < DROP79.main) [c, s] = main;
@@ -292,7 +292,7 @@ const _matDrop78 = matDrop;
 matDrop = function (p, e, f) {   // eslint-disable-line no-func-assign
   _matDrop78(p, e, f);
   if (!e || e.pvp || f.sum) return;
-  const kind = dropKind(f), big = kind !== 'normal';
+  const kind = dropKind79(f), big = kind !== 'normal';
   const B = big ? ((DROP79.boss[kind] || {})[f.id] || DROP79.bossDef) : null, M = DROP79.mon[f.id];
   const got = [];
   const r = scrRoll79(DROP79.p[kind]); if (r) got.push(scrPick79(B ? B.m : M && [M[0], M[1]], r));
