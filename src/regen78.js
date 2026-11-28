@@ -7,10 +7,10 @@
    상태 S.regen[열쇠] = { next: 다시 나오는 때(ms, 없으면 지금 나와 있음), busy: 싸우기 시작한 때(ms — 2분 동안은 다른 파티가 못 만난다), kills, told: 나왔다고 알린 next } */
 const REGEN78 = {
   // 빌드 78 둘째 (e3 합의안 · 11-27 대표님): 배율은 같은 레벨 표준 몬스터(1.0) 기준 — 몬스터 자체 배율(mh · ma · md)을 나눠 겹쳐 곱하지 않는다
-  c1: { mon: 'scare_c1', field: 'plains', stage: 8, min: 15, lvAdd: 3, hp: 2.5, atk: 1.35, def: 1.0, spot: '밀짚더미',
+  c1: { mon: 'scare_c1', field: 'plains', stage: 8, min: 15, lvAdd: 4,   /* 11-28 e10: 1층 Lv1 ~ 10 → C1 Lv8 · C2 Lv11 */ hp: 2.5, atk: 1.35, def: 1.0, spot: '밀짚더미',
         guard: { mon: 'scare_a3', lvAdd: 1, cut: 0.15 },   // Lv10 누더기 허수아비 졸개 — 살아 있는 동안 보스가 받는 피해 −15%
         drop: [['ring', 0.10]] },
-  c2: { mon: 'scare_c2', field: 'plains', stage: 16, min: 30, lvAdd: 4, hp: 4.5, atk: 1.6, def: 1.2, spot: '낡은 축사',   // 혼자 나온다
+  c2: { mon: 'scare_c2', field: 'plains', stage: 16, min: 30, lvAdd: 3, hp: 4.5, atk: 1.6, def: 1.2, spot: '낡은 축사',   // 혼자 나온다
         drop: [['book', 0.24]] }
 };
 const REGEN_BUSY = 120000;   // 싸우는 중(2분)에는 다른 파티가 못 만난다 — 지거나 물러나면 2분 뒤 다시 만날 수 있다
