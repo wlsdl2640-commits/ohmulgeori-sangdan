@@ -1,274 +1,274 @@
 {
- "idle/v1": {
-  "id": "0c3dfb9a-2ef5-4a31-a43d-209ca1ba7a15",
+ "walk/w1": {
+  "id": "1a33c7de-86a0-4200-b178-e0de040c36c4",
   "ok": 1
  },
- "idle/v4": {
-  "id": "30de5b39-3aab-46e6-988d-30e5c55bb319",
+ "walk/w2": {
+  "id": "f169330c-fd15-484c-85f8-b195668a5607",
   "ok": 1
  },
- "walk/v1": {
-  "id": "6f858009-33e3-41f9-80f1-7ebb69dab75c",
+ "idle/w1": {
+  "id": "5167de3a-d477-49c0-954c-5ebd92e961c0",
   "ok": 1
  },
- "idle/v2": {
-  "id": "6e99d617-045d-4e8a-bd90-7c071f779b61",
+ "idle/w2": {
+  "id": "55cc9b15-8d26-4313-b01d-444ba584b523",
   "ok": 1
  },
- "walk/v2": {
-  "id": "2a25524d-fac3-40ea-9c86-b3a3a2234b5c",
+ "idle/w3": {
+  "id": "9783c363-8ca5-407a-aa46-4e59ca642e02",
   "ok": 1
  },
- "idle/v3": {
-  "id": "58c92c4f-eb2b-4f81-9b1a-b1352efc6ff2",
+ "idle/w4": {
+  "id": "58fcf5c4-b6dd-487b-9a48-0062931abd28",
   "ok": 1
  },
- "walk/v3": {
-  "id": "a1f8a464-997c-48ee-a716-c06d9dca8ddc",
+ "walk/w3": {
+  "id": "5707b74b-af10-42e7-9a6a-52ca2708d946",
   "ok": 1
  },
- "walk/v4": {
-  "id": "ebbede83-4c36-4016-a760-ce530d1c4901",
+ "walk/w4": {
+  "id": "deab3276-be7a-4c67-a921-5b8fa74b5b85",
   "ok": 1
  },
- "run/v1": {
-  "id": "a08333f8-6686-4529-bf5a-78cd48c48128",
+ "run/w1": {
+  "id": "4e1a5874-8838-4e58-956d-5bf4b22d5268",
   "ok": 1
  },
- "run/v2": {
-  "id": "038e2f79-5ceb-4b85-b448-6a886d9c3f2c",
+ "run/w2": {
+  "id": "0c104967-df1c-4743-99f7-d67753d1fecf",
   "ok": 1
  },
- "run/v3": {
-  "id": "3720c441-9507-4a76-afc6-7c66877ccfa0",
+ "run/w3": {
+  "id": "aadf3c16-449a-49f5-9523-b75c322f7920",
   "ok": 1
  },
- "run/v4": {
-  "id": "e0b7a6f9-bda3-40de-8136-4449e3fb4a7e",
+ "run/w4": {
+  "id": "a8e1e24c-f60e-43a0-877a-e583c2e5f707",
   "ok": 1
  },
- "hurt/v1": {
-  "id": "bf4af60a-bc9b-4a6f-8831-ace48a172b3c",
+ "hurt/w1": {
+  "id": "32089c91-1c9e-4057-9070-aa0a8b5356ea",
   "ok": 1
  },
- "hurt/v2": {
-  "id": "fcb85484-e1a0-48da-81ca-55f41ec338af",
+ "hurt/w2": {
+  "id": "e0b1f870-4858-4c0e-8457-d4a393ea2424",
   "ok": 1
  },
- "hurt/v3": {
-  "id": "9da3587c-9edc-4994-a645-c3ce69f90014",
+ "hurt/w3": {
+  "id": "7aee79cd-7478-4442-8048-34e9c9313fee",
   "ok": 1
  },
- "hurt/v4": {
-  "id": "ff17f2b3-d249-4e74-943a-371c5e288247",
+ "hurt/w4": {
+  "id": "297ac641-ea44-4211-86f8-14016982dce9",
   "ok": 1
  },
- "fall/v1": {
-  "id": "c8986d52-eadd-47e7-9d19-645d8b7e1d18",
+ "fall/w1": {
+  "id": "7d64646c-e6a1-42dc-bdbf-910e13f8c26d",
   "ok": 1
  },
- "fall/v2": {
-  "id": "4821482a-071a-49d2-b0cc-34b366a18589",
+ "fall/w2": {
+  "id": "28e29d66-5d30-4d78-a94c-e8e53d272d19",
   "ok": 1
  },
- "fall/v3": {
-  "id": "c2c429b1-1118-4489-9722-e46dbea672c9",
+ "fall/w4": {
+  "id": "ce7646f3-80e6-45d7-a2ec-df8887034fe4",
   "ok": 1
  },
- "fall/v4": {
-  "id": "00e43391-b004-411f-bd07-fee65abd580e",
+ "fall/w3": {
+  "id": "c91c0cfc-3fcd-466f-b355-f35e6861e828",
   "ok": 1
  },
- "sit/v1": {
-  "id": "9c77f06b-2fe8-4ebf-a30d-93c48b2fdf4a",
+ "sit/w1": {
+  "id": "be35bc36-017f-4bdf-bc68-f5ac5d762a2f",
   "ok": 1
  },
- "sit/v2": {
-  "id": "c464bc5a-71cc-4236-b188-036195c484e5",
+ "sit/w2": {
+  "id": "8eb24c07-26e1-4dae-bfa0-f0df95734ac9",
   "ok": 1
  },
- "sit/v3": {
-  "id": "0caa005c-4ad5-4e53-9a7e-122e1cddcf58",
+ "sit/w3": {
+  "id": "b210f80e-7674-45dd-93d0-ccd5b36cf6bc",
   "ok": 1
  },
- "sit/v4": {
-  "id": "9c82d930-3154-415e-8df0-0b66222fbcdf",
+ "sit/w4": {
+  "id": "18a7eff6-dce6-4f7a-bb04-bc44d7984e9e",
   "ok": 1
  },
- "sleep/v1": {
-  "id": "fe38a61c-ae5a-4603-af54-a3208d013ab3",
+ "sleep/w1": {
+  "id": "d80d95c3-88b9-456e-97e6-98533ad36b88",
   "ok": 1
  },
- "sleep/v2": {
-  "id": "20a68c1d-a447-4e86-becd-b93035f59384",
+ "sleep/w2": {
+  "id": "d9ead58a-97b7-4988-9e93-c3ef201013a5",
   "ok": 1
  },
- "sleep/v3": {
-  "id": "6d214d23-d628-4d20-af17-c5f77d4a2fc3",
+ "sleep/w3": {
+  "id": "4c470613-b190-42dd-9833-b26757871cb8",
   "ok": 1
  },
- "sleep/v4": {
-  "id": "23932904-605e-4835-a982-a6edba738030",
+ "sleep/w4": {
+  "id": "94b6e4ce-6a67-4a9c-9564-23e76565793d",
   "ok": 1
  },
- "attack/v1": {
-  "id": "089ea73b-d471-40d6-9432-d2c75bd1eab0",
+ "attack/w1": {
+  "id": "cb6e7e4c-3c89-45fb-8322-508a19652738",
   "ok": 1
  },
- "attack/v2": {
-  "id": "b9d55f58-5092-43f0-8343-0e273e7e1529",
+ "attack/w2": {
+  "id": "b3cdc8be-e937-4dfc-bad6-cce6ee1d57ac",
   "ok": 1
  },
- "attack/v3": {
-  "id": "3d06d374-0dd4-4826-ab6c-722cae86db1e",
+ "attack/w3": {
+  "id": "f73b1f8d-e50d-43db-9a0a-849213aa5d7c",
   "ok": 1
  },
- "attack/v4": {
-  "id": "66b8d678-8f7f-4efb-aa0a-e9cdd01d8cef",
+ "attack/w4": {
+  "id": "e362eeea-f45b-46ed-ab10-f78509ef540e",
   "ok": 1
  },
- "fireball/v1": {
-  "id": "54b2c17d-9045-498b-911c-9603cfab61e8",
+ "fireball/w1": {
+  "id": "1cf28aaf-a3d6-4fee-b006-336435ee659a",
   "ok": 1
  },
- "fireball/v2": {
-  "id": "59067a32-b16d-47f6-a60d-c1af3e9d573e",
+ "fireball/w2": {
+  "id": "1b1ab0c5-f0fb-4d50-9a6e-37c69873156f",
   "ok": 1
  },
- "fireball/v3": {
-  "id": "95e58a51-0b38-4745-8e19-b189b31dc396",
+ "fireball/w3": {
+  "id": "ec03d492-bf61-441c-9b6f-56a11347f630",
   "ok": 1
  },
- "fireball/v4": {
-  "id": "38dc5319-f36a-4b2e-be52-f091fd812e99",
+ "fireball/w4": {
+  "id": "74c0d906-88e5-407b-81f6-2feb9969ac0e",
   "ok": 1
  },
- "icelance/v1": {
-  "id": "9c754715-0039-4dd0-bd03-9ba1e0978b8f",
+ "icelance/w1": {
+  "id": "7d4e5df5-fe7f-4446-af62-2e84f348ffa2",
   "ok": 1
  },
- "icelance/v2": {
-  "id": "de377f2f-43a1-4922-a0b6-0e082b665bae",
+ "icelance/w2": {
+  "id": "68aa51df-0633-4c22-b937-02239e911481",
   "ok": 1
  },
- "icelance/v3": {
-  "id": "6e564747-5aed-466a-a212-70f80de257a0",
+ "icelance/w3": {
+  "id": "93ae6d89-beda-40de-b380-d5c73798ecd3",
   "ok": 1
  },
- "icelance/v4": {
-  "id": "2aedf14c-d0ae-46c9-85ed-274295a8e9ba",
+ "icelance/w4": {
+  "id": "78ca8d58-0a99-49c7-8a7b-375cae800910",
   "ok": 1
  },
- "chain/v1": {
-  "id": "890e644d-4578-4cfb-b783-8bbd6e0418aa",
+ "chain/w1": {
+  "id": "759dd61f-ad40-4d5c-9764-cd6416acc37a",
   "ok": 1
  },
- "chain/v2": {
-  "id": "058b73a6-5c34-44ed-8704-1e34d6691bb3",
+ "chain/w2": {
+  "id": "a52fff76-e5ba-4e17-afdd-c7b933fc2225",
   "ok": 1
  },
- "chain/v3": {
-  "id": "12642580-0e75-4d06-84d0-e4ef44d25ecf",
+ "chain/w3": {
+  "id": "5a5219bb-4e3f-4390-8aaf-449aba29f73e",
   "ok": 1
  },
- "chain/v4": {
-  "id": "8c7f1be8-7448-4450-8767-09498488b121",
+ "chain/w4": {
+  "id": "a948c2d2-8fbb-4d6b-b92e-f3fcf6fd13be",
   "ok": 1
  },
- "weaken/v1": {
-  "id": "c6e854a4-5272-4be6-b6e9-f7f7c0d3a6ef",
+ "weaken/w1": {
+  "id": "4dcd0574-18d2-47e6-bb08-b57cbccaa5e9",
   "ok": 1
  },
- "weaken/v2": {
-  "id": "e96f68a6-b443-434f-8389-2dfcd87bdf11",
+ "weaken/w2": {
+  "id": "e1074246-c263-478b-a633-516a3cee82f3",
   "ok": 1
  },
- "weaken/v3": {
-  "id": "e732e50a-fdd1-47f2-88a8-5ad45de05a74",
+ "weaken/w3": {
+  "id": "997caea5-2690-45f7-8b59-de5a65c0624e",
   "ok": 1
  },
- "weaken/v4": {
-  "id": "38fb1231-dc68-4d34-a810-f7009b44245d",
+ "burst/w2": {
+  "id": "4d2baa98-414c-4abe-8b12-2c1452205c8d",
   "ok": 1
  },
- "burst/v1": {
-  "id": "e114d301-b40d-4c12-8236-e16ff37ef77b",
+ "weaken/w4": {
+  "id": "c1e10da6-d04e-4ad7-acab-8ce3f0a46cea",
   "ok": 1
  },
- "burst/v2": {
-  "id": "ae46cbee-6429-441d-9f91-2723c0a257ff",
+ "burst/w1": {
+  "id": "2812aa2a-e19b-4b19-b72e-6fb8cf9fd12a",
   "ok": 1
  },
- "burst/v3": {
-  "id": "25fb6e40-a658-4724-9b3e-c757faf0e2f9",
+ "burst/w3": {
+  "id": "1fbac65d-f346-4d2d-8b9a-eb8493820aa6",
   "ok": 1
  },
- "burst/v4": {
-  "id": "f581962b-95ae-424e-b81e-4103afdefe13",
+ "burst/w4": {
+  "id": "1fbd9d09-badf-49e2-85c7-85426355efd2",
   "ok": 1
  },
- "iceprison/v1": {
-  "id": "3425de2c-2141-4985-b513-f8b0adb11cb7",
+ "iceprison/w1": {
+  "id": "0c0e3559-6c15-4ee3-bd3d-322a324041ce",
   "ok": 1
  },
- "iceprison/v2": {
-  "id": "873740b7-4bc3-4f32-9703-441bba463f59",
+ "iceprison/w2": {
+  "id": "aed6164b-0c90-4cd2-945a-4793ba2a2191",
   "ok": 1
  },
- "iceprison/v3": {
-  "id": "6fd369b2-8d0c-47e2-8425-91c91df67c85",
+ "iceprison/w3": {
+  "id": "b40b5d48-82e8-4fe2-af63-bd48b749b315",
   "ok": 1
  },
- "iceprison/v4": {
-  "id": "0c186e17-452d-4001-9037-d67f3dfca926",
+ "iceprison/w4": {
+  "id": "3b2911c1-6e85-4597-ab66-0c9524188504",
   "ok": 1
  },
- "meteor/v1": {
-  "id": "5630dfa1-b86e-41d8-b946-73c19090dc22",
+ "meteor/w1": {
+  "id": "312f1275-fa6d-4454-b5d6-3e7f039caf3e",
   "ok": 1
  },
- "meteor/v2": {
-  "id": "c7d3493c-1664-4ef3-98c2-4e64045cfad2",
+ "meteor/w2": {
+  "id": "7d8f2f6b-fc72-4c3e-9163-04776c6c280e",
   "ok": 1
  },
- "meteor/v3": {
-  "id": "eb9ce764-e27e-45eb-a069-a9eed9dc33cb",
+ "meteor/w3": {
+  "id": "f05349a9-6d9f-4252-a45e-43d7d77e3b9b",
   "ok": 1
  },
- "meteor/v4": {
-  "id": "024540f5-776f-43cf-ba82-6b03db462ee9",
+ "meteor/w4": {
+  "id": "a3c66a4c-9401-43d8-b8c0-110ca9a2a789",
   "ok": 1
  },
- "thunderclap/v1": {
-  "id": "bc862ffc-9f9e-44f0-96d1-c9cb1440b3b1",
+ "thunderclap/w1": {
+  "id": "3f0d5393-3b38-40db-bd60-b66c8c543e06",
   "ok": 1
  },
- "thunderclap/v2": {
-  "id": "dea8e52a-5f94-479b-b8bf-8874b0bd830a",
+ "thunderclap/w2": {
+  "id": "62accbd6-b99d-4861-9e62-0ed6a9b78ff6",
   "ok": 1
  },
- "thunderclap/v3": {
-  "id": "4f55bf2e-079f-4f2c-ac2f-df86713ef9eb",
+ "thunderclap/w3": {
+  "id": "8a1dea8b-79e1-4178-b304-1e1cffb28cf7",
   "ok": 1
  },
- "thunderclap/v4": {
-  "id": "85c54832-b604-42a9-88da-aa1dcddda151",
+ "thunderclap/w4": {
+  "id": "9bea9aef-6595-46c7-99f3-0ff305433a26",
   "ok": 1
  },
- "manashield/v1": {
-  "id": "f5aaa78c-fa08-4e38-a273-89cf971e45bb",
+ "manashield/w1": {
+  "id": "2b41f5b2-dd97-4661-8079-293dab5b949c",
   "ok": 1
  },
- "manashield/v2": {
-  "id": "79c388f7-ba0b-401a-9992-0859c80851ab",
+ "manashield/w2": {
+  "id": "e3b15470-565e-4a55-bf92-c5fc30845ca0",
   "ok": 1
  },
- "manashield/v3": {
-  "id": "178b2a3b-fe2c-420f-a0b2-82d8c9de90c2",
+ "manashield/w3": {
+  "id": "65d7379e-028d-44fb-8ff0-fe46cb23a9db",
   "ok": 1
  },
- "manashield/v4": {
-  "id": "0ae6cd62-32c0-4d79-99c9-85060d93b717",
+ "manashield/w4": {
+  "id": "810a5fc8-45e3-4d04-9780-dce48fe105e3",
   "ok": 1
  }
 }

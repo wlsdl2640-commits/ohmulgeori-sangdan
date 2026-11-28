@@ -26,9 +26,11 @@ M = [  # (id, 한국말, 장 수, 끝 장 = 첫 장, 움직임)
  ('manashield', '마나 보호막', 20, 1, 'She holds the staff vertically in front of her body with both hands and braces her feet firmly as if guarding, holds, then returns to the start pose.'),
 ]
 J = []
+NF = {'idle': 24, 'walk': 24, 'run': 24, 'hurt': 24, 'fall': 32, 'sit': 32, 'sleep': 32}   # 11-28 대표님 「프레임 적게 썼지」 — 둘째 판: 공격 · 스킬 40
 for i, (mid, ko, n, loop, d) in enumerate(M):
+    n = NF.get(mid, 40)
     for v in range(4):
-        j = {'mon': mid, 'row': f'v{v + 1}', 'ko': ko, 'frames': n, 'first': UP, 'seed': 300 + i * 10 + v, 'subject': SUBJ, 'pose': POSE, 'desc': d + KEEP + NOFX}
+        j = {'mon': mid, 'row': f'w{v + 1}', 'ko': ko, 'frames': n, 'first': UP, 'seed': 500 + i * 10 + v, 'subject': SUBJ, 'pose': POSE, 'desc': d + KEEP + NOFX}
         if loop: j['last'] = UP
         J.append(j)
 json.dump(J, open('jobs_in.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1); print(len(J))

@@ -11,7 +11,7 @@ def gif(d, n):
     for f in fs:
         im = Image.open(os.path.join(d, f)).convert('RGBA'); c = Image.new('RGBA', im.size, BG); c.alpha_composite(im)
         fr.append(c.convert('RGB').resize((im.width * S, im.height * S), Image.NEAREST).quantize(64, dither=Image.NONE))
-    b = io.BytesIO(); fr[0].save(b, 'GIF', save_all=True, append_images=fr[1:], duration=90, loop=0, disposal=1)
+    b = io.BytesIO(); fr[0].save(b, 'GIF', save_all=True, append_images=fr[1:], duration=70, loop=0, disposal=1)
     return base64.b64encode(b.getvalue()).decode()
 mons = []; [mons.append((j['mon'], j['ko'])) for j in J if (j['mon'], j['ko']) not in mons]
 CSS = "body{margin:0;background:#1c1f26;color:#e8e6e0;font-family:system-ui,sans-serif}main{max-width:1240px;margin:0 auto;padding:16px}h3{margin:16px 0 6px;color:#f0c878}p{opacity:.88;margin:4px 0}.row{display:flex;flex-wrap:wrap;gap:8px}.card{background:#262a33;border:1px solid #3a3f4a;border-radius:10px;padding:6px;display:grid;gap:4px;text-align:center}img{image-rendering:pixelated;height:240px;width:auto;border-radius:6px}"
