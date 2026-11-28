@@ -125,7 +125,7 @@ function forgeMatBox() {
   const eth = [0, 1, 2, 3, 4, 5].filter(g => (S.inv[`p_ore_${g}`] || 0) > 0).map(g => { const nd = etherNeed(g, 1), w = forgeEtherWhy(g, 1, sm);
     return `<div class="li">${iconImg('ether_ingot')}<div class="grow stack"><span>에테르 주괴 <span class="muted">· ${MJ_GRADES[g]} 주괴로</span></span><span class="sub">${needStr(nd)} · ${hoursTxt(FORGE.etherH)}</span></div><button type="button" class="btn sm gold" data-act="forgeether" data-g="${g}"${w ? ' disabled' : ''}>만들기</button></div>`; }).join('');
   return `<div class="sec" style="margin-top:6px"><b>재료 제작</b><span>원재료를 가공해요 · 등급은 그대로</span></div><div class="list">${rows.join('') || '<div class="li"><span class="sub">가공할 원재료가 없어요. 짐꾼이 갈무리해 온 가죽 · 뼈 · 광물 같은 재료가 여기 나와요.</span></div>'}</div>
-    <div class="sec"><b>에테르 주괴</b><span>가진 ${S.inv.ether_ingot || 0}개 · 낮은 등급 주괴일수록 많이 들어요</span></div><div class="list">${eth || '<div class="li"><span class="sub">주괴가 있어야 해요. (광물 → 주괴 → 에테르 주괴)</span></div>'}</div>`;
+   `;   // 11-28: 에테르 주괴는 옛 강화(+1 ~ +30)용 — 강화를 주문서로 바꾸며 쓰는 곳이 없어 칸을 뺐다(가진 것은 scroll78이 돈으로 바꿔 줌)
 }
 Object.assign(ACT, {
   forgesm: d => { UI.forgeSm = +d.i; },
