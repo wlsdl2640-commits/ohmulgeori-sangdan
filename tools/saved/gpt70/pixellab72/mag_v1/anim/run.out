@@ -1,0 +1,613 @@
+[오후 9:37:54] !! walk/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:37:54] !! idle/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:37:54] !! walk/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:37:54] !! idle/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:37:54] !! idle/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:37:54] !! idle/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:00] !! idle/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:00] !! walk/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:00] !! idle/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:00] !! idle/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:00] !! idle/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:00] !! walk/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:06] !! walk/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:06] !! idle/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:06] !! walk/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:06] !! idle/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:06] !! idle/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:06] !! idle/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:12] !! run/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:12] !! walk/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:12] !! run/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:12] !! run/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:12] !! walk/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:12] !! run/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:18] !! run/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:18] !! walk/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:18] !! run/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:18] !! run/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:19] !! walk/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:19] !! run/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:24] !! run/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:24] !! walk/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:24] !! walk/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:24] !! run/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:25] !! run/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:25] !! run/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:31] !! fall/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:31] !! hurt/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:31] !! hurt/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:31] !! fall/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:31] !! hurt/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:31] !! hurt/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:37] !! hurt/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:37] !! hurt/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:37] !! fall/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:37] !! fall/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:37] !! hurt/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:37] !! hurt/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:43] !! hurt/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:43] !! hurt/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:43] !! fall/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:43] !! hurt/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:43] !! fall/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:43] !! hurt/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:49] !! sit/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:49] !! fall/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:49] !! fall/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:49] !! sit/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:49] !! sit/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:49] !! sit/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:55] !! fall/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:55] !! fall/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:55] !! sit/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:55] !! sit/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:55] !! sit/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:38:55] !! sit/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:01] !! sit/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:01] !! fall/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:01] !! sit/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:01] !! sit/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:01] !! fall/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:01] !! sit/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:07] !! sleep/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:07] !! attack/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:07] !! attack/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:07] !! sleep/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:08] !! sleep/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:08] !! sleep/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:13] !! sleep/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:13] !! attack/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:13] !! sleep/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:13] !! attack/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:14] !! sleep/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:14] !! sleep/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:20] !! attack/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:20] !! attack/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:20] !! sleep/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:20] !! sleep/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:20] !! sleep/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:20] !! sleep/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:26] !! fireball/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:26] !! fireball/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:26] !! fireball/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:26] !! fireball/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:26] !! attack/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:26] !! attack/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:32] !! fireball/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:32] !! fireball/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:32] !! attack/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:32] !! fireball/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:32] !! fireball/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:32] !! attack/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:38] !! fireball/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:38] !! fireball/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:38] !! attack/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:38] !! fireball/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:38] !! attack/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:38] !! fireball/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:44] !! chain/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:44] !! icelance/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:44] !! icelance/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:44] !! icelance/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:44] !! chain/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:44] !! icelance/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:50] !! icelance/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:50] !! icelance/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:50] !! icelance/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:50] !! icelance/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:50] !! chain/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:50] !! chain/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:56] !! chain/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:56] !! icelance/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:56] !! icelance/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:56] !! icelance/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:57] !! chain/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:39:57] !! icelance/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:03] !! weaken/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:03] !! chain/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:03] !! weaken/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:03] !! weaken/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:03] !! chain/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:03] !! weaken/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:09] !! weaken/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:09] !! weaken/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:09] !! chain/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:09] !! weaken/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:09] !! chain/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:09] !! weaken/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:15] !! weaken/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:15] !! chain/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:15] !! weaken/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:15] !! weaken/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:15] !! weaken/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:15] !! chain/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:21] !! iceprison/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:21] !! burst/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:21] !! burst/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:21] !! iceprison/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:21] !! burst/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:21] !! burst/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:27] !! iceprison/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:27] !! burst/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:27] !! iceprison/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:27] !! burst/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:27] !! burst/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:27] !! burst/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:33] !! burst/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:33] !! burst/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:33] !! iceprison/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:33] !! burst/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:34] !! iceprison/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:34] !! burst/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:39] !! meteor/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:39] !! meteor/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:39] !! meteor/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:39] !! meteor/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:40] !! iceprison/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:40] !! iceprison/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:46] !! iceprison/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:46] !! meteor/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:46] !! meteor/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:46] !! meteor/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:46] !! meteor/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:46] !! iceprison/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:52] !! iceprison/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:52] !! iceprison/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:52] !! meteor/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:52] !! meteor/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:52] !! meteor/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:52] !! meteor/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:58] !! thunderclap/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:58] !! manashield/v2 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:58] !! thunderclap/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:58] !! manashield/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:58] !! thunderclap/v1 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:40:58] !! thunderclap/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:04] !! manashield/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:04] !! thunderclap/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:04] !! manashield/v1 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:04] !! thunderclap/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:04] !! thunderclap/v2 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:04] !! thunderclap/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:10] !! thunderclap/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:10] !! manashield/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:10] !! manashield/v2 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:10] !! thunderclap/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:10] !! thunderclap/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:10] !! thunderclap/v1 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:16] !! manashield/v3 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:16] !! manashield/v4 실패 1: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:22] !! manashield/v3 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:22] !! manashield/v4 실패 2: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:29] !! manashield/v4 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:29] !! manashield/v3 실패 3: 작업 번호 없음: 1 validation error for call[animate_image_pixminimax]
+subject_description
+  String should have at most 300 characters [type=string_too_long, input_value='young female mage: midni...o orb in 
+[오후 9:41:34] 끝 — 받은 동작 0 / 68

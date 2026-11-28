@@ -7,7 +7,7 @@ P = np.array([50, 83, 125])
 x0, y0, x1, y1 = 82.0, 59.0, 75.5, 75.0          # 머리 아래 가운데 → 손 가운데
 k = (x1 - x0) / (y1 - y0); cx = lambda y: x0 + k * (y - y0)
 # 지우기: 위 막대(60~70줄 · 72칸부터) · 아래 막대(80~93줄 · 겉옷 끝 다음 칸부터)
-for y in range(60, 71): a[y, 72:90] = 0
+for y in range(60, 70): a[y, 72:90] = 0          # 70 ~ 79줄은 쥔 손 — 건드리지 않는다
 for y in range(80, 94):
     ps = [x for x in range(60, 80) if (a[y, x, :3] == P).all()]
     e = (max(ps) + 2) if ps else 68
@@ -16,6 +16,6 @@ def put(y):
     c = int(round(cx(y)))
     a[y, c - 2] = B; a[y, c - 1] = LT; a[y, c] = MD; a[y, c + 1] = SH; a[y, c + 2] = B
     if y % 4 == 0: a[y, c - 1] = MD; a[y, c] = SH          # 나선 홈
-for y in list(range(60, 71)) + list(range(80, 99)): put(y)
+for y in list(range(60, 70)) + list(range(80, 99)): put(y)
 c = int(round(cx(99))); a[99, c - 2:c + 3] = [B, FE, FE, FE, B]; a[100, c - 1:c + 2] = [B, B, B]   # 아래 쇠 끝
 Image.fromarray(a).save(out)
