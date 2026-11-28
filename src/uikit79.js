@@ -62,3 +62,12 @@ applyPx = function () { _applyPx79(); document.querySelectorAll('img[data-px]').
 .mbtn img, .mbtn.mmain img { width: 24px; height: 24px; image-rendering: auto; }
 .hud .pi { width: 18px; height: 18px; image-rendering: auto; }
 .pnav .parr { background-image: url('${ICONS79.arrow}') !important; background-size: 32px 32px; background-repeat: no-repeat; background-position: center; image-rendering: pixelated; }`; document.head.appendChild(st); })();
+
+/* ── 길드 창 안에 시설을 합침 (11-28 대표님 「길드 안에다가 시설 통합시켜」) — 메뉴판의 「시설」 칸 자리는 「모험가 협회」 ── */
+const CO79_TABS = [['co', '길드'], ['fac', '시설']];
+const _panelCo79 = PANELS.co;
+PANELS.co = () => {
+  const t = UI.coTab === 'fac' ? 'fac' : 'co';
+  return `<div class="tabs co79">${CO79_TABS.map(([k, n]) => `<button type="button" class="tab${t === k ? ' on' : ''}" data-act="cotab" data-t="${k}">${n}</button>`).join('')}</div>` + (t === 'fac' ? PANELS.fac() : _panelCo79());
+};
+Object.assign(ACT, { cotab: d => { UI.coTab = d.t; const w = winTop(); if (w) w.tab = d.t; renderPanel(true); } });
