@@ -52,6 +52,7 @@ const FOOD72 = {
   boar_gukbap:   ['멧돼지 국밥',           'tang',   1, { mm_boar: 1, mm_scarecrow: 1, hg_cabbage: 1, doenjang: 1 },   { hp: 0.1, fat: 0.1 },               '#c8a878', '밥을 말아 먹는 든든한 탕.'],
   boar_beet:     ['멧돼지 당근 스튜',      'soup',   1, { mm_boar: 2, hg_carrot: 1, hg_potato: 1 },                      { hp: 0.1, coldRes: 1 },             '#9a1a3a', '당근이 달큰하게 우러난 스튜.'],
   aboar_steam:   ['갑옷 멧돼지 갈비찜',    'steam',  1, { mm_aboar: 2, soy: 1, sugar: 1, hg_carrot: 1 },               { def: 0.1, hp: 0.05 },              '#8a4a2a', '달큰한 간장에 푹 졸인 갈비.'],
+  badger_grill:  ['오소리 앞다리 구이',    'grill',  1, { mm_badger: 1, hg_cabbage: 1, salt: 1 },                    { def: 0.06, hp: 0.04 },             '#a8784a', '양배추를 곁들여 구운 단단한 앞다리살.'],   // 11-28 e8
   aboar_grill:   ['갑옷 멧돼지 갈비 구이', 'grill',  1, { mm_aboar: 2, soy: 1, sesame: 1 },                            { def: 0.08, atk: 0.04 },            '#a85a2a', '양념을 발라 구운 갈비.'],
   ratking_steak: ['갑옷 멧돼지 스테이크',  'grill',  1, { mm_aboar: 2, butter: 1, pepper: 1, salt: 1 },              { atk: 0.1, exp: 0.05 },             '#b85838', '버터에 지진 두툼한 등심.'],
   plains_set:    ['평원 사냥꾼 정식',      'set',    1, { mm_rabbit: 1, mm_wolf: 1, mm_boar: 1, mm_scarecrow: 1, salt: 1 }, { atk: 0.06, hp: 0.06, exp: 0.06 }, '#d8904a', '평원에서 잡은 것을 한 상에 올렸다.'],

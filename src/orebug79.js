@@ -51,3 +51,11 @@ forgeMatBox = function () {   // eslint-disable-line no-func-assign
   return _forgeMatBox79() + box;
 };
 Object.assign(ACT, { chiptrade: d => say(chipTrade(+d.n)) });
+
+// ── 데모 제작 정리 (e8) ──
+GTYPES.bag.cls = ['porter'];   // 11-25 결정: 가방은 짐꾼 계열 전용
+const _forgeGearWhy79 = forgeGearWhy;
+forgeGearWhy = function (base, t, lv, sm) {   // eslint-disable-line no-func-assign
+  if (TEST_SCOPE && t > 0) return '시험판에서는 견습 장비만 만들어요.';   // 장비 단계는 #10에서 없앤다 — 그때까지 시험판은 견습만
+  return _forgeGearWhy79(base, t, lv, sm);
+};
