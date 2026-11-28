@@ -60,6 +60,8 @@ function scrVal(g, s, r) {
 function durMax(g) { const sl = g && GTYPES[g.base] && GTYPES[g.base].slot; if (!sl || GTYPES[g.base].ammo) return 0; return ['weapon', 'off', 'bcase'].includes(sl) ? DUR78.arms : ['armor', 'legs', 'gloves', 'boots', 'belt'].includes(sl) ? DUR78.armor : 0; }
 const durOf = g => { const M = durMax(g); return M ? (g.dur == null ? M : Math.max(0, Math.min(M, g.dur))) : 0; };
 const durTxt = g => { const M = durMax(g); if (!M) return ''; const d = durOf(g); return `<span class="${d === 0 ? 'red-t' : d <= M * DUR78.warn ? 'gold-t' : 'muted'}">내구도 ${d}/${M}${d === 0 ? ' (능력치 절반)' : ''}</span>`; };
+// 빌드 78: 내구도 막대 — 닳은 장비만 그림 아래에 열 칸 도트 막대(가득이면 안 보임). 절반 위 초록 · 20% 위 노랑 · 그 아래 빨강 · 0이면 빈 막대가 깜빡인다
+const durBarH = g => { const M = durMax(g); if (!M) return ''; const d = durOf(g); if (d >= M) return ''; const n = d > 0 ? Math.max(1, Math.ceil(d / M * 10)) : 0, c = d === 0 ? 'z' : d <= M * DUR78.warn ? 'r' : d <= M * 0.5 ? 'y' : 'g'; return `<b class="durb ${c}" style="--dn:${n}"></b>`; };
 const _gearStats78 = gearStats;
 gearStats = function (g) {   // eslint-disable-line no-func-assign
   const out = _gearStats78(g);
