@@ -15,6 +15,7 @@ PICK = {   # 대표님이 고른 장(11-27) — 열쇠: 게임 몬스터 id
     'scare_c1': [('idle', 'idle_s12'), ('sickle', 'sickle_s12'), ('crows', 'crows_s11'), ('swarm', 'swarm_s11')],
     'scare_c2': [('idle', 'idle_s12'), ('sickle', 'sickle_s12'), ('crows', 'crows_s12'), ('swarm', 'swarm_s11')],
     'badger': [('idle', 'idle_s11'), ('walk', 'walk_s11'), ('claw', 'claw_s11'), ('dig', 'dig_s11')],   # 11-28 둑굴 오소리(시안 7번)
+    'orebug': [('idle', 'idle_s11'), ('walk', 'walk_s11'), ('bite', 'bite_s11'), ('curl', 'curl_s12')],   # 11-28 e8 광맥 콩벌레(시안 1번) — 클팀장이 고름(물기 A는 입을 벌린 장이 보임 · 몸 말기 B가 더 둥글다)
 }
 BIG = {'scare_c1', 'scare_c2'}
 NF = {'idle': 12, 'walk': 12}   # 나머지 16

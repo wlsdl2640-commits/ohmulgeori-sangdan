@@ -1,0 +1,6 @@
+[
+ ["orebug", "idle", "tools/saved/orebug79/orebug1_floor1.png", "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back", {"walk": "it stays in place breathing slowly, its shell segments rising and falling a little and its antennae twitching"}, [11, 12]],
+ ["orebug", "walk", "tools/saved/orebug79/orebug1_floor1.png", "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back", {"walk": "it crawls forward in place on many short legs, its body rocking gently"}, [11, 12]],
+ ["orebug", "bite", "tools/saved/orebug79/orebug1_floor1.png", "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back", ["it pulls its head back and raises the front of its body", "it lunges its head forward and snaps its small jaws in the air"], [11, 12]],
+ ["orebug", "curl", "tools/saved/orebug79/orebug1_floor1.png", "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back", ["it tucks its head and legs under its shell", "it rolls its whole body up into a tight armored ball with the ore chunks on the outside, and holds still"], [11, 12]]
+]

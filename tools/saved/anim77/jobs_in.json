@@ -1998,5 +1998,93 @@
   "seed": 22,
   "subject": "a red canyon bat monster with a pig-like snout, pixel art, side view, facing left",
   "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it hovers and raises its wings high, pulling its head back. Frames 11-18: it beats its wings down and pushes its snout a short way forward. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors. Keep the whole body, tail and wings inside the frame with empty space around them; the wing tips never reach the frame edges, wings spread only moderately."
+ },
+ {
+  "mon": "orebug",
+  "row": "idle_s11",
+  "frames": 24,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 11,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth seamless 24-frame movement loop in place: it stays in place breathing slowly, its shell segments rising and falling a little and its antennae twitching. The body keeps exactly the same shape, size and proportions in every frame; only the limbs, wings or body wave move. Every change between frames is small and even, and the last frames lead smoothly back into the first pose. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "orebug",
+  "row": "idle_s12",
+  "frames": 24,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 12,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth seamless 24-frame movement loop in place: it stays in place breathing slowly, its shell segments rising and falling a little and its antennae twitching. The body keeps exactly the same shape, size and proportions in every frame; only the limbs, wings or body wave move. Every change between frames is small and even, and the last frames lead smoothly back into the first pose. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "orebug",
+  "row": "walk_s11",
+  "frames": 24,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 11,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth seamless 24-frame movement loop in place: it crawls forward in place on many short legs, its body rocking gently. The body keeps exactly the same shape, size and proportions in every frame; only the limbs, wings or body wave move. Every change between frames is small and even, and the last frames lead smoothly back into the first pose. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "orebug",
+  "row": "walk_s12",
+  "frames": 24,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 12,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth seamless 24-frame movement loop in place: it crawls forward in place on many short legs, its body rocking gently. The body keeps exactly the same shape, size and proportions in every frame; only the limbs, wings or body wave move. Every change between frames is small and even, and the last frames lead smoothly back into the first pose. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "orebug",
+  "row": "bite_s11",
+  "frames": 32,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 11,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it pulls its head back and raises the front of its body. Frames 11-18: it lunges its head forward and snaps its small jaws in the air. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "orebug",
+  "row": "bite_s12",
+  "frames": 32,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 12,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it pulls its head back and raises the front of its body. Frames 11-18: it lunges its head forward and snaps its small jaws in the air. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "orebug",
+  "row": "curl_s11",
+  "frames": 32,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 11,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it tucks its head and legs under its shell. Frames 11-18: it rolls its whole body up into a tight armored ball with the ore chunks on the outside, and holds still. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
+ },
+ {
+  "mon": "orebug",
+  "row": "curl_s12",
+  "frames": 32,
+  "first": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "last": "upload:7c24d383-bbb8-4546-a312-22633bb3982e",
+  "dir": "west",
+  "seed": 12,
+  "subject": "a tiny pill bug monster with a dark earthy brown segmented shell and three silver-white ore chunks embedded on its back, pixel art, side view, facing left",
+  "desc": "Smooth 32-frame action in three phases. Frames 1-10: slowly wind up — it tucks its head and legs under its shell. Frames 11-18: it rolls its whole body up into a tight armored ball with the ore chunks on the outside, and holds still. Frames 19-32: ease back gradually and return exactly to the starting pose. Every change between frames is small and gradual. The creature moves through empty air: it does not touch or hit anything and nothing else appears in the frame. Only the creature's own body is drawn in every frame, whole and inside the frame, same side view facing left, same design, size and colors."
  }
 ]
