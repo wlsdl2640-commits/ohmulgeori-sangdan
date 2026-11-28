@@ -5,6 +5,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 GF = ImageFont.truetype('C:/Users/wlsdl/AppData/Local/Temp/claude/bf0cecbd3cd9607d/7c79a6ea-5ef1-47ef-8d7e-b2f3accec304/scratchpad/Galmuri11-Bold.ttf', 22)
 W, H = 824, 1800
 def fit(im):
+    if im.size == (206, 450): return im.resize((W, H), Image.NEAREST)   # 픽셀랩 도트: 정확히 4배(폰 2배 × 2)
     k = max(W / im.width, H / im.height); im = im.resize((round(im.width * k), round(im.height * k)), Image.LANCZOS)
     return im.crop(((im.width - W) // 2, (im.height - H) // 2, (im.width - W) // 2 + W, (im.height - H) // 2 + H))
 def button(kind, state, label, w=520):
@@ -18,13 +19,14 @@ def button(kind, state, label, w=520):
     d.text(((w - tw) / 2 + 2, out.height / 2 - 13 + dy + 2), label, font=GF, fill=(0, 0, 0, 90)); d.text(((w - tw) / 2, out.height / 2 - 13 + dy), label, font=GF, fill=col if state != 'disabled' else (120, 116, 110))
     return out
 for k in 'ABC':
-    if not os.path.exists(f'bg_{k}.png'): continue
+    src = (os.environ.get('BG') or 'bg') + f'_{k}.png'
+    if not os.path.exists(src): continue
     for lg in 'ABC':
-        im = fit(Image.open(f'bg_{k}.png').convert('RGBA'))
+        im = fit(Image.open(src).convert('RGBA'))
         lo = Image.open(f'logo_{lg}.png').convert('RGBA'); s = min(680 / lo.width, 1.0) * 1.0; lo = lo.resize((round(lo.width * s), round(lo.height * s)), Image.NEAREST)
         im.alpha_composite(lo, ((W - lo.width) // 2, 150))
         y = H - 520
         for i, (kind, st, lb) in enumerate((('gold', 'hover', '게임시작'), ('wood', 'normal', '시스템설정'), ('wood', 'normal', '언어설정'))):
             b = button(kind, st, lb); im.alpha_composite(b, ((W - b.width) // 2, y + i * 140))
-        im.convert('RGB').save(f'mock_{k}{lg}.png')
+        im.convert('RGB').save(('pxmock' if os.environ.get('BG') == 'px' else 'mock') + f'_{k}{lg}.png')
 print('ok')
