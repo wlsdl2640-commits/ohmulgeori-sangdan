@@ -1,0 +1,54 @@
+[
+ {
+  "key": "shield2_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier shaped like a tall closed oval glass capsule standing on the ground, big enough to hold one standing small person, a thin glowing indigo and sky-blue rim all the way around, glass-like white reflection streaks curving along the left upper side. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster, glowing energy parts bright with a hot near-white rim fading to saturated indigo and sky-blue, crisp stepped pixel edges, no blur. The inside of the shell is EMPTY and see-through (transparent), only the glassy shell, its rim and reflections are drawn. No crosses, no star or crescent symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 192,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4300
+  }
+ },
+ {
+  "key": "shield2_b",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier shaped like a soap-bubble sphere of clear glass resting on the ground, a glowing indigo rim, rainbow-tinted glassy reflections and two bright window-shaped glints on the upper left. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster, glowing energy parts bright with a hot near-white rim fading to saturated indigo and sky-blue, crisp stepped pixel edges, no blur. The inside of the shell is EMPTY and see-through (transparent), only the glassy shell, its rim and reflections are drawn. No crosses, no star or crescent symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 192,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4301
+  }
+ },
+ {
+  "key": "shield2_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier shaped like a tall faceted crystal glass shell around an empty space, flat glass panels with glowing sky-blue edges where panels meet, soft glassy reflections on the panels, a glowing indigo outer rim. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster, glowing energy parts bright with a hot near-white rim fading to saturated indigo and sky-blue, crisp stepped pixel edges, no blur. The inside of the shell is EMPTY and see-through (transparent), only the glassy shell, its rim and reflections are drawn. No crosses, no star or crescent symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 192,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4302
+  }
+ },
+ {
+  "key": "shield2_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier shaped like a tall closed oval of flowing mana glass, a thick glowing indigo rim with slow flowing energy along it, faint ripples on the glass surface and bright glassy reflection streaks. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster, glowing energy parts bright with a hot near-white rim fading to saturated indigo and sky-blue, crisp stepped pixel edges, no blur. The inside of the shell is EMPTY and see-through (transparent), only the glassy shell, its rim and reflections are drawn. No crosses, no star or crescent symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no text, transparent background.",
+   "width": 192,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4303
+  }
+ }
+]
