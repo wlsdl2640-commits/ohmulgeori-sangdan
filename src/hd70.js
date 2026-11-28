@@ -17,6 +17,8 @@ function hd78Mot() {   // 빌드 78 허수아비 동작: 장 16 · 0.055초 · �
   add('scare_c4', 'sickle', null); add('scare_c4', 'crows', [8, -54]);
   for (const id of ['scare_c1', 'scare_c2']) { add(id, 'sickle', null); add(id, 'crows', [8, -54]); add(id, 'swarm', [6, -50], 8); }
   for (const k in o) if (!o[k].tip) delete o[k].tip;
+  // 11-28 e11 점토 협곡 13종: 공격 16장 · 맞히는 장 8 (export78 — anim76)
+  for (const id of ['canyon_ledge_lizard', 'canyon_crack_beetle', 'canyon_clay_burrower', 'canyon_pool_toad', 'canyon_cave_bat', 'canyon_clay_wasp', 'canyon_bank_beetle', 'canyon_bank_otter', 'canyon_slab_toad', 'canyon_spire_hawk', 'canyon_sluice_earwig', 'canyon_gate_crab', 'canyon_cliff_bison']) add(id, 'atk', null, 8);
   // 11-28 e8 광맥 콩벌레: 물기 · 등딱지 웅크리기(강화 — view.js fbuff가 돌린다)
   o.i_orebug_bite = { id: 'orebug', row: 'bite', T: 0.055, hit: 8, dx: [0, 0, 0, 0, 1, 2, 3, 4, 4, 3, 2, 1, 1, 0, 0, 0] };
   o.i_orebug_curl = { id: 'orebug', row: 'curl', T: 0.07, hit: 8, dx: Array(16).fill(0) };
@@ -81,7 +83,7 @@ const HD_MOT = {
   // 빌드 78: 허수아비 다섯 (픽셀랩 동작 32장 → 16장 · data-pxl78.js) — 8번째 장에서 맞힌다
   ...hd78Mot()
 };
-const HD_IDLE_FPS = { orebug: 7, badger: 8, scare_a3: 8, scare_b2: 8, scare_c4: 8, scare_c1: 8, scare_c2: 8, rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, ewisp: 8, emoth: 8, eshroom: 6, mlizard: 6, rcenti: 7, cstag: 6, sentinel: 6, elddragon: 6, smandrake: 7, fdryad: 6, fairies: 9, rahen: 6, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
+const HD_IDLE_FPS = { canyon_ledge_lizard: 7, canyon_crack_beetle: 7, canyon_clay_burrower: 7, canyon_pool_toad: 7, canyon_cave_bat: 7, canyon_clay_wasp: 7, canyon_bank_beetle: 7, canyon_bank_otter: 7, canyon_slab_toad: 7, canyon_spire_hawk: 7, canyon_sluice_earwig: 7, canyon_gate_crab: 7, canyon_cliff_bison: 7, orebug: 7, badger: 8, scare_a3: 8, scare_b2: 8, scare_c4: 8, scare_c1: 8, scare_c2: 8, rat: 7, rabbit: 7, wolf: 7, scarecrow: 6, boar: 6, aboar: 6, gobclub: 7, goblin: 7, gobarcher: 7, ewisp: 8, emoth: 8, eshroom: 6, mlizard: 6, rcenti: 7, cstag: 6, sentinel: 6, elddragon: 6, smandrake: 7, fdryad: 6, fairies: 9, rahen: 6, vinesnake: 7, cflower: 7, stump: 7, spotshroom: 7, ibeetle: 6, mgolem: 6, fguard: 6 };
 const HD_DEATH = { fguard: 'i_fguard_death', elddragon: 'i_elddragon_death', rahen: 'i_rahen_death' };
 const HD_LIFT = { ewisp: 5, emoth: 5, fairies: 6 };   // 떠 있는 몬스터: 몸을 이만큼 띄운다 (뭉툭 칸 — 그림자는 땅에)   // 쓰러지는 그림이 따로 있는 몬스터 (넘어뜨려 돌리지 않고 이 줄을 돌린다)
 const HD_WALK = { gobclub: [3, 4, 5, 6], goblin: [3, 4, 5, 6], gobarcher: [3, 4, 5, 6] };   // 걷기 줄에서 도는 장 (고블린 달리기 줄은 서기 → 달리기 → 서기라서 가운데 넉 장만)
@@ -92,7 +94,7 @@ for (const k in HD_MOT) {   // 장 시간 · 맞히는 장을 동작 표에 (fmo
 }
 Object.assign(PXU_CAST, { i_scare_a3_crow1: 1, i_scare_a3_crows: 1, i_scare_b2_crow1: 1, i_scare_b2_lantern: 1, i_scare_c4_crows: 1, i_scare_c1_crows: 1, i_scare_c1_swarm: 1, i_scare_c2_crows: 1, i_scare_c2_swarm: 1, i_scarecrow_crow1: 1, i_scarecrow_crow2: 1, i_scarecrow_crow3: 1, i_gobarcher_shot: 1, i_spotshroom_spore: 1, i_ewisp_burst: 1, i_emoth_dust: 1, i_eshroom_spore: 1, i_smandrake_scream: 1, i_elddragon_breath: 1, i_rahen_cast: 1 });   // 까마귀를 날려 보낸다 (fmot.js FMOT_CAST)
 // 새 몬스터 셋은 그림만 있다 (PXU 자리 · 크기 규칙만 빌린다) — 들쥐 · 뿔토끼 · 들늑대는 예전 PXU 그림이 그림 판을 풀기 전까지 그대로 나온다
-for (const id of ['scare_a3', 'scare_b2', 'scare_c4', 'scare_c1', 'scare_c2', 'scarecrow', 'boar', 'badger', 'orebug', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard', 'ewisp', 'emoth', 'eshroom', 'mlizard', 'rcenti', 'cstag', 'sentinel', 'elddragon', 'smandrake', 'fdryad', 'fairies', 'rahen']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
+for (const id of ['scare_a3', 'scare_b2', 'scare_c4', 'scare_c1', 'scare_c2', 'scarecrow', 'boar', 'badger', 'orebug', 'canyon_ledge_lizard', 'canyon_crack_beetle', 'canyon_clay_burrower', 'canyon_pool_toad', 'canyon_cave_bat', 'canyon_clay_wasp', 'canyon_bank_beetle', 'canyon_bank_otter', 'canyon_slab_toad', 'canyon_spire_hawk', 'canyon_sluice_earwig', 'canyon_gate_crab', 'canyon_cliff_bison', 'aboar', 'gobclub', 'gobarcher', 'vinesnake', 'cflower', 'stump', 'spotshroom', 'ibeetle', 'mgolem', 'fguard', 'ewisp', 'emoth', 'eshroom', 'mlizard', 'rcenti', 'cstag', 'sentinel', 'elddragon', 'smandrake', 'fdryad', 'fairies', 'rahen']) PXU[id] = { img: 1, g: 'C', ax: 0, pal: {} };
 for (const id of ['rat', 'rabbit', 'wolf', 'goblin']) PXU[id].img = 1;
 // 동작 갈래: hd = 그림 판이 있을 때 · 없으면 예전 갈래 (새 몬스터는 같은 것)
 const HD_ACT = {
@@ -109,6 +111,19 @@ const HD_ACT = {
   aboar:     { atk: ['i_aboar_butt'], skl: ['i_aboar_charge', 'i_aboar_horn'] },
   badger:    { atk: ['i_badger_claw'], skl: ['i_badger_dig'] },
   orebug:    { atk: ['i_orebug_bite'], skl: ['i_orebug_bite'] },
+  canyon_ledge_lizard: { atk: ['i_canyon_ledge_lizard_atk'], skl: ['i_canyon_ledge_lizard_atk'] },
+  canyon_crack_beetle: { atk: ['i_canyon_crack_beetle_atk'], skl: ['i_canyon_crack_beetle_atk'] },
+  canyon_clay_burrower: { atk: ['i_canyon_clay_burrower_atk'], skl: ['i_canyon_clay_burrower_atk'] },
+  canyon_pool_toad: { atk: ['i_canyon_pool_toad_atk'], skl: ['i_canyon_pool_toad_atk'] },
+  canyon_cave_bat: { atk: ['i_canyon_cave_bat_atk'], skl: ['i_canyon_cave_bat_atk'] },
+  canyon_clay_wasp: { atk: ['i_canyon_clay_wasp_atk'], skl: ['i_canyon_clay_wasp_atk'] },
+  canyon_bank_beetle: { atk: ['i_canyon_bank_beetle_atk'], skl: ['i_canyon_bank_beetle_atk'] },
+  canyon_bank_otter: { atk: ['i_canyon_bank_otter_atk'], skl: ['i_canyon_bank_otter_atk'] },
+  canyon_slab_toad: { atk: ['i_canyon_slab_toad_atk'], skl: ['i_canyon_slab_toad_atk'] },
+  canyon_spire_hawk: { atk: ['i_canyon_spire_hawk_atk'], skl: ['i_canyon_spire_hawk_atk'] },
+  canyon_sluice_earwig: { atk: ['i_canyon_sluice_earwig_atk'], skl: ['i_canyon_sluice_earwig_atk'] },
+  canyon_gate_crab: { atk: ['i_canyon_gate_crab_atk'], skl: ['i_canyon_gate_crab_atk'] },
+  canyon_cliff_bison: { atk: ['i_canyon_cliff_bison_atk'], skl: ['i_canyon_cliff_bison_atk'] },
   gobclub:   { atk: ['i_gobclub_smash'], skl: ['i_gobclub_smash'] },
   ewisp: { atk: ['i_ewisp_burst'], mag: ['i_ewisp_burst'], skl: ['i_ewisp_burst'] }, emoth: { atk: ['i_emoth_dust'], mag: ['i_emoth_dust'], skl: ['i_emoth_dust'] }, eshroom: { atk: ['i_eshroom_spore'], mag: ['i_eshroom_spore'], skl: ['i_eshroom_spore'] },
   mlizard: { atk: ['i_mlizard_tongue'], skl: ['i_mlizard_tongue'] }, rcenti: { atk: ['i_rcenti_bite'], skl: ['i_rcenti_bite'] }, cstag: { atk: ['i_cstag_pinch'], skl: ['i_cstag_pinch'] }, sentinel: { atk: ['i_sentinel_smash'], skl: ['i_sentinel_smash'] },
@@ -134,6 +149,19 @@ Object.assign(PXU_ACT, {
   scarecrow: Object.assign({ fx: { atk: { pal: 'shadow', hit: 'claw', p: 'dart' }, skl: { pal: 'shadow', hit: 'claw', p: 'dart', big: 1, after: 'feathers', aoe: 'feathers' } } }, HD_ACT.scarecrow),
   boar:      Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'star', after: 'dust' }, skl: { pal: 'earth', hit: 'star', big: 1, after: 'dust' } } }, HD_ACT.boar),
   aboar:     Object.assign({ tk: 1.05, fx: { atk: { pal: 'steel', hit: 'star', after: 'dust' }, skl: { pal: 'war', hit: 'pierce', big: 1, after: 'dust' } } }, HD_ACT.aboar),
+  canyon_ledge_lizard: Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'bite', after: 'dust' }, skl: { pal: 'earth', hit: 'bite', after: 'dust', big: 1 } } }, HD_ACT.canyon_ledge_lizard),
+  canyon_crack_beetle: Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'bite', after: 'dust' }, skl: { pal: 'earth', hit: 'bite', after: 'dust', big: 1 } } }, HD_ACT.canyon_crack_beetle),
+  canyon_clay_burrower: Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'bite', after: 'dust' }, skl: { pal: 'earth', hit: 'bite', after: 'dust', big: 1 } } }, HD_ACT.canyon_clay_burrower),
+  canyon_pool_toad: Object.assign({ tk: 1, fx: { atk: { pal: 'water', hit: 'bite', after: 'bubbles' }, skl: { pal: 'water', hit: 'bite', after: 'bubbles', big: 1 } } }, HD_ACT.canyon_pool_toad),
+  canyon_cave_bat: Object.assign({ tk: 1, fx: { atk: { pal: 'shadow', hit: 'bite' }, skl: { pal: 'shadow', hit: 'bite', big: 1 } } }, HD_ACT.canyon_cave_bat),
+  canyon_clay_wasp: Object.assign({ tk: 1, fx: { atk: { pal: 'poison', hit: 'poison' }, skl: { pal: 'poison', hit: 'poison', big: 1 } } }, HD_ACT.canyon_clay_wasp),
+  canyon_bank_beetle: Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'bite', after: 'dust' }, skl: { pal: 'earth', hit: 'bite', after: 'dust', big: 1 } } }, HD_ACT.canyon_bank_beetle),
+  canyon_bank_otter: Object.assign({ tk: 1, fx: { atk: { pal: 'water', hit: 'claw' }, skl: { pal: 'water', hit: 'claw', big: 1 } } }, HD_ACT.canyon_bank_otter),
+  canyon_slab_toad: Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'quake', after: 'dust' }, skl: { pal: 'earth', hit: 'quake', after: 'dust', big: 1 } } }, HD_ACT.canyon_slab_toad),
+  canyon_spire_hawk: Object.assign({ tk: 1, fx: { atk: { pal: 'wind', hit: 'claw' }, skl: { pal: 'wind', hit: 'claw', big: 1 } } }, HD_ACT.canyon_spire_hawk),
+  canyon_sluice_earwig: Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'bite', after: 'dust' }, skl: { pal: 'earth', hit: 'bite', after: 'dust', big: 1 } } }, HD_ACT.canyon_sluice_earwig),
+  canyon_gate_crab: Object.assign({ tk: 1, fx: { atk: { pal: 'steel', hit: 'slashes', after: 'dust' }, skl: { pal: 'steel', hit: 'slashes', after: 'dust', big: 1 } } }, HD_ACT.canyon_gate_crab),
+  canyon_cliff_bison: Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'bite', after: 'dust' }, skl: { pal: 'earth', hit: 'bite', after: 'dust', big: 1 } } }, HD_ACT.canyon_cliff_bison),
   orebug:    Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'bite', after: 'dust' }, skl: { pal: 'earth', hit: 'bite', after: 'dust' } } }, HD_ACT.orebug),
   badger:    Object.assign({ tk: 1, fx: { atk: { pal: 'earth', hit: 'claw', after: 'dust' }, skl: { pal: 'earth', hit: 'slashes', big: 1, after: 'dust' } } }, HD_ACT.badger),
   vinesnake: Object.assign({ fx: { atk: { pal: 'poison', hit: 'bite' }, skl: { pal: 'poison', hit: 'poison', big: 1, after: 'bubbles' } } }, HD_ACT.vinesnake),

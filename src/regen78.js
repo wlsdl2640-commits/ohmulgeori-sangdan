@@ -107,10 +107,11 @@ function regenDown(p, e, f) {   // core.js kill이 부른다 — 시계를 다�
   for (const [what, ch] of R.drop) {
     if (rnd() >= ch) continue;
     if (what === 'ring') { e.gbag.push(strawRing()); got.push('마법 걸린 밀짚 반지'); }
-    else if (what === 'book') { const id = pickOne(REGEN_BOOKS78), it = 'book_' + id; if (ITEMS[it]) { addTo(e.bag, it, 1); got.push(ITEMS[it].name); } }
+    else if (what === 'book') { const id = pickOne(R.books ? R.books() : REGEN_BOOKS78), it = 'book_' + id; if (ITEMS[it]) { addTo(e.bag, it, 1); got.push(ITEMS[it].name); } }
+    else if (what === 'gear' && R.gear) { const g = R.gear(); e.gbag.push(g); got.push(gearName(g)); }   // 빌드 79: 리젠보스마다 보스 장비 (canyon79.js)
   }
   if (got.length) { log(`${p.name}이(가) ${f.name}에게서 「${got.join('」 · 「')}」을(를) 얻었다!`, 'good'); HOOKS.toast(`리젠보스 드롭 · ${got.join(' · ')}`); }
-  else log(`${f.name}이(가) 짚더미로 무너졌다. 이번엔 아무것도 남기지 않았다.`, 'muted');
+  else log(`${f.name}이(가) ${R.fall || '짚더미로 무너졌다'}. 이번엔 아무것도 남기지 않았다.`, 'muted');
 }
 
 // ── 소문 (협회 로비 배경 모험가 · 지나가는 모험가) ──

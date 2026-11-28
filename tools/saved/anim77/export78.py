@@ -17,14 +17,28 @@ PICK = {   # 대표님이 고른 장(11-27) — 열쇠: 게임 몬스터 id
     'badger': [('idle', 'idle_s11'), ('walk', 'walk_s11'), ('claw', 'claw_s11'), ('dig', 'dig_s11')],   # 11-28 둑굴 오소리(시안 7번)
     'orebug': [('idle', 'idle_s11'), ('walk', 'walk_s11'), ('bite', 'bite_s11'), ('curl', 'curl_s12')],   # 11-28 e8 광맥 콩벌레(시안 1번) — 클팀장이 고름(물기 A는 입을 벌린 장이 보임 · 몸 말기 B가 더 둥글다)
 }
-BIG = {'scare_c1', 'scare_c2'}
+# 빌드 79 (11-28 e11): 2층 점토 협곡 13종 — 동작은 anim76(서 있기 · 움직임 · 공격), 잘려서 다시 뽑은 줄은 anim77/clean/c_*(pick.json)
+import json as _j
+_P = _j.load(open('pick.json', encoding='utf-8'))
+def _cy(src, gid):
+    rows = []
+    for rn in ('idle', 'walk', 'atk'):
+        k = f'c_{src}/{rn}'
+        rows.append((rn, f'clean/c_{src}/{_P[k]["pick"]}' if k in _P else f'../anim76/clean/{src}/{rn}'))
+    return [(rn, d if d.startswith('..') else '../anim77/' + d) for rn, d in rows]
+CANYON79 = {'canyon_ledge_lizard': 'jawlizard', 'canyon_crack_beetle': 'wedgebeetle', 'canyon_clay_burrower': 'flatbug', 'canyon_pool_toad': 'pooltoad', 'canyon_cave_bat': 'canyonbat',
+            'canyon_clay_wasp': 'barrelwasp', 'canyon_bank_beetle': 'hornbug', 'canyon_bank_otter': 'otter', 'canyon_slab_toad': 'bigtoad', 'canyon_spire_hawk': 'hawk',
+            'canyon_sluice_earwig': 'earwig', 'canyon_gate_crab': 'crab', 'canyon_cliff_bison': 'bison'}
+for gid, src in CANYON79.items(): PICK[gid] = _cy(src, gid)
+BIG = {'scare_c1', 'scare_c2', 'canyon_sluice_earwig', 'canyon_gate_crab', 'canyon_cliff_bison'}
 NF = {'idle': 12, 'walk': 12}   # 나머지 16
 
 def frames(mid, d, n):
-    fs = sorted(f for f in os.listdir(f'clean/{mid}/{d}') if f.endswith('.png'))
+    base = d if d.startswith('..') else f'clean/{mid}/{d}'   # 빌드 79: 점토 협곡은 anim76/clean 경로를 그대로 준다
+    fs = sorted(f for f in os.listdir(base) if f.endswith('.png'))
     if len(fs) > 2: fs = fs[:-1]   # 끝 장 = 첫 장
     sel = [fs[round(i * len(fs) / n)] for i in range(n)] if len(fs) >= n else fs
-    return [Image.open(f'clean/{mid}/{d}/{f}').convert('RGBA').transpose(Image.FLIP_LEFT_RIGHT) for f in sel]
+    return [Image.open(f'{base}/{f}').convert('RGBA').transpose(Image.FLIP_LEFT_RIGHT) for f in sel]
 
 def half(im):   # 2×2 → 1칸: 불투명 둘 이상이면 가장 많은 색(같으면 어두운 색)
     a = np.array(im); h, w = a.shape[0] // 2 * 2, a.shape[1] // 2 * 2; a = a[:h, :w]

@@ -1,7 +1,8 @@
 // 데모(1층 곡창지대 평원)에서 얻을 수 있는 것 / 쓰는 곳 맞대기
 const c = require('./load.js'), E = c.__E;
-const I = E('ITEMS'), M = E('MONS'), F = E('FIELDS.plains');
-const F1 = [...new Set([...F.mons, ...F.bosses, 'scare_c1', 'scare_c2'])];
+const I = E('ITEMS'), M = E('MONS'), DEMO = ['plains', 'canyon'].filter(f => E('FIELDS')[f]), F = { mons: [], bosses: [], herbs: [] };   // 데모 층(11-28: 1 · 2층 — 3층은 넣으면 더함)
+DEMO.forEach(f => { const X = E('FIELDS')[f]; F.mons.push(...X.mons); F.bosses.push(...(X.bosses || []).filter(Boolean)); F.herbs.push(...(X.herbs || [])); });
+const F1 = [...new Set([...F.mons, ...F.bosses, ...Object.values(E('REGEN78')).map(R => R.mon)])];
 const src = {}; const add = (it, w) => { if (I[it]) (src[it] = src[it] || new Set()).add(w); };
 for (const id of F1) { const m = M[id]; (m.drops || []).forEach(d => add(d[0], id)); add('mm_' + (m.mm || id), id); E('matsOf')(id).forEach(k => { add(`${k}_0`, id); add(`${k}_1`, id); }); }
 (F.herbs || []).forEach(h => add(h, '약초'));
@@ -9,6 +10,7 @@ for (const id of F1) { const m = M[id]; (m.drops || []).forEach(d => add(d[0], i
 for (const k in I) if (I[k].scr) add(k, '주문서 드롭');
 const market = k => I[k] && (I[k].buy || I[k].season || I[k].from === 'hargen' || /라비린토스 시장에서 판다/.test(I[k].desc || ''));
 for (const k in I) if (market(k)) add(k, '시장');
+if (E('OREBUG79')) add(E('OREBUG79').out, '광맥 조각 거래');
 for (const k in I) if (I[k].pfam) { const raw = k.replace(/^p_/, ''); if (src[raw]) add(k, '가공'); }
 const why = k => { const x = I[k]; if (!x) return '없는 아이템'; if (x.from && x.from !== 'hargen' && x.veg) return '이웃 왕국 상단'; if (x.sea) return '항구'; if (x.from === 'pen') return '사육장'; if (x.herb) return '다른 층 약초'; const raw = k.replace(/^p_/, ''); const d = whoDrops(raw); return d ? '다른 층 몬스터(' + d + ')' : '출처 없음'; };
 const flags = k => { const x = I[k]; if (!x) return '없는 아이템'; return ['buy', 'season', 'sup', 'veg', 'trade', 'herb', 'dish', 'ingot', 'egg', 'sea', 'excl', 'boss', 'raid', 'rare', 'book'].filter(f => x[f]).join(',') || '-'; };
