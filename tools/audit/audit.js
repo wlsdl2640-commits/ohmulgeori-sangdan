@@ -23,3 +23,8 @@ report('물약(연금술)', E('RECIPES').map(r => [I[r.out] ? I[r.out].name : r.
 const CR = E('CRAFT_IDS'), G = E('GTYPES'); report('장비 제작 0단계', CR.filter(b => G[b] && E('tierOk')(b, 0)).map(b => [G[b].name || b, E('forgeNeed')(b, 0)]));
 const SK = E('SKILLS'), BI = E('BOOK_IDS'); report('스킬북 만들기(서고) Lv30까지', BI.filter(s => SK[s] && SK[s].lv <= 30 && E('bookRecipe')(s)).map(s => [SK[s].name, E('bookRecipe')(s).need]));
 const KG = E('KINGDOMS'); for (const k in KG) report('이웃 왕국 ' + (KG[k].name || k), (KG[k].wants || []).map(w => [I[w] ? I[w].name : w, { [w]: 1 }]));
+// ── 장비 단계별 (1층 레벨 Lv1 ~ 30 안의 단계 전부) · 에테르 주괴 ──
+const GT = E('GTIERS');
+GT.forEach((T, t) => { if (t === 0 || T.lv > 30) return; report(`장비 제작 ${t}단계 (${T.name} · Lv${T.lv})`, CR.filter(b => G[b] && E('tierOk')(b, t)).map(b => [G[b].name || b, E('forgeNeed')(b, t)])); });
+report('에테르 주괴 (0등급)', [['에테르 주괴', E('etherNeed')(0, 1)]]);
+console.log('\n에테르 빛가루 출처:', whoDrops('ether_dust') || '몬스터 없음', '· 시장', !!market('ether_dust'));
