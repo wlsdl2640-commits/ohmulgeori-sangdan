@@ -490,7 +490,7 @@ function fieldScene(w, t, p, e, lights, post, dark, bg) {
 
   // 던전 입구: 1-50 끝에서 길 끝에 서 있다
   const fs = S.fields[e.field];
-  if (e.area === 'field' && fs && !F.raid && (waiting || (e.stage === fstages(F) && e.mode === 'advance' && !fighting && e.pos > 55))) {
+  if (e.area === 'field' && fs && !F.raid && !isLab(e.field) && (waiting || (e.stage === fstages(F) && e.mode === 'advance' && !fighting && e.pos > 55))) {
     const k = waiting ? 0 : Math.max(0, Math.min(1, (STAGE_LEN - e.pos) / 45));
     w.save(); w.translate(190 + k * 120, bg.gateY || GY + BG_OY); w.scale(1.25, 1.25); drawGate(w, F.dungeon.bg, fs.cleared ? 1 : fs.found ? 0 : 2); w.restore();
   }

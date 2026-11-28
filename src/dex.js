@@ -58,8 +58,8 @@ function monWhere(id) {
   for (const fid of ALL_FIELDS) {
     const F = FIELDS[fid];
     if (F.mons.includes(id)) out.push({ fid, where: `${F.name} ${F.no}-${minStage(MONS[id])}~`, lv: fieldLv(F, minStage(MONS[id])) });
-    if (F.dungeon && F.dungeon.mons.includes(id)) out.push({ fid, where: F.dungeon.name, lv: dungeonLv(F, 1) });
-    if (F.dungeon && F.dungeon.boss === id) out.push({ fid, where: `${F.dungeon.name}의 주인`, lv: F.raid ? F.lv + 14 : dungeonBossLv(F), boss: 1 });
+    if (F.dungeon && !isLab(fid) && F.dungeon.mons.includes(id)) out.push({ fid, where: F.dungeon.name, lv: dungeonLv(F, 1) });
+    if (F.dungeon && !isLab(fid) && F.dungeon.boss === id) out.push({ fid, where: `${F.dungeon.name}의 주인`, lv: F.raid ? F.lv + 14 : dungeonBossLv(F), boss: 1 });
     if (F.bosses) F.bosses.forEach((b, i) => { if (b === id && MONS[id].fb) out.push({ fid, where: `${F.name} ${F.no}-${(i + 1) * 10} ${i === 4 ? '주인' : '우두머리'}`, lv: fieldLv(F, (i + 1) * 10) + 1, fb: i + 1 }); });
   }
   for (const rid of RAID_IDS) if (RAIDS[rid].mon === id) out.push({ fid: 'raid_' + rid, where: `레이드 (${FIELDS[RAIDS[rid].bg].name} 근처)`, lv: RAIDS[rid].lv + 4, raid: rid });
@@ -68,7 +68,7 @@ function monWhere(id) {
 function dexMonList() {
   const seen = new Set(), order = [];
   const push = id => { if (MONS[id] && !seen.has(id)) { seen.add(id); order.push(id); } };
-  for (const fid of ALL_FIELDS) { const F = FIELDS[fid]; F.mons.forEach(push); if (F.bosses) F.bosses.forEach(push); if (F.dungeon) { F.dungeon.mons.forEach(push); push(F.dungeon.boss); } }
+  for (const fid of ALL_FIELDS) { const F = FIELDS[fid]; F.mons.forEach(push); if (F.bosses) F.bosses.forEach(push); if (F.dungeon && !isLab(fid)) { F.dungeon.mons.forEach(push); push(F.dungeon.boss); } }
   RAID_IDS.forEach(r => push(RAIDS[r].mon));
   return order;
 }

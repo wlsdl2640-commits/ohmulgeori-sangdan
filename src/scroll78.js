@@ -39,7 +39,7 @@ for (const [c, C] of Object.entries(SCR78.cats)) for (const s of C.stats) SCR78.
   ITEMS[`scr_${c}_${s}_${r}`] = { name: `${C.name} ${SCR78.name[s]} 주문서 ${r}%`, v: SCR78.v[i], w: 0, icon: 'book', c: '#d8b878', g: i, keep: 1, scr: { c, s, r },
     desc: `${C.name}(${C.slots.map(x => (SLOTS.find(y => y[0] === x) || [0, x])[1]).join(' · ')})에 발라요. 성공 ${r}% — 성공하면 ${SCR78.name[s]}이(가) 정해진 만큼 오르고(어떤 장비에 발라도 같은 값), 실패해도 장비는 그대로예요.` };
 });
-ITEMS.whetstone = { name: '숫돌', v: 300, w: 1, icon: 'ore', c: '#b8b0a0', g: 0, keep: 1, desc: `닳은 장비를 고쳐요. 하나에 내구도 ${DUR78.stone}. 원정에 챙겨 가면 야영 때 고치고 자요.` };
+ITEMS.whetstone = { name: '숫돌', v: 600, w: 1, icon: 'ore', c: '#b8b0a0', g: 0, keep: 1, desc: `닳은 장비를 고쳐요. 하나에 내구도 ${DUR78.stone}. 원정에 챙겨 가면 야영 때 고치고 자요.` };
 Object.entries(CAT78).forEach(([id, [n, st, c]]) => { ITEMS[id] = { name: n, v: 1200, w: 1, icon: 'gem', c, g: 2, keep: 1, desc: `대장간에서 장비를 만들 때 넣어요. 희귀 이상이 조금 더 잘 나오고, 희귀 이상이면 ${STATS.find(x => x[0] === st)[1]}이(가) 꼭 붙어요. 만들 때마다 하나씩 써요.` }; });
 ITEMS.lethe = { name: '망각의 주문서', v: 4000, w: 0, icon: 'book', c: '#9cc4d8', g: 3, keep: 1, desc: '망각의 마법을 담은 빈 주문서. 레테의 강물처럼 장비에서 주문서 강화의 기억을 씻어 내 이 안에 가둬요 — 장비는 처음 상태로 돌아가고, 가둔 기억은 다른 장비에 그대로 풀 수 있어요. (마탑)' };
 if (typeof ITEM_HD !== 'undefined') { if (ITEM_HD.whet_3) ITEM_HD.whetstone = ITEM_HD.whet_3; if (ITEM_HD.lethe0) ITEM_HD.lethe = ITEM_HD.lethe0; }
@@ -265,11 +265,10 @@ const DROP79 = {
   main: 0.6,
   // 일반: [갈래, 능력치, 숫돌]
   mon: { rat: ['bag', 'carry', 0.03], rabbit: ['bag', 'movePct', 0], wolf: ['weapon', 'atk', 0], scare_a3: ['acc', 'int', 0], scare_b2: ['weapon', 'matk', 0], scare_c4: ['weapon', 'crit', 0.03],
-    boar: ['armor', 'hp', 0], badger: ['acc', 'vit', 0.03], aboar: ['armor', 'def', 0.03], slime: ['off', 'mp', 0], goblin: ['armor', 'eva', 0] },
+    boar: ['armor', 'hp', 0], badger: ['acc', 'vit', 0.03], aboar: ['armor', 'def', 0.03] },
   // 우두머리: 종류(kind) → 몬스터 → { m: [갈래, 능력치], cat: { 촉매: 확률 }, whet }
   boss: {
     lord: { aboar: { m: ['armor', 'def'], cat: { cat_vit: 0.06, cat_str: 0.02, cat_int: 0.02, cat_agi: 0.02 }, whet: 0.35 } },
-    owner: { ratking: { m: ['off', 'atk'], cat: { cat_str: 0.03, cat_int: 0.03, cat_vit: 0.03, cat_agi: 0.03 }, whet: 0.4 } },
     c1: { scare_c1: { m: ['acc', 'agi'], cat: { cat_agi: 0.05 }, whet: 0.15 } },
     c2: { scare_c2: { m: ['armor', 'mres'], cat: { cat_int: 0.06 }, whet: 0.2 } },
     mid: { wolf: { m: ['acc', 'str'], cat: { cat_agi: 0.07 }, whet: 0.12 }, scarecrow: { m: ['off', 'def'], cat: { cat_int: 0.07 }, whet: 0.12 }, boar: { m: ['off', 'block'], cat: { cat_str: 0.07 }, whet: 0.12 } }
@@ -304,8 +303,7 @@ matDrop = function (p, e, f) {   // eslint-disable-line no-func-assign
   for (const it of got) { loot(p, e, it, 1); if (big || ITEMS[it].scr) log(`${p.name}이(가) ${ITEMS[it].name}을(를) ${e.kq ? '찾았다 — 갈무리하면 챙긴다' : '주웠다'}!`, 'good'); }
   if (big) e.kq = kq;
 };
-// 1층 곡물 창고 무리 (e7 1번 A안 — 11-25 결정: 고블린은 1층에 안 나옴 · 슬라임은 늪지): 들쥐 · 들늑대 + 주인 들쥐왕
-if (FIELDS.plains && FIELDS.plains.dungeon) FIELDS.plains.dungeon.mons = ['rat', 'wolf'];
+// 11-28 대표님: 옛 던전 「버려진 곡물 창고」는 없앤 것 — 드롭표에서도 뺐다(들쥐왕 · 슬라임 · 고블린 칸 없음)
 
 // ── 옛 저장 (불러올 때마다 — 할 것이 없으면 아무것도 안 함) ──
 function scroll78() {
