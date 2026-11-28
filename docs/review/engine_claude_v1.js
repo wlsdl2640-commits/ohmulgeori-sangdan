@@ -23,9 +23,9 @@
 // ── 1. 레벨 · 전직 ─────────────────────────────────────────────────────
 const MAX_LV = 200;
 const JOB_REQ = {   // 지금 게임 data-rpg.js JOB_REQ + 4차(11-12 결정)
-  2: { lv: 50, rank: '금장', fee: 30000 },
-  3: { lv: 100, rank: '백은', fee: 300000, souls: 2 },
-  4: { lv: 150, rank: '백금', fee: 3000000, souls: 4, core: 1 }
+  2: { lv: 50, rank: 2, rn: '금장', fee: 30000 },   // rank = 라이선스 단계 번호(지금 게임과 같음) · rn = 이름
+  3: { lv: 100, rank: 3, rn: '백은', fee: 300000, souls: 2 },
+  4: { lv: 150, rank: 4, rn: '백금', fee: 3000000, souls: 4, core: 1 }
 };
 const ADV_BONUS = 3;   // 전직할 때 HP · MP가 레벨 3개 몫 한 번에 오른다 (원안에서 가져옴)
 
@@ -73,7 +73,7 @@ class Adventurer {
   advanceWhy(guild) {
     const R = JOB_REQ[this.tier + 1]; if (!R) return '더 오를 차수가 없어요.';
     if (this.lv < R.lv) return `Lv${R.lv}부터예요.`;
-    if (guild.rankOf(this) < R.rank) return `${R.rank} 라이선스가 필요해요.`;
+    if (guild.rankOf(this) < R.rank) return `${R.rn} 라이선스가 필요해요.`;   // rankOf = 그 모험가의 라이선스 단계 번호
     if (guild.gold < R.fee) return '돈이 모자라요.';
     if ((R.souls || 0) > guild.souls) return `주인의 혼 ${R.souls}개가 필요해요.`;
     if (R.core && !guild.cores) return '별의 핵이 필요해요.';
