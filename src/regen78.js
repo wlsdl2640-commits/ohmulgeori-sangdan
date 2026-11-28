@@ -203,3 +203,55 @@ function rumorBubble(slots, list) {
   const xp = Math.max(22, Math.min(78, x / AW * 100)), yp = Math.max(4, (y - 52 - PIP_Y) / PIP_H * 100);
   el.style.left = xp + '%'; el.style.top = yp + '%';
 }
+
+// ── 리젠보스 단계 행동 (e6 회의 · 11-28 대표님 고름: 둘째 50% 저주 걸린 대상 +15% · 25% 기본 공격도 가장 다친 모험가 · 분노는 공통 1.3배) ──
+// 75% 버티기(보호막 8%)와 50% 분노(공격 속도 ×1.3)는 core.js fPhase 공통 그대로. 25% 마지막 발악은 이 둘만 바꾼다:
+// 졸개를 더 부르지 않고(pat가 있으면 core가 안 부름) · 스킬 대기 시간을 당기지 않고 · 광역기 확률 0.3 → C1 0.4 · C2 0.45
+const REGEN_PAT = {
+  scare_c1: { last: 0.4,
+    1: { name: '까마귀 바람', line: '까마귀 바람이 불어 원정대의 눈을 가린다! (낫 휘두르기 · 까마귀 떼 울음에 맞으면 25% 눈멂)' },
+    2: { name: '들판의 까마귀', line: '까마귀가 낫을 피해 옆 동료에게 달려든다! (낫이 맞을 때마다 다른 동료 한 명을 쫀다)' } },
+  scare_c2: { last: 0.45,
+    1: { name: '푸른 모자의 저주', line: '푸른 모자에서 흘러나온 저주가 낫에 스민다! (낫에 맞으면 35% 저주 · 저주 걸린 모험가는 낫에 15% 더 아프게)' },
+    2: { name: '거둬들이는 낫', line: '허수아비가 가장 다친 모험가에게 낫을 겨눈다!' } }
+};
+const REGEN_FX = { blind: { k: 'blind', p: 0.25, d: 4 }, curse: { k: 'curse', p: 0.35, d: 8 }, peck: 0.45, cursedMul: 1.15, crowSk: ['sweep', 'roar'], reapSk: 'pierce' };
+for (const id in REGEN_PAT) if (MONS[id]) MONS[id].pat = { 1: REGEN_PAT[id][1], 2: REGEN_PAT[id][2] };
+const LAST_AOE0 = FIGHT.lastAoe;
+let REGEN_CUR = null;   // 지금 차례인 리젠보스 (fPhase가 그 몬스터 차례 바로 앞에 불린다 — battle이 끝나면 지움)
+const _fPhase78 = fPhase;
+fPhase = function (e, f, foes) {   // eslint-disable-line no-func-assign
+  const R = f.regen && REGEN_PAT[f.id];
+  if (!R) { REGEN_CUR = null; FIGHT.lastAoe = LAST_AOE0; return _fPhase78(e, f, foes); }
+  const mcd0 = !f.ph2 && f.mcd ? Object.assign({}, f.mcd) : null;
+  _fPhase78(e, f, foes);
+  if (mcd0 && f.ph2) f.mcd = mcd0;   // 마지막 발악에도 스킬 대기 시간은 그대로 (회복할 틈)
+  if (f.ph2 && f.id === 'scare_c1') f.peck = REGEN_FX.peck;
+  REGEN_CUR = f; FIGHT.lastAoe = R.last;
+};
+const _battle78 = battle;
+battle = function () { try { return _battle78.apply(this, arguments); } finally { REGEN_CUR = null; FIGHT.lastAoe = LAST_AOE0; } };   // eslint-disable-line no-func-assign
+// 둘째 25%: 기본 공격 · 사신의 낫 표적 = 남은 HP 비율이 가장 낮은 모험가 (도발 · 엄호는 core가 그 뒤에 그대로)
+const _pickTarget78 = pickTarget;
+pickTarget = function (live, e, dm) {   // eslint-disable-line no-func-assign
+  const f = REGEN_CUR;
+  if (f && f.hp > 0 && f.ph2 && f.id === 'scare_c2' && live.length > 1 && live.every(x => dm[x.id])) return live.slice().sort((x, y) => x.hp / dm[x.id].maxHp - y.hp / dm[y.id].maxHp)[0];
+  return _pickTarget78(live, e, dm);
+};
+const _fSkillPick78 = fSkillPick;
+fSkillPick = function (f) { const s = _fSkillPick78.apply(this, arguments); if (f.regen) f.skNow = s ? s.tpl : null; return s; };   // eslint-disable-line no-func-assign
+const _hitAdv78 = hitAdv;
+hitAdv = function (p, e, f, x, mult, dm, o) {   // eslint-disable-line no-func-assign
+  if (!f || !f.regen || !f.ph1) return _hitAdv78(p, e, f, x, mult, dm, o);
+  o = o || {};
+  const basic = !o.skill && !o.ms && !o.aoe && !o.peck;
+  if (f.id === 'scare_c2') {
+    const st = e.sta && e.sta[x.id];
+    if (st && st.curse && (basic || (o.ms && f.skNow === REGEN_FX.reapSk))) mult *= REGEN_FX.cursedMul;
+    if (basic) o = Object.assign({}, o, { sta2: REGEN_FX.curse });
+    return _hitAdv78(p, e, f, x, mult, dm, o);
+  }
+  const hit = _hitAdv78(p, e, f, x, mult, dm, o);
+  if (hit && o.ms && REGEN_FX.crowSk.includes(f.skNow) && up(x)) { const st = e.sta && e.sta[x.id]; if (!(st && st.blind) && rnd() < REGEN_FX.blind.p) inflictAdv(e, x, REGEN_FX.blind, f.atk); }   // 까마귀 바람: 눈멂이 두 번 굴러가지 않게
+  return hit;
+};

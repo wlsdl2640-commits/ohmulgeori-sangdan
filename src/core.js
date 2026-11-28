@@ -1169,7 +1169,7 @@ function fPhase(e, f, foes) {
     f.ph1 = 1;
     const P = fPat(f, 1), n = P && P.sum ? fSummon(e, f, foes, [P.sum[0]], P.sum[1]) : 0;   // 빌드 70 길드장 패턴 1 「그림자 분신」: 분신을 부르고 · 등 뒤 분신이 따라 벤다
     if (P && P.echo) f.echo = P.echo;
-    ev(e, 'fphase', Object.assign({ s: f.uid, k: 1 }, P ? { pat: 1, pn: P.name, n } : {}));
+    ev(e, 'fphase', Object.assign({ s: f.uid, k: 1 }, P ? { pat: 1, pn: P.name, n } : {}, P && P.line ? { pl: P.line } : {}));
   }
   if (!f.ph2 && r <= 0.25) {
     f.ph2 = 1; f.aoe = true;
@@ -1177,7 +1177,7 @@ function fPhase(e, f, foes) {
     const P = fPat(f, 2), sm = monSkills(f).find(s => s.kind === 'summon');
     if (P && P.gas) f.gas = P.gas;   // 빌드 70 길드장 패턴 2 「독 안개」: 광역기가 독 약병으로 (맹독 · 눈멂)
     const n = P ? (P.sum ? fSummon(e, f, foes, [P.sum[0]], P.sum[1]) : 0) : fSummon(e, f, foes, sm && sm.mon, FIGHT.lastSummon);
-    ev(e, 'fphase', Object.assign({ s: f.uid, k: 2, n }, P ? { pat: 2, pn: P.name } : {}));
+    ev(e, 'fphase', Object.assign({ s: f.uid, k: 2, n }, P ? { pat: 2, pn: P.name } : {}, P && P.line ? { pl: P.line } : {}));
   }
 }
 function battle(p, e, team, dm, dt) {
@@ -1292,7 +1292,7 @@ function battle(p, e, team, dm, dt) {
     if (!e.taunt && live.length > 1) tgt = coverOf(e, live, tgt, dm) || tgt;
     const nh = f.pvp ? 1 : MONS[f.id].hits || 1;   // 빌드 69 몬스터 연타 (data-monup69.js): 대마다 회피 · 피해 ×HITS_MUL, 상태이상 · 반격은 한 번만
     if (nh > 1) { const once = {}; for (let h = 0; h < nh && up(tgt); h++) hitAdv(p, e, f, tgt, HITS_MUL[nh] || 1 / nh, dm, { hn: h, once }); }
-    else hitAdv(p, e, f, tgt, 1, dm);
+    else if (hitAdv(p, e, f, tgt, 1, dm) && f.peck) { const o2 = live.filter(x => x !== tgt && up(x)); if (o2.length) hitAdv(p, e, f, pickOne(o2), f.peck, dm, { sta: null, nocrit: 1, peck: 1 }); }   // 빌드 78 리젠보스 「들판의 까마귀」: 낫이 맞으면 까마귀가 다른 동료 한 명을 쫀다
     if (f.echo && up(tgt)) hitAdv(p, e, f, tgt, f.echo, dm, { hn: nh, sta: null, echo: 1 });   // 빌드 70: 등 뒤의 매연 분신이 따라 벤다 (길드장 패턴 1 — 피해 절반, 상태이상 없음)
   }
   for (let i = foes.length - 1; i >= 0; i--) if (foes[i].hp <= 0) { const f = foes[i]; foes.splice(i, 1); kill(p, e, f); }
@@ -1308,7 +1308,7 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   if (o.skill ? blind && rnd() < FIGHT.blind : rnd() < Math.min(CAP.eva, d.eva + buffAdd(e, x.id, 'eva')) + (blind ? FIGHT.blind : 0)) { ev(e, 'miss', Object.assign({ s: f.uid, d: x.id, bl: blind ? 1 : 0 }, hn)); return false; }   // 회피는 기본 공격에만 (빌드 69: 강화를 더해도 50%까지)
   const el = o.el || (magic || o.aoe ? fAtkEl(f) : 'none'), fam = elFam(el), xs = e.sta && e.sta[x.id];
   const def = d.def * buffMul(e, x.id, 'def') * (magic ? 0.5 : 1) * (1 - (o.pen || 0));   // 빌드 69: 몬스터 스킬 「꿰뚫기」는 방어를 덜 본다
-  const crit = rnd() < (f.boss ? 0.08 : 0.04) + (o.crit || 0);
+  const crit = !o.nocrit && rnd() < (f.boss ? 0.08 : 0.04) + (o.crit || 0);   // 빌드 78: 리젠보스 까마귀 쪼기는 치명타 없음
   const pet0 = petOfParty(p), guard = Math.min(CAP.guard, TQ(x, 'guard') + (!o.skill && !o.ms && !o.aoe ? j1BaGuard(x) : 0) + relic('guard') + buffAdd(e, x.id, 'guard') + (pet0 && pet0.trait === 'loyal' ? 0.04 : 0));
   const blk = rnd() < Math.min(CAP.block, (d.block || 0) + buffAdd(e, x.id, 'block') + (o.skill || o.ms || o.aoe ? 0 : d.bblock || 0));   // 예리함 룬(방어구): 기본 공격만 막는다 (빌드 69: 모두 더해 50%까지)
   const resist = (magic ? 1 - (d.mres || 0) : 1) * (fam !== 'none' ? 1 - ((d.res && d.res[fam]) || 0) : 1);   // 마법 저항 · 속성 저항
@@ -1326,7 +1326,7 @@ function hitAdv(p, e, f, x, mult, dm, o) {
   let endure = 0;
   if (x.hp - v <= 0 && x.hp > 1 && d.msEnd && !(e.msEnd && e.msEnd[x.id])) { (e.msEnd || (e.msEnd = {}))[x.id] = 1; if (rnd() < d.msEnd) { v = Math.ceil(x.hp) - 1; endure = 1; } }   // 빌드 69 불멸의 호박: 쓰러질 한 방을 HP 1로 (싸움마다 한 번)
   x.hp -= v;
-  ev(e, 'hurt', Object.assign({ s: f.uid, d: x.id, v, c: crit, k: magic ? 'magic' : '', blk: blk ? 1 : 0 }, o.ms ? { ms: 1 } : {}, o.echo ? { echo: 1 } : {}, fam !== 'none' ? { el } : {}, hn));
+  ev(e, 'hurt', Object.assign({ s: f.uid, d: x.id, v, c: crit, k: magic ? 'magic' : '', blk: blk ? 1 : 0 }, o.ms ? { ms: 1 } : {}, o.echo ? { echo: 1 } : {}, o.peck ? { peck: 1 } : {}, fam !== 'none' ? { el } : {}, hn));
   if (endure) ev(e, 'endure', { d: x.id, s: f.uid });
   msReflect(e, f, x, d, v0);
   if (x.hp <= 0) { down(p, e, x, f); return true; }

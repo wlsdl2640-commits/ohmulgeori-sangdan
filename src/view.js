@@ -1237,6 +1237,7 @@ function logEvent(x, e, p) {
   }
   if (x.type === 'fmiss') return add(`${ally(A(x.s))}의 ${x.sk ? '스킬' : '공격'}이 ${foe(Fn(x.d))}에게 빗나갔습니다.${x.sk || blindLog(e, x.s) ? ' (눈멂)' : ''}`, 'dim');
   if (x.type === 'hurt' && x.dot) return add(`${ally(jo(A(x.d), '이', '가'))} ${STATUS[x.k] ? STATUS[x.k].name : '독'}(으)로 ${num(x.v, 'r')} 피해를 입었습니다.`, 'dim');
+  if (x.type === 'hurt' && x.peck) return add(`<i class="lg-c">까마귀!</i> ${foe(Fn(x.s))}의 까마귀가 ${ally(A(x.d))}을(를) 쪼았다 — ${num(x.v, 'r')} 피해.`);
   if (x.type === 'hurt') return add(`${x.echo ? '<i class="lg-c">분신!</i> ' : ''}${foe(Fn(x.s))}의 ${x.echo ? '등 뒤 분신이 따라 벤다' : '공격'}! ${ally(jo(A(x.d), '이', '가'))} ${num(x.v, 'r')} 피해를 입었습니다.${x.blk ? ' <i class="lg-c">막았다!</i>' : ''}`);
   if (x.type === 'sta') { const St = STATUS[x.k]; if (St && x.res) add(`${foe(jo(Fn(x.d), '이', '가'))} ${St.name}에 저항했습니다 (연달아 건 행동 방해).`, 'sk'); else if (St) add(x.side === 'f' ? `${foe(jo(Fn(x.d), '이', '가'))} ${St.name} 상태가 됐습니다.` : `${ally(jo(A(x.d), '이', '가'))} ${St.name} 상태가 됐습니다!`, x.side === 'f' ? 'sk' : 'warn'); return; }
   if (x.type === 'cure') return add(`${ally(A(x.d))}의 상태이상이 풀렸습니다.`, 'dim');
@@ -1248,6 +1249,7 @@ function logEvent(x, e, p) {
   if (x.type === 'fdispel') return add(`${foe(jo(Fn(x.s), '이', '가'))} 걸린 강화 ${x.n}개를 지웠다!`, 'warn');   // 빌드 69
   if (x.type === 'ftaunt') return add(`${foe(jo(Fn(x.s), '이', '가'))} 도발한다 — ${Math.round(x.t)}초 동안 공격이 그쪽으로 쏠린다.`, 'warn');
   if (x.type === 'mpburn') return add(`${ally(A(x.d))}의 MP가 ${num(x.v, 'b')} 타 버렸다.`, 'dim');
+  if (x.type === 'fphase' && x.pl) return add(`<i class="lg-c">패턴 「${esc(x.pn || '')}」!</i> ${esc(x.pl)}`, 'warn');   // 빌드 78 리젠보스: 패턴마다 제 기록 한 줄
   if (x.type === 'fphase' && x.pat) return add(`<i class="lg-c">패턴 「${esc(x.pn || '')}」!</i> ${foe(jo(Fn(x.s), '이', '가'))} ${x.pat === 1 ? `${x.n ? `매연 그림자 분신 ${x.n}을 불러내고 ` : ''}등 뒤의 분신과 함께 벤다.` : '독 약병을 꺼내 들었다 — 광역기가 독 안개(맹독 · 눈멂)가 된다.'}`, 'warn');   // 빌드 70 길드장 패턴
   if (x.type === 'fphase') return add(x.k === 2 ? `<i class="lg-c">마지막 발악!</i> ${foe(jo(Fn(x.s), '이', '가'))} 광역기를 더 자주 쓴다${x.n ? ' · 졸개를 불렀다' : ''}.` : x.k === 0 ? `<i class="lg-c">버티기!</i> ${foe(jo(Fn(x.s), '이', '가'))} ${x.n ? '졸개를 불렀다' : '보호막을 둘렀다'}.` : `<i class="lg-c">분노!</i> ${foe(Fn(x.s))}의 공격이 빨라졌다.`, 'warn');
   if (x.type === 'fsum') return add(`${foe(jo(Fn(x.s), '이', '가'))} ${esc(MONS[x.id] ? MONS[x.id].name : '졸개')}${x.n > 1 ? ` 무리(${x.n})` : ''}를 불렀다!`, 'warn');
