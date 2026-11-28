@@ -41,4 +41,10 @@ css += f"""
 #m-box .btn {{ {bi('B', 'btn2', 9, 7)} color: #fff0d8; }}
 #m-box .btn.gold {{ {bi('B', 'btn1', 9, 7)} color: #fff0e0; }}
 """
-open(sys.argv[1], 'w', encoding='utf-8').write(css); print(len(css))
+if sys.argv[1] != '--js': open(sys.argv[1], 'w', encoding='utf-8').write(css)
+print(len(css))
+
+# 게임에 넣는 꼴: python kitcss2.py --js <src/data-uikit79.js> — CSS 글을 JS 문자열로 (uikit79.js가 <style>로 붙인다 · 손으로 고치지 말 것)
+if len(sys.argv) > 2 and sys.argv[1] == '--js':
+    import json
+    open(sys.argv[2], 'w', encoding='utf-8').write('/* 빌드 79: UI 키트 다섯(A 나무 · 금 / B 양피지 / C 돌 · 룬 / D 가죽 / E 쇠) 9조각 CSS — tools/saved/ui79/kit/kitcss2.py --js 로 뽑는다, 손으로 고치지 말 것 */\nconst UIKIT79_CSS = ' + json.dumps(css, ensure_ascii=False) + ';\n')
