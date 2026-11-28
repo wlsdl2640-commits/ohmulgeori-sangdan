@@ -1,0 +1,522 @@
+[
+ {
+  "key": "attack_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a small bolt of arcane mana flying to the right: an indigo and violet energy dart with a bright white core and a short tapering trail of tiny sky-blue sparkles. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4102
+  }
+ },
+ {
+  "key": "attack",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a small bolt of arcane mana flying to the right: an indigo and violet energy dart with a bright white core and a short tapering trail of tiny sky-blue sparkles. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4100
+  }
+ },
+ {
+  "key": "attack_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a small bolt of arcane mana flying to the right: an indigo and violet energy dart with a bright white core and a short tapering trail of tiny sky-blue sparkles. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4102
+  }
+ },
+ {
+  "key": "attack_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a small bolt of arcane mana flying to the right: an indigo and violet energy dart with a bright white core and a short tapering trail of tiny sky-blue sparkles. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4102
+  }
+ },
+ {
+  "key": "fireball_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a fireball flying to the right: a round ball of orange and yellow flame with a white-hot core, licking flame tongues and a trail of embers and small smoke puffs behind it. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4112
+  }
+ },
+ {
+  "key": "fireball",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a fireball flying to the right: a round ball of orange and yellow flame with a white-hot core, licking flame tongues and a trail of embers and small smoke puffs behind it. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4110
+  }
+ },
+ {
+  "key": "fireball_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a fireball flying to the right: a round ball of orange and yellow flame with a white-hot core, licking flame tongues and a trail of embers and small smoke puffs behind it. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4112
+  }
+ },
+ {
+  "key": "fireball_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a fireball flying to the right: a round ball of orange and yellow flame with a white-hot core, licking flame tongues and a trail of embers and small smoke puffs behind it. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4112
+  }
+ },
+ {
+  "key": "icelance_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a spear of ice flying to the right: a long sharp crystal lance of pale cyan and white ice with faceted edges, frosty mist and tiny ice shards trailing behind it. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4122
+  }
+ },
+ {
+  "key": "icelance",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a spear of ice flying to the right: a long sharp crystal lance of pale cyan and white ice with faceted edges, frosty mist and tiny ice shards trailing behind it. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4120
+  }
+ },
+ {
+  "key": "icelance_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a spear of ice flying to the right: a long sharp crystal lance of pale cyan and white ice with faceted edges, frosty mist and tiny ice shards trailing behind it. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4122
+  }
+ },
+ {
+  "key": "icelance_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a spear of ice flying to the right: a long sharp crystal lance of pale cyan and white ice with faceted edges, frosty mist and tiny ice shards trailing behind it. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4122
+  }
+ },
+ {
+  "key": "chain_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a chain of lightning arcing to the right: a jagged bright yellow-white electric bolt zigzagging horizontally and forking into two smaller branches, with crackling sparks. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4132
+  }
+ },
+ {
+  "key": "chain",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a chain of lightning arcing to the right: a jagged bright yellow-white electric bolt zigzagging horizontally and forking into two smaller branches, with crackling sparks. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4130
+  }
+ },
+ {
+  "key": "chain_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a chain of lightning arcing to the right: a jagged bright yellow-white electric bolt zigzagging horizontally and forking into two smaller branches, with crackling sparks. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4132
+  }
+ },
+ {
+  "key": "chain_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a chain of lightning arcing to the right: a jagged bright yellow-white electric bolt zigzagging horizontally and forking into two smaller branches, with crackling sparks. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4132
+  }
+ },
+ {
+  "key": "weaken_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a curse settling on a target: dark violet and sickly green wisps of smoke spiraling downward in a loose ring, with drooping heavy shadow tendrils and faint dull motes. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4142
+  }
+ },
+ {
+  "key": "weaken",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a curse settling on a target: dark violet and sickly green wisps of smoke spiraling downward in a loose ring, with drooping heavy shadow tendrils and faint dull motes. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4140
+  }
+ },
+ {
+  "key": "weaken_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a curse settling on a target: dark violet and sickly green wisps of smoke spiraling downward in a loose ring, with drooping heavy shadow tendrils and faint dull motes. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4142
+  }
+ },
+ {
+  "key": "weaken_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a curse settling on a target: dark violet and sickly green wisps of smoke spiraling downward in a loose ring, with drooping heavy shadow tendrils and faint dull motes. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4142
+  }
+ },
+ {
+  "key": "burst_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an arcane mana explosion bursting outward from a center point: a ring shockwave of indigo and sky-blue energy with a bright white flash core, flying mana shards and sparkles. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4152
+  }
+ },
+ {
+  "key": "burst",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an arcane mana explosion bursting outward from a center point: a ring shockwave of indigo and sky-blue energy with a bright white flash core, flying mana shards and sparkles. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4150
+  }
+ },
+ {
+  "key": "burst_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an arcane mana explosion bursting outward from a center point: a ring shockwave of indigo and sky-blue energy with a bright white flash core, flying mana shards and sparkles. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4152
+  }
+ },
+ {
+  "key": "burst_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an arcane mana explosion bursting outward from a center point: a ring shockwave of indigo and sky-blue energy with a bright white flash core, flying mana shards and sparkles. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4152
+  }
+ },
+ {
+  "key": "iceprison_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an ice prison: jagged pale cyan ice crystal pillars erupting from the ground in a tight cluster, forming a cage shape, with frost mist at the base and glinting facets. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4162
+  }
+ },
+ {
+  "key": "iceprison",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an ice prison: jagged pale cyan ice crystal pillars erupting from the ground in a tight cluster, forming a cage shape, with frost mist at the base and glinting facets. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4160
+  }
+ },
+ {
+  "key": "iceprison_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an ice prison: jagged pale cyan ice crystal pillars erupting from the ground in a tight cluster, forming a cage shape, with frost mist at the base and glinting facets. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4162
+  }
+ },
+ {
+  "key": "iceprison_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: an ice prison: jagged pale cyan ice crystal pillars erupting from the ground in a tight cluster, forming a cage shape, with frost mist at the base and glinting facets. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4162
+  }
+ },
+ {
+  "key": "meteor_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a flaming meteor falling diagonally from the upper left toward the lower right: a burning rock with a molten orange core, a long trail of fire, smoke and embers behind it. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 192,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4172
+  }
+ },
+ {
+  "key": "meteor",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a flaming meteor falling diagonally from the upper left toward the lower right: a burning rock with a molten orange core, a long trail of fire, smoke and embers behind it. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 192,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4170
+  }
+ },
+ {
+  "key": "meteor_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a flaming meteor falling diagonally from the upper left toward the lower right: a burning rock with a molten orange core, a long trail of fire, smoke and embers behind it. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 192,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4172
+  }
+ },
+ {
+  "key": "meteor_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a flaming meteor falling diagonally from the upper left toward the lower right: a burning rock with a molten orange core, a long trail of fire, smoke and embers behind it. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 344,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4172
+  }
+ },
+ {
+  "key": "thunderclap_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning strike from the sky straight down onto the ground: a thick jagged yellow-white thunderbolt with a bright impact flash and crackling sparks spreading at the ground. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 192,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4182
+  }
+ },
+ {
+  "key": "thunderclap",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning strike from the sky straight down onto the ground: a thick jagged yellow-white thunderbolt with a bright impact flash and crackling sparks spreading at the ground. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 192,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4180
+  }
+ },
+ {
+  "key": "thunderclap_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning strike from the sky straight down onto the ground: a thick jagged yellow-white thunderbolt with a bright impact flash and crackling sparks spreading at the ground. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 192,
+   "height": 256,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4182
+  }
+ },
+ {
+  "key": "thunderclap_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a lightning strike from the sky straight down onto the ground: a thick jagged yellow-white thunderbolt with a bright impact flash and crackling sparks spreading at the ground. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 344,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4182
+  }
+ },
+ {
+  "key": "manashield_a",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier: a translucent dome of indigo and sky-blue energy with a faint honeycomb pattern, a bright glowing rim and small sparkles drifting along its surface. Restrained version: compact size, fewer particles, small glow core, clean readable shape. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4192
+  }
+ },
+ {
+  "key": "manashield",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier: a translucent dome of indigo and sky-blue energy with a faint honeycomb pattern, a bright glowing rim and small sparkles drifting along its surface. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4190
+  }
+ },
+ {
+  "key": "manashield_c",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier: a translucent dome of indigo and sky-blue energy with a faint honeycomb pattern, a bright glowing rim and small sparkles drifting along its surface. Flashy version: bigger and brighter, extra layered secondary shapes, more sparkles and particles, strong hot white core with a vivid gradient, rich trailing particles, but still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 256,
+   "height": 144,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4192
+  }
+ },
+ {
+  "key": "manashield_d",
+  "tool": "create_image_pro",
+  "n": 1,
+  "args": {
+   "description": "Game skill effect sprite, side view: a protective mana barrier: a translucent dome of indigo and sky-blue energy with a faint honeycomb pattern, a bright glowing rim and small sparkles drifting along its surface. Ultimate version: huge and spectacular, filling most of the frame, three layered stages, many sparkles and soft rays, strong hot white core with a vivid gradient, still crisp pixel art. Detailed 16-bit pixel art in the same art style and palette mood as the reference swamp monster: solid parts (ice, rock, chains) have bold dark outlines and 3-4 step shading; glowing energy parts are bright with a hot near-white core fading to saturated color, crisp stepped pixel edges, no blur. Layered composition: a bright core shape, secondary shapes, and small scattered particles. No crosses, no star or crescent symbols, no religious symbols, no letters or runes. Only the effect: no characters, no people, no silhouettes, no creatures, no weapons, no staff, no text, transparent background.",
+   "width": 344,
+   "height": 192,
+   "no_background": true,
+   "style_image_url": "upload:8f742c44-4fb0-432b-8a47-21c35d655947",
+   "seed": 4192
+  }
+ }
+]

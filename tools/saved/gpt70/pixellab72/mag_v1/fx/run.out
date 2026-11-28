@@ -1,0 +1,81 @@
+[오후 11:19:41] 보냄 attack_a d3c8ba1c-fe7d-4093-b2dd-4797cd2ff44d
+[오후 11:19:41] 보냄 attack 86e75f3d-582e-46f4-b32f-201b84b6b280
+[오후 11:19:41] 보냄 attack_c 42cd3f8d-8144-48c9-a119-2688319554cc
+[오후 11:19:41] 보냄 attack_d 51e12f6c-8686-4362-afc7-59dd2fc3c86a
+[오후 11:20:26] 받음 attack_c
+[오후 11:20:27] 보냄 fireball_a e140679c-631b-4bd7-8125-539b07c9ee68
+[오후 11:20:37] 받음 attack_a
+[오후 11:20:37] 받음 attack
+[오후 11:20:38] 보냄 fireball 88541e63-3099-431e-9776-e1fef8fcac9a
+[오후 11:20:38] 보냄 fireball_c c34b10a5-10ba-4579-9aef-78d4b6430f88
+[오후 11:21:00] 받음 attack_d
+[오후 11:21:00] 보냄 fireball_d b822fa8d-1eb1-4a50-85ce-fa7761f14588
+[오후 11:21:32] 받음 fireball_a
+[오후 11:21:32] 받음 fireball_c
+[오후 11:21:32] 보냄 icelance_a f74c41a1-ac00-424f-804e-a952f197877a
+[오후 11:21:33] 보냄 icelance c4fb4a05-fb79-4b2b-a616-3d81128c0fee
+[오후 11:21:43] 받음 fireball
+[오후 11:21:44] 보냄 icelance_c 5033bbca-dac0-4644-b109-8889d3d5e44a
+[오후 11:21:54] 받음 fireball_d
+[오후 11:21:55] 보냄 icelance_d 95277d60-8357-4851-8e2e-d8a5501df3fb
+[오후 11:22:28] 받음 icelance_a
+[오후 11:22:28] 받음 icelance
+[오후 11:22:28] 보냄 chain_a 28817b2a-a74d-4196-9bb1-2b4076245d57
+[오후 11:22:28] 보냄 chain b3acdff4-2008-4275-9f0e-2f63c867b932
+[오후 11:22:50] 받음 icelance_c
+[오후 11:22:50] 받음 icelance_d
+[오후 11:22:51] 보냄 chain_d 3a0c8b85-b8e1-4cad-a167-367763543efe
+[오후 11:22:51] 보냄 chain_c 28d50675-b4ac-43a1-8a29-e23edf8bf9ce
+[오후 11:23:23] 받음 chain
+[오후 11:23:23] 받음 chain_a
+[오후 11:23:24] 보냄 weaken_a c8750a2f-63ed-4816-b5f7-5a28cddc64c8
+[오후 11:23:24] 보냄 weaken 7fbca9f6-79dc-4b68-ab25-03a529276f01
+[오후 11:23:46] 받음 chain_d
+[오후 11:23:46] 받음 chain_c
+[오후 11:23:46] 보냄 weaken_c 2b7060d9-8a63-458d-a91d-dc3f2b389380
+[오후 11:23:46] 보냄 weaken_d ca8dea0a-9b36-41c6-a3f1-49873e241fac
+[오후 11:24:19] 받음 weaken
+[오후 11:24:19] 받음 weaken_a
+[오후 11:24:19] 보냄 burst_a 54545b5c-bad2-43d8-80d0-67e446065885
+[오후 11:24:20] 보냄 burst 7e56c9b8-2e48-4b70-9190-371e889c65f7
+[오후 11:24:52] 받음 weaken_c
+[오후 11:24:53] 보냄 burst_c 3cd9c529-67e6-47ba-8ff5-1a802af80d56
+[오후 11:25:15] 받음 weaken_d
+[오후 11:25:15] 보냄 burst_d e3b91c6d-5ceb-4f1e-ae70-94acaa4f7af3
+[오후 11:25:25] 받음 burst_a
+[오후 11:25:25] 보냄 iceprison_a 422716b5-6cbd-43ac-8a15-e0ef25dc1dd3
+[오후 11:26:10] 받음 burst
+[오후 11:26:10] 보냄 iceprison 63ca8f56-531c-4e71-be32-3a6e43babf19
+[오후 11:26:10] 받음 iceprison_a
+[오후 11:26:10] 보냄 iceprison_c d2b83dab-fea4-4bc2-8f6d-f445b6d8518f
+[오후 11:26:21] 받음 burst_c
+[오후 11:26:21] 보냄 iceprison_d 9867a78e-a9b5-4418-b607-10a53b0d7fcb
+[오후 11:26:42] 받음 burst_d
+[오후 11:26:43] 보냄 meteor_a a546b188-6a57-4941-a66c-8355dffc8dba
+[오후 11:27:16] 받음 iceprison_c
+[오후 11:27:16] 받음 iceprison
+[오후 11:27:17] 보냄 meteor_c f9ff654d-065d-4fc2-90c3-2223a5a09b4d
+[오후 11:27:17] 보냄 meteor 33531c47-e8df-4c5f-b747-8c93b6b95f4f
+[오후 11:27:36] 받음 iceprison_d
+[오후 11:27:36] 보냄 meteor_d 8894693e-d7e4-4e43-a68f-b72f085c1e67
+[오후 11:27:46] 받음 meteor_a
+[오후 11:27:47] 보냄 thunderclap_a 41ecc750-3f18-409e-a14f-b0c03f3984a0
+[오후 11:28:19] 받음 meteor_c
+[오후 11:28:19] 받음 meteor
+[오후 11:28:19] 보냄 thunderclap 2beac02f-69df-48e7-9376-13ce3352d959
+[오후 11:28:19] 보냄 thunderclap_c bca2d720-df87-4cc0-8947-ce8ce2c939fd
+[오후 11:28:49] 받음 thunderclap_a
+[오후 11:28:50] 보냄 thunderclap_d a088b638-1cfa-40bd-8289-090330a5a153
+[오후 11:29:12] 받음 thunderclap_c
+[오후 11:29:12] 보냄 manashield_a 1a51d907-fce4-4533-8c78-b33c4a336c2c
+[오후 11:29:32] 받음 thunderclap
+[오후 11:29:32] 보냄 manashield 23ed6cfe-8c7e-4904-a3af-29f1517c6a10
+[오후 11:30:14] 받음 manashield_a
+[오후 11:30:15] 보냄 manashield_c 6c8f6dcf-7431-4077-8aca-a2d01d5bbe63
+[오후 11:30:35] 받음 manashield
+[오후 11:30:35] 보냄 manashield_d f465fe6b-1c8a-4b95-b5b4-b20ed3baf684
+[오후 11:30:53] 받음 meteor_d
+[오후 11:31:07] 받음 manashield_c
+[오후 11:31:38] 받음 manashield_d
+[오후 11:33:18] 받음 thunderclap_d
+[오후 11:33:18] 끝 — 40 / 40
