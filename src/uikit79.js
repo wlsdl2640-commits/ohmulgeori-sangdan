@@ -54,8 +54,11 @@ showTitle = function () { const r = _showTitle79.apply(this, arguments); title79
 try { matchMedia('(orientation: portrait)').addEventListener('change', () => { const t = document.getElementById('title-scr'); if (t && !t.hidden) title79Art(); }); } catch (_) {}
 
 /* ── 아이콘 (11-28 대표님 「옛 탭 속 이미지들도 다 바꿔」) — 메뉴판 칸 · 바로 가기 · 메뉴 단추 · 위쪽 띠 돈 · 명성 · 장소 화살표 (data-icons79.js) ── */
-const _applyPx79 = applyPx;
-applyPx = function () { _applyPx79(); document.querySelectorAll('img[data-px]').forEach(im => { const u = ICONS79[im.dataset.px]; if (u) im.src = u; }); };   // eslint-disable-line no-func-assign
+applyPx = function () {   // eslint-disable-line no-func-assign
+  // 새 아이콘은 옛 도트 그리기(pxURL)를 거치지 않는다 — 옛 그림이 없는 열쇠(m_assoc)는 pxURL이 멈춰 게임이 안 떴다
+  document.querySelectorAll('img[data-px]').forEach(im => { const u = ICONS79[im.dataset.px]; im.src = u || pxURL(im.dataset.px); });
+  if (!applyPx.mb) { applyPx.mb = 1; mbArt(); }
+};
 (() => { const st = document.createElement('style'); st.id = 'icons79'; st.textContent = `
 .mtile img { width: 32px; height: 32px; image-rendering: pixelated; }
 .mchip img { width: 20px; height: 20px; image-rendering: auto; }
