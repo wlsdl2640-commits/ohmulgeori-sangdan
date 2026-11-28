@@ -689,16 +689,17 @@ function buyWagon(pid, w, sl) {
 
 /* ───────── 판매·구매·제작 ───────── */
 const guildRate = () => GUILD_RATE + (spn('guild') >= 1 ? 0.1 : 0) + 0.02 * (S.rank || 0);
+const guildV = k => ITEMS[k].gsell != null ? ITEMS[k].gsell : guildV(k);   // 빌드 78: 주문서는 정한 매입가(scroll78.js DROP79.gsell)
 // 자동 판매: 표시해 둔 부속품은 원정대가 돌아올 때 남길 수만 남기고 길드에 판다
 function autoSellRun(who) {
   const A = S.autoSell || {}; let total = 0, n = 0;
-  for (const k in A) { if (!ITEMS[k] || A[k] == null) continue; const q = (S.inv[k] || 0) - A[k]; if (q > 0) { const g = Math.round(ITEMS[k].v * guildRate() * q); assocFame(k, q, S.inv[k] || 0, false); addTo(S.inv, k, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g; total += g; n += q; } }
+  for (const k in A) { if (!ITEMS[k] || A[k] == null) continue; const q = (S.inv[k] || 0) - A[k]; if (q > 0) { const g = Math.round(guildV(k) * q); assocFame(k, q, S.inv[k] || 0, false); addTo(S.inv, k, -q); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g; total += g; n += q; } }
   if (n) { log(`자동 판매: 부속품 ${n}개를 길드원 협회에 ${g$(total)}에 팔았다.`); S.stats.autoG = (S.stats.autoG || 0) + total; }
 }
 function sellGuild(it, q) {
   q = Math.min(q, S.inv[it] || 0);
   if (q <= 0) return;
-  const g = Math.round(ITEMS[it].v * guildRate() * q), st0 = S.inv[it] || 0;
+  const g = Math.round(guildV(it) * q), st0 = S.inv[it] || 0;
   addTo(S.inv, it, -q); assocFame(it, q, st0, false); S.gold += g; S.stats.earned += g; S.stats.soldG = (S.stats.soldG || 0) + g;
   HOOKS.toast(`${ITEMS[it].name} ${q}개를 ${g$(g)}에 팔았다`);
   changed();

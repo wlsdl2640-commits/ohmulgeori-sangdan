@@ -1440,7 +1440,7 @@ function fieldBossDown(p, e, f) {
 function loot(p, e, it, q) {
   if (e.kq) { e.kq.items.push([it, q]); return; }
   const room = capOf(p) - usedOf(p);
-  const fit = Math.min(q, Math.floor(room / ITEMS[it].w));
+  const w = ITEMS[it].w || 0, fit = w > 0 ? Math.min(q, Math.floor(room / w)) : q;   // 빌드 78: 무게 0(주문서)은 가방이 차도 들어간다 — 예전엔 0 ÷ 0 = NaN으로 조용히 버렸다
   if (fit > 0) { addTo(e.bag, it, fit); ev(e, 'loot', { id: it }); }
   if (fit < q) e.full = true;
   if (e.full && p.auto && e.mode === 'advance' && e.area === 'field') recall(p, 'full');
@@ -1503,7 +1503,7 @@ function injure(a, sev) {
 function dropOver(p, e) {
   let over = usedOf(p) - capOf(p);
   if (over <= 0) return;
-  const keys = Object.keys(e.bag).sort((x, y) => ITEMS[x].v / ITEMS[x].w - ITEMS[y].v / ITEMS[y].w);
+  const keys = Object.keys(e.bag).filter(k => ITEMS[k] && ITEMS[k].w > 0).sort((x, y) => ITEMS[x].v / ITEMS[x].w - ITEMS[y].v / ITEMS[y].w);   // 빌드 78: 무게 0(주문서)은 버려도 짐이 안 줄어 건드리지 않는다
   for (const k of keys) { while (over > 0 && e.bag[k] > 0) { addTo(e.bag, k, -1); over -= ITEMS[k].w; } if (over <= 0) break; }
   e.gbag.sort((x, y) => gearValue(x) - gearValue(y));
   while (over > 0 && e.gbag.length) { const g = e.gbag.shift(); over -= GTYPES[g.base].w; }

@@ -28,7 +28,7 @@ const SCR78 = {
 const SCR78_B = { band: [1, 30, 60, 90, 120], atk: [[1, 2, 4, 7, 12], [2, 3, 6, 10, 18], [2, 4, 8, 14, 24], [4, 7, 14, 24, 40], [6, 11, 22, 38, 60]] };   // 보관: 예전 B안(구간마다 다른 값)
 const DUR78 = { arms: 120, armor: 150, fight: 1, raid: 3, down: 4, stone: 40, auto: 40, pack: 3, porter: 20, warn: 0.2, zero: 0.5, fee: t => 20 + 15 * (t || 0) };   // fee = 숫돌 하나 쓸 때 드는 돈
 const CAT78 = { cat_str: ['맹공의 촉매', 'str', '#d0503a'], cat_int: ['비전의 촉매', 'int', '#6a5ad8'], cat_vit: ['수호의 촉매', 'vit', '#3a9a58'], cat_agi: ['질풍의 촉매', 'agi', '#3aa8c8'] };
-const CAT78_Q = 1.25, CAT78_DROP = 0.15;
+const CAT78_Q = 1.25;   // 촉매 드롭은 아래 DROP79 (e7)
 const LETHE78 = { make: { mj_2: 2 }, fee: 3000, take: 1000 };   // 빈 망각의 주문서: 중급 마정석 2 + 3,000G · 기억 담기 1,000G
 
 // ── 물건 ──
@@ -255,16 +255,57 @@ towerBox = function () {   // eslint-disable-line no-func-assign
 };
 BLD_SUM.library = () => '<div class="sub">스킬북 합성은 마탑으로 옮겼어요.</div>';
 
-// ── 드롭: 주문서 · 촉매 (임시 몫 — 몬스터마다 정한 표가 나오면 바꾼다) ──
-function scrRandom(r) { const cs = Object.keys(SCR78.cats), c = pickOne(cs), s = pickOne(SCR78.cats[c].stats); return `scr_${c}_${s}_${r}`; }
+// ── 드롭: 주문서 · 촉매 · 숫돌 (e7 회의 합의안 · 11-28) ──
+// 한 마리 = 주문서 한 번(확률 단계를 누적 한 번 굴림 → 당첨이면 주력 60% · 나머지 16종 고르게) · 촉매 · 숫돌은 따로.
+// 일반 몬스터는 사체 갈무리(e.kq)로, 층 주인 · 중간 우두머리 · 던전 주인 · 리젠보스는 갈무리 없이 바로 가방에.
+// 예전 임시 훅은 `if (e.kq) return`이라 갈무리가 켜진 필드 · 던전에서 주문서 · 촉매가 하나도 안 떨어졌다(matDrop은 e.kq가 있을 때만 불린다).
+const DROP79 = {
+  rates: [80, 60, 30, 10],
+  p: { normal: [0.008, 0.003, 0, 0], lord: [0.12, 0.06, 0.025, 0.004], owner: [0.16, 0.07, 0.03, 0.005], c1: [0.06, 0.04, 0.02, 0.003], c2: [0.07, 0.05, 0.03, 0.005], mid: [0.10, 0.04, 0.015, 0.002] },
+  main: 0.6,
+  // 일반: [갈래, 능력치, 숫돌]
+  mon: { rat: ['bag', 'carry', 0.03], rabbit: ['bag', 'movePct', 0], wolf: ['weapon', 'atk', 0], scare_a3: ['acc', 'int', 0], scare_b2: ['weapon', 'matk', 0], scare_c4: ['weapon', 'crit', 0.03],
+    boar: ['armor', 'hp', 0], badger: ['acc', 'vit', 0.03], aboar: ['armor', 'def', 0.03], slime: ['off', 'mp', 0], goblin: ['armor', 'eva', 0] },
+  // 우두머리: 종류(kind) → 몬스터 → { m: [갈래, 능력치], cat: { 촉매: 확률 }, whet }
+  boss: {
+    lord: { aboar: { m: ['armor', 'def'], cat: { cat_vit: 0.06, cat_str: 0.02, cat_int: 0.02, cat_agi: 0.02 }, whet: 0.35 } },
+    owner: { ratking: { m: ['off', 'atk'], cat: { cat_str: 0.03, cat_int: 0.03, cat_vit: 0.03, cat_agi: 0.03 }, whet: 0.4 } },
+    c1: { scare_c1: { m: ['acc', 'agi'], cat: { cat_agi: 0.05 }, whet: 0.15 } },
+    c2: { scare_c2: { m: ['armor', 'mres'], cat: { cat_int: 0.06 }, whet: 0.2 } },
+    mid: { wolf: { m: ['acc', 'str'], cat: { cat_agi: 0.07 }, whet: 0.12 }, scarecrow: { m: ['off', 'def'], cat: { cat_int: 0.07 }, whet: 0.12 }, boar: { m: ['off', 'block'], cat: { cat_str: 0.07 }, whet: 0.12 } }
+  },
+  bossDef: { cat: { cat_str: 0.02, cat_int: 0.02, cat_vit: 0.02, cat_agi: 0.02 }, whet: 0.15 },   // 표에 없는 우두머리(2층부터 — 표를 짤 때까지)
+  // 협회(길드) 매입가: 기준가 대신 정한 값 — 10% 주문서를 팔아 100% 주문서 여러 장을 사는 역전을 막는다
+  gsell: { 100: 210, 80: 250, 60: 270, 30: 290, 10: 300 }
+};
+const SCR_ALL = Object.entries(SCR78.cats).flatMap(([c, C]) => C.stats.map(s => [c, s]));   // 17종
+for (const [c, s] of SCR_ALL) SCR78.rates.forEach(r => { const I = ITEMS[`scr_${c}_${s}_${r}`]; if (I) I.gsell = DROP79.gsell[r]; });
+const dropKind = f => f.regen ? f.regen : f.fb ? (f.fb >= 5 ? 'lord' : 'mid') : f.boss ? 'owner' : 'normal';
+function scrPick79(main, r) {
+  let c, s;
+  if (main && rnd() < DROP79.main) [c, s] = main;
+  else { const rest = SCR_ALL.filter(([x, y]) => !main || x !== main[0] || y !== main[1]); [c, s] = pickOne(rest); }
+  return `scr_${c}_${s}_${r}`;
+}
+function scrRoll79(P) { const R = DROP79.rates; let r = rnd(), acc = 0; for (let i = R.length - 1; i >= 0; i--) { acc += P[i] || 0; if (r < acc) return R[i]; } return 0; }   // 드문 것부터 누적 — 표의 확률 그대로
+function scrRandom(r) { return scrPick79(null, r); }   // 예전 이름 (다른 곳에서 부를 때)
 const _matDrop78 = matDrop;
 matDrop = function (p, e, f) {   // eslint-disable-line no-func-assign
   _matDrop78(p, e, f);
-  if (!e || e.kq || e.pvp) return; const big = f.boss || f.fb || f.regen;
-  const add = it => { if (e.bag) { addTo(e.bag, it, 1); log(`${p.name}이(가) ${ITEMS[it].name}을(를) 주웠다!`, 'good'); } };
-  if (big) { if (rnd() < SCR78.drop.boss10) add(scrRandom(10)); else if (rnd() < SCR78.drop.boss30) add(scrRandom(30)); if (rnd() < CAT78_DROP) add(pickOne(Object.keys(CAT78))); }
-  else { const r = rnd(); if (r < SCR78.drop.p60) add(scrRandom(60)); else if (r < SCR78.drop.p60 + SCR78.drop.p80) add(scrRandom(80)); }
+  if (!e || e.pvp || f.sum) return;
+  const kind = dropKind(f), big = kind !== 'normal';
+  const B = big ? ((DROP79.boss[kind] || {})[f.id] || DROP79.bossDef) : null, M = DROP79.mon[f.id];
+  const got = [];
+  const r = scrRoll79(DROP79.p[kind]); if (r) got.push(scrPick79(B ? B.m : M && [M[0], M[1]], r));
+  if (B) for (const k in B.cat || {}) if (rnd() < B.cat[k]) { got.push(k); break; }   // 촉매는 하나까지
+  if (rnd() < (B ? B.whet : M ? M[2] : 0)) got.push('whetstone');
+  if (!got.length) return;
+  const kq = big ? e.kq : null; if (big) e.kq = null;   // 우두머리 보상은 갈무리 없이 바로 가방
+  for (const it of got) { loot(p, e, it, 1); if (big || ITEMS[it].scr) log(`${p.name}이(가) ${ITEMS[it].name}을(를) ${e.kq ? '찾았다 — 갈무리하면 챙긴다' : '주웠다'}!`, 'good'); }
+  if (big) e.kq = kq;
 };
+// 1층 곡물 창고 무리 (e7 1번 A안 — 11-25 결정: 고블린은 1층에 안 나옴 · 슬라임은 늪지): 들쥐 · 들늑대 + 주인 들쥐왕
+if (FIELDS.plains && FIELDS.plains.dungeon) FIELDS.plains.dungeon.mons = ['rat', 'wolf'];
 
 // ── 옛 저장 (불러올 때마다 — 할 것이 없으면 아무것도 안 함) ──
 function scroll78() {
