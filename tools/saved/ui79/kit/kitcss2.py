@@ -43,6 +43,24 @@ css += f"""
 """
 if sys.argv[1] != '--js': open(sys.argv[1], 'w', encoding='utf-8').write(css)
 print(len(css))
+css += f"""
+/* 3단계: 위쪽 띠 · 메뉴 · 구역 · 장소 이동 · 파티 띠 · 원정 작은 창 (11-28) */
+.hud {{ {bi('A', 'popup', 12, 8)} color: #f2dcb0; }}
+.hv.date, .hv.rent {{ color: #e8cfa0; }}
+.spd {{ {bi('A', 'btn2', 9, 6)} color: #f6e0b0; min-height: 26px; }}
+.spd.fast {{ {bi('A', 'btn3', 9, 6)} color: #2a1406; }}
+.zbtn {{ {bi('A', 'tab2', 8, 6)} color: #e8cfa0; }}
+.zbtn.on {{ {bi('A', 'tab1', 8, 6)} color: #fff2c8; }}
+.mbtn.mmain {{ {bi('A', 'slot1', 10, 8)} color: #f2dca4; }}
+.mbtn.mmain.on, .mbtn.mmain.open {{ {bi('A', 'slot2', 10, 8)} filter: brightness(1.15); }}
+.ptab {{ {bi('A', 'title', 11, 8)} color: #2a1406; }}
+.ptab small, .ptab .pnm {{ color: #2a1406; text-shadow: none; }}
+.ptab::before, .ptab::after {{ display: none; }}
+.chipbar {{ {bi('A', 'row', 10, 6)} }}
+.pchip {{ {bi('D', 'btn2', 9, 6)} color: #f4e6cc; }}
+.pchip.on {{ {bi('D', 'btn1', 9, 6)} color: #2a1408; }}
+.pip {{ {bi('A', 'frame', 14, 6)} background: #000; }}
+"""
 
 # 게임에 넣는 꼴: python kitcss2.py --js <src/data-uikit79.js> — CSS 글을 JS 문자열로 (uikit79.js가 <style>로 붙인다 · 손으로 고치지 말 것)
 if len(sys.argv) > 2 and sys.argv[1] == '--js':
