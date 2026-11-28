@@ -103,7 +103,7 @@ function deriveBase(a) {
     aspd: (1 + T.agi * BASIC69.aspd) * (1 + Math.min(CAP.spdPct, (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0))),
     spd: C.spd * (1 + T.agi * 0.004) * (1 + Math.min(CAP.spdPct, (P.spdPct || 0) + X('spdPct') + (G.spdPct || 0))),   // 예전 공격 속도 (빌드 68까지의 기본 공격 = 5초 ÷ spd) — 지금은 투기장 상대(under.js pvpFoe)만 쓴다
     cdr: Math.min(CDR_MAX, (P.cdr || 0) + X('cdr') + (G.cdr || 0)),                                   // 스킬 재사용 감소 (상한 CDR_MAX 30% — 빌드 69)
-    carry: Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0))),
+    carry: carryCap79(a, Math.round((C.carry + T.str * 0.4 + (G.carry || 0) + X('carry')) * (1 + (P.carryPct || 0)))),   // 11-28: 짐꾼 계열이 아니면 한 사람 10까지
     move: (6 + T.agi * 0.06) * (1 + Math.min(CAP.movePct, (P.movePct || 0) + relic('move') + X('movePct') + (G.movePct || 0))) * (wind ? 1.15 : 1),   // 빌드 69: 더하는 % 몫은 +200%까지
     mpRegen: 1 + (P.mpRegen || 0) + rlv('mana') * 0.3 + Math.min(RUNE_CAP.mpRegen, G.mpRegen || 0),   // 영민 룬(방어구) · 마나 룬(무기)
     // 빌드 64 룬 개편: 명중(몬스터 회피 −%p) · 기본 공격 방어 · 행동 방해 시간 − · 기본 공격 눈멂 · 눈멂 저항 · 흡혈 (속성 피해 d_*는 runeSum으로 hitFoe에서)
@@ -198,6 +198,9 @@ const rig2Name = p => { const q = rig2(p); return q && q.wagon ? rigName(q) : ''
 const scoutMove = p => Math.max(0, ...teamOf(p).filter(a => !a.down).map(a => TR(a).scout || 0));
 const tentOf = p => Math.max(1, ...teamOf(p).filter(a => !a.down).map(a => TR(a).tent || 1));
 // 쓰러진 동료는 짐을 못 들고, 들것이 자리를 차지한다
+// 11-28 대표님: 짐꾼이 없으면 짐은 모험가 한 명당 10이 최대 — 짐꾼 계열만 힘 · 가방 · 패시브로 더 든다
+const CARRY79 = 10;
+const carryCap79 = (a, v) => (jobBase(a.cls) === 'porter' ? v : Math.min(CARRY79, v));
 function capOf(p) { const all = teamOf(p), st = all.filter(a => !a.down); return Math.max(0, Math.round((st.reduce((s, a) => s + derive(a).carry, 0) + wagonCap(p)) * (1 + rlv('carry') * 0.1)) - (all.length - st.length) * STRETCHER); }
 function usedOf(p) { return p.exp ? wOf(p.exp.bag) + wOf(p.exp.sup) + gW(p.exp.gbag) + wOf(p.exp.cargo || {}) : wOf(p.sup); }
 // 파티 이동속도 = 가장 빠른(민첩한) 길드원의 속도 × 피로 × 마차
