@@ -52,3 +52,13 @@ function title79Art() {
 const _showTitle79 = showTitle;
 showTitle = function () { const r = _showTitle79.apply(this, arguments); title79Art(); return r; };   // eslint-disable-line no-func-assign
 try { matchMedia('(orientation: portrait)').addEventListener('change', () => { const t = document.getElementById('title-scr'); if (t && !t.hidden) title79Art(); }); } catch (_) {}
+
+/* ── 아이콘 (11-28 대표님 「옛 탭 속 이미지들도 다 바꿔」) — 메뉴판 칸 · 바로 가기 · 메뉴 단추 · 위쪽 띠 돈 · 명성 · 장소 화살표 (data-icons79.js) ── */
+const _applyPx79 = applyPx;
+applyPx = function () { _applyPx79(); document.querySelectorAll('img[data-px]').forEach(im => { const u = ICONS79[im.dataset.px]; if (u) im.src = u; }); };   // eslint-disable-line no-func-assign
+(() => { const st = document.createElement('style'); st.id = 'icons79'; st.textContent = `
+.mtile img { width: 32px; height: 32px; image-rendering: pixelated; }
+.mchip img { width: 20px; height: 20px; image-rendering: auto; }
+.mbtn img, .mbtn.mmain img { width: 24px; height: 24px; image-rendering: auto; }
+.hud .pi { width: 18px; height: 18px; image-rendering: auto; }
+.pnav .parr { background-image: url('${ICONS79.arrow}') !important; background-size: 32px 32px; background-repeat: no-repeat; background-position: center; image-rendering: pixelated; }`; document.head.appendChild(st); })();
