@@ -11,7 +11,7 @@
  "attack": "w3",
  "fireball": "w4",
  "icelance": "w4",
- "chain": "w2",
+ "chain": "chain2/x1",
  "weaken": "w3",
  "weaken_keep": "w4",
  "burst": "w4",
@@ -21,5 +21,6 @@
  "manashield": "w2",
  "idle": "idle2/x1",
  "walk": "w4",
- "manashield_dir": "clean_fix/manashield/w2"
+ "manashield_dir": "clean_fix/manashield/w2",
+ "meteor_shower_keep": "w2 (예전 연쇄 번개 자세)"
 }

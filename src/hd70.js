@@ -265,7 +265,7 @@ function hdMonSpr(id, mk, f) {   // pxund.js pxuSprite가 부른다 (그림 판�
 // ── 전사 1차: 동작 13가지 × 16장 (tools/saved/gpt70/hd70/extract_war16.py — 판 차례 그대로 한 줄씩) ──
 // 리마스터 그림이 있는 직업(전사 1차 · 마법사 1차). 직업마다 줄 표가 달라서, 그리기 전에 hdUse(a)로 「지금 직업」(HD.war · HDC)을 바꿔 끼운다
 // 11-22 04:43 사용자 「GPT한테 받은 모험가 말고 너랑 나랑 만든 모험가 디자인으로 다시 다 바꾸고」: 길드원은 다시 엔진의 뭉툭 도트(pxa.js · pxs*.js — 장비 겉모습 · 무기별 동작이 살아난다). 받은 판 그림은 HD_ADV_ON을 켜면 돌아온다 (자료는 그대로 둠)
-const HD_ADV_ON = false;
+const HD_ADV_ON = true;   // 빌드 80 (11-29 대표님 「모험가 다 넣고」): 1차 여섯 직업 픽셀랩 동작 (data-hd80.js · hd80.js가 자료와 줄 표를 바꿔 끼운다)
 const hdWarOn = a => !!(HD_ADV_ON && a && HD.cls[a.cls] && HDCFG[a.cls]);
 let HDC = null;
 const hdUse = a => { const c = a && HD.cls[a.cls] ? a.cls : 'warrior'; HD.war = HD.cls[c] || null; HDC = HDCFG[c]; return !!HD.war; };
@@ -304,7 +304,8 @@ const HDW_MOT = {
 };
 const HDW_OF = { down: 'slash', side: 'slash', hack: 'slash', smash: 'slash', up: 'upper', toss: 'upper', thrust: 'thrust', bash: 'bash', block: 'block',
   guard: 'guard', parry: 'guard', ready: 'guard', raise: 'raise', salute: 'raise', taunt: 'raise' };
-const hdwMot = mk => HDC.mot[HDC.of[mk] || HDC.def], hdwKey = mk => hdwMot(mk).key || HDC.of[mk] || HDC.def;
+const hdwSk = sk => (sk && HDC.sk && HDC.sk[sk]) || null;   // 빌드 80: 스킬마다 고른 동작 줄
+const hdwMot = (mk, sk) => HDC.mot[hdwSk(sk) || HDC.of[mk] || HDC.def] || HDC.mot[HDC.def], hdwKey = (mk, sk) => hdwSk(sk) || hdwMot(mk).key || HDC.of[mk] || HDC.def;
 const hdMotAtk = (mk, a) => { hdUse(a); const M = hdwMot(mk); return !M.time && M !== HDC.mot.block; };
 // 마법사 1차 (tools/saved/gpt70/mage1 — 판 넷): 서 있기 · 앞모습은 두 장(둘째 = 한 칸 내려앉은 장)을 1.5초씩, 달리기 = 걷기, 치켜들기 = 마법 쏘기의 지팡이 올리는 장
 const HDM_SEQ = { idle: ['idle', [...Array(14).fill(0), ...Array(14).fill(1)]], front: ['front', [...Array(14).fill(0), ...Array(14).fill(1)]], run: ['walk', null],
@@ -342,17 +343,17 @@ const HDW_HURT_T = 0.55, HDW_DIE_T = 1.0, HDW_RUN_T = 0.7, HDW_WALK_T = 1.05, HD
    (걷는 길 세 배 WALK_STRETCH) 그대로 맞추면 한 바퀴가 4초 — 느린 그림이 된다. 그래서 보통 빠르기에서 한 바퀴 1초가 되게 잡고, 빠른 파티는 그만큼 발이 빨라지고 느려지면(물 · 냉기) 느려진다 */
 const HDW_STRIDE = 7.5;
 const HDW_TC = {};
-function hdMotT(a, mk) {   // view.js motTA: 이 길드원가 이 동작을 할 때 장마다 초 (null이면 엔진 그대로)
+function hdMotT(a, mk, sk) {   // view.js motTA: 이 길드원가 이 동작을 할 때 장마다 초 (null이면 엔진 그대로) · sk: 스킬 (빌드 80 — 스킬마다 줄)
   if (!hdWarOn(a)) return null;
-  hdUse(a); const ck = HDC.id + mk;
+  hdUse(a); const ck = HDC.id + mk + '|' + (hdwSk(sk) || '');
   if (HDW_TC[ck]) return HDW_TC[ck];
-  const T = hdwMot(mk).T, n = pxsMotT(mk).length, hi = pxsMotHit(mk);
+  const T = hdwMot(mk, sk).T, n = pxsMotT(mk).length, hi = pxsMotHit(mk);
   if (n === 8 && hi === 4) return (HDW_TC[ck] = T);
   const pre = T.slice(0, 4).reduce((s, v) => s + v, 0), post = T.slice(4).reduce((s, v) => s + v, 0);   // 맞히는 장이 다른 엔진 동작(내려찍기 다섯째 장)은 앞 · 뒤 시간만 지킨다
   return (HDW_TC[ck] = Array.from({ length: n }, (_, f) => (f < hi ? pre / hi : post / (n - hi))));
 }
 function hdwMotFrame(mk, fr, mo) {   // 엔진 동작의 지금 자리(mo: view.js motNow — 장 f · 장 안 p · 장마다 초 T · 시작 장 f0) → 그림 동작의 장
-  const M = hdwMot(mk), N = hdwLen(hdwKey(mk));
+  const sk = mo && mo.sk, M = hdwMot(mk, sk), N = hdwLen(hdwKey(mk, sk));
   let i;
   if (!mo || !mo.T) i = Math.round(fr * (N - 1) / Math.max(1, pxsMotT(mk).length - 1));
   else if (M.time) { const T = mo.T; let e = (mo.p || 0) * T[mo.f], tt = 0; for (let f = mo.f0 || 0; f < T.length; f++) { tt += T[f]; if (f < mo.f) e += T[f]; } i = Math.floor(e / tt * N); }
@@ -361,19 +362,20 @@ function hdwMotFrame(mk, fr, mo) {   // 엔진 동작의 지금 자리(mo: view.
 }
 function hdWarSpr(a, pose, fr, t, o) {   // art.js drawAdv가 부른다 (null이면 예전 그림)
   if (!hdUse(a)) return null;
-  const ph = o.ph || 0;
-  if (pose === 'sleep') return hdwSpr('sleep', Math.floor(t * HDW_FPS.sleep + ph * 7), FLASH);   // 야영: 누워 자기
+  const ph = o.ph || 0, L = k => hdwLen(k);   // 빌드 80: 줄마다 장 수가 다르다 (16 · 20 · 24 · 32 · 40)
+  if (pose === 'sleep') { const k = hdSleepRow(a); return hdwSpr(k, Math.floor(t * HDW_FPS.sleep + ph * 7), FLASH); }   // 야영: 누워 자기 (모험가마다 자는 자세 하나)
   if (pose === 'sit') return hdwSpr('sit', Math.floor(t * HDW_FPS.sit + ph * 5), FLASH);         // 야영: 앉아 쉬기
   if (!o.side) return hdwSpr('front', Math.floor(t * HDW_FPS.front + ph * 11), FLASH);           // 길드 앞 · 초상
-  if (o.die != null) return hdwSpr('death', Math.min(15, Math.floor(o.die * 16)), FLASH);        // 쓰러지는 중 (view.js — HDW_DIE_T초)
-  if (pose === 'down') return hdwSpr('death', 15, FLASH);                                        // 쓰러져 있다 (들것)
-  if (pose.startsWith('m:')) { const mk = pose.slice(2); return hdwSpr(hdwKey(mk), hdwMotFrame(mk, fr, o.mot), FLASH); }
-  if (pose === 'atk') return hdwSpr(HDC.def, fr ? 6 : 4, FLASH);                                 // 예전 두 장 공격 (동작이 없을 때)
-  const h0 = typeof V !== 'undefined' && V.flash0 && a.id != null ? V.flash0['a' + a.id] : null, dt = h0 != null ? t - h0 : -1;
-  if (dt >= 0 && dt < HDW_HURT_T) return hdwSpr('hurt', 1 + Math.min(14, Math.floor(dt / HDW_HURT_T * 15)), FLASH === '#ffffff' && dt > 0.07 ? null : FLASH);   // 맞음: 흰 번쩍은 처음 한순간만
-  if (pose === 'walk') return o.run ? hdwSpr('run', Math.floor((t / HDW_RUN_T + ph * 0.37) * 16), FLASH) : hdwSpr('walk', Math.floor(((o.wph != null ? o.wph : t / HDW_WALK_T) + ph * 0.37) * 16), FLASH);
+  if (o.die != null) return hdwSpr('death', Math.min(L('death') - 1, Math.floor(o.die * L('death'))), FLASH);   // 쓰러지는 중 (view.js — HDW_DIE_T초)
+  if (pose === 'down') return hdwSpr('death', L('death') - 1, FLASH);                            // 쓰러져 있다 (들것)
+  if (pose.startsWith('m:')) { const mk = pose.slice(2), sk = o.mot && o.mot.sk; return hdwSpr(hdwKey(mk, sk), hdwMotFrame(mk, fr, o.mot), FLASH); }
+  if (pose === 'atk') { const n = L(HDC.def), h = HDC.mot[HDC.def].H; return hdwSpr(HDC.def, fr ? Math.min(n - 1, h) : Math.max(0, h - 2), FLASH); }   // 예전 두 장 공격 (동작이 없을 때)
+  const h0 = typeof V !== 'undefined' && V.flash0 && a.id != null ? V.flash0['a' + a.id] : null, dt = h0 != null ? t - h0 : -1, nh = L('hurt');
+  if (dt >= 0 && dt < HDW_HURT_T) return hdwSpr('hurt', 1 + Math.min(nh - 2, Math.floor(dt / HDW_HURT_T * (nh - 1))), FLASH === '#ffffff' && dt > 0.07 ? null : FLASH);   // 맞음: 흰 번쩍은 처음 한순간만
+  if (pose === 'walk') return o.run ? hdwSpr('run', Math.floor((t / HDW_RUN_T + ph * 0.37) * L('run')), FLASH) : hdwSpr('walk', Math.floor(((o.wph != null ? o.wph : t / HDW_WALK_T) + ph * 0.37) * L('walk')), FLASH);
   return hdwSpr('idle', Math.floor(t * HDW_FPS.idle + ph * 11), FLASH);
 }
+const hdSleepRow = a => { const ks = ['sleep', 'sleep_2', 'sleep_3'].filter(k => HD.war[k] || (HDC.seq[k] && HD.war[HDC.seq[k][0]])); let h = 0; for (const c of String(a.id)) h = (h * 31 + c.charCodeAt(0)) | 0; return ks.length ? ks[Math.abs(h) % ks.length] : 'sleep'; };   // 빌드 80: 자는 자세 여럿 — 모험가 id로 하나를 늘 같게
 /* 스킬 빛 (view.js 파티 그리기 — skfx.js skAdvFx와 같은 뜻을 리마스터 칼 자리에): ① 모으기 = 칼날이 스킬 색으로 달아오르고(칼날 칸 · 둘레), 빛 알갱이가 칼끝으로 모이고,
    온몸 기운(발밑 고리 · 오르는 불티) ② 자취 = 맞히는 장 앞뒤로 칼이 지나간 자리를 스킬 색 초승달로. 칼날 칸이 없는 줄(방패 밀기 · 막기)은 그리지 않는다 */
 function hdSkFx(g, a, mo, sk, x, y, dir, t) {
@@ -476,4 +478,4 @@ function buildWideHD(id, old) {
       }
     } };
 }
-hdLoad();
+// hdLoad()는 hd80.js 끝에서 부른다 (빌드 80 — 1차 여섯 직업 자료를 바꿔 끼운 뒤에 풀어야 한다)

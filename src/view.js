@@ -739,8 +739,8 @@ const MOT_SKILL = {
 };
 const MOT_HOLD = 0.08, MOT_CHAIN0 = 2, MOT_PAL = [['#ffffff', '#fff2a0', '#a8a090'], ['#fffbe0', '#ffd84a', '#c8a060']];   // 효과 색: 보통 · 치명타
 const motToHit = q => (q.T || pxsMotT(q.mk)).slice(q.f0 || 0, pxsMotHit(q.mk)).reduce((s, v) => s + v, 0);
-const motTA = (a, mk) => hdMotT(a, mk) || pxsMotT(mk);   // 이 길드원의 장마다 초 — 빌드 70: 전사 1차 리마스터(16장)는 동작을 길게 (hd70.js HDW_MOT)
-const motT = (mk, hold, a) => motTA(a, mk).map((v, f) => v + (f === 2 ? hold || 0 : 0));   // 스킬: 셋째 장(모으기)을 hold초 더 붙잡는다
+const motTA = (a, mk, sk) => hdMotT(a, mk, sk) || pxsMotT(mk);   // 이 길드원의 장마다 초 — 빌드 70: 전사 1차 리마스터(16장)는 동작을 길게 (hd70.js HDW_MOT)
+const motT = (mk, hold, a, sk) => motTA(a, mk, sk).map((v, f) => v + (f === 2 ? hold || 0 : 0));   // 스킬: 셋째 장(모으기)을 hold초 더 붙잡는다
 /* 무기 갈래마다 (빌드 42): 기본 공격 자세 · 그 갈래가 가진 동작 · 다른 갈래 동작을 이 갈래로 바꾸는 표(역할: 내려치기 cut · 올려치기 rise · 휩쓸기 sweep ·
    찌르기 stab · 난도질 flurry · 내려찍기 slam · 쏘기 shoot · 모아 쏘기 cast · 치켜들기 raise) */
 const MOT_POOL = {
@@ -833,10 +833,10 @@ function motOn(a, x, t) {
       const q0 = motQ(m, t), keep = q0 && motNow(a, t, 1) ? q0.t0 + motToHit(q0) + HDW_KEEP : 0;
       if (keep > t) { t0 = keep; pre = [q0]; }
     }
-    m = V.mot[key] = { t, sid, n: {}, pre, q: [{ mk, t0, f0: 0, c: x.c, sk, T: motT(mk, sk && SKFX[sk].hold, a) }] };
+    m = V.mot[key] = { t, sid, n: {}, pre, q: [{ mk, t0, f0: 0, c: x.c, sk, T: motT(mk, sk && SKFX[sk].hold, a, sk) }] };
   }
   const n = (m.n[x.d] = (m.n[x.d] || 0) + 1) - 1;
-  while (m.q.length <= n) { const q = m.q[m.q.length - 1], mk = motPick(a, x.sid, m.q.length, x.k); m.q.push({ mk, t0: q.t0 + motToHit(q) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c, sk, T: motTA(a, mk) }); }
+  while (m.q.length <= n) { const q = m.q[m.q.length - 1], mk = motPick(a, x.sid, m.q.length, x.k); m.q.push({ mk, t0: q.t0 + motToHit(q) + MOT_HOLD, f0: MOT_CHAIN0, c: x.c, sk, T: motTA(a, mk, sk) }); }
   if (x.c) m.q[n].c = 1;
   m.lastN = n + 1; m.lastQ = m.q[n];
   return Math.max(0.001, m.q[n].t0 + motToHit(m.q[n]) - t);   // 이어받은 기본 공격은 맞히는 장이 이미 지났을 수 있다 (0이면 동작 없는 것으로 본다)
@@ -856,7 +856,7 @@ function motCast(a, mk, t, blk, sk, now) {   // now: 지금 (t가 나중이면 �
   }
   if (mk === 'guard' && !pxsMotShield(a)) mk = 'raise';
   mk = motFam(a, mk);
-  const q = { mk, t0, f0: 0, sk: sk || null, T: motT(mk, sk && SKFX[sk] && SKFX[sk].hold, a) };
+  const q = { mk, t0, f0: 0, sk: sk || null, T: motT(mk, sk && SKFX[sk] && SKFX[sk].hold, a, sk) };
   if (now != null && t0 > now && m0 && hw && motNow(a, now, 1)) { m0.after = q; return; }   // 리마스터 전사: 지금 하던 동작은 그때까지 보이고 그 뒤에 잇는다
   V.mot['a' + a.id] = { t, sid: '#' + mk, n: {}, q: [q] };
 }

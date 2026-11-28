@@ -1,0 +1,182 @@
+[
+ {
+  "key": "attack_out",
+  "src": "attack/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a small bolt of arcane mana flying to the right: an indigo and violet energy dart with a bright white core and a short tapering trail of tiny sky-blue sparkles.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 8
+ },
+ {
+  "key": "attack_in",
+  "src": "attack/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a small bolt of arcane mana flying to the right: an indigo and violet energy dart with a bright white core and a short tapering trail of tiny sky-blue sparkles.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 9
+ },
+ {
+  "key": "fireball_c_out",
+  "src": "fireball_c/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a fireball flying to the right: a round ball of orange and yellow flame with a white-hot core, licking flame tongues and a trail of embers and small smoke puffs behind it.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 10
+ },
+ {
+  "key": "fireball_c_in",
+  "src": "fireball_c/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a fireball flying to the right: a round ball of orange and yellow flame with a white-hot core, licking flame tongues and a trail of embers and small smoke puffs behind it.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 11
+ },
+ {
+  "key": "icelance_out",
+  "src": "icelance/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a spear of ice flying to the right: a long sharp crystal lance of pale cyan and white ice with faceted edges, frosty mist and tiny ice shards trailing behind it.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 12
+ },
+ {
+  "key": "icelance_in",
+  "src": "icelance/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a spear of ice flying to the right: a long sharp crystal lance of pale cyan and white ice with faceted edges, frosty mist and tiny ice shards trailing behind it.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 13
+ },
+ {
+  "key": "chain_mix_out",
+  "src": "chain_mix/anim_src.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a chain of lightning arcing to the right: a jagged bright yellow-white electric bolt zigzagging horizontally and forking into two smaller branches, with crackling sparks.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 14
+ },
+ {
+  "key": "chain_mix_in",
+  "src": "chain_mix/anim_src.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a chain of lightning arcing to the right: a jagged bright yellow-white electric bolt zigzagging horizontally and forking into two smaller branches, with crackling sparks.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 15
+ },
+ {
+  "key": "weaken_a_out",
+  "src": "weaken_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a curse settling on a target: dark violet and sickly green wisps of smoke spiraling downward in a loose ring, with drooping heavy shadow tendrils and faint dull motes.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 16
+ },
+ {
+  "key": "weaken_a_in",
+  "src": "weaken_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a curse settling on a target: dark violet and sickly green wisps of smoke spiraling downward in a loose ring, with drooping heavy shadow tendrils and faint dull motes.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 17
+ },
+ {
+  "key": "burst_a_out",
+  "src": "burst_a/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "an arcane mana explosion bursting outward from a center point: a ring shockwave of indigo and sky-blue energy with a bright white flash core, flying mana shards and sparkles.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 18
+ },
+ {
+  "key": "burst_a_in",
+  "src": "burst_a/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "an arcane mana explosion bursting outward from a center point: a ring shockwave of indigo and sky-blue energy with a bright white flash core, flying mana shards and sparkles.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 19
+ },
+ {
+  "key": "iceprison_c_out",
+  "src": "iceprison_c/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "an ice prison: jagged pale cyan ice crystal pillars erupting from the ground in a tight cluster, forming a cage shape, with frost mist at the base and glinting facets.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 20
+ },
+ {
+  "key": "iceprison_c_in",
+  "src": "iceprison_c/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "an ice prison: jagged pale cyan ice crystal pillars erupting from the ground in a tight cluster, forming a cage shape, with frost mist at the base and glinting facets.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 21
+ },
+ {
+  "key": "meteor_c_out",
+  "src": "meteor_c/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a flaming meteor falling diagonally from the upper left toward the lower right: a burning rock with a molten orange core, a long trail of fire, smoke and embers behind it.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 22
+ },
+ {
+  "key": "meteor_c_in",
+  "src": "meteor_c/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a flaming meteor falling diagonally from the upper left toward the lower right: a burning rock with a molten orange core, a long trail of fire, smoke and embers behind it.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 23
+ },
+ {
+  "key": "thunderclap_d_out",
+  "src": "thunderclap_d/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a lightning strike from the sky straight down onto the ground: a thick jagged yellow-white thunderbolt with a bright impact flash and crackling sparks spreading at the ground.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 24
+ },
+ {
+  "key": "thunderclap_d_in",
+  "src": "thunderclap_d/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a lightning strike from the sky straight down onto the ground: a thick jagged yellow-white thunderbolt with a bright impact flash and crackling sparks spreading at the ground.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 25
+ },
+ {
+  "key": "shield2_b_out",
+  "src": "shield2_b/00.png",
+  "desc": "The effect slowly fades away: its light dims and thins out, the shapes loosen and drift apart into tiny soft sparkles that fade one by one, until nothing remains. The motion is slow, continuous and smooth across every frame: nothing appears or disappears suddenly, everything fades gradually.",
+  "subject": "a protective mana barrier shaped like a soap-bubble sphere of clear glass resting on the ground, a glowing indigo rim, rainbow-tinted glassy reflections and two bright window-shaped glints on the upper left.",
+  "pose": "the effect at full brightness",
+  "frames": 40,
+  "seed": 26
+ },
+ {
+  "key": "shield2_b_in",
+  "src": "shield2_b/00.png",
+  "desc": "The effect shrinks back toward its center and dims into a tiny point of light that vanishes. Slow, continuous and smooth across every frame, nothing pops in or out suddenly.",
+  "subject": "a protective mana barrier shaped like a soap-bubble sphere of clear glass resting on the ground, a glowing indigo rim, rainbow-tinted glassy reflections and two bright window-shaped glints on the upper left.",
+  "pose": "the effect at full brightness",
+  "frames": 24,
+  "seed": 27
+ }
+]

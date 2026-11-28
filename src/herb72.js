@@ -51,7 +51,7 @@ function herbDraw(draws, e) {
    그림은 1차 짐꾼 것이라 짐꾼(porter) 직업만 — 다른 짐꾼 계열은 서 있는 그림 그대로. */
 const WORK_X = 150, WORK_FPS = 7, WORK_Z = 0.66;   // WORK_Z: 서 있는 동료와 머리 크기가 같게
 function workDraw(draws, e, a, t) {
-  if (typeof HD_ADV_ON !== 'undefined' && !HD_ADV_ON) return false;   // 11-22: 길드원이 엔진 그림일 때는 받은 판의 작업 자세를 쓰지 않는다
+  if (typeof HD_WORK_OLD !== 'undefined' && !HD_WORK_OLD) return false;   // 11-22: 길드원이 엔진 그림일 때는 받은 판의 작업 자세를 쓰지 않는다 · 빌드 80: 픽셀랩 짐꾼과 생김새가 달라 계속 끔 (hd80.js)
   if (typeof PORTER_WORK === 'undefined' || !e || e.workA !== a.id || a.cls !== 'porter' || a.down || (e.foes || []).some(f => f.hp > 0)) return false;
   const m = herbImg(PORTER_WORK[e.workK]); if (!m) return false;
   const P = PORTER_WORK, fi = Math.floor(t * WORK_FPS) % 8, A = e.herbJob && typeof HERB_ART !== 'undefined' && HERB_ART[e.herbJob.id] ? HERB_ART[e.herbJob.id][{ 소형: 0, 중형: 1, 대형: 2 }[e.herbJob.size] || 0] : null;

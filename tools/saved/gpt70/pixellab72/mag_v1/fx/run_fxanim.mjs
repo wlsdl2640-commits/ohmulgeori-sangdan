@@ -1,0 +1,54 @@
+// 효과 그림(<key>/00.png)을 올리고 animate_image_pixminimax로 사라지는 16장을 만든다 → anim/<key>/00..16.png
+// node run_fxanim.mjs [동시 수=4] [jobs=anim_in.json]  — 토큰은 ~/.claude.json pixellab 설정에서 프로세스 안에서만 읽는다.
+import fs from 'node:fs'; import path from 'node:path'; import os from 'node:os';
+const H = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+const N = +process.argv[2] || 4; const JF = process.argv[3] || 'anim_in.json';
+const cfg = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8')).mcpServers.pixellab;
+const MCP = cfg.url, AUTH = cfg.headers.Authorization;
+const J = JSON.parse(fs.readFileSync(path.join(H, JF), 'utf8'));
+const DONE_F = path.join(H, JF.replace('in', 'done'));
+const done = fs.existsSync(DONE_F) ? JSON.parse(fs.readFileSync(DONE_F, 'utf8')) : {};
+const log = s => { const l = `[${new Date().toLocaleTimeString('ko-KR')}] ${s}`; console.log(l); fs.appendFileSync(path.join(H, 'log.txt'), l + '\n'); };
+const save = () => fs.writeFileSync(DONE_F, JSON.stringify(done, null, 1));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let sid = null, rid = 1;
+async function rpc(method, params, notify = false) {
+  const h = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream', Authorization: AUTH };
+  if (sid) h['Mcp-Session-Id'] = sid;
+  const r = await fetch(MCP, { method: 'POST', headers: h, body: JSON.stringify(notify ? { jsonrpc: '2.0', method, params } : { jsonrpc: '2.0', id: rid++, method, params }) });
+  if (r.headers.get('mcp-session-id')) sid = r.headers.get('mcp-session-id');
+  const t = await r.text(); if (notify) return null;
+  const m = t.match(/^data: (.*)$/m); const j = JSON.parse(m ? m[1] : t);
+  if (j.error) throw new Error(JSON.stringify(j.error).slice(0, 300));
+  return j.result;
+}
+const txt = res => (res.content || []).map(c => c.text || '').join('\n');
+let UP = null;
+async function upload(file) {
+  if (!UP) UP = txt(await rpc('tools/call', { name: 'get_upload_url', arguments: {} })).match(/https:\/\/api\.pixellab\.ai\/v2\/uploads\/\S+/)[0];
+  const fd = new FormData(); fd.append('file', new Blob([fs.readFileSync(file)], { type: 'image/png' }), 'fx.png');
+  const r = await fetch(UP, { method: 'POST', body: fd }); const j = await r.json(); if (!j.ref) throw new Error('올리기 ' + JSON.stringify(j)); return j.ref;
+}
+async function one(j) {
+  if (done[j.key] && done[j.key].ok) return;
+  for (let k = 0; k < 3; k++) {
+    try {
+      const ref = await upload(path.join(H, j.src));
+      const res = await rpc('tools/call', { name: 'animate_image_pixminimax', arguments: { first_frame_url: ref, description: j.desc, frame_count: j.frames || 16, view: 'side', subject_description: j.subject, initial_pose: j.pose, seed: j.seed || 5 } });
+      const id = (txt(res).match(/job_id: ([0-9a-f-]{36})/) || [])[1]; if (!id) throw new Error('작업 번호 없음 ' + txt(res).slice(0, 200));
+      done[j.key] = { id }; save(); log(`보냄 ${j.key} ${id}`);
+      let st = 0; for (let t = 0; t < 120; t++) { const r = await fetch(`https://api.pixellab.ai/mcp/images/${id}/download?index=0`); st = r.status; if (st === 200) break; if (st !== 423) throw new Error('받기 ' + st); await sleep(10000); }
+      if (st !== 200) throw new Error('시간 초과');
+      const dir = path.join(H, 'anim', j.key); fs.mkdirSync(dir, { recursive: true });
+      for (let i = 0; i <= (j.frames || 16); i++) { const r = await fetch(`https://api.pixellab.ai/mcp/images/${id}/download?index=${i}`); if (r.status !== 200) throw new Error('장 ' + i); fs.writeFileSync(path.join(dir, String(i).padStart(2, '0') + '.png'), Buffer.from(await r.arrayBuffer())); }
+      done[j.key].ok = 1; save(); log(`받음 ${j.key}`); return;
+    } catch (e) { log(`!! ${j.key} 실패 ${k + 1}: ${String(e.message).slice(0, 200)}`); await sleep(/limit|concurrent|429/i.test(e.message) ? 60000 : 5000); }
+  }
+  done[j.key] = { ...(done[j.key] || {}), fail: 1 }; save();
+}
+(async () => {
+  await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'fx3', version: '1' } }); await rpc('notifications/initialized', {}, true);
+  const q = J.slice(); let active = 0;
+  await new Promise(res => { const next = () => { if (!q.length && !active) return res(); while (active < N && q.length) { const j = q.shift(); active++; one(j).finally(() => { active--; next(); }); } }; next(); });
+  log(`끝 — ${Object.values(done).filter(d => d.ok).length} / ${J.length}`);
+})().catch(e => { log('오류 ' + e.message); process.exit(1); });
