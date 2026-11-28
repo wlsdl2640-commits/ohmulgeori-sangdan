@@ -127,8 +127,9 @@ const farmLvNeed = k => (ITEMS[k].veg ? 1 : FARM.herbLv[herbTier(k)]);
 /* ───────── 항구 (처음부터 열린 시설 · 해상왕국 배가 찾아온다) ───────── */
 const PORT = { gap: [4, 6], stay: 1, stock: [6, 12], king: '해상왕국 코랄리아', ship: '산호호' };
 
-/* ───────── 펫 알 (유정란 50% · 부화 30 ~ 70%, 실패하면 무정란) · 레어도 ───────── */
-const PEN_FERTILE = 0.5, PEN_HATCH = [0.3, 0.4, 0.5, 0.6, 0.7];
+/* ───────── 펫 알 (유정란 40% · 부화 20 ~ 50%, 실패하면 무정란) · 레어도 ───────── */
+// 11-28 대표님 「부화할 확률을 더 낮춰」 — 예전 유정란 50% · 부화 30 ~ 70% (사육장 레벨마다)
+const PEN_FERTILE = 0.4, PEN_HATCH = [0.2, 0.27, 0.35, 0.42, 0.5];
 const penHatch = () => PEN_HATCH[Math.max(0, Math.min(PEN_HATCH.length - 1, (S.bld.pen || 1) - 1))];
 const PET_Q = [[50, 1], [30, 1.1], [14, 1.25], [5, 1.45], [0.9, 1.7], [0.1, 2.0]];   // 레어도: [나올 몫 %, 힘 · 길드 효과 배율]
 const petQMul = pet => (PET_Q[(pet && pet.q) || 0] || PET_Q[0])[1];

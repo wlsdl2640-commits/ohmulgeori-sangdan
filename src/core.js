@@ -173,7 +173,8 @@ const coachLineOf = p => teamOf(p).find(coachLine) || null;
 const caravanOf = p => teamOf(p).find(a => !a.down && chainOf(a.cls).includes('caravanmaster')) || null;
 const rig2 = p => (p && !p.r2 ? { id: p.id, name: p.name, members: p.members, exp: p.exp, wagon: p.wagon2 || null, horse: p.horse2 || null, wagonPlus: p.wagonPlus2 || 0, r2: 1 } : null);
 function wagonWhy(p) {
-  const w = wagonOwned(p); if (!w || !w.horse) return '';
+  const w = wagonOwned(p); if (!w) return '';
+  if (!w.horse) return teamOf(p).some(a => jobBase(a.cls) === 'porter') ? '' : '손수레는 짐꾼 계열이 있어야 끌어요';   // 11-28 대표님
   if (p.r2 && !caravanOf(p)) return '둘째 마차는 캐러밴 마스터가 있어야 몰아요';
   if (!coachLineOf(p)) return '말이 끄는 마차는 마부 계열(마부 · 코네스토가 · 캐러밴 마스터)이 몰아요';
   const h = horseOf(p);

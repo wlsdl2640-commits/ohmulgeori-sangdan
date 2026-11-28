@@ -1088,6 +1088,7 @@ function events(e, pos, t, team, p) {
       const aq = at('a' + x.d); if (aq) V.fx.push({ k: 'num', x: aq[0] - 6, y: aq[1] - (21 + (aq.ru || 0)) * zAt(aq[1]) - 14, s: '-' + x.v + ' MP', c: '#7ab8ff', t0: t + 0.1, d: 0.8 });
     } else if (x.type === 'fbuff') {
       const fq = at('f' + x.d); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 0.7, c: BUFF_C[x.stat] || '#ff9a6a' });
+      { const ff = e.foes && e.foes.find(o => o.uid === x.d), mk = ff && 'i_' + ff.id + '_curl'; if (ff && HD_MOT[mk] && fmotOK(ff)) V.fmot['f' + ff.uid] = { mk, cat: 'skl', t0: t, T: pxuMotT(ff.id, mk), hit: 0, fl: 0, from: 'fbuff' }; }   // 11-28: 몸을 마는 강화 동작(광맥 콩벌레)
     } else if (x.type === 'fphase') {   // 우두머리 단계: 분노 · 마지막 발악
       const ft = ftop(x.s); callout(ft ? ft[0] : 170, 120, `${V.fname[x.s] || '우두머리'} ${x.pat ? `패턴 「${x.pn || ''}」!` : x.k === 2 ? '마지막 발악!' : x.k === 0 ? (x.n ? '졸개를 불렀다!' : '버티기!') : '분노!'}`, 'boss'); V.shake = Math.max(V.shake, x.k === 2 ? 6 : x.k === 0 ? 3 : 4);   // 빌드 70: 패턴 이름 (길드장)
       const fq = at('f' + x.s); if (fq) V.fx.push({ k: 'buff', x: fq[0], y: fq[1], t0: t, d: 1.0, c: x.k === 2 ? '#ff3a2a' : x.k === 0 ? '#8ac8ff' : '#ff9a3a' });

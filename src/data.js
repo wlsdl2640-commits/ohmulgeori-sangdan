@@ -161,6 +161,7 @@ const MONS = {
   scare_c1: { mm: 'scarecrow', name: '마법 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#3a2a20', scale: 2, regen: 1, mh: 1.4, ma: 1.25, md: 0.9, spd: 0.95, minS: 99, drops: [['scare_straw', 1, 2]] },
   scare_c2: { mm: 'scarecrow', name: '저주 걸린 허수아비', plan: 'biped', skin: '#c8a060', cloth: '#26305a', scale: 2, regen: 1, mh: 1.55, ma: 1.35, md: 1.0, spd: 1.0, minS: 99, drops: [['scare_straw', 1, 3]] },
   boar:    { name: '멧돼지',       plan: 'quad', body: '#8a4a32', dark: '#5a2e1e', len: 14, h: 7, tail: 1, ear: 1, mh: 1.3, ma: 1.2, md: 0.8, spd: 0.9, minS: 10, drops: [['boar_hide', 0.5], ['boar_tusk', 0.45]] },
+  orebug:  { name: '광맥 콩벌레',  plan: 'quad', body: '#4a3a2a', dark: '#241a12', len: 8, h: 4, mh: 0.65, ma: 0.55, md: 1.1, spd: 0.85, minS: 99, drops: [] },   // 11-28 e8: 1층 광물 몬스터(시안 1) — 소형 조각은 orebug79.js
   badger:  { name: '둑굴 오소리',  plan: 'quad', body: '#5c5652', dark: '#2c2826', len: 12, h: 6, tail: 1, ear: 1, snout: 1, mh: 1.4, ma: 1.25, md: 0.9, spd: 1.0, minS: 99, drops: [['boar_hide', 0.4], ['wolf_fang', 0.35]] },   // 빌드 78 (e3 C안): 1-13 ~ 1-16 밭둑 굴 — 그림은 시안 뒤 (지금은 옛 네발 그림)
   aboar:   { name: '갑옷 멧돼지',  plan: 'quad', body: '#7a3a2a', dark: '#4a2418', len: 15, h: 8, tail: 1, ear: 1, mh: 1.8, ma: 1.35, md: 1.6, spd: 0.8, minS: 14, drops: [['aboar_plate', 0.45], ['boar_tusk', 0.5], ['boar_hide', 0.3]] },
   ratking: { name: '들쥐왕',       plan: 'quad', body: '#7a6656', dark: '#4b3d32', len: 9, h: 4, tail: 1, ear: 1, crown: 1, scale: 3, boss: 1, mh: 4, ma: 1.5, md: 1, spd: 0.9, aoe: 1, drops: [['ratking_crown', 1], ['rat_tail', 1, 3]] },
@@ -207,10 +208,10 @@ const FIELDS = {
   plains: {
     no: 1, name: '곡창지대 평원', lv: 1, span: 29, bg: 'plains_hd', tier: 0,   // 빌드 70 (11-18 사용자): 이름 「곡창지대 평원」 · 몬스터 Lv1 ~ 30 · 슬라임 · 고블린은 다른 곳으로 옮길 때까지 던전에만
     desc: '곡창지대. 밀밭과 풍차 사이 넓은 들판에 들짐승과 허수아비가 돌아다닌다.',
-    mons: ['rat', 'rabbit', 'wolf', 'scare_a3', 'scare_b2', 'scare_c4', 'boar', 'badger', 'aboar'], bosses: ['wolf', 'scarecrow', 'boar', 'aboar', 'aboar'],
+    mons: ['rat', 'rabbit', 'wolf', 'scare_a3', 'scare_b2', 'scare_c4', 'boar', 'badger', 'aboar', 'orebug'], bosses: ['wolf', 'scarecrow', 'boar', 'aboar', 'aboar'],
     // 빌드 78 (11-27 대표님 · e3): 20칸 · 칸마다 Lv · 나오는 칸 [처음, 끝] · 마릿수 [낮 최소, 최대, 밤 최소, 최대] · 섞일 수 있는 짝 (같은 종류 80%)
     stages: 20, lvTab: [1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 19, 20, 21, 22, 24, 25],
-    st20: { rat: [1, 5], rabbit: [2, 8], wolf: [4, 11], scare_a3: [6, 13], scare_b2: [7, 14], scare_c4: [10, 19], boar: [12, 19], badger: [13, 16], aboar: [17, 19] },
+    st20: { rat: [1, 5], rabbit: [2, 8], wolf: [4, 11], scare_a3: [6, 13], scare_b2: [7, 14], scare_c4: [10, 19], boar: [12, 19], badger: [13, 16], aboar: [17, 19], orebug: [4, 10] },
     pack20: [[1, 1, 1, 1], [1, 1, 1, 2], [1, 2, 1, 2], [1, 2, 1, 2], [1, 2, 2, 2], [1, 2, 2, 3], [1, 2, 2, 3], [1, 2, 2, 3], [1, 2, 2, 3], [1, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 2, 2, 3], [2, 3, 2, 3], [2, 3, 2, 3], [2, 3, 3, 3]],
     mix20: [['rat', 'rabbit'], ['scare_a3', 'scare_b2'], ['scare_a3', 'scare_c4'], ['scare_c4', 'boar'], ['boar', 'badger'], ['boar', 'aboar']], same20: 0.8,
     lordX: { hp: 7.8, atk: 1.75, def: 1.9 },
