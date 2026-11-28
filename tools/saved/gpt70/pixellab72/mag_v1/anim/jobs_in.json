@@ -802,5 +802,101 @@
   "pose": "standing facing right, holding the tall staff upright in the front hand",
   "desc": "She holds the staff vertically in front of her body with both hands and braces her feet firmly as if guarding, holds, then returns to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
   "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "idle2",
+  "row": "x1",
+  "ko": "서 있기(숨쉬기 다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 700,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She breathes slowly and visibly: her chest and shoulders rise and fall, her head and hat dip down one pixel on each exhale and come back up, her braid and robe hem sway gently, one slow breath cycle over the whole clip, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "idle2",
+  "row": "x2",
+  "ko": "서 있기(숨쉬기 다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 701,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She breathes slowly and visibly: her chest and shoulders rise and fall, her head and hat dip down one pixel on each exhale and come back up, her braid and robe hem sway gently, one slow breath cycle over the whole clip, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "idle2",
+  "row": "x3",
+  "ko": "서 있기(숨쉬기 다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 702,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She breathes slowly and visibly: her chest and shoulders rise and fall, her head and hat dip down one pixel on each exhale and come back up, her braid and robe hem sway gently, one slow breath cycle over the whole clip, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "idle2",
+  "row": "x4",
+  "ko": "서 있기(숨쉬기 다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 703,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She breathes slowly and visibly: her chest and shoulders rise and fall, her head and hat dip down one pixel on each exhale and come back up, her braid and robe hem sway gently, one slow breath cycle over the whole clip, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "run2",
+  "row": "x1",
+  "ko": "달리기(다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 720,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She runs forward to the right in place at a moderate jogging pace, exactly one full stride cycle (two steps) spread evenly over the whole clip, holding her hat down with the rear hand and the staff in the front hand, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "run2",
+  "row": "x2",
+  "ko": "달리기(다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 721,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She runs forward to the right in place at a moderate jogging pace, exactly one full stride cycle (two steps) spread evenly over the whole clip, holding her hat down with the rear hand and the staff in the front hand, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "run2",
+  "row": "x3",
+  "ko": "달리기(다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 722,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She runs forward to the right in place at a moderate jogging pace, exactly one full stride cycle (two steps) spread evenly over the whole clip, holding her hat down with the rear hand and the staff in the front hand, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
+ },
+ {
+  "mon": "run2",
+  "row": "x4",
+  "ko": "달리기(다시)",
+  "frames": 24,
+  "first": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb",
+  "seed": 723,
+  "subject": "young female mage: midnight-blue wide-brim pointed hat with a cream feather, silver-white braided hair, indigo and sky-blue robe, brown potion satchel, gray boots, tall pale wooden staff with a silver cage holding an indigo orb",
+  "pose": "standing facing right, holding the tall staff upright in the front hand",
+  "desc": "She runs forward to the right in place at a moderate jogging pace, exactly one full stride cycle (two steps) spread evenly over the whole clip, holding her hat down with the rear hand and the staff in the front hand, loops back to the start pose. Keep the exact same character design, size, colors and equipment; the staff stays in her hand. Only the character moves. Absolutely no visual effects: no magic, no motion trails, no sparks, no flashes, no glow, no smoke, no dust clouds, no other characters.",
+  "last": "upload:128e86cf-da15-4b92-a09e-a937ddf60fbb"
  }
 ]

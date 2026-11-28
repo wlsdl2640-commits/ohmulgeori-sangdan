@@ -1,0 +1,6 @@
+{
+ "_note": "11-28 대표님 고름 (둘째 판 w*). idle 다시(숨쉬기가 없음) · run 너무 빠름 · walk 아직 · weaken w4는 다른 스킬용으로 보관 · manashield w2는 자세만, 지팡이 머리 속 구슬이 검게 변하는 장 고치기",
+ "hurt": "w4", "fall": "w3", "sit": "w1", "sleep": ["w1", "w2", "w3"],
+ "attack": "w3", "fireball": "w4", "icelance": "w4", "chain": "w2", "weaken": "w3", "weaken_keep": "w4",
+ "burst": "w4", "iceprison": "w1", "meteor": "w1", "thunderclap": "w1", "manashield": "w2"
+}
