@@ -6,7 +6,7 @@ P = {'frame': (8, 8, 300, 300), 'title': (326, 8, 178, 52), 'btn1': (326, 76, 17
      'tab1': (326, 258, 84, 40), 'tab2': (420, 258, 84, 40), 'slot1': (8, 326, 84, 84), 'slot2': (104, 326, 84, 84), 'round': (206, 328, 80, 80),
      'row': (300, 326, 204, 60), 'popup': (8, 424, 496, 80)}
 k = 341 / 512; meta = {}
-for K in 'ABC':
+for K in 'ABCDE':
     im = Image.open(f'parts{K}.png').convert('RGBA'); os.makedirs(f'kit{K}', exist_ok=True); meta[K] = {}
     for n, (x, y, w, h) in P.items():
         box = (max(0, int(x * k) - 4), max(0, int(y * k) - 4), min(im.width, int((x + w) * k) + 5), min(im.height, int((y + h) * k) + 5))

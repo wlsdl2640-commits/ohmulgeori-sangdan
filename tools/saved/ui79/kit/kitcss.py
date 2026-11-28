@@ -11,7 +11,7 @@ css = f"""
 .win {{ {bi('A', 'frame', 14, 12)} background: none; }}
 .win .panel, .win .panel-in {{ background: transparent; }}
 .win-head, .win-top {{ background: transparent; }}
-#win-title {{ {bi('A', 'title', 11, 9)} color: #3a1d0c; text-shadow: 0 1px 0 #f6d27a; background-color: transparent; }}
+#win-title {{ {bi('A', 'title', 11, 6)} height: auto; line-height: 20px; padding: 1px 10px; color: #3a1d0c; text-shadow: 0 1px 0 #f6d27a; background-color: transparent; }}
 .win-btn {{ {bi('A', 'btn1', 9, 7)} background: none; color: #ffe8b0; }}
 .card {{ {bi('A', 'row', 10, 8)} background: none; box-shadow: none; }}
 .li {{ {bi('A', 'row', 10, 7)} background: none; }}
@@ -24,9 +24,14 @@ css = f"""
 /* 첫 화면 */
 .tbtn {{ {bi('A', 'btn2', 9, 8)} background: none !important; color: #f6e0b0 !important; box-shadow: none !important; }}
 .tbtn.main {{ {bi('A', 'btn3', 9, 8)} color: #2a1406 !important; }}
-.t-box {{ {bi('B', 'frame', 14, 12)} background: none !important; box-shadow: none !important; color: #3a2414; }}
+.t-box {{ {bi('B', 'frame', 14, 12)} background: none !important; box-shadow: none !important; color: #24120a; }}
+.t-box h2 {{ color: #5a1410 !important; text-shadow: none !important; }}
+.t-box, .t-box * {{ text-shadow: none !important; }}
+.t-box label, .t-box small, .t-box p, .t-box span {{ color: #3a2010 !important; }}
 /* 알림 창 = 서류 */
-#m-box {{ {bi('B', 'frame', 14, 12)} background: none; color: #3a2414; }}
+#m-box {{ {bi('B', 'frame', 14, 12)} background: none; color: #24120a; }}
+#m-box h2 {{ color: #5a1410; }}
+#m-box, #m-box * {{ text-shadow: none; }}
 #m-box .btn {{ {bi('B', 'btn2', 9, 7)} color: #fff0d8; }}
 #m-box .btn.gold {{ {bi('B', 'btn1', 9, 7)} color: #fff0e0; }}
 """
