@@ -978,3 +978,11 @@ details.skl summary b { color: var(--ink); }
 .durb.z { animation: durz 1s steps(2) infinite; }
 @keyframes durz { 50% { box-shadow: 0 0 0 2px #e04030; } }
 @media (prefers-reduced-motion: reduce) { .durb.z { animation: none; box-shadow: 0 0 0 2px #e04030; } }
+/* 빌드 78: 주문서 바르기 연출 (scrfx78.js) */
+.scrfx { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: rgba(8, 6, 12, .55); animation: scrfxin .12s steps(2); }
+.scrfx canvas { image-rendering: pixelated; }
+.scrfx.out { opacity: 0; transition: opacity .18s steps(3); }
+.scrfx-t { font: 700 22px var(--font, sans-serif); letter-spacing: 2px; opacity: 0; text-shadow: 2px 2px 0 #120c08; }
+.scrfx-t.on { opacity: 1; }
+.scrfx-t.ok { color: #ffd860; } .scrfx-t.no { color: #b8aa98; }
+@keyframes scrfxin { from { opacity: 0; } }
